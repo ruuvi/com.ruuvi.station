@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_bgscan"
+        android:summary="@string/pref_bgscan_summ"
+        android:title="@string/pref_bgscan" />
+    <ListPreference
+        android:key="pref_scaninterval"
+        android:title="@string/pref_scaninterval"
+        android:summary="@string/pref_scaninterval_summ"
+        android:entries="@array/pref_scaninterval_titles"
+        android:entryValues="@array/pref_scaninterval_values"
+        android:defaultValue="5" />
+    <EditTextPreference
+        android:key="pref_backend"
+        android:title="Gateway URL (empty = disabled)"
+        android:summary="Scan information is sent to this gateway"/>
+    <EditTextPreference
+        android:key="pref_device_id"
+        android:title="Device Identifier"
+        android:summary="This information is sent to gateway"/>
+</PreferenceScreen>

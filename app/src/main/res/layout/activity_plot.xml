@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PlotActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <com.androidplot.xy.XYPlot
+                style="@style/APDefacto.Light"
+                android:id="@+id/plotPressure"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:backgroundColor="@color/white"
+                ap:title=""
+                ap:rangeTitle=""
+                ap:domainTitle=""
+                ap:lineLabels="left|bottom"
+                ap:lineLabelRotationBottom="-45"/>
+
+            <com.androidplot.xy.XYPlot
+                style="@style/APDefacto.Light"
+                android:id="@+id/plotTemperature"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:backgroundColor="@color/white"
+                ap:title=""
+                ap:rangeTitle=""
+                ap:domainTitle=""
+                ap:lineLabels="left|bottom"
+                ap:lineLabelRotationBottom="-45"/>
+
+            <com.androidplot.xy.XYPlot
+                style="@style/APDefacto.Light"
+                android:id="@+id/plotHumidity"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:backgroundColor="@color/white"
+                ap:title=""
+                ap:rangeTitle=""
+                ap:domainTitle=""
+                ap:lineLabels="left|bottom"
+                ap:lineLabelRotationBottom="-45"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</android.support.constraint.ConstraintLayout>
