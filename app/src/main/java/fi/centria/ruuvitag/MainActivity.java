@@ -59,11 +59,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openRuuviInBrowser(View v)
-    {
-
-        int index =  (Integer) v.getTag();
-
+    public void openRuuviInBrowser(View v) {
+        int index = (Integer) v.getTag();
 
         cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor != null)

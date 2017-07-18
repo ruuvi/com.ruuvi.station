@@ -39,8 +39,6 @@ public class EditActivity extends AppCompatActivity {
             textfield.setText(name, TextView.BufferType.NORMAL);
         else
             textfield.setText(id, TextView.BufferType.NORMAL);
-
-
     }
 
     @Override

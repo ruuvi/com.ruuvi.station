@@ -42,13 +42,4 @@
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|center_horizontal" />
 
-    <Button
-        android:id="@+id/graphbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:text="test graph"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="bottom|left" />
-
 </android.support.design.widget.CoordinatorLayout>

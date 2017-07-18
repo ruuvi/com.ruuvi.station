@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -41,8 +43,7 @@ import fi.centria.ruuvitag.util.Ruuvitag;
 import fi.centria.ruuvitag.util.RuuvitagComplexList;
 import fi.centria.ruuvitag.util.listAdapter;
 
-public class PlotActivity extends AppCompatActivity
-{
+public class PlotActivity extends AppCompatActivity {
     private XYPlot temp_plot;
     private XYPlot hum_plot;
     private XYPlot pres_plot;
@@ -55,13 +56,17 @@ public class PlotActivity extends AppCompatActivity
     Number humidity[];
     Number pressure[];
 
+    Intent intent;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plot);
 
-        id = getIntent().getExtras().getString("id");
+        intent = getIntent();
+        id = intent.getExtras().getString("id");
+
+        setTitle("Graphs for " + id);
 
         plotSource = PlotSource.getInstance();
         domains = plotSource.getDomains();
@@ -69,10 +74,9 @@ public class PlotActivity extends AppCompatActivity
         hum_plot = (XYPlot) findViewById(R.id.plotHumidity);
         pres_plot = (XYPlot) findViewById(R.id.plotPressure);
 
-
         Ruuvitag[] series = plotSource.getSeriesForTag(id);
 
-       temp = new Number[series.length];
+        temp = new Number[series.length];
         humidity = new Number[series.length];
         pressure = new Number[series.length];
         for(int i= 0; i < series.length; i++)
@@ -84,10 +88,6 @@ public class PlotActivity extends AppCompatActivity
                 pressure[i] =  Double.parseDouble(series[i].getPressure());
             }
         }
-
-        makeTemperaturePlot();
-        makeHumidityPlot();
-        makePressurePlot();
     }
 
     private void makeTemperaturePlot()
@@ -111,6 +111,15 @@ public class PlotActivity extends AppCompatActivity
                 return null;
             }
         });
+        temp_plot.getGraph().setPaddingLeft(25);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        makeTemperaturePlot();
+        makeHumidityPlot();
+        makePressurePlot();
     }
 
     private void makeHumidityPlot()
@@ -134,6 +143,7 @@ public class PlotActivity extends AppCompatActivity
                 return null;
             }
         });
+        hum_plot.getGraph().setPaddingLeft(25);
     }
 
     private void makePressurePlot()
@@ -141,7 +151,7 @@ public class PlotActivity extends AppCompatActivity
         pres_plot.setRangeBoundaries(800,1200, BoundaryMode.FIXED);
         LineAndPointFormatter series1Format =
                 new LineAndPointFormatter(this, R.xml.line_point_formatter_with_labels);
-        XYSeries series1 = new SimpleXYSeries(Arrays.asList(pressure), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Humidity");
+        XYSeries series1 = new SimpleXYSeries(Arrays.asList(pressure), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Pressure");
         pres_plot.addSeries(series1, series1Format);
         pres_plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
             @Override
@@ -157,7 +167,31 @@ public class PlotActivity extends AppCompatActivity
                 return null;
             }
         });
+        pres_plot.getGraph().setPaddingLeft(25);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_update) {
+            // A bit of a hack
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            this.finish();
+            overridePendingTransition(0, 0);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_graph, menu);
+        return true;
+    }
 }

@@ -30,11 +30,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import tki.centria.ruuviscanner.database.DBContract;
-import tki.centria.ruuviscanner.database.DBHandler;
+//import tki.centria.ruuviscanner.database.DBContract;
+//import tki.centria.ruuviscanner.database.DBHandler;
 
 public class GraphActivity extends AppCompatActivity {
-    private final Handler handler = new Handler();
+    /*private final Handler handler = new Handler();
     private Runnable timer1;
     private LineGraphSeries<DataPoint> series1;
     private double graph2lastXValue = 5d;
@@ -123,5 +123,5 @@ public class GraphActivity extends AppCompatActivity {
                 null,                                     // don't filter by row groups
                 null                                      // dont't sort results
         );
-    }
+    }*/
 }

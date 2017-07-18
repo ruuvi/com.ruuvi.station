@@ -1,6 +1,8 @@
 package fi.centria.ruuvitag;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
@@ -13,17 +15,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.opencsv.CSVWriter;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -34,6 +41,8 @@ import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,9 +71,12 @@ public class ScannerService extends Service implements BeaconConsumer {
     SQLiteDatabase db;
     Cursor cursor;
     Region region;
-    private Calendar c;
+    private String[] titles;
     private String backendUrl;
     private PlotSource plotSource;
+    private double[] alertValues;
+    private int notificationId;
+    private int MAX_NUM_NOTIFICATIONS = 5;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -80,6 +92,15 @@ public class ScannerService extends Service implements BeaconConsumer {
         super.onCreate();
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(mListener);
+        notificationId = 1512;
+
+        titles = new String[]{ getString(R.string.alert_notification_title0),
+                getString(R.string.alert_notification_title1),
+                getString(R.string.alert_notification_title2),
+                getString(R.string.alert_notification_title3),
+                getString(R.string.alert_notification_title4),
+                getString(R.string.alert_notification_title5)
+        };
 
         if(settings.getBoolean("pref_bgscan", false))
             startFG();
@@ -92,6 +113,7 @@ public class ScannerService extends Service implements BeaconConsumer {
         ruuvitagArrayList = new ArrayList<>();
         beaconManager = BeaconManager.getInstanceForApplication(this);
         handler = new DBHandler(getApplicationContext());
+        db = handler.getWritableDatabase();
 
         // Detect the URL frame:
         beaconManager.getBeaconParsers().add(new BeaconParser()
@@ -99,11 +121,11 @@ public class ScannerService extends Service implements BeaconConsumer {
 
         beaconManager.bind(this);
 
-        backendUrl = settings.getString("pref_backend",null);
-
-        db = handler.getWritableDatabase();
+        backendUrl = settings.getString("pref_backend", null);
 
         plotSource =  PlotSource.getInstance();
+
+        alertValues = new double[]{20.0, 30.0, 15.0, 55.0, 950.0, 1050.0};
     }
 
 
@@ -116,8 +138,7 @@ public class ScannerService extends Service implements BeaconConsumer {
             if(!settings.getBoolean("pref_bgscan", false))
                 stopForeground(true);
 
-
-                backendUrl = settings.getString("pref_backend",null);
+            backendUrl = settings.getString("pref_backend",null);
 
             try {
                 beaconManager.setForegroundBetweenScanPeriod
@@ -138,23 +159,18 @@ public class ScannerService extends Service implements BeaconConsumer {
 
                 ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
 
-
                 for(Beacon beacon : beacons) {
-                    if(beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10)
-                    {
+                    if(beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
                         // Parse url from beacon advert
                         String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
                         if (url.startsWith("https://ruu.vi/#") || url.startsWith("https://r/")) {
                             // Creates temporary ruuvitag-object, without heavy calculations
                             Ruuvitag temp = new Ruuvitag(beacon, true);
-                            if(checkForSameTag(temp))
-                            {
+                            if(checkForSameTag(temp)) {
                                 // Creates real object, with temperature etc. calculated
                                 Ruuvitag real = new Ruuvitag(beacon, false);
                                 ruuvitagArrayList.add(real);
                                 update(real);
-
-
                                 scanEvent.addRuuvitag(real);
                             }
                         }
@@ -220,7 +236,7 @@ public class ScannerService extends Service implements BeaconConsumer {
                 .setLargeIcon(bitmap)
                 .setContentIntent(pendingIntent);
 
-        startForeground(1, notification.build());
+        startForeground(notificationId, notification.build());
     }
 
     private void exportRuuvitags() {
@@ -267,7 +283,6 @@ public class ScannerService extends Service implements BeaconConsumer {
 
     Foreground.Listener listener = new Foreground.Listener(){
         public void onBecameForeground(){
-            Log.d("tagi", "huuuu");
             if(!isRunning(ScannerService.class))
                 startService(new Intent(ScannerService.this, ScannerService.class));
         }
@@ -295,8 +310,8 @@ public class ScannerService extends Service implements BeaconConsumer {
     }
 
     public void update(Ruuvitag ruuvitag) {
-        //String time = new SimpleDateFormat("dd-MM-yyyy, hh:mm:ss").format(new Date());
-        String time = DateFormat.getDateTimeInstance().format(new Date());
+        String time = new SimpleDateFormat("dd-MM-yyyy, hh:mm:ss").format(new Date());
+        //String time = DateFormat.getDateTimeInstance().format(new Date());
 
         if(Exists(ruuvitag.getId())) {
             ContentValues values = new ContentValues();
@@ -309,6 +324,7 @@ public class ScannerService extends Service implements BeaconConsumer {
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
 
             db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuvitag.getId()), null);
+            alertManager(ruuvitag.getData(), ruuvitag.getId());
         }
         exportDB();
     }
@@ -331,8 +347,8 @@ public class ScannerService extends Service implements BeaconConsumer {
     }
 
     private void exportDB() {
-        /*File dbFile = getDatabasePath("ruuvi_db.db");
         File exportDir = new File(Environment.getExternalStorageDirectory(), "ruuvitaglogs");
+        String time = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         if (!exportDir.exists()) {
             if (!exportDir.mkdirs()) {
                 Log.e("ScannerService", "failed to create directory");
@@ -341,8 +357,6 @@ public class ScannerService extends Service implements BeaconConsumer {
 
         try {
             Cursor curCSV = db.rawQuery("SELECT * FROM ruuvitag", null);
-
-            File file;
 
             String[] columnNames = {
                     curCSV.getColumnName(1),
@@ -354,30 +368,35 @@ public class ScannerService extends Service implements BeaconConsumer {
                     curCSV.getColumnName(8)
             };
 
-            String[] arrStr = {
-                    curCSV.getString(1),
-                    curCSV.getString(7),
-                    curCSV.getString(3),
-                    curCSV.getString(4),
-                    curCSV.getString(5),
-                    curCSV.getString(6),
-                    curCSV.getString(8)
-            };
-
             while (curCSV.moveToNext()) {
-                //Which column you want to export
-                file = new File(exportDir, curCSV.getString(1) + "1.0");
-                file.createNewFile();
-                CSVWriter writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory().toString()+"/ruuviaglogs/ruuvi.csv"), ',',
-                        CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, "\r\n");
+                File file = new File(exportDir, curCSV.getString(1)+"-"+time);
+                FileWriter fw = new FileWriter(file, file.exists());
+
+                CSVWriter writer = new CSVWriter(fw);
+
+                if(file.length() <= 0) {
+                    writer.writeNext(columnNames);
+                }
+
+                String[] arrStr = {
+                        curCSV.getString(1),
+                        curCSV.getString(7),
+                        curCSV.getString(3),
+                        curCSV.getString(4),
+                        curCSV.getString(5),
+                        curCSV.getString(6),
+                        curCSV.getString(8).substring(12, 20)
+                };
+
                 writer.writeNext(arrStr);
                 writer.close();
+                fw.close();
             }
             curCSV.close();
+
         } catch (Exception sqlEx) {
             Log.e("ScannerService", sqlEx.getMessage(), sqlEx);
-        }*/
-        //TODO Logging to csv file
+        }
     }
 
     private boolean isRunning(Class<?> serviceClass) {
@@ -388,5 +407,57 @@ public class ScannerService extends Service implements BeaconConsumer {
             }
         }
         return false;
+    }
+
+    private void alertManager(double[] data, String id) {
+        if(data[0] < alertValues[0]) {
+            sendAlert(0,id);
+        }
+        if(data[0] > alertValues[1]) {
+            sendAlert(1,id);
+        }
+        if(data[1] < alertValues[2]) {
+            sendAlert(2,id);
+        }
+        if(data[1] > alertValues[3]) {
+            sendAlert(3,id);
+        }
+        if(data[2] < alertValues[4]) {
+            sendAlert(4,id);
+        }
+        if(data[2] > alertValues[5]) {
+            sendAlert(5,id);
+        }
+    }
+
+    private void sendAlert(int type, String id) {
+        String name;
+        NotificationCompat.Builder notification;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+
+        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "id= ?", new String[] { "" + id }, null, null, null);
+        if(cursor != null)
+            cursor.moveToFirst();
+
+        name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
+        if(name == null && name.isEmpty())
+            name = id;
+
+        if(titles != null) {
+            notification
+                    = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle(name)
+                    .setSmallIcon(R.mipmap.ic_launcher_small)
+                    .setTicker(name + " " + titles[type])
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
+                    .setContentText(titles[type])
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setLargeIcon(bitmap);
+
+            NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotifyMgr.notify(type, notification.build());
+        }
     }
 }

@@ -13,22 +13,26 @@
 
     <string name="pref_title_scaninterval">Scan interval</string>
     <string-array name="pref_scaninterval_titles">
+        <item>1 second</item>
         <item>5 seconds</item>
-        <item>10 seconds</item>
-        <item>20 seconds</item>
+        <item>15 seconds</item>
         <item>30 seconds</item>
-        <item>45 seconds</item>
         <item>1 minute</item>
         <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
     </string-array>
     <string-array name="pref_scaninterval_values">
+        <item>1</item>
         <item>5</item>
-        <item>10</item>
-        <item>20</item>
+        <item>15</item>
         <item>30</item>
-        <item>45</item>
         <item>60</item>
         <item>300</item>
+        <item>600</item>
+        <item>1800</item>
+        <item>3600</item>
     </string-array>
 
     <!-- Example General settings -->
@@ -94,17 +98,21 @@
 
     <!-- Example settings for Notifications -->
     <string name="scanner_notification_title">Scanning ruuvitag data</string>
-
     <string name="scanner_notification_message">You can disable background scanning in settings</string>
-
     <string name="scanner_notification_ticker">Scanner started</string>
 
     <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_title_new_message_notifications">New message notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_graph">Graph</string>
+
+    <string name="alert_notification_title0">Temperature too low!</string>
+    <string name="alert_notification_title1">Temperature too high!</string>
+    <string name="alert_notification_title2">Humidity too low!</string>
+    <string name="alert_notification_title3">Humidity too high!</string>
+    <string name="alert_notification_title4">Pressure too low!</string>
+    <string name="alert_notification_title5">Pressure too high!</string>
 </resources>

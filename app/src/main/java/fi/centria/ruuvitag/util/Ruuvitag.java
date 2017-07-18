@@ -14,7 +14,7 @@ public class Ruuvitag implements Parcelable {
     private String id;
     private String url;
     private String rssi;
-    private String data;
+    private double[] data;
     private String name;
     private double temperature;
     private double humidity;
@@ -37,7 +37,6 @@ public class Ruuvitag implements Parcelable {
             id = beacon.getBluetoothAddress();
             url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
             rssi = String.valueOf(beacon.getRssi());
-            data = beacon.getExtraDataFields().toString();
             process(this.url);
         }
     }
@@ -88,11 +87,11 @@ public class Ruuvitag implements Parcelable {
 
     public String getPressure() { return String.valueOf(pressure); }
 
-    public String getData() {
+    public double[] getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(double[] data) {
         this.data = data;
     }
 
@@ -164,6 +163,8 @@ public class Ruuvitag implements Parcelable {
             temperature = (double)Math.round(temperature * 10d) / 10d;
             humidity = (double)Math.round(humidity * 10d) / 10d;
             pressure = (double)Math.round(pressure * 10d) / 10d;
+
+            data = new double[]{temperature, humidity, pressure};
 
             /*
             humidity = pData[1] * 0.5;
