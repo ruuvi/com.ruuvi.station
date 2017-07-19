@@ -311,7 +311,6 @@ public class ScannerService extends Service implements BeaconConsumer {
 
     public void update(Ruuvitag ruuvitag) {
         String time = new SimpleDateFormat("dd-MM-yyyy, hh:mm:ss").format(new Date());
-        //String time = DateFormat.getDateTimeInstance().format(new Date());
 
         if(Exists(ruuvitag.getId())) {
             ContentValues values = new ContentValues();
@@ -440,8 +439,9 @@ public class ScannerService extends Service implements BeaconConsumer {
             cursor.moveToFirst();
 
         name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
-        if(name == null && name.isEmpty())
+        if(name == null) {
             name = id;
+        }
 
         if(titles != null) {
             notification

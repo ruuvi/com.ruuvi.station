@@ -2,6 +2,7 @@ package fi.centria.ruuvitag.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.icu.text.DecimalFormat;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class DBAdapter extends CursorAdapter {
         String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
         String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI));
         String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP));
-        String fahrenheit = String.valueOf(Double.parseDouble(celsius) * 1.8 + 32);
+        String fahrenheit = String.valueOf(Math.round(Double.parseDouble(celsius) * 1.8 + 32.0) * 1.0);
         String humidity = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI));
         String pressure = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES));
         String name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
