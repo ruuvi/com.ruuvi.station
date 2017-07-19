@@ -3,6 +3,7 @@ package fi.centria.ruuvitag.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,8 @@ public class DBAdapter extends CursorAdapter {
 
         String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
         String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI));
-        String temperature = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP));
+        String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP));
+        String fahrenheit = String.valueOf(Double.parseDouble(celsius) * 1.8 + 32);
         String humidity = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI));
         String pressure = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES));
         String name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
@@ -52,7 +54,7 @@ public class DBAdapter extends CursorAdapter {
             txtId.setText(id);
 
         txtRssi.setText(rssi + " dB");
-        txtTemperature.setText(temperature + "°C");
+        txtTemperature.setText(celsius + "°C" + " / " + fahrenheit + "°F");
         txtHumidity.setText(humidity + "%");
         txtPressure.setText(pressure + " hPa");
         txtLast.setText(last + " / " + url);

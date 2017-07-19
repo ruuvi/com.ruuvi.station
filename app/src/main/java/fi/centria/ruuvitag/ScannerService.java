@@ -385,7 +385,7 @@ public class ScannerService extends Service implements BeaconConsumer {
                         curCSV.getString(4),
                         curCSV.getString(5),
                         curCSV.getString(6),
-                        curCSV.getString(8).substring(12, 20)
+                        curCSV.getString(9).substring(12, 20)
                 };
 
                 writer.writeNext(arrStr);
