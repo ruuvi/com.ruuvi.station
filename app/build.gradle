@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
-        applicationId "tki.centria.ruuviscanner"
+        applicationId "fi.centria.ruuvitag"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -45,4 +45,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.koushikdutta.ion:ion:2.+'
     compile "com.androidplot:androidplot-core:1.5.0"
+    compile 'com.google.firebase:firebase-crash:11.0.2'
 }
+apply plugin: 'com.google.gms.google-services'
