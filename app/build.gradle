@@ -42,7 +42,8 @@ dependencies {
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:support-vector-drawable:26.+'
     compile 'com.jjoe64:graphview:4.2.1'
-    testCompile 'junit:junit:4.12'
     compile 'com.koushikdutta.ion:ion:2.+'
-    compile "com.androidplot:androidplot-core:1.5.0"
+    compile 'com.androidplot:androidplot-core:1.5.0'
+    compile 'com.crystal:crystalrangeseekbar:1.0.0'
+    testCompile 'junit:junit:4.12'
 }
