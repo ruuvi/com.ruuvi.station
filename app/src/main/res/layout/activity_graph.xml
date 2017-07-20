@@ -6,7 +6,7 @@
     android:id="@+id/graphLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tki.centria.ruuviscanner.GraphActivity">
+    tools:context="fi.centria.ruuvitag.GraphActivity">
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
