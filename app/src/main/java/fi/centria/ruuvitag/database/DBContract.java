@@ -20,6 +20,7 @@ public final class DBContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_LAST = "lastseen";
         public static final String COLUMN_COLOR = "color";
+        public static final String COLUMN_VALUES = "values";
 
         public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 TABLE_NAME + "(" +
@@ -32,6 +33,7 @@ public final class DBContract {
                 COLUMN_PRES + " TEXT, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_COLOR + " TEXT, " +
-                COLUMN_LAST + " TEXT )";
+                COLUMN_LAST + " TEXT, " +
+                COLUMN_VALUES + " TEXT )";
     }
 }

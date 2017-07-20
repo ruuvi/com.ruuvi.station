@@ -2,11 +2,14 @@ package fi.centria.ruuvitag;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,19 +29,25 @@ public class EditActivity extends AppCompatActivity {
     String name;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_edit);
         textfield = (EditText) findViewById(R.id.input_name);
         handler = new DBHandler(this);
         db = handler.getWritableDatabase();
-        index = getIntent().getExtras().getInt("index");
-        getData();
 
-        if(name != null && !name.isEmpty())
-            textfield.setText(name, TextView.BufferType.NORMAL);
-        else
-            textfield.setText(id, TextView.BufferType.NORMAL);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openAlarmEdit(view);
+            }
+        });
+
+        if(getIntent().getExtras() != null) {
+            index = getIntent().getExtras().getInt("index");
+            getData();
+        }
     }
 
     @Override
@@ -55,6 +64,7 @@ public class EditActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -62,14 +72,19 @@ public class EditActivity extends AppCompatActivity {
         return true;
     }
 
-    private void getData()
-    {
+    private void getData() {
         cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+
         if(cursor != null)
             cursor.moveToFirst();
 
         id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
         name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
+
+        if(name != null && !name.isEmpty())
+            textfield.setText(name, TextView.BufferType.NORMAL);
+        else
+            textfield.setText(id, TextView.BufferType.NORMAL);
     }
 
     public void save(View view) {
@@ -105,5 +120,19 @@ public class EditActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void openAlarmEdit(View view) {
+        Intent intent = new Intent(EditActivity.this, AlarmEditActivity.class);
+        intent.putExtra("index", index);
+        startActivity(intent);
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

@@ -324,8 +324,8 @@ public class ScannerService extends Service implements BeaconConsumer {
 
             db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuvitag.getId()), null);
             alertManager(ruuvitag.getData(), ruuvitag.getId());
+            exportDB();
         }
-        exportDB();
     }
 
     public boolean Exists(String id) {

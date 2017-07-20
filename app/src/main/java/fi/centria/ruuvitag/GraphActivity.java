@@ -1,4 +1,4 @@
-package tki.centria.ruuviscanner;
+package fi.centria.ruuvitag;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
