@@ -177,7 +177,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "1")) * 1000;
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
         scheduler.scheduleAtFixedRate(new Runnable()
         {
 
@@ -187,7 +187,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 if(!scheduler.isShutdown())
                  startScan();
             }
-        }, 0, scanInterval, TimeUnit.MILLISECONDS);
+        }, 0, scanInterval-MAX_SCAN_TIME_MS+1, TimeUnit.MILLISECONDS);
 
     }
 
@@ -348,10 +348,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             backendUrl = settings.getString("pref_backend",null);
 
             scheduler.shutdown();
-            scheduler = null;
 
             scheduler = Executors.newSingleThreadScheduledExecutor();
-            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "1")) * 1000;
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
             scheduler.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run()
@@ -359,7 +358,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     if(!scheduler.isShutdown())
                         startScan();
                 }
-            }, 0, scanInterval-MAX_SCAN_TIME_MS, TimeUnit.MILLISECONDS);
+            }, 0, scanInterval-MAX_SCAN_TIME_MS+1, TimeUnit.MILLISECONDS);
 
             /*
             try
