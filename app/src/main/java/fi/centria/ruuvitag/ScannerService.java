@@ -113,7 +113,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
     private BluetoothAdapter bluetoothAdapter;
     private Handler scanTimerHandler;
-    private static int MAX_SCAN_TIME_MS = 500;
+    private static int MAX_SCAN_TIME_MS = 1000;
     private boolean scanning;
 
     @Override
@@ -187,7 +187,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 if(!scheduler.isShutdown())
                  startScan();
             }
-        }, 0, scanInterval-MAX_SCAN_TIME_MS, TimeUnit.MILLISECONDS);
+        }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
     }
 
@@ -649,6 +649,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     }
 
     private void alertManager(double[] data, String id) {
+        /*Log.d("tagi", String.valueOf(data == null));
+
         if(data[0] < alertValues[0]) {
             sendAlert(0,id);
         }
@@ -666,7 +668,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         }
         if(data[2] > alertValues[5]) {
             sendAlert(5,id);
-        }
+        }*/
     }
 
     private void sendAlert(int type, String id) {

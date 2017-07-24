@@ -2,9 +2,13 @@ package fi.centria.ruuvitag.util;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by tmakinen on 15.6.2017.
@@ -27,27 +31,17 @@ public class Ruuvitag implements Parcelable {
         this.url = url;
         this.rssi = rssi;
         this.rawData = rawData;
-
         if(!temporary)
-        {
             process();
-        }
-
     }
 
     public Ruuvitag(Beacon beacon, boolean temporary)
     {
-        if(temporary)
-        {
-            id = beacon.getBluetoothAddress();
-            url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-            rssi = String.valueOf(beacon.getRssi());
-        } else {
-            id = beacon.getBluetoothAddress();
-            url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-            rssi = String.valueOf(beacon.getRssi());
+        id = beacon.getBluetoothAddress();
+        url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
+        rssi = String.valueOf(beacon.getRssi());
+        if(!temporary)
             process();
-        }
     }
 
     public Ruuvitag(Parcel in) {
@@ -124,17 +118,24 @@ public class Ruuvitag implements Parcelable {
         }
         else if(rawData != null)
         {
-            humidity = (rawData[1]) * 0.5;//(int)((pData[1] >> 2) << 11);
-            double uTemp = (((rawData[2] & 127) << 8) | rawData[3]);
-            double tempSign = (rawData[2] >> 7) & 1;
+            humidity = (rawData[3]) * 0.5;
+            double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
+            double tempSign = (rawData[4] >> 7) & 1;
             temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
-            pressure = ((rawData[4] << 8) + rawData[5]) + 50000;
+            pressure = (rawData[7] & 0xFF) | ((rawData[6] & 0xFF) << 8) + 50000;
             pressure /= 100.00;
+
+            humidity = round(humidity, 2);
+            pressure = round(pressure, 2);
+            temperature = round(temperature, 2);
 
             // Acceleration values for each axis
             double x = ((rawData[6] << 8) + rawData[7]);
+            x = round(x, 2);
             double y = ((rawData[8] << 8) + rawData[9]);
+            y = round(x, 2);
             double z = ((rawData[10] << 8) + rawData[11]);
+            z = round(x, 2);
         }
     }
 
@@ -187,11 +188,11 @@ public class Ruuvitag implements Parcelable {
             pressure /= 100.00;
 
             //THIS IS UGLY
-            temperature = (double)Math.round(temperature * 10d) / 10d;
-            humidity = (double)Math.round(humidity * 10d) / 10d;
-            pressure = (double)Math.round(pressure * 10d) / 10d;
+            temperature = round(temperature, 2);
+            humidity = round(humidity, 2);
+            pressure = round(pressure, 2);
 
-            data = new double[]{temperature, humidity, pressure};
+            setData(new double[]{temperature, humidity, pressure});
 
             /*
             humidity = pData[1] * 0.5;
@@ -221,4 +222,12 @@ public class Ruuvitag implements Parcelable {
             return new Ruuvitag[size];
         }
     };
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 }

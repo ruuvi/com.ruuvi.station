@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import fi.centria.ruuvitag.R;
+import fi.centria.ruuvitag.util.Ruuvitag;
 
 /**
  * Created by tmakinen on 29.6.2017.
@@ -43,7 +44,7 @@ public class DBAdapter extends CursorAdapter {
         String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
         String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI));
         String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP));
-        String fahrenheit = String.valueOf(Math.round(Double.parseDouble(celsius) * 1.8 + 32.0) * 1.0);
+        String fahrenheit = String.valueOf(Ruuvitag.round(Double.parseDouble(celsius) * 1.8 + 32.0, 2));
         String humidity = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI));
         String pressure = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES));
         String name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
