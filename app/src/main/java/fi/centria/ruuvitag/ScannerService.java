@@ -5,6 +5,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.ScanResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -23,6 +29,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -30,6 +37,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
+import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
+import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
+import com.neovisionaries.bluetooth.ble.advertising.EddystoneTLM;
+import com.neovisionaries.bluetooth.ble.advertising.EddystoneUID;
+import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
 import com.opencsv.CSVWriter;
 
 import org.altbeacon.beacon.Beacon;
@@ -43,14 +56,20 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import fi.centria.ruuvitag.database.DBContract;
 import fi.centria.ruuvitag.database.DBHandler;
@@ -62,9 +81,22 @@ import fi.centria.ruuvitag.util.PlotSource;
 import fi.centria.ruuvitag.util.Ruuvitag;
 import fi.centria.ruuvitag.util.RuuvitagComplexList;
 
-public class ScannerService extends Service implements BeaconConsumer {
+
+
+public class ScannerService extends Service /*implements BeaconConsumer*/
+{
+    private ArrayList<LeScanResult> scanResults;
+    private ScheduledExecutorService scheduler;
+
+    private class LeScanResult
+    {
+        BluetoothDevice device;
+        int rssi;
+        byte[] scanData;
+    }
+
     List<Ruuvitag> ruuvitagArrayList;
-    private BeaconManager beaconManager;
+    //private BeaconManager beaconManager;
     private BackgroundPowerSaver bps;
     SharedPreferences settings;
     DBHandler handler;
@@ -77,6 +109,12 @@ public class ScannerService extends Service implements BeaconConsumer {
     private double[] alertValues;
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
+
+
+    private BluetoothAdapter bluetoothAdapter;
+    private Handler scanTimerHandler;
+    private static int MAX_SCAN_TIME_MS = 500;
+    private boolean scanning;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -102,8 +140,8 @@ public class ScannerService extends Service implements BeaconConsumer {
                 getString(R.string.alert_notification_title5)
         };
 
-        if(settings.getBoolean("pref_bgscan", false))
-            startFG();
+       // if(settings.getBoolean("pref_bgscan", false))
+        //    startFG();
 
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
@@ -111,45 +149,233 @@ public class ScannerService extends Service implements BeaconConsumer {
         bps = new BackgroundPowerSaver(this);
 
         ruuvitagArrayList = new ArrayList<>();
-        beaconManager = BeaconManager.getInstanceForApplication(this);
+
         handler = new DBHandler(getApplicationContext());
         db = handler.getWritableDatabase();
 
+/*
+        beaconManager = BeaconManager.getInstanceForApplication(this);
         // Detect the URL frame:
         beaconManager.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT));
 
-        beaconManager.bind(this);
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.))
+
+        beaconManager.bind(this);*/
 
         backendUrl = settings.getString("pref_backend", null);
 
         plotSource =  PlotSource.getInstance();
 
         alertValues = new double[]{20.0, 30.0, 15.0, 55.0, 950.0, 1050.0};
+
+
+        scanTimerHandler = new Handler();
+
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+
+
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "1")) * 1000;
+        scheduler.scheduleAtFixedRate(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                if(!scheduler.isShutdown())
+                 startScan();
+            }
+        }, 0, scanInterval-MAX_SCAN_TIME_MS, TimeUnit.MILLISECONDS);
+
     }
 
+    private void startScan()
+    {
+        if(scanning)
+            return;
+
+            scanTimerHandler.postDelayed(new Runnable() {
+                @Override
+                public void run()
+                {
+                    scanning = false;
+                    bluetoothAdapter.stopLeScan(mLeScanCallback);
+                    processFoundDevices();
+                }
+            }, MAX_SCAN_TIME_MS);
+
+        scanResults = new ArrayList<LeScanResult>();
+        scanning = true;
+        bluetoothAdapter.startLeScan(mLeScanCallback);
+    }
+
+    // Device scan callback.
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+
+                @Override
+                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord)
+                {
+                    Iterator<LeScanResult> itr = scanResults.iterator();
+
+                    LeScanResult dev = new LeScanResult();
+                    dev.device = device;
+                    dev.rssi = rssi;
+                    dev.scanData = scanRecord;
+
+                    boolean devFound = false;
+
+                    while(itr.hasNext())
+                    {
+                        LeScanResult element = itr.next();
+                        if(device.getAddress().equalsIgnoreCase(element.device.getAddress()))
+                            devFound = true;
+                    }
+
+
+                    if(!devFound)
+                    {
+                        scanResults.add(dev);
+                    }
+                }
+            };
+
+
+    void processFoundDevices()
+    {
+        ruuvitagArrayList.clear();
+        ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
+
+        Iterator<LeScanResult> itr = scanResults.iterator();
+        while(itr.hasNext())
+        {
+            LeScanResult element = itr.next();
+
+            // Parse the payload of the advertisement packet
+            // as a list of AD structures.
+            List<ADStructure> structures =
+                    ADPayloadParser.getInstance().parse(element.scanData);
+
+            // For each AD structure contained in the advertisement packet.
+            for (ADStructure structure : structures)
+            {
+                if (structure instanceof EddystoneURL)
+                {
+                    // Eddystone URL
+                    EddystoneURL es = (EddystoneURL)structure;
+                    if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/"))
+                    {
+                        // Creates temporary ruuvitag-object, without heavy calculations
+                        Ruuvitag temp = new Ruuvitag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, true);
+                        if(checkForSameTag(temp)) {
+                            // Creates real object, with temperature etc. calculated
+                            Ruuvitag real = new Ruuvitag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, false);
+                            ruuvitagArrayList.add(real);
+                            update(real);
+                            scanEvent.addRuuvitag(real);
+                        }
+                    }
+
+                }
+                // If the AD structure represents Eddystone TLM.
+                else if(structure instanceof ADManufacturerSpecific)
+                {
+                    ADManufacturerSpecific es = (ADManufacturerSpecific)structure;
+                    if(es.getCompanyId() == 0x0499)
+                    {
+
+                        byte[] data = es.getData();
+                        if (data != null) {
+
+                            Ruuvitag tempTag = new Ruuvitag(element.device.getAddress(),null,data,""+element.rssi, true);
+                            if(checkForSameTag(tempTag)) {
+                                // Creates real object, with temperature etc. calculated
+                                Ruuvitag real = new Ruuvitag(element.device.getAddress(),null,data,""+element.rssi, false);
+                                ruuvitagArrayList.add(real);
+                                update(real);
+                                scanEvent.addRuuvitag(real);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+/*
+            if(beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
+                // Parse url from beacon advert
+                String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
+
+            }*/
+
+            if(backendUrl != null)
+            {
+                //JsonObject json = new JsonObject();
+                //  JsonObject json = JSON.(scanEvent);
+                String jsonData =  new Gson().toJson(scanEvent);
+                Ion.with(getApplicationContext())
+                        .load(backendUrl)
+                        .setJsonPojoBody(scanEvent)
+                        .asJsonObject()
+                        .setCallback(new FutureCallback<JsonObject>() {
+                            @Override
+                            public void onCompleted(Exception e, JsonObject result) {
+                                // do stuff with the result or error
+                            }
+                        });
+            }
+            plotSource.addScanEvent(scanEvent);
+
+            exportRuuvitags();
+            exportDB();
+
+        }
+    }
 
     public SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+        {
             if(settings.getBoolean("pref_bgscan", false))
                 startFG();
 
-            if(!settings.getBoolean("pref_bgscan", false))
-                stopForeground(true);
+            //if(!settings.getBoolean("pref_bgscan", false))
+              //  stopForeground(true);
 
             backendUrl = settings.getString("pref_backend",null);
 
-            try {
+            scheduler.shutdown();
+
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "1")) * 1000;
+            scheduler.scheduleAtFixedRate(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    if(!scheduler.isShutdown())
+                        startScan();
+                }
+            }, 0, scanInterval-MAX_SCAN_TIME_MS, TimeUnit.MILLISECONDS);
+
+            /*
+            try
+            {
                 beaconManager.setForegroundBetweenScanPeriod
                         (Long.parseLong(settings.getString("pref_scaninterval", "1")) * 1000 - 1000l);
                 beaconManager.updateScanPeriods();
-            } catch (RemoteException e) {
+            } catch (RemoteException e)
+            {
                 e.printStackTrace();
-            }
+            }*/
         }
     };
 
+    /*
     @Override
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier(new RangeNotifier() {
@@ -216,8 +442,10 @@ public class ScannerService extends Service implements BeaconConsumer {
             e.printStackTrace();
         }
     }
+    */
 
-    public void startFG() {
+    public void startFG()
+    {
         Intent notificationIntent = new Intent(this, MainActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -263,14 +491,19 @@ public class ScannerService extends Service implements BeaconConsumer {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         exportDB();
+
+        scheduler.shutdown();
+        /*
         try {
             beaconManager.stopRangingBeaconsInRegion(new Region("uusi", null, null, null));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        beaconManager.unbind(this);
+        beaconManager.unbind(this);*/
+
         settings.unregisterOnSharedPreferenceChangeListener(mListener);
         super.onDestroy();
     }
@@ -281,14 +514,21 @@ public class ScannerService extends Service implements BeaconConsumer {
         return null;
     }
 
-    Foreground.Listener listener = new Foreground.Listener(){
-        public void onBecameForeground(){
+    Foreground.Listener listener = new Foreground.Listener()
+    {
+        public void onBecameForeground()
+        {
             if(!isRunning(ScannerService.class))
                 startService(new Intent(ScannerService.this, ScannerService.class));
         }
-        public void onBecameBackground(){
+        public void onBecameBackground()
+        {
             if(!settings.getBoolean("pref_bgscan", false))
+            {
+
+                scheduler.shutdown();
                 stopSelf();
+            }
         }
     };
 

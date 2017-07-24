@@ -20,16 +20,25 @@ public class Ruuvitag implements Parcelable {
     private double humidity;
     private double pressure;
     public boolean favorite;
+    private byte[] rawData;
 
-    public Ruuvitag(String id, String url, String rssi) {
+    public Ruuvitag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
         this.id = id;
         this.url = url;
         this.rssi = rssi;
-        process(this.url);
+        this.rawData = rawData;
+
+        if(!temporary)
+        {
+            process();
+        }
+
     }
 
-    public Ruuvitag(Beacon beacon, boolean temporary) {
-        if(temporary) {
+    public Ruuvitag(Beacon beacon, boolean temporary)
+    {
+        if(temporary)
+        {
             id = beacon.getBluetoothAddress();
             url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
             rssi = String.valueOf(beacon.getRssi());
@@ -37,7 +46,7 @@ public class Ruuvitag implements Parcelable {
             id = beacon.getBluetoothAddress();
             url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
             rssi = String.valueOf(beacon.getRssi());
-            process(this.url);
+            process();
         }
     }
 
@@ -103,16 +112,33 @@ public class Ruuvitag implements Parcelable {
         this.name = name;
     }
 
-    public void process(String url) {
-        if (url.contains("#")) {
+    public void process()
+    {
+        if (url != null && url.contains("#"))
+        {
             String data = url.split("#")[1];
-            if (!parseRuuvitagDataFromB91(data)) {
-                parseRuuvitagDataFromB64(data);
-            }
+            parseRuuvitagDataFromB64(data);
+          //  {
+            //    parseRuuvitagDataFromB91(data);
+            //}
+        }
+        else if(rawData != null)
+        {
+            humidity = (rawData[1]) * 0.5;//(int)((pData[1] >> 2) << 11);
+            double uTemp = (((rawData[2] & 127) << 8) | rawData[3]);
+            double tempSign = (rawData[2] >> 7) & 1;
+            temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
+            pressure = ((rawData[4] << 8) + rawData[5]) + 50000;
+            pressure /= 100.00;
+
+            // Acceleration values for each axis
+            double x = ((rawData[6] << 8) + rawData[7]);
+            double y = ((rawData[8] << 8) + rawData[9]);
+            double z = ((rawData[10] << 8) + rawData[11]);
         }
     }
 
-    private void parseRuuvitagDataFromB64(String data) {
+    private boolean parseRuuvitagDataFromB64(String data) {
         try {
             byte[] bData = base64.decode(data);
             // byte[] bData = Base64.decode(data.getBytes(),Base64.NO_PADDING | Base64.NO_WRAP);
@@ -122,9 +148,10 @@ public class Ruuvitag implements Parcelable {
 
             //bData[0] must be 2 or 4
             parseByteData(pData,2);
+
+            return true;
         } catch(Exception e) {
-            /*int x = 0;
-            x++;*/
+            return false;
         }
     }
 

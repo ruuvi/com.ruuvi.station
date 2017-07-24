@@ -16,9 +16,9 @@
     <EditTextPreference
         android:key="pref_backend"
         android:title="Gateway URL (empty = disabled)"
-        android:summary="Scan information is sent to this gateway"/>
+        android:summary="Send Ruuvitag data to this URL"/>
     <EditTextPreference
         android:key="pref_device_id"
         android:title="Device Identifier"
-        android:summary="This information is sent to gateway"/>
+        android:summary="Use this to identify device at backend"/>
 </PreferenceScreen>
