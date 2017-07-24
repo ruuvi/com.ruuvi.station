@@ -25,6 +25,10 @@ public class Ruuvitag implements Parcelable {
     private double pressure;
     public boolean favorite;
     private byte[] rawData;
+    double accelX;
+    double accelY;
+    double accelZ;
+    double voltage;
 
     public Ruuvitag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
         this.id = id;
@@ -130,12 +134,14 @@ public class Ruuvitag implements Parcelable {
             temperature = round(temperature, 2);
 
             // Acceleration values for each axis
-            double x = ((rawData[6] << 8) + rawData[7]);
-            x = round(x, 2);
-            double y = ((rawData[8] << 8) + rawData[9]);
-            y = round(x, 2);
-            double z = ((rawData[10] << 8) + rawData[11]);
-            z = round(x, 2);
+            double x = ((rawData[8] << 8) + rawData[9]);
+            accelX = round(x, 2);
+            double y = ((rawData[10] << 8) + rawData[11]);
+            accelY = round(y, 2);
+            double z = ((rawData[12] << 8) + rawData[13]);
+            accelZ = round(z, 2);
+
+            voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 100.0;
         }
     }
 
@@ -156,7 +162,7 @@ public class Ruuvitag implements Parcelable {
         }
     }
 
-    private boolean parseRuuvitagDataFromB91(String data) {
+    /*private boolean parseRuuvitagDataFromB91(String data) {
         byte[] bData = base91.decode(data.getBytes());
         int pData[] = new int[8];
         for (int i = 0; i < bData.length; i++)
@@ -168,7 +174,7 @@ public class Ruuvitag implements Parcelable {
         parseByteData(pData, 1);
 
         return true;
-    }
+    }*/
 
     private void parseByteData(int[] pData, int ruuviTagFWVersion ) {
         if(ruuviTagFWVersion == 1) {

@@ -348,12 +348,11 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             backendUrl = settings.getString("pref_backend",null);
 
             scheduler.shutdown();
+            scheduler = null;
 
             scheduler = Executors.newSingleThreadScheduledExecutor();
             int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "1")) * 1000;
-            scheduler.scheduleAtFixedRate(new Runnable()
-            {
-
+            scheduler.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run()
                 {
