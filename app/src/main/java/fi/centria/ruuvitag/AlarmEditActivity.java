@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
@@ -22,9 +23,12 @@ import java.util.Scanner;
 import fi.centria.ruuvitag.database.DBContract;
 import fi.centria.ruuvitag.database.DBHandler;
 
+import static fi.centria.ruuvitag.R.id.temp_check;
+
 public class AlarmEditActivity extends AppCompatActivity {
     private int index;
     private int[] values;
+    private int[] maxValues;
     private CrystalRangeSeekbar rangeSeekbar;
     private Cursor cursor;
     private SQLiteDatabase db;
@@ -43,6 +47,8 @@ public class AlarmEditActivity extends AppCompatActivity {
         }
 
         values = new int[2];
+
+        maxValues = new int[]{-40,85,0,100,300,1100};
 
         // get seekbar from view
         rangeSeekbar = (CrystalRangeSeekbar) findViewById(R.id.rangeSeekbar5);
@@ -71,24 +77,32 @@ public class AlarmEditActivity extends AppCompatActivity {
     }
 
     public void loadValues(View view) {
-        Log.d("tagi", String.valueOf(Objects.equals(view.getTag().toString(), "temperature")));
-        if(Objects.equals(view.getTag().toString(), "temperature")) {
-            cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        if(cursor.moveToFirst()) {
+            String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
 
-            if(cursor != null)
-                cursor.moveToFirst();
+            String values = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
 
-            int[] values = readSeparated(cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
-
-            for(int i : values) {
-                Log.d("tagi", String.valueOf(i));
+            if(values == null) {
+                values = "-40,85,0,100,300,1100";
             }
 
-            Log.d("tagi", "toimiiko?");
+            Integer[] valuesArray;
+            valuesArray = readSeparated(values);
 
-            rangeSeekbar.setMinStartValue(values[0]);
-            rangeSeekbar.setMaxStartValue(values[1]);
-            rangeSeekbar.apply();
+            for (Integer i : valuesArray) {
+                if(i != null)
+                    Log.d("tagi", String.valueOf(i));
+            }
+
+            if (Objects.equals(view.getTag().toString(), "temperature")) {
+                rangeSeekbar.setMinValue(maxValues[0]);
+                rangeSeekbar.setMaxValue(maxValues[1]);
+                rangeSeekbar.setMinStartValue(12);
+                rangeSeekbar.setMaxStartValue(38);
+                rangeSeekbar.apply();
+            }
+            if (Objects.equals(view.getTag().toString(), "humidity")) {}
         }
     }
 
@@ -115,6 +129,12 @@ public class AlarmEditActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
+        CheckBox tempcheck = (CheckBox) findViewById(temp_check);
+        if(tempcheck.isEnabled()) {
+            
+        }
+
+
         finish();
     }
 
@@ -132,16 +152,21 @@ public class AlarmEditActivity extends AppCompatActivity {
         return null;
     }
 
-    public int[] readSeparated(String data) {
+    public Integer[] readSeparated(String data) {
         String[] linevector;
         int index = 0;
 
         linevector = data.split(",");
 
-        int[] values = new int[linevector.length];
+        Integer[] values = new Integer[linevector.length];
 
         for(String l : linevector) {
-            values[index++] = Integer.parseInt(l);
+            try {
+                values[index] = Integer.parseInt(l);
+            } catch (NumberFormatException e) {
+                values[index] = null;
+            }
+            index++;
         }
 
         return values;

@@ -542,6 +542,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
             values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
+            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "x,x,x,x,x,x");
 
             long newRowId = db.insert(DBContract.RuuvitagDB.TABLE_NAME, null, values);
         }

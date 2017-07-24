@@ -146,4 +146,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
+    <CheckBox
+        android:id="@+id/temp_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="322dp"
+        tools:layout_editor_absoluteY="27dp" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="258dp"
+        tools:layout_editor_absoluteY="294dp" />
+
 </android.support.constraint.ConstraintLayout>
