@@ -4,37 +4,31 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
-import java.util.Scanner;
-
 import fi.centria.ruuvitag.database.DBContract;
 import fi.centria.ruuvitag.database.DBHandler;
 
-import static fi.centria.ruuvitag.R.id.temp_check;
-
 public class AlarmEditActivity extends AppCompatActivity {
     private int index;
-    private int[] values;
     private int[] maxValues;
     private CrystalRangeSeekbar rangeSeekbar;
     private Cursor cursor;
     private SQLiteDatabase db;
     private DBHandler handler;
     private TextView temp;
+    private int tag;
+    private Integer[] valuesArray;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,32 +36,29 @@ public class AlarmEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarm_edit);
         handler = new DBHandler(this);
         db = handler.getWritableDatabase();
+        maxValues = new int[]{-40,85,0,100,300,1100,-100,0};
+        valuesArray = new Integer[8];
 
         if(getIntent().getExtras() != null) {
             index = getIntent().getExtras().getInt("index");
         }
 
-        values = new int[2];
-        maxValues = new int[]{-40,85,0,100,300,1100};
-
         cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor.moveToFirst()) {
-            String values = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
-
-            if (values == null) {
-                values = "-40,85,0,100,300,1100";
-            }
-
-            Integer[] valuesArray;
-            valuesArray = readSeparated(values);
-
-            for (Integer i : valuesArray) {
-                if (i != null)
-                    Log.d("tagi", String.valueOf(i));
+            String stringValues = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
+            Integer[] temp = readSeparated(stringValues);
+            int index = 0;
+            for(Integer i : temp) {
+                if(i != null) {
+                    valuesArray[index] = i;
+                } else {
+                    valuesArray[index] = maxValues[index];
+                }
+                index++;
             }
         }
 
-            // get seekbar from view
+        // get seekbar from view
         rangeSeekbar = (CrystalRangeSeekbar) findViewById(R.id.rangeSeekbar5);
         // get min and max text view
         final TextView tvMin = (TextView) findViewById(R.id.TextMin1);
@@ -80,59 +71,87 @@ public class AlarmEditActivity extends AppCompatActivity {
                 tvMax.setText(String.valueOf(maxValue));
             }
         });
-        // set final value listener
-        rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
-            @Override
-            public void finalValue(Number minValue, Number maxValue) {
-                values[0] = minValue.intValue();
-                values[1] = maxValue.intValue();
-            }
-        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadValues(findViewById(R.id.text_temp));
     }
 
     public void loadValues(View view) {
         if(temp != null) {
             temp.setPaintFlags(temp.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
         }
+
         temp = (TextView) findViewById(view.getId());
         temp.setPaintFlags(temp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         temp.setText(temp.getText());
 
-        switch(Integer.parseInt(view.getTag().toString())) {
+        tag = Integer.parseInt(view.getTag().toString());
+
+        switch(tag) {
             case 1: {
                 rangeSeekbar.setMinValue(maxValues[0]);
                 rangeSeekbar.setMaxValue(maxValues[1]);
-                rangeSeekbar.setMinStartValue(12);
-                rangeSeekbar.setMaxStartValue(38);
+                rangeSeekbar.setMinStartValue(valuesArray[0]);
+                rangeSeekbar.setMaxStartValue(valuesArray[1]);
                 rangeSeekbar.apply();
                 break;
                 }
             case 2: {
                 rangeSeekbar.setMinValue(maxValues[2]);
                 rangeSeekbar.setMaxValue(maxValues[3]);
-                rangeSeekbar.setMinStartValue(0);
-                rangeSeekbar.setMaxStartValue(100);
+                rangeSeekbar.setMinStartValue(valuesArray[2]);
+                rangeSeekbar.setMaxStartValue(valuesArray[3]);
                 rangeSeekbar.apply();
                 break;
             }
             case 3: {
-                Log.d("tagi", "heloo");
                 rangeSeekbar.setMinValue(maxValues[4]);
                 rangeSeekbar.setMaxValue(maxValues[5]);
-                rangeSeekbar.setMinStartValue(400);
-                rangeSeekbar.setMaxStartValue(950);
+                rangeSeekbar.setMinStartValue(valuesArray[4]);
+                rangeSeekbar.setMaxStartValue(valuesArray[5]);
                 rangeSeekbar.apply();
                 break;
             }
             case 4: {
-                rangeSeekbar.setMinValue(maxValues[0]);
-                rangeSeekbar.setMaxValue(maxValues[1]);
-                rangeSeekbar.setMinStartValue(12);
-                rangeSeekbar.setMaxStartValue(38);
+                rangeSeekbar.setMinValue(maxValues[6]);
+                rangeSeekbar.setMaxValue(maxValues[7]);
+                rangeSeekbar.setMinStartValue(valuesArray[6]);
+                rangeSeekbar.setMaxStartValue(valuesArray[7]);
                 rangeSeekbar.apply();
                 break;
             }
         }
+
+        rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number minValue, Number maxValue) {
+                switch(tag) {
+                    case 1: {
+                        valuesArray[0] = minValue.intValue();
+                        valuesArray[1] = maxValue.intValue();
+                        break;
+                    }
+                    case 2: {
+                        valuesArray[2] = minValue.intValue();
+                        valuesArray[3] = maxValue.intValue();
+                        break;
+                    }
+                    case 3: {
+                        valuesArray[4] = minValue.intValue();
+                        valuesArray[5] = maxValue.intValue();
+                        break;
+                    }
+                    case 4: {
+                        valuesArray[6] = minValue.intValue();
+                        valuesArray[7] = maxValue.intValue();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -158,21 +177,18 @@ public class AlarmEditActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
-        CheckBox tempcheck = (CheckBox) findViewById(temp_check);
-        if(tempcheck.isEnabled()) {
-
-        }
-
-
+        ContentValues values = new ContentValues();
+        values.put(DBContract.RuuvitagDB.COLUMN_VALUES, commaSeparate(valuesArray));
+        db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
         finish();
     }
 
-    public String commaSeparate(int[] data) {
+    public String commaSeparate(Integer[] data) {
         if(data != null) {
 
             String separated = "";
 
-            for (int i : data) {
+            for (Integer i : data) {
                 separated += String.valueOf(i) + ",";
             }
 

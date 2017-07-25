@@ -106,7 +106,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     private String[] titles;
     private String backendUrl;
     private PlotSource plotSource;
-    private double[] alertValues;
+    private Integer[] alertValues;
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
 
@@ -140,8 +140,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 getString(R.string.alert_notification_title5)
         };
 
-       // if(settings.getBoolean("pref_bgscan", false))
-        //    startFG();
+        if(settings.getBoolean("pref_bgscan", false))
+             startFG();
 
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
@@ -167,9 +167,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
         plotSource =  PlotSource.getInstance();
 
-        alertValues = new double[]{20.0, 30.0, 15.0, 55.0, 950.0, 1050.0};
-
-
         scanTimerHandler = new Handler();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -180,7 +177,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
         scheduler.scheduleAtFixedRate(new Runnable()
         {
-
             @Override
             public void run()
             {
@@ -189,10 +185,16 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             }
         }, 0, scanInterval-MAX_SCAN_TIME_MS+1, TimeUnit.MILLISECONDS);
 
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                alertManager();
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+
     }
 
-    private void startScan()
-    {
+    private void startScan() {
         if(scanning)
             return;
 
@@ -342,8 +344,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             if(settings.getBoolean("pref_bgscan", false))
                 startFG();
 
-            //if(!settings.getBoolean("pref_bgscan", false))
-              //  stopForeground(true);
+            if(!settings.getBoolean("pref_bgscan", false))
+                stopForeground(true);
 
             backendUrl = settings.getString("pref_backend",null);
 
@@ -542,7 +544,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
             values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
-            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "x,x,x,x,x,x");
+            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-40,85,0,100,300,1100,-100,0");
 
             long newRowId = db.insert(DBContract.RuuvitagDB.TABLE_NAME, null, values);
         }
@@ -562,7 +564,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
 
             db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuvitag.getId()), null);
-            alertManager(ruuvitag.getData(), ruuvitag.getId());
             exportDB();
         }
     }
@@ -647,27 +648,34 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         return false;
     }
 
-    private void alertManager(double[] data, String id) {
-        /*Log.d("tagi", String.valueOf(data == null));
+    private void alertManager() {
+        Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+        while(csr.moveToNext()) {
+            String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
+            Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
+            Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI)));
+            Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
+            alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
 
-        if(data[0] < alertValues[0]) {
-            sendAlert(0,id);
+            if(temp < alertValues[0]) {
+                sendAlert(0,id);
+            }
+            if(temp > alertValues[1]) {
+                sendAlert(1,id);
+            }
+            if(humi < alertValues[2]) {
+                sendAlert(2,id);
+            }
+            if(humi > alertValues[3]) {
+                sendAlert(3,id);
+            }
+            if(pres < alertValues[4]) {
+                sendAlert(4,id);
+            }
+            if(pres > alertValues[5]) {
+                sendAlert(5,id);
+            }
         }
-        if(data[0] > alertValues[1]) {
-            sendAlert(1,id);
-        }
-        if(data[1] < alertValues[2]) {
-            sendAlert(2,id);
-        }
-        if(data[1] > alertValues[3]) {
-            sendAlert(3,id);
-        }
-        if(data[2] < alertValues[4]) {
-            sendAlert(4,id);
-        }
-        if(data[2] > alertValues[5]) {
-            sendAlert(5,id);
-        }*/
     }
 
     private void sendAlert(int type, String id) {
@@ -700,5 +708,25 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             NotifyMgr.notify(type, notification.build());
         }
+    }
+
+    public Integer[] readSeparated(String data) {
+        String[] linevector;
+        int index = 0;
+
+        linevector = data.split(",");
+
+        Integer[] values = new Integer[linevector.length];
+
+        for(String l : linevector) {
+            try {
+                values[index] = Integer.parseInt(l);
+            } catch (NumberFormatException e) {
+                values[index] = null;
+            }
+            index++;
+        }
+
+        return values;
     }
 }
