@@ -544,7 +544,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
             values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
-            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-40,85,0,100,300,1100,-100,0");
+            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-30,85,0,100,300,1100,-100,0");
 
             long newRowId = db.insert(DBContract.RuuvitagDB.TABLE_NAME, null, values);
         }
@@ -676,6 +676,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 sendAlert(5,id);
             }
         }
+        csr.close();
     }
 
     private void sendAlert(int type, String id) {
