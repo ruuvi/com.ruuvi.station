@@ -3,6 +3,7 @@ package fi.centria.ruuvitag;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,12 +34,12 @@ public class AlarmEditActivity extends AppCompatActivity {
     private Cursor cursor;
     private SQLiteDatabase db;
     private DBHandler handler;
+    private TextView temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_edit);
-
         handler = new DBHandler(this);
         db = handler.getWritableDatabase();
 
@@ -47,16 +48,30 @@ public class AlarmEditActivity extends AppCompatActivity {
         }
 
         values = new int[2];
-
         maxValues = new int[]{-40,85,0,100,300,1100};
 
-        // get seekbar from view
-        rangeSeekbar = (CrystalRangeSeekbar) findViewById(R.id.rangeSeekbar5);
+        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        if(cursor.moveToFirst()) {
+            String values = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
 
+            if (values == null) {
+                values = "-40,85,0,100,300,1100";
+            }
+
+            Integer[] valuesArray;
+            valuesArray = readSeparated(values);
+
+            for (Integer i : valuesArray) {
+                if (i != null)
+                    Log.d("tagi", String.valueOf(i));
+            }
+        }
+
+            // get seekbar from view
+        rangeSeekbar = (CrystalRangeSeekbar) findViewById(R.id.rangeSeekbar5);
         // get min and max text view
         final TextView tvMin = (TextView) findViewById(R.id.TextMin1);
         final TextView tvMax = (TextView) findViewById(R.id.TextMax1);
-
         // set listener
         rangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
             @Override
@@ -65,7 +80,6 @@ public class AlarmEditActivity extends AppCompatActivity {
                 tvMax.setText(String.valueOf(maxValue));
             }
         });
-
         // set final value listener
         rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
             @Override
@@ -77,32 +91,47 @@ public class AlarmEditActivity extends AppCompatActivity {
     }
 
     public void loadValues(View view) {
-        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
-        if(cursor.moveToFirst()) {
-            String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
+        if(temp != null) {
+            temp.setPaintFlags(temp.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+        }
+        temp = (TextView) findViewById(view.getId());
+        temp.setPaintFlags(temp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        temp.setText(temp.getText());
 
-            String values = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
-
-            if(values == null) {
-                values = "-40,85,0,100,300,1100";
-            }
-
-            Integer[] valuesArray;
-            valuesArray = readSeparated(values);
-
-            for (Integer i : valuesArray) {
-                if(i != null)
-                    Log.d("tagi", String.valueOf(i));
-            }
-
-            if (Objects.equals(view.getTag().toString(), "temperature")) {
+        switch(Integer.parseInt(view.getTag().toString())) {
+            case 1: {
                 rangeSeekbar.setMinValue(maxValues[0]);
                 rangeSeekbar.setMaxValue(maxValues[1]);
                 rangeSeekbar.setMinStartValue(12);
                 rangeSeekbar.setMaxStartValue(38);
                 rangeSeekbar.apply();
+                break;
+                }
+            case 2: {
+                rangeSeekbar.setMinValue(maxValues[2]);
+                rangeSeekbar.setMaxValue(maxValues[3]);
+                rangeSeekbar.setMinStartValue(0);
+                rangeSeekbar.setMaxStartValue(100);
+                rangeSeekbar.apply();
+                break;
             }
-            if (Objects.equals(view.getTag().toString(), "humidity")) {}
+            case 3: {
+                Log.d("tagi", "heloo");
+                rangeSeekbar.setMinValue(maxValues[4]);
+                rangeSeekbar.setMaxValue(maxValues[5]);
+                rangeSeekbar.setMinStartValue(400);
+                rangeSeekbar.setMaxStartValue(950);
+                rangeSeekbar.apply();
+                break;
+            }
+            case 4: {
+                rangeSeekbar.setMinValue(maxValues[0]);
+                rangeSeekbar.setMaxValue(maxValues[1]);
+                rangeSeekbar.setMinStartValue(12);
+                rangeSeekbar.setMaxStartValue(38);
+                rangeSeekbar.apply();
+                break;
+            }
         }
     }
 
@@ -131,7 +160,7 @@ public class AlarmEditActivity extends AppCompatActivity {
     public void save(View view) {
         CheckBox tempcheck = (CheckBox) findViewById(temp_check);
         if(tempcheck.isEnabled()) {
-            
+
         }
 
 
