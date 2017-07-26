@@ -9,15 +9,19 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import fi.centria.ruuvitag.database.DBContract;
 import fi.centria.ruuvitag.database.DBHandler;
+import fi.centria.ruuvitag.util.Alarm;
+import fi.centria.ruuvitag.util.EditAdapter;
 
 public class EditActivity extends AppCompatActivity {
     private Cursor cursor;
@@ -46,8 +50,13 @@ public class EditActivity extends AppCompatActivity {
 
         if(getIntent().getExtras() != null) {
             index = getIntent().getExtras().getInt("index");
-            getData();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData();
     }
 
     @Override
@@ -80,6 +89,12 @@ public class EditActivity extends AppCompatActivity {
 
         id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
         name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
+        String alarms = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
+
+        ArrayList<Alarm> alarmValues = readSeparated(alarms);
+        EditAdapter adapter = new EditAdapter(this, alarmValues);
+        ListView listView = (ListView) findViewById(R.id.alarmlist);
+        listView.setAdapter(adapter);
 
         if(name != null && !name.isEmpty())
             textfield.setText(name, TextView.BufferType.NORMAL);
@@ -134,5 +149,40 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public ArrayList<Alarm> readSeparated(String data) {
+        String[] linevector;
+        int index = 0;
+
+        linevector = data.split(",");
+
+        Integer[] values = new Integer[8];
+
+        for(String l : linevector) {
+            try {
+                values[index] = (Integer.parseInt(l));
+            } catch (NumberFormatException e) {
+                values[index] = (null);
+            }
+            index++;
+        }
+
+        ArrayList<Alarm> alarms = new ArrayList<>();
+
+        if(values[0] != -500 && values[1] != -500) {
+            alarms.add(new Alarm(values[0], values[1], "Temperature"));
+        }
+        if(values[2] != -500 && values[3] != -500) {
+            alarms.add(new Alarm(values[2], values[3], "Humidity"));
+        }
+        if(values[4] != -500 && values[5] != -500) {
+            alarms.add(new Alarm(values[4], values[5], "Pressure"));
+        }
+        if(values[6] != -500 && values[7] != -500) {
+            alarms.add(new Alarm(values[6], values[7], "RSSI"));
+        }
+
+        return alarms;
     }
 }

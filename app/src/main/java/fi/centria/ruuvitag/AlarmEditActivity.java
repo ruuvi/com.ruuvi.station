@@ -6,9 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
@@ -49,8 +51,20 @@ public class AlarmEditActivity extends AppCompatActivity {
             Integer[] temp = readSeparated(stringValues);
             int index = 0;
             for(Integer i : temp) {
-                if(i != null) {
+                if(i != -500) {
                     valuesArray[index] = i;
+                    if(index == 0 | index == 1) {
+                        ((CheckBox) findViewById(R.id.check_temp)).setChecked(true);
+                    }
+                    if(index == 2 | index == 3) {
+                        ((CheckBox) findViewById(R.id.check_humi)).setChecked(true);
+                    }
+                    if(index == 4 | index == 5) {
+                        ((CheckBox) findViewById(R.id.check_pres)).setChecked(true);
+                    }
+                    if(index == 6 | index == 7) {
+                        ((CheckBox) findViewById(R.id.check_rssi)).setChecked(true);
+                    }
                 } else {
                     valuesArray[index] = maxValues[index];
                 }
@@ -178,6 +192,23 @@ public class AlarmEditActivity extends AppCompatActivity {
 
     public void save(View view) {
         ContentValues values = new ContentValues();
+
+        if(!((CheckBox) findViewById(R.id.check_temp)).isChecked()) {
+            valuesArray[0] = -500;
+            valuesArray[1] = -500;
+        }
+        if(!((CheckBox) findViewById(R.id.check_pres)).isChecked()) {
+            valuesArray[2] = -500;
+            valuesArray[3] = -500;
+        }
+        if(!((CheckBox) findViewById(R.id.check_humi)).isChecked()) {
+            valuesArray[4] = -500;
+            valuesArray[5] = -500;
+        }
+        if(!((CheckBox) findViewById(R.id.check_rssi)).isChecked()) {
+            valuesArray[6] = -500;
+            valuesArray[7] = -500;
+        }
         values.put(DBContract.RuuvitagDB.COLUMN_VALUES, commaSeparate(valuesArray));
         db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
         finish();

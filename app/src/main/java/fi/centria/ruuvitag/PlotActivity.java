@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -117,9 +118,20 @@ public class PlotActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        makeTemperaturePlot();
-        makeHumidityPlot();
-        makePressurePlot();
+        makePlots();
+    }
+
+    private void makePlots() {
+        Handler handler = new Handler();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                makeTemperaturePlot();
+                makeHumidityPlot();
+                makePressurePlot();
+            }
+        };
+        handler.post(r);
     }
 
     private void makeHumidityPlot()

@@ -544,7 +544,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
             values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
-            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-30,85,0,100,300,1100,-100,0");
+            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-500,-500,-500,-500,-500,-500,-500,-500");
 
             long newRowId = db.insert(DBContract.RuuvitagDB.TABLE_NAME, null, values);
         }
@@ -657,23 +657,29 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
             alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
 
-            if(temp < alertValues[0]) {
+            if(alertValues[0] != -500 && temp < alertValues[0]) {
                 sendAlert(0,id);
             }
-            if(temp > alertValues[1]) {
+            if(alertValues[1] != -500 && temp > alertValues[1]) {
                 sendAlert(1,id);
             }
-            if(humi < alertValues[2]) {
+            if(alertValues[2] != -500 && humi < alertValues[2]) {
                 sendAlert(2,id);
             }
-            if(humi > alertValues[3]) {
+            if(alertValues[3] != -500 && humi > alertValues[3]) {
                 sendAlert(3,id);
             }
-            if(pres < alertValues[4]) {
+            if(alertValues[4] != -500 && pres < alertValues[4]) {
                 sendAlert(4,id);
             }
-            if(pres > alertValues[5]) {
+            if(alertValues[5] != -500 && pres > alertValues[5]) {
                 sendAlert(5,id);
+            }
+            if(alertValues[6] != -500 && pres > alertValues[6]) {
+                sendAlert(6,id);
+            }
+            if(alertValues[7] != -500 && pres > alertValues[7]) {
+                sendAlert(7,id);
             }
         }
         csr.close();

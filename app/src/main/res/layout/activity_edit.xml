@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/edit_activity"
-    android:layout_margin="20dp">
+    android:layout_margin="10dp">
 
     <TextView
         android:id="@+id/title_name"
@@ -51,11 +51,12 @@
         android:textColor="@color/red" />
 
     <ListView
+        android:id="@+id/alarmlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/button2"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView"
-        android:layout_above="@+id/button2" />
+        android:layout_below="@+id/textView" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
