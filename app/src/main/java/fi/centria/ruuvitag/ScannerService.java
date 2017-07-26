@@ -114,6 +114,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
     private Timer timer;
+    private NotificationCompat.Builder notification;
 
 
     private BluetoothAdapter bluetoothAdapter;
@@ -662,39 +663,43 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("tagi", "alertManager called");
                             Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
                             while (csr.moveToNext()) {
                                 String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
+                                String name = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
                                 Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
                                 Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI)));
                                 Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
                                 Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI)));
                                 alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
 
+                                if(name == null) {
+                                    name = id;
+                                }
+
                                 if (alertValues[0] != -500 && temp < alertValues[0]) {
-                                    sendAlert(0, id);
+                                    sendAlert(0, id, name);
                                 }
                                 if (alertValues[1] != -500 && temp > alertValues[1]) {
-                                    sendAlert(1, id);
+                                    sendAlert(1, id, name);
                                 }
                                 if (alertValues[2] != -500 && humi < alertValues[2]) {
-                                    sendAlert(2, id);
+                                    sendAlert(2, id, name);
                                 }
                                 if (alertValues[3] != -500 && humi > alertValues[3]) {
-                                    sendAlert(3, id);
+                                    sendAlert(3, id, name);
                                 }
                                 if (alertValues[4] != -500 && pres < alertValues[4]) {
-                                    sendAlert(4, id);
+                                    sendAlert(4, id, name);
                                 }
                                 if (alertValues[5] != -500 && pres > alertValues[5]) {
-                                    sendAlert(5, id);
+                                    sendAlert(5, id, name);
                                 }
                                 if (alertValues[6] != -500 && rssi < alertValues[6]) {
-                                    sendAlert(6, id);
+                                    sendAlert(6, id, name);
                                 }
                                 if (alertValues[7] != -500 && rssi > alertValues[7]) {
-                                    sendAlert(7, id);
+                                    sendAlert(7, id, name);
                                 }
                             }
                             csr.close();
@@ -705,26 +710,22 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         }
     }
 
-    private void sendAlert(int type, String id) {
-        String name;
-        NotificationCompat.Builder notification;
+    private void sendAlert(int type, String id, String name) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
         cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "id= ?", new String[] { "" + id }, null, null, null);
         if(cursor != null)
             cursor.moveToFirst();
 
-        name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
-        if(name == null) {
-            name = id;
-        }
+        String identifier = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB._ID));
+        int notificationid = Integer.parseInt(identifier + String.valueOf(type));
 
-        if(titles != null) {
+        if(notification == null) {
             notification
                     = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle(name)
+                    .setContentTitle(id)
                     .setSmallIcon(R.mipmap.ic_launcher_small)
-                    .setTicker(name + titles[type])
+                    .setTicker(id + " " + titles[type])
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
                     .setContentText(titles[type])
                     .setDefaults(Notification.DEFAULT_ALL)
@@ -732,10 +733,15 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setLargeIcon(bitmap);
-
-            NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            NotifyMgr.notify(type, notification.build());
+        } else {
+            notification.setContentTitle(id)
+                    .setContentText(titles[type]);
         }
+
+        Log.d("tagi", String.valueOf(notificationid));
+        NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotifyMgr.notify(notificationid, notification.build());
+
     }
 
     public Integer[] readSeparated(String data) {
