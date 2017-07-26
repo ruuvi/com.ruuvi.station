@@ -115,4 +115,6 @@
     <string name="alert_notification_title3">Humidity too high!</string>
     <string name="alert_notification_title4">Pressure too low!</string>
     <string name="alert_notification_title5">Pressure too high!</string>
+    <string name="alert_notification_title6">RSSI too low!</string>
+    <string name="alert_notification_title7">RSSI too high!</string>
 </resources>

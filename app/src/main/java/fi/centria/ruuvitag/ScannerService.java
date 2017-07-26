@@ -67,6 +67,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -87,6 +90,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 {
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
+    private ScheduledExecutorService alertScheduler;
 
     private class LeScanResult
     {
@@ -109,6 +113,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     private Integer[] alertValues;
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
+    private Timer timer;
 
 
     private BluetoothAdapter bluetoothAdapter;
@@ -137,7 +142,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 getString(R.string.alert_notification_title2),
                 getString(R.string.alert_notification_title3),
                 getString(R.string.alert_notification_title4),
-                getString(R.string.alert_notification_title5)
+                getString(R.string.alert_notification_title5),
+                getString(R.string.alert_notification_title6),
+                getString(R.string.alert_notification_title7)
         };
 
         if(settings.getBoolean("pref_bgscan", false))
@@ -185,13 +192,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             }
         }, 0, scanInterval-MAX_SCAN_TIME_MS+1, TimeUnit.MILLISECONDS);
 
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                alertManager();
-            }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
-
+        timer = new Timer();
+        TimerTask alertManager = new ScannerService.alertManager();
+        timer.scheduleAtFixedRate(alertManager, 2500, 2500);
     }
 
     private void startScan() {
@@ -525,7 +528,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         {
             if(!settings.getBoolean("pref_bgscan", false))
             {
-
+                timer.cancel();
                 scheduler.shutdown();
                 stopSelf();
             }
@@ -648,41 +651,58 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         return false;
     }
 
-    private void alertManager() {
-        Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
-        while(csr.moveToNext()) {
-            String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
-            Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
-            Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI)));
-            Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
-            alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
+    private class alertManager extends TimerTask {
+        private Handler handler = new Handler();
 
-            if(alertValues[0] != -500 && temp < alertValues[0]) {
-                sendAlert(0,id);
-            }
-            if(alertValues[1] != -500 && temp > alertValues[1]) {
-                sendAlert(1,id);
-            }
-            if(alertValues[2] != -500 && humi < alertValues[2]) {
-                sendAlert(2,id);
-            }
-            if(alertValues[3] != -500 && humi > alertValues[3]) {
-                sendAlert(3,id);
-            }
-            if(alertValues[4] != -500 && pres < alertValues[4]) {
-                sendAlert(4,id);
-            }
-            if(alertValues[5] != -500 && pres > alertValues[5]) {
-                sendAlert(5,id);
-            }
-            if(alertValues[6] != -500 && pres > alertValues[6]) {
-                sendAlert(6,id);
-            }
-            if(alertValues[7] != -500 && pres > alertValues[7]) {
-                sendAlert(7,id);
-            }
+        @Override
+        public void run() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("tagi", "alertManager called");
+                            Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+                            while (csr.moveToNext()) {
+                                String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
+                                Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
+                                Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI)));
+                                Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
+                                Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI)));
+                                alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
+
+                                if (alertValues[0] != -500 && temp < alertValues[0]) {
+                                    sendAlert(0, id);
+                                }
+                                if (alertValues[1] != -500 && temp > alertValues[1]) {
+                                    sendAlert(1, id);
+                                }
+                                if (alertValues[2] != -500 && humi < alertValues[2]) {
+                                    sendAlert(2, id);
+                                }
+                                if (alertValues[3] != -500 && humi > alertValues[3]) {
+                                    sendAlert(3, id);
+                                }
+                                if (alertValues[4] != -500 && pres < alertValues[4]) {
+                                    sendAlert(4, id);
+                                }
+                                if (alertValues[5] != -500 && pres > alertValues[5]) {
+                                    sendAlert(5, id);
+                                }
+                                if (alertValues[6] != -500 && rssi < alertValues[6]) {
+                                    sendAlert(6, id);
+                                }
+                                if (alertValues[7] != -500 && rssi > alertValues[7]) {
+                                    sendAlert(7, id);
+                                }
+                            }
+                            csr.close();
+                        }
+                    });
+                }
+            }).start();
         }
-        csr.close();
     }
 
     private void sendAlert(int type, String id) {
@@ -704,9 +724,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle(name)
                     .setSmallIcon(R.mipmap.ic_launcher_small)
-                    .setTicker(name + " " + titles[type])
+                    .setTicker(name + titles[type])
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
                     .setContentText(titles[type])
+                    .setDefaults(Notification.DEFAULT_ALL)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)

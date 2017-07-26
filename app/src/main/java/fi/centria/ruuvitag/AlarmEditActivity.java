@@ -197,11 +197,11 @@ public class AlarmEditActivity extends AppCompatActivity {
             valuesArray[0] = -500;
             valuesArray[1] = -500;
         }
-        if(!((CheckBox) findViewById(R.id.check_pres)).isChecked()) {
+        if(!((CheckBox) findViewById(R.id.check_humi)).isChecked()) {
             valuesArray[2] = -500;
             valuesArray[3] = -500;
         }
-        if(!((CheckBox) findViewById(R.id.check_humi)).isChecked()) {
+        if(!((CheckBox) findViewById(R.id.check_pres)).isChecked()) {
             valuesArray[4] = -500;
             valuesArray[5] = -500;
         }
