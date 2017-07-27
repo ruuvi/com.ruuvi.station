@@ -612,7 +612,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             };
 
             while (curCSV.moveToNext()) {
-                File file = new File(exportDir, curCSV.getString(1)+"-"+time);
+                File file = new File(exportDir, curCSV.getString(1)+"-"+time+".csv");
                 FileWriter fw = new FileWriter(file, file.exists());
 
                 CSVWriter writer = new CSVWriter(fw);
@@ -665,6 +665,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                         public void run() {
                             Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
                             while (csr.moveToNext()) {
+                                String _id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB._ID));
                                 String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
                                 String name = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
                                 Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
@@ -673,33 +674,32 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                                 Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI)));
                                 alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
 
-                                if(name == null) {
+                                if(name == null)
                                     name = id;
-                                }
 
                                 if (alertValues[0] != -500 && temp < alertValues[0]) {
-                                    sendAlert(0, id, name);
+                                    sendAlert(0, _id, name);
                                 }
                                 if (alertValues[1] != -500 && temp > alertValues[1]) {
-                                    sendAlert(1, id, name);
+                                    sendAlert(1, _id, name);
                                 }
                                 if (alertValues[2] != -500 && humi < alertValues[2]) {
-                                    sendAlert(2, id, name);
+                                    sendAlert(2, _id, name);
                                 }
                                 if (alertValues[3] != -500 && humi > alertValues[3]) {
-                                    sendAlert(3, id, name);
+                                    sendAlert(3, _id, name);
                                 }
                                 if (alertValues[4] != -500 && pres < alertValues[4]) {
-                                    sendAlert(4, id, name);
+                                    sendAlert(4, _id, name);
                                 }
                                 if (alertValues[5] != -500 && pres > alertValues[5]) {
-                                    sendAlert(5, id, name);
+                                    sendAlert(5, _id, name);
                                 }
                                 if (alertValues[6] != -500 && rssi < alertValues[6]) {
-                                    sendAlert(6, id, name);
+                                    sendAlert(6, _id, name);
                                 }
                                 if (alertValues[7] != -500 && rssi > alertValues[7]) {
-                                    sendAlert(7, id, name);
+                                    sendAlert(7, _id, name);
                                 }
                             }
                             csr.close();
@@ -710,22 +710,17 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         }
     }
 
-    private void sendAlert(int type, String id, String name) {
+    private void sendAlert(int type, String _id, String name) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
-        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "id= ?", new String[] { "" + id }, null, null, null);
-        if(cursor != null)
-            cursor.moveToFirst();
-
-        String identifier = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB._ID));
-        int notificationid = Integer.parseInt(identifier + String.valueOf(type));
+        int notificationid = Integer.parseInt(_id + String.valueOf(type));
 
         if(notification == null) {
             notification
                     = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle(id)
+                    .setContentTitle(name)
                     .setSmallIcon(R.mipmap.ic_launcher_small)
-                    .setTicker(id + " " + titles[type])
+                    .setTicker(name + " " + titles[type])
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
                     .setContentText(titles[type])
                     .setDefaults(Notification.DEFAULT_ALL)
@@ -734,14 +729,12 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setLargeIcon(bitmap);
         } else {
-            notification.setContentTitle(id)
+            notification.setContentTitle(name)
                     .setContentText(titles[type]);
         }
 
-        Log.d("tagi", String.valueOf(notificationid));
         NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotifyMgr.notify(notificationid, notification.build());
-
     }
 
     public Integer[] readSeparated(String data) {
