@@ -4,17 +4,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.androidplot.ui.LayoutManager;
+import com.androidplot.ui.Size;
+import com.androidplot.ui.SizeMetric;
+import com.androidplot.ui.SizeMode;
+import com.androidplot.ui.widget.Widget;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.CatmullRomInterpolator;
 import com.androidplot.xy.LineAndPointFormatter;
@@ -93,7 +100,7 @@ public class PlotActivity extends AppCompatActivity {
 
     private void makeTemperaturePlot()
     {
-        temp_plot.setRangeBoundaries(-40,40, BoundaryMode.FIXED);
+        temp_plot.setRangeBoundaries(-30,90, BoundaryMode.FIXED);
         LineAndPointFormatter series1Format =
                 new LineAndPointFormatter(this, R.xml.line_point_formatter_with_labels);
         XYSeries series1 = new SimpleXYSeries(Arrays.asList(temp), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Temperature");
@@ -112,7 +119,11 @@ public class PlotActivity extends AppCompatActivity {
                 return null;
             }
         });
-        temp_plot.getGraph().setPaddingLeft(25);
+        temp_plot.getGraph().setSize(new Size(0,SizeMode.FILL,0,SizeMode.FILL));
+        temp_plot.getGraph().setPaddingLeft(75.0f);
+        temp_plot.getLayoutManager().remove(temp_plot.getDomainTitle());
+        temp_plot.getLayoutManager().remove(temp_plot.getTitle());
+        temp_plot.getLayoutManager().remove(temp_plot.getRangeTitle());
     }
 
     @Override
@@ -122,16 +133,9 @@ public class PlotActivity extends AppCompatActivity {
     }
 
     private void makePlots() {
-        Handler handler = new Handler();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                makeTemperaturePlot();
-                makeHumidityPlot();
-                makePressurePlot();
-            }
-        };
-        handler.post(r);
+        makeTemperaturePlot();
+        makeHumidityPlot();
+        makePressurePlot();
     }
 
     private void makeHumidityPlot()
@@ -155,7 +159,11 @@ public class PlotActivity extends AppCompatActivity {
                 return null;
             }
         });
-        hum_plot.getGraph().setPaddingLeft(25);
+        hum_plot.getGraph().setSize(new Size(0,SizeMode.FILL,0,SizeMode.FILL));
+        hum_plot.getGraph().setPaddingLeft(75.0f);
+        hum_plot.getLayoutManager().remove(hum_plot.getDomainTitle());
+        hum_plot.getLayoutManager().remove(hum_plot.getTitle());
+        hum_plot.getLayoutManager().remove(hum_plot.getRangeTitle());
     }
 
     private void makePressurePlot()
@@ -165,6 +173,12 @@ public class PlotActivity extends AppCompatActivity {
                 new LineAndPointFormatter(this, R.xml.line_point_formatter_with_labels);
         XYSeries series1 = new SimpleXYSeries(Arrays.asList(pressure), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Pressure");
         pres_plot.addSeries(series1, series1Format);
+        pres_plot.getGraph().setSize(new Size(0,SizeMode.FILL,0,SizeMode.FILL));
+        pres_plot.getGraph().setPaddingLeft(75.0f);
+        pres_plot.getLayoutManager().remove(pres_plot.getDomainTitle());
+        pres_plot.getLayoutManager().remove(pres_plot.getTitle());
+        pres_plot.getLayoutManager().remove(pres_plot.getRangeTitle());
+
         pres_plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
             @Override
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
@@ -179,7 +193,6 @@ public class PlotActivity extends AppCompatActivity {
                 return null;
             }
         });
-        pres_plot.getGraph().setPaddingLeft(25);
     }
 
     @Override

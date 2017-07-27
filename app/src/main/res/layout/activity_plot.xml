@@ -9,16 +9,18 @@
 
     <ScrollView
         android:id="@+id/scrollView1"
-        android:layout_width="368dp"
-        android:fillViewport="true"
-        android:layout_height="495dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <com.androidplot.xy.XYPlot
                 android:id="@+id/plotPressure"
@@ -30,31 +32,31 @@
                 ap:lineLabels="left|bottom"
                 ap:rangeTitle=""
                 ap:title=""
-                app:backgroundColor="@color/white"/>
+                app:backgroundColor="@color/white" />
 
             <com.androidplot.xy.XYPlot
-                style="@style/APDefacto.Light"
                 android:id="@+id/plotTemperature"
+                style="@style/APDefacto.Light"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                app:backgroundColor="@color/white"
-                ap:title=""
-                ap:rangeTitle=""
                 ap:domainTitle=""
+                ap:lineLabelRotationBottom="-45"
                 ap:lineLabels="left|bottom"
-                ap:lineLabelRotationBottom="-45"/>
+                ap:rangeTitle=""
+                ap:title=""
+                app:backgroundColor="@color/white" />
 
             <com.androidplot.xy.XYPlot
-                style="@style/APDefacto.Light"
                 android:id="@+id/plotHumidity"
+                style="@style/APDefacto.Light"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                app:backgroundColor="@color/white"
-                ap:title=""
-                ap:rangeTitle=""
                 ap:domainTitle=""
+                ap:lineLabelRotationBottom="-45"
                 ap:lineLabels="left|bottom"
-                ap:lineLabelRotationBottom="-45"/>
+                ap:rangeTitle=""
+                ap:title=""
+                app:backgroundColor="@color/white" />
 
         </LinearLayout>
     </ScrollView>

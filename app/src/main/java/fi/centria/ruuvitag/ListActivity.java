@@ -98,10 +98,13 @@ public class ListActivity extends AppCompatActivity {
         ComplexPreferences complexPreferences = ComplexPreferences
                 .getComplexPreferences(this, "saved_tags", MODE_PRIVATE);
         RuuvitagComplexList ruuvilist = complexPreferences.getObject("ruuvi", RuuvitagComplexList.class);
-        for(Ruuvitag ruuvitag : ruuvilist.ruuvitags) {
-            ruuvitagArrayList.add(ruuvitag);
+
+        if(ruuvilist != null) {
+            for(Ruuvitag ruuvitag : ruuvilist.ruuvitags) {
+                ruuvitagArrayList.add(ruuvitag);
+            }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
