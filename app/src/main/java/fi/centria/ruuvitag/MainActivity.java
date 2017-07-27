@@ -68,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
         String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_URL));
         String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
+        String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
+
+        if(name == null)
+            name = id;
+
         Intent intent = new Intent(this, PlotActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("id", new String[]{id, name});
         startActivity(intent);
 
         /*

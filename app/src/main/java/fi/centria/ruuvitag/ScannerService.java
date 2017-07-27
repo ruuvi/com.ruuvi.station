@@ -336,8 +336,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             plotSource.addScanEvent(scanEvent);
 
             exportRuuvitags();
-            exportDB();
-
         }
     }
 
@@ -568,7 +566,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
 
             db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuvitag.getId()), null);
-            exportDB();
         }
     }
 
@@ -707,6 +704,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     });
                 }
             }).start();
+            exportDB();
         }
     }
 
@@ -730,6 +728,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     .setLargeIcon(bitmap);
         } else {
             notification.setContentTitle(name)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
                     .setContentText(titles[type]);
         }
 

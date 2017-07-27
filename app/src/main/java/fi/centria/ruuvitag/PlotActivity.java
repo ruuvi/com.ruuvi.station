@@ -59,6 +59,7 @@ public class PlotActivity extends AppCompatActivity {
     private PlotSource plotSource;
     private Date[] domains;
     private String id;
+    private String name;
 
     Number temp[];
     Number humidity[];
@@ -72,9 +73,11 @@ public class PlotActivity extends AppCompatActivity {
         setContentView(R.layout.activity_plot);
 
         intent = getIntent();
-        id = intent.getExtras().getString("id");
+        String[] extras = (String[]) intent.getExtras().get("id");
+        id = extras[0];
+        name = extras[1];
 
-        setTitle("Graphs for " + id);
+        setTitle("Graphs for " + name);
 
         plotSource = PlotSource.getInstance();
         domains = plotSource.getDomains();
