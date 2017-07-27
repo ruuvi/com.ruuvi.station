@@ -45,6 +45,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openAlarmEdit(view);
+                save(null);
             }
         });
 
@@ -69,6 +70,7 @@ public class EditActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
             this.save(null);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -107,7 +109,6 @@ public class EditActivity extends AppCompatActivity {
         values.put(DBContract.RuuvitagDB.COLUMN_NAME, textfield.getText().toString());
         db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "_ID="+ index, null);
         cursor.close();
-        finish();
     }
 
     public void delete(View view) {
