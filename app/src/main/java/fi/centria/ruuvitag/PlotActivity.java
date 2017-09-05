@@ -113,7 +113,7 @@ public class PlotActivity extends AppCompatActivity {
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
 
                 int i = Math.round(((Number) obj).floatValue());
-                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm");
+                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
                 return toAppendTo.append(dt1.format(domains[i]));
             }
@@ -153,7 +153,7 @@ public class PlotActivity extends AppCompatActivity {
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
 
                 int i = Math.round(((Number) obj).floatValue());
-                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm");
+                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
                 return toAppendTo.append(dt1.format(domains[i]));
             }
@@ -187,7 +187,7 @@ public class PlotActivity extends AppCompatActivity {
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
 
                 int i = Math.round(((Number) obj).floatValue());
-                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm");
+                SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
                 return toAppendTo.append(dt1.format(domains[i]));
             }

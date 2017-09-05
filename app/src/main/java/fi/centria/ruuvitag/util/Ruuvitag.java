@@ -122,7 +122,10 @@ public class Ruuvitag implements Parcelable {
         }
         else if(rawData != null)
         {
-            humidity = (rawData[3]) * 0.5;
+         //   humidity = (rawData[3]) * 0.5;
+
+            humidity = ((float) (rawData[1] & 0xFF)) / 2f;
+
             double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
             double tempSign = (rawData[4] >> 7) & 1;
             temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
@@ -142,6 +145,8 @@ public class Ruuvitag implements Parcelable {
             accelZ = round(z, 2);
 
             voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 100.0;
+
+
         }
     }
 
