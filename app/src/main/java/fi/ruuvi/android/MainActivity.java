@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void editRuuvitag(View view) {
+    public void editRuuviTag(View view) {
         Intent intent = new Intent(this, EditActivity.class);
         intent.putExtra("index", (Integer) view.getTag());
         startActivity(intent);
@@ -62,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
     public void openRuuviInBrowser(View v) {
         int index = (Integer) v.getTag();
 
-        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor != null)
             cursor.moveToFirst();
 
-        String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_URL));
-        String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
-        String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
+        String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_URL));
+        String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
+        String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
 
         if(name == null)
             name = id;
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+                            cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
                             adapter.changeCursor(cursor);
                         }
                     });
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new DBHandler(this);
         db = handler.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
 
         beaconListView = (ListView) findViewById(R.id.Tags_listView);
         adapter = new DBAdapter(this, cursor, 0);
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         }
 
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
         adapter.changeCursor(cursor);
         text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
     }

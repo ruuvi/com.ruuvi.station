@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 
+import fi.ruuvi.android.model.RuuviTag;
 import fi.ruuvi.android.util.PlotSource;
-import fi.ruuvi.android.model.Ruuvitag;
 
 public class PlotActivity extends AppCompatActivity {
     private XYPlot temp_plot;
@@ -60,7 +60,7 @@ public class PlotActivity extends AppCompatActivity {
         hum_plot = (XYPlot) findViewById(R.id.plotHumidity);
         pres_plot = (XYPlot) findViewById(R.id.plotPressure);
 
-        Ruuvitag[] series = plotSource.getSeriesForTag(id);
+        RuuviTag[] series = plotSource.getSeriesForTag(id);
 
         temp = new Number[series.length];
         humidity = new Number[series.length];

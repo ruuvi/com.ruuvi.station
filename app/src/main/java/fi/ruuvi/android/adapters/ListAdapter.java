@@ -13,14 +13,14 @@ import java.util.ArrayList;
 
 
 import fi.ruuvi.android.R;
-import fi.ruuvi.android.model.Ruuvitag;
+import fi.ruuvi.android.model.RuuviTag;
 
 /**
  * Created by tmakinen on 21.6.2017.
  */
 
-public class ListAdapter extends ArrayAdapter<Ruuvitag> implements View.OnClickListener {
-    private ArrayList<Ruuvitag> ruuvitagArrayList;
+public class ListAdapter extends ArrayAdapter<RuuviTag> implements View.OnClickListener {
+    private ArrayList<RuuviTag> ruuviTagArrayList;
     Context context;
 
     // View lookup cache
@@ -31,9 +31,9 @@ public class ListAdapter extends ArrayAdapter<Ruuvitag> implements View.OnClickL
         ImageView select;
     }
 
-    public ListAdapter(ArrayList<Ruuvitag> ruuvitagArrayList, Context context) {
-        super(context, R.layout.row_item_list, ruuvitagArrayList);
-        this.ruuvitagArrayList = ruuvitagArrayList;
+    public ListAdapter(ArrayList<RuuviTag> ruuviTagArrayList, Context context) {
+        super(context, R.layout.row_item_list, ruuviTagArrayList);
+        this.ruuviTagArrayList = ruuviTagArrayList;
         this.context = context;
     }
 
@@ -47,7 +47,7 @@ public class ListAdapter extends ArrayAdapter<Ruuvitag> implements View.OnClickL
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Ruuvitag ruuvitag = getItem(position);
+        RuuviTag ruuviTag = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder;
 
@@ -69,9 +69,9 @@ public class ListAdapter extends ArrayAdapter<Ruuvitag> implements View.OnClickL
             result = convertView;
         }
 
-        viewHolder.txtId.setText(ruuvitag.getId());
-        viewHolder.txtUrl.setText(ruuvitag.getUrl());
-        viewHolder.txtRssi.setText(ruuvitag.getRssi() + " dB");
+        viewHolder.txtId.setText(ruuviTag.getId());
+        viewHolder.txtUrl.setText(ruuviTag.getUrl());
+        viewHolder.txtRssi.setText(ruuviTag.getRssi() + " dB");
 
         // Return the completed view to render on screen
         return result;

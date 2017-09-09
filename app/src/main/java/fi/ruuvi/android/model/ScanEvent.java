@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ScanEvent {
     Date time;
     String deviceId;
-    ArrayList<Ruuvitag> tags;
+    ArrayList<RuuviTag> tags;
     String eventId;
 
     public ScanEvent(Context c, String deviceId) {
@@ -24,7 +24,7 @@ public class ScanEvent {
         eventId = UUID.randomUUID().toString();
     }
 
-    public void addRuuvitag(Ruuvitag t) {
+    public void addRuuviTag(RuuviTag t) {
         tags.add(t);
     }
 
@@ -32,7 +32,7 @@ public class ScanEvent {
         return time;
     }
 
-    public Ruuvitag getData(String tagId) {
+    public RuuviTag getData(String tagId) {
         for(int i = 0; i < tags.size(); i++) {
             if(tags.get(i).getId().equalsIgnoreCase(tagId))
             return tags.get(i);

@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
 public final class DBContract {
     private DBContract() { }
 
-    public static class RuuvitagDB implements BaseColumns {
+    public static class RuuviTagDB implements BaseColumns {
         public static final String TABLE_NAME = "ruuvitag";
         public static final String COLUMN_ID = "id";
         public static final String COLUMN_URL = "url";

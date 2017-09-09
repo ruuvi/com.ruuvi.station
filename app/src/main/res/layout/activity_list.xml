@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Tap on a ruuvitag to add it to the main screen!"
+        android:text="Tap on a ruuviTag to add it to the main screen!"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="12sp"

@@ -14,13 +14,12 @@ import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import fi.ruuvi.android.R;
 import fi.ruuvi.android.database.DBContract;
-import fi.ruuvi.android.model.Ruuvitag;
+import fi.ruuvi.android.model.RuuviTag;
 import fi.ruuvi.android.util.Utils;
 
 /**
@@ -51,15 +50,15 @@ public class DBAdapter extends CursorAdapter {
         edit.setTag(cursor.getInt(0));
         www.setTag(cursor.getInt(0));
 
-        String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
-        String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI));
-        String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP));
-        String fahrenheit = String.valueOf(Ruuvitag.round(Double.parseDouble(celsius) * 1.8 + 32.0, 2));
-        String humidity = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI));
-        String pressure = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES));
-        String name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
-        String last = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_LAST));
-        String url = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_URL));
+        String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
+        String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_RSSI));
+        String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_TEMP));
+        String fahrenheit = String.valueOf(RuuviTag.round(Double.parseDouble(celsius) * 1.8 + 32.0, 2));
+        String humidity = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_HUMI));
+        String pressure = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_PRES));
+        String name = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
+        String last = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_LAST));
+        String url = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_URL));
         if(name != null  && !name.isEmpty())
             txtId.setText(name);
         else

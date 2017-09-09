@@ -55,13 +55,13 @@ import java.util.concurrent.TimeUnit;
 
 import fi.ruuvi.android.database.DBContract;
 import fi.ruuvi.android.database.DBHandler;
+import fi.ruuvi.android.model.RuuviTag;
 import fi.ruuvi.android.model.ScanEvent;
 import fi.ruuvi.android.util.ComplexPreferences;
 import fi.ruuvi.android.util.DeviceIdentifier;
 import fi.ruuvi.android.util.Foreground;
 import fi.ruuvi.android.util.PlotSource;
-import fi.ruuvi.android.model.Ruuvitag;
-import fi.ruuvi.android.model.RuuvitagComplexList;
+import fi.ruuvi.android.model.RuuviTagComplexList;
 import fi.ruuvi.android.util.Utils;
 
 
@@ -78,7 +78,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         byte[] scanData;
     }
 
-    List<Ruuvitag> ruuvitagArrayList;
+    List<RuuviTag> ruuviTagArrayList;
     //private BeaconManager beaconManager;
     private BackgroundPowerSaver bps;
     SharedPreferences settings;
@@ -105,7 +105,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle data = intent.getExtras();
         if(data != null) {
-            save((Ruuvitag) data.getParcelable("favorite"));
+            save((RuuviTag) data.getParcelable("favorite"));
         }
         return Service.START_NOT_STICKY;
     }
@@ -135,7 +135,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
         bps = new BackgroundPowerSaver(this);
 
-        ruuvitagArrayList = new ArrayList<>();
+        ruuviTagArrayList = new ArrayList<>();
 
         handler = new DBHandler(getApplicationContext());
         db = handler.getWritableDatabase();
@@ -230,7 +230,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
     void processFoundDevices()
     {
-        ruuvitagArrayList.clear();
+        ruuviTagArrayList.clear();
         ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
 
         Iterator<LeScanResult> itr = scanResults.iterator();
@@ -253,13 +253,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/"))
                     {
                         // Creates temporary ruuvitag-object, without heavy calculations
-                        Ruuvitag temp = new Ruuvitag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, true);
+                        RuuviTag temp = new RuuviTag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, true);
                         if(checkForSameTag(temp)) {
                             // Creates real object, with temperature etc. calculated
-                            Ruuvitag real = new Ruuvitag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, false);
-                            ruuvitagArrayList.add(real);
+                            RuuviTag real = new RuuviTag(element.device.getAddress(),es.getURL().toString(),null,""+element.rssi, false);
+                            ruuviTagArrayList.add(real);
                             update(real);
-                            scanEvent.addRuuvitag(real);
+                            scanEvent.addRuuviTag(real);
                         }
                     }
 
@@ -274,13 +274,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                         byte[] data = es.getData();
                         if (data != null) {
 
-                            Ruuvitag tempTag = new Ruuvitag(element.device.getAddress(),null,data,""+element.rssi, true);
+                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(),null,data,""+element.rssi, true);
                             if(checkForSameTag(tempTag)) {
                                 // Creates real object, with temperature etc. calculated
-                                Ruuvitag real = new Ruuvitag(element.device.getAddress(),null,data,""+element.rssi, false);
-                                ruuvitagArrayList.add(real);
+                                RuuviTag real = new RuuviTag(element.device.getAddress(),null,data,""+element.rssi, false);
+                                ruuviTagArrayList.add(real);
                                 update(real);
-                                scanEvent.addRuuvitag(real);
+                                scanEvent.addRuuviTag(real);
                             }
                         }
                     }
@@ -314,7 +314,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
             }
             plotSource.addScanEvent(scanEvent);
 
-            exportRuuvitags();
+            exportRuuviTags();
         }
     }
 
@@ -362,7 +362,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         beaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-                ruuvitagArrayList.clear();
+                ruuviTagArrayList.clear();
 
                 ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
 
@@ -372,13 +372,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                         String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
                         if (url.startsWith("https://ruu.vi/#") || url.startsWith("https://r/")) {
                             // Creates temporary ruuvitag-object, without heavy calculations
-                            Ruuvitag temp = new Ruuvitag(beacon, true);
+                            RuuviTag temp = new RuuviTag(beacon, true);
                             if(checkForSameTag(temp)) {
                                 // Creates real object, with temperature etc. calculated
-                                Ruuvitag real = new Ruuvitag(beacon, false);
-                                ruuvitagArrayList.add(real);
+                                RuuviTag real = new RuuviTag(beacon, false);
+                                ruuviTagArrayList.add(real);
                                 update(real);
-                                scanEvent.addRuuvitag(real);
+                                scanEvent.addRuuviTag(real);
                             }
                         }
                     }
@@ -402,7 +402,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 }
                 plotSource.addScanEvent(scanEvent);
 
-                exportRuuvitags();
+                exportRuuviTags();
                 exportDB();
             }
         });
@@ -448,23 +448,23 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         startForeground(notificationId, notification.build());
     }
 
-    private void exportRuuvitags() {
-        ArrayList<Ruuvitag> templist = new ArrayList<>();
-        RuuvitagComplexList ruuvilist = new RuuvitagComplexList();
-        for(Ruuvitag ruuvitag : ruuvitagArrayList) {
-            if(!ruuvitag.favorite)
-                templist.add(ruuvitag);
+    private void exportRuuviTags() {
+        ArrayList<RuuviTag> templist = new ArrayList<>();
+        RuuviTagComplexList ruuvilist = new RuuviTagComplexList();
+        for(RuuviTag ruuviTag : ruuviTagArrayList) {
+            if(!ruuviTag.favorite)
+                templist.add(ruuviTag);
         }
-        ruuvilist.setRuuvitags(templist);
+        ruuvilist.setRuuviTags(templist);
         ComplexPreferences complexPreferences = ComplexPreferences
                 .getComplexPreferences(this, "saved_tags", MODE_PRIVATE);
         complexPreferences.putObject("ruuvi", ruuvilist);
         complexPreferences.commit();
     }
 
-    private boolean checkForSameTag(Ruuvitag ruuvi) {
-        for(Ruuvitag ruuvitag : ruuvitagArrayList) {
-            if(ruuvi.getId().equals(ruuvitag.getId())) {
+    private boolean checkForSameTag(RuuviTag ruuvi) {
+        for(RuuviTag ruuviTag : ruuviTagArrayList) {
+            if(ruuvi.getId().equals(ruuviTag.getId())) {
                 return false;
             }
         }
@@ -513,43 +513,43 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         }
     };
 
-    public void save(Ruuvitag ruuvitag) {
+    public void save(RuuviTag ruuviTag) {
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
-        if(!Exists(ruuvitag.getId())) {
+        if(!Exists(ruuviTag.getId())) {
             ContentValues values = new ContentValues();
-            values.put(DBContract.RuuvitagDB.COLUMN_ID, ruuvitag.getId());
-            values.put(DBContract.RuuvitagDB.COLUMN_URL, ruuvitag.getUrl());
-            values.put(DBContract.RuuvitagDB.COLUMN_RSSI, ruuvitag.getRssi());
-            values.put(DBContract.RuuvitagDB.COLUMN_TEMP, ruuvitag.getTemperature());
-            values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
-            values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
-            values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
-            values.put(DBContract.RuuvitagDB.COLUMN_VALUES, "-500,-500,-500,-500,-500,-500,-500,-500");
+            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.getId());
+            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.getUrl());
+            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.getRssi());
+            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.getTemperature());
+            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.getHumidity());
+            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.getPressure());
+            values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
+            values.put(DBContract.RuuviTagDB.COLUMN_VALUES, "-500,-500,-500,-500,-500,-500,-500,-500");
 
-            long newRowId = db.insert(DBContract.RuuvitagDB.TABLE_NAME, null, values);
+            long newRowId = db.insert(DBContract.RuuviTagDB.TABLE_NAME, null, values);
         }
     }
 
-    public void update(Ruuvitag ruuvitag) {
+    public void update(RuuviTag ruuviTag) {
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
-        if(Exists(ruuvitag.getId())) {
+        if(Exists(ruuviTag.getId())) {
             ContentValues values = new ContentValues();
-            values.put(DBContract.RuuvitagDB.COLUMN_ID, ruuvitag.getId());
-            values.put(DBContract.RuuvitagDB.COLUMN_URL, ruuvitag.getUrl());
-            values.put(DBContract.RuuvitagDB.COLUMN_RSSI, ruuvitag.getRssi());
-            values.put(DBContract.RuuvitagDB.COLUMN_TEMP, ruuvitag.getTemperature());
-            values.put(DBContract.RuuvitagDB.COLUMN_HUMI, ruuvitag.getHumidity());
-            values.put(DBContract.RuuvitagDB.COLUMN_PRES, ruuvitag.getPressure());
-            values.put(DBContract.RuuvitagDB.COLUMN_LAST, time);
+            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.getId());
+            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.getUrl());
+            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.getRssi());
+            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.getTemperature());
+            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.getHumidity());
+            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.getPressure());
+            values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
 
-            db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuvitag.getId()), null);
+            db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuviTag.getId()), null);
         }
     }
 
     public boolean Exists(String id) {
-        cursor = db.rawQuery("select 1 from ruuvitag where "+DBContract.RuuvitagDB.COLUMN_ID+"=?",
+        cursor = db.rawQuery("select 1 from ruuvitag where "+ DBContract.RuuviTagDB.COLUMN_ID+"=?",
                 new String[] { id });
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
@@ -639,16 +639,16 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuvitagDB.TABLE_NAME, null);
+                            Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
                             while (csr.moveToNext()) {
-                                String _id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB._ID));
-                                String id = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
-                                String name = csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
-                                Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_TEMP)));
-                                Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_HUMI)));
-                                Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_PRES)));
-                                Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_RSSI)));
-                                alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES)));
+                                String _id = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB._ID));
+                                String id = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
+                                String name = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
+                                Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_TEMP)));
+                                Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_HUMI)));
+                                Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_PRES)));
+                                Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_RSSI)));
+                                alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES)));
 
                                 if(name == null)
                                     name = id;

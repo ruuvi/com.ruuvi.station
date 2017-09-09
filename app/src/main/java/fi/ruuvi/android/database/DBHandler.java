@@ -26,12 +26,12 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DBContract.RuuvitagDB.CREATE_TABLE);
+        db.execSQL(DBContract.RuuviTagDB.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS " + DBContract.RuuvitagDB.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DBContract.RuuviTagDB.TABLE_NAME);
         onCreate(db);
     }
 

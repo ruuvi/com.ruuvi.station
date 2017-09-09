@@ -85,14 +85,14 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
 
         if(cursor != null)
             cursor.moveToFirst();
 
-        id = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_ID));
-        name = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_NAME));
-        String alarms = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
+        id = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
+        name = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
+        String alarms = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES));
 
         ArrayList<Alarm> alarmValues = readSeparated(alarms);
         EditAdapter adapter = new EditAdapter(this, alarmValues);
@@ -107,22 +107,22 @@ public class EditActivity extends AppCompatActivity {
 
     public void save(View view) {
         ContentValues values = new ContentValues();
-        values.put(DBContract.RuuvitagDB.COLUMN_NAME, textfield.getText().toString());
-        db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "_ID="+ index, null);
+        values.put(DBContract.RuuviTagDB.COLUMN_NAME, textfield.getText().toString());
+        db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID="+ index, null);
         cursor.close();
     }
 
     public void delete(View view) {
-        final String selection = DBContract.RuuvitagDB._ID + " LIKE ?";
+        final String selection = DBContract.RuuviTagDB._ID + " LIKE ?";
         final String[] selectionArgs = { String.valueOf(index) };
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Delete Ruuvitag");
+        builder.setTitle("Delete RuuviTag");
         builder.setMessage("Are you sure you want to delete this ruuvitag?");
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                db.delete(DBContract.RuuvitagDB.TABLE_NAME, selection, selectionArgs);
+                db.delete(DBContract.RuuviTagDB.TABLE_NAME, selection, selectionArgs);
                 cursor.close();
                 finish();
             }

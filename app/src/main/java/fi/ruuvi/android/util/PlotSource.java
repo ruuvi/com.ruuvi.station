@@ -5,7 +5,7 @@ import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import java.util.Date;
 import java.util.Iterator;
 
-import fi.ruuvi.android.model.Ruuvitag;
+import fi.ruuvi.android.model.RuuviTag;
 import fi.ruuvi.android.model.ScanEvent;
 
 /**
@@ -54,9 +54,9 @@ public class PlotSource
         return dates;
     }
 
-    public Ruuvitag[] getSeriesForTag(String o)
+    public RuuviTag[] getSeriesForTag(String o)
     {
-        Ruuvitag data[] = new Ruuvitag[BUFFER_SIZE];
+        RuuviTag data[] = new RuuviTag[BUFFER_SIZE];
 
         Iterator itr = buffer.iterator();
         int i = 0;

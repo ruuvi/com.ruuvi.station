@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context="fi.centria.ruuvitag.fi.ruuvi.android.AlarmEditActivity">
+    tools:context="fi.centria.ruuviTag.fi.ruuvi.android.AlarmEditActivity">
 
     <TextView
         android:id="@+id/text_mode"

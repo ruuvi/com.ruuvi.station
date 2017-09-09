@@ -48,7 +48,7 @@
         android:backgroundTint="@color/clear"
         android:backgroundTintMode="src_over"
         android:clickable="true"
-        android:onClick="editRuuvitag"
+        android:onClick="editRuuviTag"
         android:tint="@color/red"
         app:layout_constraintBottom_toBottomOf="@+id/id"
         app:layout_constraintRight_toRightOf="parent"

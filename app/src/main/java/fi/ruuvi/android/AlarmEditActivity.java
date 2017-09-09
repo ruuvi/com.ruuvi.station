@@ -45,9 +45,9 @@ public class AlarmEditActivity extends AppCompatActivity {
             index = getIntent().getExtras().getInt("index");
         }
 
-        cursor = db.query(DBContract.RuuvitagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor.moveToFirst()) {
-            String stringValues = cursor.getString(cursor.getColumnIndex(DBContract.RuuvitagDB.COLUMN_VALUES));
+            String stringValues = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES));
             Integer[] temp = readSeparated(stringValues);
             int index = 0;
             for(Integer i : temp) {
@@ -209,8 +209,8 @@ public class AlarmEditActivity extends AppCompatActivity {
             valuesArray[6] = -500;
             valuesArray[7] = -500;
         }
-        values.put(DBContract.RuuvitagDB.COLUMN_VALUES, commaSeparate(valuesArray));
-        db.update(DBContract.RuuvitagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
+        values.put(DBContract.RuuviTagDB.COLUMN_VALUES, commaSeparate(valuesArray));
+        db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
         finish();
     }
 

@@ -2,7 +2,7 @@ package fi.centria.ruuvitag.tests;
 
 import org.junit.Test;
 
-import fi.ruuvi.android.model.Ruuvitag;
+import fi.ruuvi.android.model.RuuviTag;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -18,7 +18,7 @@ public class RuuviTagURLParser
         {
             //
 
-            Ruuvitag tag = new Ruuvitag("0","https://ruu.vi/#BAASADyM5",null,"-87",false);
+            RuuviTag tag = new RuuviTag("0","https://ruu.vi/#BAASADyM5",null,"-87",false);
             assertEquals(tag.getTemperature(),18);
 
         }

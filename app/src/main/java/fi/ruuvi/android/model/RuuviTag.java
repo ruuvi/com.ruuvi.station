@@ -15,7 +15,7 @@ import fi.ruuvi.android.util.base64;
  * Created by tmakinen on 15.6.2017.
  */
 
-public class Ruuvitag implements Parcelable {
+public class RuuviTag implements Parcelable {
     private String id;
     private String url;
     private String rssi;
@@ -31,7 +31,7 @@ public class Ruuvitag implements Parcelable {
     double accelZ;
     double voltage;
 
-    public Ruuvitag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
+    public RuuviTag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
         this.id = id;
         this.url = url;
         this.rssi = rssi;
@@ -40,7 +40,7 @@ public class Ruuvitag implements Parcelable {
             process();
     }
 
-    public Ruuvitag(Beacon beacon, boolean temporary)
+    public RuuviTag(Beacon beacon, boolean temporary)
     {
         id = beacon.getBluetoothAddress();
         url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
@@ -49,7 +49,7 @@ public class Ruuvitag implements Parcelable {
             process();
     }
 
-    public Ruuvitag(Parcel in) {
+    public RuuviTag(Parcel in) {
         String[] data = new String[6];
         in.readStringArray(data);
         this.id = data[0];
@@ -118,7 +118,7 @@ public class Ruuvitag implements Parcelable {
             String data = url.split("#")[1];
             rawData = parseByteDataFromB64(data);
             //parseRuuvitagDataFromB64(data);
-            parseRuuvitagDataFromBytes(rawData,2);
+            parseRuuviTagDataFromBytes(rawData,2);
 
 
         }
@@ -185,7 +185,7 @@ public class Ruuvitag implements Parcelable {
     }*/
 
 
-    private void parseRuuvitagDataFromBytes(byte[] bData, int ruuviTagFWVersion )
+    private void parseRuuviTagDataFromBytes(byte[] bData, int ruuviTagFWVersion )
     {
         int pData[] = new int[8];
         for (int i = 0; i < bData.length; i++)
@@ -226,14 +226,14 @@ public class Ruuvitag implements Parcelable {
                                              String.valueOf(this.pressure)});
     }
 
-    public static final Parcelable.Creator<Ruuvitag> CREATOR
-            = new Parcelable.Creator<Ruuvitag>() {
-        public Ruuvitag createFromParcel(Parcel in) {
-            return new Ruuvitag(in);
+    public static final Parcelable.Creator<RuuviTag> CREATOR
+            = new Parcelable.Creator<RuuviTag>() {
+        public RuuviTag createFromParcel(Parcel in) {
+            return new RuuviTag(in);
         }
 
-        public Ruuvitag[] newArray(int size) {
-            return new Ruuvitag[size];
+        public RuuviTag[] newArray(int size) {
+            return new RuuviTag[size];
         }
     };
 
