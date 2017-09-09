@@ -69,18 +69,23 @@ public class DBAdapter extends CursorAdapter {
         txtTemperature.setText(celsius + "°C" + " / " + fahrenheit + "°F");
         txtHumidity.setText(humidity + "%");
         txtPressure.setText(pressure + " hPa");
-        txtLast.setText(last + " / " + url);
+
 
 
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.DB_TIME_FORMAT);
         try
         {
-            Date date1 = dateFormat.parse(last);
+            Date lastSeenDate = dateFormat.parse(last);
+           // long date1 = Long.parseLong(last);
+           // Calendar calendar = Calendar.getInstance();
+           // calendar.setTimeInMillis(date1);
+
             Date dateNow = new GregorianCalendar().getTime();
 
-            long diffInMS = dateNow.getTime() - date1.getTime();
+            long diffInMS = dateNow.getTime() - lastSeenDate.getTime();
 
+            txtLast.setText(dateFormat.format(lastSeenDate.getTime()) + " / " + url);
 
             if(diffInMS > 1000*60)
                 txtLast.setTextColor(Color.RED);
@@ -88,9 +93,10 @@ public class DBAdapter extends CursorAdapter {
                 txtLast.setTextColor(context.getResources().getColor(R.color.ap_gray));
 
         }
-        catch (ParseException e)
+        catch (Exception e)
         {
-
+            txtLast.setText("MISSING");
+            txtLast.setTextColor(Color.RED);
         }
 
     }
