@@ -1,10 +1,8 @@
 package fi.centria.ruuvitag.tests;
 
-import android.test.AndroidTestCase;
-
 import org.junit.Test;
 
-import fi.centria.ruuvitag.util.Ruuvitag;
+import fi.ruuvi.android.model.Ruuvitag;
 
 import static junit.framework.Assert.assertEquals;
 

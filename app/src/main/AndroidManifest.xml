@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fi.centria.ruuvitag">
+    package="fi.ruuvi.android">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="fi.ruuvi.android.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
             <intent-filter>
@@ -26,35 +26,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ListActivity"
+            android:name="fi.ruuvi.android.ListActivity"
             android:label="@string/title_activity_list"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="fi.ruuvi.android.MainActivity" />
         <activity
-            android:name=".database.AndroidDatabaseManager"
-            android:parentActivityName=".MainActivity" />
+            android:name="fi.ruuvi.android.database.AndroidDatabaseManager"
+            android:parentActivityName="fi.ruuvi.android.MainActivity" />
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="fi.ruuvi.android.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="fi.ruuvi.android.MainActivity" />
 
         <service
-            android:name=".ScannerService"
+            android:name="fi.ruuvi.android.ScannerService"
             android:exported="false" />
 
         <activity
-            android:name=".EditActivity"
+            android:name="fi.ruuvi.android.EditActivity"
             android:label="Edit Ruuvitag"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="fi.ruuvi.android.MainActivity" />
         <activity
-            android:name=".PlotActivity"
+            android:name="fi.ruuvi.android.PlotActivity"
             android:label=""
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="fi.ruuvi.android.MainActivity" />
         <activity
-            android:name=".AlarmEditActivity"
+            android:name="fi.ruuvi.android.AlarmEditActivity"
             android:label="Edit Alarm"
-            android:parentActivityName=".EditActivity"/>
+            android:parentActivityName="fi.ruuvi.android.EditActivity"/>
     </application>
 
 </manifest>
