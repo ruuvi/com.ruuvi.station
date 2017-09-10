@@ -12,16 +12,11 @@ import static junit.framework.Assert.assertEquals;
 
 public class RuuviTagURLParser
 {
-
         @Test
         public void parserTests() throws Exception
         {
-            //
-
             RuuviTag tag = new RuuviTag("0","https://ruu.vi/#BAASADyM5",null,"-87",false);
-            assertEquals(tag.getTemperature(),18);
-
+            assertEquals(tag.temperature,18);
         }
-
 }
 
