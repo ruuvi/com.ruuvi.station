@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RuuviScanner</string>
-    <string name="title_activity_main">My Ruuvitags</string>
-    <string name="title_activity_list">Found ruuvitags</string>
+    <string name="title_activity_main">My RuuviTags</string>
+    <string name="title_activity_list">Found RuuviTags</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
@@ -97,7 +97,7 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="scanner_notification_title">Scanning ruuvitag data</string>
+    <string name="scanner_notification_title">Scanning ruuviTag data</string>
     <string name="scanner_notification_message">You can disable background scanning in settings</string>
     <string name="scanner_notification_ticker">Scanner started</string>
 
