@@ -124,7 +124,8 @@ public class RuuviTag implements Parcelable {
         }
         else if(rawData != null)
         {
-            humidity = ((float) (rawData[1] & 0xFF)) / 2f;
+
+            humidity = ((float) (rawData[3] & 0xFF)) / 2f;
 
             double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
             double tempSign = (rawData[4] >> 7) & 1;

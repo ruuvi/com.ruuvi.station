@@ -5,5 +5,5 @@ package fi.ruuvi.android.util;
  */
 
 public class Utils {
-    public static final java.lang.String DB_TIME_FORMAT = "dd-MM-yyyy, hh:mm:ss";
+    public static final java.lang.String DB_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 }
