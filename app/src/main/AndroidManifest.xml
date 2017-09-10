@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fi.ruuvi.android">
+    package="com.ruuvi.tag">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".RuuviScannerApplication"
+        android:name="com.ruuvi.tag.RuuviScannerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="fi.ruuvi.android.MainActivity"
+            android:name="com.ruuvi.tag.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
             <intent-filter>
@@ -27,35 +27,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="fi.ruuvi.android.ListActivity"
+            android:name="com.ruuvi.tag.ListActivity"
             android:label="@string/title_activity_list"
-            android:parentActivityName="fi.ruuvi.android.MainActivity" />
+            android:parentActivityName="com.ruuvi.tag.MainActivity" />
         <activity
-            android:name="fi.ruuvi.android.database.AndroidDatabaseManager"
-            android:parentActivityName="fi.ruuvi.android.MainActivity" />
+            android:name="com.ruuvi.tag.database.AndroidDatabaseManager"
+            android:parentActivityName="com.ruuvi.tag.MainActivity" />
         <activity
-            android:name="fi.ruuvi.android.settings.SettingsActivity"
+            android:name="com.ruuvi.tag.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="fi.ruuvi.android.MainActivity" />
+            android:parentActivityName="com.ruuvi.tag.MainActivity" />
 
         <service
-            android:name="fi.ruuvi.android.ScannerService"
+            android:name="com.ruuvi.tag.ScannerService"
             android:exported="false" />
 
         <activity
-            android:name="fi.ruuvi.android.EditActivity"
+            android:name="com.ruuvi.tag.EditActivity"
             android:label="Edit Ruuvitag"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden"
-            android:parentActivityName="fi.ruuvi.android.MainActivity" />
+            android:parentActivityName="com.ruuvi.tag.MainActivity" />
         <activity
-            android:name="fi.ruuvi.android.PlotActivity"
+            android:name="com.ruuvi.tag.PlotActivity"
             android:label=""
-            android:parentActivityName="fi.ruuvi.android.MainActivity" />
+            android:parentActivityName="com.ruuvi.tag.MainActivity" />
         <activity
-            android:name="fi.ruuvi.android.AlarmEditActivity"
+            android:name="com.ruuvi.tag.AlarmEditActivity"
             android:label="Edit Alarm"
-            android:parentActivityName="fi.ruuvi.android.EditActivity"/>
+            android:parentActivityName="com.ruuvi.tag.EditActivity"/>
     </application>
 
 </manifest>

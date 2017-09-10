@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fi.ruuvi.android.ListActivity">
+    tools:context="com.ruuvi.tag.ListActivity">
 
     <ListView
         android:id="@+id/listView"
