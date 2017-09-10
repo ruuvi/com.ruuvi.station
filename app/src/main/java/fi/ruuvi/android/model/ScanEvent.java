@@ -34,7 +34,7 @@ public class ScanEvent {
 
     public RuuviTag getData(String tagId) {
         for(int i = 0; i < tags.size(); i++) {
-            if(tags.get(i).getId().equalsIgnoreCase(tagId))
+            if(tags.get(i).id.equalsIgnoreCase(tagId))
             return tags.get(i);
         }
         return null;

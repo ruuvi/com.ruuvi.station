@@ -16,20 +16,20 @@ import fi.ruuvi.android.util.base64;
  */
 
 public class RuuviTag implements Parcelable {
-    private String id;
-    private String url;
-    private String rssi;
-    private double[] data;
-    private String name;
-    private double temperature;
-    private double humidity;
-    private double pressure;
+    public String id;
+    public String url;
+    public String rssi;
+    public double[] data;
+    public String name;
+    public double temperature;
+    public double humidity;
+    public double pressure;
     public boolean favorite;
-    private byte[] rawData;
-    double accelX;
-    double accelY;
-    double accelZ;
-    double voltage;
+    public byte[] rawData;
+    public double accelX;
+    public double accelY;
+    public double accelZ;
+    public double voltage;
 
     public RuuviTag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
         this.id = id;
@@ -65,66 +65,16 @@ public class RuuviTag implements Parcelable {
         return 0;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getRssi() {
-        return rssi;
-    }
-
-    public void setRssi(String rssi) {
-        this.rssi = rssi;
-    }
-
-    public String getTemperature() { return String.valueOf(temperature); }
-
-    public String getHumidity() { return String.valueOf(humidity); }
-
-    public String getPressure() { return String.valueOf(pressure); }
-
-    public double[] getData() {
-        return data;
-    }
-
-    public void setData(double[] data) {
-        this.data = data;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void process()
     {
         if (url != null && url.contains("#"))
         {
             String data = url.split("#")[1];
             rawData = parseByteDataFromB64(data);
-            //parseRuuvitagDataFromB64(data);
             parseRuuviTagDataFromBytes(rawData,2);
-
-
         }
         else if(rawData != null)
         {
-
             humidity = ((float) (rawData[3] & 0xFF)) / 2f;
 
             double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
@@ -146,8 +96,6 @@ public class RuuviTag implements Parcelable {
             accelZ = round(z, 2);
 
             voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 100.0;
-
-
         }
     }
 
@@ -159,32 +107,11 @@ public class RuuviTag implements Parcelable {
             int pData[] = new int[8];
             for (int i = 0; i < bData.length; i++)
                 pData[i] = bData[i] & 0xFF;
-
-
-
             return bData;
         } catch(Exception e) {
             return null;
         }
     }
-    /*
-    private boolean parseRuuvitagDataFromB64(byte[] bData)
-    {
-        try
-        {
-
-            int pData[] = new int[8];
-            for (int i = 0; i < bData.length; i++)
-                pData[i] = bData[i] & 0xFF;
-
-            parseByteData(pData,2);
-
-            return true;
-        } catch(Exception e) {
-            return false;
-        }
-    }*/
-
 
     private void parseRuuviTagDataFromBytes(byte[] bData, int ruuviTagFWVersion )
     {
@@ -215,8 +142,7 @@ public class RuuviTag implements Parcelable {
             humidity = round(humidity, 2);
             pressure = round(pressure, 2);
 
-            setData(new double[]{temperature, humidity, pressure});
-
+            this.data = (new double[]{temperature, humidity, pressure});
         }
     }
 

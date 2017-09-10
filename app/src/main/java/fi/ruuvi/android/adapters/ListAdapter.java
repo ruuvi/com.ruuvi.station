@@ -69,9 +69,9 @@ public class ListAdapter extends ArrayAdapter<RuuviTag> implements View.OnClickL
             result = convertView;
         }
 
-        viewHolder.txtId.setText(ruuviTag.getId());
-        viewHolder.txtUrl.setText(ruuviTag.getUrl());
-        viewHolder.txtRssi.setText(ruuviTag.getRssi() + " dB");
+        viewHolder.txtId.setText(ruuviTag.id);
+        viewHolder.txtUrl.setText(ruuviTag.url);
+        viewHolder.txtRssi.setText(ruuviTag.rssi + " dB");
 
         // Return the completed view to render on screen
         return result;

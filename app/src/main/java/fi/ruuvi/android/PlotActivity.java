@@ -69,9 +69,9 @@ public class PlotActivity extends AppCompatActivity {
         {
             if(series[i] != null)
             {
-                temp[i] = Double.parseDouble(series[i].getTemperature());
-                humidity[i] = Double.parseDouble(series[i].getHumidity());
-                pressure[i] =  Double.parseDouble(series[i].getPressure());
+                temp[i] = series[i].temperature;
+                humidity[i] = series[i].humidity;
+                pressure[i] = series[i].pressure;
             }
         }
     }

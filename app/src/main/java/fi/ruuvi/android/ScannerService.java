@@ -464,7 +464,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
 
     private boolean checkForSameTag(RuuviTag ruuvi) {
         for(RuuviTag ruuviTag : ruuviTagArrayList) {
-            if(ruuvi.getId().equals(ruuviTag.getId())) {
+            if(ruuvi.id.equals(ruuviTag.id)) {
                 return false;
             }
         }
@@ -516,14 +516,14 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     public void save(RuuviTag ruuviTag) {
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
-        if(!Exists(ruuviTag.getId())) {
+        if(!Exists(ruuviTag.id)) {
             ContentValues values = new ContentValues();
-            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.getId());
-            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.getUrl());
-            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.getRssi());
-            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.getTemperature());
-            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.getHumidity());
-            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.getPressure());
+            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.id);
+            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.url);
+            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.rssi);
+            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.temperature);
+            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.humidity);
+            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.pressure);
             values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
             values.put(DBContract.RuuviTagDB.COLUMN_VALUES, "-500,-500,-500,-500,-500,-500,-500,-500");
 
@@ -534,17 +534,17 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     public void update(RuuviTag ruuviTag) {
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
-        if(Exists(ruuviTag.getId())) {
+        if(Exists(ruuviTag.id)) {
             ContentValues values = new ContentValues();
-            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.getId());
-            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.getUrl());
-            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.getRssi());
-            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.getTemperature());
-            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.getHumidity());
-            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.getPressure());
+            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.id);
+            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.url);
+            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.rssi);
+            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.temperature);
+            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.humidity);
+            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.pressure);
             values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
 
-            db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuviTag.getId()), null);
+            db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuviTag.id), null);
         }
     }
 
