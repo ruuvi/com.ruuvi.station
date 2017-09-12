@@ -8,6 +8,7 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -52,6 +53,8 @@ public class RuuviTag extends BaseModel {
     public double accelZ;
     @Column
     public double voltage;
+    @Column
+    public Date updateAt;
 
     public RuuviTag() {
     }

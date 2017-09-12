@@ -46,9 +46,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.util.DeviceIdentifier;
@@ -461,31 +463,26 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     };
 
     public void save(RuuviTag ruuviTag) {
-        String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
-
         if (!Exists(ruuviTag.id)) {
-            //// TODO: 12/09/17 save ruuviTag
+            ruuviTag.updateAt = new Date();
+            ruuviTag.insert();
         }
     }
 
     public void update(RuuviTag ruuviTag) {
-        String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
-
         if (Exists(ruuviTag.id)) {
-            //// TODO: 12/09/17 update ruuviTag
+            ruuviTag.updateAt = new Date();
+            ruuviTag.update();
         }
     }
 
     public boolean Exists(String id) {
-        // TODO: 12/09/17 check if exist with dbflow 
-        /*
-        cursor = db.rawQuery("select 1 from ruuvitag where "+ DBContract.RuuviTagDB.COLUMN_ID+"=?",
-                new String[] { id });
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
-        */
-        return true;
+        // TODO: 12/09/17 check if exist with dbflow
+        long count = SQLite.selectCountOf()
+                .from(RuuviTag.class)
+                .where(RuuviTag_Table.id.eq(id))
+                .count();
+        return count > 0;
     }
 
     @Override
