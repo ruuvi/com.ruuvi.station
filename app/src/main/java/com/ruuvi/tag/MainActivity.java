@@ -28,10 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-import com.ruuvi.tag.database.AndroidDatabaseManager;
 import com.ruuvi.tag.adapters.DBAdapter;
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
 import com.ruuvi.tag.settings.SettingsActivity;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
@@ -41,9 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView beaconListView;
     private Gson gson;
     private Timer timer;
-    private Cursor cursor;
-    private SQLiteDatabase db;
-    private DBHandler handler;
     private View text;
     private boolean bound;
     private SharedPreferences settings;
@@ -62,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     public void openRuuviInBrowser(View v) {
         int index = (Integer) v.getTag();
 
+        // TODO: 12/09/17 open selected tag in browser
+        /*
         cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor != null)
             cursor.moveToFirst();
@@ -69,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
         String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_URL));
         String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
         String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
-
         if(name == null)
             name = id;
 
         Intent intent = new Intent(this, PlotActivity.class);
         intent.putExtra("id", new String[]{id, name});
         startActivity(intent);
+*/
 
         /*
         final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
@@ -99,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-                            adapter.changeCursor(cursor);
+                            //// TODO: 12/09/17 get the list of tags and update the listView
+                            //cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
+                            //adapter.changeCursor(cursor);
                         }
                     });
                 }
@@ -120,19 +117,17 @@ public class MainActivity extends AppCompatActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        handler = new DBHandler(this);
-        db = handler.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
+        //// TODO: 12/09/17 get all ruuviTags, give them to the adapter
 
         beaconListView = (ListView) findViewById(R.id.Tags_listView);
-        adapter = new DBAdapter(this, cursor, 0);
+        //adapter = new DBAdapter(this, cursor, 0);
         beaconListView.setAdapter(adapter);
 
         setTitle(R.string.title_activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,12 +135,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button =(Button) findViewById(R.id.yourbuttonid);
+        Button button =(Button) findViewById(R.id.button_openDatabase);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent dbmanager = new Intent(MainActivity.this, AndroidDatabaseManager.class);
-                startActivity(dbmanager);
+                // here was the old db manager started
             }
         });
 
@@ -184,8 +178,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         }
 
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-        adapter.changeCursor(cursor);
+        // TODO: 12/09/17 update tag listView from db
+        //cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
+        //adapter.changeCursor(cursor);
         text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
     }
 

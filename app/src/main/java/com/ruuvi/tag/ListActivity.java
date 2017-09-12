@@ -19,8 +19,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.model.RuuviTagComplexList;
@@ -37,7 +35,6 @@ public class ListActivity extends AppCompatActivity {
 
     Timer timer;
     SQLiteDatabase db;
-    DBHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +43,6 @@ public class ListActivity extends AppCompatActivity {
         ruuviTagArrayList = new ArrayList<>();
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        handler = new DBHandler(getApplicationContext());
-        db = handler.getReadableDatabase();
-
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
         beaconListView = (ListView)findViewById(R.id.listView);
         adapter = new ListAdapter(ruuviTagArrayList, this);
         beaconListView.setAdapter(adapter);
@@ -62,7 +55,8 @@ public class ListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(ListActivity.this, ScannerService.class);
                 RuuviTag temp = (RuuviTag) adapterView.getItemAtPosition(i);
-                intent.putExtra("favorite", temp);
+                // TODO: 12/09/17 ??
+                //intent.putExtra("favorite", temp);
                 startService(intent);
                 finish();
             }

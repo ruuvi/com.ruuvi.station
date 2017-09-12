@@ -9,33 +9,59 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.data.Blob;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ruuvi.tag.database.LocalDatabase;
 import com.ruuvi.tag.util.base64;
 
 /**
  * Created by tmakinen on 15.6.2017.
  */
 
-public class RuuviTag implements Parcelable {
+@Table(database = LocalDatabase.class)
+public class RuuviTag extends BaseModel {
+    @Column
+    @PrimaryKey
     public String id;
+    @Column
     public String url;
+    @Column
     public String rssi;
     public double[] data;
+    @Column
     public String name;
+    @Column
     public double temperature;
+    @Column
     public double humidity;
+    @Column
     public double pressure;
+    @Column
     public boolean favorite;
+    @Column
+    public Blob rawDataBlob;
     public byte[] rawData;
+    @Column
     public double accelX;
+    @Column
     public double accelY;
+    @Column
     public double accelZ;
+    @Column
     public double voltage;
+
+    public RuuviTag() {
+    }
 
     public RuuviTag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
         this.id = id;
         this.url = url;
         this.rssi = rssi;
         this.rawData = rawData;
+        this.rawDataBlob = new Blob(rawData);
         if(!temporary)
             process();
     }
@@ -60,17 +86,13 @@ public class RuuviTag implements Parcelable {
         this.pressure = Double.valueOf(data[5]);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     public void process()
     {
         if (url != null && url.contains("#"))
         {
             String data = url.split("#")[1];
             rawData = parseByteDataFromB64(data);
+            rawDataBlob = new Blob(rawData);
             parseRuuviTagDataFromBytes(rawData,2);
         }
         else if(rawData != null)
@@ -145,24 +167,6 @@ public class RuuviTag implements Parcelable {
             this.data = (new double[]{temperature, humidity, pressure});
         }
     }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String [] {this.id, this.url, this.rssi,
-                                             String.valueOf(this.temperature),
-                                             String.valueOf(this.humidity),
-                                             String.valueOf(this.pressure)});
-    }
-
-    public static final Parcelable.Creator<RuuviTag> CREATOR
-            = new Parcelable.Creator<RuuviTag>() {
-        public RuuviTag createFromParcel(Parcel in) {
-            return new RuuviTag(in);
-        }
-
-        public RuuviTag[] newArray(int size) {
-            return new RuuviTag[size];
-        }
-    };
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();

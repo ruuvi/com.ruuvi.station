@@ -16,17 +16,10 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 
-
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
-
 public class AlarmEditActivity extends AppCompatActivity {
     private int index;
     private int[] maxValues;
     private CrystalRangeSeekbar rangeSeekbar;
-    private Cursor cursor;
-    private SQLiteDatabase db;
-    private DBHandler handler;
     private TextView temp;
     private int tag;
     private Integer[] valuesArray;
@@ -36,8 +29,6 @@ public class AlarmEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_edit);
-        handler = new DBHandler(this);
-        db = handler.getWritableDatabase();
         maxValues = new int[]{-40,85,0,100,300,1100,-100,0};
         valuesArray = new Integer[8];
 
@@ -45,6 +36,8 @@ public class AlarmEditActivity extends AppCompatActivity {
             index = getIntent().getExtras().getInt("index");
         }
 
+        // TODO: 12/09/17 remove the cursor and replace with dbflow 
+        /*
         cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
         if(cursor.moveToFirst()) {
             String stringValues = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES));
@@ -71,6 +64,7 @@ public class AlarmEditActivity extends AppCompatActivity {
                 index++;
             }
         }
+        */
 
         // get seekbar from view
         rangeSeekbar = (CrystalRangeSeekbar) findViewById(R.id.rangeSeekbar5);
@@ -209,8 +203,9 @@ public class AlarmEditActivity extends AppCompatActivity {
             valuesArray[6] = -500;
             valuesArray[7] = -500;
         }
-        values.put(DBContract.RuuviTagDB.COLUMN_VALUES, commaSeparate(valuesArray));
-        db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
+        // TODO: 12/09/17 update dbflow..
+        //values.put(DBContract.RuuviTagDB.COLUMN_VALUES, commaSeparate(valuesArray));
+        //db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
         finish();
     }
 

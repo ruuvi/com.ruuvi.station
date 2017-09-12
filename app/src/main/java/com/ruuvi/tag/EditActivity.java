@@ -18,16 +18,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
 import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.adapters.EditAdapter;
 
 public class EditActivity extends AppCompatActivity {
-    private Cursor cursor;
-    SQLiteDatabase db;
-    DBHandler handler;
     private int index;
     EditText textfield;
     String id;
@@ -38,8 +32,6 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_edit);
         textfield = (EditText) findViewById(R.id.input_name);
-        handler = new DBHandler(this);
-        db = handler.getWritableDatabase();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +77,8 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        // TODO: 12/09/17 load tag data
+        /*
         cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
 
         if(cursor != null)
@@ -103,16 +97,22 @@ public class EditActivity extends AppCompatActivity {
             textfield.setText(name, TextView.BufferType.NORMAL);
         else
             textfield.setText(id, TextView.BufferType.NORMAL);
+        */
     }
 
     public void save(View view) {
+        // TODO: 12/09/17 update tag
+        /*
         ContentValues values = new ContentValues();
         values.put(DBContract.RuuviTagDB.COLUMN_NAME, textfield.getText().toString());
         db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID="+ index, null);
         cursor.close();
+        */
     }
 
     public void delete(View view) {
+        // TODO: 12/09/17 delete tag
+        /*
         final String selection = DBContract.RuuviTagDB._ID + " LIKE ?";
         final String[] selectionArgs = { String.valueOf(index) };
 
@@ -135,6 +135,7 @@ public class EditActivity extends AppCompatActivity {
         });
 
         builder.show();
+        */
     }
 
     public void openAlarmEdit(View view) {

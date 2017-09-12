@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.ruuvi.tag.R;
-import com.ruuvi.tag.database.DBContract;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.Utils;
 
@@ -25,6 +24,7 @@ import com.ruuvi.tag.util.Utils;
  * Created by tmakinen on 29.6.2017.
  */
 
+// TODO: 12/09/17 refactor and change this class to not use db cursor
 public class DBAdapter extends CursorAdapter {
     private LayoutInflater cursorInflater;
     private Context context;
@@ -49,6 +49,7 @@ public class DBAdapter extends CursorAdapter {
         edit.setTag(cursor.getInt(0));
         www.setTag(cursor.getInt(0));
 
+        /*
         String id = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
         String rssi = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_RSSI));
         String celsius = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_TEMP));
@@ -96,7 +97,7 @@ public class DBAdapter extends CursorAdapter {
             txtLast.setText("MISSING");
             txtLast.setTextColor(Color.RED);
         }
-
+        */
     }
 
     @Override

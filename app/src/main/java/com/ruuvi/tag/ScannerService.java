@@ -53,8 +53,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.ScanEvent;
 import com.ruuvi.tag.util.ComplexPreferences;
@@ -82,9 +80,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
     //private BeaconManager beaconManager;
     private BackgroundPowerSaver bps;
     SharedPreferences settings;
-    DBHandler handler;
-    SQLiteDatabase db;
-    Cursor cursor;
     Region region;
     private String[] titles;
     private String backendUrl;
@@ -136,9 +131,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         bps = new BackgroundPowerSaver(this);
 
         ruuviTagArrayList = new ArrayList<>();
-
-        handler = new DBHandler(getApplicationContext());
-        db = handler.getWritableDatabase();
 
 /*
         beaconManager = BeaconManager.getInstanceForApplication(this);
@@ -517,17 +509,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
         if(!Exists(ruuviTag.id)) {
-            ContentValues values = new ContentValues();
-            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.id);
-            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.url);
-            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.rssi);
-            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.temperature);
-            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.humidity);
-            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.pressure);
-            values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
-            values.put(DBContract.RuuviTagDB.COLUMN_VALUES, "-500,-500,-500,-500,-500,-500,-500,-500");
-
-            long newRowId = db.insert(DBContract.RuuviTagDB.TABLE_NAME, null, values);
+            //// TODO: 12/09/17 save ruuviTag
         }
     }
 
@@ -535,25 +517,19 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         String time = new SimpleDateFormat(Utils.DB_TIME_FORMAT).format(new Date());
 
         if(Exists(ruuviTag.id)) {
-            ContentValues values = new ContentValues();
-            values.put(DBContract.RuuviTagDB.COLUMN_ID, ruuviTag.id);
-            values.put(DBContract.RuuviTagDB.COLUMN_URL, ruuviTag.url);
-            values.put(DBContract.RuuviTagDB.COLUMN_RSSI, ruuviTag.rssi);
-            values.put(DBContract.RuuviTagDB.COLUMN_TEMP, ruuviTag.temperature);
-            values.put(DBContract.RuuviTagDB.COLUMN_HUMI, ruuviTag.humidity);
-            values.put(DBContract.RuuviTagDB.COLUMN_PRES, ruuviTag.pressure);
-            values.put(DBContract.RuuviTagDB.COLUMN_LAST, time);
-
-            db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "id="+ DatabaseUtils.sqlEscapeString(ruuviTag.id), null);
+            //// TODO: 12/09/17 update ruuviTag
         }
     }
 
     public boolean Exists(String id) {
+        /*
         cursor = db.rawQuery("select 1 from ruuvitag where "+ DBContract.RuuviTagDB.COLUMN_ID+"=?",
                 new String[] { id });
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+        */
+        return true;
     }
 
     @Override
@@ -561,8 +537,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         stopForeground(true);
         stopSelf();
         Foreground.get().removeListener(listener);
-        handler.close();
-        db.close();
     }
 
     private void exportDB() {
@@ -575,6 +549,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
         }
 
         try {
+            //// TODO: 12/09/17 export to csv
+            /*
             Cursor curCSV = db.rawQuery("SELECT * FROM ruuvitag", null);
 
             String[] columnNames = {
@@ -612,7 +588,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                 fw.close();
             }
             curCSV.close();
-
+            */
         } catch (Exception sqlEx) {
             Log.e("ScannerService", sqlEx.getMessage(), sqlEx);
         }
@@ -639,6 +615,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            // TODO: 12/09/17 get alerts from dbflow
+                            /*
                             Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
                             while (csr.moveToNext()) {
                                 String _id = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB._ID));
@@ -679,6 +657,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/
                                 }
                             }
                             csr.close();
+                            */
                         }
                     });
                 }
