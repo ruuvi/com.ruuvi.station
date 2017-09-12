@@ -477,7 +477,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     }
 
     public boolean Exists(String id) {
-        // TODO: 12/09/17 check if exist with dbflow
         long count = SQLite.selectCountOf()
                 .from(RuuviTag.class)
                 .where(RuuviTag_Table.id.eq(id))
