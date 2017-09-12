@@ -1,4 +1,4 @@
-package com.ruuvi.tag.settings;
+package com.ruuvi.tag.feature.settings;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

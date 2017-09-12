@@ -1,4 +1,4 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.service;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -8,13 +8,9 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -34,13 +30,11 @@ import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
 import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
-import com.opencsv.CSVWriter;
 
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +47,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
+import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.ScanEvent;
 import com.ruuvi.tag.util.ComplexPreferences;

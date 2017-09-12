@@ -1,4 +1,4 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.list;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +19,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import com.ruuvi.tag.R;
+import com.ruuvi.tag.service.ScannerService;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.model.RuuviTagComplexList;

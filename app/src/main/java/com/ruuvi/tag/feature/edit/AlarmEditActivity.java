@@ -1,4 +1,4 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.edit;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.ruuvi.tag.R;
 
 public class AlarmEditActivity extends AppCompatActivity {
     private int index;

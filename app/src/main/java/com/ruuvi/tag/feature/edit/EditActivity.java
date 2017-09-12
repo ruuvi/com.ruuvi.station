@@ -1,25 +1,18 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.edit;
 
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.Alarm;
-import com.ruuvi.tag.adapters.EditAdapter;
 
 public class EditActivity extends AppCompatActivity {
     private int index;

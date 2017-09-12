@@ -1,11 +1,9 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.main;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -28,8 +26,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import com.ruuvi.tag.feature.edit.EditActivity;
+import com.ruuvi.tag.feature.list.ListActivity;
+import com.ruuvi.tag.R;
+import com.ruuvi.tag.service.ScannerService;
 import com.ruuvi.tag.adapters.DBAdapter;
-import com.ruuvi.tag.settings.SettingsActivity;
+import com.ruuvi.tag.feature.settings.SettingsActivity;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
 public class MainActivity extends AppCompatActivity {
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setTimerForAdvertise();
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 12/09/17 update tag listView from db
         //cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
         //adapter.changeCursor(cursor);
-        text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
+        //text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
     }
 
     @Override
