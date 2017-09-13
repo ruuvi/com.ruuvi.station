@@ -92,10 +92,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle data = intent.getExtras();
-        if (data != null) {
-            save((RuuviTag) data.getParcelable("favorite"));
-        }
         return Service.START_NOT_STICKY;
     }
 
@@ -451,21 +447,22 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         }
     };
 
-    public void save(RuuviTag ruuviTag) {
+    // TODO: 13/09/17 save, update & exist should probably be moved somewhere else
+    public static void save(RuuviTag ruuviTag) {
         if (!Exists(ruuviTag.id)) {
             ruuviTag.updateAt = new Date();
             ruuviTag.insert();
         }
     }
 
-    public void update(RuuviTag ruuviTag) {
+    public static void update(RuuviTag ruuviTag) {
         if (Exists(ruuviTag.id)) {
             ruuviTag.updateAt = new Date();
             ruuviTag.update();
         }
     }
 
-    public boolean Exists(String id) {
+    public static boolean Exists(String id) {
         long count = SQLite.selectCountOf()
                 .from(RuuviTag.class)
                 .where(RuuviTag_Table.id.eq(id))

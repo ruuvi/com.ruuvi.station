@@ -91,6 +91,10 @@ public class RuuviTag extends BaseModel {
         this.pressure = Double.valueOf(data[5]);
     }
 
+    public double getFahrenheit() {
+        return round(this.temperature * 1.8 + 32.0, 2);
+    }
+
     public void process()
     {
         if (url != null && url.contains("#"))

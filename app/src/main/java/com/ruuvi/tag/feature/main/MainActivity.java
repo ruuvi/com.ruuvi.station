@@ -26,9 +26,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import com.ruuvi.tag.adapters.RuuviTagAdapter;
 import com.ruuvi.tag.feature.edit.EditActivity;
 import com.ruuvi.tag.feature.list.ListActivity;
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.plot.PlotActivity;
+import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.service.ScannerService;
 import com.ruuvi.tag.adapters.DBAdapter;
 import com.ruuvi.tag.feature.settings.SettingsActivity;
@@ -36,13 +39,14 @@ import com.ruuvi.tag.util.DeviceIdentifier;
 
 public class MainActivity extends AppCompatActivity {
     ScannerService service;
-    private DBAdapter adapter;
+    private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private Gson gson;
     private Timer timer;
     private View text;
     private boolean bound;
     private SharedPreferences settings;
+    private List<RuuviTag> tags = new ArrayList<>();
 
     public void openList(View view) {
         Intent intent = new Intent(this, ListActivity.class);
@@ -58,22 +62,17 @@ public class MainActivity extends AppCompatActivity {
     public void openRuuviInBrowser(View v) {
         int index = (Integer) v.getTag();
 
-        // TODO: 12/09/17 open selected tag in browser
-        /*
-        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
-        if(cursor != null)
-            cursor.moveToFirst();
+        RuuviTag tag = adapter.getItem(index);
 
-        String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_URL));
-        String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
-        String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
+        String url = tag.url;
+        String id = tag.id;
+        String name = tag.name;
         if(name == null)
             name = id;
 
         Intent intent = new Intent(this, PlotActivity.class);
         intent.putExtra("id", new String[]{id, name});
         startActivity(intent);
-*/
 
         /*
         final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
@@ -97,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            //// TODO: 12/09/17 get the list of tags and update the listView
-                            //cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-                            //adapter.changeCursor(cursor);
+                            adapter.clear();
+                            adapter.addAll(RuuviTag.getAll());
+                            adapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -119,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //// TODO: 12/09/17 get all ruuviTags, give them to the adapter
+        tags = RuuviTag.getAll();
 
         beaconListView = (ListView) findViewById(R.id.Tags_listView);
-        //adapter = new DBAdapter(this, cursor, 0);
+        adapter = new RuuviTagAdapter(getApplicationContext(), tags);
         beaconListView.setAdapter(adapter);
 
         setTitle(R.string.title_activity_main);
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setTimerForAdvertise();
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -180,10 +179,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         }
 
-        // TODO: 12/09/17 update tag listView from db
-        //cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-        //adapter.changeCursor(cursor);
-        //text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
+        adapter.clear();
+        adapter.addAll(RuuviTag.getAll());
+        adapter.notifyDataSetChanged();
     }
 
     @Override

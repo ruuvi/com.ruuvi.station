@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,9 +57,8 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(ListActivity.this, ScannerService.class);
-                RuuviTag temp = (RuuviTag) adapterView.getItemAtPosition(i);
-                // TODO: 12/09/17 ??
-                //intent.putExtra("favorite", temp);
+                RuuviTag tag = (RuuviTag) adapterView.getItemAtPosition(i);
+                ScannerService.save(tag);
                 startService(intent);
                 finish();
             }
