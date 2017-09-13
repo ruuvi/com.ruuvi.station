@@ -53,32 +53,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void editRuuviTag(View view) {
-        Intent intent = new Intent(this, EditActivity.class);
-        intent.putExtra("index", (Integer) view.getTag());
-        startActivity(intent);
-    }
-
-    public void openRuuviInBrowser(View v) {
-        int index = (Integer) v.getTag();
-
-        RuuviTag tag = adapter.getItem(index);
-
-        String url = tag.url;
-        String id = tag.id;
-        String name = tag.name;
-        if(name == null)
-            name = id;
-
-        Intent intent = new Intent(this, PlotActivity.class);
-        intent.putExtra("id", new String[]{id, name});
-        startActivity(intent);
-
-        /*
-        final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-        startActivity(intent);*/
-    }
-
     private void setTimerForAdvertise() {
         timer = new Timer();
         TimerTask updateProfile = new MainActivity.CustomTimerTask();

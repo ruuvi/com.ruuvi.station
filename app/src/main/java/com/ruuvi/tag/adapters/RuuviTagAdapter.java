@@ -1,7 +1,9 @@
 package com.ruuvi.tag.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +15,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.edit.EditActivity;
+import com.ruuvi.tag.feature.main.MainActivity;
+import com.ruuvi.tag.feature.plot.PlotActivity;
 import com.ruuvi.tag.model.RuuviTag;
 
 import java.util.Date;
@@ -30,7 +35,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        RuuviTag tag = getItem(position);
+        final RuuviTag tag = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_main, parent, false);
@@ -64,6 +69,34 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         else
             txtLast.setTextColor(getContext().getResources().getColor(R.color.ap_gray));
 
+        convertView.findViewById(R.id.openInBrowser).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                String url = tag.url;
+                String id = tag.id;
+                String name = tag.name;
+                if(name == null)
+                    name = id;
+
+                Intent intent = new Intent(getContext(), PlotActivity.class);
+                intent.putExtra("id", new String[]{id, name});
+                getContext().startActivity(intent);
+                */
+
+                Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(tag.url));
+                getContext().startActivity(intent);
+            }
+        });
+
+        convertView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), EditActivity.class);
+                intent.putExtra("index", (Integer) view.getTag());
+                getContext().startActivity(intent);
+            }
+        });
         return convertView;
     }
 }
