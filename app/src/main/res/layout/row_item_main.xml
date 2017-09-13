@@ -37,7 +37,7 @@
         app:layout_constraintRight_toLeftOf="@+id/edit"
         app:layout_constraintTop_toTopOf="@+id/id" />
 
-    <ImageButton
+    <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/edit"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -68,7 +68,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/id" />
 
-    <ImageButton
+    <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/openInBrowser"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/imageViewPressure"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/imageViewTemperature"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/imageViewHumidity"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
