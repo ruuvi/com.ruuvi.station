@@ -93,7 +93,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), EditActivity.class);
-                intent.putExtra("index", (Integer) view.getTag());
+                intent.putExtra("id", tag.id);
                 getContext().startActivity(intent);
             }
         });

@@ -190,4 +190,11 @@ public class RuuviTag extends BaseModel {
                 .from(RuuviTag.class)
                 .queryList();
     }
+
+    public static RuuviTag get(String id) {
+        return SQLite.select()
+                .from(RuuviTag.class)
+                .where(RuuviTag_Table.id.eq(id))
+                .querySingle();
+    }
 }

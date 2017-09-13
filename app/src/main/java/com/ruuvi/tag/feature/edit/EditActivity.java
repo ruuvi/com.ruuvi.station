@@ -1,42 +1,51 @@
 package com.ruuvi.tag.feature.edit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.adapters.EditAdapter;
 import com.ruuvi.tag.model.Alarm;
+import com.ruuvi.tag.model.RuuviTag;
 
 public class EditActivity extends AppCompatActivity {
-    private int index;
-    EditText textfield;
-    String id;
-    String name;
+    EditText nameInput;
+    RuuviTag tag;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_edit);
-        textfield = (EditText) findViewById(R.id.input_name);
+        nameInput = findViewById(R.id.input_name);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_alarm);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openAlarmEdit(view);
-                save(null);
+                //save(null);
             }
         });
 
         if(getIntent().getExtras() != null) {
-            index = getIntent().getExtras().getInt("index");
+            tag = RuuviTag.get(getIntent().getExtras().getString("id"));
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.tag_not_found), Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -55,7 +64,7 @@ public class EditActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
-            this.save(null);
+            save(null);
             finish();
         }
 
@@ -70,53 +79,31 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        // TODO: 12/09/17 load tag data
-        /*
-        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
+        tag = RuuviTag.get(tag.id);
 
-        if(cursor != null)
-            cursor.moveToFirst();
-
-        id = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
-        name = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
-        String alarms = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES));
-
-        ArrayList<Alarm> alarmValues = readSeparated(alarms);
-        EditAdapter adapter = new EditAdapter(this, alarmValues);
+        List<Alarm> alarms = Alarm.getForTag(tag.id);
+        EditAdapter adapter = new EditAdapter(this, alarms);
         ListView listView = (ListView) findViewById(R.id.alarmlist);
         listView.setAdapter(adapter);
 
-        if(name != null && !name.isEmpty())
-            textfield.setText(name, TextView.BufferType.NORMAL);
-        else
-            textfield.setText(id, TextView.BufferType.NORMAL);
-        */
+        if(tag.name != null && !tag.name.isEmpty())
+            nameInput.setText(tag.name, TextView.BufferType.NORMAL);
     }
 
     public void save(View view) {
-        // TODO: 12/09/17 update tag
-        /*
-        ContentValues values = new ContentValues();
-        values.put(DBContract.RuuviTagDB.COLUMN_NAME, textfield.getText().toString());
-        db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID="+ index, null);
-        cursor.close();
-        */
+        tag = RuuviTag.get(tag.id);
+        tag.name = nameInput.getText().toString();
+        tag.update();
     }
 
     public void delete(View view) {
-        // TODO: 12/09/17 delete tag
-        /*
-        final String selection = DBContract.RuuviTagDB._ID + " LIKE ?";
-        final String[] selectionArgs = { String.valueOf(index) };
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Delete RuuviTag");
-        builder.setMessage("Are you sure you want to delete this ruuvitag?");
+        builder.setTitle(getString(R.string.tag_delete_title));
+        builder.setMessage(getString(R.string.tag_delete_message));
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                db.delete(DBContract.RuuviTagDB.TABLE_NAME, selection, selectionArgs);
-                cursor.close();
+                tag.delete();
                 finish();
             }
         });
@@ -128,12 +115,11 @@ public class EditActivity extends AppCompatActivity {
         });
 
         builder.show();
-        */
     }
 
     public void openAlarmEdit(View view) {
         Intent intent = new Intent(EditActivity.this, AlarmEditActivity.class);
-        intent.putExtra("index", index);
+        intent.putExtra("id", tag.id);
         startActivity(intent);
     }
 

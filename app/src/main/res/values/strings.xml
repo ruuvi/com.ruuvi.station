@@ -119,4 +119,7 @@
     <string name="alert_notification_rssi_high">RSSI too high!</string>
 
     <string name="no_tags_press_to_add"></string>
+    <string name="tag_not_found">Tag not found</string>
+    <string name="tag_delete_title">Delete RuuviTag</string>
+    <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
 </resources>

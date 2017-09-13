@@ -447,7 +447,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         }
     };
 
-    // TODO: 13/09/17 save, update & exist should probably be moved somewhere else
     public static void save(RuuviTag ruuviTag) {
         if (!Exists(ruuviTag.id)) {
             ruuviTag.updateAt = new Date();
@@ -457,6 +456,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     public static void update(RuuviTag ruuviTag) {
         if (Exists(ruuviTag.id)) {
+            // TODO: 13/09/17 remember the name some better way
+            ruuviTag.name = RuuviTag.get(ruuviTag.id).name;
             ruuviTag.updateAt = new Date();
             ruuviTag.update();
         }
