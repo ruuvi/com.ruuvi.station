@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         tags = RuuviTag.getAll();
+        if (tags.size() > 0) findViewById(R.id.noTags_textView).setVisibility(View.GONE);
 
         beaconListView = (ListView) findViewById(R.id.Tags_listView);
         adapter = new RuuviTagAdapter(getApplicationContext(), tags);
