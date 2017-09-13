@@ -111,14 +111,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button =(Button) findViewById(R.id.button_openDatabase);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // here was the old db manager started
-            }
-        });
-
         setTimerForAdvertise();
         adapter.notifyDataSetChanged();
     }
