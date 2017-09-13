@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -27,13 +26,10 @@ import java.util.TimerTask;
 
 
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
-import com.ruuvi.tag.feature.edit.EditActivity;
 import com.ruuvi.tag.feature.list.ListActivity;
 import com.ruuvi.tag.R;
-import com.ruuvi.tag.feature.plot.PlotActivity;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.service.ScannerService;
-import com.ruuvi.tag.adapters.DBAdapter;
 import com.ruuvi.tag.feature.settings.SettingsActivity;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
