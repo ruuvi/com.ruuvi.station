@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.feature.main.MainActivity;
+import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
@@ -76,7 +77,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private BackgroundPowerSaver bps;
     SharedPreferences settings;
     Region region;
-    private String[] titles;
     private String backendUrl;
     private PlotSource plotSource;
     private Integer[] alertValues;
@@ -105,17 +105,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(mListener);
         notificationId = 1512;
-
-        // TODO: 12/09/17 clean these string names 
-        titles = new String[]{getString(R.string.alert_notification_title0),
-                getString(R.string.alert_notification_title1),
-                getString(R.string.alert_notification_title2),
-                getString(R.string.alert_notification_title3),
-                getString(R.string.alert_notification_title4),
-                getString(R.string.alert_notification_title5),
-                getString(R.string.alert_notification_title6),
-                getString(R.string.alert_notification_title7)
-        };
 
         if (settings.getBoolean("pref_bgscan", false))
             startFG();
@@ -567,49 +556,48 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            // TODO: 12/09/17 get alerts from dbflow
-                            /*
-                            Cursor csr = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-                            while (csr.moveToNext()) {
-                                String _id = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB._ID));
-                                String id = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
-                                String name = csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
-                                Double temp = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_TEMP)));
-                                Double humi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_HUMI)));
-                                Double pres = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_PRES)));
-                                Double rssi = Double.parseDouble(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_RSSI)));
-                                alertValues = readSeparated(csr.getString(csr.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES)));
+                            List<RuuviTag> tags = RuuviTag.getAll();
+                            for (RuuviTag tag: tags) {
+                                List<Alarm> alarms = Alarm.getForTag(tag.id);
 
-                                if(name == null)
-                                    name = id;
+                                // TODO: 12/09/17 check if this really works
+                                // used as notification id so there may be one notification per tag
+                                String _id = tag.id.hashCode() + "";
 
-                                if (alertValues[0] != -500 && temp < alertValues[0]) {
-                                    sendAlert(0, _id, name);
+                                int notificationTextResourceId = -9001;
+                                for (Alarm alarm: alarms) {
+                                    switch (alarm.type) {
+                                        case "temperature":
+                                            if (alarm.low != -500 && tag.temperature < alarm.low)
+                                                notificationTextResourceId = R.string.alert_notification_temperature_low;
+                                            if (alarm.high != -500 && tag.temperature > alarm.high)
+                                                notificationTextResourceId = R.string.alert_notification_temperature_high;
+                                            break;
+                                        case "humidity":
+                                            if (alarm.low != -500 && tag.humidity < alarm.low)
+                                                notificationTextResourceId = R.string.alert_notification_humidity_low;
+                                            if (alarm.high != -500 && tag.humidity > alarm.high)
+                                                notificationTextResourceId = R.string.alert_notification_humidity_high;
+                                            break;
+                                        case "pressure":
+                                            if (alarm.low != -500 && tag.pressure < alarm.low)
+                                                notificationTextResourceId = R.string.alert_notification_pressure_low;
+                                            if (alarm.high != -500 && tag.pressure > alarm.high)
+                                                notificationTextResourceId = R.string.alert_notification_pressure_high;
+                                            break;
+                                        case "rssi":
+                                            if (!Utils.tryParse(tag.rssi)) continue;
+                                            double rssi = Double.parseDouble(tag.rssi);
+                                            if (alarm.low != -500 && rssi < alarm.low)
+                                                notificationTextResourceId = R.string.alert_notification_rssi_low;
+                                            if (alarm.high != -500 && rssi > alarm.high)
+                                                notificationTextResourceId = R.string.alert_notification_rssi_high;
+                                            break;
+                                    }
                                 }
-                                if (alertValues[1] != -500 && temp > alertValues[1]) {
-                                    sendAlert(1, _id, name);
-                                }
-                                if (alertValues[2] != -500 && humi < alertValues[2]) {
-                                    sendAlert(2, _id, name);
-                                }
-                                if (alertValues[3] != -500 && humi > alertValues[3]) {
-                                    sendAlert(3, _id, name);
-                                }
-                                if (alertValues[4] != -500 && pres < alertValues[4]) {
-                                    sendAlert(4, _id, name);
-                                }
-                                if (alertValues[5] != -500 && pres > alertValues[5]) {
-                                    sendAlert(5, _id, name);
-                                }
-                                if (alertValues[6] != -500 && rssi < alertValues[6]) {
-                                    sendAlert(6, _id, name);
-                                }
-                                if (alertValues[7] != -500 && rssi > alertValues[7]) {
-                                    sendAlert(7, _id, name);
-                                }
+                                if (notificationTextResourceId != -9001)
+                                    sendAlert(notificationTextResourceId, _id, tag.name);
                             }
-                            csr.close();
-                            */
                         }
                     });
                 }
@@ -618,19 +606,19 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         }
     }
 
-    private void sendAlert(int type, String _id, String name) {
+    private void sendAlert(int stringResId, String _id, String name) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
-        int notificationid = Integer.parseInt(_id + String.valueOf(type));
+        int notificationid = Integer.parseInt(_id + stringResId);
 
         if (notification == null) {
             notification
                     = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle(name)
                     .setSmallIcon(R.mipmap.ic_launcher_small)
-                    .setTicker(name + " " + titles[type])
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
-                    .setContentText(titles[type])
+                    .setTicker(name + " " + getString(stringResId))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(stringResId)))
+                    .setContentText(getString(stringResId))
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true)
@@ -638,8 +626,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     .setLargeIcon(bitmap);
         } else {
             notification.setContentTitle(name)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(titles[type]))
-                    .setContentText(titles[type]);
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(stringResId)))
+                    .setContentText(getString(stringResId));
         }
 
         NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

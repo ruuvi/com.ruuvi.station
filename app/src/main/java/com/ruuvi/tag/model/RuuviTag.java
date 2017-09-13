@@ -9,11 +9,13 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.data.Blob;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.tag.database.LocalDatabase;
 import com.ruuvi.tag.util.base64;
@@ -177,5 +179,11 @@ public class RuuviTag extends BaseModel {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    public static List<RuuviTag> getAll() {
+        return SQLite.select()
+                .from(RuuviTag.class)
+                .queryList();
     }
 }
