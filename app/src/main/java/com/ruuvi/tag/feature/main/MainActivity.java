@@ -1,11 +1,9 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.main;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -17,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -28,58 +25,28 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-import com.ruuvi.tag.database.AndroidDatabaseManager;
-import com.ruuvi.tag.adapters.DBAdapter;
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
-import com.ruuvi.tag.settings.SettingsActivity;
+import com.ruuvi.tag.adapters.RuuviTagAdapter;
+import com.ruuvi.tag.feature.list.ListActivity;
+import com.ruuvi.tag.R;
+import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.service.ScannerService;
+import com.ruuvi.tag.feature.settings.SettingsActivity;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
 public class MainActivity extends AppCompatActivity {
     ScannerService service;
-    private DBAdapter adapter;
+    private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private Gson gson;
     private Timer timer;
-    private Cursor cursor;
-    private SQLiteDatabase db;
-    private DBHandler handler;
     private View text;
     private boolean bound;
     private SharedPreferences settings;
+    private List<RuuviTag> tags = new ArrayList<>();
 
     public void openList(View view) {
         Intent intent = new Intent(this, ListActivity.class);
         startActivity(intent);
-    }
-
-    public void editRuuviTag(View view) {
-        Intent intent = new Intent(this, EditActivity.class);
-        intent.putExtra("index", (Integer) view.getTag());
-        startActivity(intent);
-    }
-
-    public void openRuuviInBrowser(View v) {
-        int index = (Integer) v.getTag();
-
-        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
-        if(cursor != null)
-            cursor.moveToFirst();
-
-        String url  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_URL));
-        String id  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_ID));
-        String name  = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_NAME));
-
-        if(name == null)
-            name = id;
-
-        Intent intent = new Intent(this, PlotActivity.class);
-        intent.putExtra("id", new String[]{id, name});
-        startActivity(intent);
-
-        /*
-        final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-        startActivity(intent);*/
     }
 
     private void setTimerForAdvertise() {
@@ -99,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-                            adapter.changeCursor(cursor);
+                            adapter.clear();
+                            adapter.addAll(RuuviTag.getAll());
+                            adapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -120,32 +88,22 @@ public class MainActivity extends AppCompatActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-        handler = new DBHandler(this);
-        db = handler.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
+        tags = RuuviTag.getAll();
+        if (tags.size() > 0) findViewById(R.id.noTags_textView).setVisibility(View.GONE);
 
         beaconListView = (ListView) findViewById(R.id.Tags_listView);
-        adapter = new DBAdapter(this, cursor, 0);
+        adapter = new RuuviTagAdapter(getApplicationContext(), tags);
         beaconListView.setAdapter(adapter);
 
         setTitle(R.string.title_activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openList(view);
-            }
-        });
-
-        Button button =(Button) findViewById(R.id.yourbuttonid);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent dbmanager = new Intent(MainActivity.this, AndroidDatabaseManager.class);
-                startActivity(dbmanager);
             }
         });
 
@@ -184,9 +142,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         }
 
-        cursor = db.rawQuery("SELECT * FROM " + DBContract.RuuviTagDB.TABLE_NAME, null);
-        adapter.changeCursor(cursor);
-        text.setVisibility((adapter.isEmpty())?View.VISIBLE:View.GONE);
+        adapter.clear();
+        adapter.addAll(RuuviTag.getAll());
+        adapter.notifyDataSetChanged();
     }
 
     @Override

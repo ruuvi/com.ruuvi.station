@@ -1,4 +1,4 @@
-package com.ruuvi.tag.settings;
+package com.ruuvi.tag.feature.settings;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

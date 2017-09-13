@@ -109,12 +109,21 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_graph">Graph</string>
 
-    <string name="alert_notification_title0">Temperature too low!</string>
-    <string name="alert_notification_title1">Temperature too high!</string>
-    <string name="alert_notification_title2">Humidity too low!</string>
-    <string name="alert_notification_title3">Humidity too high!</string>
-    <string name="alert_notification_title4">Pressure too low!</string>
-    <string name="alert_notification_title5">Pressure too high!</string>
-    <string name="alert_notification_title6">RSSI too low!</string>
-    <string name="alert_notification_title7">RSSI too high!</string>
+    <string name="alert_notification_temperature_low">Temperature too low!</string>
+    <string name="alert_notification_temperature_high">Temperature too high!</string>
+    <string name="alert_notification_humidity_low">Humidity too low!</string>
+    <string name="alert_notification_humidity_high">Humidity too high!</string>
+    <string name="alert_notification_pressure_low">Pressure too low!</string>
+    <string name="alert_notification_pressure_high">Pressure too high!</string>
+    <string name="alert_notification_rssi_low">RSSI too low!</string>
+    <string name="alert_notification_rssi_high">RSSI too high!</string>
+
+    <string name="no_tags_press_to_add"></string>
+    <string name="tag_not_found">Tag not found</string>
+    <string name="tag_delete_title">Delete RuuviTag</string>
+    <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Air Pressure</string>
+    <string name="rssi">RSSI</string>
 </resources>

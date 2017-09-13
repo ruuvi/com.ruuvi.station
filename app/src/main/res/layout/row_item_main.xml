@@ -1,202 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="81dp">
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="01:01:01:01:01:01"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/rssi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="0dp"
-
-        android:layout_marginTop="0dp"
-        android:text="-39 dB"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/id"
-        app:layout_constraintRight_toLeftOf="@+id/edit"
-        app:layout_constraintTop_toTopOf="@+id/id" />
-
-    <ImageButton
-        android:id="@+id/edit"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/clear"
-        android:backgroundTint="@color/clear"
-        android:backgroundTintMode="src_over"
-        android:clickable="true"
-        android:onClick="editRuuviTag"
-        android:tint="@color/red"
-        app:layout_constraintBottom_toBottomOf="@+id/id"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/id"
-        app:srcCompat="@drawable/ic_more_horiz_black_24dp"
-        app:layout_constraintVertical_bias="0.454" />
-
-    <TextView
-        android:id="@+id/lastseen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:text="lastseen"
-        android:textColor="@color/ap_gray"
-        android:textSize="10sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id" />
-
-    <ImageButton
-        android:id="@+id/openInBrowser"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@color/clear"
-        android:backgroundTint="@color/clear"
-        android:backgroundTintMode="@color/clear"
-        android:cropToPadding="false"
-        android:onClick="openRuuviInBrowser"
-        android:padding="10dp"
-        android:tint="@android:color/holo_red_dark"
-        app:srcCompat="@drawable/web"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="3dp"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastseen"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="10dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageViewPressure"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="2dp"
-                android:layout_marginRight="2dp"
-                android:tint="@color/red"
-                app:layout_constraintBottom_toBottomOf="@+id/pressure"
-                app:layout_constraintRight_toLeftOf="@+id/pressure"
-                app:layout_constraintTop_toTopOf="@+id/pressure"
-                app:srcCompat="@drawable/pressure" />
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="81dp">
 
             <TextView
-                android:id="@+id/pressure"
+                android:id="@+id/id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="0dp"
-                android:layout_weight="1"
-                android:text="1000 hPa"
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.504"
-                app:layout_constraintLeft_toRightOf="@+id/humidity"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lastseen" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageViewTemperature"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="2dp"
-                android:layout_marginRight="0dp"
-                android:tint="@color/red"
-                app:layout_constraintBottom_toBottomOf="@+id/temperature"
-                app:layout_constraintRight_toLeftOf="@+id/temperature"
-                app:layout_constraintTop_toTopOf="@+id/temperature"
-                app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/temp" />
-
-            <TextView
-                android:id="@+id/temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="29.0 *C / 75.4 *F"
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.504"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="01:01:01:01:01:01"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/humidity"
-                app:layout_constraintTop_toBottomOf="@+id/lastseen" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageViewHumidity"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="2dp"
-                android:layout_marginRight="2dp"
-                android:tint="@color/red"
-                app:layout_constraintBottom_toBottomOf="@+id/humidity"
-                app:layout_constraintRight_toLeftOf="@+id/humidity"
-                app:layout_constraintTop_toTopOf="@+id/humidity"
-                app:srcCompat="@drawable/humidity" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/humidity"
+                android:id="@+id/rssi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="45 %"
-                android:textSize="15sp"
+
+                android:text="-39 dB"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/id"
+                app:layout_constraintRight_toLeftOf="@+id/edit"
+                app:layout_constraintTop_toTopOf="@+id/id" />
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/edit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/clear"
+                android:backgroundTint="@color/clear"
+                android:backgroundTintMode="src_over"
+                android:clickable="true"
+                android:tint="@color/red"
+                app:layout_constraintBottom_toBottomOf="@+id/id"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/id"
+                app:layout_constraintVertical_bias="0.454"
+                app:srcCompat="@drawable/ic_more_horiz_black_24dp" />
+
+            <TextView
+                android:id="@+id/lastseen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="lastseen"
+                android:textColor="@color/ap_gray"
+                android:textSize="10sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/id" />
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/openInBrowser"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/clear"
+                android:backgroundTint="@color/clear"
+                android:backgroundTintMode="@color/clear"
+                android:cropToPadding="false"
+                android:padding="10dp"
+                android:tint="@android:color/holo_red_dark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:srcCompat="@drawable/web" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="3dp"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lastseen" />
-        </LinearLayout>
-    </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/lastseen">
 
-</android.support.constraint.ConstraintLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/imageViewPressure"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="2dp"
+                        android:tint="@color/red"
+                        app:layout_constraintBottom_toBottomOf="@+id/pressure"
+                        app:layout_constraintRight_toLeftOf="@+id/pressure"
+                        app:layout_constraintTop_toTopOf="@+id/pressure"
+                        app:srcCompat="@drawable/pressure" />
+
+                    <TextView
+                        android:id="@+id/pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="0dp"
+                        android:layout_weight="1"
+                        android:text="1000 hPa"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHorizontal_bias="0.504"
+                        app:layout_constraintLeft_toRightOf="@+id/humidity"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastseen" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/imageViewTemperature"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="0dp"
+                        android:tint="@color/red"
+                        app:layout_constraintBottom_toBottomOf="@+id/temperature"
+                        app:layout_constraintRight_toLeftOf="@+id/temperature"
+                        app:layout_constraintTop_toTopOf="@+id/temperature"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:srcCompat="@drawable/temp" />
+
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="29.0 *C / 75.4 *F"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHorizontal_bias="0.504"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@+id/humidity"
+                        app:layout_constraintTop_toBottomOf="@+id/lastseen" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/imageViewHumidity"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="2dp"
+                        android:tint="@color/red"
+                        app:layout_constraintBottom_toBottomOf="@+id/humidity"
+                        app:layout_constraintRight_toLeftOf="@+id/humidity"
+                        app:layout_constraintTop_toTopOf="@+id/humidity"
+                        app:srcCompat="@drawable/humidity" />
+
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="45 %"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastseen" />
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

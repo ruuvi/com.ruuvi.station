@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ruuvi.tag.MainActivity"
+    tools:context="com.ruuvi.tag.feature.main.MainActivity"
     tools:showIn="@layout/activity_main"
     android:background="@color/white">
 
@@ -13,12 +13,10 @@
         android:id="@+id/noTags_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Press + to add RuuviTag"
-
+        android:text="@string/no_tags_press_to_add"
         android:textColor="@color/black"
         android:textSize="@dimen/title_font_size"
         android:textStyle="bold"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,6 +27,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:padding="4dp"
+        />
 
 </android.support.constraint.ConstraintLayout>

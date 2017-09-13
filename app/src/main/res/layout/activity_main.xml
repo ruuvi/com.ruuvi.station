@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ruuvi.tag.MainActivity">
+    tools:context="com.ruuvi.tag.feature.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -24,22 +24,13 @@
         android:id="@+id/include" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_plus_sign"
         android:tint="@color/white"
-        app:backgroundTint="?attr/colorPrimary"/>
-
-    <Button
-        android:id="@+id/yourbuttonid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:text="Open database"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="bottom|center_horizontal" />
+        app:backgroundTint="?attr/colorPrimary"
+        app:srcCompat="@drawable/ic_plus_sign" />
 
 </android.support.design.widget.CoordinatorLayout>

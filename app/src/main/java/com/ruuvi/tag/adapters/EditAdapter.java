@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 import com.ruuvi.tag.R;
@@ -18,7 +19,7 @@ import com.ruuvi.tag.model.Alarm;
  */
 
 public class EditAdapter extends ArrayAdapter<Alarm> {
-    public EditAdapter(Context context, ArrayList<Alarm> alarms) {
+    public EditAdapter(Context context, List<Alarm> alarms) {
         super(context, 0, alarms);
     }
 
@@ -30,7 +31,11 @@ public class EditAdapter extends ArrayAdapter<Alarm> {
         }
         TextView type = (TextView) convertView.findViewById(R.id.alarm_name);
         TextView range = (TextView) convertView.findViewById(R.id.alarm_range);
-        type.setText(alarm.type);
+        type.setText(alarm.type == Alarm.TEMPERATURE ? getContext().getString(R.string.temperature) :
+                        alarm.type == Alarm.HUMIDITY ? getContext().getString(R.string.humidity) :
+                        alarm.type == Alarm.PERSSURE ? getContext().getString(R.string.pressure) :
+                        getContext().getString(R.string.rssi)
+        );
         range.setText("Normal range: " + String.valueOf(alarm.low) + " - " + String.valueOf(alarm.high));
         return convertView;
     }

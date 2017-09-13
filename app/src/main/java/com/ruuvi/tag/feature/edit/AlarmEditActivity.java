@@ -1,4 +1,4 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.edit;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -11,65 +11,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.ruuvi.tag.R;
+import com.ruuvi.tag.model.Alarm;
 
-
-import com.ruuvi.tag.database.DBContract;
-import com.ruuvi.tag.database.DBHandler;
+import java.util.AbstractMap;
+import java.util.List;
 
 public class AlarmEditActivity extends AppCompatActivity {
-    private int index;
+    private String tagId;
     private int[] maxValues;
     private CrystalRangeSeekbar rangeSeekbar;
-    private Cursor cursor;
-    private SQLiteDatabase db;
-    private DBHandler handler;
     private TextView temp;
-    private int tag;
+    private int viewTag;
     private Integer[] valuesArray;
+    private List<Alarm> alarms;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_edit);
-        handler = new DBHandler(this);
-        db = handler.getWritableDatabase();
         maxValues = new int[]{-40,85,0,100,300,1100,-100,0};
         valuesArray = new Integer[8];
 
         if(getIntent().getExtras() != null) {
-            index = getIntent().getExtras().getInt("index");
+            tagId = getIntent().getExtras().getString("tagId");
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.tag_not_found), Toast.LENGTH_SHORT).show();
+            finish();
         }
+        alarms = Alarm.getForTag(tagId);
 
-        cursor = db.query(DBContract.RuuviTagDB.TABLE_NAME, null, "_ID= ?", new String[] { "" + index }, null, null, null);
-        if(cursor.moveToFirst()) {
-            String stringValues = cursor.getString(cursor.getColumnIndex(DBContract.RuuviTagDB.COLUMN_VALUES));
-            Integer[] temp = readSeparated(stringValues);
-            int index = 0;
-            for(Integer i : temp) {
-                if(i != -500) {
-                    valuesArray[index] = i;
-                    if(index == 0 | index == 1) {
-                        ((CheckBox) findViewById(R.id.check_temp)).setChecked(true);
-                    }
-                    if(index == 2 | index == 3) {
-                        ((CheckBox) findViewById(R.id.check_humi)).setChecked(true);
-                    }
-                    if(index == 4 | index == 5) {
-                        ((CheckBox) findViewById(R.id.check_pres)).setChecked(true);
-                    }
-                    if(index == 6 | index == 7) {
-                        ((CheckBox) findViewById(R.id.check_rssi)).setChecked(true);
-                    }
-                } else {
-                    valuesArray[index] = maxValues[index];
-                }
-                index++;
-            }
+        for (Alarm alarm: alarms) {
+            if (alarm.type == Alarm.TEMPERATURE) ((CheckBox)findViewById(R.id.check_temp)).setChecked(true);
+            if (alarm.type == Alarm.HUMIDITY) ((CheckBox)findViewById(R.id.check_humi)).setChecked(true);
+            if (alarm.type == Alarm.PERSSURE) ((CheckBox)findViewById(R.id.check_pres)).setChecked(true);
+            if (alarm.type == Alarm.RSSI) ((CheckBox)findViewById(R.id.check_rssi)).setChecked(true);
         }
 
         // get seekbar from view
@@ -101,69 +83,59 @@ public class AlarmEditActivity extends AppCompatActivity {
         temp = (TextView) findViewById(view.getId());
         temp.setPaintFlags(temp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         temp.setText(temp.getText());
+        viewTag = Integer.parseInt(view.getTag().toString());
+        Alarm theAlarm = null;
+        for (Alarm alarm: alarms) {
+            if (alarm.type == viewTag) theAlarm = alarm;
+        }
+        if (theAlarm == null) {
+            int arrOffset = 0;
+            if (viewTag == Alarm.HUMIDITY) arrOffset = 2;
+            else if (viewTag == Alarm.PERSSURE) arrOffset = 4;
+            else if (viewTag == Alarm.RSSI) arrOffset = 6;
+            theAlarm = new Alarm(maxValues[arrOffset], maxValues[arrOffset + 1], viewTag, tagId);
+            alarms.add(theAlarm);
+        }
 
-        tag = Integer.parseInt(view.getTag().toString());
-
-        switch(tag) {
-            case 1: {
+        switch(viewTag) {
+            case Alarm.TEMPERATURE: {
                 rangeSeekbar.setMinValue(maxValues[0]);
                 rangeSeekbar.setMaxValue(maxValues[1]);
-                rangeSeekbar.setMinStartValue(valuesArray[0]);
-                rangeSeekbar.setMaxStartValue(valuesArray[1]);
-                rangeSeekbar.apply();
                 break;
                 }
-            case 2: {
+            case Alarm.HUMIDITY: {
                 rangeSeekbar.setMinValue(maxValues[2]);
                 rangeSeekbar.setMaxValue(maxValues[3]);
-                rangeSeekbar.setMinStartValue(valuesArray[2]);
-                rangeSeekbar.setMaxStartValue(valuesArray[3]);
-                rangeSeekbar.apply();
                 break;
             }
-            case 3: {
+            case Alarm.PERSSURE: {
                 rangeSeekbar.setMinValue(maxValues[4]);
                 rangeSeekbar.setMaxValue(maxValues[5]);
-                rangeSeekbar.setMinStartValue(valuesArray[4]);
-                rangeSeekbar.setMaxStartValue(valuesArray[5]);
-                rangeSeekbar.apply();
                 break;
             }
-            case 4: {
+            case Alarm.RSSI: {
                 rangeSeekbar.setMinValue(maxValues[6]);
                 rangeSeekbar.setMaxValue(maxValues[7]);
-                rangeSeekbar.setMinStartValue(valuesArray[6]);
-                rangeSeekbar.setMaxStartValue(valuesArray[7]);
-                rangeSeekbar.apply();
                 break;
             }
         }
+        rangeSeekbar.setMinStartValue(theAlarm.low);
+        rangeSeekbar.setMaxStartValue(theAlarm.high);
+        rangeSeekbar.apply();
 
         rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
             @Override
             public void finalValue(Number minValue, Number maxValue) {
-                switch(tag) {
-                    case 1: {
-                        valuesArray[0] = minValue.intValue();
-                        valuesArray[1] = maxValue.intValue();
-                        break;
-                    }
-                    case 2: {
-                        valuesArray[2] = minValue.intValue();
-                        valuesArray[3] = maxValue.intValue();
-                        break;
-                    }
-                    case 3: {
-                        valuesArray[4] = minValue.intValue();
-                        valuesArray[5] = maxValue.intValue();
-                        break;
-                    }
-                    case 4: {
-                        valuesArray[6] = minValue.intValue();
-                        valuesArray[7] = maxValue.intValue();
-                        break;
-                    }
+                Alarm theAlarm = null;
+                for (Alarm alarm: alarms) {
+                    if (alarm.type == viewTag) theAlarm = alarm;
                 }
+                if (theAlarm == null) {
+                    theAlarm = new Alarm(maxValues[0], maxValues[1], viewTag, tagId);
+                    alarms.add(theAlarm);
+                }
+                theAlarm.low = minValue.intValue();
+                theAlarm.high = maxValue.intValue();
             }
         });
     }
@@ -177,7 +149,7 @@ public class AlarmEditActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
-            this.save(null);
+            save(null);
         }
 
         return super.onOptionsItemSelected(item);
@@ -191,26 +163,43 @@ public class AlarmEditActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
-        ContentValues values = new ContentValues();
-
-        if(!((CheckBox) findViewById(R.id.check_temp)).isChecked()) {
-            valuesArray[0] = -500;
-            valuesArray[1] = -500;
+        // TODO: 13/09/17 do this in a non-stupid way
+        for (Alarm alarm: alarms) {
+            switch (alarm.type) {
+                case Alarm.TEMPERATURE:
+                    if (((CheckBox)findViewById(R.id.check_temp)).isChecked()) {
+                        if (alarm.id == 0) alarm.save();
+                        else alarm.update();
+                    } else {
+                        if (alarm.id != 0) alarm.delete();
+                    }
+                    break;
+                case Alarm.HUMIDITY:
+                    if (((CheckBox)findViewById(R.id.check_humi)).isChecked()) {
+                        if (alarm.id == 0) alarm.save();
+                        else alarm.update();
+                    } else {
+                        if (alarm.id != 0) alarm.delete();
+                    }
+                    break;
+                case Alarm.PERSSURE:
+                    if (((CheckBox)findViewById(R.id.check_pres)).isChecked()) {
+                        if (alarm.id == 0) alarm.save();
+                        else alarm.update();
+                    } else {
+                        if (alarm.id != 0) alarm.delete();
+                    }
+                    break;
+                case Alarm.RSSI:
+                    if (((CheckBox)findViewById(R.id.check_rssi)).isChecked()) {
+                        if (alarm.id == 0) alarm.save();
+                        else alarm.update();
+                    } else {
+                        if (alarm.id != 0) alarm.delete();
+                    }
+                    break;
+            }
         }
-        if(!((CheckBox) findViewById(R.id.check_humi)).isChecked()) {
-            valuesArray[2] = -500;
-            valuesArray[3] = -500;
-        }
-        if(!((CheckBox) findViewById(R.id.check_pres)).isChecked()) {
-            valuesArray[4] = -500;
-            valuesArray[5] = -500;
-        }
-        if(!((CheckBox) findViewById(R.id.check_rssi)).isChecked()) {
-            valuesArray[6] = -500;
-            valuesArray[7] = -500;
-        }
-        values.put(DBContract.RuuviTagDB.COLUMN_VALUES, commaSeparate(valuesArray));
-        db.update(DBContract.RuuviTagDB.TABLE_NAME, values, "_ID= ?", new String[] { "" + index });
         finish();
     }
 

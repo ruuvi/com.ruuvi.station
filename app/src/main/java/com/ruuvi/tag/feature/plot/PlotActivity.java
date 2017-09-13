@@ -1,4 +1,4 @@
-package com.ruuvi.tag;
+package com.ruuvi.tag.feature.plot;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 
+import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.PlotSource;
 
