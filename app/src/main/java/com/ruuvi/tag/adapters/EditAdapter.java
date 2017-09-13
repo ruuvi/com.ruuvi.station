@@ -31,7 +31,11 @@ public class EditAdapter extends ArrayAdapter<Alarm> {
         }
         TextView type = (TextView) convertView.findViewById(R.id.alarm_name);
         TextView range = (TextView) convertView.findViewById(R.id.alarm_range);
-        type.setText(alarm.type);
+        type.setText(alarm.type == Alarm.TEMPERATURE ? getContext().getString(R.string.temperature) :
+                        alarm.type == Alarm.HUMIDITY ? getContext().getString(R.string.humidity) :
+                        alarm.type == Alarm.PERSSURE ? getContext().getString(R.string.pressure) :
+                        getContext().getString(R.string.rssi)
+        );
         range.setText("Normal range: " + String.valueOf(alarm.low) + " - " + String.valueOf(alarm.high));
         return convertView;
     }

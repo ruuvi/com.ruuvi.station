@@ -37,7 +37,6 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openAlarmEdit(view);
-                //save(null);
             }
         });
 
@@ -103,6 +102,8 @@ public class EditActivity extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                List<Alarm> alarms = Alarm.getForTag(tag.id);
+                for (Alarm alarm: alarms) alarm.delete();
                 tag.delete();
                 finish();
             }
@@ -119,7 +120,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void openAlarmEdit(View view) {
         Intent intent = new Intent(EditActivity.this, AlarmEditActivity.class);
-        intent.putExtra("id", tag.id);
+        intent.putExtra("tagId", tag.id);
         startActivity(intent);
     }
 
@@ -131,40 +132,5 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    public ArrayList<Alarm> readSeparated(String data) {
-        String[] linevector;
-        int index = 0;
-
-        linevector = data.split(",");
-
-        Integer[] values = new Integer[8];
-
-        for(String l : linevector) {
-            try {
-                values[index] = (Integer.parseInt(l));
-            } catch (NumberFormatException e) {
-                values[index] = (null);
-            }
-            index++;
-        }
-
-        ArrayList<Alarm> alarms = new ArrayList<>();
-
-        if(values[0] != -500 && values[1] != -500) {
-            alarms.add(new Alarm(values[0], values[1], "Temperature"));
-        }
-        if(values[2] != -500 && values[3] != -500) {
-            alarms.add(new Alarm(values[2], values[3], "Humidity"));
-        }
-        if(values[4] != -500 && values[5] != -500) {
-            alarms.add(new Alarm(values[4], values[5], "Pressure"));
-        }
-        if(values[6] != -500 && values[7] != -500) {
-            alarms.add(new Alarm(values[6], values[7], "RSSI"));
-        }
-
-        return alarms;
     }
 }

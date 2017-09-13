@@ -555,35 +555,36 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                         @Override
                         public void run() {
                             List<RuuviTag> tags = RuuviTag.getAll();
-                            for (RuuviTag tag: tags) {
+                            for (int i = 0; i < tags.size(); i++) {
+                                RuuviTag tag = tags.get(i);
                                 List<Alarm> alarms = Alarm.getForTag(tag.id);
 
                                 // TODO: 12/09/17 check if this really works
                                 // used as notification id so there may be one notification per tag
-                                String _id = tag.id.hashCode() + "";
+                                String _id = i + "";
 
                                 int notificationTextResourceId = -9001;
                                 for (Alarm alarm: alarms) {
                                     switch (alarm.type) {
-                                        case "temperature":
+                                        case Alarm.TEMPERATURE:
                                             if (alarm.low != -500 && tag.temperature < alarm.low)
                                                 notificationTextResourceId = R.string.alert_notification_temperature_low;
                                             if (alarm.high != -500 && tag.temperature > alarm.high)
                                                 notificationTextResourceId = R.string.alert_notification_temperature_high;
                                             break;
-                                        case "humidity":
+                                        case Alarm.HUMIDITY:
                                             if (alarm.low != -500 && tag.humidity < alarm.low)
                                                 notificationTextResourceId = R.string.alert_notification_humidity_low;
                                             if (alarm.high != -500 && tag.humidity > alarm.high)
                                                 notificationTextResourceId = R.string.alert_notification_humidity_high;
                                             break;
-                                        case "pressure":
+                                        case Alarm.PERSSURE:
                                             if (alarm.low != -500 && tag.pressure < alarm.low)
                                                 notificationTextResourceId = R.string.alert_notification_pressure_low;
                                             if (alarm.high != -500 && tag.pressure > alarm.high)
                                                 notificationTextResourceId = R.string.alert_notification_pressure_high;
                                             break;
-                                        case "rssi":
+                                        case Alarm.RSSI:
                                             if (!Utils.tryParse(tag.rssi)) continue;
                                             double rssi = Double.parseDouble(tag.rssi);
                                             if (alarm.low != -500 && rssi < alarm.low)

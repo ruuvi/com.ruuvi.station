@@ -15,6 +15,11 @@ import java.util.List;
 
 @Table(database = LocalDatabase.class)
 public class Alarm extends BaseModel {
+    public static final int TEMPERATURE = 0;
+    public static final int HUMIDITY = 1;
+    public static final int PERSSURE = 2;
+    public static final int RSSI = 3;
+
     @Column
     @PrimaryKey(autoincrement = true)
     public int id;
@@ -25,15 +30,16 @@ public class Alarm extends BaseModel {
     @Column
     public int high;
     @Column
-    public String type;
+    public int type;
 
     public Alarm() {
     }
 
-    public Alarm(int low, int high, String type) {
+    public Alarm(int low, int high, int type, String tagId) {
         this.low = low;
         this.high = high;
         this.type = type;
+        this.ruuviTagId = tagId;
     }
 
     public static List<Alarm> getForTag(String id) {

@@ -122,4 +122,8 @@
     <string name="tag_not_found">Tag not found</string>
     <string name="tag_delete_title">Delete RuuviTag</string>
     <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Air Pressure</string>
+    <string name="rssi">RSSI</string>
 </resources>
