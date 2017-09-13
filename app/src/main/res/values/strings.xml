@@ -117,4 +117,6 @@
     <string name="alert_notification_pressure_high">Pressure too high!</string>
     <string name="alert_notification_rssi_low">RSSI too low!</string>
     <string name="alert_notification_rssi_high">RSSI too high!</string>
+
+    <string name="no_tags_press_to_add"></string>
 </resources>

@@ -13,7 +13,7 @@
         android:id="@+id/noTags_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Press + to add RuuviTag"
+        android:text="@string/no_tags_press_to_add"
         android:textColor="@color/black"
         android:textSize="@dimen/title_font_size"
         android:textStyle="bold"
