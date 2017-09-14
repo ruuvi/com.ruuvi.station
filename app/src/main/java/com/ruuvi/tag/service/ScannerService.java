@@ -561,7 +561,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
                                 // TODO: 12/09/17 check if this really works
                                 // used as notification id so there may be one notification per tag
-                                String _id = i + "";
 
                                 int notificationTextResourceId = -9001;
                                 for (Alarm alarm: alarms) {
@@ -595,7 +594,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                                     }
                                 }
                                 if (notificationTextResourceId != -9001)
-                                    sendAlert(notificationTextResourceId, _id, tag.name);
+                                    sendAlert(notificationTextResourceId, i, tag.name);
                             }
                         }
                     });
@@ -605,10 +604,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         }
     }
 
-    private void sendAlert(int stringResId, String _id, String name) {
+    private void sendAlert(int stringResId, int _id, String name) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
-        int notificationid = Integer.parseInt(_id + stringResId);
+        int notificationid = _id + stringResId;
 
         if (notification == null) {
             notification
