@@ -97,7 +97,7 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="scanner_notification_title">Scanning ruuviTag data</string>
+    <string name="scanner_notification_title">Scanning RuuviTags..</string>
     <string name="scanner_notification_message">You can disable background scanning in settings</string>
     <string name="scanner_notification_ticker">Scanner started</string>
 
