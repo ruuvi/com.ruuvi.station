@@ -452,6 +452,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         if (!Exists(ruuviTag.id)) {
             ruuviTag.updateAt = new Date();
             ruuviTag.insert();
+            TagSensorReading reading = new TagSensorReading(ruuviTag);
+            reading.save();
         }
     }
 
@@ -461,6 +463,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             ruuviTag.name = RuuviTag.get(ruuviTag.id).name;
             ruuviTag.updateAt = new Date();
             ruuviTag.update();
+            TagSensorReading reading = new TagSensorReading(ruuviTag);
+            reading.save();
         }
     }
 
