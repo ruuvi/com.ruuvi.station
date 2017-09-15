@@ -72,20 +72,17 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         convertView.findViewById(R.id.openInBrowser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                String url = tag.url;
                 String id = tag.id;
-                String name = tag.name;
-                if(name == null)
-                    name = id;
 
                 Intent intent = new Intent(getContext(), PlotActivity.class);
-                intent.putExtra("id", new String[]{id, name});
+                intent.putExtra("id", id);
                 getContext().startActivity(intent);
-                */
 
+                /*
+                String url = tag.url;
                 Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(tag.url));
                 getContext().startActivity(intent);
+                */
             }
         });
 

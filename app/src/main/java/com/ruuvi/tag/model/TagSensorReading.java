@@ -3,10 +3,12 @@ package com.ruuvi.tag.model;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.tag.database.LocalDatabase;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by elias on 15.9.2017.
@@ -49,5 +51,12 @@ public class TagSensorReading extends BaseModel {
         this.pressure = tag.pressure;
         this.rssi = tag.rssi;
         this.createdAt = new Date();
+    }
+
+    public static List<TagSensorReading> getForTag(String id) {
+        return SQLite.select()
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.tagId.eq(id))
+                .queryList();
     }
 }
