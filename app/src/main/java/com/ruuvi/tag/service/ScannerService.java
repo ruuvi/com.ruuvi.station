@@ -53,6 +53,7 @@ import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
+import com.ruuvi.tag.model.TagSensorReading;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.util.DeviceIdentifier;
 import com.ruuvi.tag.util.Foreground;
@@ -206,10 +207,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     EddystoneURL es = (EddystoneURL) structure;
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
                         // Creates temporary ruuvitag-object, without heavy calculations
-                        RuuviTag temp = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, "" + element.rssi, true);
+                        RuuviTag temp = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, true);
                         if (checkForSameTag(temp)) {
                             // Creates real object, with temperature etc. calculated
-                            RuuviTag real = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, "" + element.rssi, false);
+                            RuuviTag real = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
                             ruuviTagArrayList.add(real);
                             update(real);
                             scanEvent.addRuuviTag(real);
@@ -223,10 +224,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     if (es.getCompanyId() == 0x0499) {
                         byte[] data = es.getData();
                         if (data != null) {
-                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(), null, data, "" + element.rssi, true);
+                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, true);
                             if (checkForSameTag(tempTag)) {
                                 // Creates real object, with temperature etc. calculated
-                                RuuviTag real = new RuuviTag(element.device.getAddress(), null, data, "" + element.rssi, false);
+                                RuuviTag real = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
                                 ruuviTagArrayList.add(real);
                                 update(real);
                                 scanEvent.addRuuviTag(real);
@@ -584,11 +585,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                                                 notificationTextResourceId = R.string.alert_notification_pressure_high;
                                             break;
                                         case Alarm.RSSI:
-                                            if (!Utils.tryParse(tag.rssi)) continue;
-                                            double rssi = Double.parseDouble(tag.rssi);
-                                            if (alarm.low != -500 && rssi < alarm.low)
+                                            if (alarm.low != -500 && tag.rssi < alarm.low)
                                                 notificationTextResourceId = R.string.alert_notification_rssi_low;
-                                            if (alarm.high != -500 && rssi > alarm.high)
+                                            if (alarm.high != -500 && tag.rssi > alarm.high)
                                                 notificationTextResourceId = R.string.alert_notification_rssi_high;
                                             break;
                                     }

@@ -32,7 +32,7 @@ public class RuuviTag extends BaseModel {
     @Column
     public String url;
     @Column
-    public String rssi;
+    public int rssi;
     public double[] data;
     @Column
     public String name;
@@ -61,7 +61,7 @@ public class RuuviTag extends BaseModel {
     public RuuviTag() {
     }
 
-    public RuuviTag(String id, String url, byte[] rawData, String rssi, boolean temporary) {
+    public RuuviTag(String id, String url, byte[] rawData, int rssi, boolean temporary) {
         this.id = id;
         this.url = url;
         this.rssi = rssi;
@@ -75,7 +75,7 @@ public class RuuviTag extends BaseModel {
     {
         id = beacon.getBluetoothAddress();
         url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-        rssi = String.valueOf(beacon.getRssi());
+        rssi = beacon.getRssi();
         if(!temporary)
             process();
     }
@@ -85,7 +85,7 @@ public class RuuviTag extends BaseModel {
         in.readStringArray(data);
         this.id = data[0];
         this.url = data[1];
-        this.rssi = data[2];
+        this.rssi = Integer.parseInt(data[2]);
         this.temperature = Double.valueOf(data[3]);
         this.humidity = Double.valueOf(data[4]);
         this.pressure = Double.valueOf(data[5]);
