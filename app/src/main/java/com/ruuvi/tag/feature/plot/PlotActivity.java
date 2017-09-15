@@ -51,7 +51,8 @@ public class PlotActivity extends AppCompatActivity {
         String id = intent.getExtras().getString("id");
         RuuviTag tag = RuuviTag.get(id);
 
-        setTitle("Graphs for " + tag.name);
+        String name = (tag.name != null && !tag.name.isEmpty() ? tag.name : tag.id);
+        setTitle("Graphs for " + name);
 
         temp_plot = (XYPlot) findViewById(R.id.plotTemperature);
         hum_plot = (XYPlot) findViewById(R.id.plotHumidity);
