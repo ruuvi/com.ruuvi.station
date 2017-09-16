@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,7 +21,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -57,9 +55,7 @@ import com.ruuvi.tag.model.TagSensorReading;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.util.DeviceIdentifier;
 import com.ruuvi.tag.util.Foreground;
-import com.ruuvi.tag.util.PlotSource;
 import com.ruuvi.tag.model.RuuviTagComplexList;
-import com.ruuvi.tag.util.Utils;
 
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
@@ -79,7 +75,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     SharedPreferences settings;
     Region region;
     private String backendUrl;
-    private PlotSource plotSource;
     private Integer[] alertValues;
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
@@ -123,7 +118,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         beaconManager.bind(this);*/
 
         backendUrl = settings.getString("pref_backend", null);
-        plotSource = PlotSource.getInstance();
         scanTimerHandler = new Handler();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -256,7 +250,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                             }
                         });
             }
-            plotSource.addScanEvent(scanEvent);
 
             exportRuuviTags();
         }

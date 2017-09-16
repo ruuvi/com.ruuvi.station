@@ -28,7 +28,6 @@ import java.util.List;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.TagSensorReading;
-import com.ruuvi.tag.util.PlotSource;
 
 public class PlotActivity extends AppCompatActivity {
     private XYPlot temp_plot;
