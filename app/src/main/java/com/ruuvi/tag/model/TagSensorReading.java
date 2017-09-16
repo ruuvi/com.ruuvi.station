@@ -20,7 +20,7 @@ public class TagSensorReading extends BaseModel {
     @Column
     public int id;
     @Column
-    public String tagId;
+    public String ruuviTagId;
     @Column
     public Date createdAt;
     @Column
@@ -44,7 +44,7 @@ public class TagSensorReading extends BaseModel {
     }
 
     public TagSensorReading(RuuviTag tag) {
-        this.tagId = tag.id;
+        this.ruuviTagId = tag.id;
         this.temperature = tag.temperature;
         this.humidity = tag.humidity;
         this.pressure = tag.pressure;
@@ -59,7 +59,7 @@ public class TagSensorReading extends BaseModel {
     public static List<TagSensorReading> getForTag(String id) {
         return SQLite.select()
                 .from(TagSensorReading.class)
-                .where(TagSensorReading_Table.tagId.eq(id))
+                .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .queryList();
     }
 }

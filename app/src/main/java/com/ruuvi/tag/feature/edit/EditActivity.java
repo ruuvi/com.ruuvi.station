@@ -17,10 +17,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.EditAdapter;
 import com.ruuvi.tag.model.Alarm;
+import com.ruuvi.tag.model.Alarm_Table;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.model.TagSensorReading;
+import com.ruuvi.tag.model.TagSensorReading_Table;
 
 public class EditActivity extends AppCompatActivity {
     EditText nameInput;
@@ -102,8 +106,15 @@ public class EditActivity extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                List<Alarm> alarms = Alarm.getForTag(tag.id);
-                for (Alarm alarm: alarms) alarm.delete();
+                SQLite.delete()
+                        .from(Alarm.class)
+                        .where(Alarm_Table.ruuviTagId.eq(tag.id))
+                        .execute();
+                SQLite.delete()
+                        .from(TagSensorReading.class)
+                        .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
+                        .execute();
+
                 tag.delete();
                 finish();
             }
