@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -32,12 +33,10 @@ public class ListActivity extends AppCompatActivity {
     Gson gson;
     private ArrayList<RuuviTag> ruuviTagArrayList;
     private ListAdapter adapter;
-    private Cursor cursor;
     private ListView beaconListView;
     private SharedPreferences settings;
 
     Timer timer;
-    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +55,14 @@ public class ListActivity extends AppCompatActivity {
         beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(ListActivity.this, ScannerService.class);
                 RuuviTag tag = (RuuviTag) adapterView.getItemAtPosition(i);
+
+                if (RuuviTag.get(tag.id) != null) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                }
+                Intent intent = new Intent(ListActivity.this, ScannerService.class);
                 ScannerService.save(tag);
                 startService(intent);
                 finish();

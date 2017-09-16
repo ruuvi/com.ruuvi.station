@@ -1,6 +1,7 @@
 package com.ruuvi.tag.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,9 +70,21 @@ public class ListAdapter extends ArrayAdapter<RuuviTag> implements View.OnClickL
             result = convertView;
         }
 
-        viewHolder.txtId.setText(ruuviTag.id);
+        RuuviTag existingTag = RuuviTag.get(ruuviTag.id);
+        String tagId = ruuviTag.id;
+        if (existingTag != null) {
+            result.setBackgroundColor(Color.LTGRAY);
+            if (existingTag.name != null && !existingTag.name.isEmpty()) {
+                tagId = tagId + " (" + existingTag.name + ")";
+            } else {
+                result.setBackgroundColor(Color.WHITE);
+            }
+        }
+
+        viewHolder.txtId.setText(tagId);
         viewHolder.txtUrl.setText(ruuviTag.url);
         viewHolder.txtRssi.setText(ruuviTag.rssi + " dB");
+
 
         // Return the completed view to render on screen
         return result;

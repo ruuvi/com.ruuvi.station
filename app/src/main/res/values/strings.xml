@@ -126,4 +126,5 @@
     <string name="humidity">Humidity</string>
     <string name="pressure">Air Pressure</string>
     <string name="rssi">RSSI</string>
+    <string name="tag_already_added">Tag is already added</string>
 </resources>
