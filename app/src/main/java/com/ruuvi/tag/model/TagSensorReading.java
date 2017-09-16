@@ -31,17 +31,16 @@ public class TagSensorReading extends BaseModel {
     public double pressure;
     @Column
     public int rssi;
+    @Column
+    public double accelX;
+    @Column
+    public double accelY;
+    @Column
+    public double accelZ;
+    @Column
+    public double voltage;
 
     public TagSensorReading() {
-    }
-
-    public TagSensorReading(String tagId, double temperature, double humidity, double pressure, int rssi) {
-        this.tagId = tagId;
-        this.temperature = temperature;
-        this.humidity = humidity;
-        this.pressure = pressure;
-        this.rssi = rssi;
-        this.createdAt = new Date();
     }
 
     public TagSensorReading(RuuviTag tag) {
@@ -50,6 +49,10 @@ public class TagSensorReading extends BaseModel {
         this.humidity = tag.humidity;
         this.pressure = tag.pressure;
         this.rssi = tag.rssi;
+        this.accelX = tag.accelX;
+        this.accelY = tag.accelY;
+        this.accelZ = tag.accelZ;
+        this.voltage = tag.voltage;
         this.createdAt = new Date();
     }
 
