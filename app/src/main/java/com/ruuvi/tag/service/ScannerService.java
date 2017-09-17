@@ -208,7 +208,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     }
 
     void processFoundDevices() {
-        ruuviTagArrayList.clear();
+        //ruuviTagArrayList.clear();
         ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
 
         Iterator<LeScanResult> itr = scanResults.iterator();
@@ -226,15 +226,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     // Eddystone URL
                     EddystoneURL es = (EddystoneURL) structure;
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                        // Creates temporary ruuvitag-object, without heavy calculations
-                        RuuviTag temp = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, true);
-                        if (checkForSameTag(temp)) {
-                            // Creates real object, with temperature etc. calculated
-                            RuuviTag real = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
-                            ruuviTagArrayList.add(real);
-                            update(real);
-                            scanEvent.addRuuviTag(real);
-                        }
+                        RuuviTag tag = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
+                        addFoundTagToLists(tag, scanEvent);
                     }
                 }
                 // If the AD structure represents Eddystone TLM.
@@ -243,14 +236,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     if (es.getCompanyId() == 0x0499) {
                         byte[] data = es.getData();
                         if (data != null) {
-                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, true);
-                            if (checkForSameTag(tempTag)) {
-                                // Creates real object, with temperature etc. calculated
-                                RuuviTag real = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
-                                ruuviTagArrayList.add(real);
-                                update(real);
-                                scanEvent.addRuuviTag(real);
-                            }
+                            RuuviTag tag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
+                            addFoundTagToLists(tag, scanEvent);
                         }
                     }
                 }
@@ -342,13 +329,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         complexPreferences.commit();
     }
 
-    private boolean checkForSameTag(RuuviTag ruuvi) {
-        for (RuuviTag ruuviTag : ruuviTagArrayList) {
-            if (ruuvi.id.equals(ruuviTag.id)) {
-                return false;
+    private int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {
+        for (int i = 0; i < arr.size(); i++) {
+            if (ruuvi.id.equals(arr.get(i).id)) {
+                return i;
             }
         }
-        return true;
+        return -1;
     }
 
     @Override
@@ -512,5 +499,22 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     private boolean useNewApi() {
         return USE_NEW_API && Build.VERSION.SDK_INT >= 21;
+    }
+
+    public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent) {
+        int index = checkForSameTag(ruuviTagArrayList, tag);
+        if (index == -1) {
+            ruuviTagArrayList.add(tag);
+            scanEvent.addRuuviTag(tag);
+            update(tag);
+        } else {
+            ruuviTagArrayList.set(index, tag);
+        }
+
+        index = checkForSameTag(scanEvent.tags, tag);
+        if (index == -1) {
+            scanEvent.addRuuviTag(tag);
+            update(tag);
+        }
     }
 }
