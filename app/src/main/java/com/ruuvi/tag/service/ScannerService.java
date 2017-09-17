@@ -11,7 +11,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,7 +63,7 @@ import com.ruuvi.tag.model.RuuviTagComplexList;
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private static final String TAG = "ScannerService";
-    private static final boolean USE_NEW_API = true;
+    private static final boolean USE_NEW_API = false;
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
@@ -83,6 +85,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bleScanner;
+    private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
+    private ScanSettings scanSettings;
+
     private Handler scanTimerHandler;
     private static int MAX_SCAN_TIME_MS = 1300;
     private boolean scanning;
@@ -114,7 +119,12 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
-        if (useNewApi()) bleScanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (useNewApi()) {
+            bleScanner = bluetoothAdapter.getBluetoothLeScanner();
+            ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
+            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
+            scanSettings = scanSettingsBuilder.build();
+        }
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
@@ -154,7 +164,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         scanning = true;
 
         if (useNewApi()) {
-            bleScanner.startScan(bleScannerCallback);
+            bleScanner.startScan(scanFilters, scanSettings, bleScannerCallback);
         } else {
             bluetoothAdapter.startLeScan(mLeScanCallback);
         }
