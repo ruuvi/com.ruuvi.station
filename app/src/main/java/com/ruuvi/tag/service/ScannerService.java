@@ -244,7 +244,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
             }*/
 
-            if (backendUrl != null) {
+            if (backendUrl != null && scanEvent.tags.size() > 0) {
                 Ion.with(getApplicationContext())
                         .load(backendUrl)
                         .setJsonPojoBody(scanEvent)
