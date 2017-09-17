@@ -83,10 +83,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     private BluetoothAdapter bluetoothAdapter;
     private Handler scanTimerHandler;
-    private static int MAX_SCAN_TIME_MS = 1000;
+    private static int MAX_SCAN_TIME_MS = 1300;
     private boolean scanning;
 
+
+
     @Override
+
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_NOT_STICKY;
     }
@@ -125,13 +128,16 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+        scanInterval = scanInterval - MAX_SCAN_TIME_MS;
+        if (scanInterval <= 0) scanInterval = 1;
+
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (!scheduler.isShutdown())
                     startScan();
             }
-        }, 0, scanInterval - MAX_SCAN_TIME_MS + 1, TimeUnit.MILLISECONDS);
+        }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
         timer = new Timer();
         TimerTask alertManager = new ScannerService.alertManager();
