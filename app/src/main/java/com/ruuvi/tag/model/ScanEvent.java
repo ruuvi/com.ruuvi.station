@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ScanEvent {
     public Date time;
     public String deviceId;
-    ArrayList<RuuviTag> tags;
+    public ArrayList<RuuviTag> tags;
     public String eventId;
 
     public ScanEvent(String deviceId,Date time)

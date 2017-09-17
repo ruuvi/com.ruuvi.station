@@ -1,10 +1,6 @@
 package com.ruuvi.tag.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -67,15 +63,6 @@ public class RuuviTag extends BaseModel {
         this.rssi = rssi;
         this.rawData = rawData;
         this.rawDataBlob = new Blob(rawData);
-        if(!temporary)
-            process();
-    }
-
-    public RuuviTag(Beacon beacon, boolean temporary)
-    {
-        id = beacon.getBluetoothAddress();
-        url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-        rssi = beacon.getRssi();
         if(!temporary)
             process();
     }
