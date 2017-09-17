@@ -250,6 +250,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         {
             for(int i = 0; i < scanEvent.tagCount(); i ++)
             {
+                if (RuuviTag.get(scanEvent.tags.get(i).id) == null) {
+                    // don't send data about tags not in "My RuuviTags" list
+                    continue;
+                }
                 ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
                 singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
 
