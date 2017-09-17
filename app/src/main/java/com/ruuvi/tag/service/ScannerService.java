@@ -1,5 +1,6 @@
 package com.ruuvi.tag.service;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,11 +9,15 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -33,8 +38,6 @@ import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -61,6 +64,7 @@ import com.ruuvi.tag.model.RuuviTagComplexList;
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private static final String TAG = "ScannerService";
+    private static final boolean USE_NEW_API = true;
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
@@ -84,14 +88,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private NotificationCompat.Builder notification;
 
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothLeScanner bleScanner;
     private Handler scanTimerHandler;
     private static int MAX_SCAN_TIME_MS = 1300;
     private boolean scanning;
 
 
-
     @Override
-
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_NOT_STICKY;
     }
@@ -117,6 +120,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
+        if (useNewApi()) bleScanner = bluetoothAdapter.getBluetoothLeScanner();
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
@@ -143,41 +147,61 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             @Override
             public void run() {
                 scanning = false;
-                bluetoothAdapter.stopLeScan(mLeScanCallback);
+                if (useNewApi()) {
+                    bleScanner.stopScan(bleScannerCallback);
+                } else {
+                    bluetoothAdapter.stopLeScan(mLeScanCallback);
+                }
                 processFoundDevices();
             }
         }, MAX_SCAN_TIME_MS);
 
         scanResults = new ArrayList<LeScanResult>();
         scanning = true;
-        bluetoothAdapter.startLeScan(mLeScanCallback);
+
+        if (useNewApi()) {
+            bleScanner.startScan(bleScannerCallback);
+        } else {
+            bluetoothAdapter.startLeScan(mLeScanCallback);
+        }
     }
+
+    @SuppressLint("NewApi")
+    private ScanCallback bleScannerCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
+        }
+    };
 
     // Device scan callback.
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
+        new BluetoothAdapter.LeScanCallback() {
+            @Override
+            public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+                foundDevice(device, rssi, scanRecord);
+            }
+        };
 
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    Iterator<LeScanResult> itr = scanResults.iterator();
-                    LeScanResult dev = new LeScanResult();
-                    dev.device = device;
-                    dev.rssi = rssi;
-                    dev.scanData = scanRecord;
+    private void foundDevice(BluetoothDevice device, int rssi, byte[] data) {
+            Iterator<LeScanResult> itr = scanResults.iterator();
+            LeScanResult dev = new LeScanResult();
+            dev.device = device;
+            dev.rssi = rssi;
+            dev.scanData = data;
 
-                    boolean devFound = false;
-                    while (itr.hasNext()) {
-                        LeScanResult element = itr.next();
-                        if (device.getAddress().equalsIgnoreCase(element.device.getAddress()))
-                            devFound = true;
-                    }
+            boolean devFound = false;
+            while (itr.hasNext()) {
+                LeScanResult element = itr.next();
+                if (device.getAddress().equalsIgnoreCase(element.device.getAddress()))
+                    devFound = true;
+            }
 
-                    if (!devFound) {
-                        Log.d(TAG, "found: " + device.getAddress());
-                        scanResults.add(dev);
-                    }
-                }
-            };
+            if (!devFound) {
+                Log.d(TAG, "found: " + device.getAddress());
+                scanResults.add(dev);
+            }
+    }
 
     void processFoundDevices() {
         ruuviTagArrayList.clear();
@@ -208,7 +232,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                             scanEvent.addRuuviTag(real);
                         }
                     }
-
                 }
                 // If the AD structure represents Eddystone TLM.
                 else if (structure instanceof ADManufacturerSpecific) {
@@ -252,7 +275,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                         });
             }
         }
-
         exportRuuviTags();
     }
 
@@ -277,10 +299,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                         startScan();
                 }
             }, 0, scanInterval, TimeUnit.MILLISECONDS);
-
         }
     };
-
 
     public void startFG() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -329,11 +349,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     @Override
     public void onDestroy() {
-        exportDB();
-
         scheduler.shutdown();
-
-
         settings.unregisterOnSharedPreferenceChangeListener(mListener);
         super.onDestroy();
     }
@@ -392,61 +408,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         stopForeground(true);
         stopSelf();
         Foreground.get().removeListener(listener);
-    }
-
-    private void exportDB() {
-        File exportDir = new File(Environment.getExternalStorageDirectory(), "ruuvitaglogs");
-        String time = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-        if (!exportDir.exists()) {
-            if (!exportDir.mkdirs()) {
-                Log.e("ScannerService", "failed to create directory");
-            }
-        }
-
-        try {
-            //// TODO: 12/09/17 export to csv
-            /*
-            Cursor curCSV = db.rawQuery("SELECT * FROM ruuvitag", null);
-
-            String[] columnNames = {
-                    curCSV.getColumnName(1),
-                    curCSV.getColumnName(7),
-                    curCSV.getColumnName(3),
-                    curCSV.getColumnName(4),
-                    curCSV.getColumnName(5),
-                    curCSV.getColumnName(6),
-                    curCSV.getColumnName(8)
-            };
-
-            while (curCSV.moveToNext()) {
-                File file = new File(exportDir, curCSV.getString(1)+"-"+time+".csv");
-                FileWriter fw = new FileWriter(file, file.exists());
-
-                CSVWriter writer = new CSVWriter(fw);
-
-                if(file.length() <= 0) {
-                    writer.writeNext(columnNames);
-                }
-
-                String[] arrStr = {
-                        curCSV.getString(1),
-                        curCSV.getString(7),
-                        curCSV.getString(3),
-                        curCSV.getString(4),
-                        curCSV.getString(5),
-                        curCSV.getString(6),
-                        curCSV.getString(9).substring(12, 20)
-                };
-
-                writer.writeNext(arrStr);
-                writer.close();
-                fw.close();
-            }
-            curCSV.close();
-            */
-        } catch (Exception sqlEx) {
-            Log.e("ScannerService", sqlEx.getMessage(), sqlEx);
-        }
     }
 
     private boolean isRunning(Class<?> serviceClass) {
@@ -514,7 +475,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     });
                 }
             }).start();
-            exportDB();
         }
     }
 
@@ -546,21 +506,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         NotifyMgr.notify(notificationid, notification.build());
     }
 
-    public Integer[] readSeparated(String data) {
-        String[] linevector;
-        int index = 0;
-
-        linevector = data.split(",");
-        Integer[] values = new Integer[linevector.length];
-
-        for (String l : linevector) {
-            try {
-                values[index] = Integer.parseInt(l);
-            } catch (NumberFormatException e) {
-                values[index] = null;
-            }
-            index++;
-        }
-        return values;
+    private boolean useNewApi() {
+        return USE_NEW_API && Build.VERSION.SDK_INT >= 21;
     }
 }
