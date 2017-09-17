@@ -252,16 +252,17 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             {
                 ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
                 singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
-                String json = new Gson().toJson(scanEvent);
 
                 Ion.with(getApplicationContext())
                         .load(backendUrl)
-                        .setStringBody(json)
+                        .setJsonPojoBody(singleEvent)
                         .asJsonObject()
                         .setCallback(new FutureCallback<JsonObject>() {
                             @Override
                             public void onCompleted(Exception e, JsonObject result) {
-                                // do stuff with the result or error
+                                if (e != null) {
+                                    Log.e(TAG, "Sending failed.");
+                                }
                             }
                         });
             }
