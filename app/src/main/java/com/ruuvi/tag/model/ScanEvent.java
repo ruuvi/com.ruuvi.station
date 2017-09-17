@@ -12,10 +12,18 @@ import java.util.UUID;
  */
 
 public class ScanEvent {
-    Date time;
-    String deviceId;
-    public ArrayList<RuuviTag> tags;
-    String eventId;
+    public Date time;
+    public String deviceId;
+    ArrayList<RuuviTag> tags;
+    public String eventId;
+
+    public ScanEvent(String deviceId,Date time)
+    {
+        this.time = time;
+        this.deviceId = deviceId;
+        eventId = UUID.randomUUID().toString();
+        tags = new ArrayList<>();
+    }
 
     public ScanEvent(Context c, String deviceId) {
         time = new GregorianCalendar().getTime();
@@ -38,5 +46,13 @@ public class ScanEvent {
             return tags.get(i);
         }
         return null;
+    }
+
+    public int tagCount() {
+        return tags.size();
+    }
+
+    public RuuviTag getDataFromIndex(int i) {
+        return tags.get(i);
     }
 }

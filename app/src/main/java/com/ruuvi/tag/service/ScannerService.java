@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -110,16 +111,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         bps = new BackgroundPowerSaver(this);
         ruuviTagArrayList = new ArrayList<>();
-
-/*
-        beaconManager = BeaconManager.getInstanceForApplication(this);
-        // Detect the URL frame:
-        beaconManager.getBeaconParsers().add(new BeaconParser()
-                .setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT));
-
-        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.))
-
-        beaconManager.bind(this);*/
 
         backendUrl = settings.getString("pref_backend", null);
         scanTimerHandler = new Handler();
@@ -237,27 +228,29 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     }
                 }
             }
-
-/*
-            if(beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
-                // Parse url from beacon advert
-                String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-
-            }*/
-
         }
-        Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
-        if (backendUrl != null && scanEvent.tags.size() > 0) {
-            Ion.with(getApplicationContext())
-                    .load(backendUrl)
-                    .setJsonPojoBody(scanEvent)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            // do stuff with the result or error
-                        }
-                    });
+
+        Log.d(TAG, "Found " + scanEvent.tagCount() + " tags");
+        exportRuuviTags();
+        if (backendUrl != null)
+        {
+            for(int i = 0; i < scanEvent.tagCount(); i ++)
+            {
+                ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
+                singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
+                String json = new Gson().toJson(scanEvent);
+
+                Ion.with(getApplicationContext())
+                        .load(backendUrl)
+                        .setStringBody(json)
+                        .asJsonObject()
+                        .setCallback(new FutureCallback<JsonObject>() {
+                            @Override
+                            public void onCompleted(Exception e, JsonObject result) {
+                                // do stuff with the result or error
+                            }
+                        });
+            }
         }
 
         exportRuuviTags();
@@ -285,87 +278,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                 }
             }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
-            /*
-            try
-            {
-                beaconManager.setForegroundBetweenScanPeriod
-                        (Long.parseLong(settings.getString("pref_scaninterval", "1")) * 1000 - 1000l);
-                beaconManager.updateScanPeriods();
-            } catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }*/
         }
     };
 
-    /*
-    @Override
-    public void onBeaconServiceConnect() {
-        beaconManager.addRangeNotifier(new RangeNotifier() {
-            @Override
-            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-                ruuviTagArrayList.clear();
-
-                ScanEvent scanEvent = new ScanEvent(getApplicationContext(), DeviceIdentifier.id(getApplicationContext()));
-
-                for(Beacon beacon : beacons) {
-                    if(beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
-                        // Parse url from beacon advert
-                        String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-                        if (url.startsWith("https://ruu.vi/#") || url.startsWith("https://r/")) {
-                            // Creates temporary ruuvitag-object, without heavy calculations
-                            RuuviTag temp = new RuuviTag(beacon, true);
-                            if(checkForSameTag(temp)) {
-                                // Creates real object, with temperature etc. calculated
-                                RuuviTag real = new RuuviTag(beacon, false);
-                                ruuviTagArrayList.add(real);
-                                update(real);
-                                scanEvent.addRuuviTag(real);
-                            }
-                        }
-                    }
-                }
-
-                if(backendUrl != null)
-                {
-                    //JsonObject json = new JsonObject();
-                  //  JsonObject json = JSON.(scanEvent);
-                   String jsonData =  new Gson().toJson(scanEvent);
-                    Ion.with(getApplicationContext())
-                            .load(backendUrl)
-                            .setJsonPojoBody(scanEvent)
-                            .asJsonObject()
-                            .setCallback(new FutureCallback<JsonObject>() {
-                                @Override
-                                public void onCompleted(Exception e, JsonObject result) {
-                                    // do stuff with the result or error
-                                }
-                            });
-                }
-                plotSource.addScanEvent(scanEvent);
-
-                exportRuuviTags();
-                exportDB();
-            }
-        });
-
-        Random r = new Random();
-        region = new Region("RuuvitagRegion_"+r.nextInt(1000), null, null, null);
-
-        beaconManager.setForegroundScanPeriod(1000l);
-        beaconManager.setBackgroundBetweenScanPeriod(60000l);
-        beaconManager.setBackgroundScanPeriod(1000l);
-
-        try {
-            beaconManager.setForegroundBetweenScanPeriod
-                    (Long.parseLong(settings.getString("pref_scaninterval", "5")) * 1000 - 1000l);
-            beaconManager.updateScanPeriods();
-            this.beaconManager.startRangingBeaconsInRegion(region);
-        }  catch(RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-    */
 
     public void startFG() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -417,13 +332,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         exportDB();
 
         scheduler.shutdown();
-        /*
-        try {
-            beaconManager.stopRangingBeaconsInRegion(new Region("uusi", null, null, null));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        beaconManager.unbind(this);*/
+
 
         settings.unregisterOnSharedPreferenceChangeListener(mListener);
         super.onDestroy();
