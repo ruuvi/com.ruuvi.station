@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -53,15 +52,15 @@ import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
+import com.ruuvi.tag.model.TagSensorReading;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.util.DeviceIdentifier;
 import com.ruuvi.tag.util.Foreground;
-import com.ruuvi.tag.util.PlotSource;
 import com.ruuvi.tag.model.RuuviTagComplexList;
-import com.ruuvi.tag.util.Utils;
 
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
+    private static final String TAG = "ScannerService";
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
@@ -78,7 +77,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     SharedPreferences settings;
     Region region;
     private String backendUrl;
-    private PlotSource plotSource;
     private Integer[] alertValues;
     private int notificationId;
     private int MAX_NUM_NOTIFICATIONS = 5;
@@ -87,10 +85,13 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
     private BluetoothAdapter bluetoothAdapter;
     private Handler scanTimerHandler;
-    private static int MAX_SCAN_TIME_MS = 1000;
+    private static int MAX_SCAN_TIME_MS = 1300;
     private boolean scanning;
 
+
+
     @Override
+
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_NOT_STICKY;
     }
@@ -112,7 +113,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         ruuviTagArrayList = new ArrayList<>();
 
         backendUrl = settings.getString("pref_backend", null);
-        plotSource = PlotSource.getInstance();
         scanTimerHandler = new Handler();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -120,13 +120,15 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+        if (scanInterval <= MAX_SCAN_TIME_MS) scanInterval = MAX_SCAN_TIME_MS + 100;
+
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (!scheduler.isShutdown())
                     startScan();
             }
-        }, 0, scanInterval - MAX_SCAN_TIME_MS + 1, TimeUnit.MILLISECONDS);
+        }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
         timer = new Timer();
         TimerTask alertManager = new ScannerService.alertManager();
@@ -171,6 +173,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     }
 
                     if (!devFound) {
+                        Log.d(TAG, "found: " + device.getAddress());
                         scanResults.add(dev);
                     }
                 }
@@ -196,10 +199,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     EddystoneURL es = (EddystoneURL) structure;
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
                         // Creates temporary ruuvitag-object, without heavy calculations
-                        RuuviTag temp = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, "" + element.rssi, true);
+                        RuuviTag temp = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, true);
                         if (checkForSameTag(temp)) {
                             // Creates real object, with temperature etc. calculated
-                            RuuviTag real = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, "" + element.rssi, false);
+                            RuuviTag real = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
                             ruuviTagArrayList.add(real);
                             update(real);
                             scanEvent.addRuuviTag(real);
@@ -213,10 +216,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     if (es.getCompanyId() == 0x0499) {
                         byte[] data = es.getData();
                         if (data != null) {
-                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(), null, data, "" + element.rssi, true);
+                            RuuviTag tempTag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, true);
                             if (checkForSameTag(tempTag)) {
                                 // Creates real object, with temperature etc. calculated
-                                RuuviTag real = new RuuviTag(element.device.getAddress(), null, data, "" + element.rssi, false);
+                                RuuviTag real = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
                                 ruuviTagArrayList.add(real);
                                 update(real);
                                 scanEvent.addRuuviTag(real);
@@ -225,34 +228,32 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     }
                 }
             }
-
-
-            if (backendUrl != null)
-            {
-                for(int i = 0; i < scanEvent.tagCount(); i ++)
-                {
-                    ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
-                    singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
-                    String json = new Gson().toJson(scanEvent).toString();
-
-                    Ion.with(getApplicationContext())
-                            .load(backendUrl)
-                            .setStringBody(json)
-                            .asJsonObject()
-                            .setCallback(new FutureCallback<JsonObject>() {
-                                @Override
-                                public void onCompleted(Exception e, JsonObject result) {
-                                    // do stuff with the result or error
-                                }
-                            });
-                }
-
-
-            }
-            plotSource.addScanEvent(scanEvent);
-
-            exportRuuviTags();
         }
+
+        Log.d(TAG, "Found " + scanEvent.tagCount() + " tags");
+        exportRuuviTags();
+        if (backendUrl != null)
+        {
+            for(int i = 0; i < scanEvent.tagCount(); i ++)
+            {
+                ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
+                singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
+                String json = new Gson().toJson(scanEvent);
+
+                Ion.with(getApplicationContext())
+                        .load(backendUrl)
+                        .setStringBody(json)
+                        .asJsonObject()
+                        .setCallback(new FutureCallback<JsonObject>() {
+                            @Override
+                            public void onCompleted(Exception e, JsonObject result) {
+                                // do stuff with the result or error
+                            }
+                        });
+            }
+        }
+
+        exportRuuviTags();
     }
 
     public SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -268,13 +269,14 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             scheduler.shutdown();
             scheduler = Executors.newSingleThreadScheduledExecutor();
             int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+            if (scanInterval <= MAX_SCAN_TIME_MS) scanInterval = MAX_SCAN_TIME_MS + 1;
             scheduler.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     if (!scheduler.isShutdown())
                         startScan();
                 }
-            }, 0, scanInterval - MAX_SCAN_TIME_MS + 1, TimeUnit.MILLISECONDS);
+            }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
         }
     };
@@ -361,6 +363,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         if (!Exists(ruuviTag.id)) {
             ruuviTag.updateAt = new Date();
             ruuviTag.insert();
+            TagSensorReading reading = new TagSensorReading(ruuviTag);
+            reading.save();
         }
     }
 
@@ -370,6 +374,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             ruuviTag.name = RuuviTag.get(ruuviTag.id).name;
             ruuviTag.updateAt = new Date();
             ruuviTag.update();
+            TagSensorReading reading = new TagSensorReading(ruuviTag);
+            reading.save();
         }
     }
 
@@ -494,11 +500,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                                                 notificationTextResourceId = R.string.alert_notification_pressure_high;
                                             break;
                                         case Alarm.RSSI:
-                                            if (!Utils.tryParse(tag.rssi)) continue;
-                                            double rssi = Double.parseDouble(tag.rssi);
-                                            if (alarm.low != -500 && rssi < alarm.low)
+                                            if (alarm.low != -500 && tag.rssi < alarm.low)
                                                 notificationTextResourceId = R.string.alert_notification_rssi_low;
-                                            if (alarm.high != -500 && rssi > alarm.high)
+                                            if (alarm.high != -500 && tag.rssi > alarm.high)
                                                 notificationTextResourceId = R.string.alert_notification_rssi_high;
                                             break;
                                     }

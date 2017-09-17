@@ -31,17 +31,9 @@
             android:label="@string/title_activity_list"
             android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
         <activity
-            android:name="com.ruuvi.tag.database.AndroidDatabaseManager"
-            android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
-        <activity
             android:name=".feature.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
-
-        <service
-            android:name="com.ruuvi.tag.service.ScannerService"
-            android:exported="false" />
-
         <activity
             android:name="com.ruuvi.tag.feature.edit.EditActivity"
             android:label="Edit Ruuvitag"
@@ -56,6 +48,9 @@
             android:name="com.ruuvi.tag.feature.edit.AlarmEditActivity"
             android:label="Edit Alarm"
             android:parentActivityName="com.ruuvi.tag.feature.edit.EditActivity"/>
+        <service
+            android:name="com.ruuvi.tag.service.ScannerService"
+            android:exported="false" />
     </application>
 
 </manifest>

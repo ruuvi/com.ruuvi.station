@@ -1,6 +1,7 @@
 package com.ruuvi.tag.feature.plot;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -21,22 +22,19 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
-import com.ruuvi.tag.util.PlotSource;
+import com.ruuvi.tag.model.TagSensorReading;
 
 public class PlotActivity extends AppCompatActivity {
     private XYPlot temp_plot;
     private XYPlot hum_plot;
     private XYPlot pres_plot;
 
-    private PlotSource plotSource;
-    private Date[] domains;
-    private String id;
-    private String name;
-
+    Date timestamps[];
     Number temp[];
     Number humidity[];
     Number pressure[];
@@ -49,31 +47,29 @@ public class PlotActivity extends AppCompatActivity {
         setContentView(R.layout.activity_plot);
 
         intent = getIntent();
-        String[] extras = (String[]) intent.getExtras().get("id");
-        id = extras[0];
-        name = extras[1];
+        String id = intent.getExtras().getString("id");
+        RuuviTag tag = RuuviTag.get(id);
 
+        String name = (tag.name != null && !tag.name.isEmpty() ? tag.name : tag.id);
         setTitle("Graphs for " + name);
 
-        plotSource = PlotSource.getInstance();
-        domains = plotSource.getDomains();
         temp_plot = (XYPlot) findViewById(R.id.plotTemperature);
         hum_plot = (XYPlot) findViewById(R.id.plotHumidity);
         pres_plot = (XYPlot) findViewById(R.id.plotPressure);
 
-        RuuviTag[] series = plotSource.getSeriesForTag(id);
+        List<TagSensorReading> series = TagSensorReading.getForTag(tag.id);
 
-        temp = new Number[series.length];
-        humidity = new Number[series.length];
-        pressure = new Number[series.length];
-        for(int i= 0; i < series.length; i++)
+        temp = new Number[series.size()];
+        humidity = new Number[series.size()];
+        pressure = new Number[series.size()];
+        timestamps = new Date[series.size()];
+        for(int i= 0; i < series.size(); i++)
         {
-            if(series[i] != null)
-            {
-                temp[i] = series[i].temperature;
-                humidity[i] = series[i].humidity;
-                pressure[i] = series[i].pressure;
-            }
+            TagSensorReading reading = series.get(i);
+            temp[i] = reading.temperature;
+            humidity[i] = reading.humidity;
+            pressure[i] = reading.pressure;
+            timestamps[i] = reading.createdAt;
         }
     }
 
@@ -91,7 +87,7 @@ public class PlotActivity extends AppCompatActivity {
                 int i = Math.round(((Number) obj).floatValue());
                 SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
-                return toAppendTo.append(dt1.format(domains[i]));
+                return toAppendTo.append(dt1.format(timestamps[i]));
             }
             @Override
             public Object parseObject(String source, ParsePosition pos) {
@@ -131,7 +127,7 @@ public class PlotActivity extends AppCompatActivity {
                 int i = Math.round(((Number) obj).floatValue());
                 SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
-                return toAppendTo.append(dt1.format(domains[i]));
+                return toAppendTo.append(dt1.format(timestamps[i]));
             }
             @Override
             public Object parseObject(String source, ParsePosition pos) {
@@ -165,7 +161,7 @@ public class PlotActivity extends AppCompatActivity {
                 int i = Math.round(((Number) obj).floatValue());
                 SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm a");
 
-                return toAppendTo.append(dt1.format(domains[i]));
+                return toAppendTo.append(dt1.format(timestamps[i]));
             }
             @Override
             public Object parseObject(String source, ParsePosition pos) {

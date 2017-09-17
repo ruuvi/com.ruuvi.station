@@ -22,6 +22,7 @@ public class ScanEvent {
         this.time = time;
         this.deviceId = deviceId;
         eventId = UUID.randomUUID().toString();
+        tags = new ArrayList<>();
     }
 
     public ScanEvent(Context c, String deviceId) {
