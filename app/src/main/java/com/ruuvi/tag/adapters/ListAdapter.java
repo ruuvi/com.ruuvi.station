@@ -82,7 +82,7 @@ public class ListAdapter extends ArrayAdapter<RuuviTag> implements View.OnClickL
         }
 
         viewHolder.txtId.setText(tagId);
-        viewHolder.txtUrl.setText(ruuviTag.url);
+        viewHolder.txtUrl.setText(ruuviTag.url != null ? ruuviTag.url : "RawMode");
         viewHolder.txtRssi.setText(ruuviTag.rssi + " dB");
 
 

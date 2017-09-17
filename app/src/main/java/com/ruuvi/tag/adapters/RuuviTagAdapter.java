@@ -62,7 +62,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         Date dateNow = new Date();
         long diffInMS = dateNow.getTime() - tag.updateAt.getTime();
-        txtLast.setText(tag.updateAt.toString() + " / " + tag.url);
+        txtLast.setText(tag.updateAt.toLocaleString() + " / " + (tag.url != null ? tag.url : "RawMode"));
 
         if(diffInMS > 1000*60)
             txtLast.setTextColor(Color.RED);
