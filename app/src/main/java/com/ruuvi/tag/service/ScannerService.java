@@ -35,9 +35,6 @@ import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
 
-import org.altbeacon.beacon.Region;
-import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -76,10 +73,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     }
 
     List<RuuviTag> ruuviTagArrayList;
-    //private BeaconManager beaconManager;
-    private BackgroundPowerSaver bps;
     SharedPreferences settings;
-    Region region;
     private String backendUrl;
     private Integer[] alertValues;
     private int notificationId;
@@ -112,7 +106,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
 
-        bps = new BackgroundPowerSaver(this);
         ruuviTagArrayList = new ArrayList<>();
 
         backendUrl = settings.getString("pref_backend", null);
