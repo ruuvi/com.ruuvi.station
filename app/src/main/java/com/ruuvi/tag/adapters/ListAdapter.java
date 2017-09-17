@@ -76,9 +76,9 @@ public class ListAdapter extends ArrayAdapter<RuuviTag> implements View.OnClickL
             result.setBackgroundColor(Color.LTGRAY);
             if (existingTag.name != null && !existingTag.name.isEmpty()) {
                 tagId = tagId + " (" + existingTag.name + ")";
-            } else {
-                result.setBackgroundColor(Color.WHITE);
             }
+        } else {
+            result.setBackgroundColor(Color.WHITE);
         }
 
         viewHolder.txtId.setText(tagId);
