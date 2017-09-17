@@ -110,6 +110,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         backendUrl = settings.getString("pref_backend", null);
         scanTimerHandler = new Handler();
+        scanResults = new ArrayList<LeScanResult>();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -146,10 +147,10 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     bluetoothAdapter.stopLeScan(mLeScanCallback);
                 }
                 processFoundDevices();
+                scanResults = new ArrayList<LeScanResult>();
             }
         }, MAX_SCAN_TIME_MS);
 
-        scanResults = new ArrayList<LeScanResult>();
         scanning = true;
 
         if (useNewApi()) {
