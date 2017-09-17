@@ -227,17 +227,27 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             }
 
 
-            if (backendUrl != null) {
-                Ion.with(getApplicationContext())
-                        .load(backendUrl)
-                        .setJsonPojoBody(scanEvent)
-                        .asJsonObject()
-                        .setCallback(new FutureCallback<JsonObject>() {
-                            @Override
-                            public void onCompleted(Exception e, JsonObject result) {
-                                // do stuff with the result or error
-                            }
-                        });
+            if (backendUrl != null)
+            {
+                for(int i = 0; i < scanEvent.tagCount(); i ++)
+                {
+                    ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
+                    singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
+                    String json = new Gson().toJson(scanEvent).toString();
+
+                    Ion.with(getApplicationContext())
+                            .load(backendUrl)
+                            .setStringBody(json)
+                            .asJsonObject()
+                            .setCallback(new FutureCallback<JsonObject>() {
+                                @Override
+                                public void onCompleted(Exception e, JsonObject result) {
+                                    // do stuff with the result or error
+                                }
+                            });
+                }
+
+
             }
             plotSource.addScanEvent(scanEvent);
 
