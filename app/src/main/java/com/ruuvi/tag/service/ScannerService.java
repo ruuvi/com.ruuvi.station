@@ -129,8 +129,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
-        scanInterval = scanInterval - MAX_SCAN_TIME_MS;
-        if (scanInterval <= 0) scanInterval = 1;
+        if (scanInterval <= MAX_SCAN_TIME_MS) scanInterval = MAX_SCAN_TIME_MS + 100;
 
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -183,6 +182,7 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                     }
 
                     if (!devFound) {
+                        Log.d(TAG, "found: " + device.getAddress());
                         scanResults.add(dev);
                     }
                 }
@@ -276,13 +276,14 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             scheduler.shutdown();
             scheduler = Executors.newSingleThreadScheduledExecutor();
             int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+            if (scanInterval <= MAX_SCAN_TIME_MS) scanInterval = MAX_SCAN_TIME_MS + 1;
             scheduler.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     if (!scheduler.isShutdown())
                         startScan();
                 }
-            }, 0, scanInterval - MAX_SCAN_TIME_MS + 1, TimeUnit.MILLISECONDS);
+            }, 0, scanInterval, TimeUnit.MILLISECONDS);
 
             /*
             try
