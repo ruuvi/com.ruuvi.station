@@ -59,6 +59,7 @@ import com.ruuvi.tag.model.RuuviTagComplexList;
 
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
+    private static final String TAG = "ScannerService";
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
@@ -244,21 +245,22 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
             }*/
 
-            if (backendUrl != null && scanEvent.tags.size() > 0) {
-                Ion.with(getApplicationContext())
-                        .load(backendUrl)
-                        .setJsonPojoBody(scanEvent)
-                        .asJsonObject()
-                        .setCallback(new FutureCallback<JsonObject>() {
-                            @Override
-                            public void onCompleted(Exception e, JsonObject result) {
-                                // do stuff with the result or error
-                            }
-                        });
-            }
-
-            exportRuuviTags();
         }
+        Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
+        if (backendUrl != null && scanEvent.tags.size() > 0) {
+            Ion.with(getApplicationContext())
+                    .load(backendUrl)
+                    .setJsonPojoBody(scanEvent)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            // do stuff with the result or error
+                        }
+                    });
+        }
+
+        exportRuuviTags();
     }
 
     public SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
