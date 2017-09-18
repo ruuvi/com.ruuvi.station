@@ -53,6 +53,8 @@ public class RuuviTag extends BaseModel {
     public double voltage;
     @Column
     public Date updateAt;
+    @Column
+    public String gatewayUrl;
 
     public RuuviTag() {
     }

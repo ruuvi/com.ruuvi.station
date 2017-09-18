@@ -2,35 +2,30 @@ package com.ruuvi.tag.model;
 
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 
 /**
- * Created by ISOHAJA on 14.7.2017.
+ * Created by berg on 18/09/17.
  */
 
-public class ScanEvent {
+public class ScanEventSingle {
     public Date time;
     public String deviceId;
-    public ArrayList<RuuviTag> tags;
+    public RuuviTag tag;
     public String eventId;
 
-    public ScanEvent(String deviceId,Date time)
+    public ScanEventSingle(String deviceId, Date time)
     {
         this.time = time;
         this.deviceId = deviceId;
         eventId = UUID.randomUUID().toString();
-        tags = new ArrayList<>();
     }
 
-    public ScanEvent(Context c, String deviceId) {
+    public ScanEventSingle(Context c, String deviceId) {
         time = new GregorianCalendar().getTime();
         this.deviceId = deviceId;
-        tags = new ArrayList<>();
         eventId = UUID.randomUUID().toString();
     }
 }
-
-

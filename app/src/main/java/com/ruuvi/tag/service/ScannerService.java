@@ -54,6 +54,7 @@ import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
+import com.ruuvi.tag.model.ScanEventSingle;
 import com.ruuvi.tag.model.TagSensorReading;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.util.DeviceIdentifier;
@@ -244,22 +245,25 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
             }
         }
 
-        Log.d(TAG, "Found " + scanEvent.tagCount() + " tags");
+        Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
         exportRuuviTags();
-        if (backendUrl != null)
-        {
-            for(int i = 0; i < scanEvent.tagCount(); i ++)
-            {
-                if (RuuviTag.get(scanEvent.tags.get(i).id) == null) {
-                    // don't send data about tags not in "My RuuviTags" list
-                    continue;
-                }
-                ScanEvent singleEvent = new ScanEvent(scanEvent.deviceId,scanEvent.time);
-                singleEvent.addRuuviTag(scanEvent.getDataFromIndex(i));
+
+        ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
+        for (int i = 0; i < scanEvent.tags.size(); i++) {
+            RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
+            // don't send data about tags not in "My RuuviTags" list
+            if (tagFromDb == null) continue;
+
+            eventBatch.tags.add(tagFromDb);
+
+            if (tagFromDb.gatewayUrl != null && !tagFromDb.gatewayUrl.isEmpty()) {
+                // send the single tag to its gateway
+                ScanEventSingle single = new ScanEventSingle(scanEvent.deviceId, scanEvent.time);
+                single.tag = tagFromDb;
 
                 Ion.with(getApplicationContext())
-                        .load(backendUrl)
-                        .setJsonPojoBody(singleEvent)
+                        .load(tagFromDb.gatewayUrl)
+                        .setJsonPojoBody(single)
                         .asJsonObject()
                         .setCallback(new FutureCallback<JsonObject>() {
                             @Override
@@ -270,6 +274,21 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
                             }
                         });
             }
+        }
+        if (backendUrl != null && eventBatch.tags.size() > 0)
+        {
+            Ion.with(getApplicationContext())
+                    .load(backendUrl)
+                    .setJsonPojoBody(eventBatch)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            if (e != null) {
+                                Log.e(TAG, "Sending failed.");
+                            }
+                        }
+                    });
         }
         exportRuuviTags();
     }
@@ -371,24 +390,17 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         }
     };
 
-    public static void save(RuuviTag ruuviTag) {
-        if (!Exists(ruuviTag.id)) {
-            ruuviTag.updateAt = new Date();
-            ruuviTag.insert();
-            TagSensorReading reading = new TagSensorReading(ruuviTag);
-            reading.save();
-        }
-    }
+    public static void logTag(RuuviTag ruuviTag) {
+        if (!Exists(ruuviTag.id)) return;
 
-    public static void update(RuuviTag ruuviTag) {
-        if (Exists(ruuviTag.id)) {
-            // TODO: 13/09/17 remember the name some better way
-            ruuviTag.name = RuuviTag.get(ruuviTag.id).name;
-            ruuviTag.updateAt = new Date();
-            ruuviTag.update();
-            TagSensorReading reading = new TagSensorReading(ruuviTag);
-            reading.save();
-        }
+        // TODO: 13/09/17 remember the name some better way
+        RuuviTag oldTag = RuuviTag.get(ruuviTag.id);
+        ruuviTag.name = oldTag.name;
+        ruuviTag.gatewayUrl = oldTag.gatewayUrl;
+        ruuviTag.updateAt = new Date();
+        ruuviTag.update();
+        TagSensorReading reading = new TagSensorReading(ruuviTag);
+        reading.save();
     }
 
     public static boolean Exists(String id) {
@@ -510,16 +522,16 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         int index = checkForSameTag(ruuviTagArrayList, tag);
         if (index == -1) {
             ruuviTagArrayList.add(tag);
-            scanEvent.addRuuviTag(tag);
-            update(tag);
+            scanEvent.tags.add(tag);
+            logTag(tag);
         } else {
             ruuviTagArrayList.set(index, tag);
         }
 
         index = checkForSameTag(scanEvent.tags, tag);
         if (index == -1) {
-            scanEvent.addRuuviTag(tag);
-            update(tag);
+            scanEvent.tags.add(tag);
+            logTag(tag);
         }
     }
 }

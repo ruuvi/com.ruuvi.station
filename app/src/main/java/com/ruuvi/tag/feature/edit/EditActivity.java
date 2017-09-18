@@ -28,13 +28,16 @@ import com.ruuvi.tag.model.TagSensorReading_Table;
 
 public class EditActivity extends AppCompatActivity {
     EditText nameInput;
+    EditText gatewayInput;
     RuuviTag tag;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_edit);
+
         nameInput = findViewById(R.id.input_name);
+        gatewayInput = findViewById(R.id.input_gatewayUrl);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_alarm);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -91,11 +94,15 @@ public class EditActivity extends AppCompatActivity {
 
         if(tag.name != null && !tag.name.isEmpty())
             nameInput.setText(tag.name, TextView.BufferType.NORMAL);
+
+        if(tag.gatewayUrl != null && !tag.gatewayUrl.isEmpty())
+            gatewayInput.setText(tag.gatewayUrl, TextView.BufferType.NORMAL);
     }
 
     public void save(View view) {
         tag = RuuviTag.get(tag.id);
         tag.name = nameInput.getText().toString();
+        tag.gatewayUrl = gatewayInput.getText().toString();
         tag.update();
     }
 
