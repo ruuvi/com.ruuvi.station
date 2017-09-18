@@ -24,7 +24,7 @@
         android:inputType="text"
         android:paddingLeft="0dp"
         android:textColor="@color/black"
-        android:textSize="24sp" />
+        />
 
     <TextView
         android:id="@+id/title_gatewayUrl"
@@ -43,7 +43,7 @@
         android:inputType="text"
         android:paddingLeft="0dp"
         android:textColor="@color/black"
-        android:textSize="24sp" />
+        />
 
     <Button
         android:id="@+id/button2"
