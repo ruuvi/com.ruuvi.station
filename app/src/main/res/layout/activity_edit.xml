@@ -26,6 +26,24 @@
         android:textColor="@color/black"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/title_gatewayUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_name"
+        android:text="Gateway url"
+        android:textColor="@color/red" />
+
+    <EditText
+        android:id="@+id/input_gatewayUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/title_gatewayUrl"
+        android:inputType="text"
+        android:paddingLeft="0dp"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/button2"
@@ -46,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/input_name"
+        android:layout_below="@+id/input_gatewayUrl"
         android:text="Alarms"
         android:textColor="@color/red" />
 

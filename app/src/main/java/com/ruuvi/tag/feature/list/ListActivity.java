@@ -63,7 +63,8 @@ public class ListActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent = new Intent(ListActivity.this, ScannerService.class);
-                ScannerService.save(tag);
+                tag.save();
+                ScannerService.logTag(tag);
                 startService(intent);
                 finish();
             }
