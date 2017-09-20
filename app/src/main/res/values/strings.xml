@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RuuviScanner</string>
-    <string name="title_activity_main">My RuuviTags</string>
-    <string name="title_activity_list">Found RuuviTags</string>
+    <string name="title_activity_main">Ruuvi Station</string>
+    <string name="title_activity_list">Nearby Tags</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
