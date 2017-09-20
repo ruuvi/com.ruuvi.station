@@ -127,4 +127,6 @@
     <string name="pressure">Air Pressure</string>
     <string name="rssi">RSSI</string>
     <string name="tag_already_added">Tag is already added</string>
+    <string name="navigation_drawer_open">Open the navigation drawer</string>
+    <string name="navigation_drawer_close">Close the navigation drawer</string>
 </resources>
