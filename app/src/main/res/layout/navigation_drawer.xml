@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/navigation_header_view"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/ap_gray">
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/navigationDrawer_listView"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_below="@id/navigation_header_view">
+
+        </ListView>
+
+</RelativeLayout>
