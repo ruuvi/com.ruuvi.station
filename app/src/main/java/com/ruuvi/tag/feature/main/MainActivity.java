@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -139,9 +141,11 @@ public class MainActivity extends AppCompatActivity {
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            // TODO: 20/09/17 make this open differnt fragments 
-            Intent intent = new Intent(MainActivity.this, ListActivity.class);
-            startActivity(intent);
+            // TODO: 20/09/17 make this open differnt fragments
+            if (i == 1) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
