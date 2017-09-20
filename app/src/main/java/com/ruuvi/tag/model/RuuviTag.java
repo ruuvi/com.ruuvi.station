@@ -115,7 +115,7 @@ public class RuuviTag extends BaseModel {
             double z = ((rawData[12] << 8) + rawData[13]);
             accelZ = round(z, 2);
 
-            voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 100.0;
+            voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 1000.0;
         }
     }
 
