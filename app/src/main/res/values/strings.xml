@@ -129,4 +129,11 @@
     <string name="tag_already_added">Tag is already added</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
+
+    <string-array name="navigation_items">
+        <item>Ruuvi Station</item>
+        <item>App Settings</item>
+        <item>About</item>
+    </string-array>
+
 </resources>

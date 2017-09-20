@@ -48,6 +48,13 @@
         android:layout_gravity="start"
         android:background="@android:color/white" >
 
+        <ListView
+            android:id="@+id/navigationDrawer_listView"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+        </ListView>
+
     </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
