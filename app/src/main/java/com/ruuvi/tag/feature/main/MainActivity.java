@@ -10,12 +10,18 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -33,6 +39,7 @@ import com.ruuvi.tag.service.ScannerService;
 import com.ruuvi.tag.feature.settings.SettingsActivity;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
+// TODO: 20/09/17 make this, settings and about into fragments 
 public class MainActivity extends AppCompatActivity {
     ScannerService service;
     private RuuviTagAdapter adapter;
@@ -43,11 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean bound;
     private SharedPreferences settings;
     private List<RuuviTag> tags = new ArrayList<>();
-
-    public void openList(View view) {
-        Intent intent = new Intent(this, ListActivity.class);
-        startActivity(intent);
-    }
 
     private void setTimerForAdvertise() {
         timer = new Timer();
@@ -81,6 +83,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        DrawerLayout drawerLayout = findViewById(R.id.main_drawerLayout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        );
+
+        drawerLayout.addDrawerListener(drawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        drawerToggle.syncState();
+
+        ListView drawerListView = findViewById(R.id.navigationDrawer_listView);
+
+        drawerListView.setAdapter(
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        getResources().getStringArray(R.array.navigation_items)
+                )
+        );
+
+        drawerListView.setOnItemClickListener(drawerItemClicked);
+
         gson = new Gson();
         text = findViewById(R.id.noTags_textView);
 
@@ -91,25 +119,31 @@ public class MainActivity extends AppCompatActivity {
         tags = RuuviTag.getAll();
         if (tags.size() > 0) findViewById(R.id.noTags_textView).setVisibility(View.GONE);
 
-        beaconListView = (ListView) findViewById(R.id.Tags_listView);
+        beaconListView = findViewById(R.id.Tags_listView);
         adapter = new RuuviTagAdapter(getApplicationContext(), tags);
         beaconListView.setAdapter(adapter);
 
         setTitle(R.string.title_activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
+        FloatingActionButton fab = findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openList(view);
             }
         });
 
         setTimerForAdvertise();
         adapter.notifyDataSetChanged();
     }
+
+    AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            // TODO: 20/09/17 make this open differnt fragments 
+            Intent intent = new Intent(MainActivity.this, ListActivity.class);
+            startActivity(intent);
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -155,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
