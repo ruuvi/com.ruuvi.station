@@ -7,11 +7,12 @@
     android:layout_height="match_parent"
     tools:context="com.ruuvi.tag.feature.main.MainActivity">
 
-    <android.support.design.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
@@ -25,21 +26,13 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <include
-            android:id="@+id/include"
-            layout="@layout/content_main" />
+        <FrameLayout
+            android:id="@+id/main_contentFrame"
+            android:layout_below="@id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:tint="@color/white"
-            app:backgroundTint="?attr/colorPrimary"
-            app:srcCompat="@drawable/ic_plus_sign" />
-
-    </android.support.design.widget.CoordinatorLayout>
+    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nvView"
