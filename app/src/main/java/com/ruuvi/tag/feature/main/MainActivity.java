@@ -141,11 +141,14 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 break;
             default:
+                type = 0;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.main_contentFrame, new RuuviStationFragment())
                         .commit();
                 break;
         }
+
+        setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
         drawerLayout.closeDrawers();
     }
 }
