@@ -1,11 +1,13 @@
 package com.ruuvi.tag.feature.main;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -13,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,69 +22,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-
-import com.ruuvi.tag.adapters.RuuviTagAdapter;
-import com.ruuvi.tag.feature.list.ListActivity;
 import com.ruuvi.tag.R;
-import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.service.ScannerService;
-import com.ruuvi.tag.feature.settings.SettingsActivity;
-import com.ruuvi.tag.util.DeviceIdentifier;
 
 // TODO: 20/09/17 make this, settings and about into fragments 
 public class MainActivity extends AppCompatActivity {
-    ScannerService service;
-    private RuuviTagAdapter adapter;
-    private ListView beaconListView;
-    private Gson gson;
-    private Timer timer;
-    private View text;
-    private boolean bound;
-    private SharedPreferences settings;
-    private List<RuuviTag> tags = new ArrayList<>();
-
-    private void setTimerForAdvertise() {
-        timer = new Timer();
-        TimerTask updateProfile = new MainActivity.CustomTimerTask();
-        timer.scheduleAtFixedRate(updateProfile, 0, 1000);
-    }
-
-    private class CustomTimerTask extends TimerTask {
-        private Handler mHandler = new Handler();
-
-        @Override
-        public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.clear();
-                            adapter.addAll(RuuviTag.getAll());
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }).start();
-        }
-    }
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DrawerLayout drawerLayout = findViewById(R.id.main_drawerLayout);
+        drawerLayout = findViewById(R.id.main_drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -109,43 +64,13 @@ public class MainActivity extends AppCompatActivity {
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
-        gson = new Gson();
-        text = findViewById(R.id.noTags_textView);
-
-        DeviceIdentifier.id(this);
-
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        tags = RuuviTag.getAll();
-        if (tags.size() > 0) findViewById(R.id.noTags_textView).setVisibility(View.GONE);
-
-        beaconListView = findViewById(R.id.Tags_listView);
-        adapter = new RuuviTagAdapter(getApplicationContext(), tags);
-        beaconListView.setAdapter(adapter);
-
-        setTitle(R.string.title_activity_main);
-
-        FloatingActionButton fab = findViewById(R.id.fab_add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        setTimerForAdvertise();
-        adapter.notifyDataSetChanged();
+        openFragment(0);
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            // TODO: 20/09/17 make this open differnt fragments
-            if (i == 1) {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-            }
+            openFragment(i);
         }
     };
 
@@ -179,10 +104,6 @@ public class MainActivity extends AppCompatActivity {
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         }
-
-        adapter.clear();
-        adapter.addAll(RuuviTag.getAll());
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -204,13 +125,23 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openFragment(int type) {
+        switch (type) {
+            case 1:
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main_contentFrame, new SettingsFragment())
+                        .commit();
+                break;
+            default:
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main_contentFrame, new RuuviStationFragment())
+                        .commit();
+                break;
+        }
+        drawerLayout.closeDrawers();
     }
 }
 
