@@ -135,6 +135,11 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.main_contentFrame, new SettingsFragment())
                         .commit();
                 break;
+            case 2:
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main_contentFrame, new AboutFragment())
+                        .commit();
+                break;
             default:
                 getFragmentManager().beginTransaction()
                         .replace(R.id.main_contentFrame, new RuuviStationFragment())
