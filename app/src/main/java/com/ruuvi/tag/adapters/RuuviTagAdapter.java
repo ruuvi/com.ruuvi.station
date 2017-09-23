@@ -156,16 +156,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
                             intent.putExtra("id", tag.id);
                             getContext().startActivity(intent);
                         } else if (i == 3) {
-                            SQLite.delete()
-                                    .from(Alarm.class)
-                                    .where(Alarm_Table.ruuviTagId.eq(tag.id))
-                                    .execute();
-                            SQLite.delete()
-                                    .from(TagSensorReading.class)
-                                    .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
-                                    .execute();
-
-                            tag.delete();
+                            tag.deleteTagAndRelatives();
                         }
 
                         dialog.dismiss();
