@@ -5,8 +5,9 @@
     tools:context="com.ruuvi.tag.feature.main.AboutFragment">
 
     <TextView
+        android:id="@+id/versionInfo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="about" />
+        android:text="Version: ..." />
 
 </FrameLayout>
