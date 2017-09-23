@@ -3,6 +3,7 @@ package com.ruuvi.tag.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -99,20 +100,23 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         sensorValues.setText(sensorStr);
 
-        convertView.findViewById(R.id.openInBrowser).setOnClickListener(new View.OnClickListener() {
+        if (tag.url != null && !tag.url.isEmpty()) {
+            convertView.findViewById(R.id.row_main_letter).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(tag.url));
+                    getContext().startActivity(intent);
+                }
+            });
+        }
+
+        convertView.findViewById(R.id.row_main_letter).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-                String id = tag.id;
-
+            public boolean onLongClick(View view) {
                 Intent intent = new Intent(getContext(), PlotActivity.class);
-                intent.putExtra("id", id);
+                intent.putExtra("id", tag.id);
                 getContext().startActivity(intent);
-
-                /*
-                String url = tag.url;
-                Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(tag.url));
-                getContext().startActivity(intent);
-                */
+                return false;
             }
         });
 
