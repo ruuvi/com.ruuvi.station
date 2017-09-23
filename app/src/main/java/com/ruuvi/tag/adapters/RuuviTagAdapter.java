@@ -6,21 +6,28 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.edit.AlarmEditActivity;
 import com.ruuvi.tag.feature.edit.EditActivity;
 import com.ruuvi.tag.feature.plot.PlotActivity;
 import com.ruuvi.tag.model.Alarm;
 import com.ruuvi.tag.model.Alarm_Table;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.model.TagSensorReading;
+import com.ruuvi.tag.model.TagSensorReading_Table;
 import com.ruuvi.tag.util.Utils;
 
 import java.util.Date;
@@ -123,9 +130,50 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         convertView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), EditActivity.class);
-                intent.putExtra("id", tag.id);
-                getContext().startActivity(intent);
+                final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
+
+                ListView listView = new ListView(getContext());
+
+                listView.setAdapter(
+                        new ArrayAdapter<>(
+                                getContext(),
+                                android.R.layout.simple_list_item_1,
+                                getContext().getResources().getStringArray(R.array.station_tag_menu)
+                        )
+                );
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        if (i == 0) {
+
+                        } else if (i == 1) {
+                            Intent intent = new Intent(getContext(), AlarmEditActivity.class);
+                            intent.putExtra("tagId", tag.id);
+                            getContext().startActivity(intent);
+                        } else if (i == 2) {
+                            Intent intent = new Intent(getContext(), EditActivity.class);
+                            intent.putExtra("id", tag.id);
+                            getContext().startActivity(intent);
+                        } else if (i == 3) {
+                            SQLite.delete()
+                                    .from(Alarm.class)
+                                    .where(Alarm_Table.ruuviTagId.eq(tag.id))
+                                    .execute();
+                            SQLite.delete()
+                                    .from(TagSensorReading.class)
+                                    .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
+                                    .execute();
+
+                            tag.delete();
+                        }
+
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.setContentView(listView);
+                dialog.show();
             }
         });
 
