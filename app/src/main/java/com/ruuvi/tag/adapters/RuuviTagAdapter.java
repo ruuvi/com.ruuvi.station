@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
@@ -30,6 +31,8 @@ import com.ruuvi.tag.model.TagSensorReading;
 import com.ruuvi.tag.model.TagSensorReading_Table;
 import com.ruuvi.tag.util.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -117,16 +120,6 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             });
         }
 
-        convertView.findViewById(R.id.row_main_letter).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Intent intent = new Intent(getContext(), PlotActivity.class);
-                intent.putExtra("id", tag.id);
-                getContext().startActivity(intent);
-                return false;
-            }
-        });
-
         convertView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,11 +127,17 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
                 ListView listView = new ListView(getContext());
 
+                List<String> menu = new ArrayList<>(Arrays.asList(getContext().getResources().getStringArray(R.array.station_tag_menu)));
+
+                if (tag.url != null && !tag.url.isEmpty()) {
+                    menu.add(getContext().getResources().getString(R.string.share));
+                }
+
                 listView.setAdapter(
                         new ArrayAdapter<>(
                                 getContext(),
                                 android.R.layout.simple_list_item_1,
-                                getContext().getResources().getStringArray(R.array.station_tag_menu)
+                                menu
                         )
                 );
 
@@ -146,7 +145,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         if (i == 0) {
-
+                            Toast.makeText(getContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
                         } else if (i == 1) {
                             Intent intent = new Intent(getContext(), AlarmEditActivity.class);
                             intent.putExtra("tagId", tag.id);
@@ -157,6 +156,16 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
                             getContext().startActivity(intent);
                         } else if (i == 3) {
                             tag.deleteTagAndRelatives();
+                        } else if (i == 4) {
+                            Intent intent = new Intent(getContext(), PlotActivity.class);
+                            intent.putExtra("id", tag.id);
+                            getContext().startActivity(intent);
+                        } else if (i == 5) {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
+                            intent.putExtra(Intent.EXTRA_TEXT, tag.url);
+                            getContext().startActivity(Intent.createChooser(intent, "Share URL"));
                         }
 
                         dialog.dismiss();

@@ -141,9 +141,11 @@
         <item>Tag Alerts</item>
         <item>Tag Settings</item>
         <item>Remove Tag</item>
+        <item>View Graph</item>
     </string-array>
 
     <string name="updated">Updated</string>
     <string name="alerts">Alerts</string>
     <string name="signal">Signal</string>
+    <string name="share">Share</string>
 </resources>
