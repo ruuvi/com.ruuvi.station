@@ -65,7 +65,7 @@ public class RuuviTag extends BaseModel {
         this.rssi = rssi;
         this.rawData = rawData;
         this.rawDataBlob = new Blob(rawData);
-        if(!temporary)
+        if (!temporary)
             process();
     }
 
@@ -84,17 +84,13 @@ public class RuuviTag extends BaseModel {
         return round(this.temperature * 1.8 + 32.0, 2);
     }
 
-    public void process()
-    {
-        if (url != null && url.contains("#"))
-        {
+    public void process() {
+        if (url != null && url.contains("#")) {
             String data = url.split("#")[1];
             rawData = parseByteDataFromB64(data);
             rawDataBlob = new Blob(rawData);
-            parseRuuviTagDataFromBytes(rawData,2);
-        }
-        else if(rawData != null)
-        {
+            parseRuuviTagDataFromBytes(rawData, 2);
+        } else if (rawData != null) {
             humidity = ((float) (rawData[3] & 0xFF)) / 2f;
 
             double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
@@ -119,27 +115,24 @@ public class RuuviTag extends BaseModel {
         }
     }
 
-    private byte[] parseByteDataFromB64(String data)
-    {
-        try
-        {
+    private byte[] parseByteDataFromB64(String data) {
+        try {
             byte[] bData = base64.decode(data);
             int pData[] = new int[8];
             for (int i = 0; i < bData.length; i++)
                 pData[i] = bData[i] & 0xFF;
             return bData;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    private void parseRuuviTagDataFromBytes(byte[] bData, int ruuviTagFWVersion )
-    {
+    private void parseRuuviTagDataFromBytes(byte[] bData, int ruuviTagFWVersion) {
         int pData[] = new int[8];
         for (int i = 0; i < bData.length; i++)
             pData[i] = bData[i] & 0xFF;
 
-        if(ruuviTagFWVersion == 1) {
+        if (ruuviTagFWVersion == 1) {
             humidity = ((float) (pData[1] & 0xFF)) / 2f;
             double uTemp = (((pData[3] & 127) << 8) | pData[2]);
             double tempSign = (pData[3] >> 7) & 1;
@@ -147,12 +140,10 @@ public class RuuviTag extends BaseModel {
             pressure = ((pData[5] << 8) + pData[4]) + 50000;
             pressure /= 100.00;
             pressure = (pData[7] << 8) + pData[6];
-        }
-        else
-        {
+        } else {
             humidity = ((float) (pData[1] & 0xFF)) / 2f;
             double uTemp = (((pData[2] & 127) << 8) | pData[3]);
-            double  tempSign = (pData[2] >> 7) & 1;
+            double tempSign = (pData[2] >> 7) & 1;
             temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
             pressure = ((pData[4] << 8) + pData[5]) + 50000;
             pressure /= 100.00;
@@ -185,5 +176,18 @@ public class RuuviTag extends BaseModel {
                 .from(RuuviTag.class)
                 .where(RuuviTag_Table.id.eq(id))
                 .querySingle();
+    }
+
+    public void deleteTagAndRelatives() {
+        SQLite.delete()
+                .from(Alarm.class)
+                .where(Alarm_Table.ruuviTagId.eq(this.id))
+                .execute();
+        SQLite.delete()
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.ruuviTagId.eq(this.id))
+                .execute();
+
+        this.delete();
     }
 }

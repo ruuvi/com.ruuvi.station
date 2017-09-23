@@ -113,16 +113,7 @@ public class EditActivity extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                SQLite.delete()
-                        .from(Alarm.class)
-                        .where(Alarm_Table.ruuviTagId.eq(tag.id))
-                        .execute();
-                SQLite.delete()
-                        .from(TagSensorReading.class)
-                        .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
-                        .execute();
-
-                tag.delete();
+                tag.deleteTagAndRelatives();
                 finish();
             }
         });
