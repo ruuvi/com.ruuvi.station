@@ -100,7 +100,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         alertsRssi.setText(alertStr);
 
-        String sensorStr = tag.temperature + "°" + "/ " +
+        String sensorStr = tag.temperature + "°" + " / " +
                 tag.pressure + " hPa / " +
                 tag.humidity + "% RH";
         if (tag.voltage > 0) sensorStr += " / " + tag.voltage + " V";
