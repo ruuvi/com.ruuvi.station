@@ -13,9 +13,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.feature.edit.EditActivity;
 import com.ruuvi.tag.feature.plot.PlotActivity;
+import com.ruuvi.tag.model.Alarm;
+import com.ruuvi.tag.model.Alarm_Table;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.Utils;
 
@@ -41,32 +44,60 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         }
 
         TextView txtId = convertView.findViewById(R.id.id);
-        TextView txtRssi = convertView.findViewById(R.id.rssi);
-        TextView txtTemperature = convertView.findViewById(R.id.temperature);
-        TextView txtHumidity = convertView.findViewById(R.id.humidity);
-        TextView txtPressure = convertView.findViewById(R.id.pressure);
-        TextView txtLast = convertView.findViewById(R.id.lastseen);
-        ImageButton edit = convertView.findViewById(R.id.edit);
-        ImageButton www = convertView.findViewById(R.id.openInBrowser);
+        TextView lastseen = convertView.findViewById(R.id.lastseen);
+        TextView sensorValues = convertView.findViewById(R.id.sensorValues);
+        TextView alertsRssi = convertView.findViewById(R.id.alerts_rssi);
 
         if(tag.name != null && !tag.name.isEmpty())
             txtId.setText(tag.name);
         else
             txtId.setText(tag.id);
 
-        txtRssi.setText(tag.rssi + " dB");
-        txtTemperature.setText(tag.temperature + "°C" + " / " + tag.getFahrenheit() + "°F");
-        txtHumidity.setText(tag.humidity + "%");
-        txtPressure.setText(tag.pressure + " hPa");
+        ((ImageView)convertView.findViewById(R.id.row_main_letter))
+                .setImageBitmap(Utils.createBall(100,
+                        R.color.ap_gray,
+                        Color.WHITE,
+                        txtId.getText().charAt(0) + ""));
 
         Date dateNow = new Date();
         long diffInMS = dateNow.getTime() - tag.updateAt.getTime();
-        txtLast.setText(tag.updateAt.toLocaleString() + " / " + (tag.url != null ? tag.url : "RawMode"));
+        String updated = getContext().getResources().getString(R.string.updated) + " ";
+        // show date if the tag has not been seen for 24h
+        if (diffInMS > 24 * 60 * 60 * 1000) {
+            updated += tag.updateAt.toString();
+        } else {
+            int seconds = (int) (diffInMS / 1000) % 60 ;
+            int minutes = (int) ((diffInMS / (1000*60)) % 60);
+            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
+            if (hours > 0) updated += hours + " h ";
+            if (minutes > 0) updated += minutes + " min ";
+            updated += seconds + " s ago";
+        }
 
+        lastseen.setText(updated);
+
+        /*
         if(diffInMS > 1000*60)
             txtLast.setTextColor(Color.RED);
         else
             txtLast.setTextColor(getContext().getResources().getColor(R.color.ap_gray));
+        */
+
+        String alertStr = getContext().getResources().getString(R.string.alerts) + ": ";
+        long alarmCount = SQLite.selectCountOf().from(Alarm.class).where(Alarm_Table.ruuviTagId.eq(tag.id))
+                .count();
+        alertStr += alarmCount > 0 ? "On" : "Off";
+        alertStr += " / " + getContext().getResources().getString(R.string.signal) + ": ";
+        alertStr += tag.rssi + " dB";
+
+        alertsRssi.setText(alertStr);
+
+        String sensorStr = tag.temperature + "°" + "/ " +
+                tag.pressure + " hPa / " +
+                tag.humidity + "% RH";
+        if (tag.voltage > 0) sensorStr += " / " + tag.voltage + " V";
+
+        sensorValues.setText(sensorStr);
 
         convertView.findViewById(R.id.openInBrowser).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,11 +125,6 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             }
         });
 
-        ((ImageView)convertView.findViewById(R.id.row_main_letter))
-                .setImageBitmap(Utils.createBall(100,
-                        R.color.ap_gray,
-                        Color.WHITE,
-                        txtId.getText().charAt(0) + ""));
         return convertView;
     }
 }

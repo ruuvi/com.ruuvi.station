@@ -136,4 +136,7 @@
         <item>About</item>
     </string-array>
 
+    <string name="updated">Updated</string>
+    <string name="alerts">Alerts</string>
+    <string name="signal">Signal</string>
 </resources>
