@@ -51,6 +51,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.Alarm;
+import com.ruuvi.tag.model.LeScanResult;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
@@ -69,12 +70,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
-
-    private class LeScanResult {
-        BluetoothDevice device;
-        int rssi;
-        byte[] scanData;
-    }
 
     List<RuuviTag> ruuviTagArrayList;
     SharedPreferences settings;
