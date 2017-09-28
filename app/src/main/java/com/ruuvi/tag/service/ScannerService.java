@@ -61,10 +61,11 @@ import com.ruuvi.tag.util.DeviceIdentifier;
 import com.ruuvi.tag.util.Foreground;
 import com.ruuvi.tag.model.RuuviTagComplexList;
 
+import static com.ruuvi.tag.RuuviScannerApplication.useNewApi;
+
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private static final String TAG = "ScannerService";
-    private static final boolean USE_NEW_API = false;
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
@@ -512,10 +513,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotifyMgr.notify(notificationid, notification.build());
-    }
-
-    private boolean useNewApi() {
-        return USE_NEW_API && Build.VERSION.SDK_INT >= 21;
     }
 
     public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent) {
