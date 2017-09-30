@@ -65,10 +65,8 @@ public class ListActivity extends AppCompatActivity implements RuuviTagListener 
                         .show();
                     return;
                 }
-                Intent intent = new Intent(ListActivity.this, ScannerService.class);
                 tag.save();
                 ScannerService.logTag(tag);
-                startService(intent);
                 finish();
             }
         });
