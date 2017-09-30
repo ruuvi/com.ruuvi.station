@@ -31,10 +31,6 @@
             android:label="@string/title_activity_list"
             android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
         <activity
-            android:name=".feature.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
-        <activity
             android:name="com.ruuvi.tag.feature.edit.EditActivity"
             android:label="Edit Ruuvitag"
             android:launchMode="singleTop"
