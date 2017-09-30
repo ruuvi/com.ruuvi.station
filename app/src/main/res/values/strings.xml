@@ -8,13 +8,11 @@
     <string name="pref_bgscan">Enable background scan</string>
     <string name="pref_bgscan_summ">Allows scanning when app is running in the background</string>
 
-    <string name="pref_scaninterval">Scan interval</string>
-    <string name="pref_scaninterval_summ">Set time between scans</string>
+    <string name="pref_scaninterval">Background scan interval</string>
+    <string name="pref_scaninterval_summ">Set time between background scans</string>
 
-    <string name="pref_title_scaninterval">Scan interval</string>
+    <string name="pref_title_scaninterval">Background scan interval</string>
     <string-array name="pref_scaninterval_titles">
-        <item>1 second</item>
-        <item>5 seconds</item>
         <item>15 seconds</item>
         <item>30 seconds</item>
         <item>1 minute</item>
@@ -24,8 +22,6 @@
         <item>1 hour</item>
     </string-array>
     <string-array name="pref_scaninterval_values">
-        <item>1</item>
-        <item>5</item>
         <item>15</item>
         <item>30</item>
         <item>60</item>
