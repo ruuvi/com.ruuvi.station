@@ -38,7 +38,7 @@ import com.ruuvi.tag.util.RuuviTagScanner;
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
-    public List<RuuviTag> myRuuviTags;
+    public List<RuuviTag> myRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
 
@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
+            myRuuviTags.clear();
+            myRuuviTags.addAll(RuuviTag.getAll());
             scanner.start();
             handler.post(updater);
         }
