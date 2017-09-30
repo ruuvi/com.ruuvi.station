@@ -212,33 +212,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         while (itr.hasNext()) {
             LeScanResult element = itr.next();
 
-            // Parse the payload of the advertisement packet
-            // as a list of AD structures.
-            List<ADStructure> structures =
-                    ADPayloadParser.getInstance().parse(element.scanData);
-
-            // For each AD structure contained in the advertisement packet.
-            for (ADStructure structure : structures) {
-                if (structure instanceof EddystoneURL) {
-                    // Eddystone URL
-                    EddystoneURL es = (EddystoneURL) structure;
-                    if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                        RuuviTag tag = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
-                        addFoundTagToLists(tag, scanEvent);
-                    }
-                }
-                // If the AD structure represents Eddystone TLM.
-                else if (structure instanceof ADManufacturerSpecific) {
-                    ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
-                    if (es.getCompanyId() == 0x0499) {
-                        byte[] data = es.getData();
-                        if (data != null) {
-                            RuuviTag tag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
-                            addFoundTagToLists(tag, scanEvent);
-                        }
-                    }
-                }
-            }
+            RuuviTag tag  = element.parse();
+            if (tag != null) addFoundTagToLists(tag, scanEvent);
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");

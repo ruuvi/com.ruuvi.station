@@ -80,6 +80,14 @@ public class RuuviTag extends BaseModel {
         this.pressure = Double.valueOf(data[5]);
     }
 
+    public void updateDataFrom(RuuviTag tag) {
+        this.url = tag.url;
+        this.rssi = tag.rssi;
+        this.rawData = tag.rawData;
+        this.updateAt = new Date();
+        process();
+    }
+
     public double getFahrenheit() {
         return round(this.temperature * 1.8 + 32.0, 2);
     }
