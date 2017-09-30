@@ -1,10 +1,16 @@
 package com.ruuvi.tag.feature.main;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +30,7 @@ import java.util.List;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.service.BackgroundScanner;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.util.RuuviTagListener;
 import com.ruuvi.tag.util.RuuviTagScanner;
@@ -79,6 +86,24 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         );
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
+
+        boolean alarmUp = (PendingIntent.getBroadcast(this, 0,
+                new Intent("com.ruuvi.tag.service.BackgroundScanner"),
+                PendingIntent.FLAG_NO_CREATE) != null);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (settings.getBoolean("pref_bgscan", false) && !alarmUp) {
+
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+
+            Intent i = new Intent(this, BackgroundScanner.class);
+
+            PendingIntent sender = PendingIntent.getBroadcast(this, BackgroundScanner.REQUEST_CODE, i, 0);
+
+            AlarmManager am = (AlarmManager) this
+                    .getSystemService(ALARM_SERVICE);
+            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                    scanInterval, sender);
+        }
 
         openFragment(0);
     }
