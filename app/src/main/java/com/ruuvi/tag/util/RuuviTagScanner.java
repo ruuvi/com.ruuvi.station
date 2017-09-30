@@ -88,5 +88,4 @@ public class RuuviTagScanner {
         RuuviTag tag = dev.parse();
         if (tag != null) listener.tagFound(tag);
     }
-
 }
