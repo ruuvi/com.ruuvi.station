@@ -1,15 +1,16 @@
 package com.ruuvi.tag.feature.main;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Fragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceFragment;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,12 +27,29 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
-import com.ruuvi.tag.service.ScannerService;
+import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.service.BackgroundScanner;
+import com.ruuvi.tag.util.DataUpdateListener;
+import com.ruuvi.tag.util.RuuviTagListener;
+import com.ruuvi.tag.util.RuuviTagScanner;
 
-// TODO: 20/09/17 make this, settings and about into fragments 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private DrawerLayout drawerLayout;
+    private RuuviTagScanner scanner;
+    public List<RuuviTag> myRuuviTags = new ArrayList<>();
+    private DataUpdateListener fragmentWithCallback;
+    private Handler handler;
+
+    private Runnable updater = new Runnable() {
+        @Override
+        public void run() {
+            if (fragmentWithCallback != null) fragmentWithCallback.dataUpdated();
+            handler.postDelayed(updater, 1000);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.main_drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        handler = new Handler();
+
+        myRuuviTags = RuuviTag.getAll();
+        scanner = new RuuviTagScanner(this, getApplicationContext());
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -64,6 +87,24 @@ public class MainActivity extends AppCompatActivity {
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
+        boolean alarmUp = (PendingIntent.getBroadcast(this, 0,
+                new Intent("com.ruuvi.tag.service.BackgroundScanner"),
+                PendingIntent.FLAG_NO_CREATE) != null);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (settings.getBoolean("pref_bgscan", false) && !alarmUp) {
+
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
+
+            Intent i = new Intent(this, BackgroundScanner.class);
+
+            PendingIntent sender = PendingIntent.getBroadcast(this, BackgroundScanner.REQUEST_CODE, i, 0);
+
+            AlarmManager am = (AlarmManager) this
+                    .getSystemService(ALARM_SERVICE);
+            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                    scanInterval, sender);
+        }
+
         openFragment(0);
     }
 
@@ -76,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Intent intent = new Intent(MainActivity.this, ScannerService.class);
-        startService(intent);
+        //Intent intent = new Intent(MainActivity.this, ScannerService.class);
+        //startService(intent);
         super.onStart();
     }
 
@@ -103,7 +144,19 @@ public class MainActivity extends AppCompatActivity {
 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+        } else {
+            myRuuviTags.clear();
+            myRuuviTags.addAll(RuuviTag.getAll());
+            scanner.start();
+            handler.post(updater);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        scanner.stop();
+        handler.removeCallbacks(updater);
     }
 
     @Override
@@ -129,27 +182,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openFragment(int type) {
+        Fragment fragment = null;
         switch (type) {
             case 1:
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.main_contentFrame, new SettingsFragment())
-                        .commit();
+                fragment = new SettingsFragment();
+                fragmentWithCallback = null;
                 break;
             case 2:
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.main_contentFrame, new AboutFragment())
-                        .commit();
+                fragment = new AboutFragment();
+                fragmentWithCallback = null;
                 break;
             default:
+                fragment = new RuuviStationFragment();
+                fragmentWithCallback = (DataUpdateListener)fragment;
                 type = 0;
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.main_contentFrame, new RuuviStationFragment())
-                        .commit();
                 break;
         }
-
+        getFragmentManager().beginTransaction()
+                .replace(R.id.main_contentFrame, fragment)
+                .commit();
         setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
         drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void tagFound(RuuviTag tag) {
+        for (RuuviTag myTag: myRuuviTags) {
+            if (myTag.id.equals(tag.id)) {
+                myTag.updateDataFrom(tag);
+                if (fragmentWithCallback != null) fragmentWithCallback.dataUpdated();
+            }
+        }
     }
 }
 

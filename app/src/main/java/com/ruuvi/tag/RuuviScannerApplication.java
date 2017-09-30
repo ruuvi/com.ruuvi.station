@@ -1,6 +1,7 @@
 package com.ruuvi.tag;
 
 import android.app.Application;
+import android.os.Build;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 
@@ -9,6 +10,12 @@ import com.raizlabs.android.dbflow.config.FlowManager;
  */
 
 public class RuuviScannerApplication extends Application {
+    private static final boolean USE_NEW_API = true;
+
+    public static boolean useNewApi() {
+        return USE_NEW_API && Build.VERSION.SDK_INT >= 21;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

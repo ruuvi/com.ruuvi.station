@@ -27,16 +27,17 @@ import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.ComplexPreferences;
 import com.ruuvi.tag.model.RuuviTagComplexList;
 import com.ruuvi.tag.adapters.ListAdapter;
+import com.ruuvi.tag.util.RuuviTagListener;
+import com.ruuvi.tag.util.RuuviTagScanner;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements RuuviTagListener {
     SharedPreferences savedTags;
     Gson gson;
     private ArrayList<RuuviTag> ruuviTagArrayList;
     private ListAdapter adapter;
     private ListView beaconListView;
     private SharedPreferences settings;
-
-    Timer timer;
+    private RuuviTagScanner scanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class ListActivity extends AppCompatActivity {
         beaconListView = (ListView)findViewById(R.id.listView);
         adapter = new ListAdapter(ruuviTagArrayList, this);
         beaconListView.setAdapter(adapter);
+
+        scanner = new RuuviTagScanner(this, getApplicationContext());
 
         savedTags = getSharedPreferences("saved_tags", MODE_PRIVATE);
         gson = new Gson();
@@ -62,58 +65,34 @@ public class ListActivity extends AppCompatActivity {
                         .show();
                     return;
                 }
-                Intent intent = new Intent(ListActivity.this, ScannerService.class);
                 tag.save();
                 ScannerService.logTag(tag);
-                startService(intent);
                 finish();
             }
         });
     }
 
-    private void setTimerForAdvertise() {
-        timer = new Timer();
-        TimerTask updateProfile = new CustomTimerTask();
-        timer.scheduleAtFixedRate(updateProfile, 500, 500);
-    }
-
-    public class CustomTimerTask extends TimerTask {
-        private Handler mHandler = new Handler();
-
-        @Override
-        public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            importRuuviTags();
-                        }
-                    });
-                }
-            }).start();
-        }
-    }
-
-    private void importRuuviTags() {
-        ruuviTagArrayList.clear();
-        ComplexPreferences complexPreferences = ComplexPreferences
-                .getComplexPreferences(this, "saved_tags", MODE_PRIVATE);
-        RuuviTagComplexList ruuvilist = complexPreferences.getObject("ruuvi", RuuviTagComplexList.class);
-
-        if(ruuvilist != null) {
-            for(RuuviTag ruuviTag : ruuvilist.ruuviTags) {
-                ruuviTagArrayList.add(ruuviTag);
-            }
-            adapter.notifyDataSetChanged();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        importRuuviTags();
-        setTimerForAdvertise();
+        scanner.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        scanner.stop();
+    }
+
+    @Override
+    public void tagFound(RuuviTag tag) {
+        int found = -1;
+        for (int i = 0; i < ruuviTagArrayList.size(); i++) {
+            if (ruuviTagArrayList.get(i).id.equals(tag.id)) found = i;
+        }
+        if (found > -1) ruuviTagArrayList.set(found, tag);
+        else ruuviTagArrayList.add(tag);
+
+        adapter.notifyDataSetChanged();
     }
 }

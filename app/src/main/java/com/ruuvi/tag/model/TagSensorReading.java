@@ -57,9 +57,12 @@ public class TagSensorReading extends BaseModel {
     }
 
     public static List<TagSensorReading> getForTag(String id) {
+        Date from = new Date();
+        from.setHours(-24);
         return SQLite.select()
                 .from(TagSensorReading.class)
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
+                .and(TagSensorReading_Table.createdAt.greaterThan(from))
                 .queryList();
     }
 }

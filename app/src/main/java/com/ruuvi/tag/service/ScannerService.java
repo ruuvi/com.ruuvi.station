@@ -51,6 +51,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.Alarm;
+import com.ruuvi.tag.model.LeScanResult;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.RuuviTag_Table;
 import com.ruuvi.tag.model.ScanEvent;
@@ -61,19 +62,14 @@ import com.ruuvi.tag.util.DeviceIdentifier;
 import com.ruuvi.tag.util.Foreground;
 import com.ruuvi.tag.model.RuuviTagComplexList;
 
+import static com.ruuvi.tag.RuuviScannerApplication.useNewApi;
+
 
 public class ScannerService extends Service /*implements BeaconConsumer*/ {
     private static final String TAG = "ScannerService";
-    private static final boolean USE_NEW_API = false;
     private ArrayList<LeScanResult> scanResults;
     private ScheduledExecutorService scheduler;
     private ScheduledExecutorService alertScheduler;
-
-    private class LeScanResult {
-        BluetoothDevice device;
-        int rssi;
-        byte[] scanData;
-    }
 
     List<RuuviTag> ruuviTagArrayList;
     SharedPreferences settings;
@@ -216,33 +212,8 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
         while (itr.hasNext()) {
             LeScanResult element = itr.next();
 
-            // Parse the payload of the advertisement packet
-            // as a list of AD structures.
-            List<ADStructure> structures =
-                    ADPayloadParser.getInstance().parse(element.scanData);
-
-            // For each AD structure contained in the advertisement packet.
-            for (ADStructure structure : structures) {
-                if (structure instanceof EddystoneURL) {
-                    // Eddystone URL
-                    EddystoneURL es = (EddystoneURL) structure;
-                    if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                        RuuviTag tag = new RuuviTag(element.device.getAddress(), es.getURL().toString(), null, element.rssi, false);
-                        addFoundTagToLists(tag, scanEvent);
-                    }
-                }
-                // If the AD structure represents Eddystone TLM.
-                else if (structure instanceof ADManufacturerSpecific) {
-                    ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
-                    if (es.getCompanyId() == 0x0499) {
-                        byte[] data = es.getData();
-                        if (data != null) {
-                            RuuviTag tag = new RuuviTag(element.device.getAddress(), null, data, element.rssi, false);
-                            addFoundTagToLists(tag, scanEvent);
-                        }
-                    }
-                }
-            }
+            RuuviTag tag  = element.parse();
+            if (tag != null) addFoundTagToLists(tag, scanEvent);
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
@@ -512,10 +483,6 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
 
         NotificationManager NotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotifyMgr.notify(notificationid, notification.build());
-    }
-
-    private boolean useNewApi() {
-        return USE_NEW_API && Build.VERSION.SDK_INT >= 21;
     }
 
     public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,47 +16,19 @@ import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
 import com.ruuvi.tag.feature.list.ListActivity;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.util.DeviceIdentifier;
+import com.ruuvi.tag.util.RuuviTagListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RuuviStationFragment extends Fragment {
+public class RuuviStationFragment extends Fragment implements DataUpdateListener {
+    private static final String TAG = "RuuviStationFragment";
     private RuuviTagAdapter adapter;
     private ListView beaconListView;
-    private Timer timer;
-    private View text;
-    private List<RuuviTag> tags = new ArrayList<>();
-
-    private void setTimerForAdvertise() {
-        timer = new Timer();
-        TimerTask updateProfile = new CustomTimerTask();
-        timer.scheduleAtFixedRate(updateProfile, 0, 1000);
-    }
-
-    private class CustomTimerTask extends TimerTask {
-        private Handler mHandler = new Handler();
-
-        @Override
-        public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.clear();
-                            adapter.addAll(RuuviTag.getAll());
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }).start();
-        }
-    }
-
 
     public RuuviStationFragment() {
         // Required empty public constructor
@@ -79,15 +52,14 @@ public class RuuviStationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ruuvi_station, container, false);
 
-        text = view.findViewById(R.id.noTags_textView);
+        view.findViewById(R.id.noTags_textView);
 
         DeviceIdentifier.id(getActivity());
 
-        tags = RuuviTag.getAll();
-        if (tags.size() > 0) view.findViewById(R.id.noTags_textView).setVisibility(View.GONE);
+        if (((MainActivity)getActivity()).myRuuviTags.size() > 0) view.findViewById(R.id.noTags_textView).setVisibility(View.GONE);
 
         beaconListView = view.findViewById(R.id.Tags_listView);
-        adapter = new RuuviTagAdapter(getActivity(), tags);
+        adapter = new RuuviTagAdapter(getActivity(), ((MainActivity)getActivity()).myRuuviTags);
         beaconListView.setAdapter(adapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_add);
@@ -99,10 +71,13 @@ public class RuuviStationFragment extends Fragment {
             }
         });
 
-        setTimerForAdvertise();
         adapter.notifyDataSetChanged();
 
         return view;
     }
 
+    @Override
+    public void dataUpdated() {
+        adapter.notifyDataSetChanged();
+    }
 }
