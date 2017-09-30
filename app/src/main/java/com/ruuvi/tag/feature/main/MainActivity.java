@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         switch (type) {
             case 1:
                 fragment = new SettingsFragment();
-                fragmentWithCallback = (DataUpdateListener) fragment;
+                fragmentWithCallback = null;
                 break;
             case 2:
                 fragment = new AboutFragment();
