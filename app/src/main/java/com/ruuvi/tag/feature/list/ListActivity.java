@@ -1,11 +1,7 @@
 package com.ruuvi.tag.feature.list;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,19 +12,14 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.service.ScannerService;
 import com.ruuvi.tag.model.RuuviTag;
-import com.ruuvi.tag.util.ComplexPreferences;
-import com.ruuvi.tag.model.RuuviTagComplexList;
 import com.ruuvi.tag.adapters.ListAdapter;
-import com.ruuvi.tag.util.RuuviTagListener;
-import com.ruuvi.tag.util.RuuviTagScanner;
+import com.ruuvi.tag.scanning.RuuviTagListener;
+import com.ruuvi.tag.scanning.RuuviTagScanner;
 
 public class ListActivity extends AppCompatActivity implements RuuviTagListener {
     SharedPreferences savedTags;

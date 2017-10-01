@@ -1,4 +1,4 @@
-package com.ruuvi.tag.service;
+package com.ruuvi.tag.scanning;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;

@@ -27,13 +27,12 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
-import com.ruuvi.tag.service.BackgroundScanner;
+import com.ruuvi.tag.scanning.BackgroundScanner;
 import com.ruuvi.tag.util.DataUpdateListener;
-import com.ruuvi.tag.util.RuuviTagListener;
-import com.ruuvi.tag.util.RuuviTagScanner;
+import com.ruuvi.tag.scanning.RuuviTagListener;
+import com.ruuvi.tag.scanning.RuuviTagScanner;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private DrawerLayout drawerLayout;
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
         boolean alarmUp = (PendingIntent.getBroadcast(this, 0,
-                new Intent("com.ruuvi.tag.service.BackgroundScanner"),
+                new Intent("com.ruuvi.tag.scanning.BackgroundScanner"),
                 PendingIntent.FLAG_NO_CREATE) != null);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (settings.getBoolean("pref_bgscan", false) && !alarmUp) {

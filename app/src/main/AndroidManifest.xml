@@ -47,7 +47,7 @@
         <service
             android:name="com.ruuvi.tag.service.ScannerService"
             android:exported="false" />
-        <receiver android:name=".service.BackgroundScanner" />
+        <receiver android:name=".scanning.BackgroundScanner" />
     </application>
 
 </manifest>
