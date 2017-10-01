@@ -22,6 +22,7 @@ import com.ruuvi.tag.model.LeScanResult;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.ScanEvent;
 import com.ruuvi.tag.model.ScanEventSingle;
+import com.ruuvi.tag.util.AlarmChecker;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
 import java.util.ArrayList;
@@ -118,7 +119,6 @@ public class BackgroundScanner extends BroadcastReceiver {
     }
 
     void processFoundDevices(Context context) {
-        //ruuviTagArrayList.clear();
         ScanEvent scanEvent = new ScanEvent(context, DeviceIdentifier.id(context));
 
         Iterator<LeScanResult> itr = scanResults.iterator();
@@ -130,12 +130,11 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
-        //exportRuuviTags();
 
         ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
         for (int i = 0; i < scanEvent.tags.size(); i++) {
             RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
-            // don't send data about tags not in "My RuuviTags" list
+            // don't send data about tags not in the list
             if (tagFromDb == null) continue;
 
             eventBatch.tags.add(tagFromDb);
@@ -158,6 +157,8 @@ public class BackgroundScanner extends BroadcastReceiver {
                             }
                         });
             }
+
+            AlarmChecker.check(tagFromDb, context);
         }
         /*
         if (backendUrl != null && eventBatch.tags.size() > 0)
