@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruuvi.tag.BuildConfig;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.scanning.BackgroundScanner;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public List<RuuviTag> myRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
+    SharedPreferences settings;
 
     private Runnable updater = new Runnable() {
         @Override
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         setSupportActionBar(toolbar);
 
         handler = new Handler();
+
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         myRuuviTags = RuuviTag.getAll();
         scanner = new RuuviTagScanner(this, getApplicationContext());
@@ -86,23 +91,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
-        boolean alarmUp = (PendingIntent.getBroadcast(this, 0,
-                new Intent("com.ruuvi.tag.scanning.BackgroundScanner"),
-                PendingIntent.FLAG_NO_CREATE) != null);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (settings.getBoolean("pref_bgscan", false) && !alarmUp) {
-
-            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "5")) * 1000;
-
-            Intent i = new Intent(this, BackgroundScanner.class);
-
-            PendingIntent sender = PendingIntent.getBroadcast(this, BackgroundScanner.REQUEST_CODE, i, 0);
-
-            AlarmManager am = (AlarmManager) this
-                    .getSystemService(ALARM_SERVICE);
-            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                    scanInterval, sender);
-        }
+        setBackgroundScanning(false);
 
         openFragment(0);
     }
@@ -113,6 +102,33 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             openFragment(i);
         }
     };
+
+    private void setBackgroundScanning(boolean restartFlag) {
+        PendingIntent pendingIntent = getPendingIntent();
+        boolean shouldRun = settings.getBoolean("pref_bgscan", false);
+        boolean isRunning = pendingIntent != null;
+        if (isRunning && (!shouldRun || restartFlag)) {
+            AlarmManager am = (AlarmManager) getApplicationContext()
+                    .getSystemService(ALARM_SERVICE);
+            am.cancel(pendingIntent);
+            pendingIntent.cancel();
+            isRunning = false;
+        }
+        if (shouldRun && !isRunning) {
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+            Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
+            PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, 0);
+            AlarmManager am = (AlarmManager) getApplicationContext()
+                    .getSystemService(ALARM_SERVICE);
+            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                    scanInterval, sender);
+        }
+    }
+
+    private PendingIntent getPendingIntent() {
+        Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
+        return PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
+    }
 
     @Override
     protected void onStart() {
@@ -144,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
+            settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             myRuuviTags.clear();
             myRuuviTags.addAll(RuuviTag.getAll());
             scanner.start();
@@ -154,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     protected void onPause() {
         super.onPause();
+        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         scanner.stop();
         handler.removeCallbacks(updater);
     }
@@ -213,5 +231,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         }
     }
+
+
+    public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            setBackgroundScanning(true);
+        }
+    };
 }
 

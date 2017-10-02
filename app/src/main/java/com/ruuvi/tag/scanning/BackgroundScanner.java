@@ -56,7 +56,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-        Log.d(TAG, "I got it!");
+        Log.d(TAG, "Woke up");
         final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (useNewApi()) {
@@ -120,7 +120,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         if (!devFound) {
-            Log.d(TAG, "found: " + device.getAddress());
+            Log.d(TAG, "Found: " + device.getAddress());
             scanResults.add(dev);
         }
     }
@@ -185,6 +185,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
         */
         //exportRuuviTags();
+        Log.d(TAG, "Going to sleep");
         wakeLock.release();
     }
 
