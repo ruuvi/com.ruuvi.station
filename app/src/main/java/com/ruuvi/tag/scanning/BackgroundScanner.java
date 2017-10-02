@@ -13,6 +13,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static android.content.Context.POWER_SERVICE;
 import static com.ruuvi.tag.RuuviScannerApplication.useNewApi;
 import static com.ruuvi.tag.service.ScannerService.logTag;
 
@@ -46,9 +48,14 @@ public class BackgroundScanner extends BroadcastReceiver {
     private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
     private ScanSettings scanSettings;
     private List<LeScanResult> scanResults;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
         Log.d(TAG, "I got it!");
         final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -178,6 +185,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
         */
         //exportRuuviTags();
+        wakeLock.release();
     }
 
 
