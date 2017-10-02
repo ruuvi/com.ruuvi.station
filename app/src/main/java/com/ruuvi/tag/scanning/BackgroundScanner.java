@@ -62,7 +62,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         if (useNewApi()) {
             bleScanner = bluetoothAdapter.getBluetoothLeScanner();
             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
-            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
+            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER);
             scanSettings = scanSettingsBuilder.build();
         }
         scanResults = new ArrayList<LeScanResult>();
