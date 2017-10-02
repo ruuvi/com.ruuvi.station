@@ -12,7 +12,7 @@
         android:summary="@string/pref_scaninterval_summ"
         android:entries="@array/pref_scaninterval_titles"
         android:entryValues="@array/pref_scaninterval_values"
-        android:defaultValue="5" />
+        android:defaultValue="300" />
     <EditTextPreference
         android:key="pref_backend"
         android:title="Gateway URL (empty = disabled)"

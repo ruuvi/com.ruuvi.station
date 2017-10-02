@@ -1,4 +1,4 @@
-package com.ruuvi.tag.util;
+package com.ruuvi.tag.scanning;
 
 import com.ruuvi.tag.model.RuuviTag;
 

@@ -1,4 +1,4 @@
-package com.ruuvi.tag.service;
+package com.ruuvi.tag.scanning;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -13,6 +13,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -22,12 +23,14 @@ import com.ruuvi.tag.model.LeScanResult;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.ScanEvent;
 import com.ruuvi.tag.model.ScanEventSingle;
+import com.ruuvi.tag.util.AlarmChecker;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static android.content.Context.POWER_SERVICE;
 import static com.ruuvi.tag.RuuviScannerApplication.useNewApi;
 import static com.ruuvi.tag.service.ScannerService.logTag;
 
@@ -45,16 +48,21 @@ public class BackgroundScanner extends BroadcastReceiver {
     private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
     private ScanSettings scanSettings;
     private List<LeScanResult> scanResults;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.d(TAG, "I got it!");
+        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
+        Log.d(TAG, "Woke up");
         final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (useNewApi()) {
             bleScanner = bluetoothAdapter.getBluetoothLeScanner();
             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
-            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
+            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER);
             scanSettings = scanSettingsBuilder.build();
         }
         scanResults = new ArrayList<LeScanResult>();
@@ -112,13 +120,12 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         if (!devFound) {
-            Log.d(TAG, "found: " + device.getAddress());
+            Log.d(TAG, "Found: " + device.getAddress());
             scanResults.add(dev);
         }
     }
 
     void processFoundDevices(Context context) {
-        //ruuviTagArrayList.clear();
         ScanEvent scanEvent = new ScanEvent(context, DeviceIdentifier.id(context));
 
         Iterator<LeScanResult> itr = scanResults.iterator();
@@ -130,12 +137,11 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
-        //exportRuuviTags();
 
         ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
         for (int i = 0; i < scanEvent.tags.size(); i++) {
             RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
-            // don't send data about tags not in "My RuuviTags" list
+            // don't send data about tags not in the list
             if (tagFromDb == null) continue;
 
             eventBatch.tags.add(tagFromDb);
@@ -158,6 +164,8 @@ public class BackgroundScanner extends BroadcastReceiver {
                             }
                         });
             }
+
+            AlarmChecker.check(tagFromDb, context);
         }
         /*
         if (backendUrl != null && eventBatch.tags.size() > 0)
@@ -177,6 +185,8 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
         */
         //exportRuuviTags();
+        Log.d(TAG, "Going to sleep");
+        wakeLock.release();
     }
 
 

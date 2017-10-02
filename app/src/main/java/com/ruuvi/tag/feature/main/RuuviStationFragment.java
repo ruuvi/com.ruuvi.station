@@ -4,9 +4,7 @@ package com.ruuvi.tag.feature.main;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +13,8 @@ import android.widget.ListView;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
 import com.ruuvi.tag.feature.list.ListActivity;
-import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.util.DeviceIdentifier;
-import com.ruuvi.tag.util.RuuviTagListener;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class RuuviStationFragment extends Fragment implements DataUpdateListener {
     private static final String TAG = "RuuviStationFragment";
