@@ -173,7 +173,11 @@ public class BackgroundScanner extends BroadcastReceiver {
 
             AlarmChecker.check(tagFromDb, context);
         }
-        /*
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        String backendUrl = settings.getString("pref_backend", null);
+
         if (backendUrl != null && eventBatch.tags.size() > 0)
         {
             Ion.with(context)
@@ -184,16 +188,12 @@ public class BackgroundScanner extends BroadcastReceiver {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e != null) {
-                                Log.e(TAG, "Sending failed.");
+                                Log.e(TAG, "Batch sending failed.");
                             }
                         }
                     });
         }
-        */
-        //exportRuuviTags();
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
         Intent intent = new Intent(context, BackgroundScanner.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
         AlarmManager am = (AlarmManager) context
