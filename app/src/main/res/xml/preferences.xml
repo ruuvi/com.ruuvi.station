@@ -6,6 +6,11 @@
         android:key="pref_bgscan"
         android:summary="@string/pref_bgscan_summ"
         android:title="@string/pref_bgscan" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_bgscan_battery_saving"
+        android:summary="@string/pref_bgscan_battery_saving_summ"
+        android:title="@string/pref_bgscan_battery_saving" />
     <ListPreference
         android:key="pref_scaninterval"
         android:title="@string/pref_scaninterval"

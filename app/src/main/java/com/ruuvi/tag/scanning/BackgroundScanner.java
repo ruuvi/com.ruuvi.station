@@ -1,6 +1,8 @@
 package com.ruuvi.tag.scanning;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -12,8 +14,12 @@ import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -30,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
 import static com.ruuvi.tag.RuuviScannerApplication.useNewApi;
 import static com.ruuvi.tag.service.ScannerService.logTag;
@@ -167,7 +174,12 @@ public class BackgroundScanner extends BroadcastReceiver {
 
             AlarmChecker.check(tagFromDb, context);
         }
-        /*
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
+        String backendUrl = settings.getString("pref_backend", null);
+
         if (backendUrl != null && eventBatch.tags.size() > 0)
         {
             Ion.with(context)
@@ -178,13 +190,25 @@ public class BackgroundScanner extends BroadcastReceiver {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e != null) {
-                                Log.e(TAG, "Sending failed.");
+                                Log.e(TAG, "Batch sending failed.");
                             }
                         }
                     });
         }
-        */
-        //exportRuuviTags();
+
+        Intent intent = new Intent(context, BackgroundScanner.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
+        AlarmManager am = (AlarmManager) context
+                .getSystemService(ALARM_SERVICE);
+        if (!batterySaving) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            }
+            else {
+                am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            }
+        }
+
         Log.d(TAG, "Going to sleep");
         wakeLock.release();
     }
