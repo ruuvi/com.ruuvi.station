@@ -120,8 +120,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, 0);
             AlarmManager am = (AlarmManager) getApplicationContext()
                     .getSystemService(ALARM_SERVICE);
+            /*
             am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
                     scanInterval, sender);
+            */
+            am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval,  sender);
         }
     }
 
