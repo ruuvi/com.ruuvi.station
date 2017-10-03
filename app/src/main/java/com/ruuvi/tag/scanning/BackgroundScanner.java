@@ -177,6 +177,7 @@ public class BackgroundScanner extends BroadcastReceiver {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
         String backendUrl = settings.getString("pref_backend", null);
 
         if (backendUrl != null && eventBatch.tags.size() > 0)
@@ -199,11 +200,13 @@ public class BackgroundScanner extends BroadcastReceiver {
         PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
         AlarmManager am = (AlarmManager) context
                 .getSystemService(ALARM_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-        }
-        else {
-            am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+        if (!batterySaving) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            }
+            else {
+                am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            }
         }
 
         Log.d(TAG, "Going to sleep");

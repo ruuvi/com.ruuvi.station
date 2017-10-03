@@ -8,6 +8,9 @@
     <string name="pref_bgscan">Enable background scan</string>
     <string name="pref_bgscan_summ">Allows scanning when app is running in the background</string>
 
+    <string name="pref_bgscan_battery_saving">Enable battery saving</string>
+    <string name="pref_bgscan_battery_saving_summ">Let the operating system decide when to scan (makes scanning interval very inaccurate)</string>
+
     <string name="pref_scaninterval">Background scan interval</string>
     <string name="pref_scaninterval_summ">Set time between background scans</string>
 

@@ -117,19 +117,21 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
         if (shouldRun && !isRunning) {
             int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+            boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
             Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
             PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, 0);
             AlarmManager am = (AlarmManager) getApplicationContext()
                     .getSystemService(ALARM_SERVICE);
-            /*
-            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                    scanInterval, sender);
-            */
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-            }
-            else {
-                am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            if (batterySaving) {
+                am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                        scanInterval, sender);
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+                }
+                else {
+                    am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+                }
             }
         }
     }
