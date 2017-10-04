@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
         if (shouldRun && !isRunning) {
             int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+            if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
+
             boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
             Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
             PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, 0);
