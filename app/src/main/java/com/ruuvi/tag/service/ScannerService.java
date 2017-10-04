@@ -364,12 +364,9 @@ public class ScannerService extends Service /*implements BeaconConsumer*/ {
     public static void logTag(RuuviTag ruuviTag) {
         if (!Exists(ruuviTag.id)) return;
 
-        // TODO: 13/09/17 remember the name some better way
-        RuuviTag oldTag = RuuviTag.get(ruuviTag.id);
-        ruuviTag.name = oldTag.name;
-        ruuviTag.gatewayUrl = oldTag.gatewayUrl;
-        ruuviTag.updateAt = new Date();
-        ruuviTag.update();
+        RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
+        dbTag.updateDataFrom(ruuviTag);
+        dbTag.update();
         TagSensorReading reading = new TagSensorReading(ruuviTag);
         reading.save();
     }

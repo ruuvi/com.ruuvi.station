@@ -69,7 +69,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         if (useNewApi()) {
             bleScanner = bluetoothAdapter.getBluetoothLeScanner();
             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
-            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER);
+            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
             scanSettings = scanSettingsBuilder.build();
         }
         scanResults = new ArrayList<LeScanResult>();
@@ -177,6 +177,7 @@ public class BackgroundScanner extends BroadcastReceiver {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
         boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
         String backendUrl = settings.getString("pref_backend", null);
 
