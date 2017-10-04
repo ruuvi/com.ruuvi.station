@@ -185,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         scanner.stop();
         handler.removeCallbacks(updater);
+        for (RuuviTag tag: myRuuviTags) {
+            tag.update();
+        }
     }
 
     @Override
