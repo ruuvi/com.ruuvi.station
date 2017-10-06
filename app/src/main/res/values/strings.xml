@@ -147,4 +147,10 @@
     <string name="alerts">Alerts</string>
     <string name="signal">Signal</string>
     <string name="share">Share</string>
+
+    <string name="battery_optimization_request">Make sure battery optimization is not on for the application.
+        If it is on background scanning interval can be very unreliable.
+        Do you wish to disable optimization for the app?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
