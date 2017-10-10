@@ -42,6 +42,7 @@ import java.util.List;
 
 public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
     private List<RuuviTag> tags;
+
     public RuuviTagAdapter(@NonNull Context context, List<RuuviTag> tags) {
         super(context, 0, tags);
         this.tags = tags;

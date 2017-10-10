@@ -28,10 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ruuvi.tag.feature.list.ListActivity"
-            android:label="@string/title_activity_list"
-            android:parentActivityName="com.ruuvi.tag.feature.main.MainActivity" />
-        <activity
             android:name="com.ruuvi.tag.feature.edit.EditActivity"
             android:label="Edit Ruuvitag"
             android:launchMode="singleTop"

@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
     public List<RuuviTag> myRuuviTags = new ArrayList<>();
+    public List<RuuviTag> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
     SharedPreferences settings;
@@ -97,12 +98,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         setBackgroundScanning(false);
 
-        openFragment(0);
+        openFragment(1);
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            // TODO: 10/10/17 make this in a sane way
             openFragment(i);
         }
     };
@@ -210,11 +212,16 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-            myRuuviTags.clear();
-            myRuuviTags.addAll(RuuviTag.getAll());
+            refrshTagLists();
             scanner.start();
             handler.post(updater);
         }
+    }
+
+    private void refrshTagLists() {
+        myRuuviTags.clear();
+        myRuuviTags.addAll(RuuviTag.getAll());
+        otherRuuviTags.clear();
     }
 
     @Override
@@ -250,19 +257,25 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         return super.onOptionsItemSelected(item);
     }
 
-    private void openFragment(int type) {
+    public void openFragment(int type) {
         Fragment fragment = null;
         switch (type) {
             case 1:
+                refrshTagLists();
+                fragment = new RuuviStationFragment();
+                fragmentWithCallback = (DataUpdateListener)fragment;
+                break;
+            case 2:
                 fragment = new SettingsFragment();
                 fragmentWithCallback = null;
                 break;
-            case 2:
+            case 3:
                 fragment = new AboutFragment();
                 fragmentWithCallback = null;
                 break;
             default:
-                fragment = new RuuviStationFragment();
+                refrshTagLists();
+                fragment = new AddTagFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 type = 0;
                 break;
@@ -279,9 +292,24 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         for (RuuviTag myTag: myRuuviTags) {
             if (myTag.id.equals(tag.id)) {
                 myTag.updateDataFrom(tag);
-                if (fragmentWithCallback != null) fragmentWithCallback.dataUpdated();
+                if (fragmentWithCallback != null) {
+                    fragmentWithCallback.dataUpdated();
+                    return;
+                }
             }
         }
+
+        for (RuuviTag myTag: otherRuuviTags) {
+            if (myTag.id.equals(tag.id)) {
+                myTag.updateDataFrom(tag);
+                // TODO: 10/10/17 order by rssi desc
+                if (fragmentWithCallback != null) {
+                    fragmentWithCallback.dataUpdated();
+                    return;
+                }
+            }
+        }
+        otherRuuviTags.add(tag);
     }
 
     public void BatteryOptimizationDialogShown() {

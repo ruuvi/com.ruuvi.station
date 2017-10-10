@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
-import com.ruuvi.tag.feature.list.ListActivity;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.util.DeviceIdentifier;
 
@@ -52,15 +51,6 @@ public class RuuviStationFragment extends Fragment implements DataUpdateListener
         beaconListView = view.findViewById(R.id.Tags_listView);
         adapter = new RuuviTagAdapter(getActivity(), ((MainActivity)getActivity()).myRuuviTags);
         beaconListView.setAdapter(adapter);
-
-        FloatingActionButton fab = view.findViewById(R.id.fab_add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ListActivity.class);
-                startActivity(intent);
-            }
-        });
 
         adapter.notifyDataSetChanged();
 

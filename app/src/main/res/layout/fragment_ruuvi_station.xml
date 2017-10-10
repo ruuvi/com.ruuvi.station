@@ -31,15 +31,4 @@
         android:layout_centerHorizontal="true"
         android:padding="4dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="@dimen/fab_margin"
-        android:tint="@color/white"
-        app:backgroundTint="?attr/colorPrimary"
-        app:srcCompat="@drawable/ic_plus_sign" />
-
 </android.support.constraint.ConstraintLayout>
