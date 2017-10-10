@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.ruuvi.tag.R;
@@ -38,6 +39,7 @@ import com.ruuvi.tag.scanning.BackgroundScanner;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.scanning.RuuviTagListener;
 import com.ruuvi.tag.scanning.RuuviTagScanner;
+import com.ruuvi.tag.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         for (RuuviTag myTag: otherRuuviTags) {
             if (myTag.id.equals(tag.id)) {
                 myTag.updateDataFrom(tag);
-                // TODO: 10/10/17 order by rssi desc
+                Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
                     fragmentWithCallback.dataUpdated();
                     return;

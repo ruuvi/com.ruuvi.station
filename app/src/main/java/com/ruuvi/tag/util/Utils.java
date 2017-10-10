@@ -6,6 +6,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
+import com.ruuvi.tag.model.RuuviTag;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Created by admin on 09/09/2017.
  */
@@ -38,5 +44,13 @@ public class Utils {
         paint.getTextBounds(letter, 0, letter.length(), textBounds);
         canvas.drawText(letter, radius - textBounds.exactCenterX(), radius - textBounds.exactCenterY(), paint);
         return bitmap;
+    }
+
+    public static void sortTagsByRssi(List<RuuviTag> tags) {
+        Collections.sort(tags, new Comparator<RuuviTag>() {
+            @Override public int compare(RuuviTag o1, RuuviTag o2) {
+                return o2.rssi - o1.rssi;
+            }
+        });
     }
 }
