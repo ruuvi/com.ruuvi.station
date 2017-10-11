@@ -99,27 +99,39 @@ public class RuuviTag extends BaseModel {
             rawDataBlob = new Blob(rawData);
             parseRuuviTagDataFromBytes(rawData, 2);
         } else if (rawData != null) {
+            String protocolVersion = String.valueOf(rawData[2]);
+
             humidity = ((float) (rawData[3] & 0xFF)) / 2f;
 
-            double uTemp = (((rawData[4] & 127) << 8) | rawData[5]);
-            double tempSign = (rawData[4] >> 7) & 1;
-            temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
-            pressure = (rawData[7] & 0xFF) | ((rawData[6] & 0xFF) << 8) + 50000;
-            pressure /= 100.00;
+            int temperatureSign = (rawData[4] >> 7) & 1;
+            int temperatureBase = (rawData[4] & 0x7F);
+            float temperatureFraction = ((float) rawData[5]) / 100f;
+            temperature = ((float) temperatureBase) + temperatureFraction;
+            if (temperatureSign == 1) {
+                temperature *= -1;
+            }
 
+            int pressureHi = rawData[6] & 0xFF;
+            int pressureLo = rawData[7] & 0xFF;
+            pressure = pressureHi * 256 + 50000 + pressureLo;
+            pressure /= 100.0;
+
+            accelX = (rawData[8] << 8 | rawData[9] & 0xFF) / 1000f;
+            accelY = (rawData[10] << 8 | rawData[11] & 0xFF) / 1000f;
+            accelZ = (rawData[12] << 8 | rawData[13] & 0xFF) / 1000f;
+
+            int battHi = rawData[14] & 0xFF;
+            int battLo = rawData[15] & 0xFF;
+            voltage = (battHi * 256 + battLo) / 1000f;
+
+            // make it pretty
+            temperature = round(temperature, 2);
             humidity = round(humidity, 2);
             pressure = round(pressure, 2);
-            temperature = round(temperature, 2);
-
-            // Acceleration values for each axis
-            double x = ((rawData[8] << 8) + rawData[9]);
-            accelX = round(x, 2);
-            double y = ((rawData[10] << 8) + rawData[11]);
-            accelY = round(y, 2);
-            double z = ((rawData[12] << 8) + rawData[13]);
-            accelZ = round(z, 2);
-
-            voltage = ((rawData[15] & 0xFF) | ((rawData[14] & 0xFF) << 8)) / 1000.0;
+            voltage = round(voltage, 4);
+            accelX = round(accelX, 4);
+            accelY = round(accelY, 4);
+            accelZ = round(accelZ, 4);
         }
     }
 

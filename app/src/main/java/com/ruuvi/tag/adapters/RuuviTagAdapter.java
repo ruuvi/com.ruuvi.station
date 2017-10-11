@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.widget.AppCompatImageButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import java.util.List;
 
 public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
     private List<RuuviTag> tags;
+
     public RuuviTagAdapter(@NonNull Context context, List<RuuviTag> tags) {
         super(context, 0, tags);
         this.tags = tags;
@@ -60,6 +62,10 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         TextView lastseen = convertView.findViewById(R.id.lastseen);
         TextView sensorValues = convertView.findViewById(R.id.sensorValues);
         TextView alertsRssi = convertView.findViewById(R.id.alerts_rssi);
+        AppCompatImageButton menuButton = convertView.findViewById(R.id.edit);
+
+        menuButton.setTag(tag);
+        menuButton.setOnClickListener(tagMenuClickListener);
 
         if(tag.name != null && !tag.name.isEmpty())
             txtId.setText(tag.name);
@@ -122,64 +128,66 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             });
         }
 
-        convertView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
-
-                ListView listView = new ListView(getContext());
-
-                List<String> menu = new ArrayList<>(Arrays.asList(getContext().getResources().getStringArray(R.array.station_tag_menu)));
-
-                if (tag.url != null && !tag.url.isEmpty()) {
-                    menu.add(getContext().getResources().getString(R.string.share));
-                }
-
-                listView.setAdapter(
-                        new ArrayAdapter<>(
-                                getContext(),
-                                android.R.layout.simple_list_item_1,
-                                menu
-                        )
-                );
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        if (i == 0) {
-                            Toast.makeText(getContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
-                        } else if (i == 1) {
-                            Intent intent = new Intent(getContext(), AlarmEditActivity.class);
-                            intent.putExtra("tagId", tag.id);
-                            getContext().startActivity(intent);
-                        } else if (i == 2) {
-                            Intent intent = new Intent(getContext(), EditActivity.class);
-                            intent.putExtra("id", tag.id);
-                            getContext().startActivity(intent);
-                        } else if (i == 3) {
-                            tags.remove(tag);
-                            tag.deleteTagAndRelatives();
-                        } else if (i == 4) {
-                            Intent intent = new Intent(getContext(), PlotActivity.class);
-                            intent.putExtra("id", tag.id);
-                            getContext().startActivity(intent);
-                        } else if (i == 5) {
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("text/plain");
-                            intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
-                            intent.putExtra(Intent.EXTRA_TEXT, tag.url);
-                            getContext().startActivity(Intent.createChooser(intent, "Share URL"));
-                        }
-
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.setContentView(listView);
-                dialog.show();
-            }
-        });
-
         return convertView;
     }
+
+    View.OnClickListener tagMenuClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final RuuviTag tag = (RuuviTag)v.getTag();
+
+            final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
+
+            ListView listView = new ListView(getContext());
+
+            List<String> menu = new ArrayList<>(Arrays.asList(getContext().getResources().getStringArray(R.array.station_tag_menu)));
+
+            if (tag.url != null && !tag.url.isEmpty()) {
+                menu.add(getContext().getResources().getString(R.string.share));
+            }
+
+            listView.setAdapter(
+                    new ArrayAdapter<>(
+                            getContext(),
+                            android.R.layout.simple_list_item_1,
+                            menu
+                    )
+            );
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (i == 0) {
+                        Toast.makeText(getContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
+                    } else if (i == 1) {
+                        Intent intent = new Intent(getContext(), AlarmEditActivity.class);
+                        intent.putExtra("tagId", tag.id);
+                        getContext().startActivity(intent);
+                    } else if (i == 2) {
+                        Intent intent = new Intent(getContext(), EditActivity.class);
+                        intent.putExtra("id", tag.id);
+                        getContext().startActivity(intent);
+                    } else if (i == 3) {
+                        tags.remove(tag);
+                        tag.deleteTagAndRelatives();
+                    } else if (i == 4) {
+                        Intent intent = new Intent(getContext(), PlotActivity.class);
+                        intent.putExtra("id", tag.id);
+                        getContext().startActivity(intent);
+                    } else if (i == 5) {
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
+                        intent.putExtra(Intent.EXTRA_TEXT, tag.url);
+                        getContext().startActivity(Intent.createChooser(intent, "Share URL"));
+                    }
+
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.setContentView(listView);
+            dialog.show();
+        }
+    };
 }

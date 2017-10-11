@@ -4,21 +4,24 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,18 +32,20 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ruuvi.tag.BuildConfig;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.scanning.BackgroundScanner;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.scanning.RuuviTagListener;
 import com.ruuvi.tag.scanning.RuuviTagScanner;
+import com.ruuvi.tag.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+    private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
     public List<RuuviTag> myRuuviTags = new ArrayList<>();
+    public List<RuuviTag> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
     SharedPreferences settings;
@@ -94,12 +99,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         setBackgroundScanning(false);
 
-        openFragment(0);
+        openFragment(1);
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            // TODO: 10/10/17 make this in a sane way
             openFragment(i);
         }
     };
@@ -129,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                         scanInterval, sender);
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkAndAskForBatteryOptimization();
                     am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
                 }
                 else {
@@ -137,6 +144,38 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         }
     }
+
+    private void checkAndAskForBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasShownBatteryOptimizationDialog()) {
+            PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+            String packageName = getPackageName();
+            // this below does not seems to work on my device
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.battery_optimization_request))
+                        .setPositiveButton(getString(R.string.yes), batteryDialogClick)
+                        .setNegativeButton(getString(R.string.no), batteryDialogClick)
+                        .show();
+
+                BatteryOptimizationDialogShown();
+            }
+        }
+    }
+
+    DialogInterface.OnClickListener batteryDialogClick = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    startActivity(intent);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        }
+    };
 
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
@@ -174,11 +213,16 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-            myRuuviTags.clear();
-            myRuuviTags.addAll(RuuviTag.getAll());
+            refrshTagLists();
             scanner.start();
             handler.post(updater);
         }
+    }
+
+    private void refrshTagLists() {
+        myRuuviTags.clear();
+        myRuuviTags.addAll(RuuviTag.getAll());
+        otherRuuviTags.clear();
     }
 
     @Override
@@ -214,19 +258,25 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         return super.onOptionsItemSelected(item);
     }
 
-    private void openFragment(int type) {
+    public void openFragment(int type) {
         Fragment fragment = null;
         switch (type) {
             case 1:
+                refrshTagLists();
+                fragment = new DashboardFragment();
+                fragmentWithCallback = (DataUpdateListener)fragment;
+                break;
+            case 2:
                 fragment = new SettingsFragment();
                 fragmentWithCallback = null;
                 break;
-            case 2:
+            case 3:
                 fragment = new AboutFragment();
                 fragmentWithCallback = null;
                 break;
             default:
-                fragment = new RuuviStationFragment();
+                refrshTagLists();
+                fragment = new AddTagFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 type = 0;
                 break;
@@ -243,11 +293,35 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         for (RuuviTag myTag: myRuuviTags) {
             if (myTag.id.equals(tag.id)) {
                 myTag.updateDataFrom(tag);
-                if (fragmentWithCallback != null) fragmentWithCallback.dataUpdated();
+                if (fragmentWithCallback != null) {
+                    fragmentWithCallback.dataUpdated();
+                }
+                return;
             }
         }
+
+        for (RuuviTag myTag: otherRuuviTags) {
+            if (myTag.id.equals(tag.id)) {
+                myTag.updateDataFrom(tag);
+                Utils.sortTagsByRssi(otherRuuviTags);
+                if (fragmentWithCallback != null) {
+                    fragmentWithCallback.dataUpdated();
+                }
+                return;
+            }
+        }
+        otherRuuviTags.add(tag);
     }
 
+    public void BatteryOptimizationDialogShown() {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(BATTERY_ASKED_PREF, true);
+        editor.apply();
+    }
+
+    public boolean hasShownBatteryOptimizationDialog() {
+        return settings.getBoolean(BATTERY_ASKED_PREF, false);
+    }
 
     public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override

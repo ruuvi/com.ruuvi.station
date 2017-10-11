@@ -130,7 +130,8 @@
     <string name="navigation_drawer_close">Close the navigation drawer</string>
 
     <string-array name="navigation_items">
-        <item>Ruuvi Station</item>
+        <item>Add a New RuuviTag</item>
+        <item>Show Dashboard</item>
         <item>App Settings</item>
         <item>About</item>
     </string-array>
@@ -147,4 +148,13 @@
     <string name="alerts">Alerts</string>
     <string name="signal">Signal</string>
     <string name="share">Share</string>
+
+    <string name="battery_optimization_request">Make sure battery optimization is not on for the application.
+        If it is on background scanning interval can be very unreliable.
+        Do you wish to disable optimization for the app?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
