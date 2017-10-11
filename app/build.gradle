@@ -7,8 +7,8 @@ android {
         applicationId "com.ruuvi.tag"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 10016
-        versionName "0.6.1-beta"
+        versionCode 10017
+        versionName "0.6.2-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
