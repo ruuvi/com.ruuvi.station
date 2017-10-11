@@ -1,12 +1,14 @@
 package com.ruuvi.tag.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageButton;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -168,8 +170,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
                         intent.putExtra("id", tag.id);
                         getContext().startActivity(intent);
                     } else if (i == 3) {
-                        tags.remove(tag);
-                        tag.deleteTagAndRelatives();
+                        delete(tag);
                     } else if (i == 4) {
                         Intent intent = new Intent(getContext(), PlotActivity.class);
                         intent.putExtra("id", tag.id);
@@ -190,4 +191,25 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             dialog.show();
         }
     };
+
+    public void delete(final RuuviTag tag) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(getContext().getString(R.string.tag_delete_title));
+        builder.setMessage(getContext().getString(R.string.tag_delete_message));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                tags.remove(tag);
+                tag.deleteTagAndRelatives();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.show();
+    }
 }

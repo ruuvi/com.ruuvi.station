@@ -41,21 +41,6 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         adapter = new AddTagAdapter(getActivity(), ((MainActivity)getActivity()).otherRuuviTags);
         beaconListView.setAdapter(adapter);
 
-        beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RuuviTag tag = (RuuviTag) adapterView.getItemAtPosition(i);
-
-                if (RuuviTag.get(tag.id) != null) {
-                    Toast.makeText(getActivity(), getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
-                tag.save();
-                ScannerService.logTag(tag);
-                ((MainActivity)getActivity()).openFragment(1);
-            }
-        });
 
         adapter.notifyDataSetChanged();
 
