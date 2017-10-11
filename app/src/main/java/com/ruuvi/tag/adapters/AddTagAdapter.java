@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.RuuviTag;
+import com.ruuvi.tag.service.ScannerService;
 
 import java.util.List;
 
@@ -38,6 +41,19 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
         ((TextView)convertView.findViewById(R.id.address)).setText(tag.id);
         ((TextView)convertView.findViewById(R.id.rssi)).setText(tag.rssi + " dB");
 
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (RuuviTag.get(tag.id) != null) {
+                    Toast.makeText(getContext(), getContext().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+                tag.save();
+                ScannerService.logTag(tag);
+                ((MainActivity)getContext()).openFragment(1);
+            }
+        });
         return convertView;
     }
 }
