@@ -295,8 +295,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 myTag.updateDataFrom(tag);
                 if (fragmentWithCallback != null) {
                     fragmentWithCallback.dataUpdated();
-                    return;
                 }
+                return;
             }
         }
 
@@ -306,8 +306,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
                     fragmentWithCallback.dataUpdated();
-                    return;
                 }
+                return;
             }
         }
         otherRuuviTags.add(tag);
