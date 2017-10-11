@@ -30,7 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import com.ruuvi.tag.R;
@@ -264,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         switch (type) {
             case 1:
                 refrshTagLists();
-                fragment = new RuuviStationFragment();
+                fragment = new DashboardFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 break;
             case 2:
