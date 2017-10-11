@@ -57,6 +57,6 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void dataUpdated() {
-        adapter.notifyDataSetChanged();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 }
