@@ -289,13 +289,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)
                 .commit();
-        if (type == 1) {
-            setTitle(null);
-            if (getSupportActionBar() != null) getSupportActionBar().setIcon(R.drawable.logo);
-        } else {
-            if (getSupportActionBar() != null) getSupportActionBar().setIcon(null);
-            setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
+        if (type == 1 && getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(R.drawable.logo);
+        } else if (getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(null);
         }
+        setTitle(getResources().getStringArray(R.array.navigation_items_titles)[type]);
         drawerLayout.closeDrawers();
     }
 

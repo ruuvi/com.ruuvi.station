@@ -136,6 +136,14 @@
         <item>About</item>
     </string-array>
 
+    <string-array name="navigation_items_titles">
+        <item>Nearby Tags</item>
+        <item></item>
+        <item>App Settings</item>
+        <item>About</item>
+    </string-array>
+
+
     <string-array name="station_tag_menu">
         <item>View Card</item>
         <item>Tag Alerts</item>
