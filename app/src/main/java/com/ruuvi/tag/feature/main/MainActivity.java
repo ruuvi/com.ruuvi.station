@@ -83,8 +83,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         );
 
         drawerLayout.addDrawerListener(drawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         drawerToggle.syncState();
 
         ListView drawerListView = findViewById(R.id.navigationDrawer_listView);
