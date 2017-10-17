@@ -271,17 +271,14 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 break;
             case 2:
-                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 fragment = new SettingsFragment();
                 fragmentWithCallback = null;
                 break;
             case 3:
-                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 fragment = new AboutFragment();
                 fragmentWithCallback = null;
                 break;
             default:
-                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 refrshTagLists();
                 fragment = new AddTagFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;

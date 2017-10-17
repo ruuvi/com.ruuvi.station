@@ -3,6 +3,8 @@ package com.ruuvi.tag.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +41,12 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
         }
 
         ((TextView)convertView.findViewById(R.id.address)).setText(tag.id);
-        ((TextView)convertView.findViewById(R.id.rssi)).setText(tag.rssi + " dB");
+        ((TextView)convertView.findViewById(R.id.rssi)).setText(String.format(getContext().getResources().getString(R.string.signal_reading), tag.rssi));
+
+        AppCompatImageView signalIcon = convertView.findViewById(R.id.signalIcon);
+        if (tag.rssi < -80) signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_1));
+        else if (tag.rssi < -50) signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_2));
+        else signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_3));
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

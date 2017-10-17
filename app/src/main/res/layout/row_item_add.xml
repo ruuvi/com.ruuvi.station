@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    android:padding="8dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:fontFamily="sans-serif"
+        android:textColor="@color/textDarkBlue"
         android:text="10:10:10:10:10:10"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="20sp"
@@ -24,10 +25,11 @@
         />
 
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/signalIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:srcCompat="@drawable/icon_connection_1"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
