@@ -155,6 +155,9 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="temperature_reading" formatted="false">%1$,.2f°</string>
+    <string name="humidity_reading" formatted="false">%1$,.2f\% RH</string>
+    <string name="pressure_reading" formatted="false">%1$,.2f hPa"°</string>
+    <string name="signal_reading" formatted="false">%1$,d dBm</string>
+
 </resources>

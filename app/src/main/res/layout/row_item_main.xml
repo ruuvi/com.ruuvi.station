@@ -1,100 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_main_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp"
-    >
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/row_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundLight"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/letter_ball_radius"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/letter_ball_radius"
+            android:paddingLeft="24dp"
+            android:text="01:01:01:01:01:01"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/textDarkBlue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/row_main_letter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        />
+        android:layout_margin="8dp" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_name_layout"
+        android:layout_toRightOf="@id/row_main_letter"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.GridLayout
+            android:id="@+id/row_main_grid"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/row_main_letter"
-            >
+            android:layout_marginStart="10dp"
+            android:padding="8dp"
+            app:useDefaultMargins="true"
+            app:columnCount="2"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
 
-            <TextView
-                android:id="@+id/id"
+            <RelativeLayout
+                app:layout_columnWeight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:text="01:01:01:01:01:01"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent">
 
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/edit"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginRight="0dp"
-                android:background="@color/clear"
-                android:backgroundTint="@color/clear"
-                android:backgroundTintMode="src_over"
-                android:clickable="true"
-                android:tint="@color/red"
-                app:layout_constraintBottom_toBottomOf="@id/id"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/id"
-                app:layout_constraintVertical_bias="0.423"
-                app:srcCompat="@drawable/ic_more_horiz_black_24dp" />
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/row_main_temp_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/icon_measure_small_temp" />
 
-            <LinearLayout
-                android:id="@+id/linearLayout"
+                <TextView
+                    android:id="@+id/row_main_temperature"
+                    android:text="@string/temperature_reading"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@id/row_main_temp_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                app:layout_columnWeight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="3dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/id">
+                android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/lastseen"
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/row_main_humid_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="0dp"
-                    android:layout_weight="1"
-                    android:text="Updated 2 h 5 min 45 s ago"
-                    android:textSize="15sp"
-                    />
+                    app:srcCompat="@drawable/icon_measure_small_humid" />
 
                 <TextView
-                    android:id="@+id/alerts_rssi"
+                    android:id="@+id/row_main_humidity"
+                    android:text="@string/humidity_reading"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@id/row_main_humid_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                app:layout_columnWeight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/row_main_pres_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="0dp"
-                    android:layout_weight="1"
-                    android:text="Alerts: Off / Signal: -75 dBm"
-                    android:textSize="15sp"
-                    />
+                    app:srcCompat="@drawable/icon_measure_small_pressure" />
 
                 <TextView
-                    android:id="@+id/sensorValues"
+                    android:id="@+id/row_main_pressure"
+                    android:text="@string/pressure_reading"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@id/row_main_pres_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                app:layout_columnWeight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/row_main_signal_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="24.12° / 1000.00 hPa / 88.2% RH / 3.1337V"
-                    android:textSize="15sp"
-                    />
+                    app:srcCompat="@drawable/icon_measure_small_signal" />
 
-            </LinearLayout>
-        </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/row_main_signal"
+                    android:text="@string/signal_reading"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@id/row_main_signal_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.GridLayout>
+
+        <TextView
+            android:id="@+id/lastseen"
+            android:gravity="end"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Updated 2 h 5 min 45 s ago"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@+id/row_main_grid"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+    </android.support.constraint.ConstraintLayout>
 </RelativeLayout>
