@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="29dp"
-    android:height="29dp"
     android:viewportWidth="29"
-    android:viewportHeight="29">
-
+    android:viewportHeight="29"
+    android:width="29dp"
+    android:height="29dp">
     <path
-        android:fillColor="#fff"
-        android:strokeColor="#158ea5"
+        android:pathData="M28.5 14.5a14 14 0 0 1 -14 14 14 14 0 0 1 -14 -14 14 14 0 0 1 14 -14 14 14 0 0 1 14 14z"
         android:strokeWidth="1"
+        android:fillColor="#ffffff"
         android:strokeMiterLimit="10"
-        android:pathData="M 14.5 0.5 C 22.2319864976 0.5 28.5 6.76801350237 28.5 14.5 C 28.5 22.2319864976 22.2319864976 28.5 14.5 28.5 C 6.76801350237 28.5 0.5 22.2319864976 0.5 14.5 C 0.5 6.76801350237 6.76801350237 0.5 14.5 0.5 Z" />
+        android:strokeColor="#158ea5" />
+    <group
+        android:translateX="-551.47"
+        android:translateY="-481">
+        <path
+            android:pathData="M565.62 496l0 -6.1"
+            android:fillColor="#0b6372" />
+    </group>
+    <group
+        android:translateX="-551.47"
+        android:translateY="-481">
+        <path
+            android:pathData="M564.3 497.87l0 -1.37 -0.87 0 0 1.37a1.75 1.75 0 1 0 0.87 0z"
+            android:fillColor="#0b6372" />
+    </group>
     <path
-        android:fillColor="#0b6372"
-        android:pathData="M565.62,496v-6.1a.44 .44 ,0,0,0-.44-.44h-2.62a.44 .44 ,0,0,0-.44 .44
-V496a3.94,3.94,0,1,0,3.5,0Zm1.07,4.68a3.06,3.06,0,1,1-4-4,.44 .44
-,0,0,0,.27-.4v-5.94h1.75v5.94a.44 .44 ,0,0,0,.27 .41
-A3.06,3.06,0,0,1,566.69,500.72Z" />
-    <path
-        android:fillColor="#0b6372"
-        android:pathData="M564.3,497.87V496.5h-.87v1.37a1.75,1.75,0,1,0,.87,0Z" />
-    <path
-        android:fillColor="#0b6372"
-        android:pathData="M 22.33 11 L 21.71 10.38 L 20.52 11.56 L 19.39 11.56 L 19.39 10.43 L 20.58 9.25 L 19.96 8.63 L 18.95 9.63 L 17.95 8.63 L 17.33 9.25 L 18.52 10.43 L 18.52 11.56 L 17.38 11.56 L 16.2 10.38 L 15.58 11 L 16.59 12 L 15.58 13 L 16.2 13.62 L 17.38 12.44 L 18.52 12.44 L 18.52 13.57 L 17.33 14.75 L 17.95 15.37 L 18.95 14.37 L 19.96 15.37 L 20.58 14.75 L 19.39 13.57 L 19.39 12.44 L 20.52 12.44 L 21.71 13.62 L 22.33 13 L 21.32 12 L 22.33 11 Z" />
+        android:pathData="M20.52 11.56l-1.13 0 0 -1.13 1.19 -1.18 -0.62 -0.62 -1.01 1 -1 -1 -0.62 0.62 1.19 1.18 0 1.13 -1.14 0 -1.18 -1.18 -0.62 0.62 1.01 1 -1.01 1 0.62 0.62 1.18 -1.18 1.14 0 0 1.13 -1.19 1.18 0.62 0.62 1 -1 1.01 1 0.62 -0.62 -1.19 -1.18 0 -1.13 1.13 0 1.19 1.18 0.62 -0.62 -1.01 -1 1.01 -1 0 0 -0.62 -0.62z"
+        android:fillColor="#0b6372" />
 </vector>

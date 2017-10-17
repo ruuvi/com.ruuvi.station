@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         drawerLayout = findViewById(R.id.main_drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.logo);
 
         handler = new Handler();
 
@@ -267,14 +268,17 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 break;
             case 2:
+                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 fragment = new SettingsFragment();
                 fragmentWithCallback = null;
                 break;
             case 3:
+                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 fragment = new AboutFragment();
                 fragmentWithCallback = null;
                 break;
             default:
+                setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
                 refrshTagLists();
                 fragment = new AddTagFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
@@ -284,7 +288,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)
                 .commit();
-        setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
+        if (type == 1) {
+            setTitle(null);
+            getSupportActionBar().setIcon(R.drawable.logo);
+        } else {
+            getSupportActionBar().setIcon(null);
+            setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
+        }
         drawerLayout.closeDrawers();
     }
 
