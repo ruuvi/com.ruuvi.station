@@ -31,6 +31,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
@@ -290,9 +291,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 .commit();
         if (type == 1) {
             setTitle(null);
-            getSupportActionBar().setIcon(R.drawable.logo);
+            if (getSupportActionBar() != null) getSupportActionBar().setIcon(R.drawable.logo);
         } else {
-            getSupportActionBar().setIcon(null);
+            if (getSupportActionBar() != null) getSupportActionBar().setIcon(null);
             setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
         }
         drawerLayout.closeDrawers();
