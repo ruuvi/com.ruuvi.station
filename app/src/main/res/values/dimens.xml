@@ -2,4 +2,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="title_font_size">16sp</dimen>
+
+    <dimen name="letter_ball_radius">80px</dimen>
 </resources>

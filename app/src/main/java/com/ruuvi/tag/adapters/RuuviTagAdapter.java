@@ -62,12 +62,10 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         TextView txtId = convertView.findViewById(R.id.id);
         TextView lastseen = convertView.findViewById(R.id.lastseen);
-        TextView sensorValues = convertView.findViewById(R.id.sensorValues);
-        TextView alertsRssi = convertView.findViewById(R.id.alerts_rssi);
-        AppCompatImageButton menuButton = convertView.findViewById(R.id.edit);
-
-        menuButton.setTag(tag);
-        menuButton.setOnClickListener(tagMenuClickListener);
+        TextView temp = convertView.findViewById(R.id.row_main_temperature);
+        TextView humid = convertView.findViewById(R.id.row_main_humidity);
+        TextView pres = convertView.findViewById(R.id.row_main_pressure);
+        TextView signal = convertView.findViewById(R.id.row_main_signal);
 
         if(tag.name != null && !tag.name.isEmpty())
             txtId.setText(tag.name);
@@ -75,10 +73,13 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
             txtId.setText(tag.id);
 
         ((ImageView)convertView.findViewById(R.id.row_main_letter))
-                .setImageBitmap(Utils.createBall(100,
-                        R.color.ap_gray,
+                .setImageBitmap(Utils.createBall((int)getContext().getResources().getDimension(R.dimen.letter_ball_radius),
+                        getContext().getResources().getColor(R.color.accentDark),
                         Color.WHITE,
                         txtId.getText().charAt(0) + ""));
+
+        convertView.findViewById(R.id.row_main_root).setTag(tag);
+        //convertView.findViewById(R.id.row_main_letter).setOnClickListener(tagMenuClickListener);
 
         Date dateNow = new Date();
         long diffInMS = dateNow.getTime() - tag.updateAt.getTime();
@@ -97,28 +98,10 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         lastseen.setText(updated);
 
-        /*
-        if(diffInMS > 1000*60)
-            txtLast.setTextColor(Color.RED);
-        else
-            txtLast.setTextColor(getContext().getResources().getColor(R.color.ap_gray));
-        */
-
-        String alertStr = getContext().getResources().getString(R.string.alerts) + ": ";
-        long alarmCount = SQLite.selectCountOf().from(Alarm.class).where(Alarm_Table.ruuviTagId.eq(tag.id))
-                .count();
-        alertStr += alarmCount > 0 ? "On" : "Off";
-        alertStr += " / " + getContext().getResources().getString(R.string.signal) + ": ";
-        alertStr += tag.rssi + " dB";
-
-        alertsRssi.setText(alertStr);
-
-        String sensorStr = tag.temperature + "°" + " / " +
-                tag.pressure + " hPa / " +
-                tag.humidity + "% RH";
-        if (tag.voltage > 0) sensorStr += " / " + tag.voltage + " V";
-
-        sensorValues.setText(sensorStr);
+        temp.setText(String.format(getContext().getString(R.string.temperature_reading), tag.temperature));
+        humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.humidity));
+        pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.pressure));
+        signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.rssi));
 
         if (tag.url != null && !tag.url.isEmpty()) {
             convertView.findViewById(R.id.row_main_letter).setOnClickListener(new View.OnClickListener() {
@@ -131,85 +114,5 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         }
 
         return convertView;
-    }
-
-    View.OnClickListener tagMenuClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final RuuviTag tag = (RuuviTag)v.getTag();
-
-            final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
-
-            ListView listView = new ListView(getContext());
-
-            List<String> menu = new ArrayList<>(Arrays.asList(getContext().getResources().getStringArray(R.array.station_tag_menu)));
-
-            if (tag.url != null && !tag.url.isEmpty()) {
-                menu.add(getContext().getResources().getString(R.string.share));
-            }
-
-            listView.setAdapter(
-                    new ArrayAdapter<>(
-                            getContext(),
-                            android.R.layout.simple_list_item_1,
-                            menu
-                    )
-            );
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (i == 0) {
-                        Toast.makeText(getContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
-                    } else if (i == 1) {
-                        Intent intent = new Intent(getContext(), AlarmEditActivity.class);
-                        intent.putExtra("tagId", tag.id);
-                        getContext().startActivity(intent);
-                    } else if (i == 2) {
-                        Intent intent = new Intent(getContext(), EditActivity.class);
-                        intent.putExtra("id", tag.id);
-                        getContext().startActivity(intent);
-                    } else if (i == 3) {
-                        delete(tag);
-                    } else if (i == 4) {
-                        Intent intent = new Intent(getContext(), PlotActivity.class);
-                        intent.putExtra("id", tag.id);
-                        getContext().startActivity(intent);
-                    } else if (i == 5) {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
-                        intent.putExtra(Intent.EXTRA_TEXT, tag.url);
-                        getContext().startActivity(Intent.createChooser(intent, "Share URL"));
-                    }
-
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.setContentView(listView);
-            dialog.show();
-        }
-    };
-
-    public void delete(final RuuviTag tag) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(getContext().getString(R.string.tag_delete_title));
-        builder.setMessage(getContext().getString(R.string.tag_delete_message));
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                tags.remove(tag);
-                tag.deleteTagAndRelatives();
-            }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        builder.show();
     }
 }

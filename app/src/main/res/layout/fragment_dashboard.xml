@@ -29,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:padding="4dp" />
+        />
 
 </android.support.constraint.ConstraintLayout>

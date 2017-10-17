@@ -31,6 +31,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.RuuviTag;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         drawerLayout = findViewById(R.id.main_drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.logo);
 
         handler = new Handler();
 
@@ -81,8 +83,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         );
 
         drawerLayout.addDrawerListener(drawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         drawerToggle.syncState();
 
         ListView drawerListView = findViewById(R.id.navigationDrawer_listView);
@@ -284,7 +288,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)
                 .commit();
-        setTitle(getResources().getStringArray(R.array.navigation_items)[type]);
+        if (type == 1 && getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(R.drawable.logo);
+        } else if (getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(null);
+        }
+        setTitle(getResources().getStringArray(R.array.navigation_items_titles)[type]);
         drawerLayout.closeDrawers();
     }
 

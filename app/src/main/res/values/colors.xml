@@ -5,4 +5,10 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="clear">#00000000</color>
+    <color name="accentDark">#158EA5</color>
+    <color name="accentLight">#5DCEC6</color>
+    <color name="textDarkBlue">#003a58</color>
+    <color name="backgroundLight">#f2f4f5</color>
+    <color name="settingsTitleColor">#030303</color>
+    <color name="settingsParagraphColor">#808080</color>
 </resources>
