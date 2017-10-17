@@ -157,7 +157,7 @@
 
     <string name="temperature_reading" formatted="false">%1$,.2f°</string>
     <string name="humidity_reading" formatted="false">%1$,.2f\% RH</string>
-    <string name="pressure_reading" formatted="false">%1$,.2f hPa"°</string>
+    <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
 
 </resources>
