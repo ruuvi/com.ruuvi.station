@@ -4,6 +4,9 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +46,7 @@ import com.ruuvi.tag.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
+    private static final int REQUEST_ENABLE_BT = 1337;
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
     public List<RuuviTag> myRuuviTags = new ArrayList<>();
@@ -75,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         myRuuviTags = RuuviTag.getAll();
+
+        // should the users be asked if he wants to enable bt?
+        enableBluetooth();
         scanner = new RuuviTagScanner(this, getApplicationContext());
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
@@ -104,6 +111,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         setBackgroundScanning(false);
 
         openFragment(1);
+    }
+
+    private void enableBluetooth() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.enable();
+        }
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
@@ -218,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
-            scanner.start();
+            if (scanner != null) scanner.start();
             handler.post(updater);
         }
     }
