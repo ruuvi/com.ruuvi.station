@@ -164,8 +164,15 @@
     <string name="no">No</string>
 
     <string name="temperature_reading" formatted="false">%1$,.2f°</string>
-    <string name="humidity_reading" formatted="false">%1$,.2f\% RH</string>
+    <string name="humidity_reading" formatted="false">%1$,.2f%% RH</string>
     <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
+
+    <string name="save">Save</string>
+    <string name="name">Name</string>
+    <string name="tag_name">Tag name</string>
+    <string name="gateway">Gateway</string>
+    <string name="gateway_url">Gateway url</string>
+    <string name="no_gateway_url">No gateway url</string>
 
 </resources>

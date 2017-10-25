@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ruuvi.tag.feature.TagSettings">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/header"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/tag_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/bg"
+                android:scaleType="fitStart"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/name_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/backgroundLight"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:text="@string/name"
+                android:textColor="@color/textDarkBlue"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tag_image" />
+
+            <TextView
+                android:id="@+id/name_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/name_header"
+                android:padding="8dp"
+                android:text="@string/tag_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintTop_toBottomOf="@id/name_header" />
+
+            <TextView
+                android:id="@+id/input_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="8dp"
+                android:text="00:00:00:00:00:00"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:gravity="end"
+                app:layout_constraintLeft_toRightOf="@id/name_title"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/name_header" />
+
+            <TextView
+                android:id="@+id/gateway_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/backgroundLight"
+                android:text="@string/gateway"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/textDarkBlue"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_name"
+                />
+
+            <TextView
+                android:id="@+id/title_gatewayUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/gateway_url"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintTop_toBottomOf="@id/gateway_header" />
+
+            <TextView
+                android:id="@+id/input_gatewayUrl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/no_gateway_url"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:gravity="end"
+                app:layout_constraintLeft_toRightOf="@id/title_gatewayUrl"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gateway_header" />
+
+            <TextView
+                android:id="@+id/alerts_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/backgroundLight"
+                android:text="@string/alerts"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/textDarkBlue"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_gatewayUrl"
+                />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
