@@ -1,41 +1,22 @@
 package com.ruuvi.tag.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatImageButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.tag.R;
-import com.ruuvi.tag.feature.edit.AlarmEditActivity;
-import com.ruuvi.tag.feature.edit.EditActivity;
-import com.ruuvi.tag.feature.plot.PlotActivity;
-import com.ruuvi.tag.model.Alarm;
-import com.ruuvi.tag.model.Alarm_Table;
 import com.ruuvi.tag.model.RuuviTag;
-import com.ruuvi.tag.model.TagSensorReading;
-import com.ruuvi.tag.model.TagSensorReading_Table;
 import com.ruuvi.tag.util.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

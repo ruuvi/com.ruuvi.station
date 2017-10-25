@@ -6,9 +6,10 @@
         <item name="colorPrimary">@color/red</item>
         <item name="colorPrimaryDark">@color/dred</item>
         <item name="colorAccent">@color/red</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

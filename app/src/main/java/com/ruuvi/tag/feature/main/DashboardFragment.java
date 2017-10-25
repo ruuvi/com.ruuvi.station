@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
+import com.ruuvi.tag.feature.TagSettings;
 import com.ruuvi.tag.feature.edit.AlarmEditActivity;
 import com.ruuvi.tag.feature.edit.EditActivity;
 import com.ruuvi.tag.feature.plot.PlotActivity;
@@ -105,8 +106,8 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
                         intent.putExtra("tagId", tag.id);
                         getActivity().startActivity(intent);
                     } else if (i == 2) {
-                        Intent intent = new Intent(getActivity(), EditActivity.class);
-                        intent.putExtra("id", tag.id);
+                        Intent intent = new Intent(getActivity(), TagSettings.class);
+                        intent.putExtra(TagSettings.TAG_ID, tag.id);
                         getActivity().startActivity(intent);
                     } else if (i == 3) {
                         delete(tag);
