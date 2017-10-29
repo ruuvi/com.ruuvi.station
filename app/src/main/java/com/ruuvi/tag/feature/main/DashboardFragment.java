@@ -112,9 +112,12 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
                     } else if (i == 3) {
                         delete(tag);
                     } else if (i == 4) {
+                        Toast.makeText(getActivity(), "Not working in this build", Toast.LENGTH_SHORT).show();
+                        /*
                         Intent intent = new Intent(getActivity(), PlotActivity.class);
                         intent.putExtra("id", tag.id);
                         getActivity().startActivity(intent);
+                        */
                     } else if (i == 5) {
                         Intent intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("text/plain");
