@@ -22,11 +22,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/tag_settings_item_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -42,7 +47,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/backgroundLight"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:textSize="16sp"
                 android:text="@string/name"
                 android:textColor="@color/textDarkBlue"
@@ -56,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/name_header"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:text="@string/tag_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintTop_toBottomOf="@id/name_header" />
@@ -66,7 +71,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:text="00:00:00:00:00:00"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="end"
@@ -81,7 +86,7 @@
                 android:background="@color/backgroundLight"
                 android:text="@string/gateway"
                 android:textStyle="bold"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:textSize="16sp"
                 android:textColor="@color/textDarkBlue"
                 app:layout_constraintRight_toRightOf="parent"
@@ -93,7 +98,7 @@
                 android:id="@+id/title_gatewayUrl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:text="@string/gateway_url"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintTop_toBottomOf="@id/gateway_header" />
@@ -102,7 +107,7 @@
                 android:id="@+id/input_gatewayUrl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:text="@string/no_gateway_url"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="end"
@@ -117,7 +122,7 @@
                 android:background="@color/backgroundLight"
                 android:text="@string/alerts"
                 android:textStyle="bold"
-                android:padding="8dp"
+                android:padding="@dimen/tag_settings_text_padding"
                 android:textSize="16sp"
                 android:textColor="@color/textDarkBlue"
                 app:layout_constraintRight_toRightOf="parent"

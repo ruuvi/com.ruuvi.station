@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/alarm_layout"
+    android:layout_margin="@dimen/tag_settings_text_padding"
+    android:paddingBottom="@dimen/tag_settings_text_padding"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/alert_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="@string/temperature"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/alert_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/alert_subtitle_off"
+        android:paddingBottom="@dimen/tag_settings_text_padding"
+        app:layout_constraintTop_toBottomOf="@id/alert_title"
+        />
+
+    <CheckBox
+        android:id="@+id/alert_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alerts_header"
+        />
+
+    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+        android:id="@+id/alert_seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:bar_color="@color/ap_gray"
+        app:bar_highlight_color="@color/accentDark"
+        app:left_thumb_color="@color/accentDark"
+        app:right_thumb_color="@color/accentDark"
+        app:data_type="_integer"
+        />
+
+</android.support.constraint.ConstraintLayout>
