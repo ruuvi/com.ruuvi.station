@@ -50,10 +50,10 @@ public class TagSettings extends AppCompatActivity {
         tagAlarms = Alarm.getForTag(tagId);
 
         final TextView nameTextView = findViewById(R.id.input_name);
-        nameTextView.setText(!tag.name.isEmpty() ? tag.name : tag.id);
+        nameTextView.setText((tag.name != null && !tag.name.isEmpty()) ? tag.name : tag.id);
 
         final TextView gatewayTextView = findViewById(R.id.input_gatewayUrl);
-        if (!tag.gatewayUrl.isEmpty()) gatewayTextView.setText(tag.gatewayUrl);
+        if (tag.gatewayUrl != null && !tag.gatewayUrl.isEmpty()) gatewayTextView.setText(tag.gatewayUrl);
 
         // TODO: 25/10/17 make this less ugly
         nameTextView.setOnClickListener(new View.OnClickListener() {
