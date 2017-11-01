@@ -99,10 +99,10 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
-        alarmItems.add(new AlarmItem(getString(R.string.temperature), getString(R.string.alert_subtitle_off), Alarm.TEMPERATURE, false, -40, 85));
-        alarmItems.add(new AlarmItem(getString(R.string.humidity), getString(R.string.alert_subtitle_off), Alarm.HUMIDITY, false, 0, 100));
-        alarmItems.add(new AlarmItem(getString(R.string.pressure), getString(R.string.alert_subtitle_off), Alarm.PERSSURE, false, 300, 1100));
-        alarmItems.add(new AlarmItem(getString(R.string.rssi), getString(R.string.alert_subtitle_off), Alarm.RSSI, false, -100 ,0));
+        alarmItems.add(new AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85));
+        alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
+        alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
+        alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -100 ,0));
 
         for (Alarm alarm: tagAlarms) {
             AlarmItem item = alarmItems.get(alarm.type);
@@ -154,9 +154,8 @@ public class TagSettings extends AppCompatActivity {
         public View view;
         public int alarmId = -1;
 
-        public AlarmItem(String name, String subtitle, int type, boolean checked, int max, int min) {
+        public AlarmItem(String name, int type, boolean checked, int max, int min) {
             this.name = name;
-            this.subtitle = subtitle;
             this.type = type;
             this.checked = checked;
             this.min = min;
@@ -175,10 +174,12 @@ public class TagSettings extends AppCompatActivity {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.accentDark));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.accentDark));
                 seekBar.setRightThumbColor(getResources().getColor(R.color.accentDark));
+                this.subtitle = getString(R.string.alert_subtitle_on);
             } else {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setRightThumbColor(getResources().getColor(R.color.ap_gray));
+                this.subtitle = getString(R.string.alert_subtitle_off);
             }
             seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
