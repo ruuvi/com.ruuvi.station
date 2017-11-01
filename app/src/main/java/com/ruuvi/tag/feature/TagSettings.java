@@ -13,7 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
@@ -29,6 +31,7 @@ public class TagSettings extends AppCompatActivity {
 
     private RuuviTag tag;
     List<Alarm> tagAlarms = new ArrayList<>();
+    List<AlarmItem> alarmItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +99,6 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
-
-        List<AlarmItem> alarmItems = new ArrayList<>();
         alarmItems.add(new AlarmItem(getString(R.string.temperature), getString(R.string.alert_subtitle_off), Alarm.TEMPERATURE, false, -40, 85));
         alarmItems.add(new AlarmItem(getString(R.string.humidity), getString(R.string.alert_subtitle_off), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), getString(R.string.alert_subtitle_off), Alarm.PERSSURE, false, 300, 1100));
@@ -119,6 +120,8 @@ public class TagSettings extends AppCompatActivity {
             AlarmItem item = alarmItems.get(i);
             item.view = inflater.inflate(R.layout.view_alarm, parentLayout, false);
             item.view.setId(item.view.getId() + i);
+            item.view.findViewById(R.id.alert_checkbox).setTag(i);
+            ((CheckBox)item.view.findViewById(R.id.alert_checkbox)).setOnCheckedChangeListener(alarmCheckboxListener);
             item.updateView();
             parentLayout.addView(item.view);
             ConstraintSet set = new ConstraintSet();
@@ -130,6 +133,15 @@ public class TagSettings extends AppCompatActivity {
         }
     }
 
+    CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            AlarmItem ai = alarmItems.get((int)buttonView.getTag());
+            ai.checked = isChecked;
+            ai.updateView();
+        }
+    };
+
     private class AlarmItem {
         public String name;
         public String subtitle;
@@ -140,7 +152,7 @@ public class TagSettings extends AppCompatActivity {
         public int min;
         public int type;
         public View view;
-        public int alarmId;
+        public int alarmId = -1;
 
         public AlarmItem(String name, String subtitle, int type, boolean checked, int max, int min) {
             this.name = name;
@@ -158,19 +170,17 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setMinValue(this.min);
             seekBar.setMaxValue(this.max);
             if (this.checked) {
-                seekBar.setLeft(this.low);
-                seekBar.setRight(this.high);
+                seekBar.setMinStartValue(this.low);
+                seekBar.setMaxStartValue(this.high);
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.accentDark));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.accentDark));
                 seekBar.setRightThumbColor(getResources().getColor(R.color.accentDark));
             } else {
-                seekBar.setLeft(this.min);
-                seekBar.setRight(this.max);
-                seekBar.setEnabled(false);
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setRightThumbColor(getResources().getColor(R.color.ap_gray));
             }
+            seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
             ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
