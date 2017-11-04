@@ -2,12 +2,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ruuvi.tag.feature.main.AboutFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ruuvi.tag.feature.main.AboutFragment"
+    android:background="@drawable/gradient_background"
+    >
 
-    <TextView
-        android:id="@+id/versionInfo"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Version: ..." />
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/infoTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:padding="50dp"
+                app:srcCompat="@drawable/title_ruuvi"
+                />
+
+            <TextView
+                android:id="@+id/aboutInfoText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/info_text"
+                android:textColor="@color/white"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@id/infoTitle"
+                />
+
+            <TextView
+                android:id="@+id/versionInfo"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Version: ..."
+                app:layout_constraintTop_toBottomOf="@id/aboutInfoText"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:paddingTop="20dp"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
 
 </FrameLayout>
