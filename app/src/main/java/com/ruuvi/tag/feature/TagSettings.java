@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.Alarm;
@@ -109,7 +111,7 @@ public class TagSettings extends AppCompatActivity {
             item.high = alarm.high;
             item.low = alarm.low;
             item.checked = true;
-            item.alarmId = alarm.id;
+            item.alarm = alarm;
         }
 
         LayoutInflater inflater = getLayoutInflater();
@@ -122,7 +124,7 @@ public class TagSettings extends AppCompatActivity {
             item.view.setId(item.view.getId() + i);
             item.view.findViewById(R.id.alert_checkbox).setTag(i);
             ((CheckBox)item.view.findViewById(R.id.alert_checkbox)).setOnCheckedChangeListener(alarmCheckboxListener);
-            item.updateView();
+            item.createView();
             parentLayout.addView(item.view);
             ConstraintSet set = new ConstraintSet();
             set.clone(parentLayout);
@@ -152,9 +154,9 @@ public class TagSettings extends AppCompatActivity {
         public int min;
         public int type;
         public View view;
-        public int alarmId = -1;
+        public Alarm alarm;
 
-        public AlarmItem(String name, int type, boolean checked, int max, int min) {
+        public AlarmItem(String name, int type, boolean checked, int min, int max) {
             this.name = name;
             this.type = type;
             this.checked = checked;
@@ -164,17 +166,33 @@ public class TagSettings extends AppCompatActivity {
             this.high = max;
         }
 
-        public void updateView() {
+        public void createView() {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
             seekBar.setMinValue(this.min);
             seekBar.setMaxValue(this.max);
+            seekBar.setMinStartValue(this.low);
+            seekBar.setMaxStartValue(this.high);
+            seekBar.apply();
+
+            seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+                @Override
+                public void valueChanged(Number minValue, Number maxValue) {
+                    low = minValue.intValue();
+                    high = maxValue.intValue();
+                    updateView();
+                }
+            });
+
+            updateView();
+        }
+
+        public void updateView() {
+            CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
             if (this.checked) {
-                seekBar.setMinStartValue(this.low);
-                seekBar.setMaxStartValue(this.high);
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.accentDark));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.accentDark));
                 seekBar.setRightThumbColor(getResources().getColor(R.color.accentDark));
-                this.subtitle = getString(R.string.alert_subtitle_on);
+                this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
             } else {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setLeftThumbColor(getResources().getColor(R.color.ap_gray));
@@ -199,6 +217,20 @@ public class TagSettings extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_save) {
             tag.update();
+            for (AlarmItem alarmItem: alarmItems) {
+                if (alarmItem.checked) {
+                    if (alarmItem.alarm == null) {
+                        alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
+                        alarmItem.alarm.save();
+                    } else {
+                        alarmItem.alarm.low = alarmItem.low;
+                        alarmItem.alarm.high = alarmItem.high;
+                        alarmItem.alarm.update();
+                    }
+                } else if (alarmItem.alarm != null) {
+                    alarmItem.alarm.delete();
+                }
+            }
             finish();
         }
         return super.onOptionsItemSelected(item);
