@@ -30,16 +30,17 @@
                 android:id="@+id/aboutText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/about"
-                android:textColor="@color/white"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="10dp"
+                android:text="@string/about"
                 android:textAlignment="center"
-                app:layout_constraintTop_toBottomOf="@id/infoTitle"
-                app:layout_constraintRight_toRightOf="parent"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textAllCaps="true"
                 app:layout_constraintLeft_toLeftOf="parent"
-                />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/infoTitle" />
 
             <TextView
                 android:id="@+id/aboutInfoText"
