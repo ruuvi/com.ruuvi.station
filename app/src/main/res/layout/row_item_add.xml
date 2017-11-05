@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
-        android:textColor="@color/textDarkBlue"
+        android:textColor="@color/mainDark"
         android:text="10:10:10:10:10:10"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="20sp"

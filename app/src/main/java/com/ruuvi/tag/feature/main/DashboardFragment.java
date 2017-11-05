@@ -18,9 +18,6 @@ import android.widget.Toast;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
 import com.ruuvi.tag.feature.TagSettings;
-import com.ruuvi.tag.feature.edit.AlarmEditActivity;
-import com.ruuvi.tag.feature.edit.EditActivity;
-import com.ruuvi.tag.feature.plot.PlotActivity;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.DataUpdateListener;
 import com.ruuvi.tag.util.DeviceIdentifier;
@@ -102,20 +99,19 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
                     if (i == 0) {
                         Toast.makeText(getActivity(), "Not yet implemented", Toast.LENGTH_SHORT).show();
                     } else if (i == 1) {
-                        Intent intent = new Intent(getActivity(), AlarmEditActivity.class);
-                        intent.putExtra("tagId", tag.id);
-                        getActivity().startActivity(intent);
-                    } else if (i == 2) {
                         Intent intent = new Intent(getActivity(), TagSettings.class);
                         intent.putExtra(TagSettings.TAG_ID, tag.id);
                         getActivity().startActivity(intent);
-                    } else if (i == 3) {
+                    } else if (i == 2) {
                         delete(tag);
-                    } else if (i == 4) {
+                    } else if (i == 3) {
+                        Toast.makeText(getActivity(), "Not working in this build", Toast.LENGTH_SHORT).show();
+                        /*
                         Intent intent = new Intent(getActivity(), PlotActivity.class);
                         intent.putExtra("id", tag.id);
                         getActivity().startActivity(intent);
-                    } else if (i == 5) {
+                        */
+                    } else if (i == 4) {
                         Intent intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("text/plain");
                         intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");

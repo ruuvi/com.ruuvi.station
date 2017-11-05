@@ -302,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)
                 .commit();
-        if (type == 1 && getSupportActionBar() != null) {
+        if ((type == 1 || type == 3) && getSupportActionBar() != null) {
             getSupportActionBar().setIcon(R.drawable.logo);
         } else if (getSupportActionBar() != null) {
             getSupportActionBar().setIcon(null);

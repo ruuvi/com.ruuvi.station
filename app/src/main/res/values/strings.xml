@@ -140,13 +140,12 @@
         <item>Nearby Tags</item>
         <item></item>
         <item>App Settings</item>
-        <item>About</item>
+        <item></item>
     </string-array>
 
 
     <string-array name="station_tag_menu">
         <item>View Card</item>
-        <item>Tag Alerts</item>
         <item>Tag Settings</item>
         <item>Remove Tag</item>
         <item>View Graph</item>
@@ -174,5 +173,9 @@
     <string name="gateway">Gateway</string>
     <string name="gateway_url">Gateway url</string>
     <string name="no_gateway_url">No gateway url</string>
+    <string name="alert_subtitle_off">Off</string>
+    <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
 
+    <string name="info_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dapibus id odio et vestibulum. Nunc in tortor sed lectus venenatis porttitor. Etiam lacus velit, volutpat a elit eu, congue mollis mauris. Maecenas convallis vehicula risus quis iaculis. Suspendisse est tellus, iaculis sit amet bibendum tristique, efficitur nec lectus.</string>
+    <string name="about">About</string>
 </resources>

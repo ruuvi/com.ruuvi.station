@@ -23,7 +23,7 @@
             android:paddingLeft="34dp"
             android:text="01:01:01:01:01:01"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/textDarkBlue"
+            android:textColor="@color/mainDark"
             android:textSize="20sp"
             android:textStyle="bold" />
 
