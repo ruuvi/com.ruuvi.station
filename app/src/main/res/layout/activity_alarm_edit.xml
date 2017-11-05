@@ -16,7 +16,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="Mode"
-        android:textColor="@color/red"
+        android:textColor="@color/gray"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -131,7 +131,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:text="Normal range:"
-        android:textColor="@color/red"
+        android:textColor="@color/gray"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_rssi" />
 
@@ -142,7 +142,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="8dp"
         android:text="12"
-        android:textColor="@color/dred"
+        android:textColor="@color/darkGray"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
@@ -152,7 +152,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
         android:text="16"
-        android:textColor="@color/dred"
+        android:textColor="@color/darkGray"
         app:layout_constraintBaseline_toBaselineOf="@+id/TextMin1"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -162,7 +162,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Alarm action"
-        android:textColor="@color/red"
+        android:textColor="@color/gray"
         app:layout_constraintTop_toBottomOf="@+id/rangeSeekbar5"
         android:layout_marginLeft="10dp"
         app:layout_constraintLeft_toLeftOf="parent" />

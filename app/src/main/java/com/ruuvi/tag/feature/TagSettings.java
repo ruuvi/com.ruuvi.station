@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.method.CharacterPickerDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,11 +14,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.model.Alarm;
@@ -189,9 +186,9 @@ public class TagSettings extends AppCompatActivity {
         public void updateView() {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
             if (this.checked) {
-                seekBar.setBarHighlightColor(getResources().getColor(R.color.accentDark));
-                seekBar.setLeftThumbColor(getResources().getColor(R.color.accentDark));
-                seekBar.setRightThumbColor(getResources().getColor(R.color.accentDark));
+                seekBar.setBarHighlightColor(getResources().getColor(R.color.main));
+                seekBar.setLeftThumbColor(getResources().getColor(R.color.main));
+                seekBar.setRightThumbColor(getResources().getColor(R.color.main));
                 this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
             } else {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));

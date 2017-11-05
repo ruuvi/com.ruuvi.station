@@ -41,9 +41,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:bar_color="@color/ap_gray"
-        app:bar_highlight_color="@color/accentDark"
-        app:left_thumb_color="@color/accentDark"
-        app:right_thumb_color="@color/accentDark"
+        app:bar_highlight_color="@color/main"
+        app:left_thumb_color="@color/main"
+        app:right_thumb_color="@color/main"
         app:data_type="_integer"
         />
 
