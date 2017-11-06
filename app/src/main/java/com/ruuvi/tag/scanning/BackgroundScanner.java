@@ -74,6 +74,12 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
         scanResults = new ArrayList<LeScanResult>();
 
+        if (!canScan()) {
+            Log.d(TAG, "Could not start scanning in background, scheduling next attempt");
+            scheduleNextScan(context);
+            return;
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -176,9 +182,6 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
-        if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
-        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
         String backendUrl = settings.getString("pref_backend", null);
 
         if (backendUrl != null && eventBatch.tags.size() > 0)
@@ -197,6 +200,18 @@ public class BackgroundScanner extends BroadcastReceiver {
                     });
         }
 
+        scheduleNextScan(context);
+
+        Log.d(TAG, "Going to sleep");
+        wakeLock.release();
+    }
+
+    private void scheduleNextScan(Context context) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
+        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
+
         Intent intent = new Intent(context, BackgroundScanner.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
         AlarmManager am = (AlarmManager) context
@@ -210,10 +225,7 @@ public class BackgroundScanner extends BroadcastReceiver {
             }
         }
 
-        Log.d(TAG, "Going to sleep");
-        wakeLock.release();
     }
-
 
     private int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {
         for (int i = 0; i < arr.size(); i++) {
@@ -230,5 +242,10 @@ public class BackgroundScanner extends BroadcastReceiver {
             scanEvent.tags.add(tag);
             logTag(tag);
         }
+    }
+
+    private boolean canScan() {
+        boolean useNewApi = useNewApi();
+        return useNewApi && bleScanner != null || !useNewApi && bluetoothAdapter != null;
     }
 }
