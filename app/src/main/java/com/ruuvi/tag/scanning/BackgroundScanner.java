@@ -25,6 +25,7 @@ import android.util.Log;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.ruuvi.tag.feature.main.MainActivity;
 import com.ruuvi.tag.model.LeScanResult;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.model.ScanEvent;
@@ -73,6 +74,8 @@ public class BackgroundScanner extends BroadcastReceiver {
             scanSettings = scanSettingsBuilder.build();
         }
         scanResults = new ArrayList<LeScanResult>();
+
+        MainActivity.enableBluetooth();
 
         if (!canScan()) {
             Log.d(TAG, "Could not start scanning in background, scheduling next attempt");

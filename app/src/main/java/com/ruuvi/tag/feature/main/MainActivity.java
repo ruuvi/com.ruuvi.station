@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         // should the users be asked if he wants to enable bt?
         enableBluetooth();
-        scanner = new RuuviTagScanner(this, getApplicationContext());
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -108,12 +107,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
+        scanner = new RuuviTagScanner(this, getApplicationContext());
         setBackgroundScanning(false);
 
         openFragment(1);
     }
 
-    private void enableBluetooth() {
+    public static void enableBluetooth() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
             bluetoothAdapter.enable();
