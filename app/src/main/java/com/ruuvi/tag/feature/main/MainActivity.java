@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if (isBluetoothEnabled()) {
             scanner = new RuuviTagScanner(this, getApplicationContext());
         } else {
-            bluetoothEnableDialog();
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         setBackgroundScanning(false);
         openFragment(1);
@@ -119,13 +120,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public static boolean isBluetoothEnabled() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return bluetoothAdapter.isEnabled();
-    }
-
-    public static void enableBluetooth() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-        }
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
@@ -170,38 +164,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         }
     }
-
-    private void bluetoothEnableDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.bluetooth_not_enabled))
-                .setPositiveButton(getString(R.string.yes), bluetoothDialogClick)
-                .setNegativeButton(getString(R.string.no), bluetoothDialogClick)
-                .show();
-    }
-
-    DialogInterface.OnClickListener bluetoothDialogClick = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    enableBluetooth();
-                    // give bluetooth some time to start
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            scanner = new RuuviTagScanner(MainActivity.this, getApplicationContext());
-                            scanner.start();
-                            setBackgroundScanning(false);
-                        }
-                    }, 1000);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // okay then
-                    break;
-            }
-        }
-    };
 
     private void checkAndAskForBatteryOptimization() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasShownBatteryOptimizationDialog()) {
@@ -392,5 +354,15 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             setBackgroundScanning(true);
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ENABLE_BT) {
+                scanner = new RuuviTagScanner(MainActivity.this, getApplicationContext());
+            }
+        }
+    }
 }
 
