@@ -27,7 +27,7 @@ android {
 }
 
 def dbflow_version = "4.1.1"
-def support_version = "26.0.2"
+def support_version = "26.1.0"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
