@@ -47,6 +47,8 @@ import com.ruuvi.tag.util.Utils;
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
+    private static final int TAG_UI_UPDATE_FREQ = 1000;
+
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
     public List<RuuviTag> myRuuviTags = new ArrayList<>();
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         @Override
         public void run() {
             if (fragmentWithCallback != null) fragmentWithCallback.dataUpdated();
-            handler.postDelayed(updater, 1000);
+            handler.postDelayed(updater, TAG_UI_UPDATE_FREQ);
         }
     };
 
@@ -80,9 +82,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         myRuuviTags = RuuviTag.getAll();
 
-        // should the users be asked if he wants to enable bt?
-        enableBluetooth();
-        scanner = new RuuviTagScanner(this, getApplicationContext());
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -108,16 +107,19 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
 
+        if (isBluetoothEnabled()) {
+            scanner = new RuuviTagScanner(this, getApplicationContext());
+        } else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
         setBackgroundScanning(false);
-
         openFragment(1);
     }
 
-    private void enableBluetooth() {
+    public static boolean isBluetoothEnabled() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-        }
+        return bluetoothAdapter.isEnabled();
     }
 
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
@@ -230,9 +232,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
+            if (scanner != null) scanner.start();
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
-            if (scanner != null) scanner.start();
             handler.post(updater);
         }
     }
@@ -247,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     protected void onPause() {
         super.onPause();
         settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        scanner.stop();
+        if (scanner != null) scanner.stop();
         handler.removeCallbacks(updater);
         for (RuuviTag tag: myRuuviTags) {
             tag.update();
@@ -352,5 +354,15 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             setBackgroundScanning(true);
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ENABLE_BT) {
+                scanner = new RuuviTagScanner(MainActivity.this, getApplicationContext());
+            }
+        }
+    }
 }
 

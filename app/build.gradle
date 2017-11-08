@@ -7,8 +7,8 @@ android {
         applicationId "com.ruuvi.tag"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 10020
-        versionName "0.6.6-beta"
+        versionCode 10022
+        versionName "0.6.8-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -27,7 +27,7 @@ android {
 }
 
 def dbflow_version = "4.1.1"
-def support_version = "26.0.2"
+def support_version = "26.1.0"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

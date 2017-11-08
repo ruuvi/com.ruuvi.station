@@ -43,7 +43,7 @@ public class RuuviTagScanner {
     }
 
     public void start() {
-        if (scanning) return;
+        if (scanning || !canScan()) return;
         scanning = true;
         if (useNewApi()) {
             bleScanner.startScan(scanFilters, scanSettings, bleScannerCallback);
@@ -53,6 +53,7 @@ public class RuuviTagScanner {
     }
 
     public void stop() {
+        if (!canScan()) return;
         if (useNewApi()) {
             bleScanner.stopScan(bleScannerCallback);
         } else {
@@ -87,5 +88,10 @@ public class RuuviTagScanner {
         Log.d(TAG, "found: " + device.getAddress());
         RuuviTag tag = dev.parse();
         if (tag != null) listener.tagFound(tag);
+    }
+
+    private boolean canScan() {
+        boolean useNewApi = useNewApi();
+        return useNewApi && bleScanner != null || !useNewApi && bluetoothAdapter != null;
     }
 }
