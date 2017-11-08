@@ -75,7 +75,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
         scanResults = new ArrayList<LeScanResult>();
 
-        MainActivity.enableBluetooth();
+        //MainActivity.enableBluetooth();
 
         if (!canScan()) {
             Log.d(TAG, "Could not start scanning in background, scheduling next attempt");
