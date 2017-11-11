@@ -62,22 +62,9 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         convertView.findViewById(R.id.row_main_root).setTag(tag);
         //convertView.findViewById(R.id.row_main_letter).setOnClickListener(tagMenuClickListener);
 
-        Date dateNow = new Date();
-        long diffInMS = dateNow.getTime() - tag.updateAt.getTime();
-        String updated = getContext().getResources().getString(R.string.updated) + " ";
-        // show date if the tag has not been seen for 24h
-        if (diffInMS > 24 * 60 * 60 * 1000) {
-            updated += tag.updateAt.toString();
-        } else {
-            int seconds = (int) (diffInMS / 1000) % 60 ;
-            int minutes = (int) ((diffInMS / (1000*60)) % 60);
-            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
-            if (hours > 0) updated += hours + " h ";
-            if (minutes > 0) updated += minutes + " min ";
-            updated += seconds + " s ago";
-        }
+        String updatedAt = getContext().getResources().getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt);
 
-        lastseen.setText(updated);
+        lastseen.setText(updatedAt);
 
         temp.setText(String.format(getContext().getString(R.string.temperature_reading), tag.temperature));
         humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.humidity));

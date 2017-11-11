@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.ruuvi.tag.R;
 import com.ruuvi.tag.adapters.RuuviTagAdapter;
+import com.ruuvi.tag.feature.TagDetails;
 import com.ruuvi.tag.feature.TagSettings;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.util.DataUpdateListener;
@@ -74,6 +75,10 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final RuuviTag tag = (RuuviTag)view.getTag();
+            Intent intent = new Intent(getActivity(), TagDetails.class);
+            intent.putExtra("id", tag.id);
+            startActivity(intent);
+            /*
 
             final BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
 
@@ -106,11 +111,9 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
                         delete(tag);
                     } else if (i == 3) {
                         Toast.makeText(getActivity(), "Not working in this build", Toast.LENGTH_SHORT).show();
-                        /*
-                        Intent intent = new Intent(getActivity(), PlotActivity.class);
-                        intent.putExtra("id", tag.id);
-                        getActivity().startActivity(intent);
-                        */
+                        //Intent intent = new Intent(getActivity(), PlotActivity.class);
+                        //intent.putExtra("id", tag.id);
+                        //getActivity().startActivity(intent);
                     } else if (i == 4) {
                         Intent intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("text/plain");
@@ -125,6 +128,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
 
             dialog.setContentView(listView);
             dialog.show();
+            */
         }
     };
 

@@ -10,6 +10,7 @@ import com.ruuvi.tag.model.RuuviTag;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,5 +53,23 @@ public class Utils {
                 return o2.rssi - o1.rssi;
             }
         });
+    }
+
+    public static String strDescribingTimeSince(Date date) {
+        String output = "";
+        Date dateNow = new Date();
+        long diffInMS = dateNow.getTime() - date.getTime();
+        // show date if the tag has not been seen for 24h
+        if (diffInMS > 24 * 60 * 60 * 1000) {
+            output += date.toString();
+        } else {
+            int seconds = (int) (diffInMS / 1000) % 60 ;
+            int minutes = (int) ((diffInMS / (1000*60)) % 60);
+            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
+            if (hours > 0) output += hours + " h ";
+            if (minutes > 0) output += minutes + " min ";
+            output += seconds + " s ago";
+        }
+        return output;
     }
 }
