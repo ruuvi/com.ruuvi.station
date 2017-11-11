@@ -318,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         for (RuuviTag myTag: myRuuviTags) {
             if (myTag.id.equals(tag.id)) {
                 myTag.updateDataFrom(tag);
+                myTag.update();
                 if (fragmentWithCallback != null) {
                     fragmentWithCallback.dataUpdated();
                 }
