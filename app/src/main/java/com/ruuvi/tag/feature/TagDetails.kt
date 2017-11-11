@@ -75,7 +75,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             humidityText?.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             pressureText?.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             signalText?.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
-            var updatedAt = this.getResources().getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
+            var updatedAt = this.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
             updatedText?.text = updatedAt
         }
     }
