@@ -3,6 +3,7 @@ package com.ruuvi.tag.feature
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import android.widget.TextView
 import com.ruuvi.tag.R
 import com.ruuvi.tag.model.RuuviTag
@@ -27,6 +28,8 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         setContentView(R.layout.activity_tag_details)
         setSupportActionBar(toolbar)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         tempText = findViewById(R.id.tag_temp)
         humidityText = findViewById(R.id.tag_humidity)
         pressureText = findViewById(R.id.tag_pressure)
@@ -39,6 +42,13 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         updateUI()
 
         scanner = RuuviTagScanner(this, this)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 
     override fun onResume() {
