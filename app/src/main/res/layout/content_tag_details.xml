@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.ruuvi.tag.feature.TagDetails"
+    tools:showIn="@layout/activity_tag_details">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/tag_pager"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        >
+
+    </android.support.v4.view.ViewPager>
+
+    <TextView
+        android:id="@+id/tag_temp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="80sp"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/white"
+        android:text="@string/temperature_reading"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/tag_humidity_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/tag_pressure_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        >
+
+        <ImageView
+            android:id="@+id/tag_humidity_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/icon_measure_humidity" />
+
+        <TextView
+            android:id="@+id/tag_humidity"
+            android:text="@string/humidity_reading"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tag_pressure_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/tag_signal_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        >
+
+        <ImageView
+            android:id="@+id/tag_pressure_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/icon_measure_pressure" />
+
+        <TextView
+            android:id="@+id/tag_pressure"
+            android:text="@string/pressure_reading"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tag_signal_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="48dp"
+        >
+
+        <ImageView
+            android:id="@+id/tag_signal_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/icon_measure_signal" />
+
+        <TextView
+            android:id="@+id/tag_signal"
+            android:text="@string/signal_reading"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tag_updated"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray"
+        android:layout_margin="16dp"
+        android:textAlignment="textEnd"
+        android:text="@string/updated"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+
+</android.support.constraint.ConstraintLayout>
