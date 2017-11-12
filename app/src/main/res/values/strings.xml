@@ -145,10 +145,9 @@
 
 
     <string-array name="station_tag_menu">
-        <item>View Card</item>
         <item>Tag Settings</item>
-        <item>Remove Tag</item>
         <item>View Graph</item>
+        <item>Remove Tag</item>
     </string-array>
 
     <string name="updated">Updated</string>

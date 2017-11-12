@@ -1,13 +1,17 @@
 package com.ruuvi.tag.feature
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Point
 import android.graphics.Typeface
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.widget.TextView
 import com.ruuvi.tag.R
 import com.ruuvi.tag.model.RuuviTag
 import com.ruuvi.tag.scanning.RuuviTagListener
@@ -19,8 +23,9 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
-
-
+import android.widget.*
+import com.ruuvi.tag.feature.main.MainActivity
+import java.util.*
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -52,6 +57,9 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         updatedText = findViewById(R.id.tag_updated)
         pager = findViewById(R.id.tag_pager)
 
+        val size = Point()
+        windowManager.defaultDisplay.getSize(size)
+        pager?.pageMargin = - (size.x / 2)
         pager!!.setOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -63,10 +71,22 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         })
 
         val tagId = intent.getStringExtra("id");
-        tag = RuuviTag.get(tagId)
         tags = RuuviTag.getAll()
         val pagerAdapter = TagPager(tags!!)
         pager?.adapter = pagerAdapter
+
+        for (i in tags!!.indices) {
+            if (tags!!.get(i).id == tagId) {
+                tag = tags!!.get(i)
+                pager!!.currentItem = i
+            }
+        }
+
+        if (tag == null) {
+            Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
 
         updateUI()
 
@@ -76,12 +96,28 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
+        } else if (item?.itemId == R.id.action_share) {
+            if (tag?.url != null) {
+                if (!tag!!.url.isEmpty()) {
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "text/plain"
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, tag!!.url!!)
+                    this.startActivity(shareIntent)
+                    return true;
+                }
+            }
+            Toast.makeText(this,
+                    "You can only share tags in weather station mode right now"
+                    , Toast.LENGTH_SHORT).show()
+        } else {
+            showOptionsMenu()
         }
         return true
     }
 
     override fun onResume() {
         super.onResume()
+        tags = RuuviTag.getAll()
         scanner?.start()
     }
 
@@ -108,6 +144,57 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             updatedText?.text = updatedAt
         }
     }
+
+    private fun showOptionsMenu() {
+        val sheetDialog = BottomSheetDialog(this)
+        var listView = ListView(this)
+        val menu: List<String> = this.resources.getStringArray(R.array.station_tag_menu).toList()
+
+        listView.adapter = ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                menu
+        )
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+            when (i) {
+                0 -> {
+                    val intent = Intent(this, TagSettings::class.java)
+                    intent.putExtra(TagSettings.TAG_ID, tag?.id)
+                    this.startActivity(intent)
+                }
+                1 -> {
+                    Toast.makeText(this,
+                            "Currently broken",
+                            Toast.LENGTH_SHORT).show()
+                }
+                2 -> {
+                    delete()
+                }
+            }
+
+            sheetDialog.dismiss()
+        }
+
+        sheetDialog.setContentView(listView)
+        sheetDialog.show()
+    }
+
+    fun delete() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(this.getString(R.string.tag_delete_title))
+        builder.setMessage(this.getString(R.string.tag_delete_message))
+        builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+            finish()
+            tag?.deleteTagAndRelatives()
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
+
+        builder.show()
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_details, menu)
+        return true
+    }
 }
 
 class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
@@ -121,6 +208,7 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
         textView.setTextColor(Color.WHITE)
         textView.gravity = Gravity.CENTER_HORIZONTAL
         textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        textView.textSize = context.resources.getDimension(R.dimen.tag_details_name)
         textView.setTypeface(null, Typeface.BOLD)
 
         (container as ViewPager).addView(textView, 0)
