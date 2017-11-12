@@ -37,6 +37,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final RuuviTag tag = getItem(position);
 
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_main, parent, false);
         }
@@ -48,10 +49,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         TextView pres = convertView.findViewById(R.id.row_main_pressure);
         TextView signal = convertView.findViewById(R.id.row_main_signal);
 
-        if(tag.name != null && !tag.name.isEmpty())
-            txtId.setText(tag.name);
-        else
-            txtId.setText(tag.id);
+        txtId.setText(tag.getDispayName());
 
         ((ImageView)convertView.findViewById(R.id.row_main_letter))
                 .setImageBitmap(Utils.createBall((int)getContext().getResources().getDimension(R.dimen.letter_ball_radius),

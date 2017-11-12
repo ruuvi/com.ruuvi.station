@@ -177,6 +177,10 @@ public class RuuviTag extends BaseModel {
         }
     }
 
+    public String getDispayName() {
+        return (this.name != null && !this.name.isEmpty()) ? this.name : this.id;
+    }
+
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 

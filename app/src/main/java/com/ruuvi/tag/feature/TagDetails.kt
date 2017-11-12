@@ -1,5 +1,6 @@
 package com.ruuvi.tag.feature
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -12,11 +13,15 @@ import com.ruuvi.tag.scanning.RuuviTagScanner
 import com.ruuvi.tag.util.Utils
 
 import kotlinx.android.synthetic.main.activity_tag_details.*
+import android.graphics.Paint.UNDERLINE_TEXT_FLAG
+
+
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
     var tagId: String = ""
     var tag: RuuviTag? = null
     var scanner: RuuviTagScanner? = null
+    var nameText: TextView? = null
     var tempText: TextView? = null
     var humidityText: TextView? = null
     var pressureText: TextView? = null
@@ -32,12 +37,14 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo)
 
+        nameText = findViewById(R.id.tag_name)
         tempText = findViewById(R.id.tag_temp)
         humidityText = findViewById(R.id.tag_humidity)
         pressureText = findViewById(R.id.tag_pressure)
         signalText = findViewById(R.id.tag_signal)
         updatedText = findViewById(R.id.tag_updated)
 
+        nameText?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tagId = intent.getStringExtra("id");
         tag = RuuviTag.get(tagId)
 
@@ -73,6 +80,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     fun updateUI() {
         tag?.let {
+            nameText?.text = tag?.dispayName
             tempText?.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
             humidityText?.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             pressureText?.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
