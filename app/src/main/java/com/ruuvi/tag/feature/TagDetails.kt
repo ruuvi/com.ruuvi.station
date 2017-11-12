@@ -1,8 +1,6 @@
 package com.ruuvi.tag.feature
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -10,7 +8,6 @@ import android.graphics.Point
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.tag.R
 import com.ruuvi.tag.model.RuuviTag
@@ -24,8 +21,6 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.widget.*
-import com.ruuvi.tag.feature.main.MainActivity
-import java.util.*
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -86,7 +81,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
             finish()
         }
-
 
         updateUI()
 
