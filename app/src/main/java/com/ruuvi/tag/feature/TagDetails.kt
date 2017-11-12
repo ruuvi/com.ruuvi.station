@@ -29,6 +29,8 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = null
+        supportActionBar?.setIcon(R.drawable.logo)
 
         tempText = findViewById(R.id.tag_temp)
         humidityText = findViewById(R.id.tag_humidity)
