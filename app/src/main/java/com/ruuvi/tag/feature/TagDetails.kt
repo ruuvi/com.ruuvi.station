@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.tag.R
@@ -82,7 +83,13 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             finish()
         }
 
-        updateUI()
+        val handler = Handler()
+        handler.post(object: Runnable {
+            override fun run() {
+                updateUI()
+                handler.postDelayed(this, 1000)
+            }
+        })
 
         scanner = RuuviTagScanner(this, this)
     }
@@ -121,14 +128,21 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 
     override fun tagFound(tag: RuuviTag) {
-        if (tag.id == this.tag?.id) {
-            this.tag?.updateDataFrom(tag);
-            this.tag?.update()
-            updateUI()
+        if (tags == null) return;
+        for (mTag in tags!!) {
+            if (mTag.id == tag.id) {
+                mTag.updateDataFrom(tag)
+                mTag.update()
+            }
         }
     }
 
     fun updateUI() {
+        for (mTag in tags!!) {
+            if (mTag.id == tag!!.id) {
+                tag = mTag
+            }
+        }
         tag?.let {
             tempText?.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
             humidityText?.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
