@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.widget.*
+import kotlinx.android.synthetic.main.content_tag_details.*
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -29,13 +30,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     var tags: List<RuuviTag>? = null
 
     var scanner: RuuviTagScanner? = null
-    var tempText: TextView? = null
-    var humidityText: TextView? = null
-    var pressureText: TextView? = null
-    var signalText: TextView? = null
-    var updatedText: TextView? = null
-
-    var pager: ViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,17 +40,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo)
 
-        tempText = findViewById(R.id.tag_temp)
-        humidityText = findViewById(R.id.tag_humidity)
-        pressureText = findViewById(R.id.tag_pressure)
-        signalText = findViewById(R.id.tag_signal)
-        updatedText = findViewById(R.id.tag_updated)
-        pager = findViewById(R.id.tag_pager)
-
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
-        pager?.pageMargin = - (size.x / 2)
-        pager!!.setOnPageChangeListener(object : OnPageChangeListener {
+        tag_pager.pageMargin = - (size.x / 2)
+        tag_pager.setOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
@@ -69,12 +56,12 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         val tagId = intent.getStringExtra("id");
         tags = RuuviTag.getAll()
         val pagerAdapter = TagPager(tags!!)
-        pager?.adapter = pagerAdapter
+        tag_pager.adapter = pagerAdapter
 
         for (i in tags!!.indices) {
             if (tags!!.get(i).id == tagId) {
                 tag = tags!!.get(i)
-                pager!!.currentItem = i
+                tag_pager.currentItem = i
             }
         }
 
@@ -144,12 +131,12 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            tempText?.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
-            humidityText?.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
-            pressureText?.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
-            signalText?.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
+            tag_temp.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
+            tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
+            tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
+            tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
             var updatedAt = this.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
-            updatedText?.text = updatedAt
+            tag_updated.text = updatedAt
         }
     }
 
