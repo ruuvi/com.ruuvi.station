@@ -117,7 +117,7 @@
     <string name="alert_notification_rssi_low">RSSI too low!</string>
     <string name="alert_notification_rssi_high">RSSI too high!</string>
 
-    <string name="no_tags_press_to_add"></string>
+    <string name="no_tags_press_to_add">No tags found</string>
     <string name="tag_not_found">Tag not found</string>
     <string name="tag_delete_title">Delete RuuviTag</string>
     <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
@@ -179,4 +179,13 @@
     <string name="about">About</string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
+
+    <string name="welcome_text_0">Swipe to see what you can do with ruuvi station</string>
+    <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
+    <string name="welcome_text_2">Listen to ruuvitags in realtime and explore history graphs</string>
+    <string name="welcome_text_3">Set alerts and get notified if limits are hit</string>
+    <string name="welcome_text_4">Export logged data or let the app act as a gateway</string>
+    <string name="welcome_text_5">Press scan to find nearby ruuvitags</string>
+
+    <string name="scan">Scan</string>
 </resources>
