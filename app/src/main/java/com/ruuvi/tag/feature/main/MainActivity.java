@@ -5,8 +5,6 @@ import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,9 +32,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import com.ruuvi.tag.R;
+import com.ruuvi.tag.feature.WelcomeActivity;
 import com.ruuvi.tag.model.RuuviTag;
 import com.ruuvi.tag.scanning.BackgroundScanner;
 import com.ruuvi.tag.util.DataUpdateListener;
@@ -46,6 +44,7 @@ import com.ruuvi.tag.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
+    private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
 
@@ -75,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.logo);
+
 
         handler = new Handler();
 
@@ -114,7 +114,15 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         setBackgroundScanning(false);
-        openFragment(1);
+
+        if (!getPrefDone(FIRST_START_PREF)) {
+            openFragment(0);
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+            setPrefDone(FIRST_START_PREF);
+        } else {
+            openFragment(1);
+        }
     }
 
     public static boolean isBluetoothEnabled() {
@@ -166,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     private void checkAndAskForBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasShownBatteryOptimizationDialog()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !getPrefDone(BATTERY_ASKED_PREF)) {
             PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
             String packageName = getPackageName();
             // this below does not seems to work on my device
@@ -177,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                         .setNegativeButton(getString(R.string.no), batteryDialogClick)
                         .show();
 
-                BatteryOptimizationDialogShown();
+                setPrefDone(BATTERY_ASKED_PREF);
             }
         }
     }
@@ -339,14 +347,14 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         otherRuuviTags.add(tag);
     }
 
-    public void BatteryOptimizationDialogShown() {
+    public void setPrefDone(String pref) {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(BATTERY_ASKED_PREF, true);
+        editor.putBoolean(pref, true);
         editor.apply();
     }
 
-    public boolean hasShownBatteryOptimizationDialog() {
-        return settings.getBoolean(BATTERY_ASKED_PREF, false);
+    public boolean getPrefDone(String pref) {
+        return settings.getBoolean(pref, false);
     }
 
     public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
