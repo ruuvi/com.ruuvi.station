@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
+    private static final int FROM_WELCOME = 1447;
 
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
@@ -106,21 +107,20 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         );
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
-
-        if (isBluetoothEnabled()) {
-            scanner = new RuuviTagScanner(this, getApplicationContext());
-        } else {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-        setBackgroundScanning(false);
-
         if (!getPrefDone(FIRST_START_PREF)) {
             openFragment(0);
             Intent intent = new Intent(this, WelcomeActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, FROM_WELCOME);
             setPrefDone(FIRST_START_PREF);
         } else {
+            if (isBluetoothEnabled()) {
+                scanner = new RuuviTagScanner(this, getApplicationContext());
+            } else {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            setBackgroundScanning(false);
+
             openFragment(1);
         }
     }
@@ -370,6 +370,16 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(resultCode == RESULT_OK) {
             if (requestCode == REQUEST_ENABLE_BT) {
                 scanner = new RuuviTagScanner(MainActivity.this, getApplicationContext());
+            }
+        } else {
+            if (requestCode == FROM_WELCOME) {
+                if (isBluetoothEnabled()) {
+                    scanner = new RuuviTagScanner(this, getApplicationContext());
+                } else {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+                setBackgroundScanning(false);
             }
         }
     }
