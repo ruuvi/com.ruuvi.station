@@ -86,57 +86,6 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
             Intent intent = new Intent(getActivity(), TagDetails.class);
             intent.putExtra("id", tag.id);
             startActivity(intent);
-            /*
-
-            final BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
-
-            ListView listView = new ListView(getActivity());
-
-            List<String> menu = new ArrayList<>(Arrays.asList(getActivity().getResources().getStringArray(R.array.station_tag_menu)));
-
-            if (tag.url != null && !tag.url.isEmpty()) {
-                menu.add(getActivity().getResources().getString(R.string.share));
-            }
-
-            listView.setAdapter(
-                    new ArrayAdapter<>(
-                            getActivity(),
-                            android.R.layout.simple_list_item_1,
-                            menu
-                    )
-            );
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (i == 0) {
-                        Toast.makeText(getActivity(), "Not yet implemented", Toast.LENGTH_SHORT).show();
-                    } else if (i == 1) {
-                        Intent intent = new Intent(getActivity(), TagSettings.class);
-                        intent.putExtra(TagSettings.TAG_ID, tag.id);
-                        getActivity().startActivity(intent);
-                    } else if (i == 2) {
-                        delete(tag);
-                    } else if (i == 3) {
-                        Toast.makeText(getActivity(), "Not working in this build", Toast.LENGTH_SHORT).show();
-                        //Intent intent = new Intent(getActivity(), PlotActivity.class);
-                        //intent.putExtra("id", tag.id);
-                        //getActivity().startActivity(intent);
-                    } else if (i == 4) {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
-                        intent.putExtra(Intent.EXTRA_TEXT, tag.url);
-                        getActivity().startActivity(Intent.createChooser(intent, "Share URL"));
-                    }
-
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.setContentView(listView);
-            dialog.show();
-            */
         }
     };
 
@@ -163,6 +112,5 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void dataUpdated() {
-        //if (adapter != null) adapter.notifyDataSetChanged();
     }
 }
