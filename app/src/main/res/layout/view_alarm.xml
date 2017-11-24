@@ -33,18 +33,36 @@
         app:layout_constraintTop_toBottomOf="@id/alerts_header"
         />
 
+    <TextView
+        android:id="@+id/alert_min_value"
+        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="-"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
     <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
         android:id="@+id/alert_seekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/alert_max_value"
+        app:layout_constraintLeft_toLeftOf="@id/alert_min_value"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
         app:bar_color="@color/ap_gray"
         app:bar_highlight_color="@color/main"
-        app:left_thumb_color="@color/main"
-        app:right_thumb_color="@color/main"
+        app:left_thumb_image="@drawable/range_ball_inactive"
+        app:right_thumb_image="@drawable/range_ball_inactive"
         app:data_type="_integer"
         />
+
+    <TextView
+        android:id="@+id/alert_max_value"
+        android:text="-"
+        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
 
 </android.support.constraint.ConstraintLayout>
