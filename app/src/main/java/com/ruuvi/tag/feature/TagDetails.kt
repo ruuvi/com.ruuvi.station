@@ -57,6 +57,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         tags = RuuviTag.getAll()
         val pagerAdapter = TagPager(tags!!)
         tag_pager.adapter = pagerAdapter
+        tag_pager.offscreenPageLimit = 100
 
         for (i in tags!!.indices) {
             if (tags!!.get(i).id == tagId) {

@@ -51,9 +51,11 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         txtId.setText(tag.getDispayName());
 
+        int ballColorRes = (position % 2 == 0) ? R.color.main : R.color.mainLight;
+
         ((ImageView)convertView.findViewById(R.id.row_main_letter))
                 .setImageBitmap(Utils.createBall((int)getContext().getResources().getDimension(R.dimen.letter_ball_radius),
-                        getContext().getResources().getColor(R.color.main),
+                        getContext().getResources().getColor(ballColorRes),
                         Color.WHITE,
                         txtId.getText().charAt(0) + ""));
 

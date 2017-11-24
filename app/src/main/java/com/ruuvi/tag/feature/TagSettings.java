@@ -187,19 +187,21 @@ public class TagSettings extends AppCompatActivity {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
             if (this.checked) {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.main));
-                seekBar.setLeftThumbColor(getResources().getColor(R.color.main));
-                seekBar.setRightThumbColor(getResources().getColor(R.color.main));
+                seekBar.setLeftThumbDrawable(R.drawable.range_ball);
+                seekBar.setRightThumbDrawable(R.drawable.range_ball);
                 this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
             } else {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
-                seekBar.setLeftThumbColor(getResources().getColor(R.color.ap_gray));
-                seekBar.setRightThumbColor(getResources().getColor(R.color.ap_gray));
+                seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
+                seekBar.setRightThumbDrawable(R.drawable.range_ball_inactive);
                 this.subtitle = getString(R.string.alert_subtitle_off);
             }
             seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
             ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
+            ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+            ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
         }
     }
 
