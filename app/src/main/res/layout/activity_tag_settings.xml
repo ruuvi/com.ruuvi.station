@@ -39,7 +39,7 @@
                 android:id="@+id/tag_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@drawable/bg3"
+                android:src="@drawable/bg3"
                 android:scaleType="centerCrop"
                 app:layout_constraintTop_toTopOf="parent" />
 
