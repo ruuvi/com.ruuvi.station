@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,14 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
 
         beaconListView.setOnItemClickListener(tagClick);
 
-        adapter.notifyDataSetChanged();
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (adapter != null) adapter.notifyDataSetChanged();
+                handler.postDelayed(this, 1000);
+            }
+        });
 
         return view;
     }
@@ -155,6 +163,6 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void dataUpdated() {
-        if (adapter != null) adapter.notifyDataSetChanged();
+        //if (adapter != null) adapter.notifyDataSetChanged();
     }
 }
