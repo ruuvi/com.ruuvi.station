@@ -38,7 +38,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo)
+        supportActionBar?.setIcon(R.drawable.logo_white)
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
