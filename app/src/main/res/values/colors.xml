@@ -11,4 +11,5 @@
     <color name="backgroundLight">#f2f4f5</color>
     <color name="settingsTitleColor">#030303</color>
     <color name="settingsParagraphColor">#808080</color>
+    <color name="lastSeenColor">#829fa5</color>
 </resources>
