@@ -38,7 +38,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo)
+        supportActionBar?.setIcon(R.drawable.logo_white)
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
@@ -205,6 +205,7 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
         textView.gravity = Gravity.CENTER_HORIZONTAL
         textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         textView.textSize = context.resources.getDimension(R.dimen.tag_details_name)
+        textView.setAllCaps(true)
         textView.setTypeface(null, Typeface.BOLD)
 
         (container as ViewPager).addView(textView, 0)
