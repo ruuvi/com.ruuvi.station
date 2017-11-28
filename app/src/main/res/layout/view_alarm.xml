@@ -11,19 +11,21 @@
         android:id="@+id/alert_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/temperature"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/alert_subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/alert_subtitle_off"
+        android:fontFamily="@font/roboto"
         android:paddingBottom="@dimen/tag_settings_text_padding"
-        app:layout_constraintTop_toBottomOf="@id/alert_title"
-        />
+        android:text="@string/alert_subtitle_off"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/alert_title" />
 
     <CheckBox
         android:id="@+id/alert_checkbox"
@@ -35,11 +37,13 @@
 
     <TextView
         android:id="@+id/alert_min_value"
-        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:text="-"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:text="-"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alert_subtitle" />
 
     <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
         android:id="@+id/alert_seekBar"
@@ -59,10 +63,12 @@
 
     <TextView
         android:id="@+id/alert_max_value"
-        android:text="-"
-        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:text="-"
+        android:textSize="14sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alert_subtitle" />
 
 </android.support.constraint.ConstraintLayout>

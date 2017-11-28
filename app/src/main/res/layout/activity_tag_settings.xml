@@ -48,10 +48,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/backgroundLight"
+                android:fontFamily="@font/montserrat"
                 android:padding="@dimen/tag_settings_text_padding"
-                android:textSize="16sp"
                 android:text="@string/name"
                 android:textColor="@color/mainDark"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -62,9 +63,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/name_header"
+                android:fontFamily="@font/roboto_medium"
                 android:padding="@dimen/tag_settings_text_padding"
                 android:text="@string/tag_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@id/name_header" />
 
             <TextView
@@ -85,22 +88,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/backgroundLight"
-                android:text="@string/gateway"
-                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
                 android:padding="@dimen/tag_settings_text_padding"
-                android:textSize="16sp"
+                android:text="@string/gateway"
                 android:textColor="@color/mainDark"
-                app:layout_constraintRight_toRightOf="parent"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/input_name"
-                />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_name" />
 
             <TextView
                 android:id="@+id/title_gatewayUrl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
                 android:padding="@dimen/tag_settings_text_padding"
                 android:text="@string/gateway_url"
+                android:textSize="16sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintTop_toBottomOf="@id/gateway_header" />
 
@@ -121,15 +126,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/backgroundLight"
-                android:text="@string/alerts"
-                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
                 android:padding="@dimen/tag_settings_text_padding"
-                android:textSize="16sp"
+                android:text="@string/alerts"
                 android:textColor="@color/mainDark"
-                app:layout_constraintRight_toRightOf="parent"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/input_gatewayUrl"
-                />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_gatewayUrl" />
 
         </android.support.constraint.ConstraintLayout>
 
