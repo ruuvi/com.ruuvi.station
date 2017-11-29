@@ -23,6 +23,12 @@ import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.TypefaceSpan
+import com.ruuvi.tag.util.CustomTypefaceSpan
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -132,7 +138,9 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            tag_temp.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
+            val ss1 = SpannableString(String.format(this.getString(R.string.temperature_reading), tag?.temperature) + "C")
+            ss1.setSpan(CustomTypefaceSpan(dummyTextView.typeface), ss1.length - 2, ss1.length, 0)
+            tag_temp.text = ss1
             tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
@@ -218,5 +226,6 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
     override fun getCount(): Int {
         return tags.size
     }
-
 }
+
+
