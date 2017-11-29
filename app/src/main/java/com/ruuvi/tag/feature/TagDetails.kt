@@ -159,11 +159,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
                     this.startActivity(intent)
                 }
                 1 -> {
-                    Toast.makeText(this,
-                            "Currently broken",
-                            Toast.LENGTH_SHORT).show()
-                }
-                2 -> {
                     delete()
                 }
             }
