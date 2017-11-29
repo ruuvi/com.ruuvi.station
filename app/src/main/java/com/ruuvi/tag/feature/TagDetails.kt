@@ -212,7 +212,7 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
         textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         textView.textSize = context.resources.getDimension(R.dimen.tag_details_name)
         textView.setAllCaps(true)
-        textView.setTypeface(null, Typeface.BOLD)
+        textView.typeface = container.findViewById<TextView>(R.id.dummyTextViewPager).typeface
 
         (container as ViewPager).addView(textView, 0)
         return textView

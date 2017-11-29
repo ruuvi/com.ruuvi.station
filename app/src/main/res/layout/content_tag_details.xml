@@ -17,6 +17,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         >
 
+        <TextView
+            android:id="@+id/dummyTextViewPager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/oswald_bold"
+            />
     </android.support.v4.view.ViewPager>
 
     <TextView
