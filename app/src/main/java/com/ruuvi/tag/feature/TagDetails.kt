@@ -23,6 +23,13 @@ import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.SuperscriptSpan
+import android.text.style.TypefaceSpan
+import com.ruuvi.tag.util.CustomTypefaceSpan
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -132,7 +139,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            tag_temp.text = String.format(this.getString(R.string.temperature_reading), tag?.temperature)
+            val temperature = SpannableString(String.format(this.getString(R.string.temperature_reading), tag?.temperature) + "C")
+            temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
+            temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
+            temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
+            tag_temp.text = temperature
             tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
@@ -159,11 +170,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
                     this.startActivity(intent)
                 }
                 1 -> {
-                    Toast.makeText(this,
-                            "Currently broken",
-                            Toast.LENGTH_SHORT).show()
-                }
-                2 -> {
                     delete()
                 }
             }
@@ -206,7 +212,7 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
         textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         textView.textSize = context.resources.getDimension(R.dimen.tag_details_name)
         textView.setAllCaps(true)
-        textView.setTypeface(null, Typeface.BOLD)
+        textView.typeface = container.findViewById<TextView>(R.id.dummyTextViewPager).typeface
 
         (container as ViewPager).addView(textView, 0)
         return textView
@@ -223,5 +229,6 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
     override fun getCount(): Int {
         return tags.size
     }
-
 }
+
+

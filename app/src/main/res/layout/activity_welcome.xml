@@ -37,8 +37,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/title_welcome" />
 
             <TextView
@@ -69,8 +72,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/icon_intro_1" />
 
             <TextView
@@ -101,8 +107,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/icon_intro_2" />
 
             <TextView
@@ -133,8 +142,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/icon_intro_3" />
 
             <TextView
@@ -165,8 +177,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/icon_intro_4" />
 
             <TextView
@@ -197,8 +212,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
+                android:layout_marginBottom="200dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/title_lets" />
 
             <TextView

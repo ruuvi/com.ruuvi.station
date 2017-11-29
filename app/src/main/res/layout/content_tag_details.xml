@@ -17,7 +17,20 @@
         app:layout_constraintLeft_toLeftOf="parent"
         >
 
+        <TextView
+            android:id="@+id/dummyTextViewPager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/oswald_bold"
+            />
     </android.support.v4.view.ViewPager>
+
+    <TextView
+        android:id="@+id/dummyTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/oswald_light"
+        android:textSize="76sp" />
 
     <TextView
         android:id="@+id/tag_temp"

@@ -2,7 +2,9 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/montserrat</item>
+        <item>@font/montserrat_bold</item>
         <item>@font/oswald_bold</item>
+        <item>@font/oswald_light</item>
         <item>@font/roboto</item>
         <item>@font/roboto_medium</item>
     </array>

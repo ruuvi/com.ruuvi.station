@@ -19,7 +19,7 @@
             android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat"
+            android:fontFamily="@font/montserrat_bold"
             android:textAllCaps="true"
             android:layout_marginLeft="@dimen/letter_ball_radius"
             android:paddingLeft="34dp"
@@ -27,7 +27,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/mainDark"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            />
 
     </LinearLayout>
 
