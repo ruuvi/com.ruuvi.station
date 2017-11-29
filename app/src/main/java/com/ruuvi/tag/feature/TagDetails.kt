@@ -27,6 +27,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.style.SuperscriptSpan
 import android.text.style.TypefaceSpan
 import com.ruuvi.tag.util.CustomTypefaceSpan
 
@@ -138,9 +139,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            val ss1 = SpannableString(String.format(this.getString(R.string.temperature_reading), tag?.temperature) + "C")
-            ss1.setSpan(CustomTypefaceSpan(dummyTextView.typeface), ss1.length - 2, ss1.length, 0)
-            tag_temp.text = ss1
+            val temperature = SpannableString(String.format(this.getString(R.string.temperature_reading), tag?.temperature) + "C")
+            temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
+            temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
+            temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
+            tag_temp.text = temperature
             tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
