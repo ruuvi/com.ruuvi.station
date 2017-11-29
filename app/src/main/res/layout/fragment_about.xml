@@ -30,14 +30,15 @@
                 android:id="@+id/aboutText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="10dp"
                 android:text="@string/about"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textStyle="bold"
                 android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/infoTitle" />
@@ -48,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_text"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 android:paddingTop="30dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
@@ -67,6 +69,7 @@
                 android:paddingTop="20dp"
                 android:textAlignment="center"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 />
 
         </android.support.constraint.ConstraintLayout>
