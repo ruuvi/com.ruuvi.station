@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
@@ -50,6 +51,13 @@ public class TagSettings extends AppCompatActivity {
             return;
         }
         tagAlarms = Alarm.getForTag(tagId);
+
+        findViewById(R.id.tag_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(TagSettings.this, "Not yet :)", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         final TextView nameTextView = findViewById(R.id.input_name);
         nameTextView.setText(tag.getDispayName());
