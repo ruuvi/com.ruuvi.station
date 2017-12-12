@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,9 +70,10 @@ public class TagSettings extends AppCompatActivity {
         nameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this, R.style.Theme_AppCompat_Light_Dialog);
+                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this);
                 builder.setTitle(getString(R.string.tag_name));
                 final EditText input = new EditText(TagSettings.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setText(tag.name);
                 builder.setView(input);
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -89,9 +91,10 @@ public class TagSettings extends AppCompatActivity {
         gatewayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this, R.style.Theme_AppCompat_Light_Dialog);
+                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this);
                 builder.setTitle(getString(R.string.gateway_url));
                 final EditText input = new EditText(TagSettings.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setText(tag.gatewayUrl);
                 builder.setView(input);
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
