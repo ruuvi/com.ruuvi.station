@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context="com.ruuvi.tag.feature.WelcomeActivity">
+    tools:context="com.ruuvi.station.feature.WelcomeActivity">
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/logo"

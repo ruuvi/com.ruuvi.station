@@ -187,4 +187,5 @@
     <string name="welcome_text_5">Press scan to find nearby ruuvitags</string>
 
     <string name="scan">Scan</string>
+    <string name="background_image">Background\nimage</string>
 </resources>

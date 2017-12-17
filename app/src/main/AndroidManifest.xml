@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ruuvi.tag">
+    package="com.ruuvi.station">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -10,14 +10,14 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".RuuviScannerApplication"
+        android:name="com.ruuvi.station.RuuviScannerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".feature.main.MainActivity"
+            android:name="com.ruuvi.station.feature.main.MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             >
@@ -28,26 +28,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.plot.PlotActivity"
+            android:name="com.ruuvi.station.feature.plot.PlotActivity"
             android:label=""
-            android:parentActivityName=".feature.main.MainActivity" />
+            android:parentActivityName="com.ruuvi.station.feature.main.MainActivity" />
         <activity
-            android:name=".feature.TagSettings"
+            android:name="com.ruuvi.station.feature.TagSettings"
             android:label="Tag Settings"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".service.ScannerService"
+            android:name="com.ruuvi.station.service.ScannerService"
             android:exported="false" />
 
-        <receiver android:name=".scanning.BackgroundScanner" />
+        <receiver android:name="com.ruuvi.station.scanning.BackgroundScanner" />
 
         <activity
-            android:name=".feature.TagDetails"
+            android:name="com.ruuvi.station.feature.TagDetails"
             android:label="@string/title_activity_tag_details"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             />
-        <activity android:name=".feature.WelcomeActivity"
+        <activity android:name="com.ruuvi.station.feature.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             />
