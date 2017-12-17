@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ruuvi.tag.feature.main.AddTagFragment">
+    tools:context="com.ruuvi.station.feature.main.AddTagFragment">
 
     <ListView
         android:id="@+id/tag_listView"

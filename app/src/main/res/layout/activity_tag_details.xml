@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg1"
-    tools:context="com.ruuvi.tag.feature.TagDetails">
+    tools:context="com.ruuvi.station.feature.TagDetails">
 
     <LinearLayout
         android:fitsSystemWindows="true"

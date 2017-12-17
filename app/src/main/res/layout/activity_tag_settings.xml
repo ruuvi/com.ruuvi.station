@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.ruuvi.tag.feature.TagSettings">
+    tools:context="com.ruuvi.station.feature.TagSettings">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
