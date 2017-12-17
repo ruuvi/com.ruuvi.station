@@ -1,11 +1,13 @@
 package com.ruuvi.tag.feature
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Typeface
+import android.nfc.Tag
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
@@ -49,7 +51,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
-        tag_pager.pageMargin = - (size.x / 2)
+        //tag_pager.pageMargin = - (size.x / 2)
         tag_pager.setOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -62,11 +64,14 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         val tagId = intent.getStringExtra("id");
         tags = RuuviTag.getAll()
-        val pagerAdapter = TagPager(tags!!)
+        val pagerAdapter = TagPager(tags!!, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
 
+        tab_layout.setupWithViewPager(tag_pager)
+
         for (i in tags!!.indices) {
+            //tab_layout.addTab(tab_layout.newTab().setText(tags!!.get(i).dispayName))
             if (tags!!.get(i).id == tagId) {
                 tag = tags!!.get(i)
                 tag_pager.currentItem = i
@@ -134,6 +139,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     fun updateUI() {
         for (mTag in tags!!) {
+            (tag_pager.adapter as TagPager).updateView(mTag)
             if (mTag.id == tag!!.id) {
                 tag = mTag
             }
@@ -143,12 +149,15 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
             temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
             temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
+            (tag_pager.adapter as TagPager).updateView(tag!!)
+            /*
             tag_temp.text = temperature
             tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
             var updatedAt = this.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
             tag_updated.text = updatedAt
+            */
         }
     }
 
@@ -199,23 +208,63 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 }
 
-class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
+class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) : PagerAdapter() {
+    val VIEW_TAG = "DetailedTag"
     var tags = tags
+    val context = context
+    val view = view
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-        val context = container?.context!!
 
-        val textView: TextView = TextView(context)
+        val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
+        view.tag = VIEW_TAG + position
+        (container as ViewPager).addView(view, 0)
+        return view
+
+        val textView = TextView(context)
         textView.text = tags.get(position).dispayName
         textView.setTextColor(Color.WHITE)
         textView.gravity = Gravity.CENTER_HORIZONTAL
         textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        textView.textSize = context.resources.getDimension(R.dimen.tag_details_name)
+        textView.textSize = context!!.resources.getDimension(R.dimen.tag_details_name)
         textView.setAllCaps(true)
-        textView.typeface = container.findViewById<TextView>(R.id.dummyTextViewPager).typeface
+        textView.typeface = container.findViewById<TextView>(R.id.dummyTextView).typeface
 
         (container as ViewPager).addView(textView, 0)
         return textView
+    }
+
+    fun updateView(tag: RuuviTag) {
+        var pos = -1
+        for ((index, aTag) in tags.withIndex()) {
+            if (tag.id.equals(aTag.id)) {
+                pos = index
+                break
+            }
+        }
+        if (pos == -1) return
+
+        val rootView = view.findViewWithTag<View>(VIEW_TAG + pos)
+        if (rootView == null) return;
+
+        val dummyTextView = rootView.findViewById<TextView>(R.id.dummyTextView)
+        val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
+        val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)
+        val tag_pressure = rootView.findViewById<TextView>(R.id.tag_pressure)
+        val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
+        val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
+
+        val temperature = SpannableString(String.format(context.getString(R.string.temperature_reading), tag?.temperature) + "C")
+        temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
+        temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
+        temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
+
+        tag_temp.text = temperature
+        tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
+        tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)
+        tag_signal.text = String.format(context.getString(R.string.signal_reading), tag?.rssi)
+        var updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
+        tag_updated.text = updatedAt
     }
 
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
@@ -224,6 +273,10 @@ class TagPager constructor(tags: List<RuuviTag>) : PagerAdapter() {
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         // hmm
+    }
+
+    override fun getPageTitle(position: Int): CharSequence {
+        return tags.get(position).dispayName
     }
 
     override fun getCount(): Int {
