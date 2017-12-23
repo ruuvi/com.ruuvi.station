@@ -63,10 +63,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
 
-        tab_layout.setupWithViewPager(tag_pager)
-
         for (i in tags!!.indices) {
-            //tab_layout.addTab(tab_layout.newTab().setText(tags!!.get(i).dispayName))
             if (tags!!.get(i).id == tagId) {
                 tag = tags!!.get(i)
                 tag_pager.currentItem = i
