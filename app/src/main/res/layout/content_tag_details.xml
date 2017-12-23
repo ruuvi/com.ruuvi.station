@@ -17,21 +17,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         >
 
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/PagerTabStripText"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabTextColor="@color/white"
-        app:tabSelectedTextColor="@color/white"
-        app:tabIndicatorColor="@color/white"
-        app:tabMode="scrollable"
-        app:tabGravity="center"
-        />
+    </android.support.v4.view.ViewPager>
 
     <TextView
         android:id="@+id/dummyTextView"
