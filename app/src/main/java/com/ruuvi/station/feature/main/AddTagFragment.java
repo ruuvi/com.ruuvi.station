@@ -58,6 +58,9 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                 tag.save();
                 ScannerService.logTag(tag);
                 ((MainActivity)getActivity()).openFragment(1);
+                Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
+                settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
+                startActivity(settingsIntent);
             }
         });
 
