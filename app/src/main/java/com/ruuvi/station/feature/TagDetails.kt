@@ -166,11 +166,16 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
             when (i) {
                 0 -> {
+                    val intent = Intent(this, GraphActivity::class.java)
+                    intent.putExtra(GraphActivity.TAGID, tag?.id)
+                    this.startActivity(intent)
+                }
+                1 -> {
                     val intent = Intent(this, TagSettings::class.java)
                     intent.putExtra(TagSettings.TAG_ID, tag?.id)
                     this.startActivity(intent)
                 }
-                1 -> {
+                2 -> {
                     delete()
                 }
             }

@@ -145,6 +145,7 @@
 
 
     <string-array name="station_tag_menu">
+        <item>Graphs</item>
         <item>Tag Settings</item>
         <item>Remove Tag</item>
     </string-array>
