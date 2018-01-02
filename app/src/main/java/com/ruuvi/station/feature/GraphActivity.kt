@@ -80,4 +80,9 @@ class GraphActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
+    }
 }
