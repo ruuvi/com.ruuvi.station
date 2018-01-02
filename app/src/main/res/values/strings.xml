@@ -189,4 +189,5 @@
 
     <string name="scan">Scan</string>
     <string name="background_image">Background\nimage</string>
+    <string name="bg_scan_for_graphs">Background scanning needs to be enabled to see graphs</string>
 </resources>

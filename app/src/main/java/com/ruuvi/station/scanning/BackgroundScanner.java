@@ -226,7 +226,6 @@ public class BackgroundScanner extends BroadcastReceiver {
                 am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
             }
         }
-
     }
 
     private int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {

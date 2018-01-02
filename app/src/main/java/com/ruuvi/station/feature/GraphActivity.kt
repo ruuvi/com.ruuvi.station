@@ -1,9 +1,12 @@
 package com.ruuvi.station.feature
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.widget.Toolbar
+import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -41,6 +44,10 @@ class GraphActivity : AppCompatActivity() {
         val tagId = intent.getStringExtra(TAGID)
         val tag = RuuviTag.get(tagId)
         if (tag == null) finish()
+
+        val settings = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+        val bgScanEnabled = settings.getBoolean("pref_bgscan", false)
+        if (!bgScanEnabled) Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
 
         supportActionBar!!.title = tag.dispayName.toUpperCase()
 
