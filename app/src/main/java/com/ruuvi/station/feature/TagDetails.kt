@@ -144,7 +144,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             (tag_pager.adapter as TagPager).updateView(tag!!)
             /*
             tag_temp.text = temperature
-            tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
+       ¨åpo     tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
             tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
             tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
             var updatedAt = this.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);

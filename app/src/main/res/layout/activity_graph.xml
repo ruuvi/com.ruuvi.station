@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.ruuvi.station.feature.GraphActivity">
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+    </com.github.mikephil.charting.charts.LineChart>
+
 </android.support.constraint.ConstraintLayout>
