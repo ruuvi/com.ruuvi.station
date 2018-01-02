@@ -64,6 +64,7 @@ class GraphActivity : AppCompatActivity() {
     fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
         set.setDrawValues(false)
+        set.setDrawFilled(true)
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
