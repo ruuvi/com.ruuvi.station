@@ -6,4 +6,6 @@
 
     <dimen name="letter_ball_radius">85px</dimen>
     <dimen name="tag_details_name">5sp</dimen>
+
+    <dimen name="graph_description_size">4sp</dimen>
 </resources>

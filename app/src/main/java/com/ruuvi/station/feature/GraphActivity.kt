@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
@@ -78,6 +79,8 @@ class GraphActivity : AppCompatActivity() {
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
         chart.description.text = label
         chart.description.textColor = Color.WHITE
+        chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
+        chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.roboto)
         chart.legend.isEnabled = false
         chart.data = LineData(set)
 
