@@ -48,19 +48,6 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
         else if (tag.rssi < -50) signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_2));
         else signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_3));
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (RuuviTag.get(tag.id) != null) {
-                    Toast.makeText(getContext(), getContext().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
-                tag.save();
-                ScannerService.logTag(tag);
-                ((MainActivity)getContext()).openFragment(1);
-            }
-        });
         return convertView;
     }
 }

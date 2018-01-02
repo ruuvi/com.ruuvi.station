@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RuuviScanner</string>
+    <string name="app_name">Ruuvi Station</string>
     <string name="title_activity_main">Ruuvi Station</string>
     <string name="title_activity_list">Nearby Tags</string>
     <string name="title_activity_settings">Settings</string>
@@ -145,6 +145,7 @@
 
 
     <string-array name="station_tag_menu">
+        <item>Graphs</item>
         <item>Tag Settings</item>
         <item>Remove Tag</item>
     </string-array>
@@ -188,4 +189,5 @@
 
     <string name="scan">Scan</string>
     <string name="background_image">Background\nimage</string>
+    <string name="bg_scan_for_graphs">Background scanning needs to be enabled to see graphs</string>
 </resources>
