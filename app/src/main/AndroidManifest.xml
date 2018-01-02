@@ -54,7 +54,9 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".feature.GraphActivity"></activity>
+        <activity android:name=".feature.GraphActivity"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+            />
     </application>
 
 </manifest>
