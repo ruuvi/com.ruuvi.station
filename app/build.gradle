@@ -48,7 +48,7 @@ dependencies {
     compile "com.android.support:gridlayout-v7:${support_version}"
 
     compile 'com.jjoe64:graphview:4.2.1'
-    compile 'com.koushikdutta.ion:ion:2.0.0'
+    compile 'com.koushikdutta.ion:ion:2.2.1'
     compile "com.androidplot:androidplot-core:1.5.0"
     //compile 'com.google.firebase:firebase-crash:11.0.2'
     compile 'com.crystal:crystalrangeseekbar:1.1.3'
