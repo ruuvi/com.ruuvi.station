@@ -27,10 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.plot.PlotActivity"
-            android:label=""
-            android:parentActivityName=".feature.main.MainActivity" />
-        <activity
             android:name=".feature.TagSettings"
             android:label="Tag Settings"
             android:theme="@style/AppTheme.NoActionBar" />
