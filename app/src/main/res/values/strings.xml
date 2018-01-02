@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RuuviScanner</string>
+    <string name="app_name">Ruuvi Station</string>
     <string name="title_activity_main">Ruuvi Station</string>
     <string name="title_activity_list">Nearby Tags</string>
     <string name="title_activity_settings">Settings</string>
