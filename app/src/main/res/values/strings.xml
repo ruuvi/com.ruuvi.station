@@ -170,8 +170,8 @@
     <string name="name">Name</string>
     <string name="tag_name">Tag name</string>
     <string name="gateway">Gateway</string>
-    <string name="gateway_url">Gateway url</string>
-    <string name="no_gateway_url">No gateway url</string>
+    <string name="gateway_url">Gateway URL</string>
+    <string name="no_gateway_url">No gateway URL</string>
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
 
