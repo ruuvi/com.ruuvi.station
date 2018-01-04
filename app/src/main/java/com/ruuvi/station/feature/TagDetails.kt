@@ -215,6 +215,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
         view.tag = VIEW_TAG + position
         (container as ViewPager).addView(view, 0)
+        updateView(tags[position])
         return view
     }
 
