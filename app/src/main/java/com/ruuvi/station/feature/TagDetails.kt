@@ -89,7 +89,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
-        } else if (item?.itemId == R.id.action_share) {
+        } else {
+            showOptionsMenu()
+        }
+        /*else if (item?.itemId == R.id.action_share) {
             if (tag?.url != null) {
                 if (!tag!!.url.isEmpty()) {
                     val shareIntent = Intent(Intent.ACTION_SEND)
@@ -102,9 +105,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             Toast.makeText(this,
                     "You can only share tags in weather station mode right now"
                     , Toast.LENGTH_SHORT).show()
-        } else {
-            showOptionsMenu()
-        }
+        } */
         return true
     }
 
