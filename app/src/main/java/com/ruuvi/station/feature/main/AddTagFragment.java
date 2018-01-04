@@ -59,10 +59,9 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                 }
                 tag.save();
                 ScannerService.logTag(tag);
-                ((MainActivity)getActivity()).openFragment(1);
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
                 settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
-                startActivity(settingsIntent);
+                startActivityForResult(settingsIntent, 1);
             }
         });
 
@@ -81,5 +80,11 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         } else {
             noTagsTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ((MainActivity)getActivity()).openFragment(1);
     }
 }
