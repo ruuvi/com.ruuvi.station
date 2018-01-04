@@ -133,7 +133,7 @@
         <item>Add a New RuuviTag</item>
         <item>Show Dashboard</item>
         <item>App Settings</item>
-        <item>About</item>
+        <item>About / Help</item>
     </string-array>
 
     <string-array name="navigation_items_titles">
@@ -176,7 +176,7 @@
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
 
     <string name="info_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dapibus id odio et vestibulum. Nunc in tortor sed lectus venenatis porttitor. Etiam lacus velit, volutpat a elit eu, congue mollis mauris. Maecenas convallis vehicula risus quis iaculis. Suspendisse est tellus, iaculis sit amet bibendum tristique, efficitur nec lectus.</string>
-    <string name="about">About</string>
+    <string name="about">About / Help</string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
 
