@@ -19,6 +19,8 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 
+import java.util.List;
+
 public class AddTagFragment extends Fragment implements DataUpdateListener {
     private AddTagAdapter adapter;
     private ListView beaconListView;
@@ -73,7 +75,8 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     public void dataUpdated() {
         if (adapter != null) adapter.notifyDataSetChanged();
 
-        if (((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
+        List<RuuviTag> otherTags = ((MainActivity)getActivity()).otherRuuviTags;
+        if (otherTags != null && otherTags.size() > 0) {
             noTagsTextView.setVisibility(View.INVISIBLE);
         } else {
             noTagsTextView.setVisibility(View.VISIBLE);
