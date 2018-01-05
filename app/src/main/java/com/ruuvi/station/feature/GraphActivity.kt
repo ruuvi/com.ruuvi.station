@@ -32,6 +32,8 @@ class GraphActivity : AppCompatActivity() {
         val TAGID = "TAG_ID"
     }
 
+    var firstReadingTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graph)
@@ -58,10 +60,13 @@ class GraphActivity : AppCompatActivity() {
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
 
+        firstReadingTime = readings[0].createdAt.time
+
         readings.map { reading ->
-            tempData.add(Entry(reading.createdAt.time.toFloat(), reading.temperature.toFloat()))
-            humidData.add(Entry(reading.createdAt.time.toFloat(), reading.humidity.toFloat()))
-            pressureData.add(Entry(reading.createdAt.time.toFloat(), reading.pressure.toFloat()))
+            val timestamp = (reading.createdAt.time - firstReadingTime).toFloat()
+            tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+            humidData.add(Entry(timestamp, reading.humidity.toFloat()))
+            pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
         }
 
         addDataToChart(tempData, tempChart, "Temperature")
@@ -80,14 +85,16 @@ class GraphActivity : AppCompatActivity() {
         chart.description.text = label
         chart.description.textColor = Color.WHITE
         chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
-        chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.roboto)
+        try {
+            chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.roboto)
+        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
         chart.legend.isEnabled = false
         chart.data = LineData(set)
 
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             private val mFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                return mFormat.format(Date(value.toLong()))
+                return mFormat.format(Date(firstReadingTime + value.toLong()))
             }
         }
     }

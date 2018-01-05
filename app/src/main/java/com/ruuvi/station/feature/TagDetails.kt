@@ -89,7 +89,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
-        } else if (item?.itemId == R.id.action_share) {
+        } else {
+            showOptionsMenu()
+        }
+        /*else if (item?.itemId == R.id.action_share) {
             if (tag?.url != null) {
                 if (!tag!!.url.isEmpty()) {
                     val shareIntent = Intent(Intent.ACTION_SEND)
@@ -102,9 +105,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             Toast.makeText(this,
                     "You can only share tags in weather station mode right now"
                     , Toast.LENGTH_SHORT).show()
-        } else {
-            showOptionsMenu()
-        }
+        } */
         return true
     }
 
@@ -212,23 +213,11 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
     val view = view
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
         view.tag = VIEW_TAG + position
         (container as ViewPager).addView(view, 0)
+        updateView(tags[position])
         return view
-
-        val textView = TextView(context)
-        textView.text = tags.get(position).dispayName
-        textView.setTextColor(Color.WHITE)
-        textView.gravity = Gravity.CENTER_HORIZONTAL
-        textView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        textView.textSize = context!!.resources.getDimension(R.dimen.tag_details_name)
-        textView.setAllCaps(true)
-        textView.typeface = container.findViewById<TextView>(R.id.dummyTextView).typeface
-
-        (container as ViewPager).addView(textView, 0)
-        return textView
     }
 
     fun updateView(tag: RuuviTag) {

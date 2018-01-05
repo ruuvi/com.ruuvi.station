@@ -9,13 +9,13 @@
         android:title="menu"
         android:icon="@drawable/ic_more_horiz_24px" />
 
+    <!--
     <item
         android:id="@+id/action_share"
         app:showAsAction="always"
         android:orderInCategory="0"
         android:title="@string/share"
-        android:icon="@drawable/ic_share_24px">
-
-    </item>
+        android:icon="@drawable/ic_share_24px"/>
+    -->
 
 </menu>

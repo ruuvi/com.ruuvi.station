@@ -112,7 +112,7 @@ public class TagSettings extends AppCompatActivity {
         alarmItems.add(new AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85));
         alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
-        alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -100 ,0));
+        alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105 ,0));
 
         for (Alarm alarm: tagAlarms) {
             AlarmItem item = alarmItems.get(alarm.type);
