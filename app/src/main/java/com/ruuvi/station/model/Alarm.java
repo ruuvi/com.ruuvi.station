@@ -19,6 +19,7 @@ public class Alarm extends BaseModel {
     public static final int HUMIDITY = 1;
     public static final int PERSSURE = 2;
     public static final int RSSI = 3;
+    public static final int MOVEMENT = 4;
 
     @Column
     @PrimaryKey(autoincrement = true)

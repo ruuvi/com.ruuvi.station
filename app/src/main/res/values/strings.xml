@@ -116,6 +116,7 @@
     <string name="alert_notification_pressure_high">Pressure too high!</string>
     <string name="alert_notification_rssi_low">RSSI too low!</string>
     <string name="alert_notification_rssi_high">RSSI too high!</string>
+    <string name="alert_notification_movement">Movement detected!</string>
 
     <string name="no_tags_press_to_add">No tags found</string>
     <string name="tag_not_found">Tag not found</string>

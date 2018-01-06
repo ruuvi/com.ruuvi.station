@@ -13,6 +13,7 @@ import com.ruuvi.station.R;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.TagSensorReading;
 
 import java.util.List;
 
@@ -53,10 +54,24 @@ public class AlarmChecker {
                     if (tag.rssi > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_rssi_high;
                     break;
+                case Alarm.MOVEMENT:
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
+                    if (readings.size() == 2) {
+                        double prev = getSumOfAcc(readings.get(0));
+                        double current = getSumOfAcc(readings.get(1));
+                        if (Math.abs(current - prev) > 0.03) {
+                            notificationTextResourceId = R.string.alert_notification_movement;
+                        }
+                    }
+                    break;
             }
             if (notificationTextResourceId != -9001)
                 sendAlert(notificationTextResourceId, alarm.id, tag.name, context);
         }
+    }
+
+    private static double getSumOfAcc(TagSensorReading reading) {
+        return reading.accelX + reading.accelY + reading.accelZ;
     }
 
     private static void sendAlert(int stringResId, int _id, String name, Context context) {
@@ -79,7 +94,7 @@ public class AlarmChecker {
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setLargeIcon(bitmap);
 
             NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

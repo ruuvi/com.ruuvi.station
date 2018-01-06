@@ -65,4 +65,13 @@ public class TagSensorReading extends BaseModel {
                 .and(TagSensorReading_Table.createdAt.greaterThan(from))
                 .queryList();
     }
+
+    public static List<TagSensorReading> getLatestForTag(String id, int limit) {
+        return SQLite.select()
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.ruuviTagId.eq(id))
+                .orderBy(TagSensorReading_Table.id, false)
+                .limit(limit)
+                .queryList();
+    }
 }
