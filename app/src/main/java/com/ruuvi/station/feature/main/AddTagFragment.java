@@ -74,8 +74,8 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     public void dataUpdated() {
         if (adapter != null) adapter.notifyDataSetChanged();
 
-        List<RuuviTag> otherTags = ((MainActivity)getActivity()).otherRuuviTags;
-        if (otherTags != null && otherTags.size() > 0) {
+        if (((MainActivity)getActivity()).otherRuuviTags != null &&
+                ((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
             noTagsTextView.setVisibility(View.INVISIBLE);
         } else {
             noTagsTextView.setVisibility(View.VISIBLE);
