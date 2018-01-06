@@ -73,7 +73,7 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001) {
-                sendAlert(notificationTextResourceId, alarm.id, tag.name, context);
+                sendAlert(notificationTextResourceId, alarm.id, tag.getDispayName(), context);
             }
         }
     }
