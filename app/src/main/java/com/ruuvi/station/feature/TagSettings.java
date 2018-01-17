@@ -209,7 +209,7 @@ public class TagSettings extends AppCompatActivity {
                 seekBar.setLeftThumbDrawable(R.drawable.range_ball);
                 seekBar.setRightThumbDrawable(R.drawable.range_ball);
                 if (this.type == Alarm.MOVEMENT) {
-                    this.subtitle = getString(R.string.alert_substring_movement);fdkl
+                    this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
                     this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
                 }
