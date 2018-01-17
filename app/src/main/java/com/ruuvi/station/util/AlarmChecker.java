@@ -77,7 +77,7 @@ public class AlarmChecker {
     }
 
     private static boolean hasTagMoved(TagSensorReading one, TagSensorReading two) {
-        double threshold = 0.03;
+        double threshold = 0.06;
         return diff(one.accelZ, two.accelZ) > threshold ||
                 diff(one.accelX, two.accelX) > threshold ||
                 diff(one.accelY, two.accelY) > threshold;
