@@ -64,9 +64,7 @@ public class AlarmChecker {
                 case Alarm.MOVEMENT:
                     List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
                     if (readings.size() == 2) {
-                        double prev = getSumOfAcc(readings.get(0));
-                        double current = getSumOfAcc(readings.get(1));
-                        if (Math.abs(current - prev) > 0.03) {
+                        if (hasTagMoved(readings.get(0), readings.get(1))) {
                             notificationTextResourceId = R.string.alert_notification_movement;
                         }
                     }
@@ -78,17 +76,25 @@ public class AlarmChecker {
         }
     }
 
+    private static boolean hasTagMoved(TagSensorReading one, TagSensorReading two) {
+        double threshold = 0.03;
+        return diff(one.accelZ, two.accelZ) > threshold ||
+                diff(one.accelX, two.accelX) > threshold ||
+                diff(one.accelY, two.accelY) > threshold;
+    }
+
+    private static double diff(double one, double two) {
+        return Math.abs(one - two);
+    }
+
     private static double getSumOfAcc(TagSensorReading reading) {
         return reading.accelX + reading.accelY + reading.accelZ;
     }
 
     private static void sendAlert(int stringResId, int _id, String name, Context context) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-
         int notificationid = _id + stringResId;
-
         boolean isShowing = isNotificationVisible(context, notificationid);
-
         NotificationCompat.Builder notification;
 
         if (!isShowing) {
@@ -121,7 +127,6 @@ public class AlarmChecker {
             }
         }
     }
-
 
     private static boolean isNotificationVisible(Context context, int id) {
         Intent notificationIntent = new Intent(context, MainActivity.class);
