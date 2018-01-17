@@ -113,6 +113,7 @@ public class TagSettings extends AppCompatActivity {
         alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
         alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105 ,0));
+        alarmItems.add(new AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0 ,0));
 
         for (Alarm alarm: tagAlarms) {
             AlarmItem item = alarmItems.get(alarm.type);
@@ -129,9 +130,10 @@ public class TagSettings extends AppCompatActivity {
         for (int i = 0; i < alarmItems.size(); i++) {
             AlarmItem item = alarmItems.get(i);
             item.view = inflater.inflate(R.layout.view_alarm, parentLayout, false);
-            item.view.setId(item.view.getId() + i);
-            item.view.findViewById(R.id.alert_checkbox).setTag(i);
-            ((CheckBox)item.view.findViewById(R.id.alert_checkbox)).setOnCheckedChangeListener(alarmCheckboxListener);
+            item.view.setId(View.generateViewId());
+            CheckBox checkBox = item.view.findViewById(R.id.alert_checkbox);
+            checkBox.setTag(i);
+            checkBox.setOnCheckedChangeListener(alarmCheckboxListener);
             item.createView();
             parentLayout.addView(item.view);
             ConstraintSet set = new ConstraintSet();
@@ -191,6 +193,12 @@ public class TagSettings extends AppCompatActivity {
                 }
             });
 
+            if (this.min == 0 && this.max == 0) {
+                seekBar.setVisibility(View.INVISIBLE);
+                this.view.findViewById(R.id.alert_min_value).setVisibility(View.INVISIBLE);
+                this.view.findViewById(R.id.alert_max_value).setVisibility(View.INVISIBLE);
+            }
+
             updateView();
         }
 
@@ -200,7 +208,11 @@ public class TagSettings extends AppCompatActivity {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.main));
                 seekBar.setLeftThumbDrawable(R.drawable.range_ball);
                 seekBar.setRightThumbDrawable(R.drawable.range_ball);
-                this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                if (this.type == Alarm.MOVEMENT) {
+                    this.subtitle = getString(R.string.alert_substring_movement);fdkl
+                } else {
+                    this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                }
             } else {
                 seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
                 seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);

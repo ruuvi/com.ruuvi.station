@@ -126,6 +126,7 @@
     <string name="humidity">Humidity</string>
     <string name="pressure">Air Pressure</string>
     <string name="rssi">RSSI</string>
+    <string name="movement">Movement</string>
     <string name="tag_already_added">Tag is already added</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
@@ -175,6 +176,7 @@
     <string name="no_gateway_url">No gateway URL</string>
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
+    <string name="alert_substring_movement">You will get a notification when the phone sees the tag move</string>
 
     <string name="info_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dapibus id odio et vestibulum. Nunc in tortor sed lectus venenatis porttitor. Etiam lacus velit, volutpat a elit eu, congue mollis mauris. Maecenas convallis vehicula risus quis iaculis. Suspendisse est tellus, iaculis sit amet bibendum tristique, efficitur nec lectus.</string>
     <string name="about">About / Help</string>
