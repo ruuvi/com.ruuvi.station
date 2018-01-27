@@ -111,7 +111,8 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     override fun onResume() {
         super.onResume()
-        tags = RuuviTag.getAll()
+        (tag_pager.adapter as TagPager).tags = RuuviTag.getAll()
+        tag_pager.adapter.notifyDataSetChanged()
         scanner?.start()
     }
 
