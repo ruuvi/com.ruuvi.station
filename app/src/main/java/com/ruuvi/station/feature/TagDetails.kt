@@ -111,6 +111,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     override fun onResume() {
         super.onResume()
+        tags = RuuviTag.getAll()
         (tag_pager.adapter as TagPager).tags = RuuviTag.getAll()
         tag_pager.adapter.notifyDataSetChanged()
         scanner?.start()
@@ -122,7 +123,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 
     override fun tagFound(tag: RuuviTag) {
-        if (tags == null) return;
+        if (tags == null) return
         for (mTag in tags!!) {
             if (mTag.id == tag.id) {
                 mTag.updateDataFrom(tag)
