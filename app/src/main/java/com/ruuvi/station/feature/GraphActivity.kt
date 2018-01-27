@@ -67,6 +67,7 @@ class GraphActivity : AppCompatActivity() {
 
     fun drawChart() {
         val readings = TagSensorReading.getForTag(tagId)
+        if (readings.size == 0) return
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
