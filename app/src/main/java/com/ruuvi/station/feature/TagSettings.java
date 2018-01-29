@@ -1,6 +1,7 @@
 package com.ruuvi.station.feature;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +56,9 @@ public class TagSettings extends AppCompatActivity {
         }
         tagAlarms = Alarm.getForTag(tagId);
 
-        findViewById(R.id.tag_image).setOnClickListener(new View.OnClickListener() {
+        ImageView tagImage = findViewById(R.id.tag_image);
+        tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
+        tagImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(TagSettings.this, "Not yet :)", Toast.LENGTH_SHORT).show();
