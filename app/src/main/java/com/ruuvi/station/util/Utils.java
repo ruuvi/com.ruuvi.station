@@ -85,7 +85,7 @@ public class Utils {
             case 2:
                 return context.getResources().getDrawable(R.drawable.bg3);
             default:
-                return null;
+                return context.getResources().getDrawable(R.drawable.bg1);
         }
     }
 }
