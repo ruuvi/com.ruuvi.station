@@ -1,11 +1,14 @@
 package com.ruuvi.station.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 
+import com.ruuvi.station.R;
 import com.ruuvi.station.model.RuuviTag;
 
 import java.util.Collections;
@@ -71,5 +74,18 @@ public class Utils {
             output += seconds + " s ago";
         }
         return output;
+    }
+
+    public static Drawable getDefaultBackground(int number, Context context) {
+        switch (number) {
+            case 0:
+                return context.getResources().getDrawable(R.drawable.bg1);
+            case 1:
+                return context.getResources().getDrawable(R.drawable.bg2);
+            case 2:
+                return context.getResources().getDrawable(R.drawable.bg3);
+            default:
+                return null;
+        }
     }
 }
