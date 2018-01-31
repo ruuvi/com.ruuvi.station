@@ -62,6 +62,9 @@ public class TagSettings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(TagSettings.this, "Not yet :)", Toast.LENGTH_SHORT).show();
+                // just toggle between default images for now
+                tag.defaultBackground = tag.defaultBackground == 2 ? 0 : tag.defaultBackground + 1;
+                ((ImageView)view).setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
             }
         });
 
