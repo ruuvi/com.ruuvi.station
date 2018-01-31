@@ -123,8 +123,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     override fun onResume() {
         super.onResume()
         tags = RuuviTag.getAll()
-        (tag_pager.adapter as TagPager).tags = RuuviTag.getAll()
+        (tag_pager.adapter as TagPager).tags = tags!!
         tag_pager.adapter.notifyDataSetChanged()
+        Utils.getDefaultBackground(tags!!.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
+            tag_background_view.setImageDrawable(background)
+        }
         scanner?.start()
     }
 
