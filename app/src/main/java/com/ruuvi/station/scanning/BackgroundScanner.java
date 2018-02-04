@@ -64,6 +64,7 @@ public class BackgroundScanner extends BroadcastReceiver {
                 "MyWakelockTag");
         wakeLock.acquire();
         Log.d(TAG, "Woke up");
+        scheduleNextScan(context);
         final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (useNewApi()) {
@@ -72,13 +73,13 @@ public class BackgroundScanner extends BroadcastReceiver {
             scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
             scanSettings = scanSettingsBuilder.build();
         }
-        scanResults = new ArrayList<LeScanResult>();
+        scanResults = new ArrayList<>();
 
         //MainActivity.enableBluetooth();
 
         if (!canScan()) {
             Log.d(TAG, "Could not start scanning in background, scheduling next attempt");
-            scheduleNextScan(context);
+            //scheduleNextScan(context);
             return;
         }
 
@@ -202,7 +203,7 @@ public class BackgroundScanner extends BroadcastReceiver {
                     });
         }
 
-        scheduleNextScan(context);
+        //scheduleNextScan(context);
 
         Log.d(TAG, "Going to sleep");
         wakeLock.release();

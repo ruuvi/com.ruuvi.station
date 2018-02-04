@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.Toolbar
@@ -33,6 +34,7 @@ class GraphActivity : AppCompatActivity() {
     }
 
     var firstReadingTime: Long = 0
+    var tagId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,7 @@ class GraphActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-        val tagId = intent.getStringExtra(TAGID)
+        tagId = intent.getStringExtra(TAGID)
         val tag = RuuviTag.get(tagId)
         if (tag == null) finish()
 
@@ -54,7 +56,18 @@ class GraphActivity : AppCompatActivity() {
 
         supportActionBar!!.title = tag.dispayName.toUpperCase()
 
+        val handler = Handler()
+        handler.post(object: Runnable {
+            override fun run() {
+                drawChart()
+                handler.postDelayed(this, 30000)
+            }
+        })
+    }
+
+    fun drawChart() {
         val readings = TagSensorReading.getForTag(tagId)
+        if (readings.size == 0) return
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
@@ -97,6 +110,9 @@ class GraphActivity : AppCompatActivity() {
                 return mFormat.format(Date(firstReadingTime + value.toLong()))
             }
         }
+
+        chart.notifyDataSetChanged()
+        chart.invalidate()
     }
 
     override fun onSupportNavigateUp(): Boolean {

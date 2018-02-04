@@ -51,6 +51,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".feature.GraphActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             />
     </application>

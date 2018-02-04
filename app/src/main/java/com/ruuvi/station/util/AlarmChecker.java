@@ -1,18 +1,24 @@
 package com.ruuvi.station.util;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.TagSensorReading;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.List;
 
@@ -23,6 +29,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 
 public class AlarmChecker {
+    private static final String TAG = "AlarmChecker";
+
     public static void check(RuuviTag tag, Context context) {
         List<Alarm> alarms = Alarm.getForTag(tag.id);
 
@@ -53,24 +61,41 @@ public class AlarmChecker {
                     if (tag.rssi > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_rssi_high;
                     break;
+                case Alarm.MOVEMENT:
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
+                    if (readings.size() == 2) {
+                        if (hasTagMoved(readings.get(0), readings.get(1))) {
+                            notificationTextResourceId = R.string.alert_notification_movement;
+                        }
+                    }
+                    break;
             }
-            if (notificationTextResourceId != -9001)
-                sendAlert(notificationTextResourceId, alarm.id, tag.name, context);
+            if (notificationTextResourceId != -9001) {
+                sendAlert(notificationTextResourceId, alarm.id, tag.getDispayName(), context);
+            }
         }
+    }
+
+    private static boolean hasTagMoved(TagSensorReading one, TagSensorReading two) {
+        double threshold = 0.03;
+        return diff(one.accelZ, two.accelZ) > threshold ||
+                diff(one.accelX, two.accelX) > threshold ||
+                diff(one.accelY, two.accelY) > threshold;
+    }
+
+    private static double diff(double one, double two) {
+        return Math.abs(one - two);
     }
 
     private static void sendAlert(int stringResId, int _id, String name, Context context) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-
         int notificationid = _id + stringResId;
-
         boolean isShowing = isNotificationVisible(context, notificationid);
-
         NotificationCompat.Builder notification;
 
         if (!isShowing) {
             notification
-                    = new NotificationCompat.Builder(context)
+                    = new NotificationCompat.Builder(context, "notify_001")
                     .setContentTitle(name)
                     .setSmallIcon(R.mipmap.ic_launcher_small)
                     .setTicker(name + " " + context.getString(stringResId))
@@ -79,14 +104,25 @@ public class AlarmChecker {
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setLargeIcon(bitmap);
 
-            NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            NotifyMgr.notify(notificationid, notification.build());
+            try {
+                NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel("notify_001",
+                            "Alert notifications",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    NotifyMgr.createNotificationChannel(channel);
+                }
+
+                NotifyMgr.notify(notificationid, notification.build());
+            } catch (Exception e) {
+                Log.d(TAG, "Failed to create notification");
+            }
         }
     }
-
 
     private static boolean isNotificationVisible(Context context, int id) {
         Intent notificationIntent = new Intent(context, MainActivity.class);

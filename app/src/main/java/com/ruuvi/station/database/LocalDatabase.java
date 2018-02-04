@@ -13,7 +13,20 @@ import com.ruuvi.station.model.RuuviTag;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
+
+    @Migration(version = 3, database = LocalDatabase.class)
+    public static class Migration3 extends AlterTableMigration<RuuviTag> {
+        public Migration3(Class<RuuviTag> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            addColumn(SQLiteType.INTEGER, "defaultBackground");
+            addColumn(SQLiteType.TEXT, "userBackground");
+        }
+    }
 
     @Migration(version = 2, database = LocalDatabase.class)
     public static class Migration2 extends AlterTableMigration<RuuviTag> {

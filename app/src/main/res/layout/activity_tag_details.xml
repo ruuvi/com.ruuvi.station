@@ -4,8 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg1"
     tools:context="com.ruuvi.station.feature.TagDetails">
+
+    <ImageView
+        android:id="@+id/tag_background_view"
+        android:src="@drawable/bg1"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:fitsSystemWindows="true"
@@ -14,24 +20,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        app:elevation="0dp"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:background="@null"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:elevation="0dp"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@null"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <include layout="@layout/content_tag_details"
-        />
+        </android.support.design.widget.AppBarLayout>
+
+        <include layout="@layout/content_tag_details" />
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

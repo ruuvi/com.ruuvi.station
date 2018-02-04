@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
+import com.google.android.gms.common.SignInButton;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -55,6 +56,10 @@ public class RuuviTag extends BaseModel {
     public Date updateAt;
     @Column
     public String gatewayUrl;
+    @Column
+    public int defaultBackground;
+    @Column
+    public String userBackground;
 
     public RuuviTag() {
     }

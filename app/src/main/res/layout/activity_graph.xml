@@ -30,31 +30,30 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/tempChart"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="fill_parent" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/tempChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/humidChart"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/humidChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/pressureChart"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/pressureChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
-
-            </LinearLayout>
-        </ScrollView>
+        </LinearLayout>
 
     </LinearLayout>
 

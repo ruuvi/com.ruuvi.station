@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
@@ -53,6 +55,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
             override fun onPageSelected(position: Int) {
                 tag = tags!!.get(position)
+                Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
+                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable,background))
+                    tag_background_view.setImageDrawable(transitionDrawable)
+                    transitionDrawable.startTransition(500)
+                }
                 updateUI()
             }
         })
@@ -73,6 +80,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         if (tag == null) {
             Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
             finish()
+        }
+
+        Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
+            tag_background_view.setImageDrawable(background)
         }
 
         val handler = Handler()
@@ -112,6 +123,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     override fun onResume() {
         super.onResume()
         tags = RuuviTag.getAll()
+        (tag_pager.adapter as TagPager).tags = tags!!
+        tag_pager.adapter.notifyDataSetChanged()
+        Utils.getDefaultBackground(tags!!.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
+            tag_background_view.setImageDrawable(background)
+        }
         scanner?.start()
     }
 
@@ -121,7 +137,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 
     override fun tagFound(tag: RuuviTag) {
-        if (tags == null) return;
+        if (tags == null) return
         for (mTag in tags!!) {
             if (mTag.id == tag.id) {
                 mTag.updateDataFrom(tag)
