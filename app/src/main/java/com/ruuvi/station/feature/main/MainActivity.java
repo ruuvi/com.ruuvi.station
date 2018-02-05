@@ -328,7 +328,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 myTag.updateDataFrom(tag);
                 myTag.update();
                 if (fragmentWithCallback != null) {
-                    fragmentWithCallback.dataUpdated();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fragmentWithCallback.dataUpdated();
+                        }
+                    });
                 }
                 return;
             }
@@ -339,7 +344,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 myTag.updateDataFrom(tag);
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
-                    fragmentWithCallback.dataUpdated();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fragmentWithCallback.dataUpdated();
+                        }
+                    });
                 }
                 return;
             }

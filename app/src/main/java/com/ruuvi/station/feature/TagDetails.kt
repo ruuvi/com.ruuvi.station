@@ -278,7 +278,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return tags.get(position).dispayName
+        return tags.get(position).dispayName.toUpperCase()
     }
 
     override fun getCount(): Int {
