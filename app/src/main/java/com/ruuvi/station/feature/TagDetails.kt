@@ -159,14 +159,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
             temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
             (tag_pager.adapter as TagPager).updateView(tag!!)
-            /*
-            tag_temp.text = temperature
-       ¨åpo     tag_humidity.text = String.format(this.getString(R.string.humidity_reading), tag?.humidity)
-            tag_pressure.text = String.format(this.getString(R.string.pressure_reading), tag?.pressure)
-            tag_signal.text = String.format(this.getString(R.string.signal_reading), tag?.rssi)
-            var updatedAt = this.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
-            tag_updated.text = updatedAt
-            */
         }
     }
 
