@@ -154,7 +154,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            val temperature = SpannableString(String.format(this.getString(R.string.temperature_reading), tag?.temperature) + "C")
+            val temperature = SpannableString(tag?.getTemperatureString(this) + RuuviTag.getTemperatureUnit(this))
             temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
             temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
             temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
@@ -248,7 +248,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
 
-        val temperature = SpannableString(String.format(context.getString(R.string.temperature_reading), tag?.temperature) + "C")
+        val temperature = SpannableString(tag?.getTemperatureString(context) + RuuviTag.getTemperatureUnit(context))
         temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
         temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
         temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)

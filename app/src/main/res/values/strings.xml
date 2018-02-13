@@ -93,6 +93,16 @@
 
     <string-array name="multi_select_list_preference_default_value" />
 
+    <string-array name="list_preference_temperature_unit_titles">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+    </string-array>
+
+    <string-array name="list_preference_temperature_unit_values">
+        <item>C</item>
+        <item>F</item>
+    </string-array>
+
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
@@ -144,7 +154,6 @@
         <item>App Settings</item>
         <item></item>
     </string-array>
-
 
     <string-array name="station_tag_menu">
         <item>Graphs</item>
