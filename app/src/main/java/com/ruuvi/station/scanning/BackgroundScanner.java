@@ -3,14 +3,7 @@ package com.ruuvi.station.scanning;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,8 +31,11 @@ import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
-import static com.ruuvi.station.RuuviScannerApplication.useNewApi;
 import static com.ruuvi.station.service.ScannerService.logTag;
+
+import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
+import no.nordicsemi.android.support.v18.scanner.ScanCallback;
+import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 /**
  * Created by berg on 30/09/17.
@@ -50,12 +46,11 @@ public class BackgroundScanner extends BroadcastReceiver {
     public static final int REQUEST_CODE = 9001;
     private static final int SCAN_TIME_MS = 5000;
 
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothLeScanner bleScanner;
-    private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
-    private ScanSettings scanSettings;
     private List<LeScanResult> scanResults;
     private PowerManager.WakeLock wakeLock;
+
+    private ScanSettings scanSettings;
+    private BluetoothLeScannerCompat scanner;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -65,61 +60,39 @@ public class BackgroundScanner extends BroadcastReceiver {
         wakeLock.acquire();
         Log.d(TAG, "Woke up");
         scheduleNextScan(context);
-        final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        if (useNewApi()) {
-            bleScanner = bluetoothAdapter.getBluetoothLeScanner();
-            ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder();
-            scanSettingsBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
-            scanSettings = scanSettingsBuilder.build();
-        }
-        scanResults = new ArrayList<>();
 
-        //MainActivity.enableBluetooth();
+        scanSettings = new ScanSettings.Builder()
+                .setReportDelay(0)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setUseHardwareBatchingIfSupported(false).build();
+        scanner = BluetoothLeScannerCompat.getScanner();
+
+        scanResults = new ArrayList<>();
 
         if (!canScan()) {
             Log.d(TAG, "Could not start scanning in background, scheduling next attempt");
-            //scheduleNextScan(context);
             return;
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (useNewApi()) {
-                    bleScanner.stopScan(bleScannerCallback);
-                } else {
-                    bluetoothAdapter.stopLeScan(mLeScanCallback);
-                }
+                scanner.stopScan(nsCallback);
                 processFoundDevices(context);
                 scanResults = new ArrayList<LeScanResult>();
             }
         }, SCAN_TIME_MS);
 
-        if (useNewApi()) {
-            bleScanner.startScan(scanFilters, scanSettings, bleScannerCallback);
-        } else {
-            bluetoothAdapter.startLeScan(mLeScanCallback);
-        }
+        scanner.startScan(null, scanSettings, nsCallback);
     }
 
-
-    @SuppressLint("NewApi")
-    private ScanCallback bleScannerCallback = new ScanCallback() {
+    private ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, ScanResult result) {
+        public void onScanResult(int callbackType, no.nordicsemi.android.support.v18.scanner.ScanResult result) {
+            super.onScanResult(callbackType, result);
             foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
         }
     };
-
-    // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    foundDevice(device, rssi, scanRecord);
-                }
-            };
 
     private void foundDevice(BluetoothDevice device, int rssi, byte[] data) {
         Iterator<LeScanResult> itr = scanResults.iterator();
@@ -247,7 +220,6 @@ public class BackgroundScanner extends BroadcastReceiver {
     }
 
     private boolean canScan() {
-        boolean useNewApi = useNewApi();
-        return useNewApi && bleScanner != null || !useNewApi && bluetoothAdapter != null;
+        return scanner != null;
     }
 }

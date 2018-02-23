@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.RuuviTag;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -87,5 +89,17 @@ public class Utils {
             default:
                 return context.getResources().getDrawable(R.drawable.bg1);
         }
+    }
+
+    public static double celciusToFahrenheit(double celcius) {
+        return round(celcius * 1.8 + 32.0, 2);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }

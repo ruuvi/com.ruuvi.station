@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_graph.*
 import javax.xml.datatype.DatatypeConstants.HOURS
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.ruuvi.station.util.Utils
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -75,9 +76,12 @@ class GraphActivity : AppCompatActivity() {
 
         firstReadingTime = readings[0].createdAt.time
 
+        val tempUnit = RuuviTag.getTemperatureUnit(this)
+
         readings.map { reading ->
             val timestamp = (reading.createdAt.time - firstReadingTime).toFloat()
-            tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+            if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+            else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
             humidData.add(Entry(timestamp, reading.humidity.toFloat()))
             pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
         }

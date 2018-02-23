@@ -19,6 +19,7 @@
         <activity
             android:name=".feature.main.MainActivity"
             android:launchMode="singleTop"
+            android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,6 +1,9 @@
 package com.ruuvi.station.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
+import android.preference.PreferenceManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,8 +17,12 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.data.Blob;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ruuvi.station.R;
 import com.ruuvi.station.database.LocalDatabase;
+import com.ruuvi.station.util.Utils;
 import com.ruuvi.station.util.base64;
+
+import static com.ruuvi.station.util.Utils.round;
 
 /**
  * Created by tmakinen on 15.6.2017.
@@ -93,8 +100,8 @@ public class RuuviTag extends BaseModel {
         process();
     }
 
-    public double getFahrenheit() {
-        return round(this.temperature * 1.8 + 32.0, 2);
+    private double getFahrenheit() {
+        return Utils.celciusToFahrenheit(this.temperature);
     }
 
     public void process() {
@@ -182,16 +189,20 @@ public class RuuviTag extends BaseModel {
         }
     }
 
-    public String getDispayName() {
-        return (this.name != null && !this.name.isEmpty()) ? this.name : this.id;
+    public static String getTemperatureUnit(Context context) {
+        // TODO: 13/02/2018 move this out to a helper
+        return PreferenceManager.getDefaultSharedPreferences(context).getString("pref_temperature_unit", "C");
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
+    public String getTemperatureString(Context context) {
+        if (RuuviTag.getTemperatureUnit(context).equals("C")) {
+            return String.format(context.getString(R.string.temperature_reading), this.temperature);
+        }
+        return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit());
+    }
 
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+    public String getDispayName() {
+        return (this.name != null && !this.name.isEmpty()) ? this.name : this.id;
     }
 
     public static List<RuuviTag> getAll() {

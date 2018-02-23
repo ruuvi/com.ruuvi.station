@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
     SharedPreferences settings;
+    boolean dashboardVisible = true;
 
     private Runnable updater = new Runnable() {
         @Override
@@ -288,11 +289,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     public void openFragment(int type) {
         Fragment fragment = null;
+        dashboardVisible = false;
         switch (type) {
             case 1:
                 refrshTagLists();
                 fragment = new DashboardFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
+                dashboardVisible = true;
                 break;
             case 2:
                 fragment = new SettingsFragment();
@@ -391,6 +394,15 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 }
                 setBackgroundScanning(false);
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (dashboardVisible) {
+            super.onBackPressed();
+        } else {
+            openFragment(1);
         }
     }
 }
