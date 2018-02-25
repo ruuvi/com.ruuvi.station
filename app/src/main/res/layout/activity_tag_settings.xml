@@ -51,7 +51,7 @@
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/tag_image_select_button"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="32dp"
                     android:layout_marginTop="52dp"
                     android:alpha="0.7"
                     android:scaleType="fitCenter"
