@@ -95,7 +95,7 @@
                     android:fontFamily="@font/roboto_medium"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/tag_name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:textSize="16sp"
                     app:layout_constraintTop_toBottomOf="@id/name_header" />
 
@@ -134,7 +134,7 @@
                     android:fontFamily="@font/roboto_medium"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/gateway_url"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:textSize="16sp"
                     app:layout_constraintTop_toBottomOf="@id/gateway_header" />
 
