@@ -19,6 +19,7 @@
         <activity
             android:name=".feature.main.MainActivity"
             android:launchMode="singleTop"
+            android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +30,7 @@
         <activity
             android:name=".feature.TagSettings"
             android:label="Tag Settings"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <service
             android:name=".service.ScannerService"
