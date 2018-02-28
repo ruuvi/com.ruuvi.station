@@ -36,6 +36,14 @@
         android:fontFamily="@font/oswald_light"
         android:textSize="76sp" />
 
+    <TextView
+        android:id="@+id/dummyTextViewMontserrat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="76sp" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>
