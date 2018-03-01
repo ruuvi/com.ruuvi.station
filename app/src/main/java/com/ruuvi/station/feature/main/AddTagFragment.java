@@ -4,6 +4,7 @@ package com.ruuvi.station.feature.main;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                             .show();
                     return;
                 }
-                tag.defaultBackground = (int)(Math.random() * 3.0);
+                tag.defaultBackground = (int)(Math.random() * 9.0);
                 tag.save();
                 ScannerService.logTag(tag);
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
@@ -68,19 +69,30 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
 
         adapter.notifyDataSetChanged();
 
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null && ((MainActivity)getActivity()).otherRuuviTags != null &&
+                        ((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
+                    noTagsTextView.setVisibility(View.INVISIBLE);
+                }
+                else noTagsTextView.setVisibility(View.VISIBLE);
+                if (adapter != null)  adapter.notifyDataSetChanged();
+                handler.postDelayed(this, 1000);
+            }
+        });
+
         return view;
     }
 
     @Override
-    public void dataUpdated() {
-        if (adapter != null) adapter.notifyDataSetChanged();
+    public void onResume() {
+        super.onResume();
+    }
 
-        if (getActivity() != null && ((MainActivity)getActivity()).otherRuuviTags != null &&
-                ((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
-            noTagsTextView.setVisibility(View.INVISIBLE);
-        } else {
-            noTagsTextView.setVisibility(View.VISIBLE);
-        }
+    @Override
+    public void dataUpdated() {
     }
 
     @Override

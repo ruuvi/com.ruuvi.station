@@ -77,6 +77,13 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
 
+        for (i in 0..(pager_title_strip.childCount-1)) {
+            val child = pager_title_strip.getChildAt(i)
+            if (child is TextView) {
+                child.typeface = dummyTextViewMontserrat.typeface
+            }
+        }
+
         if (tag == null) {
             Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
             finish()
@@ -248,10 +255,10 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
 
-        val temperature = SpannableString(tag?.getTemperatureString(context) + RuuviTag.getTemperatureUnit(context))
-        temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
-        temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
-        temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
+        val temperature = SpannableString(tag?.getTemperatureString(context))
+        temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 1, temperature.length, 0)
+        temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 1, temperature.length, 0)
+        temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
 
         tag_temp.text = temperature
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)

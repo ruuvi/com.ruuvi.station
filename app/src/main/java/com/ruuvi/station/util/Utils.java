@@ -86,6 +86,18 @@ public class Utils {
                 return context.getResources().getDrawable(R.drawable.bg2);
             case 2:
                 return context.getResources().getDrawable(R.drawable.bg3);
+            case 3:
+                return context.getResources().getDrawable(R.drawable.bg4);
+            case 4:
+                return context.getResources().getDrawable(R.drawable.bg5);
+            case 5:
+                return context.getResources().getDrawable(R.drawable.bg6);
+            case 6:
+                return context.getResources().getDrawable(R.drawable.bg7);
+            case 7:
+                return context.getResources().getDrawable(R.drawable.bg8);
+            case 8:
+                return context.getResources().getDrawable(R.drawable.bg9);
             default:
                 return context.getResources().getDrawable(R.drawable.bg1);
         }

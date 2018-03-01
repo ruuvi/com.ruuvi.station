@@ -63,7 +63,7 @@ public class TagSettings extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(TagSettings.this, "Image upload is not available in Beta", Toast.LENGTH_SHORT).show();
                 // just toggle between default images for now
-                tag.defaultBackground = tag.defaultBackground == 2 ? 0 : tag.defaultBackground + 1;
+                tag.defaultBackground = tag.defaultBackground == 8 ? 0 : tag.defaultBackground + 1;
                 ((ImageView)view).setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
             }
         });
@@ -212,21 +212,22 @@ public class TagSettings extends AppCompatActivity {
 
         public void updateView() {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
+            int setSeekbarColor = R.color.ap_gray;
             if (this.checked) {
-                seekBar.setBarHighlightColor(getResources().getColor(R.color.main));
-                seekBar.setLeftThumbDrawable(R.drawable.range_ball);
-                seekBar.setRightThumbDrawable(R.drawable.range_ball);
+                setSeekbarColor = R.color.main;
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
                     this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
                 }
             } else {
-                seekBar.setBarHighlightColor(getResources().getColor(R.color.ap_gray));
-                seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
-                seekBar.setRightThumbDrawable(R.drawable.range_ball_inactive);
                 this.subtitle = getString(R.string.alert_subtitle_off);
             }
+            seekBar.setBarHighlightColor(getResources().getColor(setSeekbarColor));
+            seekBar.setRightThumbColor(getResources().getColor(setSeekbarColor));
+            seekBar.setRightThumbHighlightColor(getResources().getColor(setSeekbarColor));
+            seekBar.setLeftThumbColor(getResources().getColor(setSeekbarColor));
+            seekBar.setLeftThumbHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);

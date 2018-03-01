@@ -30,7 +30,7 @@
         <activity
             android:name=".feature.TagSettings"
             android:label="Tag Settings"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <service
             android:name=".service.ScannerService"

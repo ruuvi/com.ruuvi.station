@@ -67,6 +67,7 @@
                     android:id="@+id/row_main_temp_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.5"
                     app:srcCompat="@drawable/icon_measure_small_temp" />
 
                 <TextView
@@ -74,6 +75,7 @@
                     android:text="@string/temperature_reading"
                     android:textStyle="bold"
                     android:textColor="@color/darkGray"
+                    android:fontFamily="@font/montserrat"
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@id/row_main_temp_icon"
                     android:layout_centerVertical="true"
@@ -91,6 +93,7 @@
                     android:id="@+id/row_main_humid_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.5"
                     app:srcCompat="@drawable/icon_measure_small_humid" />
 
                 <TextView
@@ -98,6 +101,7 @@
                     android:text="@string/humidity_reading"
                     android:textStyle="bold"
                     android:textColor="@color/darkGray"
+                    android:fontFamily="@font/montserrat"
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@id/row_main_humid_icon"
                     android:layout_centerVertical="true"
@@ -115,6 +119,7 @@
                     android:id="@+id/row_main_pres_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.5"
                     app:srcCompat="@drawable/icon_measure_small_pressure" />
 
                 <TextView
@@ -122,6 +127,7 @@
                     android:text="@string/pressure_reading"
                     android:textStyle="bold"
                     android:textColor="@color/darkGray"
+                    android:fontFamily="@font/montserrat"
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@id/row_main_pres_icon"
                     android:layout_centerVertical="true"
@@ -140,6 +146,7 @@
                     android:id="@+id/row_main_signal_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.5"
                     app:srcCompat="@drawable/icon_measure_small_signal" />
 
                 <TextView
@@ -147,6 +154,7 @@
                     android:text="@string/signal_reading"
                     android:textStyle="bold"
                     android:textColor="@color/darkGray"
+                    android:fontFamily="@font/montserrat"
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@id/row_main_signal_icon"
                     android:layout_centerVertical="true"
