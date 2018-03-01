@@ -63,7 +63,7 @@ public class TagSettings extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(TagSettings.this, "Image upload is not available in Beta", Toast.LENGTH_SHORT).show();
                 // just toggle between default images for now
-                tag.defaultBackground = tag.defaultBackground == 2 ? 0 : tag.defaultBackground + 1;
+                tag.defaultBackground = tag.defaultBackground == 8 ? 0 : tag.defaultBackground + 1;
                 ((ImageView)view).setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
             }
         });

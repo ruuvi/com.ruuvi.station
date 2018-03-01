@@ -57,7 +57,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                             .show();
                     return;
                 }
-                tag.defaultBackground = (int)(Math.random() * 3.0);
+                tag.defaultBackground = (int)(Math.random() * 9.0);
                 tag.save();
                 ScannerService.logTag(tag);
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
@@ -74,6 +74,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     @Override
     public void dataUpdated() {
         if (adapter != null) adapter.notifyDataSetChanged();
+        if (noTagsTextView == null) return;
 
         if (getActivity() != null && ((MainActivity)getActivity()).otherRuuviTags != null &&
                 ((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
