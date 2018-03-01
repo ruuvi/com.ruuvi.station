@@ -23,10 +23,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="@string/no_tags_press_to_add"
-        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/title_font_size"
         android:textAllCaps="true"
-        android:textColor="@color/ap_gray"
         android:textAlignment="center"
+        android:fontFamily="@font/montserrat_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
