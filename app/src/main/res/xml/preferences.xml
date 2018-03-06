@@ -28,7 +28,7 @@
         android:summary="Use this to identify device at backend"/>
     <ListPreference
         android:key="pref_temperature_unit"
-        android:title="Temperature uinit"
+        android:title="Temperature unit"
         android:defaultValue="C"
         android:entryValues="@array/list_preference_temperature_unit_values"
         android:entries="@array/list_preference_temperature_unit_titles"
