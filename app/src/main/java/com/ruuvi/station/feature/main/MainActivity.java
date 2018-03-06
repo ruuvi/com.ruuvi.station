@@ -37,6 +37,7 @@ import com.ruuvi.station.R;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
+import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
@@ -77,13 +78,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.logo);
 
-
         handler = new Handler();
-
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        myRuuviTags = RuuviTag.getAll();
-
+        myRuuviTags = RuuviTag.getAll(true);
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -241,16 +238,19 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
-            if (scanner != null) scanner.start();
+            //if (scanner != null) scanner.start();
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
             handler.post(updater);
+
+            Intent scannerService = new Intent(this, ScannerService.class);
+            startService(scannerService);
         }
     }
 
     private void refrshTagLists() {
         myRuuviTags.clear();
-        myRuuviTags.addAll(RuuviTag.getAll());
+        myRuuviTags.addAll(RuuviTag.getAll(true));
         otherRuuviTags.clear();
     }
 

@@ -65,7 +65,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         })
 
         val tagId = intent.getStringExtra("id");
-        tags = RuuviTag.getAll()
+        tags = RuuviTag.getAll(true)
         val pagerAdapter = TagPager(tags!!, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
@@ -129,18 +129,18 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     override fun onResume() {
         super.onResume()
-        tags = RuuviTag.getAll()
+        tags = RuuviTag.getAll(true)
         (tag_pager.adapter as TagPager).tags = tags!!
         tag_pager.adapter.notifyDataSetChanged()
         Utils.getDefaultBackground(tags!!.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
             tag_background_view.setImageDrawable(background)
         }
-        scanner?.start()
+        //scanner?.start()
     }
 
     override fun onPause() {
         super.onPause()
-        scanner?.stop()
+        //scanner?.stop()
     }
 
     override fun tagFound(tag: RuuviTag) {
@@ -154,6 +154,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 
     fun updateUI() {
+        tags = RuuviTag.getAll(true)
         for (mTag in tags!!) {
             (tag_pager.adapter as TagPager).updateView(mTag)
             if (mTag.id == tag!!.id) {

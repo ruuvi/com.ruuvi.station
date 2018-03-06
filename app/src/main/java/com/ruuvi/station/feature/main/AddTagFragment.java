@@ -19,13 +19,18 @@ import com.ruuvi.station.feature.TagSettings;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
+import com.ruuvi.station.util.Utils;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddTagFragment extends Fragment implements DataUpdateListener {
     private AddTagAdapter adapter;
     private ListView beaconListView;
     private TextView noTagsTextView;
+    private List<RuuviTag> tags;
 
     public AddTagFragment() {
         // Required empty public constructor
@@ -46,20 +51,22 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
 
         noTagsTextView = view.findViewById(R.id.no_tags);
         beaconListView = view.findViewById(R.id.tag_listView);
-        adapter = new AddTagAdapter(getActivity(), ((MainActivity)getActivity()).otherRuuviTags);
+        tags = new ArrayList<>();
+        adapter = new AddTagAdapter(getActivity(), tags);
         beaconListView.setAdapter(adapter);
 
         beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RuuviTag tag = (RuuviTag)beaconListView.getItemAtPosition(i);
-                if (RuuviTag.get(tag.id) != null) {
+                if (RuuviTag.get(tag.id).favorite) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
                 tag.defaultBackground = (int)(Math.random() * 9.0);
-                tag.save();
+                tag.favorite = true;
+                tag.update();
                 ScannerService.logTag(tag);
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
                 settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
@@ -73,8 +80,18 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity() != null && ((MainActivity)getActivity()).otherRuuviTags != null &&
-                        ((MainActivity)getActivity()).otherRuuviTags.size() > 0) {
+                tags.clear();
+                tags.addAll(RuuviTag.getAll(false));
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.SECOND, -5);
+                for (int i = 0; i < tags.size(); i++) {
+                    if (tags.get(i).updateAt.getTime() < calendar.getTime().getTime()) {
+                        tags.remove(i);
+                        i--;
+                    }
+                }
+                if (tags.size() > 0) {
+                    Utils.sortTagsByRssi(tags);
                     noTagsTextView.setVisibility(View.INVISIBLE);
                 }
                 else noTagsTextView.setVisibility(View.VISIBLE);
