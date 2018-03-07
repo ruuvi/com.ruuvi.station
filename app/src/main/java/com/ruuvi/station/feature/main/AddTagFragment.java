@@ -43,6 +43,25 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         return fragment;
     }
 
+    public static boolean isBackgroundInUse(List<RuuviTag> tags, int background) {
+        for (RuuviTag tag: tags) {
+            if (tag.defaultBackground == background) return true;
+        }
+        return false;
+    }
+
+    public static int getKindaRandomBackground() {
+        List<RuuviTag> tags = RuuviTag.getAll(true);
+        int bg = (int)(Math.random() * 9.0);
+        for (int i = 0; i < 100; i++) {
+            if (!isBackgroundInUse(tags, bg)) {
+                return bg;
+            }
+            bg = (int)(Math.random() * 9.0);
+        }
+        return bg;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,7 +83,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                             .show();
                     return;
                 }
-                tag.defaultBackground = (int)(Math.random() * 9.0);
+                tag.defaultBackground = getKindaRandomBackground();
                 tag.favorite = true;
                 tag.update();
                 ScannerService.logTag(tag);

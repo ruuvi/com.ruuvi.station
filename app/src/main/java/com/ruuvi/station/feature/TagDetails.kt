@@ -87,6 +87,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         if (tag == null) {
             Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
             finish()
+            return
         }
 
         Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
