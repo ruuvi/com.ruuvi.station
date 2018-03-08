@@ -1,6 +1,7 @@
 package com.ruuvi.station.feature;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -247,6 +248,7 @@ public class TagSettings extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_save) {
+            tag.favorite = true;
             tag.update();
             for (AlarmItem alarmItem: alarmItems) {
                 if (alarmItem.checked) {
