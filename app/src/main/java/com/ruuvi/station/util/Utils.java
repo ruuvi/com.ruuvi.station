@@ -43,7 +43,7 @@ public class Utils {
         canvas.drawCircle(radius, radius, (float) radius, paint2);
         Paint paint = new Paint();
         paint.setColor(letterColor);
-        paint.setTextSize(120);
+        paint.setTextSize(100);
         paint.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 
         Rect textBounds = new Rect();
