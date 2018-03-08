@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             startActivityForResult(intent, FROM_WELCOME);
         } else {
             if (isBluetoothEnabled()) {
-                scanner = new RuuviTagScanner(this, getApplicationContext());
             } else {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -237,13 +236,14 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
         } else {
-            //if (scanner != null) scanner.start();
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
             handler.post(updater);
 
-            Intent scannerService = new Intent(this, ScannerService.class);
-            startService(scannerService);
+            if (isBluetoothEnabled()) {
+                Intent scannerService = new Intent(this, ScannerService.class);
+                startService(scannerService);
+            }
         }
     }
 
