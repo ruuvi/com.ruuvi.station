@@ -70,16 +70,6 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.pressure));
         signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.rssi));
 
-        if (tag.url != null && !tag.url.isEmpty()) {
-            convertView.findViewById(R.id.row_main_letter).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(tag.url));
-                    getContext().startActivity(intent);
-                }
-            });
-        }
-
         return convertView;
     }
 }
