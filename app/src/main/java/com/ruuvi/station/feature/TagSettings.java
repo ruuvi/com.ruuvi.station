@@ -14,9 +14,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,7 +86,13 @@ public class TagSettings extends AppCompatActivity {
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setText(tag.name);
-                builder.setView(input);
+                FrameLayout container = new FrameLayout(getApplicationContext());
+                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                input.setLayoutParams(params);
+                container.addView(input);
+                builder.setView(container);
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -105,7 +113,13 @@ public class TagSettings extends AppCompatActivity {
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setText(tag.gatewayUrl);
-                builder.setView(input);
+                FrameLayout container = new FrameLayout(getApplicationContext());
+                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                input.setLayoutParams(params);
+                container.addView(input);
+                builder.setView(container);
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
