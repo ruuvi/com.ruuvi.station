@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="@string/no_tags_press_to_add"
-        android:textColor="@color/black"
+        android:textColor="@color/noTagsColor"
         android:textSize="@dimen/title_font_size"
         android:textAllCaps="true"
         android:textAlignment="center"
