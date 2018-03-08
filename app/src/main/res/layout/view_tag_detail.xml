@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/dummyTextView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fontFamily="@font/oswald_bold"
-        />
-
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tag_temp"
         android:layout_width="0dp"

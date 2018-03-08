@@ -11,6 +11,7 @@ import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
@@ -65,7 +66,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         })
 
         val tagId = intent.getStringExtra("id");
-        tags = RuuviTag.getAll()
+        tags = RuuviTag.getAll(true)
         val pagerAdapter = TagPager(tags!!, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
@@ -87,6 +88,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         if (tag == null) {
             Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
             finish()
+            return
         }
 
         Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
@@ -129,18 +131,18 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     override fun onResume() {
         super.onResume()
-        tags = RuuviTag.getAll()
+        tags = RuuviTag.getAll(true)
         (tag_pager.adapter as TagPager).tags = tags!!
         tag_pager.adapter.notifyDataSetChanged()
         Utils.getDefaultBackground(tags!!.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
             tag_background_view.setImageDrawable(background)
         }
-        scanner?.start()
+        //scanner?.start()
     }
 
     override fun onPause() {
         super.onPause()
-        scanner?.stop()
+        //scanner?.stop()
     }
 
     override fun tagFound(tag: RuuviTag) {
@@ -154,6 +156,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     }
 
     fun updateUI() {
+        tags = RuuviTag.getAll(true)
         for (mTag in tags!!) {
             (tag_pager.adapter as TagPager).updateView(mTag)
             if (mTag.id == tag!!.id) {
@@ -256,9 +259,12 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
 
         val temperature = SpannableString(tag?.getTemperatureString(context))
-        temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 1, temperature.length, 0)
-        temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 1, temperature.length, 0)
-        temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
+        try {
+            val oswaldLight = ResourcesCompat.getFont(context, R.font.oswald_light)
+            temperature.setSpan(CustomTypefaceSpan(oswaldLight), temperature.length - 1, temperature.length, 0)
+        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
+        temperature.setSpan(RelativeSizeSpan(0.93f), temperature.length - 1, temperature.length, 0)
+        //temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
 
         tag_temp.text = temperature
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)

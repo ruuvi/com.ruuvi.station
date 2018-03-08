@@ -20,11 +20,17 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class DashboardFragment extends Fragment implements DataUpdateListener {
     private static final String TAG = "DashboardFragment";
     private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private View noTagsFound;
+    private List<RuuviTag> tags;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -48,12 +54,13 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+        tags = RuuviTag.getAll(true);
         noTagsFound = view.findViewById(R.id.noTags_textView);
 
         DeviceIdentifier.id(getActivity());
 
         beaconListView = view.findViewById(R.id.Tags_listView);
-        adapter = new RuuviTagAdapter(getActivity(), ((MainActivity)getActivity()).myRuuviTags);
+        adapter = new RuuviTagAdapter(getActivity(), tags);
         beaconListView.setAdapter(adapter);
 
         beaconListView.setOnItemClickListener(tagClick);
@@ -62,8 +69,9 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity() != null && ((MainActivity)getActivity()).myRuuviTags != null &&
-                        ((MainActivity)getActivity()).myRuuviTags.size() > 0) {
+                tags.clear();
+                tags.addAll(RuuviTag.getAll(true));
+                if (tags.size() > 0) {
                     noTagsFound.setVisibility(View.GONE);
                 }
                 else noTagsFound.setVisibility(View.VISIBLE);

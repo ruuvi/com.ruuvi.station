@@ -205,9 +205,10 @@ public class RuuviTag extends BaseModel {
         return (this.name != null && !this.name.isEmpty()) ? this.name : this.id;
     }
 
-    public static List<RuuviTag> getAll() {
+    public static List<RuuviTag> getAll(boolean favorite) {
         return SQLite.select()
                 .from(RuuviTag.class)
+                .where(RuuviTag_Table.favorite.eq(favorite))
                 .queryList();
     }
 
