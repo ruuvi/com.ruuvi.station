@@ -11,6 +11,7 @@ import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
@@ -258,9 +259,12 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
 
         val temperature = SpannableString(tag?.getTemperatureString(context))
-        temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 1, temperature.length, 0)
-        temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 1, temperature.length, 0)
-        temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
+        try {
+            val oswaldLight = ResourcesCompat.getFont(context, R.font.oswald_light)
+            temperature.setSpan(CustomTypefaceSpan(oswaldLight), temperature.length - 1, temperature.length, 0)
+        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
+        temperature.setSpan(RelativeSizeSpan(0.93f), temperature.length - 1, temperature.length, 0)
+        //temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
 
         tag_temp.text = temperature
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
