@@ -248,6 +248,7 @@ public class TagSettings extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_save) {
+            boolean isNew = !tag.favorite;
             tag.favorite = true;
             tag.update();
             for (AlarmItem alarmItem: alarmItems) {
@@ -265,6 +266,11 @@ public class TagSettings extends AppCompatActivity {
                 }
             }
             finish();
+            if (isNew) {
+                Intent intent = new Intent(getApplicationContext(), TagDetails.class);
+                intent.putExtra("id", tag.id);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
