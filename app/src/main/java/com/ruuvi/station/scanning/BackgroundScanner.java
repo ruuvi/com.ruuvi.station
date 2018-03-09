@@ -1,6 +1,5 @@
 package com.ruuvi.station.scanning;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothDevice;
@@ -18,20 +17,23 @@ import android.util.Log;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
+import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
-import static com.ruuvi.station.service.ScannerService.logTag;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -217,6 +219,28 @@ public class BackgroundScanner extends BroadcastReceiver {
             scanEvent.tags.add(tag);
             logTag(tag);
         }
+    }
+
+    public static void logTag(RuuviTag ruuviTag) {
+        if (Exists(ruuviTag.id)) {
+            RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
+            dbTag.updateDataFrom(ruuviTag);
+            dbTag.update();
+        } else {
+            ruuviTag.updateAt = new Date();
+            ruuviTag.save();
+        }
+
+        TagSensorReading reading = new TagSensorReading(ruuviTag);
+        reading.save();
+    }
+
+    public static boolean Exists(String id) {
+        long count = SQLite.selectCountOf()
+                .from(RuuviTag.class)
+                .where(RuuviTag_Table.id.eq(id))
+                .count();
+        return count > 0;
     }
 
     private boolean canScan() {
