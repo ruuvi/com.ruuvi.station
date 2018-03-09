@@ -85,7 +85,11 @@ public class BackgroundScanner extends BroadcastReceiver {
             }
         }, SCAN_TIME_MS);
 
-        scanner.startScan(null, scanSettings, nsCallback);
+        try {
+            scanner.startScan(null, scanSettings, nsCallback);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     private ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {

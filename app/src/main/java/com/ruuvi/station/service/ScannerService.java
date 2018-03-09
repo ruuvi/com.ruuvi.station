@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -97,7 +98,13 @@ public class ScannerService extends Service {
     public void startScan() {
         if (scanning || !canScan()) return;
         scanning = true;
-        scanner.startScan(null, scanSettings, nsCallback);
+        try {
+            scanner.startScan(null, scanSettings, nsCallback);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            scanning = false;
+            Toast.makeText(getApplicationContext(), "Could not start scanning", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void stopScan() {
