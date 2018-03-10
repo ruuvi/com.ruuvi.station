@@ -103,7 +103,7 @@ class GraphActivity : AppCompatActivity() {
         chart.description.textColor = Color.WHITE
         chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
         try {
-            chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.roboto)
+            chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
         chart.legend.isEnabled = false
         chart.data = LineData(set)
