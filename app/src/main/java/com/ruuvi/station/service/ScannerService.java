@@ -55,6 +55,7 @@ import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.TagSensorReading;
+import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.ComplexPreferences;
 import com.ruuvi.station.util.DeviceIdentifier;
 import com.ruuvi.station.util.Foreground;
@@ -133,7 +134,7 @@ public class ScannerService extends Service {
 
         Log.d(TAG, "found: " + device.getAddress());
         RuuviTag tag = dev.parse();
-        if (tag != null) logTag(tag);
+        if (tag != null) logTag(tag, getApplicationContext());
     }
 
     @Override
@@ -162,7 +163,7 @@ public class ScannerService extends Service {
     public static Map<String, Long> lastLogged = null;
     public static int LOG_INTERVAL = 5; // seconds
 
-    public static void logTag(RuuviTag ruuviTag) {
+    public static void logTag(RuuviTag ruuviTag, Context context) {
         if (Exists(ruuviTag.id)) {
             RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
             dbTag.updateDataFrom(ruuviTag);
@@ -187,6 +188,7 @@ public class ScannerService extends Service {
         lastLogged.put(ruuviTag.id, new Date().getTime());
         TagSensorReading reading = new TagSensorReading(ruuviTag);
         reading.save();
+        AlarmChecker.check(ruuviTag, context);
     }
 
     public static boolean Exists(String id) {

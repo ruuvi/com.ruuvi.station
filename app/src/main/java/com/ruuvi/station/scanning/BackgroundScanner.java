@@ -129,7 +129,7 @@ public class BackgroundScanner extends BroadcastReceiver {
             LeScanResult element = itr.next();
 
             RuuviTag tag  = element.parse();
-            if (tag != null) addFoundTagToLists(tag, scanEvent);
+            if (tag != null) addFoundTagToLists(tag, scanEvent, context);
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
@@ -160,8 +160,6 @@ public class BackgroundScanner extends BroadcastReceiver {
                             }
                         });
             }
-
-            AlarmChecker.check(tagFromDb, context);
         }
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -218,14 +216,14 @@ public class BackgroundScanner extends BroadcastReceiver {
         return -1;
     }
 
-    public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent) {
+    public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent, Context context) {
         int index = checkForSameTag(scanEvent.tags, tag);
         if (index == -1) {
             scanEvent.tags.add(tag);
-            logTag(tag);
+            logTag(tag, context);
         }
     }
-    
+
     private boolean canScan() {
         return scanner != null;
     }
