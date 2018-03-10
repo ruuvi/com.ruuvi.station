@@ -32,9 +32,13 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -155,6 +159,9 @@ public class ScannerService extends Service {
         }
     };
 
+    public static Map<String, Long> lastLogged = null;
+    public static int LOG_INTERVAL = 5; // seconds
+
     public static void logTag(RuuviTag ruuviTag) {
         if (Exists(ruuviTag.id)) {
             RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
@@ -165,8 +172,21 @@ public class ScannerService extends Service {
             ruuviTag.save();
         }
 
-        //TagSensorReading reading = new TagSensorReading(ruuviTag);
-        //reading.save();
+        if (lastLogged == null) lastLogged = new HashMap<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -LOG_INTERVAL);
+        long loggingTreshold = calendar.getTime().getTime();
+        for (Map.Entry<String, Long> entry : lastLogged.entrySet())
+        {
+            if (entry.getKey().equals(ruuviTag.id) && entry.getValue() > loggingTreshold) {
+                return;
+            }
+        }
+
+        lastLogged.put(ruuviTag.id, new Date().getTime());
+        TagSensorReading reading = new TagSensorReading(ruuviTag);
+        reading.save();
     }
 
     public static boolean Exists(String id) {

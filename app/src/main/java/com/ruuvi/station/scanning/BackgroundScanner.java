@@ -34,6 +34,7 @@ import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
+import static com.ruuvi.station.service.ScannerService.logTag;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -224,29 +225,7 @@ public class BackgroundScanner extends BroadcastReceiver {
             logTag(tag);
         }
     }
-
-    public static void logTag(RuuviTag ruuviTag) {
-        if (Exists(ruuviTag.id)) {
-            RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
-            dbTag.updateDataFrom(ruuviTag);
-            dbTag.update();
-        } else {
-            ruuviTag.updateAt = new Date();
-            ruuviTag.save();
-        }
-
-        TagSensorReading reading = new TagSensorReading(ruuviTag);
-        reading.save();
-    }
-
-    public static boolean Exists(String id) {
-        long count = SQLite.selectCountOf()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.id.eq(id))
-                .count();
-        return count > 0;
-    }
-
+    
     private boolean canScan() {
         return scanner != null;
     }
