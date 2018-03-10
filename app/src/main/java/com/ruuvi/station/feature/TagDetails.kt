@@ -164,10 +164,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            val temperature = SpannableString(tag?.getTemperatureString(this) + RuuviTag.getTemperatureUnit(this))
-            temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
-            temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
-            temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
             (tag_pager.adapter as TagPager).updateView(tag!!)
         }
     }
@@ -261,10 +257,10 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val temperature = SpannableString(tag?.getTemperatureString(context))
         try {
             val oswaldLight = ResourcesCompat.getFont(context, R.font.oswald_light)
-            temperature.setSpan(CustomTypefaceSpan(oswaldLight), temperature.length - 1, temperature.length, 0)
+            temperature.setSpan(CustomTypefaceSpan(oswaldLight), temperature.length - 2, temperature.length, 0)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
-        temperature.setSpan(RelativeSizeSpan(0.93f), temperature.length - 1, temperature.length, 0)
-        //temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
+        temperature.setSpan(RelativeSizeSpan(0.93f), temperature.length - 2, temperature.length, 0)
+        //temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
 
         tag_temp.text = temperature
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
