@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +46,7 @@ import com.ruuvi.station.scanning.RuuviTagScanner;
 import com.ruuvi.station.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+    private static final String TAG = "MainActivity";
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
     private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
@@ -170,18 +173,21 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     private void checkAndAskForBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !getPrefDone(BATTERY_ASKED_PREF)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
             String packageName = getPackageName();
             // this below does not seems to work on my device
-            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.battery_optimization_request))
-                        .setPositiveButton(getString(R.string.yes), batteryDialogClick)
-                        .setNegativeButton(getString(R.string.no), batteryDialogClick)
-                        .show();
+            try {
+                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    startActivity(intent);
+                }
 
                 setPrefDone(BATTERY_ASKED_PREF);
+            } catch (Exception e) {
+                Log.d(TAG, "Could not set ignoring battery optimization");
             }
         }
     }
