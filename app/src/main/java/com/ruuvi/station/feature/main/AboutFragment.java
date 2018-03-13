@@ -3,6 +3,7 @@ package com.ruuvi.station.feature.main;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ public class AboutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
+
+        ((TextView)view.findViewById(R.id.aboutInfoText)).setMovementMethod(LinkMovementMethod.getInstance());
 
         ((TextView)view.findViewById(R.id.versionInfo))
                 .setText("Version: " + BuildConfig.VERSION_NAME);

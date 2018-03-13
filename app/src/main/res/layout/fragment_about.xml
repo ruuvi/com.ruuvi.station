@@ -55,7 +55,7 @@
                 android:paddingRight="40dp"
                 android:textAlignment="textStart"
                 android:lineSpacingExtra="6dp"
-                android:autoLink="web"
+                android:textColorLink="@android:color/holo_blue_dark"
                 app:layout_constraintTop_toBottomOf="@id/aboutText"
                 />
 
