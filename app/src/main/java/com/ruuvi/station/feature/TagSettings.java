@@ -147,8 +147,7 @@ public class TagSettings extends AppCompatActivity {
         }
 
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout parentLayout = findViewById(R.id.tag_settings_item_layout);
-        TextView alertsHeader = findViewById(R.id.alerts_header);
+        ConstraintLayout parentLayout = findViewById(R.id.alerts_container);
 
         for (int i = 0; i < alarmItems.size(); i++) {
             AlarmItem item = alarmItems.get(i);
@@ -163,7 +162,7 @@ public class TagSettings extends AppCompatActivity {
             set.clone(parentLayout);
             set.connect(item.view.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
             set.connect(item.view.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-            set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? alertsHeader.getId() : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
+            set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
             set.applyTo(parentLayout);
         }
     }
@@ -217,9 +216,9 @@ public class TagSettings extends AppCompatActivity {
             });
 
             if (this.min == 0 && this.max == 0) {
-                seekBar.setVisibility(View.INVISIBLE);
-                this.view.findViewById(R.id.alert_min_value).setVisibility(View.INVISIBLE);
-                this.view.findViewById(R.id.alert_max_value).setVisibility(View.INVISIBLE);
+                seekBar.setVisibility(View.GONE);
+                this.view.findViewById(R.id.alert_min_value).setVisibility(View.GONE);
+                this.view.findViewById(R.id.alert_max_value).setVisibility(View.GONE);
             }
 
             updateView();
