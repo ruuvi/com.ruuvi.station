@@ -227,5 +227,6 @@
 
     <string name="scan">Scan</string>
     <string name="background_image">Background\nimage</string>
-    <string name="bg_scan_for_graphs">Background scanning needs to be enabled to see graphs</string>
+    <string name="bg_scan_for_graphs">Graphs works best with background scanning enabled.</string>
+    <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
 </resources>
