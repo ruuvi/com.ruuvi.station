@@ -20,7 +20,7 @@
         android:defaultValue="30" />
     <EditTextPreference
         android:key="pref_backend"
-        android:title="Gateway URL (empty = disabled)"
+        android:title="Gateway Settings"
         android:summary="Send Ruuvitag data to this URL"/>
     <EditTextPreference
         android:key="pref_device_id"
