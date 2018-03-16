@@ -222,7 +222,8 @@
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
     <string name="welcome_text_2">Listen to ruuvitags in realtime and explore history graphs</string>
     <string name="welcome_text_3">Set alerts and get notified if limits are hit</string>
-    <string name="welcome_text_4">Export logged data or let the app act as a gateway</string>
+    <string name="welcome_text_4">Let the app act as a gateway</string>
+    <!--<string name="welcome_text_4">Export logged data or let the app act as a gateway</string>-->
     <string name="welcome_text_5">Press scan to find nearby ruuvitags</string>
 
     <string name="scan">Scan</string>
