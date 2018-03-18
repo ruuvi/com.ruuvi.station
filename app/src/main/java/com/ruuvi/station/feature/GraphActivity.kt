@@ -53,6 +53,8 @@ class GraphActivity : AppCompatActivity() {
         val tag = RuuviTag.get(tagId)
         if (tag == null) finish()
 
+        graph_root_view.background = Utils.getDefaultBackground(tag.defaultBackground, this)
+
         val settings = PreferenceManager.getDefaultSharedPreferences(applicationContext);
         val bgScanEnabled = settings.getBoolean("pref_bgscan", false)
         if (!bgScanEnabled) {
