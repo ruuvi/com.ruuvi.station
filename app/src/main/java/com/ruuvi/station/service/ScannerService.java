@@ -32,6 +32,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Dictionary;
@@ -91,6 +92,7 @@ public class ScannerService extends Service {
                 .setReportDelay(0)
                 .setScanMode(no.nordicsemi.android.support.v18.scanner.ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .setUseHardwareBatchingIfSupported(false).build();
+
         scanner = BluetoothLeScannerCompat.getScanner();
 
         startScan();
@@ -104,7 +106,10 @@ public class ScannerService extends Service {
         if (scanning || !canScan()) return;
         scanning = true;
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            no.nordicsemi.android.support.v18.scanner.ScanFilter filter = new no.nordicsemi.android.support.v18.scanner.ScanFilter.Builder()
+                    .setManufacturerData(0x0499, new byte [] {})
+                    .build();
+            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;

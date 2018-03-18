@@ -28,6 +28,7 @@ import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,7 @@ import static com.ruuvi.station.service.ScannerService.logTag;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
+import no.nordicsemi.android.support.v18.scanner.ScanFilter;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 /**
@@ -68,6 +70,10 @@ public class BackgroundScanner extends BroadcastReceiver {
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .setUseHardwareBatchingIfSupported(false).build();
+        ScanFilter filter = new ScanFilter.Builder()
+                .setManufacturerData(0x0499, new byte [] {})
+                .build();
+
         scanner = BluetoothLeScannerCompat.getScanner();
 
         scanResults = new ArrayList<>();
@@ -87,7 +93,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }, SCAN_TIME_MS);
 
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
