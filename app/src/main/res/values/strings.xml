@@ -174,7 +174,7 @@
     <string name="no">No</string>
 
     <string name="temperature_reading" formatted="false">%1$,.2f°</string>
-    <string name="humidity_reading" formatted="false">%1$,.2f%%</string>
+    <string name="humidity_reading" formatted="false">%1$,.2f %%</string>
     <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
 
@@ -188,7 +188,32 @@
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alert_substring_movement">You will get a notification when the phone sees the tag move</string>
 
-    <string name="info_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dapibus id odio et vestibulum. Nunc in tortor sed lectus venenatis porttitor. Etiam lacus velit, volutpat a elit eu, congue mollis mauris. Maecenas convallis vehicula risus quis iaculis. Suspendisse est tellus, iaculis sit amet bibendum tristique, efficitur nec lectus.</string>
+    <string name="info_text">
+        Ruuvi Station is an easy and powerful tool to superpower RuuviTag sensor nodes.\n
+        \n
+        The application is now in beta and may still have unknown issues. But don’t worry, our team is determined to polish the app to perfection.\n
+        \n
+        If you notice problems or find anything you would like to have changed, please let us know by filling out
+        <a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>.
+        \n
+        \n
+        QUICK START GUIDE\n
+        \n
+        1) Click Add a new RuuviTag from menu and you’re ready to go. Easy as that.\n
+        \n
+        GATEWAY\n
+        \n
+        Currently, the gateway feature is for advanced users only. To use it,
+        <a href="https://github.com/ruuvi/com.ruuvi.station">check the documentation</a>.
+        \n
+        \n
+        TROUBLESHOOTING\n
+        \n
+        RuuviTags are sending temperature data in 0.01 degree resolution. If you see lower accuracy readings for some reason, make sure your RuuviTag is running the latest
+        <a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
+
+        \n
+    </string>
     <string name="about">About / Help</string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
@@ -197,10 +222,20 @@
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
     <string name="welcome_text_2">Listen to ruuvitags in realtime and explore history graphs</string>
     <string name="welcome_text_3">Set alerts and get notified if limits are hit</string>
-    <string name="welcome_text_4">Export logged data or let the app act as a gateway</string>
+    <string name="welcome_text_4">Let the app act as a gateway</string>
+    <!--<string name="welcome_text_4">Export logged data or let the app act as a gateway</string>-->
     <string name="welcome_text_5">Press scan to find nearby ruuvitags</string>
 
     <string name="scan">Scan</string>
     <string name="background_image">Background\nimage</string>
-    <string name="bg_scan_for_graphs">Background scanning needs to be enabled to see graphs</string>
+    <string name="bg_scan_for_graphs">Graphs works best with background scanning enabled.</string>
+    <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
+
+    <string name="permission_dialog_title">Permission needed</string>
+    <string name="permission_dialog_request_message">Android requires location permission in order to scan for RuuviTags. Please allow it :)</string>
+    <string name="ok">Ok</string>
+    <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
+    <string name="settings">Settings</string>
+    <string name="unsaved_changes">Unsave changes</string>
+    <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
 </resources>

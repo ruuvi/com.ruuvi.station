@@ -32,9 +32,14 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -51,6 +56,7 @@ import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.TagSensorReading;
+import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.ComplexPreferences;
 import com.ruuvi.station.util.DeviceIdentifier;
 import com.ruuvi.station.util.Foreground;
@@ -86,6 +92,7 @@ public class ScannerService extends Service {
                 .setReportDelay(0)
                 .setScanMode(no.nordicsemi.android.support.v18.scanner.ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .setUseHardwareBatchingIfSupported(false).build();
+
         scanner = BluetoothLeScannerCompat.getScanner();
 
         startScan();
@@ -99,7 +106,10 @@ public class ScannerService extends Service {
         if (scanning || !canScan()) return;
         scanning = true;
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            no.nordicsemi.android.support.v18.scanner.ScanFilter filter = new no.nordicsemi.android.support.v18.scanner.ScanFilter.Builder()
+                    .setManufacturerData(0x0499, new byte [] {})
+                    .build();
+            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;
@@ -129,7 +139,7 @@ public class ScannerService extends Service {
 
         Log.d(TAG, "found: " + device.getAddress());
         RuuviTag tag = dev.parse();
-        if (tag != null) logTag(tag);
+        if (tag != null) logTag(tag, getApplicationContext());
     }
 
     @Override
@@ -155,7 +165,10 @@ public class ScannerService extends Service {
         }
     };
 
-    public static void logTag(RuuviTag ruuviTag) {
+    public static Map<String, Long> lastLogged = null;
+    public static int LOG_INTERVAL = 5; // seconds
+
+    public static void logTag(RuuviTag ruuviTag, Context context) {
         if (Exists(ruuviTag.id)) {
             RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
             dbTag.updateDataFrom(ruuviTag);
@@ -165,8 +178,22 @@ public class ScannerService extends Service {
             ruuviTag.save();
         }
 
-        //TagSensorReading reading = new TagSensorReading(ruuviTag);
-        //reading.save();
+        if (lastLogged == null) lastLogged = new HashMap<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -LOG_INTERVAL);
+        long loggingTreshold = calendar.getTime().getTime();
+        for (Map.Entry<String, Long> entry : lastLogged.entrySet())
+        {
+            if (entry.getKey().equals(ruuviTag.id) && entry.getValue() > loggingTreshold) {
+                return;
+            }
+        }
+
+        lastLogged.put(ruuviTag.id, new Date().getTime());
+        TagSensorReading reading = new TagSensorReading(ruuviTag);
+        reading.save();
+        AlarmChecker.check(ruuviTag, context);
     }
 
     public static boolean Exists(String id) {

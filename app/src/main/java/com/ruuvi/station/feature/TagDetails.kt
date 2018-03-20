@@ -3,15 +3,11 @@ package com.ruuvi.station.feature
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Point
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
@@ -26,10 +22,8 @@ import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
-import android.text.style.RelativeSizeSpan
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
-import com.ruuvi.station.util.CustomTypefaceSpan
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
@@ -164,10 +158,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             }
         }
         tag?.let {
-            val temperature = SpannableString(tag?.getTemperatureString(this) + RuuviTag.getTemperatureUnit(this))
-            temperature.setSpan(CustomTypefaceSpan(dummyTextView.typeface), temperature.length - 2, temperature.length, 0)
-            temperature.setSpan(RelativeSizeSpan(0.6f), temperature.length - 2, temperature.length, 0)
-            temperature.setSpan(SuperscriptSpan(), temperature.length - 2, temperature.length, 0)
             (tag_pager.adapter as TagPager).updateView(tag!!)
         }
     }
@@ -251,21 +241,21 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val rootView = view.findViewWithTag<View>(VIEW_TAG + pos)
         if (rootView == null) return;
 
-        val dummyTextView = rootView.findViewById<TextView>(R.id.dummyTextView)
         val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
         val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)
         val tag_pressure = rootView.findViewById<TextView>(R.id.tag_pressure)
         val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
+        val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
 
-        val temperature = SpannableString(tag?.getTemperatureString(context))
-        try {
-            val oswaldLight = ResourcesCompat.getFont(context, R.font.oswald_light)
-            temperature.setSpan(CustomTypefaceSpan(oswaldLight), temperature.length - 1, temperature.length, 0)
-        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
-        temperature.setSpan(RelativeSizeSpan(0.93f), temperature.length - 1, temperature.length, 0)
-        //temperature.setSpan(SuperscriptSpan(), temperature.length - 1, temperature.length, 0)
+        var temperature = tag?.getTemperatureString(context)
+        val unit = temperature.substring(temperature.length - 2, temperature.length)
+        temperature = temperature.substring(0, temperature.length - 2)
 
+        val unitSpan = SpannableString(unit)
+        unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
+
+        tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)

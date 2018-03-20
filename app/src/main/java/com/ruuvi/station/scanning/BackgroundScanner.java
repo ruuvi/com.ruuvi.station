@@ -28,15 +28,18 @@ import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
+import static com.ruuvi.station.service.ScannerService.logTag;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
+import no.nordicsemi.android.support.v18.scanner.ScanFilter;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 /**
@@ -67,6 +70,10 @@ public class BackgroundScanner extends BroadcastReceiver {
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .setUseHardwareBatchingIfSupported(false).build();
+        ScanFilter filter = new ScanFilter.Builder()
+                .setManufacturerData(0x0499, new byte [] {})
+                .build();
+
         scanner = BluetoothLeScannerCompat.getScanner();
 
         scanResults = new ArrayList<>();
@@ -86,7 +93,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }, SCAN_TIME_MS);
 
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -128,7 +135,7 @@ public class BackgroundScanner extends BroadcastReceiver {
             LeScanResult element = itr.next();
 
             RuuviTag tag  = element.parse();
-            if (tag != null) addFoundTagToLists(tag, scanEvent);
+            if (tag != null) addFoundTagToLists(tag, scanEvent, context);
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
@@ -159,8 +166,6 @@ public class BackgroundScanner extends BroadcastReceiver {
                             }
                         });
             }
-
-            AlarmChecker.check(tagFromDb, context);
         }
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -190,7 +195,7 @@ public class BackgroundScanner extends BroadcastReceiver {
 
     private void scheduleNextScan(Context context) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
         if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
         boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
 
@@ -217,34 +222,12 @@ public class BackgroundScanner extends BroadcastReceiver {
         return -1;
     }
 
-    public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent) {
+    public void addFoundTagToLists(RuuviTag tag, ScanEvent scanEvent, Context context) {
         int index = checkForSameTag(scanEvent.tags, tag);
         if (index == -1) {
             scanEvent.tags.add(tag);
-            logTag(tag);
+            logTag(tag, context);
         }
-    }
-
-    public static void logTag(RuuviTag ruuviTag) {
-        if (Exists(ruuviTag.id)) {
-            RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
-            dbTag.updateDataFrom(ruuviTag);
-            dbTag.update();
-        } else {
-            ruuviTag.updateAt = new Date();
-            ruuviTag.save();
-        }
-
-        TagSensorReading reading = new TagSensorReading(ruuviTag);
-        reading.save();
-    }
-
-    public static boolean Exists(String id) {
-        long count = SQLite.selectCountOf()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.id.eq(id))
-                .count();
-        return count > 0;
     }
 
     private boolean canScan() {

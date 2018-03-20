@@ -39,6 +39,7 @@ public class TagSettings extends AppCompatActivity {
     private RuuviTag tag;
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
+    private boolean somethinghaschanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        somethinghaschanged = true;
                         tag.name = input.getText().toString();
                         nameTextView.setText(tag.name);
                     }
@@ -123,6 +125,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        somethinghaschanged = true;
                         tag.gatewayUrl = input.getText().toString();
                         gatewayTextView.setText(!tag.gatewayUrl.isEmpty() ? tag.gatewayUrl : getString(R.string.no_gateway_url));
                     }
@@ -147,8 +150,7 @@ public class TagSettings extends AppCompatActivity {
         }
 
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout parentLayout = findViewById(R.id.tag_settings_item_layout);
-        TextView alertsHeader = findViewById(R.id.alerts_header);
+        ConstraintLayout parentLayout = findViewById(R.id.alerts_container);
 
         for (int i = 0; i < alarmItems.size(); i++) {
             AlarmItem item = alarmItems.get(i);
@@ -163,7 +165,7 @@ public class TagSettings extends AppCompatActivity {
             set.clone(parentLayout);
             set.connect(item.view.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
             set.connect(item.view.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-            set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? alertsHeader.getId() : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
+            set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
             set.applyTo(parentLayout);
         }
     }
@@ -171,6 +173,7 @@ public class TagSettings extends AppCompatActivity {
     CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            somethinghaschanged = true;
             AlarmItem ai = alarmItems.get((int)buttonView.getTag());
             ai.checked = isChecked;
             ai.updateView();
@@ -210,6 +213,9 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                 @Override
                 public void valueChanged(Number minValue, Number maxValue) {
+                    if (low != minValue.intValue() || high != maxValue.intValue()) {
+                        somethinghaschanged = true;
+                    }
                     low = minValue.intValue();
                     high = maxValue.intValue();
                     updateView();
@@ -217,9 +223,9 @@ public class TagSettings extends AppCompatActivity {
             });
 
             if (this.min == 0 && this.max == 0) {
-                seekBar.setVisibility(View.INVISIBLE);
-                this.view.findViewById(R.id.alert_min_value).setVisibility(View.INVISIBLE);
-                this.view.findViewById(R.id.alert_max_value).setVisibility(View.INVISIBLE);
+                seekBar.setVisibility(View.GONE);
+                this.view.findViewById(R.id.alert_min_value).setVisibility(View.GONE);
+                this.view.findViewById(R.id.alert_max_value).setVisibility(View.GONE);
             }
 
             updateView();
@@ -230,19 +236,20 @@ public class TagSettings extends AppCompatActivity {
             int setSeekbarColor = R.color.ap_gray;
             if (this.checked) {
                 setSeekbarColor = R.color.main;
+                seekBar.setLeftThumbDrawable(R.drawable.range_ball);
+                seekBar.setRightThumbDrawable(R.drawable.range_ball);
+                this.subtitle = getString(R.string.alert_substring_movement);
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
                     this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
                 }
             } else {
+                seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
+                seekBar.setRightThumbDrawable(R.drawable.range_ball_inactive);
                 this.subtitle = getString(R.string.alert_subtitle_off);
             }
             seekBar.setBarHighlightColor(getResources().getColor(setSeekbarColor));
-            seekBar.setRightThumbColor(getResources().getColor(setSeekbarColor));
-            seekBar.setRightThumbHighlightColor(getResources().getColor(setSeekbarColor));
-            seekBar.setLeftThumbColor(getResources().getColor(setSeekbarColor));
-            seekBar.setLeftThumbHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
@@ -254,7 +261,27 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        if (somethinghaschanged) {
+            AlertDialog alertDialog = new AlertDialog.Builder(TagSettings.this).create();
+            alertDialog.setTitle(getString(R.string.unsaved_changes));
+            alertDialog.setMessage(getString(R.string.unsaved_changes_question));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        } else {
+            finish();
+        }
         return super.onSupportNavigateUp();
     }
 

@@ -1,14 +1,18 @@
 package com.ruuvi.station.feature.main;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +20,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,12 +28,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +51,13 @@ import com.ruuvi.station.scanning.RuuviTagScanner;
 import com.ruuvi.station.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+    private static final String TAG = "MainActivity";
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
     private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
+    private static final int COARSE_LOCATION_PERMISSION = 1;
 
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
@@ -106,18 +115,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
         if (!getPrefDone(FIRST_START_PREF)) {
-            openFragment(0);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivityForResult(intent, FROM_WELCOME);
         } else {
-            if (isBluetoothEnabled()) {
-            } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            setBackgroundScanning(false);
-
-            openFragment(1);
+            getThingsStarted(false);
         }
     }
 
@@ -134,76 +135,73 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     };
 
-    private void setBackgroundScanning(boolean restartFlag) {
-        PendingIntent pendingIntent = getPendingIntent();
+    public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
+        PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         boolean isRunning = pendingIntent != null;
         if (isRunning && (!shouldRun || restartFlag)) {
-            AlarmManager am = (AlarmManager) getApplicationContext()
+            AlarmManager am = (AlarmManager) context
                     .getSystemService(ALARM_SERVICE);
-            am.cancel(pendingIntent);
+            try {
+                am.cancel(pendingIntent);
+            } catch (Exception e) {
+                Log.d(TAG, "Could not cancel background intent");
+            }
             pendingIntent.cancel();
             isRunning = false;
         }
         if (shouldRun && !isRunning) {
-            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "300")) * 1000;
+            int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
             if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
 
             boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
-            Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
-            PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, 0);
-            AlarmManager am = (AlarmManager) getApplicationContext()
+            Intent intent = new Intent(context, BackgroundScanner.class);
+            PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
+            AlarmManager am = (AlarmManager) context
                     .getSystemService(ALARM_SERVICE);
-            if (batterySaving) {
-                am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                        scanInterval, sender);
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    checkAndAskForBatteryOptimization();
-                    am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+            try {
+                if (batterySaving) {
+                    am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                            scanInterval, sender);
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkAndAskForBatteryOptimization(context);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
+                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+                    }
+                    else {
+                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+                    }
                 }
-                else {
-                    am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-                }
+            } catch (Exception e) {
+                Toast.makeText(context, "Could not start background scanning", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void checkAndAskForBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !getPrefDone(BATTERY_ASKED_PREF)) {
-            PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
-            String packageName = getPackageName();
+    public static void checkAndAskForBatteryOptimization(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+            String packageName = context.getPackageName();
             // this below does not seems to work on my device
-            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.battery_optimization_request))
-                        .setPositiveButton(getString(R.string.yes), batteryDialogClick)
-                        .setNegativeButton(getString(R.string.no), batteryDialogClick)
-                        .show();
+            try {
+                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    context.startActivity(intent);
+                }
 
-                setPrefDone(BATTERY_ASKED_PREF);
+            } catch (Exception e) {
+                Log.d(TAG, "Could not set ignoring battery optimization");
             }
         }
     }
 
-    DialogInterface.OnClickListener batteryDialogClick = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    startActivity(intent);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        }
-    };
-
-    private PendingIntent getPendingIntent() {
-        Intent intent = new Intent(getApplicationContext(), BackgroundScanner.class);
-        return PendingIntent.getBroadcast(getApplicationContext(), BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
+    private static PendingIntent getPendingIntent(Context context) {
+        Intent intent = new Intent(context, BackgroundScanner.class);
+        return PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
     }
 
     @Override
@@ -214,27 +212,67 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Permission check for Marshmallow and newer
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case COARSE_LOCATION_PERMISSION : {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // party
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        requestPermissions();
+                    } else {
+                        showPermissionSnackbar(this);
+                    }
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void showPermissionSnackbar(final Activity activity) {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_contentFrame), getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG);
+        snackbar.setAction(getString(R.string.settings), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+            }
+        });
+        snackbar.show();
+    }
+
+    private List<String> getNeededPermissions() {
         int permissionCoarseLocation = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        int permissionWriteExternal = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
+        final List<String> listPermissionsNeeded = new ArrayList<>();
 
         if(permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
-        if(permissionWriteExternal != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
+        return listPermissionsNeeded;
+    }
+
+    private boolean showPermissionDialog(AppCompatActivity activity) {
+        List<String> listPermissionsNeeded = getNeededPermissions();
 
         if(!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), COARSE_LOCATION_PERMISSION);
+        }
+
+        return !listPermissionsNeeded.isEmpty();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getNeededPermissions().size() > 0) {
+
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
@@ -271,18 +309,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -372,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            setBackgroundScanning(true);
+            setBackgroundScanning(true, getApplicationContext(), settings);
         }
     };
 
@@ -385,15 +416,43 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         } else {
             if (requestCode == FROM_WELCOME) {
-                if (isBluetoothEnabled()) {
-                    scanner = new RuuviTagScanner(this, getApplicationContext());
-                } else {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-                setPrefDone(FIRST_START_PREF);
-                setBackgroundScanning(false);
+                getThingsStarted(true);
             }
+        }
+    }
+
+    private void getThingsStarted(boolean goToAddTags) {
+        if (isBluetoothEnabled()) {
+            scanner = new RuuviTagScanner(this, getApplicationContext());
+        } else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        setPrefDone(FIRST_START_PREF);
+        setBackgroundScanning(false, this, settings);
+        openFragment(goToAddTags ? 0 : 1);
+        requestPermissions();
+    }
+
+    private void requestPermissions() {
+        if (getNeededPermissions().size() > 0) {
+            final AppCompatActivity activity = this;
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle(getString(R.string.permission_dialog_title));
+            alertDialog.setMessage(getString(R.string.permission_dialog_request_message));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    showPermissionDialog(activity);
+                }
+            });
+            alertDialog.show();
         }
     }
 

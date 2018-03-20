@@ -195,10 +195,11 @@ public class RuuviTag extends BaseModel {
     }
 
     public String getTemperatureString(Context context) {
-        if (RuuviTag.getTemperatureUnit(context).equals("C")) {
-            return String.format(context.getString(R.string.temperature_reading), this.temperature);
+        String temperatureUnit = RuuviTag.getTemperatureUnit(context);
+        if (temperatureUnit.equals("C")) {
+            return String.format(context.getString(R.string.temperature_reading), this.temperature) + temperatureUnit;
         }
-        return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit());
+        return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
     }
 
     public String getDispayName() {

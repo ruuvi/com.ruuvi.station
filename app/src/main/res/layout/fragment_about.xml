@@ -53,8 +53,9 @@
                 android:paddingTop="30dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
-                android:textAlignment="center"
+                android:textAlignment="textStart"
                 android:lineSpacingExtra="6dp"
+                android:textColorLink="@android:color/holo_blue_dark"
                 app:layout_constraintTop_toBottomOf="@id/aboutText"
                 />
 
