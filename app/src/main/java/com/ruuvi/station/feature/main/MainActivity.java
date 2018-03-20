@@ -223,17 +223,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         int permissionCoarseLocation = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        int permissionWriteExternal = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
         final List<String> listPermissionsNeeded = new ArrayList<>();
 
         if(permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-
-        if(permissionWriteExternal != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
         if(!listPermissionsNeeded.isEmpty()) {
