@@ -2,6 +2,7 @@ package com.ruuvi.station.feature.main;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         int permissionWriteExternal = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-        List<String> listPermissionsNeeded = new ArrayList<>();
+        final List<String> listPermissionsNeeded = new ArrayList<>();
 
         if(permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -236,7 +237,26 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
 
         if(!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+            if (!getPrefDone(FIRST_START_PREF)) {
+                // welcome activity should be showing so let's not bug the user about permissions yet
+                final AppCompatActivity activity = this;
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle(getString(R.string.permission_dialog_title));
+                alertDialog.setMessage(getString(R.string.permission_dialog_request_message));
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+                    }
+                });
+                alertDialog.show();
+            }
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
