@@ -39,6 +39,7 @@ public class TagSettings extends AppCompatActivity {
     private RuuviTag tag;
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
+    private boolean somethinghaschanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        somethinghaschanged = true;
                         tag.name = input.getText().toString();
                         nameTextView.setText(tag.name);
                     }
@@ -123,6 +125,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        somethinghaschanged = true;
                         tag.gatewayUrl = input.getText().toString();
                         gatewayTextView.setText(!tag.gatewayUrl.isEmpty() ? tag.gatewayUrl : getString(R.string.no_gateway_url));
                     }
@@ -170,6 +173,7 @@ public class TagSettings extends AppCompatActivity {
     CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            somethinghaschanged = true;
             AlarmItem ai = alarmItems.get((int)buttonView.getTag());
             ai.checked = isChecked;
             ai.updateView();
@@ -209,6 +213,9 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                 @Override
                 public void valueChanged(Number minValue, Number maxValue) {
+                    if (low != minValue.intValue() || high != maxValue.intValue()) {
+                        somethinghaschanged = true;
+                    }
                     low = minValue.intValue();
                     high = maxValue.intValue();
                     updateView();
@@ -254,7 +261,27 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        if (somethinghaschanged) {
+            AlertDialog alertDialog = new AlertDialog.Builder(TagSettings.this).create();
+            alertDialog.setTitle(getString(R.string.unsaved_changes));
+            alertDialog.setMessage(getString(R.string.unsaved_changes_question));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        } else {
+            finish();
+        }
         return super.onSupportNavigateUp();
     }
 

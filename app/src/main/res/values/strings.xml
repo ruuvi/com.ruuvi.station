@@ -236,4 +236,6 @@
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
+    <string name="unsaved_changes">Unsave changes</string>
+    <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
 </resources>
