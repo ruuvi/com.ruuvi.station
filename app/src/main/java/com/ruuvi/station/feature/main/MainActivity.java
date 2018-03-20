@@ -1,6 +1,7 @@
 package com.ruuvi.station.feature.main;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -19,6 +20,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
+    private static final int COARSE_LOCATION_PERMISSION = 1;
 
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
@@ -112,18 +115,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
         if (!getPrefDone(FIRST_START_PREF)) {
-            openFragment(0);
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivityForResult(intent, FROM_WELCOME);
         } else {
-            if (isBluetoothEnabled()) {
-            } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            setBackgroundScanning(false, this, settings);
-
-            openFragment(1);
+            getThingsStarted(false);
         }
     }
 
@@ -217,9 +212,40 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Permission check for Marshmallow and newer
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case COARSE_LOCATION_PERMISSION : {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // party
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        requestPermissions();
+                    } else {
+                        showPermissionSnackbar(this);
+                    }
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void showPermissionSnackbar(final Activity activity) {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_contentFrame), getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG);
+        snackbar.setAction(getString(R.string.settings), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+            }
+        });
+        snackbar.show();
+    }
+
+    private List<String> getNeededPermissions() {
         int permissionCoarseLocation = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -229,27 +255,24 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
+        return listPermissionsNeeded;
+    }
+
+    private boolean showPermissionDialog(AppCompatActivity activity) {
+        List<String> listPermissionsNeeded = getNeededPermissions();
+
         if(!listPermissionsNeeded.isEmpty()) {
-            if (!getPrefDone(FIRST_START_PREF)) {
-                // welcome activity should be showing so let's not bug the user about permissions yet
-                final AppCompatActivity activity = this;
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                alertDialog.setTitle(getString(R.string.permission_dialog_title));
-                alertDialog.setMessage(getString(R.string.permission_dialog_request_message));
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
-                    }
-                });
-                alertDialog.show();
-            }
+            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), COARSE_LOCATION_PERMISSION);
+        }
+
+        return !listPermissionsNeeded.isEmpty();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getNeededPermissions().size() > 0) {
+
         } else {
             settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
@@ -393,15 +416,43 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         } else {
             if (requestCode == FROM_WELCOME) {
-                if (isBluetoothEnabled()) {
-                    scanner = new RuuviTagScanner(this, getApplicationContext());
-                } else {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-                setPrefDone(FIRST_START_PREF);
-                setBackgroundScanning(false, this, settings);
+                getThingsStarted(true);
             }
+        }
+    }
+
+    private void getThingsStarted(boolean goToAddTags) {
+        if (isBluetoothEnabled()) {
+            scanner = new RuuviTagScanner(this, getApplicationContext());
+        } else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        setPrefDone(FIRST_START_PREF);
+        setBackgroundScanning(false, this, settings);
+        openFragment(goToAddTags ? 0 : 1);
+        requestPermissions();
+    }
+
+    private void requestPermissions() {
+        if (getNeededPermissions().size() > 0) {
+            final AppCompatActivity activity = this;
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle(getString(R.string.permission_dialog_title));
+            alertDialog.setMessage(getString(R.string.permission_dialog_request_message));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    showPermissionDialog(activity);
+                }
+            });
+            alertDialog.show();
         }
     }
 

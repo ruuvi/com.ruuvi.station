@@ -234,4 +234,6 @@
     <string name="permission_dialog_title">Permission needed</string>
     <string name="permission_dialog_request_message">Android requires location permission in order to scan for RuuviTags. Please allow it :)</string>
     <string name="ok">Ok</string>
+    <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
+    <string name="settings">Settings</string>
 </resources>
