@@ -203,21 +203,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
-    DialogInterface.OnClickListener batteryDialogClick = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    startActivity(intent);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        }
-    };
-
     private static PendingIntent getPendingIntent(Context context) {
         Intent intent = new Intent(context, BackgroundScanner.class);
         return PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
@@ -288,18 +273,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 
