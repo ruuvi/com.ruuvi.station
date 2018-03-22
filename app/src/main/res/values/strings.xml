@@ -246,4 +246,6 @@
     <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
     <string name="temperature_unit">Temperature unit</string>
     <string name="temperature_unit_sum">Celsius / Fahrenheit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
 </resources>

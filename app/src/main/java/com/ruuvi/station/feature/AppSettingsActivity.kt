@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_app_settings.*
 import kotlinx.android.synthetic.main.content_app_settings.*
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.AppCompatTextView
 import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,7 @@ class AppSettingsActivity : AppCompatActivity() {
             builder.setItems(options) { dialog, which ->
                 pref.edit().putString("pref_scaninterval", values[which]).apply()
                 MainActivity.setBackgroundScanning(true, this, pref)
+                updateSubs()
             }
             builder.show()
         }
@@ -73,9 +75,35 @@ class AppSettingsActivity : AppCompatActivity() {
             builder.setItems(options) { dialog, which ->
                 pref.edit().putString("pref_temperature_unit", values[which]).apply()
                 MainActivity.setBackgroundScanning(true, this, pref)
+                updateSubs()
             }
             builder.show()
         }
+        updateSubs()
+    }
+
+    fun updateSubs() {
+        setTextFromPref(background_scan_interval_sub,
+                "pref_scaninterval",
+                "300",
+                R.array.pref_scaninterval_values,
+                R.array.pref_scaninterval_titles)
+        gateway_url_sub.text = pref.getString("pref_backend", "Disabled")
+        if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
+        device_identifier_sub.text = pref.getString("pref_device_id", "")
+        if (pref.getString("pref_temperature_unit", "C") == "C") {
+            temperature_unit_sub.text = getString(R.string.celsius)
+        } else {
+            temperature_unit_sub.text = getString(R.string.fahrenheit )
+        }
+    }
+
+    fun setTextFromPref(textView: AppCompatTextView, prefTag: String, default: String, resValues: Int, resTitles: Int) {
+        textView.text =
+                resources.getStringArray(resTitles)[
+                        resources.getStringArray(resValues).indexOf(
+                                pref.getString(prefTag, default)
+                        )]
     }
 
     fun input(prefId: String, title: String) {
@@ -94,6 +122,7 @@ class AppSettingsActivity : AppCompatActivity() {
         builder.setPositiveButton("Ok") { dialog, which ->
             pref.edit().putString(prefId, input.text.toString()).apply()
             MainActivity.setBackgroundScanning(true, this, pref)
+            updateSubs()
         }
         builder.setNegativeButton("Cancel", null)
         builder.show()
