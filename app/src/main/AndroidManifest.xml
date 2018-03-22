@@ -65,6 +65,10 @@
             android:name=".feature.AddTagActivity"
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name=".feature.AppSettingsActivity"
+            android:label="@string/title_activity_app_settings"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     </application>
 
 </manifest>

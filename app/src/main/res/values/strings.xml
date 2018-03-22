@@ -239,4 +239,11 @@
     <string name="unsaved_changes">Unsave changes</string>
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
     <string name="title_activity_add_tag">Nearby Tags</string>
+    <string name="title_activity_app_settings">App Settings</string>
+    <string name="background_scan_interval">Background scan interval</string>
+    <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
+    <string name="device_identifier">Device identifier</string>
+    <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
+    <string name="temperature_unit">Temperature unit</string>
+    <string name="temperature_unit_sum">Celsius / Fahrenheit</string>
 </resources>

@@ -43,6 +43,7 @@ import java.util.List;
 import com.ruuvi.station.R;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
+import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
@@ -167,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                             scanInterval, sender);
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        checkAndAskForBatteryOptimization(context);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
                         am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
@@ -330,9 +330,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 dashboardVisible = true;
                 break;
             case 2:
-                fragment = new SettingsFragment();
-                fragmentWithCallback = null;
-                break;
+                //fragment = new SettingsFragment();
+                //fragmentWithCallback = null;
+                Intent settingsIntent = new Intent(this, AppSettingsActivity.class);
+                startActivity(settingsIntent);
+                return;
             case 3:
                 //fragment = new AboutFragment();
                 //fragmentWithCallback = null;

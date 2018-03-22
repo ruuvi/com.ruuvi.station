@@ -13,4 +13,5 @@
     <color name="settingsParagraphColor">#808080</color>
     <color name="lastSeenColor">#829fa5</color>
     <color name="noTagsColor">#bbbbbb</color>
+    <color name="divider">#dddddd</color>
 </resources>
