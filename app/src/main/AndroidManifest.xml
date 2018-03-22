@@ -13,16 +13,16 @@
 
     <application
         android:name=".RuuviScannerApplication"
-        tools:replace="android:allowBackup"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".feature.main.MainActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTop"
-            android:configChanges = "orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,10 +54,14 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".feature.GraphActivity"
+        <activity
+            android:name=".feature.GraphActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name=".feature.AboutActivity"
+            android:label="@string/title_activity_info"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     </application>
 
 </manifest>

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
@@ -332,9 +333,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 fragmentWithCallback = null;
                 break;
             case 3:
-                fragment = new AboutFragment();
-                fragmentWithCallback = null;
-                break;
+                //fragment = new AboutFragment();
+                //fragmentWithCallback = null;
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                return;
             default:
                 refrshTagLists();
                 fragment = new AddTagFragment();
