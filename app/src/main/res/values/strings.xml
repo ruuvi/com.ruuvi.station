@@ -238,4 +238,5 @@
     <string name="settings">Settings</string>
     <string name="unsaved_changes">Unsave changes</string>
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
+    <string name="title_activity_add_tag">Nearby Tags</string>
 </resources>

@@ -42,6 +42,7 @@ import java.util.List;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.feature.AboutActivity;
+import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
@@ -340,10 +341,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 return;
             default:
                 refrshTagLists();
-                fragment = new AddTagFragment();
-                fragmentWithCallback = (DataUpdateListener)fragment;
+                //fragment = new AddTagFragment();
+                //fragmentWithCallback = (DataUpdateListener)fragment;
+                Intent addIntent = new Intent(this, AddTagActivity.class);
+                startActivity(addIntent);
                 type = 0;
-                break;
+                return;
         }
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)
