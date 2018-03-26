@@ -43,7 +43,20 @@
         android:fontFamily="@font/montserrat_bold"
         android:textSize="76sp" />
 
-
-
+    <TextView
+        android:id="@+id/noTags_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/press_to_add"
+        android:textColor="@color/white"
+        android:textSize="@dimen/title_font_size"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:fontFamily="@font/montserrat_bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

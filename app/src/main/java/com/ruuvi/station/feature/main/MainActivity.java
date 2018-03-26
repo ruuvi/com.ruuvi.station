@@ -56,7 +56,7 @@ import com.ruuvi.station.util.Utils;
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String TAG = "MainActivity";
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
-    private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
+    private static final String FIRST_START_PREF = "FIRST_START_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;

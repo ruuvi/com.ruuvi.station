@@ -24,11 +24,6 @@
             android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".feature.TagSettings"
@@ -44,7 +39,12 @@
         <activity
             android:name=".feature.TagDetails"
             android:label="@string/title_activity_tag_details"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".feature.WelcomeActivity"
             android:screenOrientation="portrait"

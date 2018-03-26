@@ -1,13 +1,25 @@
 package com.ruuvi.station.feature
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.drawable.TransitionDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
+import android.provider.Settings
 import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
@@ -20,26 +32,84 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
+import android.support.v7.app.ActionBarDrawerToggle
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
+import android.util.Log
+import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
+import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
+import com.ruuvi.station.service.ScannerService
+import com.ruuvi.station.util.PreferenceKeys.FIRST_START_PREF
+import java.util.ArrayList
 
 
 class TagDetails : AppCompatActivity(), RuuviTagListener {
+    private val TAG = "TagDetails"
+    private val REQUEST_ENABLE_BT = 1337
+    private val FROM_WELCOME = 1447
+    private val COARSE_LOCATION_PERMISSION = 1
+
     var tag: RuuviTag? = null
-    var tags: List<RuuviTag>? = null
+    lateinit var tags: MutableList<RuuviTag>
 
     var scanner: RuuviTagScanner? = null
+    lateinit var handler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag_details)
         setSupportActionBar(toolbar)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
+
+
+        val drawerToggle = ActionBarDrawerToggle(
+                this, main_drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+
+        main_drawerLayout.addDrawerListener(drawerToggle)
+        if (supportActionBar != null) {
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            supportActionBar!!.setHomeButtonEnabled(true)
+        }
+        drawerToggle.syncState()
+
+        val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
+
+        drawerListView.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                resources.getStringArray(R.array.navigation_items)
+        )
+
+        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            main_drawerLayout.closeDrawers()
+            when (i) {
+                1 -> {
+                }
+                2 -> {
+                    val settingsIntent = Intent(this, AppSettingsActivity::class.java)
+                    startActivity(settingsIntent)
+                }
+                3 -> {
+                    val aboutIntent = Intent(this, AboutActivity::class.java)
+                    startActivity(aboutIntent)
+                }
+                else -> {
+                    val addIntent = Intent(this, AddTagActivity::class.java)
+                    startActivity(addIntent)
+                }
+            }
+        }
+
+        noTags_textView.setOnClickListener {
+            val addIntent = Intent(this, AddTagActivity::class.java)
+            startActivity(addIntent)
+        }
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
@@ -61,43 +131,139 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         val tagId = intent.getStringExtra("id");
         tags = RuuviTag.getAll(true)
-        val pagerAdapter = TagPager(tags!!, applicationContext, tag_pager)
+        val pagerAdapter = TagPager(tags, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
 
-        for (i in tags!!.indices) {
-            if (tags!!.get(i).id == tagId) {
-                tag = tags!!.get(i)
+        for (i in tags.indices) {
+            if (tags[i].id == tagId) {
+                tag = tags[i]
                 tag_pager.currentItem = i
             }
         }
 
-        for (i in 0..(pager_title_strip.childCount-1)) {
-            val child = pager_title_strip.getChildAt(i)
-            if (child is TextView) {
-                child.typeface = dummyTextViewMontserrat.typeface
+        if (tag == null && tags.isNotEmpty()) {
+            tag = tags[0]
+            tag_pager.currentItem = 0
+        }
+
+        try {
+            for (i in 0..(pager_title_strip.childCount-1)) {
+                val child = pager_title_strip.getChildAt(i)
+                if (child is TextView) {
+                    child.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat_bold)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to set pager font")
+        }
+
+        if (tag != null) {
+            //Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
+            //finish()
+            //return
+            Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
+                tag_background_view.setImageDrawable(background)
             }
         }
 
-        if (tag == null) {
-            Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
-
-        Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
-            tag_background_view.setImageDrawable(background)
-        }
-
-        val handler = Handler()
-        handler.post(object: Runnable {
-            override fun run() {
-                updateUI()
-                handler.postDelayed(this, 1000)
-            }
-        })
-
+        handler = Handler()
         scanner = RuuviTagScanner(this, this)
+
+        if (!getBoolPref(FIRST_START_PREF)) {
+            val intent = Intent(this, WelcomeActivity::class.java)
+            startActivityForResult(intent, FROM_WELCOME)
+        } else {
+            getThingsStarted(false)
+        }
+    }
+
+    private fun getThingsStarted(goToAddTags: Boolean) {
+        if (isBluetoothEnabled()) {
+            scanner = RuuviTagScanner(this, applicationContext)
+        } else {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
+        setBoolPref(FIRST_START_PREF)
+        setBackgroundScanning(false, this, PreferenceManager.getDefaultSharedPreferences(this))
+        requestPermissions()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            COARSE_LOCATION_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // party
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        requestPermissions()
+                    } else {
+                        showPermissionSnackbar(this)
+                    }
+                    Toast.makeText(applicationContext, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showPermissionSnackbar(activity: Activity) {
+        val snackbar = Snackbar.make(main_drawerLayout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
+        snackbar.setAction(getString(R.string.settings)) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            val uri = Uri.fromParts("package", activity.packageName, null)
+            intent.data = uri
+            activity.startActivity(intent)
+        }
+        snackbar.show()
+    }
+
+    private fun getNeededPermissions(): List<String> {
+        val permissionCoarseLocation = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        val listPermissionsNeeded = ArrayList<String>()
+
+        if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
+        return listPermissionsNeeded
+    }
+
+    private fun showPermissionDialog(activity: AppCompatActivity): Boolean {
+        val listPermissionsNeeded = getNeededPermissions()
+
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toTypedArray(), COARSE_LOCATION_PERMISSION)
+        }
+
+        return !listPermissionsNeeded.isEmpty()
+    }
+
+    private fun requestPermissions() {
+        if (getNeededPermissions().isNotEmpty()) {
+            val activity = this
+            val alertDialog = android.support.v7.app.AlertDialog.Builder(this@TagDetails).create()
+            alertDialog.setTitle(getString(R.string.permission_dialog_title))
+            alertDialog.setMessage(getString(R.string.permission_dialog_request_message))
+            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+            ) { dialog, which -> dialog.dismiss() }
+            alertDialog.setOnDismissListener { showPermissionDialog(activity) }
+            alertDialog.show()
+        }
+    }
+
+    fun setBoolPref(pref: String) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
+        editor.putBoolean(pref, true)
+        editor.apply()
+    }
+
+    fun getBoolPref(pref: String): Boolean {
+        val settings = PreferenceManager.getDefaultSharedPreferences(this)
+        return settings.getBoolean(pref, false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -123,25 +289,66 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         return true
     }
 
+    private fun refrshTagLists() {
+        tags.clear()
+        tags.addAll(RuuviTag.getAll(true))
+        updateUI()
+    }
+
     override fun onResume() {
         super.onResume()
         tags = RuuviTag.getAll(true)
         (tag_pager.adapter as TagPager).tags = tags!!
         tag_pager.adapter.notifyDataSetChanged()
-        Utils.getDefaultBackground(tags!!.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
-            tag_background_view.setImageDrawable(background)
+        if (tags.isNotEmpty()) {
+            Utils.getDefaultBackground(tags.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
+                tag_background_view.setImageDrawable(background)
+            }
+        }
+
+        if (getNeededPermissions().isEmpty()) {
+            refrshTagLists()
+            handler.post(object: Runnable {
+                override fun run() {
+                    updateUI()
+                    handler.postDelayed(this, 1000)
+                }
+            })
+
+            if (isBluetoothEnabled()) {
+                val scannerService = Intent(this, ScannerService::class.java)
+                startService(scannerService)
+            }
+        } else {
+            updateUI()
         }
         //scanner?.start()
     }
 
     override fun onPause() {
         super.onPause()
-        //scanner?.stop()
+        scanner?.stop()
+        handler.removeCallbacksAndMessages(null)
+        for (tag in tags) {
+            tag.update()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_ENABLE_BT) {
+                scanner = RuuviTagScanner(this@TagDetails, applicationContext)
+            }
+        } else {
+            if (requestCode == FROM_WELCOME) {
+                getThingsStarted(true)
+            }
+        }
     }
 
     override fun tagFound(tag: RuuviTag) {
-        if (tags == null) return
-        for (mTag in tags!!) {
+        for (mTag in tags) {
             if (mTag.id == tag.id) {
                 mTag.updateDataFrom(tag)
                 mTag.update()
@@ -151,14 +358,21 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     fun updateUI() {
         tags = RuuviTag.getAll(true)
-        for (mTag in tags!!) {
+        for (mTag in tags) {
             (tag_pager.adapter as TagPager).updateView(mTag)
-            if (mTag.id == tag!!.id) {
+            if (tag != null && mTag.id == tag!!.id) {
                 tag = mTag
             }
         }
         tag?.let {
             (tag_pager.adapter as TagPager).updateView(tag!!)
+        }
+        if (tags.isEmpty()) {
+            pager_title_strip.visibility = View.INVISIBLE
+            noTags_textView.visibility = View.VISIBLE
+        } else {
+            pager_title_strip.visibility = View.VISIBLE
+            noTags_textView.visibility = View.INVISIBLE
         }
     }
 

@@ -3,8 +3,6 @@ package com.ruuvi.station.feature
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.Settings
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.widget.CompoundButton
@@ -12,11 +10,9 @@ import com.ruuvi.station.R
 
 import kotlinx.android.synthetic.main.activity_app_settings.*
 import kotlinx.android.synthetic.main.content_app_settings.*
-import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatTextView
 import android.text.InputType
-import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
