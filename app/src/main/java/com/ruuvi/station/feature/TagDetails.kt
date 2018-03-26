@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Point
@@ -159,9 +158,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         }
 
         if (tag != null) {
-            //Toast.makeText(this, "Something went wrong..", Toast.LENGTH_SHORT).show()
-            //finish()
-            //return
             Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
                 tag_background_view.setImageDrawable(background)
             }
@@ -272,20 +268,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         } else {
             showOptionsMenu()
         }
-        /*else if (item?.itemId == R.id.action_share) {
-            if (tag?.url != null) {
-                if (!tag!!.url.isEmpty()) {
-                    val shareIntent = Intent(Intent.ACTION_SEND)
-                    shareIntent.type = "text/plain"
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, tag!!.url!!)
-                    this.startActivity(shareIntent)
-                    return true;
-                }
-            }
-            Toast.makeText(this,
-                    "You can only share tags in weather station mode right now"
-                    , Toast.LENGTH_SHORT).show()
-        } */
         return true
     }
 
@@ -322,7 +304,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         } else {
             updateUI()
         }
-        //scanner?.start()
     }
 
     override fun onPause() {
@@ -424,6 +405,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
         builder.show()
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (tags.isNotEmpty()) {
             menuInflater.inflate(R.menu.menu_details, menu)
