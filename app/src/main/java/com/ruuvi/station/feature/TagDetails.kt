@@ -370,9 +370,11 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         if (tags.isEmpty()) {
             pager_title_strip.visibility = View.INVISIBLE
             noTags_textView.visibility = View.VISIBLE
+            this.invalidateOptionsMenu()
         } else {
             pager_title_strip.visibility = View.VISIBLE
             noTags_textView.visibility = View.INVISIBLE
+            this.invalidateOptionsMenu()
         }
     }
 
@@ -423,7 +425,9 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         builder.show()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_details, menu)
+        if (tags.isNotEmpty()) {
+            menuInflater.inflate(R.menu.menu_details, menu)
+        }
         return true
     }
 }
