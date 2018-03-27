@@ -307,11 +307,13 @@ public class TagSettings extends AppCompatActivity {
                 }
             }
             finish();
+            /*
             if (isNew) {
                 Intent intent = new Intent(getApplicationContext(), TagDetails.class);
                 intent.putExtra("id", tag.id);
                 startActivity(intent);
             }
+            */
         }
         return super.onOptionsItemSelected(item);
     }
