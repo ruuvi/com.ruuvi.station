@@ -261,6 +261,7 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        /*
         if (somethinghaschanged) {
             AlertDialog alertDialog = new AlertDialog.Builder(TagSettings.this).create();
             alertDialog.setTitle(getString(R.string.unsaved_changes));
@@ -282,11 +283,35 @@ public class TagSettings extends AppCompatActivity {
         } else {
             finish();
         }
+        */
         return super.onSupportNavigateUp();
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        tag.favorite = true;
+        tag.update();
+        for (AlarmItem alarmItem: alarmItems) {
+            if (alarmItem.checked) {
+                if (alarmItem.alarm == null) {
+                    alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
+                    alarmItem.alarm.save();
+                } else {
+                    alarmItem.alarm.low = alarmItem.low;
+                    alarmItem.alarm.high = alarmItem.high;
+                    alarmItem.alarm.update();
+                }
+            } else if (alarmItem.alarm != null) {
+                alarmItem.alarm.delete();
+            }
+        }
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        /*
         int id = item.getItemId();
         if (id == R.id.action_save) {
             boolean isNew = !tag.favorite;
@@ -307,21 +332,21 @@ public class TagSettings extends AppCompatActivity {
                 }
             }
             finish();
-            /*
             if (isNew) {
                 Intent intent = new Intent(getApplicationContext(), TagDetails.class);
                 intent.putExtra("id", tag.id);
                 startActivity(intent);
             }
-            */
         }
+        */
+        finish();
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        //getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
     }
 }
