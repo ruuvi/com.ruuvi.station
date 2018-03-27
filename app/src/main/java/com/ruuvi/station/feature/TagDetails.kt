@@ -124,7 +124,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
                     tag_background_view.setImageDrawable(transitionDrawable)
                     transitionDrawable.startTransition(500)
                 }
-                updateUI()
             }
         })
 
@@ -398,8 +397,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         builder.setTitle(this.getString(R.string.tag_delete_title))
         builder.setMessage(this.getString(R.string.tag_delete_message))
         builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-            finish()
             tag?.deleteTagAndRelatives()
+            val intent = intent
+            finish()
+            startActivity(intent)
         }
         builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
 
