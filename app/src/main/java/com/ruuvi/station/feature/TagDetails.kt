@@ -40,6 +40,7 @@ import android.util.Log
 import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
 import com.ruuvi.station.service.ScannerService
+import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.PreferenceKeys.FIRST_START_PREF
 import java.util.ArrayList
 
@@ -64,6 +65,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
+        DeviceIdentifier.id(this)
 
         val drawerToggle = ActionBarDrawerToggle(
                 this, main_drawerLayout, toolbar,
