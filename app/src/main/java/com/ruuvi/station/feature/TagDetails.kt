@@ -348,6 +348,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
                 tag = mTag
             }
         }
+        if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
             (tag_pager.adapter as TagPager).updateView(tag!!)
         }
