@@ -38,7 +38,6 @@
 
         <activity
             android:name=".feature.TagDetails"
-            android:label="@string/title_activity_tag_details"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
