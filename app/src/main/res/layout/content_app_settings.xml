@@ -113,7 +113,7 @@
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/background_scan_interval_sub"
                 android:text="@string/background_scan_interval_sum"
-                style="@style/PrefSecondaryTextState"
+                style="@style/PrefSecondaryText"
                 app:layout_constraintTop_toBottomOf="@id/bg_scan_interval_title"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -146,7 +146,7 @@
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/gateway_url_sub"
                 android:text="@string/gateway_url"
-                style="@style/PrefSecondaryTextState"
+                style="@style/PrefSecondaryText"
                 app:layout_constraintTop_toBottomOf="@id/gateway_title"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -179,7 +179,7 @@
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/device_identifier_sub"
                 android:text="@string/device_identifier_sum"
-                style="@style/PrefSecondaryTextState"
+                style="@style/PrefSecondaryText"
                 app:layout_constraintTop_toBottomOf="@id/deviceId_title"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -213,7 +213,7 @@
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/temperature_unit_sub"
                 android:text="@string/temperature_unit_sum"
-                style="@style/PrefSecondaryTextState"
+                style="@style/PrefSecondaryText"
                 app:layout_constraintTop_toBottomOf="@id/temperatureUnit_title"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
