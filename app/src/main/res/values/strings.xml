@@ -200,8 +200,7 @@
         \n
         The application is now in beta and may still have unknown issues. But don’t worry, our team is determined to polish the app to perfection.\n
         \n
-        If you notice problems or find anything you would like to have changed, please let us know by filling out
-        <a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>.
+        If you notice problems or find anything you would like to have changed, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>.
         \n
         \n
         QUICK START GUIDE\n
@@ -210,14 +209,12 @@
         \n
         GATEWAY\n
         \n
-        Currently, the gateway feature is for advanced users only. To use it,
-        <a href="https://github.com/ruuvi/com.ruuvi.station">check the documentation</a>.
+        Currently, the gateway feature is for advanced users only. To use it,&#160;<a href="https://github.com/ruuvi/com.ruuvi.station">check the documentation</a>.
         \n
         \n
         TROUBLESHOOTING\n
         \n
-        RuuviTags are sending temperature data in 0.01 degree resolution. If you see lower accuracy readings for some reason, make sure your RuuviTag is running the latest
-        <a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
+        RuuviTags are sending temperature data in 0.01 degree resolution. If you see lower accuracy readings for some reason, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
 
         \n
     </string>
