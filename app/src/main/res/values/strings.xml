@@ -150,6 +150,12 @@
         <item>About / Help</item>
     </string-array>
 
+    <string-array name="navigation_items_card_view">
+        <item>Add a New RuuviTag</item>
+        <item>App Settings</item>
+        <item>About / Help</item>
+    </string-array>
+
     <string-array name="navigation_items_titles">
         <item>Nearby Tags</item>
         <item></item>

@@ -84,19 +84,17 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         drawerListView.adapter = ArrayAdapter(
                 this,
                 android.R.layout.simple_list_item_1,
-                resources.getStringArray(R.array.navigation_items)
+                resources.getStringArray(R.array.navigation_items_card_view)
         )
 
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             main_drawerLayout.closeDrawers()
             when (i) {
                 1 -> {
-                }
-                2 -> {
                     val settingsIntent = Intent(this, AppSettingsActivity::class.java)
                     startActivity(settingsIntent)
                 }
-                3 -> {
+                2 -> {
                     val aboutIntent = Intent(this, AboutActivity::class.java)
                     startActivity(aboutIntent)
                 }
