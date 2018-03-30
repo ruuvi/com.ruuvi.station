@@ -173,9 +173,11 @@ public class ScannerService extends Service {
             RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
             dbTag.updateDataFrom(ruuviTag);
             dbTag.update();
+            if (!dbTag.favorite) return;
         } else {
             ruuviTag.updateAt = new Date();
             ruuviTag.save();
+            return;
         }
 
         if (lastLogged == null) lastLogged = new HashMap<>();
