@@ -13,7 +13,6 @@ import android.widget.RadioButton
 
 import com.ruuvi.station.R
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
 private const val ARG_SETTING_RES = "arg_setting_res"
@@ -43,10 +42,11 @@ class AppSettingsDetailFragment : Fragment() {
         if (res == R.string.pref_bgscan) {
             scan_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setScanSwitchLayout(view)
-            settings_info.text = "This will enable background scanning, meaning that you phone will periodically search for beacons even if you are not using it."
+            settings_info.text = getString(R.string.settings_background_scan_details)
         } else if (res == R.string.pref_bgscan_battery_saving) {
             battery_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setBatterySwitchLayout(view)
+            settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)
@@ -64,6 +64,7 @@ class AppSettingsDetailFragment : Fragment() {
             radio_group.setOnCheckedChangeListener { radioGroup, i ->
                 pref.edit().putString("pref_scaninterval", radioGroup.checkedRadioButtonId.toString()).apply()
             }
+            settings_info.text = getString(R.string.settings_background_scan_interval_details)
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)
@@ -81,6 +82,7 @@ class AppSettingsDetailFragment : Fragment() {
             radio_group.setOnCheckedChangeListener { radioGroup, i ->
                 pref.edit().putString("pref_temperature_unit", values[i]).apply()
             }
+            settings_info.text = getString(R.string.settings_temperature_unit_details)
         } else if (res == R.string.gateway_url) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
@@ -96,6 +98,7 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_backend", p0.toString()).apply()
                 }
             })
+            settings_info.text = getString(R.string.settings_gateway_details)
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
@@ -114,6 +117,7 @@ class AppSettingsDetailFragment : Fragment() {
                 override fun afterTextChanged(p0: Editable?) {
                 }
             })
+            settings_info.text = getString(R.string.settings_device_identifier_details)
         }
     }
 

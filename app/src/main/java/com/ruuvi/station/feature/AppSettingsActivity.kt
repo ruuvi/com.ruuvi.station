@@ -4,14 +4,15 @@ import android.app.Fragment
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatTextView
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import android.support.v7.widget.SwitchCompat
+import android.transition.Fade
 
 import kotlinx.android.synthetic.main.activity_app_settings.*
 
