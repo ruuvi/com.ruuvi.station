@@ -19,15 +19,14 @@ public class DeviceIdentifier
     {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
-
-            uniqueID = settings.getString(PREF_UNIQUE_ID, null);
-            if (uniqueID == null)
-            {
-                uniqueID = UUID.randomUUID().toString();
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(PREF_UNIQUE_ID, uniqueID);
-                editor.commit();
-            }
+        uniqueID = settings.getString(PREF_UNIQUE_ID, null);
+        if (uniqueID == null || uniqueID.isEmpty())
+        {
+            uniqueID = UUID.randomUUID().toString();
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PREF_UNIQUE_ID, uniqueID);
+            editor.commit();
+        }
 
         return uniqueID;
     }

@@ -24,21 +24,23 @@ class AppSettingsListFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (view == null)  return
+
         pref = PreferenceManager.getDefaultSharedPreferences(activity)
 
-        bg_scan_switch.isChecked = pref.getBoolean("pref_bgscan", false)
-        bg_scan_switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            pref.edit().putBoolean("pref_bgscan", isChecked).apply()
-            MainActivity.setBackgroundScanning(true, activity, pref)
-            MainActivity.checkAndAskForBatteryOptimization(activity)
-        })
-        bg_scan_battery_switch.isChecked = pref.getBoolean("pref_bgscan_battery_saving", false)
-        bg_scan_battery_switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            pref.edit().putBoolean("pref_bgscan_battery_saving", isChecked).apply()
-            MainActivity.setBackgroundScanning(true, activity, pref)
-        })
+        (activity as AppSettingsActivity).setScanSwitchLayout(view)
+        scan_layout.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
+        }
+
+        (activity as AppSettingsActivity).setBatterySwitchLayout(view)
+        battery_layout.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan_battery_saving)
+        }
 
         scan_interval.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
+            /*
             val options = resources.getStringArray(R.array.pref_scaninterval_titles)
             val values = resources.getStringArray(R.array.pref_scaninterval_values)
             val builder = AlertDialog.Builder(activity)
@@ -49,17 +51,22 @@ class AppSettingsListFragment : Fragment() {
                 updateSubs()
             }
             builder.show()
+            */
         }
 
         gateway_url.setOnClickListener {
-            input("pref_backend", getString(R.string.gateway_url))
+            //input("pref_backend", getString(R.string.gateway_url))
+            (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
         }
 
         device_identifier.setOnClickListener {
-            input("pref_device_id", getString(R.string.device_identifier))
+            //input("pref_device_id", getString(R.string.device_identifier))
+            (activity as AppSettingsActivity).openFragment(R.string.device_identifier)
         }
 
         temperature_unit.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
+            /*
             val options = resources.getStringArray(R.array.list_preference_temperature_unit_titles)
             val values = resources.getStringArray(R.array.list_preference_temperature_unit_values)
             val builder = AlertDialog.Builder(activity)
@@ -70,7 +77,9 @@ class AppSettingsListFragment : Fragment() {
                 updateSubs()
             }
             builder.show()
+            */
         }
+
         updateSubs()
     }
 
@@ -82,7 +91,7 @@ class AppSettingsListFragment : Fragment() {
     fun updateSubs() {
         setTextFromPref(background_scan_interval_sub,
                 "pref_scaninterval",
-                "300",
+                "30",
                 R.array.pref_scaninterval_values,
                 R.array.pref_scaninterval_titles)
         gateway_url_sub.text = pref.getString("pref_backend", "Disabled")
