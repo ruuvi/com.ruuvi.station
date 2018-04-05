@@ -1,9 +1,9 @@
 package com.ruuvi.station.feature
 
-import android.app.Fragment
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -12,7 +12,6 @@ import android.widget.CompoundButton
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import android.support.v7.widget.SwitchCompat
-import android.transition.Fade
 
 import kotlinx.android.synthetic.main.activity_app_settings.*
 
@@ -32,22 +31,26 @@ class AppSettingsActivity : AppCompatActivity() {
 
     fun openFragment(res: Int) {
         showingFragmentTitle = res
+        val transaction = supportFragmentManager.beginTransaction()
         var fragment: Fragment?
-        if (res == -1) {
+        if (res == -1 || res == R.string.title_activity_app_settings) {
             fragment = AppSettingsListFragment()
             showingFragmentTitle = R.string.title_activity_app_settings
+            if (res == R.string.title_activity_app_settings) {
+                transaction.setCustomAnimations(R.anim.enter_left, R.anim.exit_right)
+            }
         } else {
+            transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
             fragment = AppSettingsDetailFragment.newInstance(res)
         }
-        fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, fragment)
+        transaction.replace(R.id.settings_frame, fragment)
                 .commit()
         title = getString(showingFragmentTitle)
     }
 
     override fun onBackPressed() {
         if (showingFragmentTitle != R.string.title_activity_app_settings) {
-            openFragment(-1)
+            openFragment(R.string.title_activity_app_settings)
         } else {
             finish()
         }
