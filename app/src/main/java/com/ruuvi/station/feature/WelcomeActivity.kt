@@ -27,7 +27,7 @@ class WelcomeActivity : AppCompatActivity() {
 }
 
 class WelcomePager: PagerAdapter() {
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         var resId = 0
         when (position) {
             0 -> resId = R.id.welcome_0
@@ -38,18 +38,14 @@ class WelcomePager: PagerAdapter() {
             5 -> resId = R.id.welcome_5
         }
 
-        return container!!.findViewById(resId)
+        return container.findViewById(resId)
     }
 
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
-    }
-
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
     }
 
     override fun getCount(): Int {
         return 6
     }
-
 }

@@ -21,10 +21,8 @@ import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 class AppSettingsListFragment : Fragment() {
     lateinit var pref: SharedPreferences
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (view == null)  return
 
         pref = PreferenceManager.getDefaultSharedPreferences(activity)
 
@@ -113,7 +111,7 @@ class AppSettingsListFragment : Fragment() {
     }
 
     fun input(prefId: String, title: String) {
-        val builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(context!!)
         builder.setTitle(title)
         val input = EditText(activity)
         input.inputType = InputType.TYPE_CLASS_TEXT

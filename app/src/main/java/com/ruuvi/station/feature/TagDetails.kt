@@ -282,7 +282,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         super.onResume()
         tags = RuuviTag.getAll(true)
         (tag_pager.adapter as TagPager).tags = tags!!
-        tag_pager.adapter.notifyDataSetChanged()
+        tag_pager.adapter?.notifyDataSetChanged()
         if (tags.isNotEmpty()) {
             Utils.getDefaultBackground(tags.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
                 tag_background_view.setImageDrawable(background)
@@ -424,7 +424,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
     val context = context
     val view = view
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
         view.tag = VIEW_TAG + position
         (container as ViewPager).addView(view, 0)
@@ -468,12 +468,8 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         tag_updated.text = updatedAt
     }
 
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
-    }
-
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-        // hmm
     }
 
     override fun getPageTitle(position: Int): CharSequence {

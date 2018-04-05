@@ -33,9 +33,8 @@ class AppSettingsDetailFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_app_settings_detail, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (view == null) return
 
         pref = PreferenceManager.getDefaultSharedPreferences(activity)
 
