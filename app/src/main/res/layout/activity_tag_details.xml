@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/tag_background_view"
-        android:src="@drawable/bg1"
+        android:src="@drawable/bg9"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
