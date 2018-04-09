@@ -70,9 +70,6 @@ public class BackgroundScanner extends BroadcastReceiver {
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .setUseHardwareBatchingIfSupported(false).build();
-        ScanFilter filter = new ScanFilter.Builder()
-                .setManufacturerData(0x0499, new byte [] {})
-                .build();
 
         scanner = BluetoothLeScannerCompat.getScanner();
 
@@ -93,7 +90,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         }, SCAN_TIME_MS);
 
         try {
-            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
+            scanner.startScan(null, scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

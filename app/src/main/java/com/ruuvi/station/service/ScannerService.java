@@ -106,10 +106,7 @@ public class ScannerService extends Service {
         if (scanning || !canScan()) return;
         scanning = true;
         try {
-            no.nordicsemi.android.support.v18.scanner.ScanFilter filter = new no.nordicsemi.android.support.v18.scanner.ScanFilter.Builder()
-                    .setManufacturerData(0x0499, new byte [] {})
-                    .build();
-            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
+            scanner.startScan(null, scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;
