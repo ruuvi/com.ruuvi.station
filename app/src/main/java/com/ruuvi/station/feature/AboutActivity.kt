@@ -22,7 +22,7 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.setIcon(R.drawable.logo_white)
 
         aboutInfoText.movementMethod = LinkMovementMethod.getInstance()
-        versionInfo.text = BuildConfig.VERSION_NAME
+        versionInfo.text = getString(R.string.version) + ": " + BuildConfig.VERSION_NAME
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

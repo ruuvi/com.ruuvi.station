@@ -14,7 +14,9 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="32dp"
+            >
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/infoTitle"
@@ -34,7 +36,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
-                android:paddingTop="10dp"
+                android:paddingTop="16dp"
                 android:text="@string/about"
                 android:textAlignment="center"
                 android:textAllCaps="true"
@@ -50,13 +52,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_text"
                 android:textColor="@color/white"
-                android:textStyle="bold"
+                android:fontFamily="@font/roboto"
                 android:paddingTop="30dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:textAlignment="textStart"
                 android:lineSpacingExtra="6dp"
-                android:textColorLink="@android:color/holo_blue_dark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColorLink="@color/href"
                 app:layout_constraintTop_toBottomOf="@id/aboutText"
                 />
 
@@ -68,10 +72,12 @@
                 app:layout_constraintTop_toBottomOf="@id/aboutInfoText"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:paddingTop="20dp"
-                android:textAlignment="center"
                 android:textColor="@color/white"
+                android:fontFamily="@font/roboto"
+                android:paddingTop="20dp"
+                android:textSize="14sp"
                 android:textStyle="bold"
+                android:textAlignment="center"
                 />
 
         </android.support.constraint.ConstraintLayout>
