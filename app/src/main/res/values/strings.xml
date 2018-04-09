@@ -250,4 +250,6 @@
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Change the unit of temperature to display.</string>
     <string name="version">Version</string>
+    <string name="locationServices">Location services</string>
+    <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
 </resources>

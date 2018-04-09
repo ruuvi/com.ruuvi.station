@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
 import com.ruuvi.station.service.ScannerService
@@ -56,6 +57,8 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     var scanner: RuuviTagScanner? = null
     lateinit var handler: Handler
+    var openAddView = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -190,8 +193,7 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             COARSE_LOCATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // party
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
+                    openAddView = true
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                         requestPermissions()
@@ -301,6 +303,23 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
             if (isBluetoothEnabled()) {
                 val scannerService = Intent(this, ScannerService::class.java)
                 startService(scannerService)
+                if (!MainActivity.isLocationEnabled(this)) {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle(this.getString(R.string.locationServices))
+                    builder.setMessage(this.getString(R.string.enableLocationServices))
+                    builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        startActivity(intent)
+                    }
+                    builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
+                    builder.show()
+                } else {
+                    if (openAddView) {
+                        openAddView = false
+                        val addIntent = Intent(this, AddTagActivity::class.java)
+                        startActivity(addIntent)
+                    }
+                }
             }
         } else {
             updateUI()
