@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.feature.AboutActivity;
+import com.ruuvi.station.feature.AddTagActivity;
+import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
@@ -53,7 +56,7 @@ import com.ruuvi.station.util.Utils;
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String TAG = "MainActivity";
     private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
-    private static final String FIRST_START_PREF = "BATTERY_ASKED_PREF";
+    private static final String FIRST_START_PREF = "FIRST_START_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
@@ -165,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                             scanInterval, sender);
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        checkAndAskForBatteryOptimization(context);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
                         am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
@@ -328,19 +330,25 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 dashboardVisible = true;
                 break;
             case 2:
-                fragment = new SettingsFragment();
-                fragmentWithCallback = null;
-                break;
+                //fragment = new SettingsFragment();
+                //fragmentWithCallback = null;
+                Intent settingsIntent = new Intent(this, AppSettingsActivity.class);
+                startActivity(settingsIntent);
+                return;
             case 3:
-                fragment = new AboutFragment();
-                fragmentWithCallback = null;
-                break;
+                //fragment = new AboutFragment();
+                //fragmentWithCallback = null;
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                return;
             default:
                 refrshTagLists();
-                fragment = new AddTagFragment();
-                fragmentWithCallback = (DataUpdateListener)fragment;
+                //fragment = new AddTagFragment();
+                //fragmentWithCallback = (DataUpdateListener)fragment;
+                Intent addIntent = new Intent(this, AddTagActivity.class);
+                startActivity(addIntent);
                 type = 0;
-                break;
+                return;
         }
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_contentFrame, fragment)

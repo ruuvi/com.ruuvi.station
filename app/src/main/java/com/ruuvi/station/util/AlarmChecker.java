@@ -97,7 +97,7 @@ public class AlarmChecker {
             notification
                     = new NotificationCompat.Builder(context, "notify_001")
                     .setContentTitle(name)
-                    .setSmallIcon(R.drawable.ic_ruuvi_eye_nega)
+                    .setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1)
                     .setTicker(name + " " + context.getString(stringResId))
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(stringResId)))
                     .setContentText(context.getString(stringResId))

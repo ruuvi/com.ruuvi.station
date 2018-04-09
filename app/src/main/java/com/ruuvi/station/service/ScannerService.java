@@ -106,10 +106,7 @@ public class ScannerService extends Service {
         if (scanning || !canScan()) return;
         scanning = true;
         try {
-            no.nordicsemi.android.support.v18.scanner.ScanFilter filter = new no.nordicsemi.android.support.v18.scanner.ScanFilter.Builder()
-                    .setManufacturerData(0x0499, new byte [] {})
-                    .build();
-            scanner.startScan(Arrays.asList(filter), scanSettings, nsCallback);
+            scanner.startScan(null, scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;
@@ -173,9 +170,11 @@ public class ScannerService extends Service {
             RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
             dbTag.updateDataFrom(ruuviTag);
             dbTag.update();
+            if (!dbTag.favorite) return;
         } else {
             ruuviTag.updateAt = new Date();
             ruuviTag.save();
+            return;
         }
 
         if (lastLogged == null) lastLogged = new HashMap<>();

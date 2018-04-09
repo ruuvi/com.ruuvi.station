@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 10040
-        versionName "0.8.4-beta"
+        targetSdkVersion 27
+        versionCode 10050
+        versionName "0.8.9-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -27,38 +27,39 @@ android {
 }
 
 def dbflow_version = "4.1.1"
-def support_version = "26.1.0"
+def support_version = "27.1.1"
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:support-v4:${support_version}"
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
-    compile 'com.opencsv:opencsv:3.10'
+    implementation 'com.opencsv:opencsv:3.10'
 
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile "com.android.support:appcompat-v7:${support_version}"
-    compile "com.android.support:design:${support_version}"
-    compile "com.android.support:support-v4:${support_version}"
-    compile "com.android.support:support-vector-drawable:${support_version}"
-    compile "com.android.support:cardview-v7:${support_version}"
-    compile "com.android.support:gridlayout-v7:${support_version}"
+    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "com.android.support:appcompat-v7:${support_version}"
+    implementation "com.android.support:design:${support_version}"
+    implementation "com.android.support:support-v4:${support_version}"
+    implementation "com.android.support:support-vector-drawable:${support_version}"
+    implementation "com.android.support:cardview-v7:${support_version}"
+    implementation "com.android.support:gridlayout-v7:${support_version}"
 
-    compile 'com.koushikdutta.ion:ion:2.2.1'
-    compile "com.androidplot:androidplot-core:1.5.0"
-    //compile 'com.google.firebase:firebase-crash:11.0.2'
-    compile 'com.crystal:crystalrangeseekbar:1.1.3'
-    compile 'com.neovisionaries:nv-bluetooth:1.7'
+    implementation 'com.koushikdutta.ion:ion:2.2.1'
+    implementation "com.androidplot:androidplot-core:1.5.0"
+    //implementation 'com.google.firebase:firebase-crash:11.0.2'
+    implementation 'com.crystal:crystalrangeseekbar:1.1.3'
+    implementation 'com.neovisionaries:nv-bluetooth:1.7'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
 
-    compile 'no.nordicsemi.android.support.v18:scanner:1.0.0'
+    implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'

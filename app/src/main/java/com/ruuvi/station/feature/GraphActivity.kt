@@ -51,7 +51,10 @@ class GraphActivity : AppCompatActivity() {
 
         tagId = intent.getStringExtra(TAGID)
         val tag = RuuviTag.get(tagId)
-        if (tag == null) finish()
+        if (tag == null) {
+            finish()
+            return
+        }
 
         graph_root_view.background = Utils.getDefaultBackground(tag.defaultBackground, this)
 
