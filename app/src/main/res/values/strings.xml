@@ -249,4 +249,7 @@
     <string name="settings_gateway_details">This feature will let the app act as a gateway and send data to a sever/cloud. \nIf a url is put here the app will do a HTTP post with the found tags when it does background scanning.</string>
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Change the unit of temperature to display.</string>
+    <string name="version">Version</string>
+    <string name="locationServices">Location services</string>
+    <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
 </resources>
