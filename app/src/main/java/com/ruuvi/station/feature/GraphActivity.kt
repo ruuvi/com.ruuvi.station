@@ -82,7 +82,8 @@ class GraphActivity : AppCompatActivity() {
             }
         }
 
-        supportActionBar!!.title = tag.dispayName.toUpperCase()
+        supportActionBar!!.title = ""
+        toolbar_title.text = tag.dispayName.toUpperCase()
 
         val handler = Handler()
         handler.post(object: Runnable {
