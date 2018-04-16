@@ -217,7 +217,6 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="50dp"
                 android:background="@drawable/border_button"
-                android:onClick="start"
                 android:text="@string/scan"
                 android:textColor="@color/white"
                 android:fontFamily="@font/montserrat_bold"

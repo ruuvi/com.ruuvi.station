@@ -19,10 +19,10 @@ class WelcomeActivity : AppCompatActivity() {
         welcome_pager.offscreenPageLimit = 100 // just keep them all in memory
 
         tab_layout.setupWithViewPager(welcome_pager)
-    }
 
-    fun start(view: View?) {
-        finish()
+        start_button.setOnClickListener {
+            finish()
+        }
     }
 }
 
