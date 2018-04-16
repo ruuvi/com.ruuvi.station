@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <uses-feature android:name="android.hardware.bluetooth" />
+
     <application
         android:name=".RuuviScannerApplication"
         android:allowBackup="false"
