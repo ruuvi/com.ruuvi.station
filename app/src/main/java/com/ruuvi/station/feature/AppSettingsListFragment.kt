@@ -57,10 +57,12 @@ class AppSettingsListFragment : Fragment() {
             (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
         }
 
+        /*
         device_identifier.setOnClickListener {
             //input("pref_device_id", getString(R.string.device_identifier))
             (activity as AppSettingsActivity).openFragment(R.string.device_identifier)
         }
+        */
 
         temperature_unit.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
@@ -94,7 +96,7 @@ class AppSettingsListFragment : Fragment() {
                 R.array.pref_scaninterval_titles)
         gateway_url_sub.text = pref.getString("pref_backend", "Disabled")
         if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
-        device_identifier_sub.text = pref.getString("pref_device_id", "")
+        //device_identifier_sub.text = pref.getString("pref_device_id", "")
         if (pref.getString("pref_temperature_unit", "C") == "C") {
             temperature_unit_sub.text = getString(R.string.celsius)
         } else {

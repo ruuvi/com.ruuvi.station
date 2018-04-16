@@ -10,9 +10,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
@@ -71,7 +73,8 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001) {
-                sendAlert(notificationTextResourceId, alarm.id, tag.getDispayName(), context);
+                RuuviTag fromDb = RuuviTag.get(tag.id);
+                sendAlert(notificationTextResourceId, alarm.id, fromDb.getDispayName(), fromDb.id, context);
             }
         }
     }
@@ -87,40 +90,43 @@ public class AlarmChecker {
         return Math.abs(one - two);
     }
 
-    private static void sendAlert(int stringResId, int _id, String name, Context context) {
+    private static void sendAlert(int stringResId, int _id, String name, String mac, Context context) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-        int notificationid = _id + stringResId;
-        boolean isShowing = isNotificationVisible(context, notificationid);
+        int notificationId = _id + stringResId;
         NotificationCompat.Builder notification;
 
-        if (!isShowing) {
-            notification
-                    = new NotificationCompat.Builder(context, "notify_001")
-                    .setContentTitle(name)
-                    .setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1)
-                    .setTicker(name + " " + context.getString(stringResId))
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(stringResId)))
-                    .setContentText(context.getString(stringResId))
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setOnlyAlertOnce(true)
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setLargeIcon(bitmap);
+        Intent intent = new Intent(context, TagDetails.class);
+        intent.putExtra("id", mac);
+        PendingIntent pendingIntent = TaskStackBuilder.create(context)
+                .addNextIntent(intent)
+                .getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification
+                = new NotificationCompat.Builder(context, "notify_001")
+                .setContentTitle(name)
+                .setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1)
+                .setTicker(name + " " + context.getString(stringResId))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(stringResId)))
+                .setContentText(context.getString(stringResId))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(pendingIntent)
+                .setLargeIcon(bitmap);
 
-            try {
-                NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        try {
+            NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel("notify_001",
-                            "Alert notifications",
-                            NotificationManager.IMPORTANCE_DEFAULT);
-                    NotifyMgr.createNotificationChannel(channel);
-                }
-
-                NotifyMgr.notify(notificationid, notification.build());
-            } catch (Exception e) {
-                Log.d(TAG, "Failed to create notification");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel("notify_001",
+                        "Alert notifications",
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                NotifyMgr.createNotificationChannel(channel);
             }
+
+            NotifyMgr.notify(notificationId, notification.build());
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to create notification");
         }
     }
 

@@ -98,6 +98,18 @@ class AppSettingsDetailFragment : Fragment() {
                 }
             })
             settings_info.text = getString(R.string.settings_gateway_details)
+            device_identifier_layout.visibility = View.VISIBLE
+            device_identifier_input.setText(pref.getString("pref_device_id", ""))
+            device_identifier_input.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    pref.edit().putString("pref_device_id", p0.toString()).apply()
+                }
+            })
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
