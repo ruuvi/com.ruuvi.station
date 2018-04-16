@@ -123,6 +123,7 @@ class GraphActivity : AppCompatActivity() {
         val set = LineDataSet(data, label)
         set.setDrawValues(false)
         set.setDrawFilled(true)
+        set.highLightColor = resources.getColor(R.color.main)
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
