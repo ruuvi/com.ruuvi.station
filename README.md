@@ -1,7 +1,9 @@
-# Android_RuuvitagScannner
+# Ruuvi Station
 
-Android - Ruuvitag scanner, datalogger/sender
+Android - RuuviTag scanner, datalogger/gateway
 
-In this project we (Centria University of Applied Sciences / R&D) created Ruuvitags scanner for Android devices (supporting OS version 4.4.2 and later). This application scans for beacons around that have Eddystone URL starting with "https://ruu.vi/#" and displays them on screen (with their sensor data). To scan beacons application uses alt-beacon library and is written entirely as native Android application.
+With this app you can easily monitor RuuviTag bluetooth sensors https://ruuvi.com/index.php?id=2.
+It can also be used as a gateway for your tags, lettings you see and log sensor readings in the cloud.
 
-We use this in research, to monitor environment within buildings and outside.
+
+This app can be found on play store https://play.google.com/store/apps/details?id=com.ruuvi.station
