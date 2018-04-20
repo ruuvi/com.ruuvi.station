@@ -44,9 +44,9 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
         ((TextView)convertView.findViewById(R.id.rssi)).setText(String.format(getContext().getResources().getString(R.string.signal_reading), tag.rssi));
 
         AppCompatImageView signalIcon = convertView.findViewById(R.id.signalIcon);
-        if (tag.rssi < -80) signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_1));
-        else if (tag.rssi < -50) signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_2));
-        else signalIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_connection_3));
+        if (tag.rssi < -80) signalIcon.setImageResource(R.drawable.icon_connection_1);
+        else if (tag.rssi < -50) signalIcon.setImageResource(R.drawable.icon_connection_2);
+        else signalIcon.setImageResource(R.drawable.icon_connection_3);
 
         return convertView;
     }
