@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +68,14 @@ public class RuuviTag extends BaseModel {
     public int defaultBackground;
     @Column
     public String userBackground;
+    @Column
+    public int dataFormat;
+    @Column
+    public double txPower;
+    @Column
+    public int movementCounter;
+    @Column
+    public int measurementSequenceNumber;
 
     public RuuviTag() {
     }
@@ -110,41 +119,85 @@ public class RuuviTag extends BaseModel {
             rawData = parseByteDataFromB64(data);
             rawDataBlob = new Blob(rawData);
             parseRuuviTagDataFromBytes(rawData, 2);
+            dataFormat = 2;
         } else if (rawData != null) {
-            String protocolVersion = String.valueOf(rawData[2]);
-
-            humidity = ((float) (rawData[3] & 0xFF)) / 2f;
-
-            int temperatureSign = (rawData[4] >> 7) & 1;
-            int temperatureBase = (rawData[4] & 0x7F);
-            float temperatureFraction = ((float) rawData[5]) / 100f;
-            temperature = ((float) temperatureBase) + temperatureFraction;
-            if (temperatureSign == 1) {
-                temperature *= -1;
+            byte[] partOfData = Arrays.copyOfRange(rawData, 5, rawData.length);
+            String protocolVersion = String.valueOf(partOfData[2]);
+            switch (protocolVersion) {
+                case "3":
+                    parseFormat3(partOfData);
+                    break;
+                case "5":
+                    parseFormat5(partOfData);
+                    break;
             }
-
-            int pressureHi = rawData[6] & 0xFF;
-            int pressureLo = rawData[7] & 0xFF;
-            pressure = pressureHi * 256 + 50000 + pressureLo;
-            pressure /= 100.0;
-
-            accelX = (rawData[8] << 8 | rawData[9] & 0xFF) / 1000f;
-            accelY = (rawData[10] << 8 | rawData[11] & 0xFF) / 1000f;
-            accelZ = (rawData[12] << 8 | rawData[13] & 0xFF) / 1000f;
-
-            int battHi = rawData[14] & 0xFF;
-            int battLo = rawData[15] & 0xFF;
-            voltage = (battHi * 256 + battLo) / 1000f;
-
-            // make it pretty
-            temperature = round(temperature, 2);
-            humidity = round(humidity, 2);
-            pressure = round(pressure, 2);
-            voltage = round(voltage, 4);
-            accelX = round(accelX, 4);
-            accelY = round(accelY, 4);
-            accelZ = round(accelZ, 4);
         }
+    }
+
+    private void parseFormat3(byte[] rawData) {
+        dataFormat = 3;
+        humidity = ((float) (rawData[3] & 0xFF)) / 2f;
+
+        int temperatureSign = (rawData[4] >> 7) & 1;
+        int temperatureBase = (rawData[4] & 0x7F);
+        float temperatureFraction = ((float) rawData[5]) / 100f;
+        temperature = ((float) temperatureBase) + temperatureFraction;
+        if (temperatureSign == 1) {
+            temperature *= -1;
+        }
+
+        int pressureHi = rawData[6] & 0xFF;
+        int pressureLo = rawData[7] & 0xFF;
+        pressure = pressureHi * 256 + 50000 + pressureLo;
+        pressure /= 100.0;
+
+        accelX = (rawData[8] << 8 | rawData[9] & 0xFF) / 1000f;
+        accelY = (rawData[10] << 8 | rawData[11] & 0xFF) / 1000f;
+        accelZ = (rawData[12] << 8 | rawData[13] & 0xFF) / 1000f;
+
+        int battHi = rawData[14] & 0xFF;
+        int battLo = rawData[15] & 0xFF;
+        voltage = (battHi * 256 + battLo) / 1000f;
+
+        // make it pretty
+        temperature = round(temperature, 2);
+        humidity = round(humidity, 2);
+        pressure = round(pressure, 2);
+        voltage = round(voltage, 4);
+        accelX = round(accelX, 4);
+        accelY = round(accelY, 4);
+        accelZ = round(accelZ, 4);
+    }
+
+    private void parseFormat5(byte[] rawData) {
+        dataFormat = 5;
+        humidity = ((rawData[5] & 0xFF) << 8 | rawData[6] & 0xFF) / 400d;
+        temperature = (rawData[3] << 8 | rawData[4] & 0xFF) / 200d;
+        pressure = (double) ((rawData[7] & 0xFF) << 8 | rawData[8] & 0xFF) + 50000;
+        pressure /= 100.0;
+
+        accelX = (rawData[9] << 8 | rawData[10] & 0xFF) / 1000d;
+        accelY = (rawData[11] << 8 | rawData[12] & 0xFF) / 1000d;
+        accelZ = (rawData[13] << 8 | rawData[14] & 0xFF) / 1000d;
+
+        int powerInfo = (rawData[15] & 0xFF) << 8 | rawData[16] & 0xFF;
+        if ((powerInfo >>> 5) != 0b11111111111) {
+            voltage = (powerInfo >>> 5) / 1000d + 1.6d;
+        }
+        if ((powerInfo & 0b11111) != 0b11111) {
+            txPower = (powerInfo & 0b11111) * 2 - 40;
+        }
+        movementCounter = rawData[18] & 0xFF;
+        measurementSequenceNumber = (rawData[20] & 0xFF) << 8 | rawData[19] & 0xFF;
+
+        // make it pretty
+        temperature = round(temperature, 2);
+        humidity = round(humidity, 2);
+        pressure = round(pressure, 2);
+        voltage = round(voltage, 4);
+        accelX = round(accelX, 4);
+        accelY = round(accelY, 4);
+        accelZ = round(accelZ, 4);
     }
 
     private byte[] parseByteDataFromB64(String data) {

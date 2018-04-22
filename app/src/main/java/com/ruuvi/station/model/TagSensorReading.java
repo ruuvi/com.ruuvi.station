@@ -39,6 +39,14 @@ public class TagSensorReading extends BaseModel {
     public double accelZ;
     @Column
     public double voltage;
+    @Column
+    public int dataFormat;
+    @Column
+    public double txPower;
+    @Column
+    public int movementCounter;
+    @Column
+    public int measurementSequenceNumber;
 
     public TagSensorReading() {
     }
@@ -53,6 +61,10 @@ public class TagSensorReading extends BaseModel {
         this.accelY = tag.accelY;
         this.accelZ = tag.accelZ;
         this.voltage = tag.voltage;
+        this.dataFormat = tag.dataFormat;
+        this.txPower = tag.txPower;
+        this.movementCounter = tag.movementCounter;
+        this.measurementSequenceNumber = tag.measurementSequenceNumber;
         this.createdAt = new Date();
     }
 
