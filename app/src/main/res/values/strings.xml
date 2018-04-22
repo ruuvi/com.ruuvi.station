@@ -246,7 +246,7 @@
     <string name="settings_background_scan_details">This will enable background scanning, meaning that you phone will periodically search for beacons even if you are not using it.</string>
     <string name="settings_background_scan_battery_save_details">Enabling this will let the operating system choose when to do background scanning. \nIt will result in better battery life, but background scanning will be very irregular.</string>
     <string name="settings_background_scan_interval_details">This is at what interval the background scanning will run. \nFor example, setting it to 1 minute will result in the background scanning running once every 1 minute. \n\n(Note that this might not always be true depending on the device and operating system)</string>
-    <string name="settings_gateway_details">This feature will let the app act as a gateway and send data to a sever/cloud. \nIf a url is put here the app will do a HTTP post with the found tags when it does background scanning.</string>
+    <string name="settings_gateway_details">This feature will let the app act as a gateway and send data to a server/cloud. \nIf a url is put here the app will do a HTTP post with the found tags when it does background scanning.</string>
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Change the unit of temperature to display.</string>
     <string name="version">Version</string>
