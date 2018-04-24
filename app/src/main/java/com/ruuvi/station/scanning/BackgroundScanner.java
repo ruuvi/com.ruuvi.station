@@ -52,17 +52,19 @@ public class BackgroundScanner extends BroadcastReceiver {
     private static final int SCAN_TIME_MS = 5000;
 
     private List<LeScanResult> scanResults;
-    private PowerManager.WakeLock wakeLock;
+    //private PowerManager.WakeLock wakeLock;
 
     private ScanSettings scanSettings;
     private BluetoothLeScannerCompat scanner;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        /*
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
+        */
         Log.d(TAG, "Woke up");
         scheduleNextScan(context);
 
@@ -184,10 +186,8 @@ public class BackgroundScanner extends BroadcastReceiver {
                     });
         }
 
-        //scheduleNextScan(context);
-
         Log.d(TAG, "Going to sleep");
-        wakeLock.release();
+        //wakeLock.release();
     }
 
     private void scheduleNextScan(Context context) {
