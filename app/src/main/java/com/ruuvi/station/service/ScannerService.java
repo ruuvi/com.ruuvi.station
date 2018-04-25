@@ -110,7 +110,7 @@ public class ScannerService extends Service {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;
-            Toast.makeText(getApplicationContext(), "Could not start scanning", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Couldn't start scanning, is bluetooth disabled?", Toast.LENGTH_LONG).show();
         }
     }
 

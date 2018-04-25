@@ -103,7 +103,6 @@ public class AlarmChecker {
         notification
                 = new NotificationCompat.Builder(context, "notify_001")
                 .setContentTitle(name)
-                .setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1)
                 .setTicker(name + " " + context.getString(stringResId))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(stringResId)))
                 .setContentText(context.getString(stringResId))
@@ -113,6 +112,12 @@ public class AlarmChecker {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
                 .setLargeIcon(bitmap);
+
+        if (Build.VERSION.SDK_INT < 21) {
+            notification.setSmallIcon(R.mipmap.ic_launcher_small);
+        } else {
+            notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
+        }
 
         try {
             NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

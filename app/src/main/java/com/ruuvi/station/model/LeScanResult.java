@@ -38,11 +38,9 @@ public class LeScanResult {
             // If the AD structure represents Eddystone TLM.
             else if (structure instanceof ADManufacturerSpecific) {
                 ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
+                byte[] date = es.getData();
                 if (es.getCompanyId() == 0x0499) {
-                    byte[] data = es.getData();
-                    if (data != null) {
-                        tag = new RuuviTag(this.device.getAddress(), null, data, this.rssi, false);
-                    }
+                    tag = new RuuviTag(this.device.getAddress(), null, this.scanData, this.rssi, false);
                 }
             }
         }
