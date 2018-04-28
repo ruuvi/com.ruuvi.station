@@ -20,6 +20,10 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.LocalDatabase;
+import com.ruuvi.station.decoder.DecodeFormat2and4;
+import com.ruuvi.station.decoder.DecodeFormat3;
+import com.ruuvi.station.decoder.DecodeFormat5;
+import com.ruuvi.station.decoder.RuuviTagDecoder;
 import com.ruuvi.station.util.Utils;
 import com.ruuvi.station.util.base64;
 
@@ -80,170 +84,21 @@ public class RuuviTag extends BaseModel {
     public RuuviTag() {
     }
 
-    public RuuviTag(String id, String url, byte[] rawData, int rssi, boolean temporary) {
-        this.id = id;
-        this.url = url;
-        this.rssi = rssi;
-        this.rawData = rawData;
-        this.rawDataBlob = new Blob(rawData);
-        if (!temporary)
-            process();
-    }
-
-    public RuuviTag(Parcel in) {
-        String[] data = new String[6];
-        in.readStringArray(data);
-        this.id = data[0];
-        this.url = data[1];
-        this.rssi = Integer.parseInt(data[2]);
-        this.temperature = Double.valueOf(data[3]);
-        this.humidity = Double.valueOf(data[4]);
-        this.pressure = Double.valueOf(data[5]);
-    }
-
-    public void updateDataFrom(RuuviTag tag) {
-        this.url = tag.url;
-        this.rssi = tag.rssi;
-        this.rawData = tag.rawData;
-        this.updateAt = new Date();
-        process();
+    public RuuviTag preserveData(RuuviTag tag) {
+        tag.name = this.name;
+        tag.favorite = this.favorite;
+        tag.gatewayUrl = this.gatewayUrl;
+        tag.defaultBackground = this.defaultBackground;
+        tag.userBackground = this.userBackground;
+        tag.updateAt = new Date();
+        return tag;
     }
 
     private double getFahrenheit() {
         return Utils.celciusToFahrenheit(this.temperature);
     }
 
-    public void process() {
-        if (url != null && url.contains("#")) {
-            String data = url.split("#")[1];
-            rawData = parseByteDataFromB64(data);
-            rawDataBlob = new Blob(rawData);
-            parseRuuviTagDataFromBytes(rawData, 2);
-            dataFormat = 2;
-        } else if (rawData != null) {
-            byte[] partOfData = Arrays.copyOfRange(rawData, 5, rawData.length);
-            String protocolVersion = String.valueOf(partOfData[2]);
-            switch (protocolVersion) {
-                case "3":
-                    parseFormat3(partOfData);
-                    break;
-                case "5":
-                    parseFormat5(partOfData);
-                    break;
-            }
-        }
-    }
-
-    private void parseFormat3(byte[] rawData) {
-        dataFormat = 3;
-        humidity = ((float) (rawData[3] & 0xFF)) / 2f;
-
-        int temperatureSign = (rawData[4] >> 7) & 1;
-        int temperatureBase = (rawData[4] & 0x7F);
-        float temperatureFraction = ((float) rawData[5]) / 100f;
-        temperature = ((float) temperatureBase) + temperatureFraction;
-        if (temperatureSign == 1) {
-            temperature *= -1;
-        }
-
-        int pressureHi = rawData[6] & 0xFF;
-        int pressureLo = rawData[7] & 0xFF;
-        pressure = pressureHi * 256 + 50000 + pressureLo;
-        pressure /= 100.0;
-
-        accelX = (rawData[8] << 8 | rawData[9] & 0xFF) / 1000f;
-        accelY = (rawData[10] << 8 | rawData[11] & 0xFF) / 1000f;
-        accelZ = (rawData[12] << 8 | rawData[13] & 0xFF) / 1000f;
-
-        int battHi = rawData[14] & 0xFF;
-        int battLo = rawData[15] & 0xFF;
-        voltage = (battHi * 256 + battLo) / 1000f;
-
-        // make it pretty
-        temperature = round(temperature, 2);
-        humidity = round(humidity, 2);
-        pressure = round(pressure, 2);
-        voltage = round(voltage, 4);
-        accelX = round(accelX, 4);
-        accelY = round(accelY, 4);
-        accelZ = round(accelZ, 4);
-    }
-
-    private void parseFormat5(byte[] rawData) {
-        dataFormat = 5;
-        humidity = ((rawData[5] & 0xFF) << 8 | rawData[6] & 0xFF) / 400d;
-        temperature = (rawData[3] << 8 | rawData[4] & 0xFF) / 200d;
-        pressure = (double) ((rawData[7] & 0xFF) << 8 | rawData[8] & 0xFF) + 50000;
-        pressure /= 100.0;
-
-        accelX = (rawData[9] << 8 | rawData[10] & 0xFF) / 1000d;
-        accelY = (rawData[11] << 8 | rawData[12] & 0xFF) / 1000d;
-        accelZ = (rawData[13] << 8 | rawData[14] & 0xFF) / 1000d;
-
-        int powerInfo = (rawData[15] & 0xFF) << 8 | rawData[16] & 0xFF;
-        if ((powerInfo >>> 5) != 0b11111111111) {
-            voltage = (powerInfo >>> 5) / 1000d + 1.6d;
-        }
-        if ((powerInfo & 0b11111) != 0b11111) {
-            txPower = (powerInfo & 0b11111) * 2 - 40;
-        }
-        movementCounter = rawData[18] & 0xFF;
-        measurementSequenceNumber = (rawData[20] & 0xFF) << 8 | rawData[19] & 0xFF;
-
-        // make it pretty
-        temperature = round(temperature, 2);
-        humidity = round(humidity, 2);
-        pressure = round(pressure, 2);
-        voltage = round(voltage, 4);
-        accelX = round(accelX, 4);
-        accelY = round(accelY, 4);
-        accelZ = round(accelZ, 4);
-    }
-
-    private byte[] parseByteDataFromB64(String data) {
-        try {
-            byte[] bData = base64.decode(data);
-            int pData[] = new int[8];
-            for (int i = 0; i < bData.length; i++)
-                pData[i] = bData[i] & 0xFF;
-            return bData;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private void parseRuuviTagDataFromBytes(byte[] bData, int ruuviTagFWVersion) {
-        int pData[] = new int[8];
-        for (int i = 0; i < bData.length; i++)
-            pData[i] = bData[i] & 0xFF;
-
-        if (ruuviTagFWVersion == 1) {
-            humidity = ((float) (pData[1] & 0xFF)) / 2f;
-            double uTemp = (((pData[3] & 127) << 8) | pData[2]);
-            double tempSign = (pData[3] >> 7) & 1;
-            temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
-            pressure = ((pData[5] << 8) + pData[4]) + 50000;
-            pressure /= 100.00;
-            pressure = (pData[7] << 8) + pData[6];
-        } else {
-            humidity = ((float) (pData[1] & 0xFF)) / 2f;
-            double uTemp = (((pData[2] & 127) << 8) | pData[3]);
-            double tempSign = (pData[2] >> 7) & 1;
-            temperature = tempSign == 0.00 ? uTemp / 256.0 : -1.00 * uTemp / 256.0;
-            pressure = ((pData[4] << 8) + pData[5]) + 50000;
-            pressure /= 100.00;
-
-            //THIS IS UGLY
-            temperature = round(temperature, 2);
-            humidity = round(humidity, 2);
-            pressure = round(pressure, 2);
-
-            this.data = (new double[]{temperature, humidity, pressure});
-        }
-    }
-
     public static String getTemperatureUnit(Context context) {
-        // TODO: 13/02/2018 move this out to a helper
         return PreferenceManager.getDefaultSharedPreferences(context).getString("pref_temperature_unit", "C");
     }
 
