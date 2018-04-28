@@ -46,7 +46,7 @@ import com.ruuvi.station.util.PreferenceKeys.FIRST_START_PREF
 import java.util.ArrayList
 
 
-class TagDetails : AppCompatActivity(), RuuviTagListener {
+class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
     private val REQUEST_ENABLE_BT = 1337
     private val FROM_WELCOME = 1447
@@ -55,7 +55,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
     var tag: RuuviTag? = null
     lateinit var tags: MutableList<RuuviTag>
 
-    var scanner: RuuviTagScanner? = null
     lateinit var handler: Handler
     var openAddView = false
 
@@ -166,7 +165,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         }
 
         handler = Handler()
-        scanner = RuuviTagScanner(this, this)
 
         if (!getBoolPref(FIRST_START_PREF)) {
             val intent = Intent(this, WelcomeActivity::class.java)
@@ -178,7 +176,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     private fun getThingsStarted(goToAddTags: Boolean) {
         if (isBluetoothEnabled()) {
-            scanner = RuuviTagScanner(this, applicationContext)
         } else {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
@@ -328,7 +325,6 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
 
     override fun onPause() {
         super.onPause()
-        scanner?.stop()
         handler.removeCallbacksAndMessages(null)
         for (tag in tags) {
             tag.update()
@@ -339,20 +335,10 @@ class TagDetails : AppCompatActivity(), RuuviTagListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_ENABLE_BT) {
-                scanner = RuuviTagScanner(this@TagDetails, applicationContext)
             }
         } else {
             if (requestCode == FROM_WELCOME) {
                 getThingsStarted(true)
-            }
-        }
-    }
-
-    override fun tagFound(tag: RuuviTag) {
-        for (mTag in tags) {
-            if (mTag.id == tag.id) {
-                mTag.updateDataFrom(tag)
-                mTag.update()
             }
         }
     }

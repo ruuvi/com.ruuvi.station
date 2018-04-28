@@ -166,10 +166,10 @@ public class ScannerService extends Service {
     public static int LOG_INTERVAL = 5; // seconds
 
     public static void logTag(RuuviTag ruuviTag, Context context) {
-        if (Exists(ruuviTag.id)) {
-            RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
-            dbTag.updateDataFrom(ruuviTag);
-            dbTag.update();
+        RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
+        if (dbTag != null) {
+            ruuviTag = dbTag.preserveData(ruuviTag);
+            ruuviTag.update();
             if (!dbTag.favorite) return;
         } else {
             ruuviTag.updateAt = new Date();
