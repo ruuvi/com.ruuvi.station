@@ -1,5 +1,6 @@
 package com.ruuvi.station.feature
 
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.AddTagAdapter
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.Utils
@@ -74,6 +76,20 @@ class AddTagActivity : AppCompatActivity() {
                 handler.postDelayed(this, 1000)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkBluetooth()
+    }
+
+    fun checkBluetooth(): Boolean {
+        if (MainActivity.isBluetoothEnabled()) {
+            return true
+        }
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        startActivity(enableBtIntent)
+        return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
