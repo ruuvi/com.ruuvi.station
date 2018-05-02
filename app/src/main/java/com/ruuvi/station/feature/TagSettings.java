@@ -1,6 +1,8 @@
 package com.ruuvi.station.feature;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -64,6 +66,22 @@ public class TagSettings extends AppCompatActivity {
             return;
         }
         tagAlarms = Alarm.getForTag(tagId);
+
+        ((TextView)findViewById(R.id.input_mac)).setText(tag.id);
+        findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Mac address", tag.id);
+                try {
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Log.d(TAG, "Could not copy mac to clipboard");
+                }
+                return false;
+            }
+        });
 
         ImageView tagImage = findViewById(R.id.tag_image);
         tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));

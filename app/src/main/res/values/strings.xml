@@ -253,4 +253,6 @@
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
     <string name="gateway_settings">Gateway Settings</string>
+    <string name="mac_address">Mac address</string>
+    <string name="mac">Mac</string>
 </resources>
