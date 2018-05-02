@@ -174,12 +174,16 @@ class TagDetails : AppCompatActivity() {
         }
     }
 
-    private fun getThingsStarted(goToAddTags: Boolean) {
+    private fun checkBluetooth(): Boolean {
         if (isBluetoothEnabled()) {
-        } else {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+            return true
         }
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        return false
+    }
+
+    private fun getThingsStarted(goToAddTags: Boolean) {
         setBoolPref(FIRST_START_PREF)
         setBackgroundScanning(false, this, PreferenceManager.getDefaultSharedPreferences(this))
         requestPermissions()
@@ -248,6 +252,8 @@ class TagDetails : AppCompatActivity() {
             ) { dialog, which -> dialog.dismiss() }
             alertDialog.setOnDismissListener { showPermissionDialog(activity) }
             alertDialog.show()
+        } else {
+            checkBluetooth()
         }
     }
 
@@ -277,6 +283,28 @@ class TagDetails : AppCompatActivity() {
         updateUI()
     }
 
+    private fun startScanning() {
+        val scannerService = Intent(this, ScannerService::class.java)
+        startService(scannerService)
+        if (!MainActivity.isLocationEnabled(this)) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(this.getString(R.string.locationServices))
+            builder.setMessage(this.getString(R.string.enableLocationServices))
+            builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+            }
+            builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
+            builder.show()
+        } else {
+            if (openAddView) {
+                openAddView = false
+                val addIntent = Intent(this, AddTagActivity::class.java)
+                startActivity(addIntent)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         tags = RuuviTag.getAll(true)
@@ -297,26 +325,8 @@ class TagDetails : AppCompatActivity() {
                 }
             })
 
-            if (isBluetoothEnabled()) {
-                val scannerService = Intent(this, ScannerService::class.java)
-                startService(scannerService)
-                if (!MainActivity.isLocationEnabled(this)) {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle(this.getString(R.string.locationServices))
-                    builder.setMessage(this.getString(R.string.enableLocationServices))
-                    builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                        startActivity(intent)
-                    }
-                    builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
-                    builder.show()
-                } else {
-                    if (openAddView) {
-                        openAddView = false
-                        val addIntent = Intent(this, AddTagActivity::class.java)
-                        startActivity(addIntent)
-                    }
-                }
+            if (checkBluetooth()) {
+                startScanning()
             }
         } else {
             updateUI()
