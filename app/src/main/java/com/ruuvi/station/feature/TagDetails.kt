@@ -3,7 +3,6 @@ package com.ruuvi.station.feature
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,13 +16,10 @@ import android.provider.Settings
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.scanning.RuuviTagListener
-import com.ruuvi.station.scanning.RuuviTagScanner
 import com.ruuvi.station.util.Utils
 
 import kotlinx.android.synthetic.main.activity_tag_details.*
@@ -31,19 +27,17 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
-import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
-import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.PreferenceKeys.FIRST_START_PREF
-import java.util.ArrayList
+import com.ruuvi.station.util.PreferenceKeys
+import com.ruuvi.station.util.Starter
+import kotlinx.android.synthetic.main.navigation_drawer.*
 
 
 class TagDetails : AppCompatActivity() {
@@ -57,6 +51,7 @@ class TagDetails : AppCompatActivity() {
 
     lateinit var handler: Handler
     var openAddView = false
+    lateinit var starter: Starter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,44 +62,11 @@ class TagDetails : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        DeviceIdentifier.id(this)
-
-        val drawerToggle = ActionBarDrawerToggle(
-                this, main_drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-
-        main_drawerLayout.addDrawerListener(drawerToggle)
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setHomeButtonEnabled(true)
-        }
-        drawerToggle.syncState()
-
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
-
-        drawerListView.adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                resources.getStringArray(R.array.navigation_items_card_view)
-        )
-
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            main_drawerLayout.closeDrawers()
-            when (i) {
-                1 -> {
-                    val settingsIntent = Intent(this, AppSettingsActivity::class.java)
-                    startActivity(settingsIntent)
-                }
-                2 -> {
-                    val aboutIntent = Intent(this, AboutActivity::class.java)
-                    startActivity(aboutIntent)
-                }
-                else -> {
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
-                }
-            }
+        if (getBoolPref(PreferenceKeys.DASHBOARD_ENABLED_PREF)) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            main_drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        } else {
+            setupDrawer()
         }
 
         noTags_textView.setOnClickListener {
@@ -166,28 +128,52 @@ class TagDetails : AppCompatActivity() {
 
         handler = Handler()
 
-        if (!getBoolPref(FIRST_START_PREF)) {
-            val intent = Intent(this, WelcomeActivity::class.java)
-            startActivityForResult(intent, FROM_WELCOME)
-        } else {
-            getThingsStarted(false)
+        starter = Starter(this)
+
+        starter.getThingsStarted()
+    }
+
+    fun setupDrawer() {
+        val drawerToggle = ActionBarDrawerToggle(
+                this, main_drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+
+        main_drawerLayout.addDrawerListener(drawerToggle)
+        if (supportActionBar != null) {
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            supportActionBar!!.setHomeButtonEnabled(true)
+        }
+        drawerToggle.syncState()
+
+        val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
+
+        drawerListView.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                resources.getStringArray(R.array.navigation_items_card_view)
+        )
+
+        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            main_drawerLayout.closeDrawers()
+            when (i) {
+                1 -> {
+                    val settingsIntent = Intent(this, AppSettingsActivity::class.java)
+                    startActivity(settingsIntent)
+                }
+                2 -> {
+                    val aboutIntent = Intent(this, AboutActivity::class.java)
+                    startActivity(aboutIntent)
+                }
+                else -> {
+                    val addIntent = Intent(this, AddTagActivity::class.java)
+                    startActivity(addIntent)
+                }
+            }
         }
     }
 
-    private fun checkBluetooth(): Boolean {
-        if (isBluetoothEnabled()) {
-            return true
-        }
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        return false
-    }
 
-    private fun getThingsStarted(goToAddTags: Boolean) {
-        setBoolPref(FIRST_START_PREF)
-        setBackgroundScanning(false, this, PreferenceManager.getDefaultSharedPreferences(this))
-        requestPermissions()
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
@@ -197,7 +183,7 @@ class TagDetails : AppCompatActivity() {
                     openAddView = true
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                        requestPermissions()
+                        starter.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
                     }
@@ -217,44 +203,6 @@ class TagDetails : AppCompatActivity() {
             activity.startActivity(intent)
         }
         snackbar.show()
-    }
-
-    private fun getNeededPermissions(): List<String> {
-        val permissionCoarseLocation = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-
-        val listPermissionsNeeded = ArrayList<String>()
-
-        if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-
-        return listPermissionsNeeded
-    }
-
-    private fun showPermissionDialog(activity: AppCompatActivity): Boolean {
-        val listPermissionsNeeded = getNeededPermissions()
-
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toTypedArray(), COARSE_LOCATION_PERMISSION)
-        }
-
-        return !listPermissionsNeeded.isEmpty()
-    }
-
-    private fun requestPermissions() {
-        if (getNeededPermissions().isNotEmpty()) {
-            val activity = this
-            val alertDialog = android.support.v7.app.AlertDialog.Builder(this@TagDetails).create()
-            alertDialog.setTitle(getString(R.string.permission_dialog_title))
-            alertDialog.setMessage(getString(R.string.permission_dialog_request_message))
-            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-            ) { dialog, which -> dialog.dismiss() }
-            alertDialog.setOnDismissListener { showPermissionDialog(activity) }
-            alertDialog.show()
-        } else {
-            checkBluetooth()
-        }
     }
 
     fun setBoolPref(pref: String) {
@@ -283,27 +231,6 @@ class TagDetails : AppCompatActivity() {
         updateUI()
     }
 
-    private fun startScanning() {
-        val scannerService = Intent(this, ScannerService::class.java)
-        startService(scannerService)
-        if (!MainActivity.isLocationEnabled(this)) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(this.getString(R.string.locationServices))
-            builder.setMessage(this.getString(R.string.enableLocationServices))
-            builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            }
-            builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
-            builder.show()
-        } else {
-            if (openAddView) {
-                openAddView = false
-                val addIntent = Intent(this, AddTagActivity::class.java)
-                startActivity(addIntent)
-            }
-        }
-    }
 
     override fun onResume() {
         super.onResume()
@@ -316,7 +243,7 @@ class TagDetails : AppCompatActivity() {
             }
         }
 
-        if (getNeededPermissions().isEmpty()) {
+        if (starter.getNeededPermissions().isEmpty()) {
             refrshTagLists()
             handler.post(object: Runnable {
                 override fun run() {
@@ -325,8 +252,8 @@ class TagDetails : AppCompatActivity() {
                 }
             })
 
-            if (checkBluetooth()) {
-                startScanning()
+            if (starter.checkBluetooth()) {
+                starter.startScanning()
             }
         } else {
             updateUI()
@@ -345,10 +272,6 @@ class TagDetails : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_ENABLE_BT) {
-            }
-        } else {
-            if (requestCode == FROM_WELCOME) {
-                getThingsStarted(true)
             }
         }
     }
@@ -495,5 +418,3 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         return tags.size
     }
 }
-
-

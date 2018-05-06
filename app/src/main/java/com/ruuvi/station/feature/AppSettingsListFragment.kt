@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatTextView
+import android.support.v7.widget.SwitchCompat
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import android.widget.FrameLayout
 
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
+import com.ruuvi.station.util.PreferenceKeys
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
 class AppSettingsListFragment : Fragment() {
@@ -38,47 +40,21 @@ class AppSettingsListFragment : Fragment() {
 
         scan_interval.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
-            /*
-            val options = resources.getStringArray(R.array.pref_scaninterval_titles)
-            val values = resources.getStringArray(R.array.pref_scaninterval_values)
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle(resources.getString(R.string.background_scan_interval))
-            builder.setItems(options) { dialog, which ->
-                pref.edit().putString("pref_scaninterval", values[which]).apply()
-                MainActivity.setBackgroundScanning(true, activity, pref)
-                updateSubs()
-            }
-            builder.show()
-            */
         }
 
         gateway_url.setOnClickListener {
-            //input("pref_backend", getString(R.string.gateway_url))
             (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
         }
 
-        /*
-        device_identifier.setOnClickListener {
-            //input("pref_device_id", getString(R.string.device_identifier))
-            (activity as AppSettingsActivity).openFragment(R.string.device_identifier)
-        }
-        */
-
         temperature_unit.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
-            /*
-            val options = resources.getStringArray(R.array.list_preference_temperature_unit_titles)
-            val values = resources.getStringArray(R.array.list_preference_temperature_unit_values)
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle(resources.getString(R.string.temperature_unit))
-            builder.setItems(options) { dialog, which ->
-                pref.edit().putString("pref_temperature_unit", values[which]).apply()
-                MainActivity.setBackgroundScanning(true, activity, pref)
-                updateSubs()
-            }
-            builder.show()
-            */
         }
+
+        val switch = view.findViewById<SwitchCompat>(R.id.dashboard_switch)
+        switch.isChecked = pref.getBoolean(PreferenceKeys.DASHBOARD_ENABLED_PREF, false)
+        switch.setOnCheckedChangeListener({ _, isChecked ->
+            pref.edit().putBoolean(PreferenceKeys.DASHBOARD_ENABLED_PREF, isChecked).apply()
+        })
 
         updateSubs()
     }

@@ -15,7 +15,7 @@
         android:paddingLeft="@dimen/letter_ball_radius"
         android:paddingTop="8dp">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

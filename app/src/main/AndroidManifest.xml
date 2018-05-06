@@ -25,13 +25,12 @@
             android:name=".feature.main.MainActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.TagSettings"
-            android:windowSoftInputMode="adjustResize"
             android:label="Tag Settings"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name=".service.ScannerService"
@@ -41,15 +40,11 @@
 
         <activity
             android:name=".feature.TagDetails"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
         <activity
             android:name=".feature.WelcomeActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <meta-data
@@ -70,6 +65,17 @@
         <activity
             android:name=".feature.AppSettingsActivity"
             android:label="@string/title_activity_app_settings"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name=".feature.StartupActivity"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".feature.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     </application>
 

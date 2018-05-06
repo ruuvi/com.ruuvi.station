@@ -1,11 +1,14 @@
 package com.ruuvi.station.feature
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import com.ruuvi.station.R
+import com.ruuvi.station.util.PreferenceKeys
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 class WelcomeActivity : AppCompatActivity() {
@@ -21,10 +24,19 @@ class WelcomeActivity : AppCompatActivity() {
         tab_layout.setupWithViewPager(welcome_pager)
 
         start_button.setOnClickListener {
-            finish()
+            setBoolPref(PreferenceKeys.FIRST_START_PREF)
+            val intent = Intent(this, StartupActivity::class.java)
+            startActivity(intent)
         }
     }
+
+    fun setBoolPref(pref: String) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
+        editor.putBoolean(pref, true)
+        editor.apply()
+    }
 }
+
 
 class WelcomePager: PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
