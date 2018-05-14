@@ -9,6 +9,13 @@
         android:title="menu"
         android:icon="@drawable/ic_more_horiz_24px" />
 
+    <item
+        android:id="@+id/action_alarm"
+        app:showAsAction="always"
+        android:orderInCategory="0"
+        android:title="alarm"
+        android:icon="@drawable/ic_notifications_off_24px" />
+
     <!--
     <item
         android:id="@+id/action_share"

@@ -6,7 +6,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Point
+import android.graphics.PorterDuff
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -20,7 +22,6 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.util.Utils
 
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import android.support.v4.view.PagerAdapter
@@ -28,15 +29,14 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
+import android.support.v4.widget.ImageViewCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.PreferenceKeys
-import com.ruuvi.station.util.Starter
+import com.ruuvi.station.util.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 
 
@@ -351,6 +351,26 @@ class TagDetails : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (tags.isNotEmpty()) {
             menuInflater.inflate(R.menu.menu_details, menu)
+            val item = menu.findItem(R.id.action_alarm)
+            if (tag != null) {
+                val status = AlarmChecker.getStatus(tag)
+                item.isVisible = status > -1
+                if (status == 0) {
+                    item.setIcon(R.drawable.ic_notifications_off_24px)
+                    val drawable = item.icon
+                    if(drawable != null) {
+                        drawable.mutate()
+                        drawable.setColorFilter(resources.getColor(R.color.white), PorterDuff.Mode.SRC_ATOP)
+                    }
+                } else if (status == 1) {
+                    item.setIcon(R.drawable.ic_notifications_active_24px)
+                    val drawable = item.icon
+                    if(drawable != null) {
+                        drawable.mutate()
+                        drawable.setColorFilter(resources.getColor(R.color.activeAlarm), PorterDuff.Mode.SRC_ATOP)
+                    }
+                }
+            }
         }
         return true
     }

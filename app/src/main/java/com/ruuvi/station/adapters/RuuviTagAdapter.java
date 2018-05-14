@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,16 +73,13 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
         AppCompatImageView bell = convertView.findViewById(R.id.bell);
         int status = AlarmChecker.getStatus(tag);
-        if (status == -1) {
-            bell.setVisibility(View.INVISIBLE);
-        } else if (status == 0) {
+        bell.setVisibility(status == -1 ? View.INVISIBLE : View.VISIBLE);
+        if (status == 0) {
             bell.setImageResource(R.drawable.ic_notifications_off_24px);
             ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
-            bell.setVisibility(View.VISIBLE);
         } else if (status == 1) {
             bell.setImageResource(R.drawable.ic_notifications_active_24px);
             ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.activeAlarm)));
-            bell.setVisibility(View.VISIBLE);
         }
 
         temp.setText(tag.getTemperatureString(getContext()));
