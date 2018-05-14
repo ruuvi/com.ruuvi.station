@@ -1,5 +1,8 @@
 package com.ruuvi.station.feature;
 
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -8,13 +11,16 @@ import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -34,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagSettings extends AppCompatActivity {
+    private static final String TAG = "TagSettings";
     public static final String TAG_ID = "TAG_ID";
 
     private RuuviTag tag;
@@ -60,6 +67,22 @@ public class TagSettings extends AppCompatActivity {
         }
         tagAlarms = Alarm.getForTag(tagId);
 
+        ((TextView)findViewById(R.id.input_mac)).setText(tag.id);
+        findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Mac address", tag.id);
+                try {
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Log.d(TAG, "Could not copy mac to clipboard");
+                }
+                return false;
+            }
+        });
+
         ImageView tagImage = findViewById(R.id.tag_image);
         tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
         tagImage.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +105,7 @@ public class TagSettings extends AppCompatActivity {
         nameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
                 builder.setTitle(getString(R.string.tag_name));
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -103,14 +126,21 @@ public class TagSettings extends AppCompatActivity {
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
-                builder.show();
+                Dialog d = builder.create();
+                try {
+                    d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                } catch (Exception e) {
+                    Log.d(TAG, "Could not open keyboard");
+                }
+                d.show();
+                input.requestFocus();
             }
         });
 
         gatewayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TagSettings.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
                 builder.setTitle(getString(R.string.gateway_url));
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -131,7 +161,14 @@ public class TagSettings extends AppCompatActivity {
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
-                builder.show();
+                Dialog d = builder.create();
+                try {
+                    d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                } catch (Exception e) {
+                    Log.d(TAG, "Could not open keyboard");
+                }
+                d.show();
+                input.requestFocus();
             }
         });
 

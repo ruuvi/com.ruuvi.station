@@ -195,6 +195,51 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <android.support.constraint.ConstraintLayout
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/dashboard_layout"
+                app:layout_constraintRight_toLeftOf="@id/dashboard_switch"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/dashboard_title"
+                    android:text="@string/dashboard_pref"
+                    style="@style/PrefTitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:text="@string/dashboard_pref_sub"
+                    style="@style/PrefSecondaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/dashboard_switch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </android.support.constraint.ConstraintLayout>
+
+
     </LinearLayout>
 
 </FrameLayout>

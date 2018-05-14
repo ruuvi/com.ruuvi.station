@@ -2,10 +2,14 @@ package com.ruuvi.station.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.Utils;
 
 import java.util.List;
@@ -64,6 +70,17 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         String updatedAt = getContext().getResources().getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt);
 
         lastseen.setText(updatedAt);
+
+        AppCompatImageView bell = convertView.findViewById(R.id.bell);
+        int status = AlarmChecker.getStatus(tag);
+        bell.setVisibility(status == -1 ? View.INVISIBLE : View.VISIBLE);
+        if (status == 0) {
+            bell.setImageResource(R.drawable.ic_notifications_off_24px);
+            ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
+        } else if (status == 1) {
+            bell.setImageResource(R.drawable.ic_notifications_active_24px);
+            ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.activeAlarm)));
+        }
 
         temp.setText(tag.getTemperatureString(getContext()));
         humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.humidity));

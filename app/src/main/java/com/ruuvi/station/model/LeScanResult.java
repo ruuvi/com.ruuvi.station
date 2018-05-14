@@ -1,6 +1,7 @@
 package com.ruuvi.station.model;
 
 import android.bluetooth.BluetoothDevice;
+import android.util.Log;
 
 import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
 import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 
 public class LeScanResult {
+    private static final String TAG = "LeScanResult";
     public BluetoothDevice device;
     public int rssi;
     public byte[] scanData;
@@ -28,27 +30,31 @@ public class LeScanResult {
     public RuuviTag parse() {
         RuuviTag tag = null;
 
-        // Parse the payload of the advertisement packet
-        // as a list of AD structures.
-        List<ADStructure> structures =
-                ADPayloadParser.getInstance().parse(this.scanData);
+        try {
+            // Parse the payload of the advertisement packet
+            // as a list of AD structures.
+            List<ADStructure> structures =
+                    ADPayloadParser.getInstance().parse(this.scanData);
 
-        // For each AD structure contained in the advertisement packet.
-        for (ADStructure structure : structures) {
-            if (structure instanceof EddystoneURL) {
-                // Eddystone URL
-                EddystoneURL es = (EddystoneURL) structure;
-                if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                    tag = from(this.device.getAddress(), es.getURL().toString(), null, this.rssi);
+            // For each AD structure contained in the advertisement packet.
+            for (ADStructure structure : structures) {
+                if (structure instanceof EddystoneURL) {
+                    // Eddystone URL
+                    EddystoneURL es = (EddystoneURL) structure;
+                    if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
+                        tag = from(this.device.getAddress(), es.getURL().toString(), null, this.rssi);
+                    }
+                }
+                // If the AD structure represents Eddystone TLM.
+                else if (structure instanceof ADManufacturerSpecific) {
+                    ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
+                    if (es.getCompanyId() == 0x0499) {
+                        tag = from(this.device.getAddress(), null, this.scanData, this.rssi);
+                    }
                 }
             }
-            // If the AD structure represents Eddystone TLM.
-            else if (structure instanceof ADManufacturerSpecific) {
-                ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
-                if (es.getCompanyId() == 0x0499) {
-                    tag = from(this.device.getAddress(), null, this.scanData, this.rssi);
-                }
-            }
+        } catch (Exception e) {
+            Log.e(TAG, "Parsing ble data failed");
         }
 
         return tag;

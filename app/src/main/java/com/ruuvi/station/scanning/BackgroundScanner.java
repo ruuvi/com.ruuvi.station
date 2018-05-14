@@ -14,6 +14,8 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -138,6 +140,9 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
 
         Log.d(TAG, "Found " + scanEvent.tags.size() + " tags");
+
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        Ion.getDefault(context).configure().setGson(gson);
 
         ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
         for (int i = 0; i < scanEvent.tags.size(); i++) {
