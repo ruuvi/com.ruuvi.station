@@ -33,6 +33,53 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class AlarmChecker {
     private static final String TAG = "AlarmChecker";
 
+    // returns 1 for triggered alarm, 0 for non triggered alarm, -1 if tag has no alarm
+    public static int getStatus(RuuviTag tag) {
+        List<Alarm> alarms = Alarm.getForTag(tag.id);
+
+        int notificationTextResourceId = -9001;
+        for (Alarm alarm : alarms) {
+            switch (alarm.type) {
+                case Alarm.TEMPERATURE:
+                    if (tag.temperature < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_temperature_low;
+                    if (tag.temperature > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_temperature_high;
+                    break;
+                case Alarm.HUMIDITY:
+                    if (tag.humidity < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_humidity_low;
+                    if (tag.humidity > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_humidity_high;
+                    break;
+                case Alarm.PERSSURE:
+                    if (tag.pressure < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_pressure_low;
+                    if (tag.pressure > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_pressure_high;
+                    break;
+                case Alarm.RSSI:
+                    if (tag.rssi < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_rssi_low;
+                    if (tag.rssi > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_rssi_high;
+                    break;
+                case Alarm.MOVEMENT:
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
+                    if (readings.size() == 2) {
+                        if (hasTagMoved(readings.get(0), readings.get(1))) {
+                            notificationTextResourceId = R.string.alert_notification_movement;
+                        }
+                    }
+                    break;
+            }
+            if (notificationTextResourceId != -9001) {
+                return 1;
+            }
+        }
+        return alarms.size() > 0 ? 0 : -1;
+    }
+
     public static void check(RuuviTag tag, Context context) {
         List<Alarm> alarms = Alarm.getForTag(tag.id);
 

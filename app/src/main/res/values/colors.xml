@@ -15,4 +15,5 @@
     <color name="noTagsColor">#bbbbbb</color>
     <color name="divider">#dddddd</color>
     <color name="href">#6aeae1</color>
+    <color name="activeAlarm">#EF1111</color>
 </resources>
