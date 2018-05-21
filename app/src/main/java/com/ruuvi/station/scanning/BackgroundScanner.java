@@ -148,7 +148,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         for (int i = 0; i < scanEvent.tags.size(); i++) {
             RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
             // don't send data about tags not in the list
-            if (tagFromDb == null) continue;
+            if (tagFromDb == null || tagFromDb.favorite) continue;
 
             eventBatch.tags.add(tagFromDb);
 
