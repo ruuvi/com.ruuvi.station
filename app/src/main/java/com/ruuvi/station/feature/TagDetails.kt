@@ -417,8 +417,12 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
 
+        var todaysValues = getTodaysValues(tag)
+
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
+        tag_min.text = todaysValues[0].temperature.toString() + unitSpan + "   /"
+        tag_max.text = todaysValues[todaysValues.lastIndex].temperature.toString() + unitSpan
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag?.rssi)
@@ -436,5 +440,10 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
 
     override fun getCount(): Int {
         return tags.size
+    }
+
+    fun getTodaysValues(tag: RuuviTag): List<TagSensorReading> {
+        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> s.createdAt.day == Date().day }
+        return todaysReadings.sortedWith(compareBy({ it.temperature }))
     }
 }
