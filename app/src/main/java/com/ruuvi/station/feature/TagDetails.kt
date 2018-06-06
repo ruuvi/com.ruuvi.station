@@ -36,8 +36,10 @@ import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
+import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
+import java.util.*
 
 
 class TagDetails : AppCompatActivity() {
@@ -404,6 +406,8 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         if (rootView == null) return;
 
         val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
+        val tag_min = rootView.findViewById<TextView>(R.id.tag_min_value)
+        val tag_max = rootView.findViewById<TextView>(R.id.tag_max_value)
         val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)
         val tag_pressure = rootView.findViewById<TextView>(R.id.tag_pressure)
         val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
