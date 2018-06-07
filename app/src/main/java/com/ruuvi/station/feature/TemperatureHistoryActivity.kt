@@ -71,8 +71,8 @@ class TemperatureHistoryActivity : AppCompatActivity() {
 
     fun getOneDayValues(tag: RuuviTag, date: Date): List<TagSensorReading> {
         val sdf = SimpleDateFormat("dd.MM.yyyy")
-        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> sdf.format(s.createdAt) == sdf.format(date) }
-        return todaysReadings.sortedWith(compareBy({ it.temperature }))
+        val dateReadings = TagSensorReading.getForTag(tag?.id).filter { s -> sdf.format(s.createdAt) == sdf.format(date) }
+        return dateReadings.sortedWith(compareBy({ it.temperature }))
     }
 
     override fun onSupportNavigateUp(): Boolean {
