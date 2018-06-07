@@ -38,6 +38,7 @@ import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_tag_details.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -438,7 +439,8 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
     }
 
     fun getTodaysValues(tag: RuuviTag): List<TagSensorReading> {
-        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> s.createdAt.day == Date().day }
+        val sdf = SimpleDateFormat("dd.MM.yyyy")
+        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> sdf.format(s.createdAt) == sdf.format(Date()) }
         return todaysReadings.sortedWith(compareBy({ it.temperature }))
     }
 

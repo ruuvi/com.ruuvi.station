@@ -13,6 +13,7 @@ import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_temperature_history.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class TemperatureHistoryActivity : AppCompatActivity() {
@@ -69,7 +70,8 @@ class TemperatureHistoryActivity : AppCompatActivity() {
     }
 
     fun getOneDayValues(tag: RuuviTag, date: Date): List<TagSensorReading> {
-        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> s.createdAt.day == date.day }
+        val sdf = SimpleDateFormat("dd.MM.yyyy")
+        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> sdf.format(s.createdAt) == sdf.format(date) }
         return todaysReadings.sortedWith(compareBy({ it.temperature }))
     }
 
