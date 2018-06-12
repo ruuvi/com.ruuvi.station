@@ -69,7 +69,7 @@ class TemperatureHistoryActivity : AppCompatActivity() {
             historyItemList.add(HistoryItem(createdAt, min, max, unit))
         }
 
-        historyListView.adapter = TempHistoryAdapter(this, historyItemList.reversed())
+        historyListView.adapter = TempHistoryAdapter(this, historyItemList)
     }
 
     override fun onSupportNavigateUp(): Boolean {

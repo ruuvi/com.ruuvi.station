@@ -99,7 +99,7 @@ public class TagSensorReading extends BaseModel {
     }
 
     public static FlowCursor getTempHistory(String id) {
-        final String mQuery = "select strftime('%d.%m.%Y', createdAt / 1000, 'unixepoch') as createdAt, ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch')";
+        final String mQuery = "select strftime('%d.%m.%Y', createdAt / 1000, 'unixepoch') as createdAt, ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch') order by createdAt desc limit 30";
 
         return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, (String[]) null);
     }

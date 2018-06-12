@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/oswald_bold"
-                android:text="Temperatures"
+                android:text="@string/last_30_days"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="30sp"
