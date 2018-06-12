@@ -424,13 +424,23 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
 
-        var minTempToday = TagSensorReading.getMinForTag(tag?.id, Date())
-        var maxTempToday = TagSensorReading.getMaxForTag(tag?.id, Date())
+        var cursor = TagSensorReading.getMinAndMaxForTag(tag?.id, Date())
+
+        while (cursor.moveToNext()) {
+            var index: Int
+
+            index = cursor.getColumnIndexOrThrow("min")
+            val min = cursor.getString(index)
+
+            index = cursor.getColumnIndexOrThrow("max")
+            val max = cursor.getString(index)
+
+            tag_min.text = min + unitSpan
+            tag_max.text = max + unitSpan
+        }
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_min.text = minTempToday.temperature.toString() + unitSpan
-        tag_max.text = maxTempToday.temperature.toString() + unitSpan
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag?.rssi)

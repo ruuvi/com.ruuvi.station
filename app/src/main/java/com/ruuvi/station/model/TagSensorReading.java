@@ -10,6 +10,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.ruuvi.station.database.LocalDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -90,24 +91,11 @@ public class TagSensorReading extends BaseModel {
                 .queryList();
     }
 
-    public static TagSensorReading getMinForTag(String id, Date date) {
-        date.setHours(00);
-        date.setMinutes(00);
-        return SQLite.select(TagSensorReading_Table.id, TagSensorReading_Table.ruuviTagId, TagSensorReading_Table.createdAt, Method.min(TagSensorReading_Table.temperature).as("temperature"))
-                .from(TagSensorReading.class)
-                .where(TagSensorReading_Table.ruuviTagId.eq(id))
-                .and(TagSensorReading_Table.createdAt.greaterThan(date))
-                .querySingle();
-    }
+    public static FlowCursor getMinAndMaxForTag(String id, Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
-    public static TagSensorReading getMaxForTag(String id, Date date) {
-        date.setHours(00);
-        date.setMinutes(00);
-        return SQLite.select(TagSensorReading_Table.id, TagSensorReading_Table.ruuviTagId, TagSensorReading_Table.createdAt, Method.max(TagSensorReading_Table.temperature).as("temperature"))
-                .from(TagSensorReading.class)
-                .where(TagSensorReading_Table.ruuviTagId.eq(id))
-                .and(TagSensorReading_Table.createdAt.greaterThan(date))
-                .querySingle();
+        final String mQuery = "select ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading where ruuviTagId = ? and createdAt >= ? group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch')";
+        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, new String[]{id, sdf.format(date)});
     }
 
     public static FlowCursor getTempHistory(String id) {

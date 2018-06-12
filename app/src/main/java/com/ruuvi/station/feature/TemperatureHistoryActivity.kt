@@ -61,10 +61,10 @@ class TemperatureHistoryActivity : AppCompatActivity() {
             val createdAt = cursor.getString(index)
 
             index = cursor.getColumnIndexOrThrow("min")
-            val min = cursor.getString(index).toString()
+            val min = cursor.getString(index)
 
             index = cursor.getColumnIndexOrThrow("max")
-            val max = cursor.getLong(index).toString()
+            val max = cursor.getString(index)
 
             historyItemList.add(HistoryItem(createdAt, min, max, unit))
         }
