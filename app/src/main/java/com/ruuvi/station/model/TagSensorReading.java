@@ -3,8 +3,11 @@ package com.ruuvi.station.model;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Date;
@@ -85,5 +88,31 @@ public class TagSensorReading extends BaseModel {
                 .orderBy(TagSensorReading_Table.id, false)
                 .limit(limit)
                 .queryList();
+    }
+
+    public static TagSensorReading getMinForTag(String id, Date date) {
+        date.setHours(00);
+        date.setMinutes(00);
+        return SQLite.select(TagSensorReading_Table.id, TagSensorReading_Table.ruuviTagId, TagSensorReading_Table.createdAt, Method.min(TagSensorReading_Table.temperature).as("temperature"))
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.ruuviTagId.eq(id))
+                .and(TagSensorReading_Table.createdAt.greaterThan(date))
+                .querySingle();
+    }
+
+    public static TagSensorReading getMaxForTag(String id, Date date) {
+        date.setHours(00);
+        date.setMinutes(00);
+        return SQLite.select(TagSensorReading_Table.id, TagSensorReading_Table.ruuviTagId, TagSensorReading_Table.createdAt, Method.max(TagSensorReading_Table.temperature).as("temperature"))
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.ruuviTagId.eq(id))
+                .and(TagSensorReading_Table.createdAt.greaterThan(date))
+                .querySingle();
+    }
+
+    public static FlowCursor getTempHistory(String id) {
+        final String mQuery = "select strftime('%d.%m.%Y', createdAt / 1000, 'unixepoch') as createdAt, ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch')";
+
+        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, (String[]) null);
     }
 }

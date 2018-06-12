@@ -37,15 +37,11 @@ public class TempHistoryAdapter extends ArrayAdapter<HistoryItem> {
         TextView min = convertView.findViewById(R.id.min);
         TextView max = convertView.findViewById(R.id.max);
 
-        date.setText(tag.date.toString());
-
         convertView.findViewById(R.id.row_temp_root).setTag(tag);
 
-        SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy");
-
-        date.setText(formatDate.format(tag.date));
-        min.setText(Double.toString(tag.minTemp) + tag.unit);
-        max.setText(Double.toString(tag.maxTemp) + tag.unit);
+        date.setText(tag.date);
+        min.setText(tag.minTemp + tag.unit);
+        max.setText(tag.maxTemp + tag.unit);
 
         return convertView;
     }

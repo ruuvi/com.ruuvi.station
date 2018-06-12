@@ -3,15 +3,15 @@ package com.ruuvi.station.model;
 import java.util.Date;
 
 public class HistoryItem {
-    public Date date;
-    public double minTemp;
-    public double maxTemp;
+    public String date;
+    public String minTemp;
+    public String maxTemp;
     public String unit;
 
     public HistoryItem() {
     }
 
-    public HistoryItem(Date date, double minTemp, double maxTemp, String unit) {
+    public HistoryItem(String date, String minTemp, String maxTemp, String unit) {
         this.date = date;
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;

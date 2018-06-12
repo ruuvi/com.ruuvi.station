@@ -38,7 +38,6 @@ import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_tag_details.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -425,23 +424,18 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
 
-        var todaysValues = getTodaysValues(tag)
+        var minTempToday = TagSensorReading.getMinForTag(tag?.id, Date())
+        var maxTempToday = TagSensorReading.getMaxForTag(tag?.id, Date())
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_min.text = if (todaysValues.size != 0) todaysValues[0].temperature.toString() + unitSpan + "   /" else temperature + unitSpan
-        tag_max.text = if (todaysValues.size != 0) todaysValues[todaysValues.lastIndex].temperature.toString() + unitSpan else temperature + unitSpan
+        tag_min.text = minTempToday.temperature.toString() + unitSpan
+        tag_max.text = maxTempToday.temperature.toString() + unitSpan
         tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag?.rssi)
         var updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
         tag_updated.text = updatedAt
-    }
-
-    fun getTodaysValues(tag: RuuviTag): List<TagSensorReading> {
-        val sdf = SimpleDateFormat("dd.MM.yyyy")
-        val todaysReadings = TagSensorReading.getForTag(tag?.id).filter { s -> sdf.format(s.createdAt) == sdf.format(Date()) }
-        return todaysReadings.sortedWith(compareBy({ it.temperature }))
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
