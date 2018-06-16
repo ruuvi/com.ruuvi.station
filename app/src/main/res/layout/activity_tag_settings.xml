@@ -55,14 +55,14 @@
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/tag_image_select_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="52dp"
                     android:alpha="0.7"
                     android:scaleType="fitCenter"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/tag_image_camera_button"
                     app:layout_constraintTop_toTopOf="@id/tag_image"
-                    app:srcCompat="@android:drawable/ic_media_next" />
+                    app:srcCompat="@drawable/icon_bg_refresh" />
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/tag_image_camera_button"
@@ -72,8 +72,8 @@
                     android:alpha="0.7"
                     android:scaleType="fitCenter"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tag_image"
                     app:layout_constraintLeft_toRightOf="@id/tag_image_select_button"
+                    app:layout_constraintTop_toTopOf="@id/tag_image"
                     app:srcCompat="@drawable/icon_bg_camera_01" />
 
                 <TextView
