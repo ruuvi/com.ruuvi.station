@@ -257,4 +257,6 @@
     <string name="mac">Mac</string>
     <string name="dashboard_pref">Dashboard</string>
     <string name="dashboard_pref_sub">Enabled dashboard view (requires restart)</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 </resources>

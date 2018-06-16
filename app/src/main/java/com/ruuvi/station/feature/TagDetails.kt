@@ -6,9 +6,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -29,7 +30,6 @@ import android.support.v4.view.ViewPager
 import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.ImageViewCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
@@ -37,7 +37,6 @@ import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
 import com.ruuvi.station.util.*
-import kotlinx.android.synthetic.main.navigation_drawer.*
 
 
 class TagDetails : AppCompatActivity() {
@@ -74,6 +73,7 @@ class TagDetails : AppCompatActivity() {
             startActivity(addIntent)
         }
 
+        var currentBitmap: Bitmap? = null
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
         //tag_pager.pageMargin = - (size.x / 2)
@@ -82,9 +82,9 @@ class TagDetails : AppCompatActivity() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                tag = tags!!.get(position)
-                Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
-                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable,background))
+                tag = tags[position]
+                Utils.getBackground(applicationContext, tag!!).let { bitmap ->
+                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, BitmapDrawable(applicationContext.resources, bitmap)))
                     tag_background_view.setImageDrawable(transitionDrawable)
                     transitionDrawable.startTransition(500)
                 }
@@ -120,16 +120,8 @@ class TagDetails : AppCompatActivity() {
             Log.e(TAG, "Failed to set pager font")
         }
 
-        if (tag != null) {
-            Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
-                tag_background_view.setImageDrawable(background)
-            }
-        }
-
         handler = Handler()
-
         starter = Starter(this)
-
         starter.getThingsStarted()
     }
 
@@ -238,8 +230,8 @@ class TagDetails : AppCompatActivity() {
         (tag_pager.adapter as TagPager).tags = tags!!
         tag_pager.adapter?.notifyDataSetChanged()
         if (tags.isNotEmpty()) {
-            Utils.getDefaultBackground(tags.get(tag_pager.currentItem).defaultBackground, applicationContext).let { background ->
-                tag_background_view.setImageDrawable(background)
+            Utils.getBackground(applicationContext, tags.get(tag_pager.currentItem)).let { bitmap ->
+                tag_background_view.setImageBitmap(bitmap)
             }
         }
 
@@ -400,8 +392,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         }
         if (pos == -1) return
 
-        val rootView = view.findViewWithTag<View>(VIEW_TAG + pos)
-        if (rootView == null) return;
+        val rootView = view.findViewWithTag<View>(VIEW_TAG + pos) ?: return
 
         val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
         val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)

@@ -2,15 +2,23 @@ package com.ruuvi.station.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.media.ExifInterface;
+import android.util.Log;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.RuuviTag;
 
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
@@ -23,6 +31,7 @@ import java.util.List;
  */
 
 public class Utils {
+    private static final String TAG = "Utils";
     public static final java.lang.String DB_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 
     public static boolean tryParse(String value) {
@@ -78,28 +87,44 @@ public class Utils {
         return output;
     }
 
+    public static Bitmap getBackground(Context context, RuuviTag tag) {
+        try {
+            Uri uri = Uri.parse(tag.userBackground);
+            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        } catch (Exception e) {
+            Log.e(TAG, "Could not set user background");
+        }
+
+        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.defaultBackground));
+    }
+
+
     public static Drawable getDefaultBackground(int number, Context context) {
+        return context.getResources().getDrawable(getDefaultBackground(number));
+    }
+
+    private static int getDefaultBackground(int number) {
         switch (number) {
             case 0:
-                return context.getResources().getDrawable(R.drawable.bg1);
+                return R.drawable.bg1;
             case 1:
-                return context.getResources().getDrawable(R.drawable.bg2);
+                return R.drawable.bg2;
             case 2:
-                return context.getResources().getDrawable(R.drawable.bg3);
+                return R.drawable.bg3;
             case 3:
-                return context.getResources().getDrawable(R.drawable.bg4);
+                return R.drawable.bg4;
             case 4:
-                return context.getResources().getDrawable(R.drawable.bg5);
+                return R.drawable.bg5;
             case 5:
-                return context.getResources().getDrawable(R.drawable.bg6);
+                return R.drawable.bg6;
             case 6:
-                return context.getResources().getDrawable(R.drawable.bg7);
+                return R.drawable.bg7;
             case 7:
-                return context.getResources().getDrawable(R.drawable.bg8);
+                return R.drawable.bg8;
             case 8:
-                return context.getResources().getDrawable(R.drawable.bg9);
+                return R.drawable.bg9;
             default:
-                return context.getResources().getDrawable(R.drawable.bg1);
+                return R.drawable.bg1;
         }
     }
 

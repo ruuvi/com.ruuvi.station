@@ -7,8 +7,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 10054
-        versionName "0.9.3-beta"
+        versionCode 10056
+        versionName "0.9.4-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -47,6 +47,8 @@ dependencies {
     implementation "com.android.support:support-vector-drawable:${support_version}"
     implementation "com.android.support:cardview-v7:${support_version}"
     implementation "com.android.support:gridlayout-v7:${support_version}"
+    implementation "com.android.support:exifinterface:${support_version}"
+
 
     implementation 'com.koushikdutta.ion:ion:2.2.1'
     implementation "com.androidplot:androidplot-core:1.5.0"
