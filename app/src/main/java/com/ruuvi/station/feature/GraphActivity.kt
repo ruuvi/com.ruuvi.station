@@ -1,35 +1,30 @@
 package com.ruuvi.station.feature
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
-import kotlinx.android.synthetic.main.activity_graph.*
-import javax.xml.datatype.DatatypeConstants.HOURS
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.Utils
+import kotlinx.android.synthetic.main.activity_graph.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class GraphActivity : AppCompatActivity() {

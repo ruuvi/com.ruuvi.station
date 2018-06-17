@@ -40,11 +40,11 @@
 
         <activity
             android:name=".feature.TagDetails"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.WelcomeActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <meta-data
@@ -53,6 +53,10 @@
 
         <activity
             android:name=".feature.GraphActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name=".feature.TemperatureHistoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
@@ -75,7 +79,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".feature.DashboardActivity"
+        <activity
+            android:name=".feature.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     </application>
 
