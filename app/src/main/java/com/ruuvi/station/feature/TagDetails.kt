@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.drawable.TransitionDrawable
@@ -19,25 +18,27 @@ import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
-import com.ruuvi.station.R
-import com.ruuvi.station.model.RuuviTag
-
-import kotlinx.android.synthetic.main.activity_tag_details.*
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.ImageViewCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.widget.*
-import kotlinx.android.synthetic.main.content_tag_details.*
+import android.support.v7.app.AppCompatActivity
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.ruuvi.station.util.*
-import kotlinx.android.synthetic.main.navigation_drawer.*
+import android.view.*
+import android.widget.*
+import com.ruuvi.station.R
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.TagSensorReading
+import com.ruuvi.station.util.AlarmChecker
+import com.ruuvi.station.util.PreferenceKeys
+import com.ruuvi.station.util.Starter
+import com.ruuvi.station.util.Utils
+import kotlinx.android.synthetic.main.activity_tag_details.*
+import kotlinx.android.synthetic.main.content_tag_details.*
+import java.util.*
 
 
 class TagDetails : AppCompatActivity() {
@@ -84,7 +85,7 @@ class TagDetails : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 tag = tags!!.get(position)
                 Utils.getDefaultBackground(tag!!.defaultBackground, applicationContext).let { background ->
-                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable,background))
+                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, background))
                     tag_background_view.setImageDrawable(transitionDrawable)
                     transitionDrawable.startTransition(500)
                 }
@@ -110,7 +111,7 @@ class TagDetails : AppCompatActivity() {
         }
 
         try {
-            for (i in 0..(pager_title_strip.childCount-1)) {
+            for (i in 0..(pager_title_strip.childCount - 1)) {
                 val child = pager_title_strip.getChildAt(i)
                 if (child is TextView) {
                     child.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat_bold)
@@ -172,7 +173,6 @@ class TagDetails : AppCompatActivity() {
             }
         }
     }
-
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -245,7 +245,7 @@ class TagDetails : AppCompatActivity() {
 
         if (starter.getNeededPermissions().isEmpty()) {
             refrshTagLists()
-            handler.post(object: Runnable {
+            handler.post(object : Runnable {
                 override fun run() {
                     updateUI()
                     handler.postDelayed(this, 1000)
@@ -317,11 +317,16 @@ class TagDetails : AppCompatActivity() {
                     this.startActivity(intent)
                 }
                 1 -> {
+                    val intent = Intent(this, TemperatureHistoryActivity::class.java)
+                    intent.putExtra(TemperatureHistoryActivity.TAGID, tag?.id)
+                    this.startActivity(intent)
+                }
+                2 -> {
                     val intent = Intent(this, TagSettings::class.java)
                     intent.putExtra(TagSettings.TAG_ID, tag?.id)
                     this.startActivity(intent)
                 }
-                2 -> {
+                3 -> {
                     delete()
                 }
             }
@@ -358,14 +363,14 @@ class TagDetails : AppCompatActivity() {
                 if (status == 0) {
                     item.setIcon(R.drawable.ic_notifications_off_24px)
                     val drawable = item.icon
-                    if(drawable != null) {
+                    if (drawable != null) {
                         drawable.mutate()
                         drawable.setColorFilter(resources.getColor(R.color.white), PorterDuff.Mode.SRC_ATOP)
                     }
                 } else if (status == 1) {
                     item.setIcon(R.drawable.ic_notifications_active_24px)
                     val drawable = item.icon
-                    if(drawable != null) {
+                    if (drawable != null) {
                         drawable.mutate()
                         drawable.setColorFilter(resources.getColor(R.color.activeAlarm), PorterDuff.Mode.SRC_ATOP)
                     }
@@ -404,6 +409,8 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         if (rootView == null) return;
 
         val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
+        val tag_min = rootView.findViewById<TextView>(R.id.tag_min_value)
+        val tag_max = rootView.findViewById<TextView>(R.id.tag_max_value)
         val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)
         val tag_pressure = rootView.findViewById<TextView>(R.id.tag_pressure)
         val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
@@ -416,6 +423,21 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
 
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
+
+        var cursor = TagSensorReading.getMinAndMaxForTag(tag?.id, Date())
+
+        while (cursor.moveToNext()) {
+            var index: Int
+
+            index = cursor.getColumnIndexOrThrow("min")
+            val min = cursor.getString(index)
+
+            index = cursor.getColumnIndexOrThrow("max")
+            val max = cursor.getString(index)
+
+            tag_min.text = min + unitSpan
+            tag_max.text = max + unitSpan
+        }
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
