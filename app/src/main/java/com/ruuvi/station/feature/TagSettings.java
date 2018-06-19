@@ -530,11 +530,12 @@ public class TagSettings extends AppCompatActivity {
         try {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int height = displayMetrics.heightPixels;
-            if (height > 1440) height = 1440;
+            int targetHeight = 1440;
+            int targetWidth = 960;
             Bitmap b = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
-            Bitmap out = Bitmap.createScaledBitmap(b, height, (int)(((float)height / (float)b.getWidth()) * b.getHeight()), false);
-            out = rotate(out, rotation);
+            b = rotate(b, rotation);
+            Bitmap out = Bitmap.createScaledBitmap(b,  (int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()), targetHeight, false);
+            out = Bitmap.createBitmap(out, (out.getWidth() / 2) - (targetWidth / 2), 0, targetWidth, targetHeight);
             File file = new File(mCurrentPhotoPath);
             FileOutputStream fOut = new FileOutputStream(file);
             out.compress(Bitmap.CompressFormat.JPEG, 60, fOut);

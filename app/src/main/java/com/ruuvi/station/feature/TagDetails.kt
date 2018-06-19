@@ -52,6 +52,9 @@ class TagDetails : AppCompatActivity() {
     var openAddView = false
     lateinit var starter: Starter
 
+    val backgrounds = HashMap<String, BitmapDrawable>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,20 +76,19 @@ class TagDetails : AppCompatActivity() {
             startActivity(addIntent)
         }
 
-        var currentBitmap: Bitmap? = null
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
-        //tag_pager.pageMargin = - (size.x / 2)
         tag_pager.setOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
                 tag = tags[position]
-                Utils.getBackground(applicationContext, tag!!).let { bitmap ->
-                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, BitmapDrawable(applicationContext.resources, bitmap)))
+                backgrounds[tag!!.id].let { bitmap ->
+                    if (bitmap == null) return
+                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, bitmap))
                     tag_background_view.setImageDrawable(transitionDrawable)
-                    transitionDrawable.startTransition(500)
+                    transitionDrawable.startTransition(200)
                 }
             }
         })
@@ -227,11 +229,17 @@ class TagDetails : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         tags = RuuviTag.getAll(true)
-        (tag_pager.adapter as TagPager).tags = tags!!
+
+        for (tag in tags) {
+            Utils.getBackground(applicationContext, tag).let { bitmap ->
+                backgrounds.put(tag.id, BitmapDrawable(applicationContext.resources, bitmap))
+            }
+        }
+        (tag_pager.adapter as TagPager).tags = tags
         tag_pager.adapter?.notifyDataSetChanged()
         if (tags.isNotEmpty()) {
-            Utils.getBackground(applicationContext, tags.get(tag_pager.currentItem)).let { bitmap ->
-                tag_background_view.setImageBitmap(bitmap)
+            backgrounds[tags.get(tag_pager.currentItem).id].let { bitmap ->
+                tag_background_view.setImageDrawable(bitmap)
             }
         }
 
@@ -293,7 +301,7 @@ class TagDetails : AppCompatActivity() {
 
     private fun showOptionsMenu() {
         val sheetDialog = BottomSheetDialog(this)
-        var listView = ListView(this)
+        val listView = ListView(this)
         val menu: List<String> = this.resources.getStringArray(R.array.station_tag_menu).toList()
 
         listView.adapter = ArrayAdapter<String>(this,
