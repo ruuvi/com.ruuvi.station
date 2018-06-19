@@ -6,6 +6,7 @@ import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,7 +98,8 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_backend", p0.toString()).apply()
                 }
             })
-            settings_info.text = getString(R.string.settings_gateway_details)
+            //settings_info.text = getString(R.string.settings_gateway_details)
+            settings_info.movementMethod = LinkMovementMethod.getInstance()
             device_identifier_layout.visibility = View.VISIBLE
             device_identifier_input.setText(pref.getString("pref_device_id", ""))
             device_identifier_input.addTextChangedListener(object : TextWatcher {
