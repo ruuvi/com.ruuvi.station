@@ -4,7 +4,6 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
@@ -91,16 +90,20 @@ public class TagSensorReading extends BaseModel {
                 .queryList();
     }
 
-    public static FlowCursor getMinAndMaxForTag(String id, Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    public static FlowCursor getMinAndMaxForTag(String id) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Date d = new Date();
+        d.setHours(00);
+        d.setMinutes(00);
+        Long today = d.getTime();
 
         final String mQuery = "select ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading where ruuviTagId = ? and createdAt >= ? group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch')";
-        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, new String[]{id, sdf.format(date)});
+        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, new String[]{id, today.toString()});
     }
 
     public static FlowCursor getTempHistory(String id) {
-        final String mQuery = "select strftime('%d.%m.%Y', createdAt / 1000, 'unixepoch') as createdAt, ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch') order by createdAt desc limit 30";
+        final String mQuery = "select strftime('%d.%m.%Y', createdAt / 1000, 'unixepoch') as createdAt, ruuviTagId, min(temperature) as min, max(temperature) as max from TagSensorReading where ruuviTagId = ? group by strftime('%d-%m-%Y', createdAt / 1000, 'unixepoch') order by createdAt desc limit 30";
 
-        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, (String[]) null);
+        return FlowManager.getDatabaseForTable(TagSensorReading.class).getWritableDatabase().rawQuery(mQuery, new String[]{id});
     }
 }

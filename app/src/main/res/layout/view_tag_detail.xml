@@ -52,7 +52,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:fontFamily="@font/montserrat"
-            android:text="@string/today_min_value"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="normal" />
@@ -64,7 +63,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:fontFamily="@font/montserrat"
-            android:text="@string/today_max_value"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
