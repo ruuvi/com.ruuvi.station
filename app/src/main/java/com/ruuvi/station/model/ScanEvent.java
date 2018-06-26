@@ -16,9 +16,9 @@ public class ScanEvent {
     public String deviceId;
     public ArrayList<RuuviTag> tags;
     public String eventId;
+    public ScanLocation location;
 
-    public ScanEvent(String deviceId,Date time)
-    {
+    public ScanEvent(String deviceId,Date time) {
         this.time = time;
         this.deviceId = deviceId;
         eventId = UUID.randomUUID().toString();
