@@ -37,6 +37,7 @@ import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
 import com.ruuvi.station.util.*
+import java.util.*
 
 
 class TagDetails : AppCompatActivity() {
@@ -44,7 +45,9 @@ class TagDetails : AppCompatActivity() {
     private val REQUEST_ENABLE_BT = 1337
     private val FROM_WELCOME = 1447
     private val COARSE_LOCATION_PERMISSION = 1
+    private val BACKGROUND_FADE_DURATION = 200
 
+    var backgroundFadeStarted: Long = 0
     var tag: RuuviTag? = null
     lateinit var tags: MutableList<RuuviTag>
 
@@ -88,7 +91,8 @@ class TagDetails : AppCompatActivity() {
                     if (bitmap == null) return
                     val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, bitmap))
                     tag_background_view.setImageDrawable(transitionDrawable)
-                    transitionDrawable.startTransition(200)
+                    transitionDrawable.startTransition(BACKGROUND_FADE_DURATION)
+                    backgroundFadeStarted = Date().time
                 }
             }
         })
@@ -166,8 +170,6 @@ class TagDetails : AppCompatActivity() {
             }
         }
     }
-
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
@@ -277,6 +279,12 @@ class TagDetails : AppCompatActivity() {
     }
 
     fun updateUI() {
+        val now = Date().time
+        if (backgroundFadeStarted + BACKGROUND_FADE_DURATION > now) {
+            // do not update ui while the background is animating
+            // maybe this would not be needed if the db call below was async
+            return
+        }
         tags = RuuviTag.getAll(true)
         for (mTag in tags) {
             (tag_pager.adapter as TagPager).updateView(mTag)
