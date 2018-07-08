@@ -3,6 +3,7 @@ package com.ruuvi.station.feature;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -472,7 +474,12 @@ public class TagSettings extends AppCompatActivity {
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == RESULT_OK) {
             try {
-                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+                Uri path = data.getData();
+                if (!isImage(path)) {
+                    Toast.makeText(this, "File type not supported", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(path);
                 File photoFile = null;
                 try {
                     photoFile = createImageFile();
@@ -509,6 +516,17 @@ public class TagSettings extends AppCompatActivity {
                 // ... O.o
             }
         }
+    }
+
+    private boolean isImage(Uri uri) {
+        String mime = getMimeType(uri);
+        return mime.equals("jpeg") || mime.equals("jpg") || mime.equals("png");
+    }
+
+    private String getMimeType(Uri uri) {
+        ContentResolver cR = getApplicationContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
     public static Bitmap rotate(Bitmap bitmap, float degrees) {
