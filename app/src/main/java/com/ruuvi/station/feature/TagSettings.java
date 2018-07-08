@@ -3,6 +3,7 @@ package com.ruuvi.station.feature;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -66,6 +68,7 @@ public class TagSettings extends AppCompatActivity {
     private boolean somethinghaschanged = false;
     private Uri file;
     AppCompatImageView tagImage;
+    String tempUnit = "C";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,8 @@ public class TagSettings extends AppCompatActivity {
             return;
         }
         tagAlarms = Alarm.getForTag(tagId);
+
+        tempUnit = RuuviTag.getTemperatureUnit(this);
 
         ((TextView)findViewById(R.id.input_mac)).setText(tag.id);
         findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
@@ -305,7 +310,13 @@ public class TagSettings extends AppCompatActivity {
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
-                    this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                    if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
+                        this.subtitle = String.format(getString(R.string.alert_subtitle_on),
+                                (int)Utils.celciusToFahrenheit(this.low),
+                                (int)Utils.celciusToFahrenheit(this.high));
+                    } else {
+                        this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                    }
                 }
             } else {
                 seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
@@ -317,8 +328,13 @@ public class TagSettings extends AppCompatActivity {
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
             ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
-            ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
-            ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+            if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
+                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celciusToFahrenheit(this.low) + "");
+                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celciusToFahrenheit(this.high) + "");
+            } else {
+                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+            }
         }
     }
 
@@ -458,7 +474,12 @@ public class TagSettings extends AppCompatActivity {
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == RESULT_OK) {
             try {
-                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+                Uri path = data.getData();
+                if (!isImage(path)) {
+                    Toast.makeText(this, "File type not supported", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(path);
                 File photoFile = null;
                 try {
                     photoFile = createImageFile();
@@ -495,6 +516,17 @@ public class TagSettings extends AppCompatActivity {
                 // ... O.o
             }
         }
+    }
+
+    private boolean isImage(Uri uri) {
+        String mime = getMimeType(uri);
+        return mime.equals("jpeg") || mime.equals("jpg") || mime.equals("png");
+    }
+
+    private String getMimeType(Uri uri) {
+        ContentResolver cR = getApplicationContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
     public static Bitmap rotate(Bitmap bitmap, float degrees) {
@@ -534,8 +566,15 @@ public class TagSettings extends AppCompatActivity {
             int targetWidth = 960;
             Bitmap b = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
             b = rotate(b, rotation);
-            Bitmap out = Bitmap.createScaledBitmap(b,  (int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()), targetHeight, false);
-            out = Bitmap.createBitmap(out, (out.getWidth() / 2) - (targetWidth / 2), 0, targetWidth, targetHeight);
+            Bitmap out;
+            if ((int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()) > targetWidth) {
+                out = Bitmap.createScaledBitmap(b,  (int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()), targetHeight, false);
+            } else {
+                out = Bitmap.createScaledBitmap(b, targetWidth, (int)(((float)targetWidth / (float)b.getWidth()) * b.getHeight()), false);
+            }
+            int x = (out.getWidth() / 2) - (targetWidth / 2);
+            if (x < 0) x = 0;
+            out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight);
             File file = new File(mCurrentPhotoPath);
             FileOutputStream fOut = new FileOutputStream(file);
             out.compress(Bitmap.CompressFormat.JPEG, 60, fOut);

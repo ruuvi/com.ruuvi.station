@@ -18,6 +18,7 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
@@ -28,6 +29,7 @@
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.TagSettings"
+            android:configChanges="orientation|screenSize"
             android:label="Tag Settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
