@@ -195,7 +195,7 @@
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes..\n
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes.\n
         \nThe application is currently in beta testing stage and may still have unknown issues. Our team is determined to iron out all the kinks, and make sure the app works perfectly.\n
         \nIf you notice any problems or have any comments about the functionality, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>. We’re grateful for your help!
         \n
