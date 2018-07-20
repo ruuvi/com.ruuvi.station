@@ -2,17 +2,26 @@ package com.ruuvi.station.feature
 
 import android.os.Bundle
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import com.google.gson.JsonObject
+import com.koushikdutta.async.future.FutureCallback
+import com.koushikdutta.ion.Ion
+import com.koushikdutta.ion.Response
 
 import com.ruuvi.station.R
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.ScanEvent
+import com.ruuvi.station.model.ScanEventSingle
 import com.ruuvi.station.util.DeviceIdentifier
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
@@ -112,6 +121,29 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_device_id", p0.toString()).apply()
                 }
             })
+            gateway_tester_layout.visibility = View.VISIBLE
+            gateway_test_button.setOnClickListener { _ ->
+                gateway_test_result.text = "Testing.."
+                gateway_test_result.setTextColor(Color.DKGRAY)
+                val scanEvent = ScanEvent(context, DeviceIdentifier.id(context))
+                Ion.with(context)
+                        .load(input_setting.text.toString())
+                        .setJsonPojoBody(scanEvent)
+                        .asJsonObject()
+                        .withResponse()
+                        .setCallback({ e, result ->
+                            if (e != null) {
+                                gateway_test_result.setTextColor(Color.RED)
+                                gateway_test_result.text = "Nope, did not work. Is the URL correct?"
+                            } else if (result.headers.code() != 200) {
+                                gateway_test_result.setTextColor(Color.RED)
+                                gateway_test_result.text = "Nope, did not work. Response code: " + result.headers.code()
+                            } else {
+                                gateway_test_result.setTextColor(Color.GREEN)
+                                gateway_test_result.text = "Gateway works! Response code: " + result.headers.code()
+                            }
+                        })
+            }
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
