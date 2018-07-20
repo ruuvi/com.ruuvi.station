@@ -1,12 +1,15 @@
 package com.ruuvi.station.feature
 
 import android.Manifest
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
@@ -376,6 +379,18 @@ class TagDetails : AppCompatActivity() {
                     if(drawable != null) {
                         drawable.mutate()
                         drawable.setColorFilter(resources.getColor(R.color.activeAlarm), PorterDuff.Mode.SRC_ATOP)
+                        try {
+                            val anim = ValueAnimator()
+                            anim.setIntValues(Color.WHITE, Color.RED)
+                            anim.setEvaluator(ArgbEvaluator());
+                            anim.addUpdateListener {
+                                drawable.setColorFilter(it.animatedValue as Int, PorterDuff.Mode.SRC_ATOP)
+                            }
+                            anim.duration = 300
+                            anim.start()
+                        } catch (e: Exception) {
+
+                        }
                     }
                 }
             }
