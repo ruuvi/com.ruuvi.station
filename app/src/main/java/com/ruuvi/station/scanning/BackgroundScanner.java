@@ -218,7 +218,8 @@ public class BackgroundScanner extends BroadcastReceiver {
 
     private void scheduleNextScan(Context context) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
+        //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
+        int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
         if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
         boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
 

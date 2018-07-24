@@ -57,22 +57,33 @@ class AppSettingsDetailFragment : Fragment() {
             (activity as AppSettingsActivity).setBatterySwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
-            radio_layout.visibility = View.VISIBLE
-            radio_setting_title.text = getString(res!!)
-            val current = (activity as AppSettingsActivity).getStringFromPref("pref_scaninterval", "30")
-            val options = resources.getStringArray(R.array.pref_scaninterval_titles)
-            val values = resources.getStringArray(R.array.pref_scaninterval_values)
-            options.forEachIndexed { index, option ->
-                val rb = RadioButton(activity)
-                rb.id = Integer.parseInt(values[index])
-                rb.text = option
-                rb.isChecked = (values[index] == current)
-                radio_group.addView(rb)
+            duration_picker.visibility = View.VISIBLE
+            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", 30)
+
+            val min = current / 60
+            val sec = current - min * 60
+
+            duration_minute.maxValue = 59
+            duration_second.maxValue = 59
+            if (min == 0) duration_second.minValue = 15
+
+            duration_minute.value = min
+            duration_second.value = sec
+
+            duration_minute.setOnValueChangedListener { numberPicker, old, new ->
+                if (new == 0) {
+                    duration_second.minValue = 15
+                    if (duration_second.value < 15) duration_second.value = 15
+                } else {
+                    duration_second.minValue = 0
+                }
+                pref.edit().putInt("pref_background_scan_interval", new * 60 + duration_second.value).apply()
             }
 
-            radio_group.setOnCheckedChangeListener { radioGroup, i ->
-                pref.edit().putString("pref_scaninterval", radioGroup.checkedRadioButtonId.toString()).apply()
+            duration_second.setOnValueChangedListener { numberPicker, old, new ->
+                pref.edit().putInt("pref_background_scan_interval", duration_minute.value * 60 + new).apply()
             }
+
             settings_info.text = getString(R.string.settings_background_scan_interval_details)
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
