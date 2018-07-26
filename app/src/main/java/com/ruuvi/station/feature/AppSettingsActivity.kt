@@ -83,6 +83,10 @@ class AppSettingsActivity : AppCompatActivity() {
     }
 
     fun getStringFromPref(prefTag: String, default: String): String {
-        return pref.getString(prefTag, default);
+        return pref.getString(prefTag, default)
+    }
+
+    fun getIntFromPref(prefTag: String, default: Int): Int {
+        return pref.getInt(prefTag, default)
     }
 }

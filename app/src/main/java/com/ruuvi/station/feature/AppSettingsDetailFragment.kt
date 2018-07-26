@@ -2,16 +2,26 @@ package com.ruuvi.station.feature
 
 import android.os.Bundle
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import com.google.gson.JsonObject
+import com.koushikdutta.async.future.FutureCallback
+import com.koushikdutta.ion.Ion
+import com.koushikdutta.ion.Response
 
 import com.ruuvi.station.R
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.ScanEvent
+import com.ruuvi.station.model.ScanEventSingle
 import com.ruuvi.station.util.DeviceIdentifier
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
@@ -47,22 +57,33 @@ class AppSettingsDetailFragment : Fragment() {
             (activity as AppSettingsActivity).setBatterySwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
-            radio_layout.visibility = View.VISIBLE
-            radio_setting_title.text = getString(res!!)
-            val current = (activity as AppSettingsActivity).getStringFromPref("pref_scaninterval", "30")
-            val options = resources.getStringArray(R.array.pref_scaninterval_titles)
-            val values = resources.getStringArray(R.array.pref_scaninterval_values)
-            options.forEachIndexed { index, option ->
-                val rb = RadioButton(activity)
-                rb.id = Integer.parseInt(values[index])
-                rb.text = option
-                rb.isChecked = (values[index] == current)
-                radio_group.addView(rb)
+            duration_picker.visibility = View.VISIBLE
+            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", 30)
+
+            val min = current / 60
+            val sec = current - min * 60
+
+            duration_minute.maxValue = 59
+            duration_second.maxValue = 59
+            if (min == 0) duration_second.minValue = 15
+
+            duration_minute.value = min
+            duration_second.value = sec
+
+            duration_minute.setOnValueChangedListener { numberPicker, old, new ->
+                if (new == 0) {
+                    duration_second.minValue = 15
+                    if (duration_second.value < 15) duration_second.value = 15
+                } else {
+                    duration_second.minValue = 0
+                }
+                pref.edit().putInt("pref_background_scan_interval", new * 60 + duration_second.value).apply()
             }
 
-            radio_group.setOnCheckedChangeListener { radioGroup, i ->
-                pref.edit().putString("pref_scaninterval", radioGroup.checkedRadioButtonId.toString()).apply()
+            duration_second.setOnValueChangedListener { numberPicker, old, new ->
+                pref.edit().putInt("pref_background_scan_interval", duration_minute.value * 60 + new).apply()
             }
+
             settings_info.text = getString(R.string.settings_background_scan_interval_details)
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
@@ -97,7 +118,8 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_backend", p0.toString()).apply()
                 }
             })
-            settings_info.text = getString(R.string.settings_gateway_details)
+            //settings_info.text = getString(R.string.settings_gateway_details)
+            settings_info.movementMethod = LinkMovementMethod.getInstance()
             device_identifier_layout.visibility = View.VISIBLE
             device_identifier_input.setText(pref.getString("pref_device_id", ""))
             device_identifier_input.addTextChangedListener(object : TextWatcher {
@@ -110,6 +132,29 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_device_id", p0.toString()).apply()
                 }
             })
+            gateway_tester_layout.visibility = View.VISIBLE
+            gateway_test_button.setOnClickListener { _ ->
+                gateway_test_result.text = "Testing.."
+                gateway_test_result.setTextColor(Color.DKGRAY)
+                val scanEvent = ScanEvent(context, DeviceIdentifier.id(context))
+                Ion.with(context)
+                        .load(input_setting.text.toString())
+                        .setJsonPojoBody(scanEvent)
+                        .asJsonObject()
+                        .withResponse()
+                        .setCallback({ e, result ->
+                            if (e != null) {
+                                gateway_test_result.setTextColor(Color.RED)
+                                gateway_test_result.text = "Nope, did not work. Is the URL correct?"
+                            } else if (result.headers.code() != 200) {
+                                gateway_test_result.setTextColor(Color.RED)
+                                gateway_test_result.text = "Nope, did not work. Response code: " + result.headers.code()
+                            } else {
+                                gateway_test_result.setTextColor(Color.GREEN)
+                                gateway_test_result.text = "Gateway works! Response code: " + result.headers.code()
+                            }
+                        })
+            }
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)

@@ -7,41 +7,39 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
-import com.ruuvi.station.model.TagSensorReading;
-import com.ruuvi.station.util.AlarmChecker;
+import com.ruuvi.station.model.ScanLocation;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
-import static android.content.Context.POWER_SERVICE;
 import static com.ruuvi.station.service.ScannerService.logTag;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
-import no.nordicsemi.android.support.v18.scanner.ScanFilter;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 /**
@@ -58,6 +56,7 @@ public class BackgroundScanner extends BroadcastReceiver {
 
     private ScanSettings scanSettings;
     private BluetoothLeScannerCompat scanner;
+    private Location tagLocation;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -69,6 +68,16 @@ public class BackgroundScanner extends BroadcastReceiver {
         */
         Log.d(TAG, "Woke up");
         scheduleNextScan(context);
+
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    tagLocation = location;
+                }
+            });
+        }
 
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
@@ -131,6 +140,16 @@ public class BackgroundScanner extends BroadcastReceiver {
     void processFoundDevices(Context context) {
         ScanEvent scanEvent = new ScanEvent(context, DeviceIdentifier.id(context));
 
+        ScanLocation location = null;
+        if (tagLocation != null) {
+            location = new ScanLocation();
+            location.latitude = tagLocation.getLatitude();
+            location.longitude = tagLocation.getLongitude();
+            location.accuracy = tagLocation.getAccuracy();
+        }
+        scanEvent.location = location;
+
+
         Iterator<LeScanResult> itr = scanResults.iterator();
         while (itr.hasNext()) {
             LeScanResult element = itr.next();
@@ -145,16 +164,18 @@ public class BackgroundScanner extends BroadcastReceiver {
         Ion.getDefault(context).configure().setGson(gson);
 
         ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
+        eventBatch.location = location;
         for (int i = 0; i < scanEvent.tags.size(); i++) {
             RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
             // don't send data about tags not in the list
-            if (tagFromDb == null) continue;
+            if (tagFromDb == null || !tagFromDb.favorite) continue;
 
             eventBatch.tags.add(tagFromDb);
 
             if (tagFromDb.gatewayUrl != null && !tagFromDb.gatewayUrl.isEmpty()) {
                 // send the single tag to its gateway
                 ScanEventSingle single = new ScanEventSingle(scanEvent.deviceId, scanEvent.time);
+                single.location = location;
                 single.tag = tagFromDb;
 
                 Ion.with(context)
@@ -197,7 +218,8 @@ public class BackgroundScanner extends BroadcastReceiver {
 
     private void scheduleNextScan(Context context) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
+        //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
+        int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
         if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
         boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
 

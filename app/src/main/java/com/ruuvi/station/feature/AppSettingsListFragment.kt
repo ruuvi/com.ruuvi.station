@@ -65,11 +65,13 @@ class AppSettingsListFragment : Fragment() {
     }
 
     fun updateSubs() {
-        setTextFromPref(background_scan_interval_sub,
-                "pref_scaninterval",
-                "30",
-                R.array.pref_scaninterval_values,
-                R.array.pref_scaninterval_titles)
+        val bgScanInterval = pref.getInt("pref_background_scan_interval", 30)
+        val min = bgScanInterval / 60
+        val sec = bgScanInterval - min * 60
+        var intervalText = ""
+        if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
+        intervalText += sec.toString() + " " + getString(R.string.seconds)
+        background_scan_interval_sub.text = intervalText
         gateway_url_sub.text = pref.getString("pref_backend", "Disabled")
         if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
         //device_identifier_sub.text = pref.getString("pref_device_id", "")
@@ -78,14 +80,6 @@ class AppSettingsListFragment : Fragment() {
         } else {
             temperature_unit_sub.text = getString(R.string.fahrenheit )
         }
-    }
-
-    fun setTextFromPref(textView: AppCompatTextView, prefTag: String, default: String, resValues: Int, resTitles: Int) {
-        textView.text =
-                resources.getStringArray(resTitles)[
-                        resources.getStringArray(resValues).indexOf(
-                                pref.getString(prefTag, default)
-                        )]
     }
 
     fun input(prefId: String, title: String) {

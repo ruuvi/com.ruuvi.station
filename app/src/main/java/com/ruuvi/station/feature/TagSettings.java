@@ -3,17 +3,27 @@ package com.ruuvi.station.feature;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.media.ExifInterface;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,11 +31,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +50,11 @@ import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.Utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +66,9 @@ public class TagSettings extends AppCompatActivity {
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
     private boolean somethinghaschanged = false;
+    private Uri file;
+    AppCompatImageView tagImage;
+    String tempUnit = "C";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +89,8 @@ public class TagSettings extends AppCompatActivity {
         }
         tagAlarms = Alarm.getForTag(tagId);
 
+        tempUnit = RuuviTag.getTemperatureUnit(this);
+
         ((TextView)findViewById(R.id.input_mac)).setText(tag.id);
         findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -83,15 +107,22 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
-        ImageView tagImage = findViewById(R.id.tag_image);
-        tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
-        tagImage.setOnClickListener(new View.OnClickListener() {
+        tagImage = findViewById(R.id.tag_image);
+        tagImage.setImageBitmap(Utils.getBackground(this, tag));
+        findViewById(R.id.tag_image_camera_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(TagSettings.this, "Image upload is not available in Beta", Toast.LENGTH_SHORT).show();
-                // just toggle between default images for now
+                showImageSourceSheet();
+            }
+        });
+
+        findViewById(R.id.tag_image_select_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 tag.defaultBackground = tag.defaultBackground == 8 ? 0 : tag.defaultBackground + 1;
-                ((ImageView)view).setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
+                tag.userBackground = null;
+                tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
+                somethinghaschanged = true;
             }
         });
 
@@ -279,7 +310,13 @@ public class TagSettings extends AppCompatActivity {
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
-                    this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                    if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
+                        this.subtitle = String.format(getString(R.string.alert_subtitle_on),
+                                (int)Utils.celciusToFahrenheit(this.low),
+                                (int)Utils.celciusToFahrenheit(this.high));
+                    } else {
+                        this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                    }
                 }
             } else {
                 seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
@@ -291,36 +328,18 @@ public class TagSettings extends AppCompatActivity {
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
             ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
-            ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
-            ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+            if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
+                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celciusToFahrenheit(this.low) + "");
+                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celciusToFahrenheit(this.high) + "");
+            } else {
+                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+            }
         }
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        /*
-        if (somethinghaschanged) {
-            AlertDialog alertDialog = new AlertDialog.Builder(TagSettings.this).create();
-            alertDialog.setTitle(getString(R.string.unsaved_changes));
-            alertDialog.setMessage(getString(R.string.unsaved_changes_question));
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
-        } else {
-            finish();
-        }
-        */
         return super.onSupportNavigateUp();
     }
 
@@ -343,47 +362,228 @@ public class TagSettings extends AppCompatActivity {
                 alarmItem.alarm.delete();
             }
         }
-        finish();
+        // what are you doing here?
+        //finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-        int id = item.getItemId();
-        if (id == R.id.action_save) {
-            boolean isNew = !tag.favorite;
-            tag.favorite = true;
-            tag.update();
-            for (AlarmItem alarmItem: alarmItems) {
-                if (alarmItem.checked) {
-                    if (alarmItem.alarm == null) {
-                        alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
-                        alarmItem.alarm.save();
-                    } else {
-                        alarmItem.alarm.low = alarmItem.low;
-                        alarmItem.alarm.high = alarmItem.high;
-                        alarmItem.alarm.update();
-                    }
-                } else if (alarmItem.alarm != null) {
-                    alarmItem.alarm.delete();
-                }
-            }
-            finish();
-            if (isNew) {
-                Intent intent = new Intent(getApplicationContext(), TagDetails.class);
-                intent.putExtra("id", tag.id);
-                startActivity(intent);
-            }
-        }
-        */
         finish();
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
+    }
+
+
+    private void showImageSourceSheet() {
+        final BottomSheetDialog sheetDialog = new BottomSheetDialog(this);
+        ListView listView = new ListView(this);
+        String[] menu = {
+                getResources().getString(R.string.camera),
+                getResources().getString(R.string.gallery)
+        };
+
+        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, menu));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        dispatchTakePictureIntent();
+                        break;
+                    case 1:
+                        getImageFromGallery();
+                        break;
+                }
+                sheetDialog.dismiss();
+            }
+        });
+
+        sheetDialog.setContentView(listView);
+        sheetDialog.show();
+    }
+
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        String imageFileName = "background_" + tag.id;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_GALLERY_PHOTO = 2;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                try {
+                    photoFile.createNewFile();
+                } catch (IOException ioEx) {
+                    Toast.makeText(this, "Could not start camera", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                file = FileProvider.getUriForFile(this,
+                        "com.ruuvi.station.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    public void getImageFromGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GALLERY_PHOTO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            if (file != null) {
+                int rotation = getCameraPhotoOrientation(file);
+                resize(file, rotation);
+                tag.userBackground = file.toString();
+                Bitmap background = Utils.getBackground(getApplicationContext(), tag);
+                tagImage.setImageBitmap(background);
+                somethinghaschanged = true;
+            }
+        } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == RESULT_OK) {
+            try {
+                Uri path = data.getData();
+                if (!isImage(path)) {
+                    Toast.makeText(this, "File type not supported", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(path);
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // This is fine :)
+                }
+                if (photoFile != null) {
+                    try {
+                        photoFile.createNewFile();
+                    } catch (IOException ioEx) {
+                        // :(
+                        return;
+                    }
+                    OutputStream output = new FileOutputStream(photoFile);
+                    try {
+                        byte[] buffer = new byte[4 * 1024]; // or other buffer size
+                        int read;
+                        while ((read = inputStream.read(buffer)) != -1) {
+                            output.write(buffer, 0, read);
+                        }
+                        output.flush();
+                    } finally {
+                        output.close();
+                    }
+                    Uri uri = Uri.fromFile(photoFile);
+                    int rotation = getCameraPhotoOrientation(uri);
+                    resize(uri, rotation);
+                    tag.userBackground = uri.toString();
+                    Bitmap background = Utils.getBackground(getApplicationContext(), tag);
+                    tagImage.setImageBitmap(background);
+                    somethinghaschanged = true;
+                }
+            } catch (Exception e) {
+                // ... O.o
+            }
+        }
+    }
+
+    private boolean isImage(Uri uri) {
+        String mime = getMimeType(uri);
+        return mime.equals("jpeg") || mime.equals("jpg") || mime.equals("png");
+    }
+
+    private String getMimeType(Uri uri) {
+        ContentResolver cR = getApplicationContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public int getCameraPhotoOrientation(Uri file){
+        int rotate = 0;
+        try (InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(file)) {
+            ExifInterface exif = new ExifInterface(inputStream);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Could not get orientation of image");
+        }
+        return rotate;
+    }
+
+    public void resize(Uri uri, int rotation) {
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int targetHeight = 1440;
+            int targetWidth = 960;
+            Bitmap b = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
+            b = rotate(b, rotation);
+            Bitmap out;
+            if ((int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()) > targetWidth) {
+                out = Bitmap.createScaledBitmap(b,  (int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()), targetHeight, false);
+            } else {
+                out = Bitmap.createScaledBitmap(b, targetWidth, (int)(((float)targetWidth / (float)b.getWidth()) * b.getHeight()), false);
+            }
+            int x = (out.getWidth() / 2) - (targetWidth / 2);
+            if (x < 0) x = 0;
+            out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight);
+            File file = new File(mCurrentPhotoPath);
+            FileOutputStream fOut = new FileOutputStream(file);
+            out.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
+            fOut.flush();
+            fOut.close();
+            b.recycle();
+            out.recycle();
+        } catch (Exception e) {
+            Log.e(TAG, "Could not resize background image");
+        }
     }
 }

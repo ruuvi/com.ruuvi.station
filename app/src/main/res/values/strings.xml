@@ -5,16 +5,16 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_bgscan">Enable background scan</string>
-    <string name="pref_bgscan_summ">Allows scanning when app is running in the background</string>
+    <string name="pref_bgscan">Enable background scanning</string>
+    <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background.</string>
 
-    <string name="pref_bgscan_battery_saving">Enable battery saving</string>
-    <string name="pref_bgscan_battery_saving_summ">Let the operating system decide when to scan (makes scanning interval very inaccurate)</string>
+    <string name="pref_bgscan_battery_saving">Enable battery saving mode</string>
+    <string name="pref_bgscan_battery_saving_summ">Allows the operating system to decide when to scan for data.</string>
 
-    <string name="pref_scaninterval">Background scan interval</string>
+    <string name="pref_scaninterval">Set scanning interval</string>
     <string name="pref_scaninterval_summ">Set time between background scans</string>
 
-    <string name="pref_title_scaninterval">Background scan interval</string>
+    <string name="pref_title_scaninterval">Set scanning interval</string>
     <string-array name="pref_scaninterval_titles">
         <item>15 seconds</item>
         <item>30 seconds</item>
@@ -165,7 +165,7 @@
 
     <string-array name="station_tag_menu">
         <item>Graphs</item>
-        <item>Tag Settings</item>
+        <item>Tag Settings and Alerts</item>
         <item>Remove Tag</item>
     </string-array>
 
@@ -193,40 +193,40 @@
     <string name="no_gateway_url">No gateway URL</string>
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
-    <string name="alert_substring_movement">You will get a notification when the phone sees the tag move</string>
+    <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
-    <string name="info_text">Ruuvi Station is an easy and powerful tool to superpower RuuviTag sensor nodes.\n
-        \nThe application is now in beta and may still have unknown issues. But don’t worry, our team is determined to polish the app to perfection.\n
-        \nIf you notice problems or find anything you would like to have changed, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>.
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes.\n
+        \nThe application is currently in beta testing stage and may still have unknown issues. Our team is determined to iron out all the kinks, and make sure the app works perfectly.\n
+        \nIf you notice any problems or have any comments about the functionality, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>. We’re grateful for your help!
         \n
         \nQUICK START GUIDE\n
-        \n1) Click Add a new RuuviTag from menu and you’re ready to go. Easy as that.\n
+        \n1) Click ‘Add a new RuuviTag’ in the menu, add the tag or tags you want, and you’re ready to start using Ruuvi Station. Simple as that.\n
         \nGATEWAY\n
-        \nCurrently, the gateway feature is for advanced users only. To use it,&#160;<a href="https://github.com/ruuvi/com.ruuvi.station">check the documentation</a>.
+        \nCurrently the gateway feature is available for advanced users only. You can review the documentation&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">here</a>.
         \n
         \nTROUBLESHOOTING\n
-        \nRuuviTags are sending temperature data in 0.01 degree resolution. If you see lower accuracy readings for some reason, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
+        \nRuuviTags are sending temperature data with 0.01 degree resolution. If at any point you notice lower accuracy, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
         \n
     </string>
     <string name="about">About / Help</string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
 
-    <string name="welcome_text_0">Swipe to see what you can do with ruuvi station</string>
+    <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you</string>
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
-    <string name="welcome_text_2">Listen to ruuvitags in realtime and explore history graphs</string>
-    <string name="welcome_text_3">Set alerts and get notified if limits are hit</string>
+    <string name="welcome_text_2">Access data for each linked RuuviTag in real time and explore history graphs</string>
+    <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <!--<string name="welcome_text_4">Export logged data or let the app act as a gateway</string>-->
-    <string name="welcome_text_5">Press scan to find nearby ruuvitags</string>
+    <string name="welcome_text_5">Press SCAN to find and add nearby RuuviTags to your Ruuvi Station</string>
 
     <string name="scan">Scan</string>
     <string name="background_image">Background\nimage</string>
-    <string name="bg_scan_for_graphs">Graphs works best with background scanning enabled.</string>
+    <string name="bg_scan_for_graphs">Graphs feature works best with background scanning enabled.</string>
     <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
 
     <string name="permission_dialog_title">Permission needed</string>
-    <string name="permission_dialog_request_message">Android requires location permission in order to scan for RuuviTags.</string>
+    <string name="permission_dialog_request_message">Android requires permission to access your location in order to scan for RuuviTags.</string>
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
@@ -234,21 +234,22 @@
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
     <string name="title_activity_add_tag">Nearby Tags</string>
     <string name="title_activity_app_settings">App Settings</string>
-    <string name="background_scan_interval">Scan interval</string>
+    <string name="background_scan_interval">Set scanning interval</string>
     <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
     <string name="device_identifier">Device identifier</string>
     <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
-    <string name="temperature_unit">Temperature unit</string>
+    <string name="temperature_unit">Change temperature units</string>
     <string name="temperature_unit_sum">Celsius / Fahrenheit</string>
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
     <string name="seconds">Seconds</string>
-    <string name="settings_background_scan_details">This will enable background scanning, meaning that you phone will periodically search for beacons even if you are not using it.</string>
-    <string name="settings_background_scan_battery_save_details">Enabling this will let the operating system choose when to do background scanning. \nIt will result in better battery life, but background scanning will be very irregular.</string>
-    <string name="settings_background_scan_interval_details">This is at what interval the background scanning will run. \nFor example, setting it to 1 minute will result in the background scanning running once every 1 minute. \n\n(Note that this might not always be true depending on the device and operating system)</string>
-    <string name="settings_gateway_details">This feature will let the app act as a gateway and send data to a server/cloud. \nIf a url is put here the app will do a HTTP post with the found tags when it does background scanning.</string>
+    <string name="minutes">Minutes</string>
+    <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
+    <string name="settings_background_scan_battery_save_details">Enabling this feature will let the operating system choose when to do background scanning. It will result in longer battery life but scanning intervals will be very irregular.</string>
+    <string name="settings_background_scan_interval_details">Here you can choose at what time interval you want the background scanning to run. For example, by setting it to 1 \nminute, the background scan will run once every minute. \n\n(N.B. Scanning intervals may not always be 100% accurate, depending on your device and the operating system.) \n\nScanning results are logged every 5 second while the application is active (in foreground), regardless of background scanning interval</string>
+    <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info,&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">check the documentation</a>.</string>
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
-    <string name="settings_temperature_unit_details">Change the unit of temperature to display.</string>
+    <string name="settings_temperature_unit_details">Choose the temperature unit you want displayed.</string>
     <string name="version">Version</string>
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
@@ -257,4 +258,7 @@
     <string name="mac">Mac</string>
     <string name="dashboard_pref">Dashboard</string>
     <string name="dashboard_pref_sub">Enabled dashboard view (requires restart)</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="test_gateway">Test gateway</string>
 </resources>

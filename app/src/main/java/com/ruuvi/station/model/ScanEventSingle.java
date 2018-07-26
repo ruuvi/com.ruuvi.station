@@ -15,6 +15,7 @@ public class ScanEventSingle {
     public String deviceId;
     public RuuviTag tag;
     public String eventId;
+    public ScanLocation location;
 
     public ScanEventSingle(String deviceId, Date time)
     {

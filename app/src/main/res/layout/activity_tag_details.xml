@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.ruuvi.station.feature.TagDetails">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/tag_background_view"
         android:src="@drawable/bg9"
         android:scaleType="centerCrop"
