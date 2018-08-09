@@ -3,6 +3,7 @@ package com.ruuvi.station.service;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -19,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -49,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
 import com.ruuvi.station.feature.main.MainActivity;
+import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
@@ -75,6 +78,9 @@ public class ScannerService extends Service {
 
     private no.nordicsemi.android.support.v18.scanner.ScanSettings scanSettings;
     private BluetoothLeScannerCompat scanner;
+    private Handler handler;
+    private boolean isForegroundMode = false;
+    private SharedPreferences settings;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -95,7 +101,54 @@ public class ScannerService extends Service {
 
         scanner = BluetoothLeScannerCompat.getScanner();
 
-        startScan();
+        if (getForegroundMode()) startFG();
+        handler = new Handler();
+        handler.post(reStarter);
+    }
+
+    private boolean getForegroundMode() {
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        return settings.getBoolean("pref_bgscan", false);
+    }
+
+    private Runnable reStarter = new Runnable() {
+        @Override
+        public void run() {
+            stopScan();
+            startScan();
+            handler.postDelayed(reStarter, 5 * 60 * 1000);
+        }
+    };
+
+    public void startFG() {
+        isForegroundMode = true;
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        NotificationCompat.Builder notification;
+        notification
+                = new NotificationCompat.Builder(getApplicationContext(), "notify_001")
+                .setContentTitle(this.getString(R.string.scanner_notification_title))
+                .setSmallIcon(R.mipmap.ic_launcher_small)
+                .setTicker(this.getString(R.string.scanner_notification_ticker))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(this.getString(R.string.scanner_notification_message)))
+                .setContentText(this.getString(R.string.scanner_notification_message))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setLargeIcon(bitmap)
+                .setContentIntent(pendingIntent);
+
+        if (Build.VERSION.SDK_INT < 21) {
+            notification.setSmallIcon(R.mipmap.ic_launcher_small);
+        } else {
+            notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
+        }
+
+        startForeground(1337, notification.build());
     }
 
     private boolean canScan() {
@@ -134,7 +187,7 @@ public class ScannerService extends Service {
         dev.rssi = rssi;
         dev.scanData = data;
 
-        Log.d(TAG, "found: " + device.getAddress());
+        //Log.d(TAG, "found: " + device.getAddress());
         RuuviTag tag = dev.parse();
         if (tag != null) logTag(tag, getApplicationContext());
     }
@@ -158,7 +211,12 @@ public class ScannerService extends Service {
         }
 
         public void onBecameBackground() {
-            stopSelf();
+            if (!getForegroundMode()) {
+                stopSelf();
+                isForegroundMode = false;
+            } else {
+                if (!isForegroundMode) startFG();
+            }
         }
     };
 
@@ -188,6 +246,10 @@ public class ScannerService extends Service {
                 return;
             }
         }
+
+        List<RuuviTag> tags = new ArrayList<>();
+        tags.add(ruuviTag);
+        Http.post(tags, null, context);
 
         lastLogged.put(ruuviTag.id, new Date().getTime());
         TagSensorReading reading = new TagSensorReading(ruuviTag);

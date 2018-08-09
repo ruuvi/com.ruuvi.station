@@ -3,10 +3,12 @@ package com.ruuvi.station.feature.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +50,7 @@ import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
+import com.ruuvi.station.service.ScannerJobService;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
@@ -142,6 +145,24 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
         PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
+        if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
+            if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
+            JobScheduler jobScheduler = (JobScheduler)context
+                    .getSystemService(JOB_SCHEDULER_SERVICE);
+            ComponentName componentName = new ComponentName(context,
+                    ScannerJobService.class);
+            JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    .setMinimumLatency(scanInterval).build();
+            //JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    //.setPeriodic(scanInterval).build();
+            try {
+                jobScheduler.schedule(jobInfo);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "Could not start background job");
+            }
+            return;
+        }
         boolean isRunning = pendingIntent != null;
         if (isRunning && (!shouldRun || restartFlag)) {
             AlarmManager am = (AlarmManager) context

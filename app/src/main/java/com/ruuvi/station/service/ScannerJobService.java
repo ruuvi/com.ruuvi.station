@@ -1,17 +1,15 @@
-package com.ruuvi.station.scanning;
+package com.ruuvi.station.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.annotation.TargetApi;
+import android.app.job.JobParameters;
+import android.app.job.JobService;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -24,6 +22,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
@@ -36,19 +35,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static android.content.Context.ALARM_SERVICE;
-import static com.ruuvi.station.service.ScannerService.logTag;
-
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
-/**
- * Created by berg on 30/09/17.
- */
+import static com.ruuvi.station.service.ScannerService.logTag;
 
-public class BackgroundScanner extends BroadcastReceiver {
-    private static final String TAG = "BackgroundScanner";
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class ScannerJobService extends JobService {
+    private static final String TAG = "ScannerJobService";
     public static final int REQUEST_CODE = 9001;
     private static final int SCAN_TIME_MS = 5000;
 
@@ -60,18 +55,14 @@ public class BackgroundScanner extends BroadcastReceiver {
     private Location tagLocation;
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
-        /*
-        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "MyWakelockTag");
-        wakeLock.acquire();
-        */
+    public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "Woke up");
-        scheduleNextScan(context);
 
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        MainActivity.setBackgroundScanning(true, getApplicationContext(), settings);
+
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
@@ -91,14 +82,14 @@ public class BackgroundScanner extends BroadcastReceiver {
 
         if (!canScan()) {
             Log.d(TAG, "Could not start scanning in background, scheduling next attempt");
-            return;
+            return false;
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 scanner.stopScan(nsCallback);
-                processFoundDevices(context);
+                processFoundDevices(getApplicationContext());
                 scanResults = new ArrayList<LeScanResult>();
             }
         }, SCAN_TIME_MS);
@@ -108,6 +99,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+        return true;
     }
 
     private ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {
@@ -153,28 +145,6 @@ public class BackgroundScanner extends BroadcastReceiver {
         Http.post(tags, tagLocation, context);
 
         Log.d(TAG, "Going to sleep");
-        //wakeLock.release();
-    }
-
-    private void scheduleNextScan(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
-        int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
-        if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
-        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
-
-        Intent intent = new Intent(context, BackgroundScanner.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
-        AlarmManager am = (AlarmManager) context
-                .getSystemService(ALARM_SERVICE);
-        if (!batterySaving) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-            }
-            else {
-                am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-            }
-        }
     }
 
     private int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {
@@ -194,7 +164,13 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
     }
 
+
     private boolean canScan() {
         return scanner != null;
+    }
+
+    @Override
+    public boolean onStopJob(JobParameters jobParameters) {
+        return false;
     }
 }
