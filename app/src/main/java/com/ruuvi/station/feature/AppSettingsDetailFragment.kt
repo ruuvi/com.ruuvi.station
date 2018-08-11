@@ -22,6 +22,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.ScanEvent
 import com.ruuvi.station.model.ScanEventSingle
+import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.DeviceIdentifier
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
@@ -58,7 +59,7 @@ class AppSettingsDetailFragment : Fragment() {
             settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
-            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", 30)
+            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
 
             val min = current / 60
             val sec = current - min * 60

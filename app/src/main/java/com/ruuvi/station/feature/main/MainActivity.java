@@ -52,6 +52,7 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
 import com.ruuvi.station.service.ScannerJobService;
 import com.ruuvi.station.service.ScannerService;
+import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
@@ -146,16 +147,16 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
-            if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
+            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
+            if (scanInterval < 15 * 1000) return;
             JobScheduler jobScheduler = (JobScheduler)context
                     .getSystemService(JOB_SCHEDULER_SERVICE);
             ComponentName componentName = new ComponentName(context,
                     ScannerJobService.class);
-            JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                    .setMinimumLatency(scanInterval).build();
             //JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                    //.setPeriodic(scanInterval).build();
+                    //.setMinimumLatency(scanInterval).build();
+            JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    .setPeriodic(scanInterval).build();
             try {
                 jobScheduler.schedule(jobInfo);
             } catch (NullPointerException e) {
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
         if (shouldRun && !isRunning) {
             //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
-            int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
+            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
             if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
 
             boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
