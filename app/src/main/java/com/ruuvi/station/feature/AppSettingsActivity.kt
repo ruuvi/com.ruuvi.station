@@ -69,7 +69,7 @@ class AppSettingsActivity : AppCompatActivity() {
         switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             pref.edit().putBoolean("pref_bgscan", isChecked).apply()
             MainActivity.setBackgroundScanning(true, this, pref)
-            if (isChecked) MainActivity.checkAndAskForBatteryOptimization(this)
+            //if (isChecked) MainActivity.checkAndAskForBatteryOptimization(this)
         })
     }
 

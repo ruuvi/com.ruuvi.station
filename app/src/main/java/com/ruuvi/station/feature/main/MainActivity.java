@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
+    /*
     public static void checkAndAskForBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             }
         }
     }
+    */
 
     private static PendingIntent getPendingIntent(Context context) {
         Intent intent = new Intent(context, BackgroundScanner.class);
