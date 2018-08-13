@@ -25,7 +25,7 @@ public class Http {
     private static final String TAG = "Http";
 
     public static void post(List<RuuviTag> tags, Location location, Context context){
-        ScanEvent scanEvent = new ScanEvent(context, DeviceIdentifier.id(context));
+        String deviceId = DeviceIdentifier.id(context);
 
         ScanLocation scanLocation = null;
         if (location != null) {
@@ -34,16 +34,15 @@ public class Http {
             scanLocation.longitude = location.getLongitude();
             scanLocation.accuracy = location.getAccuracy();
         }
-        scanEvent.location = scanLocation;
 
 
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
         Ion.getDefault(context).configure().setGson(gson);
 
-        ScanEvent eventBatch = new ScanEvent(scanEvent.deviceId, scanEvent.time);
+        ScanEvent eventBatch = new ScanEvent(deviceId);
         eventBatch.location = scanLocation;
-        for (int i = 0; i < scanEvent.tags.size(); i++) {
-            RuuviTag tagFromDb = RuuviTag.get(scanEvent.tags.get(i).id);
+        for (int i = 0; i < tags.size(); i++) {
+            RuuviTag tagFromDb = RuuviTag.get(tags.get(i).id);
             // don't send data about tags not in the list
             if (tagFromDb == null || !tagFromDb.favorite) continue;
 
@@ -51,7 +50,7 @@ public class Http {
 
             if (tagFromDb.gatewayUrl != null && !tagFromDb.gatewayUrl.isEmpty()) {
                 // send the single tag to its gateway
-                ScanEventSingle single = new ScanEventSingle(scanEvent.deviceId, scanEvent.time);
+                ScanEventSingle single = new ScanEventSingle(deviceId);
                 single.location = scanLocation;
                 single.tag = tagFromDb;
 

@@ -85,7 +85,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                 }
                 tag.defaultBackground = getKindaRandomBackground();
                 tag.update();
-                ScannerService.logTag(tag, getActivity());
+                ScannerService.logTag(tag, getActivity(), true);
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
                 settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
                 startActivityForResult(settingsIntent, 1);

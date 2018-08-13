@@ -25,7 +25,7 @@ public class ScanEvent {
         tags = new ArrayList<>();
     }
 
-    public ScanEvent(Context c, String deviceId) {
+    public ScanEvent(String deviceId) {
         time = new GregorianCalendar().getTime();
         this.deviceId = deviceId;
         tags = new ArrayList<>();

@@ -59,6 +59,7 @@ import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.TagSensorReading;
+import com.ruuvi.station.scanning.BackgroundScanner;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.ComplexPreferences;
 import com.ruuvi.station.util.Constants;
@@ -80,8 +81,13 @@ public class ScannerService extends Service {
     private no.nordicsemi.android.support.v18.scanner.ScanSettings scanSettings;
     private BluetoothLeScannerCompat scanner;
     private Handler handler;
+    private Handler bgScanHandler;
     private boolean isForegroundMode = false;
+    private boolean foreground = false;
     private SharedPreferences settings;
+    private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
+    private static List<RuuviTag> backgroundTags = new ArrayList<>();
+    private static final int SCAN_TIME_MS = 5000;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -95,6 +101,7 @@ public class ScannerService extends Service {
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
 
+        foreground = true;
         scanSettings = new no.nordicsemi.android.support.v18.scanner.ScanSettings.Builder()
                 .setReportDelay(0)
                 .setScanMode(no.nordicsemi.android.support.v18.scanner.ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -105,6 +112,7 @@ public class ScannerService extends Service {
         if (getForegroundMode()) startFG();
         handler = new Handler();
         handler.post(reStarter);
+        bgScanHandler = new Handler();
     }
 
     private boolean getForegroundMode() {
@@ -122,7 +130,50 @@ public class ScannerService extends Service {
         }
     };
 
+    private Runnable bgLogger = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "Started background scan");
+            backgroundTags.clear();
+            startScan();
+            Log.d(TAG, "Scheduling next scan in " + backgroundScanInterval + "s");
+            bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);
+            bgScanHandler.postDelayed(bgLoggerDone, SCAN_TIME_MS);
+        }
+    };
+
+    private Runnable bgLoggerDone = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "Stopping background scan, found " + backgroundTags.size() + " tags");
+            stopScan();
+            Http.post(backgroundTags, null, getApplicationContext());
+
+            for (RuuviTag tag: backgroundTags) {
+                TagSensorReading reading = new TagSensorReading(tag);
+                reading.save();
+                AlarmChecker.check(tag, getApplicationContext());
+            }
+        }
+    };
+
     public void startFG() {
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        String channelId = "foreground_scanner_channel";
+        if (Build.VERSION.SDK_INT >= 26) {
+            CharSequence channelName = "RuuviStation foreground scanner";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            try {
+                notificationManager.createNotificationChannel(notificationChannel);
+            } catch (Exception e) {
+                Log.e(TAG, "Could not create notification channel");
+            }
+        }
+
         isForegroundMode = true;
         Intent notificationIntent = new Intent(this, MainActivity.class);
 
@@ -131,7 +182,7 @@ public class ScannerService extends Service {
 
         NotificationCompat.Builder notification;
         notification
-                = new NotificationCompat.Builder(getApplicationContext(), "notify_001")
+                = new NotificationCompat.Builder(getApplicationContext(), channelId)
                 .setContentTitle(this.getString(R.string.scanner_notification_title))
                 .setSmallIcon(R.mipmap.ic_launcher_small)
                 .setTicker(this.getString(R.string.scanner_notification_ticker))
@@ -191,7 +242,7 @@ public class ScannerService extends Service {
 
         //Log.d(TAG, "found: " + device.getAddress());
         RuuviTag tag = dev.parse();
-        if (tag != null) logTag(tag, getApplicationContext());
+        if (tag != null) logTag(tag, getApplicationContext(), foreground);
     }
 
     @Override
@@ -208,16 +259,23 @@ public class ScannerService extends Service {
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
+            foreground = true;
+            handler.postDelayed(reStarter, 5 * 60 * 1000);
             if (!isRunning(ScannerService.class))
                 startService(new Intent(ScannerService.this, ScannerService.class));
+            bgScanHandler.removeCallbacksAndMessages(null);
         }
 
         public void onBecameBackground() {
+            foreground = false;
+            handler.removeCallbacksAndMessages(null);
             if (!getForegroundMode()) {
                 stopSelf();
                 isForegroundMode = false;
             } else {
+                backgroundScanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
                 if (!isForegroundMode) startFG();
+                bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);
             }
         }
     };
@@ -225,7 +283,7 @@ public class ScannerService extends Service {
     public static Map<String, Long> lastLogged = null;
     public static int LOG_INTERVAL = 5; // seconds
 
-    public static void logTag(RuuviTag ruuviTag, Context context) {
+    public static void logTag(RuuviTag ruuviTag, Context context, boolean foreground) {
         RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag);
@@ -237,14 +295,21 @@ public class ScannerService extends Service {
             return;
         }
 
+        if (!foreground) {
+            if (ruuviTag.favorite && checkForSameTag(backgroundTags, ruuviTag) == -1) {
+                backgroundTags.add(ruuviTag);
+            }
+            return;
+        }
+
         if (lastLogged == null) lastLogged = new HashMap<>();
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, -LOG_INTERVAL);
-        long loggingTreshold = calendar.getTime().getTime();
+        long loggingThreshold = calendar.getTime().getTime();
         for (Map.Entry<String, Long> entry : lastLogged.entrySet())
         {
-            if (entry.getKey().equals(ruuviTag.id) && entry.getValue() > loggingTreshold) {
+            if (entry.getKey().equals(ruuviTag.id) && entry.getValue() > loggingThreshold) {
                 return;
             }
         }
@@ -282,5 +347,14 @@ public class ScannerService extends Service {
             }
         }
         return false;
+    }
+
+    private static int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {
+        for (int i = 0; i < arr.size(); i++) {
+            if (ruuvi.id.equals(arr.get(i).id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

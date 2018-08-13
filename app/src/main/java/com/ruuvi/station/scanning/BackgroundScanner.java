@@ -191,7 +191,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         int index = checkForSameTag(tags, tag);
         if (index == -1) {
             tags.add(tag);
-            logTag(tag, context);
+            logTag(tag, context, true);
         }
     }
 

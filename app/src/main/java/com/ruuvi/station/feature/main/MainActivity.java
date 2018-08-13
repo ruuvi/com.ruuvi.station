@@ -148,14 +148,22 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
-            if (scanInterval < 15 * 1000) return;
             JobScheduler jobScheduler = (JobScheduler)context
                     .getSystemService(JOB_SCHEDULER_SERVICE);
+            if (scanInterval < 15 * 1000) {
+                try {
+                    jobScheduler.cancel(1);
+                } catch (Exception e) {
+                }
+                return;
+            }
             ComponentName componentName = new ComponentName(context,
                     ScannerJobService.class);
             //JobInfo jobInfo = new JobInfo.Builder(1, componentName)
                     //.setMinimumLatency(scanInterval).build();
             JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
                     .setPeriodic(scanInterval).build();
             try {
                 jobScheduler.schedule(jobInfo);
@@ -187,9 +195,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             AlarmManager am = (AlarmManager) context
                     .getSystemService(ALARM_SERVICE);
             try {
-                if (batterySaving) {
+                //if (batterySaving) {
                     am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
                             scanInterval, sender);
+                    /*
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         SharedPreferences.Editor editor = settings.edit();
@@ -200,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                         am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
                     }
                 }
+                */
             } catch (Exception e) {
                 Toast.makeText(context, "Could not start background scanning", Toast.LENGTH_LONG).show();
             }
