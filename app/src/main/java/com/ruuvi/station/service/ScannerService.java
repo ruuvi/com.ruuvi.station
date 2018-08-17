@@ -211,7 +211,6 @@ public class ScannerService extends Service {
                 .setTicker(this.getString(R.string.scanner_notification_ticker))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(this.getString(R.string.scanner_notification_message)))
                 .setContentText(this.getString(R.string.scanner_notification_message))
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -282,15 +281,14 @@ public class ScannerService extends Service {
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
-            /*
             if (wakeLock != null) {
                 try {
                     wakeLock.release();
+                    Log.d(TAG, "Released wakelock");
                 } catch (Exception e) {
                     Log.e(TAG, "Could not release wakelock");
                 }
             }
-            */
             foreground = true;
             handler.postDelayed(reStarter, 5 * 60 * 1000);
             if (!isRunning(ScannerService.class))
@@ -305,16 +303,19 @@ public class ScannerService extends Service {
                 stopSelf();
                 isForegroundMode = false;
             } else {
-                /*
-                PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
-                try {
-                    wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                            "MyWakelockTag");
-                    wakeLock.acquire();
-                } catch (Exception e) {
-                    Log.e(TAG, "Could not acquire wakelock");
+                if (settings.getBoolean("pref_wakelock", false)) {
+                    PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+                    try {
+                        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                                "MyWakelockTag");
+                        wakeLock.acquire();
+                        Log.d(TAG, "Acquired wakelock");
+                    } catch (Exception e) {
+                        Log.e(TAG, "Could not acquire wakelock");
+                    }
+                } else {
+                    wakeLock = null;
                 }
-                */
                 backgroundScanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
                 if (!isForegroundMode) startFG();
                 bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);

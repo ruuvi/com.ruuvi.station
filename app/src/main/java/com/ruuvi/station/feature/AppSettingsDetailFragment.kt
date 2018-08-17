@@ -134,6 +134,11 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_device_id", p0.toString()).apply()
                 }
             })
+            wakelock_layout_container.visibility = View.VISIBLE
+            wakelock_switch.isChecked = pref.getBoolean("pref_wakelock", false)
+            wakelock_switch.setOnCheckedChangeListener { switch, checked ->
+                pref.edit().putBoolean("pref_wakelock", checked).apply();
+            }
             gateway_tester_layout.visibility = View.VISIBLE
             gateway_test_button.setOnClickListener { _ ->
                 gateway_test_result.text = "Testing.."

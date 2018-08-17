@@ -54,6 +54,53 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/wakelock_layout_container"
+            android:visibility="gone"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/wakelock_layout"
+                app:layout_constraintRight_toLeftOf="@id/wakelock_switch"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/wakelock_title"
+                    android:text="@string/wakelock_title"
+                    style="@style/PrefTitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:text="@string/wakelock_description"
+                    style="@style/PrefSecondaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/wakelock_switch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                app:layout_constraintTop_toBottomOf="@id/wakelock_layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:paddingTop="12dp"
+                android:background="@color/divider" />
+
+        </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/battery_layout_container"
