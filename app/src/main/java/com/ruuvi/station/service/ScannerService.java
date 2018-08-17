@@ -18,17 +18,24 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -88,6 +95,8 @@ public class ScannerService extends Service {
     private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
     private static List<RuuviTag> backgroundTags = new ArrayList<>();
     private static final int SCAN_TIME_MS = 5000;
+    private Location tagLocation;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -115,10 +124,23 @@ public class ScannerService extends Service {
         bgScanHandler = new Handler();
     }
 
+    private void updateLocation() {
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    tagLocation = location;
+                }
+            });
+        }
+    }
+
     private boolean getForegroundMode() {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
-        return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
+        //int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
+        //return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
+        return settings.getBoolean("pref_bgscan", false);
     }
 
     private Runnable reStarter = new Runnable() {
@@ -136,6 +158,7 @@ public class ScannerService extends Service {
             Log.d(TAG, "Started background scan");
             backgroundTags.clear();
             startScan();
+            updateLocation();
             Log.d(TAG, "Scheduling next scan in " + backgroundScanInterval + "s");
             bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);
             bgScanHandler.postDelayed(bgLoggerDone, SCAN_TIME_MS);
@@ -147,7 +170,7 @@ public class ScannerService extends Service {
         public void run() {
             Log.d(TAG, "Stopping background scan, found " + backgroundTags.size() + " tags");
             stopScan();
-            Http.post(backgroundTags, null, getApplicationContext());
+            Http.post(backgroundTags, tagLocation, getApplicationContext());
 
             for (RuuviTag tag: backgroundTags) {
                 TagSensorReading reading = new TagSensorReading(tag);
@@ -259,6 +282,15 @@ public class ScannerService extends Service {
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
+            /*
+            if (wakeLock != null) {
+                try {
+                    wakeLock.release();
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not release wakelock");
+                }
+            }
+            */
             foreground = true;
             handler.postDelayed(reStarter, 5 * 60 * 1000);
             if (!isRunning(ScannerService.class))
@@ -273,6 +305,16 @@ public class ScannerService extends Service {
                 stopSelf();
                 isForegroundMode = false;
             } else {
+                /*
+                PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+                try {
+                    wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                            "MyWakelockTag");
+                    wakeLock.acquire();
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not acquire wakelock");
+                }
+                */
                 backgroundScanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
                 if (!isForegroundMode) startFG();
                 bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);

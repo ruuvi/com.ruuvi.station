@@ -19,6 +19,7 @@ import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 
 import com.ruuvi.station.R
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.ScanEvent
 import com.ruuvi.station.model.ScanEventSingle
@@ -53,10 +54,6 @@ class AppSettingsDetailFragment : Fragment() {
             scan_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setScanSwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_details)
-        } else if (res == R.string.pref_bgscan_battery_saving) {
-            battery_layout_container.visibility = View.VISIBLE
-            (activity as AppSettingsActivity).setBatterySwitchLayout(view)
-            settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
             val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
@@ -66,15 +63,15 @@ class AppSettingsDetailFragment : Fragment() {
 
             duration_minute.maxValue = 59
             duration_second.maxValue = 59
-            if (min == 0) duration_second.minValue = 15
+            if (min == 0) duration_second.minValue = 10
 
             duration_minute.value = min
             duration_second.value = sec
 
             duration_minute.setOnValueChangedListener { numberPicker, old, new ->
                 if (new == 0) {
-                    duration_second.minValue = 15
-                    if (duration_second.value < 15) duration_second.value = 15
+                    duration_second.minValue = 10
+                    if (duration_second.value < 10) duration_second.value = 10
                 } else {
                     duration_second.minValue = 0
                 }
@@ -86,6 +83,10 @@ class AppSettingsDetailFragment : Fragment() {
             }
 
             settings_info.text = getString(R.string.settings_background_scan_interval_details)
+
+            ignore_battery_layout.setOnClickListener {
+                MainActivity.requestIgnoreBatteryOptimization(context)
+            }
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)

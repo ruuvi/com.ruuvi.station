@@ -144,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     };
 
     public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
+        return;
+        /*
         PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -198,44 +200,41 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 //if (batterySaving) {
                     am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
                             scanInterval, sender);
-                    /*
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
-                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-                    }
-                    else {
-                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-                    }
-                }
-                */
+//                } else {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        SharedPreferences.Editor editor = settings.edit();
+//                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
+//                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+//                    }
+//                    else {
+//                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+//                    }
+//                }
             } catch (Exception e) {
                 Toast.makeText(context, "Could not start background scanning", Toast.LENGTH_LONG).show();
             }
         }
+        */
     }
 
-    /*
-    public static void checkAndAskForBatteryOptimization(Context context) {
+    public static void requestIgnoreBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-            String packageName = context.getPackageName();
-            // this below does not seems to work on my device
             try {
-                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                    Intent intent = new Intent();
+                Intent intent = new Intent();
+                String packageName = context.getPackageName();
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                if (pm.isIgnoringBatteryOptimizations(packageName))
+                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                else {
                     intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                     intent.setData(Uri.parse("package:" + packageName));
-                    context.startActivity(intent);
                 }
-
+                context.startActivity(intent);
             } catch (Exception e) {
                 Log.d(TAG, "Could not set ignoring battery optimization");
             }
         }
     }
-    */
 
     private static PendingIntent getPendingIntent(Context context) {
         Intent intent = new Intent(context, BackgroundScanner.class);

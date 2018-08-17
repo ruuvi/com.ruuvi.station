@@ -73,15 +73,6 @@ class AppSettingsActivity : AppCompatActivity() {
         })
     }
 
-    fun setBatterySwitchLayout(view: View) {
-        val switch = view.findViewById<SwitchCompat>(R.id.bg_scan_battery_switch)
-        switch.isChecked = pref.getBoolean("pref_bgscan_battery_saving", false)
-        switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            pref.edit().putBoolean("pref_bgscan_battery_saving", isChecked).apply()
-            MainActivity.setBackgroundScanning(true, this, pref)
-        })
-    }
-
     fun getStringFromPref(prefTag: String, default: String): String {
         return pref.getString(prefTag, default)
     }

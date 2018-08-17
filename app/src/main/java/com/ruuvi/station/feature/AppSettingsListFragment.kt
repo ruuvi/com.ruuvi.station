@@ -34,11 +34,6 @@ class AppSettingsListFragment : Fragment() {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
         }
 
-        (activity as AppSettingsActivity).setBatterySwitchLayout(view)
-        battery_layout.setOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan_battery_saving)
-        }
-
         scan_interval.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
         }
