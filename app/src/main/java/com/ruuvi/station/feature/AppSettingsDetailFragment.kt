@@ -19,9 +19,11 @@ import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 
 import com.ruuvi.station.R
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.ScanEvent
 import com.ruuvi.station.model.ScanEventSingle
+import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.DeviceIdentifier
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
@@ -52,28 +54,24 @@ class AppSettingsDetailFragment : Fragment() {
             scan_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setScanSwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_details)
-        } else if (res == R.string.pref_bgscan_battery_saving) {
-            battery_layout_container.visibility = View.VISIBLE
-            (activity as AppSettingsActivity).setBatterySwitchLayout(view)
-            settings_info.text = getString(R.string.settings_background_scan_battery_save_details)
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
-            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", 30)
+            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
 
             val min = current / 60
             val sec = current - min * 60
 
             duration_minute.maxValue = 59
             duration_second.maxValue = 59
-            if (min == 0) duration_second.minValue = 15
+            if (min == 0) duration_second.minValue = 10
 
             duration_minute.value = min
             duration_second.value = sec
 
             duration_minute.setOnValueChangedListener { numberPicker, old, new ->
                 if (new == 0) {
-                    duration_second.minValue = 15
-                    if (duration_second.value < 15) duration_second.value = 15
+                    duration_second.minValue = 10
+                    if (duration_second.value < 10) duration_second.value = 10
                 } else {
                     duration_second.minValue = 0
                 }
@@ -85,6 +83,10 @@ class AppSettingsDetailFragment : Fragment() {
             }
 
             settings_info.text = getString(R.string.settings_background_scan_interval_details)
+
+            ignore_battery_layout.setOnClickListener {
+                MainActivity.requestIgnoreBatteryOptimization(context)
+            }
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)
@@ -132,11 +134,16 @@ class AppSettingsDetailFragment : Fragment() {
                     pref.edit().putString("pref_device_id", p0.toString()).apply()
                 }
             })
+            wakelock_layout_container.visibility = View.VISIBLE
+            wakelock_switch.isChecked = pref.getBoolean("pref_wakelock", false)
+            wakelock_switch.setOnCheckedChangeListener { switch, checked ->
+                pref.edit().putBoolean("pref_wakelock", checked).apply();
+            }
             gateway_tester_layout.visibility = View.VISIBLE
             gateway_test_button.setOnClickListener { _ ->
                 gateway_test_result.text = "Testing.."
                 gateway_test_result.setTextColor(Color.DKGRAY)
-                val scanEvent = ScanEvent(context, DeviceIdentifier.id(context))
+                val scanEvent = ScanEvent(DeviceIdentifier.id(context))
                 Ion.with(context)
                         .load(input_setting.text.toString())
                         .setJsonPojoBody(scanEvent)

@@ -17,6 +17,7 @@ import android.widget.FrameLayout
 
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
+import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.PreferenceKeys
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
@@ -31,11 +32,6 @@ class AppSettingsListFragment : Fragment() {
         (activity as AppSettingsActivity).setScanSwitchLayout(view)
         scan_layout.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
-        }
-
-        (activity as AppSettingsActivity).setBatterySwitchLayout(view)
-        battery_layout.setOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan_battery_saving)
         }
 
         scan_interval.setOnClickListener {
@@ -65,7 +61,7 @@ class AppSettingsListFragment : Fragment() {
     }
 
     fun updateSubs() {
-        val bgScanInterval = pref.getInt("pref_background_scan_interval", 30)
+        val bgScanInterval = pref.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
         val min = bgScanInterval / 60
         val sec = bgScanInterval - min * 60
         var intervalText = ""

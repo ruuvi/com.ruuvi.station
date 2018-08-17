@@ -3,10 +3,12 @@ package com.ruuvi.station.feature.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,7 +50,9 @@ import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
+import com.ruuvi.station.service.ScannerJobService;
 import com.ruuvi.station.service.ScannerService;
+import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
@@ -140,8 +144,36 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     };
 
     public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
+        return;
+        /*
         PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
+        if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
+            JobScheduler jobScheduler = (JobScheduler)context
+                    .getSystemService(JOB_SCHEDULER_SERVICE);
+            if (scanInterval < 15 * 1000) {
+                try {
+                    jobScheduler.cancel(1);
+                } catch (Exception e) {
+                }
+                return;
+            }
+            ComponentName componentName = new ComponentName(context,
+                    ScannerJobService.class);
+            //JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    //.setMinimumLatency(scanInterval).build();
+            JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setPeriodic(scanInterval).build();
+            try {
+                jobScheduler.schedule(jobInfo);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "Could not start background job");
+            }
+            return;
+        }
         boolean isRunning = pendingIntent != null;
         if (isRunning && (!shouldRun || restartFlag)) {
             AlarmManager am = (AlarmManager) context
@@ -156,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
         if (shouldRun && !isRunning) {
             //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
-            int scanInterval = settings.getInt("pref_background_scan_interval", 30) * 1000;
+            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
             if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
 
             boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
@@ -165,38 +197,39 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             AlarmManager am = (AlarmManager) context
                     .getSystemService(ALARM_SERVICE);
             try {
-                if (batterySaving) {
+                //if (batterySaving) {
                     am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
                             scanInterval, sender);
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
-                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-                    }
-                    else {
-                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-                    }
-                }
+//                } else {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        SharedPreferences.Editor editor = settings.edit();
+//                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
+//                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+//                    }
+//                    else {
+//                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
+//                    }
+//                }
             } catch (Exception e) {
                 Toast.makeText(context, "Could not start background scanning", Toast.LENGTH_LONG).show();
             }
         }
+        */
     }
 
-    public static void checkAndAskForBatteryOptimization(Context context) {
+    public static void requestIgnoreBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-            String packageName = context.getPackageName();
-            // this below does not seems to work on my device
             try {
-                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                    Intent intent = new Intent();
+                Intent intent = new Intent();
+                String packageName = context.getPackageName();
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                if (pm.isIgnoringBatteryOptimizations(packageName))
+                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                else {
                     intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                     intent.setData(Uri.parse("package:" + packageName));
-                    context.startActivity(intent);
                 }
-
+                context.startActivity(intent);
             } catch (Exception e) {
                 Log.d(TAG, "Could not set ignoring battery optimization");
             }

@@ -24,7 +24,7 @@ public class ScanEventSingle {
         eventId = UUID.randomUUID().toString();
     }
 
-    public ScanEventSingle(Context c, String deviceId) {
+    public ScanEventSingle(String deviceId) {
         time = new GregorianCalendar().getTime();
         this.deviceId = deviceId;
         eventId = UUID.randomUUID().toString();
