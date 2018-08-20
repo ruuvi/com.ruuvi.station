@@ -10,23 +10,10 @@ import java.util.UUID;
  * Created by berg on 18/09/17.
  */
 
-public class ScanEventSingle {
-    public Date time;
-    public String deviceId;
+public class ScanEventSingle extends Event {
     public RuuviTag tag;
-    public String eventId;
-    public ScanLocation location;
 
-    public ScanEventSingle(String deviceId, Date time)
-    {
-        this.time = time;
-        this.deviceId = deviceId;
-        eventId = UUID.randomUUID().toString();
-    }
-
-    public ScanEventSingle(String deviceId) {
-        time = new GregorianCalendar().getTime();
-        this.deviceId = deviceId;
-        eventId = UUID.randomUUID().toString();
+    public ScanEventSingle(Context context) {
+        super(context);
     }
 }

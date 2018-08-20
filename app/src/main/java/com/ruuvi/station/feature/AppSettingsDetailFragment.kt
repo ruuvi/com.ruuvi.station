@@ -143,7 +143,7 @@ class AppSettingsDetailFragment : Fragment() {
             gateway_test_button.setOnClickListener { _ ->
                 gateway_test_result.text = "Testing.."
                 gateway_test_result.setTextColor(Color.DKGRAY)
-                val scanEvent = ScanEvent(DeviceIdentifier.id(context))
+                val scanEvent = ScanEvent(context)
                 Ion.with(context)
                         .load(input_setting.text.toString())
                         .setJsonPojoBody(scanEvent)
