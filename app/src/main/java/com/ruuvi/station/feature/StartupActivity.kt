@@ -29,6 +29,9 @@ class StartupActivity : AppCompatActivity() {
             return
         }
         val intent = Intent(applicationContext, TagDetails::class.java)
+        intent.putExtra(TagDetails.FROM_WELCOME,
+                getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
+        )
         startActivity(intent)
     }
 

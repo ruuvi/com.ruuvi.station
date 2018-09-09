@@ -46,16 +46,18 @@ import java.util.*
 class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
     private val REQUEST_ENABLE_BT = 1337
-    private val FROM_WELCOME = 1447
     private val COARSE_LOCATION_PERMISSION = 1
     private val BACKGROUND_FADE_DURATION = 200
+    companion object {
+        val FROM_WELCOME = "FROM_WELCOME"
+    }
 
     var backgroundFadeStarted: Long = 0
     var tag: RuuviTag? = null
     lateinit var tags: MutableList<RuuviTag>
 
     lateinit var handler: Handler
-    var openAddView = false
+    private var openAddView = false
     lateinit var starter: Starter
 
     val backgrounds = HashMap<String, BitmapDrawable>()
@@ -129,6 +131,8 @@ class TagDetails : AppCompatActivity() {
             Log.e(TAG, "Failed to set pager font")
         }
 
+        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
+
         handler = Handler()
         starter = Starter(this)
         starter.getThingsStarted()
@@ -176,10 +180,10 @@ class TagDetails : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            COARSE_LOCATION_PERMISSION -> {
+            10 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // party
-                    openAddView = true
+                    if (openAddView) noTags_textView.callOnClick()
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                         starter.requestPermissions()
@@ -278,6 +282,7 @@ class TagDetails : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_ENABLE_BT) {
             }
+
         }
     }
 

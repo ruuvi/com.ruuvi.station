@@ -26,6 +26,7 @@ class WelcomeActivity : AppCompatActivity() {
         start_button.setOnClickListener {
             setBoolPref(PreferenceKeys.FIRST_START_PREF)
             val intent = Intent(this, StartupActivity::class.java)
+            intent.putExtra(TagDetails.FROM_WELCOME, true)
             startActivity(intent)
         }
     }
