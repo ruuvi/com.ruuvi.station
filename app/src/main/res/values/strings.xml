@@ -198,16 +198,13 @@
     <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes.\n
         \nThe application is currently in beta testing stage and may still have unknown issues. Our team is determined to iron out all the kinks, and make sure the app works perfectly.\n
         \nIf you notice any problems or have any comments about the functionality, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>. We’re grateful for your help!
-        \n
-        \nQUICK START GUIDE\n
-        \n1) Click ‘Add a new RuuviTag’ in the menu, add the tag or tags you want, and you’re ready to start using Ruuvi Station. Simple as that.\n
-        \nGATEWAY\n
-        \nCurrently the gateway feature is available for advanced users only. You can review the documentation&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">here</a>.
-        \n
-        \nTROUBLESHOOTING\n
-        \nRuuviTags are sending temperature data with 0.01 degree resolution. If at any point you notice lower accuracy, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.
-        \n
     </string>
+    <string name="quick_start_info_title">QUICK START GUIDE</string>
+    <string name="quick_start_info_text">1) Click ‘Add a new RuuviTag’ in the menu, add the tag or tags you want, and you’re ready to start using Ruuvi Station. Simple as that.</string>
+    <string name="gateway_info_title">GATEWAY</string>
+    <string name="gateway_info_text">Currently the gateway feature is available for advanced users only. You can review the documentation&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">here</a>.</string>
+    <string name="troubleshooting_info_title">TROUBLESHOOTING</string>
+    <string name="troubleshooting_info_text">RuuviTags are sending temperature data with 0.01 degree resolution. If at any point you notice lower accuracy, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.</string>
     <string name="about">About / Help</string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
