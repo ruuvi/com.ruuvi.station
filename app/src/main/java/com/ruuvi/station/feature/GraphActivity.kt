@@ -127,6 +127,7 @@ class GraphActivity : AppCompatActivity() {
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = resources.getColor(R.color.main)
+        set.circleRadius = (2).toFloat()
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
