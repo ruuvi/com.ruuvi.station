@@ -5,8 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/graph_root_view"
-    android:background="@drawable/gradient_background"
     tools:context="com.ruuvi.station.feature.GraphActivity">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/background_view"
+        android:src="@drawable/gradient_background"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:fitsSystemWindows="true"

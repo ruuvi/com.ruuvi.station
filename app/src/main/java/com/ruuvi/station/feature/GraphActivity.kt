@@ -3,6 +3,7 @@ package com.ruuvi.station.feature
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -56,7 +57,9 @@ class GraphActivity : AppCompatActivity() {
             return
         }
 
-        graph_root_view.background = Utils.getDefaultBackground(tag.defaultBackground, this)
+        Utils.getBackground(applicationContext, tag).let { bitmap ->
+            background_view.setImageDrawable(BitmapDrawable(applicationContext.resources, bitmap))
+        }
 
         val settings = PreferenceManager.getDefaultSharedPreferences(applicationContext);
         val bgScanEnabled = settings.getBoolean("pref_bgscan", false)
