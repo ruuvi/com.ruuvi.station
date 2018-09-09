@@ -40,6 +40,11 @@ class AppSettingsDetailFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        MainActivity.setBackgroundScanning(true, activity, pref)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_app_settings_detail, container, false)

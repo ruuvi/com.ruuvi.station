@@ -139,9 +139,9 @@ public class ScannerService extends Service {
 
     private boolean getForegroundMode() {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-        //int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
-        //return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
-        return settings.getBoolean("pref_bgscan", false);
+        int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
+        return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
+        //return settings.getBoolean("pref_bgscan", false);
     }
 
     private Runnable reStarter = new Runnable() {
@@ -214,7 +214,7 @@ public class ScannerService extends Service {
                 .setContentText(this.getString(R.string.scanner_notification_message))
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setLargeIcon(bitmap)
                 .setContentIntent(pendingIntent);
 
