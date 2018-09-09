@@ -135,6 +135,7 @@ class GraphActivity : AppCompatActivity() {
         chart.description.text = label
         chart.description.textColor = Color.WHITE
         chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
+        chart.setNoDataTextColor(Color.WHITE)
         try {
             chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
