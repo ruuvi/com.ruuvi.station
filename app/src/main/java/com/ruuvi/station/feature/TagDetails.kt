@@ -8,7 +8,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.PorterDuff
@@ -34,6 +33,7 @@ import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.AppCompatImageView
 import android.widget.*
 import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
@@ -86,19 +86,36 @@ class TagDetails : AppCompatActivity() {
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
+        var prevTagId = ""
         tag_pager.setOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
                 tag = tags[position]
-                backgrounds[tag!!.id].let { bitmap ->
-                    if (bitmap == null) return
-                    val transitionDrawable = TransitionDrawable(arrayOf(tag_background_view.drawable, bitmap))
-                    tag_background_view.setImageDrawable(transitionDrawable)
-                    transitionDrawable.startTransition(BACKGROUND_FADE_DURATION)
+                if (!prevTagId.isEmpty()) {
+                    backgrounds[prevTagId].let { bitmapDrawable ->
+                        if (bitmapDrawable == null) return
+                        tag_background_view.setImageDrawable(bitmapDrawable)
+                    }
+                }
+                backgrounds[tag!!.id].let { bitmapDrawable ->
+                    if (bitmapDrawable == null) return
+                    imageSwitcher.setImageDrawable(bitmapDrawable)
                     backgroundFadeStarted = Date().time
                 }
+                prevTagId = tag!!.id
+            }
+        })
+
+        imageSwitcher.setFactory(object : ViewSwitcher.ViewFactory {
+            override fun makeView(): View {
+                val im = AppCompatImageView(applicationContext)
+                im.scaleType = ImageView.ScaleType.CENTER_CROP
+                im.layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT)
+                return im
             }
         })
 
@@ -248,7 +265,7 @@ class TagDetails : AppCompatActivity() {
         tag_pager.adapter?.notifyDataSetChanged()
         if (tags.isNotEmpty()) {
             backgrounds[tags.get(tag_pager.currentItem).id].let { bitmap ->
-                tag_background_view.setImageDrawable(bitmap)
+                imageSwitcher.setImageDrawable(bitmap)
             }
         }
 
