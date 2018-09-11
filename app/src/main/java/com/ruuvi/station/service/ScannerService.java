@@ -57,6 +57,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
+import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.Alarm;
@@ -138,9 +139,9 @@ public class ScannerService extends Service {
 
     private boolean getForegroundMode() {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-        //int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
-        //return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
-        return settings.getBoolean("pref_bgscan", false);
+        int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
+        return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
+        //return settings.getBoolean("pref_bgscan", false);
     }
 
     private Runnable reStarter = new Runnable() {
@@ -198,7 +199,7 @@ public class ScannerService extends Service {
         }
 
         isForegroundMode = true;
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, StartupActivity.class);
 
         Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -213,7 +214,7 @@ public class ScannerService extends Service {
                 .setContentText(this.getString(R.string.scanner_notification_message))
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setLargeIcon(bitmap)
                 .setContentIntent(pendingIntent);
 

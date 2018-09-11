@@ -53,10 +53,12 @@ public class ScannerJobService extends JobService {
     private ScanSettings scanSettings;
     private BluetoothLeScannerCompat scanner;
     private Location tagLocation;
+    private JobParameters jobParameters;
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "Woke up");
+        this.jobParameters = jobParameters;
 
         //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         //MainActivity.setBackgroundScanning(true, getApplicationContext(), settings);
@@ -144,7 +146,14 @@ public class ScannerJobService extends JobService {
 
         Http.post(tags, tagLocation, context);
 
-        Log.d(TAG, "Going to sleep");
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Going to sleep");
+                jobFinished(jobParameters, false);
+            }
+        }, 1000);
     }
 
     private int checkForSameTag(List<RuuviTag> arr, RuuviTag ruuvi) {

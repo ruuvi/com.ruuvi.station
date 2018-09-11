@@ -14,6 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageSwitcher
+        android:id="@+id/imageSwitcher"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ImageSwitcher>
+
     <LinearLayout
         android:fitsSystemWindows="true"
         android:orientation="vertical"

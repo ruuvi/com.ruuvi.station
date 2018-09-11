@@ -40,6 +40,11 @@ class AppSettingsDetailFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        MainActivity.setBackgroundScanning(true, activity, pref)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_app_settings_detail, container, false)
@@ -143,7 +148,7 @@ class AppSettingsDetailFragment : Fragment() {
             gateway_test_button.setOnClickListener { _ ->
                 gateway_test_result.text = "Testing.."
                 gateway_test_result.setTextColor(Color.DKGRAY)
-                val scanEvent = ScanEvent(DeviceIdentifier.id(context))
+                val scanEvent = ScanEvent(context)
                 Ion.with(context)
                         .load(input_setting.text.toString())
                         .setJsonPojoBody(scanEvent)

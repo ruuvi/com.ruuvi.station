@@ -3,6 +3,7 @@ package com.ruuvi.station.feature
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -56,7 +57,9 @@ class GraphActivity : AppCompatActivity() {
             return
         }
 
-        graph_root_view.background = Utils.getDefaultBackground(tag.defaultBackground, this)
+        Utils.getBackground(applicationContext, tag).let { bitmap ->
+            background_view.setImageDrawable(BitmapDrawable(applicationContext.resources, bitmap))
+        }
 
         val settings = PreferenceManager.getDefaultSharedPreferences(applicationContext);
         val bgScanEnabled = settings.getBoolean("pref_bgscan", false)
@@ -124,6 +127,7 @@ class GraphActivity : AppCompatActivity() {
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = resources.getColor(R.color.main)
+        set.circleRadius = (2).toFloat()
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
@@ -131,6 +135,7 @@ class GraphActivity : AppCompatActivity() {
         chart.description.text = label
         chart.description.textColor = Color.WHITE
         chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
+        chart.setNoDataTextColor(Color.WHITE)
         try {
             chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }

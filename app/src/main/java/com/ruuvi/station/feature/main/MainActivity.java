@@ -144,15 +144,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     };
 
     public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
-        return;
-        /*
-        PendingIntent pendingIntent = getPendingIntent(context);
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
-        if (shouldRun && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (shouldRun) {
             int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
             JobScheduler jobScheduler = (JobScheduler)context
                     .getSystemService(JOB_SCHEDULER_SERVICE);
-            if (scanInterval < 15 * 1000) {
+            if (scanInterval < 15 * 60 * 1000) {
                 try {
                     jobScheduler.cancel(1);
                 } catch (Exception e) {
@@ -172,8 +169,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             } catch (NullPointerException e) {
                 Log.e(TAG, "Could not start background job");
             }
-            return;
         }
+        /*
+        PendingIntent pendingIntent = getPendingIntent(context);
         boolean isRunning = pendingIntent != null;
         if (isRunning && (!shouldRun || restartFlag)) {
             AlarmManager am = (AlarmManager) context

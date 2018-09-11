@@ -11,25 +11,11 @@ import java.util.UUID;
  * Created by ISOHAJA on 14.7.2017.
  */
 
-public class ScanEvent {
-    public Date time;
-    public String deviceId;
-    public ArrayList<RuuviTag> tags;
-    public String eventId;
-    public ScanLocation location;
+public class ScanEvent extends Event {
+    public ArrayList<RuuviTag> tags = new ArrayList<>();
 
-    public ScanEvent(String deviceId,Date time) {
-        this.time = time;
-        this.deviceId = deviceId;
-        eventId = UUID.randomUUID().toString();
-        tags = new ArrayList<>();
-    }
-
-    public ScanEvent(String deviceId) {
-        time = new GregorianCalendar().getTime();
-        this.deviceId = deviceId;
-        tags = new ArrayList<>();
-        eventId = UUID.randomUUID().toString();
+    public ScanEvent(Context context) {
+        super(context);
     }
 }
 
