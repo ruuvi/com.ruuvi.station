@@ -78,9 +78,6 @@ import com.ruuvi.station.util.Utils;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 
-import static com.ruuvi.station.RuuviScannerApplication.useNewApi;
-
-
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
 

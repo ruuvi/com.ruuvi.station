@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     };
 
     public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
+        /*
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         if (shouldRun) {
             int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 Log.e(TAG, "Could not start background job");
             }
         }
+        */
         /*
         PendingIntent pendingIntent = getPendingIntent(context);
         boolean isRunning = pendingIntent != null;

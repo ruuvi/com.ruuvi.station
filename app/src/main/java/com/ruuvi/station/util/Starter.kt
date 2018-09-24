@@ -19,13 +19,14 @@ import com.ruuvi.station.feature.TagDetails
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
+import com.ruuvi.station.service.AltBeaconScannerService
 import com.ruuvi.station.service.ScannerService
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
     fun startScanning(): Boolean {
-        val scannerService = Intent(that, ScannerService::class.java)
+        val scannerService = Intent(that, AltBeaconScannerService::class.java)
         that.startService(scannerService)
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)

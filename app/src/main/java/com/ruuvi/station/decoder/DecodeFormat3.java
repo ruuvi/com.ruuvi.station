@@ -6,30 +6,30 @@ import static com.ruuvi.station.util.Utils.round;
 
 public class DecodeFormat3 implements RuuviTagDecoder {
     @Override
-    public RuuviTag decode(byte[] data) {
+    public RuuviTag decode(byte[] data, int offset) {
         RuuviTag tag = new RuuviTag();
         tag.dataFormat = 3;
-        tag.humidity = ((float) (data[8] & 0xFF)) / 2f;
+        tag.humidity = ((float) (data[1 + offset] & 0xFF)) / 2f;
 
-        int temperatureSign = (data[9] >> 7) & 1;
-        int temperatureBase = (data[9] & 0x7F);
-        float temperatureFraction = ((float) data[10]) / 100f;
+        int temperatureSign = (data[2 + offset] >> 7) & 1;
+        int temperatureBase = (data[2 + offset] & 0x7F);
+        float temperatureFraction = ((float) data[3 + offset]) / 100f;
         tag.temperature = ((float) temperatureBase) + temperatureFraction;
         if (temperatureSign == 1) {
             tag.temperature *= -1;
         }
 
-        int pressureHi = data[11] & 0xFF;
-        int pressureLo = data[12] & 0xFF;
+        int pressureHi = data[4 + offset] & 0xFF;
+        int pressureLo = data[5 + offset] & 0xFF;
         tag.pressure = pressureHi * 256 + 50000 + pressureLo;
         tag.pressure /= 100.0;
 
-        tag.accelX = (data[13] << 8 | data[14] & 0xFF) / 1000f;
-        tag.accelY = (data[15] << 8 | data[16] & 0xFF) / 1000f;
-        tag.accelZ = (data[17] << 8 | data[18] & 0xFF) / 1000f;
+        tag.accelX = (data[6 + offset] << 8 | data[7 + offset] & 0xFF) / 1000f;
+        tag.accelY = (data[8 + offset] << 8 | data[9 + offset] & 0xFF) / 1000f;
+        tag.accelZ = (data[10 + offset] << 8 | data[11 + offset] & 0xFF) / 1000f;
 
-        int battHi = data[19] & 0xFF;
-        int battLo = data[20] & 0xFF;
+        int battHi = data[12 + offset] & 0xFF;
+        int battLo = data[13 + offset] & 0xFF;
         tag.voltage = (battHi * 256 + battLo) / 1000f;
 
         // make it pretty
