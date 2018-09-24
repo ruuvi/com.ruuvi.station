@@ -1,42 +1,23 @@
 package com.ruuvi.station.service;
 
-import android.app.ActivityManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.ruuvi.station.R;
-import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.model.RuuviTag_Table;
-import com.ruuvi.station.model.TagSensorReading;
-import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 
@@ -49,14 +30,8 @@ import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 
 
 public class AltBeaconScannerService extends Service implements BeaconConsumer {

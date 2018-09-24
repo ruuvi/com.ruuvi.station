@@ -1,32 +1,39 @@
 package com.ruuvi.station.scanning;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.util.Log;
 
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 
-import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
-import no.nordicsemi.android.support.v18.scanner.ScanCallback;
-import no.nordicsemi.android.support.v18.scanner.ScanSettings;
-
 public class RuuviTagScanner {
     private static final String TAG = "RuuviTagScanner";
     private RuuviTagListener listener;
 
-    private boolean scanning = false;
-
+    private BluetoothAdapter bluetoothAdapter;
     private ScanSettings scanSettings;
-    private BluetoothLeScannerCompat scanner;
+    private BluetoothLeScanner scanner;
+    private boolean scanning = false;
 
     public RuuviTagScanner(RuuviTagListener listener, Context context) {
         this.listener = listener;
+
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setUseHardwareBatchingIfSupported(false).build();
-        scanner = BluetoothLeScannerCompat.getScanner();
+                .build();
+
+        final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        scanner = bluetoothAdapter.getBluetoothLeScanner();
+
     }
 
     public void start() {
@@ -41,9 +48,9 @@ public class RuuviTagScanner {
         scanner.stopScan(nsCallback);
     }
 
-    private ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {
+    private ScanCallback nsCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, no.nordicsemi.android.support.v18.scanner.ScanResult result) {
+        public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
         }

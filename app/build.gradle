@@ -62,7 +62,6 @@ dependencies {
     implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
     implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
 
-    implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
     implementation 'org.altbeacon:android-beacon-library:2.15.1'
 
     testImplementation 'junit:junit:4.12'

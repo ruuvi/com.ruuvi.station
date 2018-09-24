@@ -2,7 +2,13 @@ package com.ruuvi.station.scanning;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,19 +25,10 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.model.ScanEvent;
-import com.ruuvi.station.model.ScanEventSingle;
-import com.ruuvi.station.model.ScanLocation;
 import com.ruuvi.station.util.Constants;
-import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,14 +37,9 @@ import java.util.List;
 import static android.content.Context.ALARM_SERVICE;
 import static com.ruuvi.station.service.ScannerService.logTag;
 
-import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
-import no.nordicsemi.android.support.v18.scanner.ScanCallback;
-import no.nordicsemi.android.support.v18.scanner.ScanSettings;
-
 /**
- * Created by berg on 30/09/17.
+ * Created by io53 on 30/09/17.
  */
-
 public class BackgroundScanner extends BroadcastReceiver {
     private static final String TAG = "BackgroundScanner";
     public static final int REQUEST_CODE = 9001;
@@ -56,8 +48,9 @@ public class BackgroundScanner extends BroadcastReceiver {
     private List<LeScanResult> scanResults;
     //private PowerManager.WakeLock wakeLock;
 
+    private BluetoothAdapter bluetoothAdapter;
     private ScanSettings scanSettings;
-    private BluetoothLeScannerCompat scanner;
+    private BluetoothLeScanner scanner;
     private Location tagLocation;
 
     @Override
@@ -84,9 +77,11 @@ public class BackgroundScanner extends BroadcastReceiver {
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setUseHardwareBatchingIfSupported(false).build();
+                .build();
 
-        scanner = BluetoothLeScannerCompat.getScanner();
+        final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        scanner = bluetoothAdapter.getBluetoothLeScanner();
 
         scanResults = new ArrayList<>();
 
@@ -111,9 +106,9 @@ public class BackgroundScanner extends BroadcastReceiver {
         }
     }
 
-    private ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {
+    private ScanCallback nsCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, no.nordicsemi.android.support.v18.scanner.ScanResult result) {
+        public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
         }
