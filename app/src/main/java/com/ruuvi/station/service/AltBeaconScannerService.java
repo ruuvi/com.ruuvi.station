@@ -92,14 +92,6 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            beaconManager.removeAllRangeNotifiers();
-            beaconManager.stopRangingBeaconsInRegion(region);
-        } catch (Exception e) {
-            Log.d(TAG, "Could not remove ranging region");
-        }
-        beaconManager.unbind(this);
-        beaconManager = null;
     }
 
     @Nullable
@@ -127,6 +119,14 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+         try {
+            beaconManager.removeAllRangeNotifiers();
+            beaconManager.stopRangingBeaconsInRegion(region);
+        } catch (Exception e) {
+            Log.d(TAG, "Could not remove ranging region");
+        }
+        beaconManager.unbind(this);
+        beaconManager = null;
         stopForeground(true);
         stopSelf();
         Foreground.get().removeListener(listener);
