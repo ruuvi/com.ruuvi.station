@@ -2,7 +2,9 @@ package com.ruuvi.station.util
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -26,8 +28,10 @@ import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
     fun startScanning(): Boolean {
-        val scannerService = Intent(that, AltBeaconScannerService::class.java)
-        that.startService(scannerService)
+        if (isRunning(AltBeaconScannerService::class.java)) {
+            val scannerService = Intent(that, AltBeaconScannerService::class.java)
+            that.startService(scannerService)
+        }
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
             builder.setTitle(that.getString(R.string.locationServices))
@@ -50,6 +54,16 @@ class Starter(val that: AppCompatActivity) {
             }
         }
         */
+    }
+
+    private fun isRunning(serviceClass: Class<*>): Boolean {
+        val mgr = that.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        for (service in mgr!!.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     fun getThingsStarted() {
