@@ -2,24 +2,20 @@ package com.ruuvi.station.feature.main;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -44,18 +40,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
-import com.ruuvi.station.service.ScannerJobService;
+import com.ruuvi.station.service.AltBeaconScannerForegroundService;
+import com.ruuvi.station.service.AltBeaconScannerService;
 import com.ruuvi.station.service.ScannerService;
-import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.util.ServiceUtils;
 import com.ruuvi.station.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
@@ -143,7 +141,28 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     };
 
-    public static void setBackgroundScanning(boolean restartFlag, Context context, SharedPreferences settings) {
+    public static void setBackgroundScanning(final Context context, final SharedPreferences settings) {
+        Log.d(TAG, "DEBUG, setBackgroundScan");
+        ((RuuviScannerApplication)(((Activity)context).getApplication())).startForegroundScanning();
+        /*
+        Log.d(TAG, "DEBUG, stopped bg scan");
+        ServiceUtils su = new ServiceUtils(context);
+        if (settings.getBoolean("foreground_service", false)) {
+            if (su.isRunning(AltBeaconScannerService.class)) {
+                su.stopService();
+            } else {
+                su.startForegroundService();
+            }
+        }
+        else {
+            if (su.isRunning(AltBeaconScannerForegroundService.class)) {
+                new ServiceUtils(context).stopForegroundService();
+            } else {
+                su.startService();
+            }
+        }
+        */
+        //new ServiceUtils(context).stopService().startService();
         /*
         boolean shouldRun = settings.getBoolean("pref_bgscan", false);
         if (shouldRun) {
@@ -463,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            setBackgroundScanning(true, getApplicationContext(), settings);
+            //setBackgroundScanning(true, getApplicationContext(), settings);
         }
     };
 
@@ -489,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         setPrefDone(FIRST_START_PREF);
-        setBackgroundScanning(false, this, settings);
+        //setBackgroundScanning(false, this, settings);
         openFragment(goToAddTags ? 0 : 1);
         requestPermissions();
     }

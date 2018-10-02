@@ -262,4 +262,6 @@
     <string name="ignore_battery_description">Press here to exclude Ruuvi Station from battery optimisations. This can help background scanning to run more reliably on Android 6.0+.</string>
     <string name="wakelock_title">Keep the device awake while scanning</string>
     <string name="wakelock_description">This will make the device stay awake while background scanning is enabled. It will improve background scanning reliability but will make the app use more battery.</string>
+    <string name="use_foreground_service">Use foreground service</string>
+    <string name="use_foreground_service_description">Background scanning will be running as a foreground service with notification showing.</string>
 </resources>

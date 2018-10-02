@@ -50,9 +50,51 @@
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/bg_scan_switch"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/scan_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/scan_layout"
                     app:layout_constraintRight_toRightOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    app:layout_constraintTop_toBottomOf="@id/scan_layout"
+                    android:id="@+id/scan_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/divider" />
+
+                <LinearLayout
+                    android:id="@+id/foreground_scan_layout"
+                    app:layout_constraintRight_toLeftOf="@id/foreground_scan_switch"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/scan_divider"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/foreground_scan_title"
+                        android:text="@string/use_foreground_service"
+                        style="@style/PrefTitleText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:text="@string/use_foreground_service_description"
+                        style="@style/PrefSecondaryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/foreground_scan_switch"
+                    app:layout_constraintTop_toTopOf="@id/foreground_scan_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/foreground_scan_layout"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:enabled="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -248,6 +290,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/ignore_battery_container"
                     app:layout_constraintTop_toBottomOf="@id/duration_container"
                     android:orientation="vertical"

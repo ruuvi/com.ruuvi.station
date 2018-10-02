@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import com.ruuvi.station.R
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.PreferenceKeys
 import com.ruuvi.station.util.PreferenceKeys.DASHBOARD_ENABLED_PREF
@@ -17,6 +18,7 @@ class StartupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_startup)
 
         DeviceIdentifier.id(applicationContext)
+        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
 
         if (!getBoolPref(PreferenceKeys.FIRST_START_PREF)) {
             val intent = Intent(this, WelcomeActivity::class.java)

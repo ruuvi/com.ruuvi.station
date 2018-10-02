@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.design.widget.Snackbar
@@ -27,10 +28,11 @@ import kotlinx.android.synthetic.main.activity_tag_details.*
 import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
+    var isScanning = false
     fun startScanning(): Boolean {
-        if (isRunning(AltBeaconScannerService::class.java)) {
-            val scannerService = Intent(that, AltBeaconScannerService::class.java)
-            that.startService(scannerService)
+        if (!isScanning) {
+            MainActivity.setBackgroundScanning(that, PreferenceManager.getDefaultSharedPreferences(that))
+            isScanning = true
         }
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
@@ -56,21 +58,10 @@ class Starter(val that: AppCompatActivity) {
         */
     }
 
-    private fun isRunning(serviceClass: Class<*>): Boolean {
-        val mgr = that.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        for (service in mgr!!.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
-
     fun getThingsStarted() {
-        setBackgroundScanning(false, that, PreferenceManager.getDefaultSharedPreferences(that))
+        //setBackgroundScanning(false, that, PreferenceManager.getDefaultSharedPreferences(that))
         requestPermissions()
     }
-
 
     fun getNeededPermissions(): List<String> {
         val permissionCoarseLocation = ContextCompat.checkSelfPermission(that,

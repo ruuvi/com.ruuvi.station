@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +38,7 @@ import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
+import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.*
 import java.util.*
 
@@ -254,6 +254,7 @@ class TagDetails : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
         tags = RuuviTag.getAll(true)
 
         for (tag in tags) {
