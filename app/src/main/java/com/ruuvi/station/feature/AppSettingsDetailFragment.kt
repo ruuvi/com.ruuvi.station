@@ -73,7 +73,7 @@ class AppSettingsDetailFragment : Fragment() {
             }
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
-            val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
+            val current = prefs.backgroundScanInterval
 
             val min = current / 60
             val sec = current - min * 60
@@ -107,7 +107,7 @@ class AppSettingsDetailFragment : Fragment() {
         } else if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)
-            val current = (activity as AppSettingsActivity).getStringFromPref("pref_temperature_unit", "C")
+            val current = prefs.temperatureUnit
             val options = resources.getStringArray(R.array.list_preference_temperature_unit_titles)
             val values = resources.getStringArray(R.array.list_preference_temperature_unit_values)
             options.forEachIndexed { index, option ->
@@ -125,7 +125,7 @@ class AppSettingsDetailFragment : Fragment() {
         } else if (res == R.string.gateway_url) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
-            input_setting.setText((activity as AppSettingsActivity).getStringFromPref("pref_backend", ""))
+            input_setting.setText(prefs.gatewayUrl)
             input_setting.hint = "https://your.gateway/..."
             input_setting.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -187,7 +187,7 @@ class AppSettingsDetailFragment : Fragment() {
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)
-            input_setting.setText((activity as AppSettingsActivity).getStringFromPref("pref_device_id", ""))
+            input_setting.setText(prefs.deviceId)
             input_setting.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 }
