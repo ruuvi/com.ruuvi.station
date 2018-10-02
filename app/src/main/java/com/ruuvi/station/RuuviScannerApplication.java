@@ -29,7 +29,6 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     public void stopScanning() {
         if (beaconManager == null) return;
         running = false;
-        Log.d(TAG, "DEBUG, Stopped background scanning");
         Log.d(TAG, "Stopped background scanning");
         beaconManager.setBackgroundMode(false);
         try {

@@ -97,10 +97,6 @@ public class RuuviRangeNotifier implements RangeNotifier {
             }
         }
 
-        if (ruuviTag.id.equals("FC:38:2B:A3:EB:D2")) {
-            Log.d(TAG, "SAVING");
-        }
-
         lastLogged.put(ruuviTag.id, new Date().getTime());
         TagSensorReading reading = new TagSensorReading(ruuviTag);
         reading.save();

@@ -13,7 +13,6 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.ScanLocation;
-import com.ruuvi.station.util.DeviceIdentifier;
 import com.ruuvi.station.util.Preferences;
 
 import java.util.List;
