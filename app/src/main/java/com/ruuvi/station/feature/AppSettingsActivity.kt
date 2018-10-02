@@ -2,7 +2,6 @@ package com.ruuvi.station.feature
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -22,7 +21,6 @@ class AppSettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_app_settings)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        pref = PreferenceManager.getDefaultSharedPreferences(this)
 
         openFragment(-1)
     }

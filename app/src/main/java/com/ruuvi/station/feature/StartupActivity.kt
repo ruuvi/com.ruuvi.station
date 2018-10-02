@@ -3,12 +3,10 @@ package com.ruuvi.station.feature
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.PreferenceKeys
-import com.ruuvi.station.util.PreferenceKeys.DASHBOARD_ENABLED_PREF
+import com.ruuvi.station.util.Preferences
 
 
 class StartupActivity : AppCompatActivity() {
@@ -18,14 +16,16 @@ class StartupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_startup)
 
         DeviceIdentifier.id(applicationContext)
-        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
+        MainActivity.setBackgroundScanning(this)
 
-        if (!getBoolPref(PreferenceKeys.FIRST_START_PREF)) {
+        val prefs = Preferences(this)
+
+        if (prefs.isFirstStart) {
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent)
             return
         }
-        if (getBoolPref(DASHBOARD_ENABLED_PREF)) {
+        if (prefs.dashboardEnabled) {
             val intent = Intent(applicationContext, DashboardActivity::class.java)
             startActivity(intent)
             return
@@ -35,10 +35,5 @@ class StartupActivity : AppCompatActivity() {
                 getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
         )
         startActivity(intent)
-    }
-
-    fun getBoolPref(pref: String): Boolean {
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        return settings.getBoolean(pref, false)
     }
 }

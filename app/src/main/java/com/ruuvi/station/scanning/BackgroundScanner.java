@@ -12,13 +12,11 @@ import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -28,7 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.util.Constants;
+import com.ruuvi.station.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -153,11 +151,11 @@ public class BackgroundScanner extends BroadcastReceiver {
     }
 
     private void scheduleNextScan(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        Preferences prefs = new Preferences(context);
         //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
-        int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
+        int scanInterval = prefs.getBackgroundScanInterval() * 1000;
         if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
-        boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
+        boolean batterySaving = prefs.getBatterySaverEnabled();
 
         Intent intent = new Intent(context, BackgroundScanner.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);

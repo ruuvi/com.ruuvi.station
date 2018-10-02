@@ -15,7 +15,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
@@ -72,7 +71,7 @@ class TagDetails : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        if (getBoolPref(PreferenceKeys.DASHBOARD_ENABLED_PREF)) {
+        if (Preferences(this).dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             main_drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
@@ -225,17 +224,6 @@ class TagDetails : AppCompatActivity() {
         snackbar.show()
     }
 
-    fun setBoolPref(pref: String) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
-        editor.putBoolean(pref, true)
-        editor.apply()
-    }
-
-    fun getBoolPref(pref: String): Boolean {
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        return settings.getBoolean(pref, false)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
@@ -254,7 +242,7 @@ class TagDetails : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
+        MainActivity.setBackgroundScanning(this)
         tags = RuuviTag.getAll(true)
 
         for (tag in tags) {

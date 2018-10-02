@@ -1,9 +1,7 @@
 package com.ruuvi.station.feature
 
 import android.os.Bundle
-import android.content.SharedPreferences
 import android.graphics.Color
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.widget.SwitchCompat
 import android.text.Editable
@@ -20,17 +18,21 @@ import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.ScanEvent
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.DeviceIdentifier
+import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.ServiceUtils
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
 private const val ARG_SETTING_RES = "arg_setting_res"
 
 class AppSettingsDetailFragment : Fragment() {
-    lateinit var pref: SharedPreferences
     private var res: Int? = null
+    lateinit var prefs: Preferences
+    private var gatewayUrl = ""
+    private var deviceId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = Preferences(this.context!!)
         arguments?.let {
             res = it.getInt(ARG_SETTING_RES)
         }
@@ -38,7 +40,15 @@ class AppSettingsDetailFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        MainActivity.setBackgroundScanning(activity, pref)
+        prefs.gatewayUrl = gatewayUrl
+        prefs.deviceId = deviceId
+        MainActivity.setBackgroundScanning(activity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (gatewayUrl.isEmpty()) gatewayUrl = prefs.gatewayUrl
+        if (deviceId.isEmpty()) deviceId = prefs.deviceId
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,17 +59,15 @@ class AppSettingsDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        pref = PreferenceManager.getDefaultSharedPreferences(activity)
-
         if (res == R.string.pref_bgscan) {
             scan_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setScanSwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_details)
 
             val switch = view.findViewById<SwitchCompat>(R.id.foreground_scan_switch)
-            switch.isChecked = pref.getBoolean("foreground_service", false)
+            switch.isChecked = prefs.foregroundServiceEnabled
             switch.setOnCheckedChangeListener { _, isChecked ->
-                pref.edit().putBoolean("foreground_service", isChecked).apply()
+                prefs.foregroundServiceEnabled = isChecked
                 if (!isChecked) ServiceUtils(context!!).stopForegroundService();
                 //MainActivity.setBackgroundScanning(context, pref)
             }
@@ -84,11 +92,11 @@ class AppSettingsDetailFragment : Fragment() {
                 } else {
                     duration_second.minValue = 0
                 }
-                pref.edit().putInt("pref_background_scan_interval", new * 60 + duration_second.value).apply()
+                prefs.backgroundScanInterval = new * 60 + duration_second.value
             }
 
             duration_second.setOnValueChangedListener { numberPicker, old, new ->
-                pref.edit().putInt("pref_background_scan_interval", duration_minute.value * 60 + new).apply()
+                prefs.backgroundScanInterval = duration_minute.value * 60 + new
             }
 
             settings_info.text = getString(R.string.settings_background_scan_interval_details)
@@ -111,7 +119,7 @@ class AppSettingsDetailFragment : Fragment() {
             }
 
             radio_group.setOnCheckedChangeListener { radioGroup, i ->
-                pref.edit().putString("pref_temperature_unit", values[i]).apply()
+                prefs.temperatureUnit = values[i]
             }
             settings_info.text = getString(R.string.settings_temperature_unit_details)
         } else if (res == R.string.gateway_url) {
@@ -126,13 +134,13 @@ class AppSettingsDetailFragment : Fragment() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-                    pref.edit().putString("pref_backend", p0.toString()).apply()
+                    gatewayUrl = p0.toString()
                 }
             })
             //settings_info.text = getString(R.string.settings_gateway_details)
             settings_info.movementMethod = LinkMovementMethod.getInstance()
             device_identifier_layout.visibility = View.VISIBLE
-            device_identifier_input.setText(pref.getString("pref_device_id", ""))
+            device_identifier_input.setText(prefs.deviceId)
             device_identifier_input.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 }
@@ -140,36 +148,41 @@ class AppSettingsDetailFragment : Fragment() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-                    pref.edit().putString("pref_device_id", p0.toString()).apply()
+                    deviceId = p0.toString()
                 }
             })
             wakelock_layout_container.visibility = View.VISIBLE
-            wakelock_switch.isChecked = pref.getBoolean("pref_wakelock", false)
+            wakelock_switch.isChecked = prefs.serviceWakelock
             wakelock_switch.setOnCheckedChangeListener { switch, checked ->
-                pref.edit().putBoolean("pref_wakelock", checked).apply();
+                prefs.serviceWakelock = checked
             }
             gateway_tester_layout.visibility = View.VISIBLE
             gateway_test_button.setOnClickListener { _ ->
                 gateway_test_result.text = "Testing.."
                 gateway_test_result.setTextColor(Color.DKGRAY)
                 val scanEvent = ScanEvent(context)
+                scanEvent.deviceId = device_identifier_input.text.toString()
                 Ion.with(context)
                         .load(input_setting.text.toString())
                         .setJsonPojoBody(scanEvent)
                         .asJsonObject()
                         .withResponse()
-                        .setCallback({ e, result ->
-                            if (e != null) {
-                                gateway_test_result.setTextColor(Color.RED)
-                                gateway_test_result.text = "Nope, did not work. Is the URL correct?"
-                            } else if (result.headers.code() != 200) {
-                                gateway_test_result.setTextColor(Color.RED)
-                                gateway_test_result.text = "Nope, did not work. Response code: " + result.headers.code()
-                            } else {
-                                gateway_test_result.setTextColor(Color.GREEN)
-                                gateway_test_result.text = "Gateway works! Response code: " + result.headers.code()
+                        .setCallback { e, result ->
+                            when {
+                                e != null -> {
+                                    gateway_test_result.setTextColor(Color.RED)
+                                    gateway_test_result.text = "Nope, did not work. Is the URL correct?"
+                                }
+                                result.headers.code() != 200 -> {
+                                    gateway_test_result.setTextColor(Color.RED)
+                                    gateway_test_result.text = "Nope, did not work. Response code: " + result.headers.code()
+                                }
+                                else -> {
+                                    gateway_test_result.setTextColor(Color.GREEN)
+                                    gateway_test_result.text = "Gateway works! Response code: " + result.headers.code()
+                                }
                             }
-                        })
+                        }
             }
         } else if (res == R.string.device_identifier) {
             input_layout.visibility = View.VISIBLE
@@ -179,10 +192,9 @@ class AppSettingsDetailFragment : Fragment() {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 }
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    pref.edit().putString("pref_device_id", p0.toString()).apply()
+                    deviceId = p0.toString()
                     if (p0.toString().isEmpty()) {
-                        // this will generate a new uuid and put it into the pref
-                        DeviceIdentifier.id(activity)
+                        deviceId = DeviceIdentifier.generateId()
                     }
                 }
 

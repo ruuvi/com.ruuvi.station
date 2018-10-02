@@ -15,7 +15,6 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +23,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -53,6 +51,7 @@ import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
+import com.ruuvi.station.util.Preferences;
 
 
 public class ScannerService extends Service {
@@ -67,7 +66,6 @@ public class ScannerService extends Service {
     private Handler bgScanHandler;
     private boolean isForegroundMode = false;
     private boolean foreground = false;
-    private SharedPreferences settings;
     private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
     private static List<RuuviTag> backgroundTags = new ArrayList<>();
     private static final int SCAN_TIME_MS = 5000;
@@ -114,9 +112,9 @@ public class ScannerService extends Service {
     }
 
     private boolean getForegroundMode() {
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-        int getInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
-        return settings.getBoolean("pref_bgscan", false) && getInterval < 15 * 60;
+        Preferences prefs = new Preferences(this);
+        int getInterval =  prefs.getBackgroundScanInterval();
+        return prefs.getBackgroundScanEnabled() && getInterval < 15 * 60;
         //return settings.getBoolean("pref_bgscan", false);
     }
 
@@ -276,7 +274,8 @@ public class ScannerService extends Service {
                 stopSelf();
                 isForegroundMode = false;
             } else {
-                if (settings.getBoolean("pref_wakelock", false)) {
+                Preferences prefs = new Preferences(getApplicationContext());
+                if (prefs.getServiceWakelock()) {
                     PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
                     try {
                         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -289,7 +288,7 @@ public class ScannerService extends Service {
                 } else {
                     wakeLock = null;
                 }
-                backgroundScanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
+                backgroundScanInterval = prefs.getBackgroundScanInterval();
                 if (!isForegroundMode) startFG();
                 bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);
             }

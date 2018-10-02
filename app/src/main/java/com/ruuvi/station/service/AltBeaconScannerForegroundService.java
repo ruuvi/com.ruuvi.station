@@ -6,14 +6,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -22,6 +19,7 @@ import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.util.Constants;
+import com.ruuvi.station.util.Preferences;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -50,9 +48,6 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        backgroundScanInterval = settings.getInt("pref_background_scan_interval", backgroundScanInterval);
 
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         startFG();
@@ -116,8 +111,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         beaconManager.setEnableScheduledScanJobs(true);
         beaconManager = null;
         stopForeground(true);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (settings.getBoolean("pref_bgscan", false)) {
+        if (new Preferences(this).getBackgroundScanEnabled()) {
             ((RuuviScannerApplication)(this.getApplication())).startBackgroundScanning();
         }
         stopSelf();

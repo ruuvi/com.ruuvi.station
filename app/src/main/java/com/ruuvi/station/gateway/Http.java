@@ -1,9 +1,7 @@
 package com.ruuvi.station.gateway;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,14 +9,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.ScanLocation;
 import com.ruuvi.station.util.DeviceIdentifier;
+import com.ruuvi.station.util.Preferences;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class Http {
@@ -69,10 +66,10 @@ public class Http {
             }
         }
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        String backendUrl = settings.getString("pref_backend", null);
+        Preferences prefs = new Preferences(context);
+        String backendUrl = prefs.getGatewayUrl();
 
-        if (backendUrl != null && eventBatch.tags.size() > 0)
+        if (!backendUrl.isEmpty() && eventBatch.tags.size() > 0)
         {
             Ion.with(context)
                     .load(backendUrl)
