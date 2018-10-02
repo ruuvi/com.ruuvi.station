@@ -5,18 +5,15 @@ import android.support.v4.app.Fragment
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.SwitchCompat
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.FrameLayout
 
 import com.ruuvi.station.R
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.PreferenceKeys
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
@@ -93,7 +90,7 @@ class AppSettingsListFragment : Fragment() {
         builder.setView(container)
         builder.setPositiveButton("Ok") { dialog, which ->
             pref.edit().putString(prefId, input.text.toString()).apply()
-            MainActivity.setBackgroundScanning(true, activity, pref)
+            //MainActivity.setBackgroundScanning(true, activity, pref)
             updateSubs()
         }
         builder.setNegativeButton("Cancel", null)

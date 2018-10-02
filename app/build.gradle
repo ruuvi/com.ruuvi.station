@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 10065
-        versionName "0.9.8.2-beta"
+        versionCode 10066
+        versionName "0.9.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -39,7 +39,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "com.android.support:appcompat-v7:${support_version}"
     implementation "com.android.support:design:${support_version}"
@@ -62,7 +62,7 @@ dependencies {
     implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
     implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
 
-    implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
+    implementation 'org.altbeacon:android-beacon-library:2.15.1'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:1.10.19'

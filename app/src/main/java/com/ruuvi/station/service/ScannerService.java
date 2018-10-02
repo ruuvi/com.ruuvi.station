@@ -1,8 +1,6 @@
 package com.ruuvi.station.service;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -36,58 +34,35 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
 import com.ruuvi.station.feature.StartupActivity;
-import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.gateway.Http;
-import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.RuuviTag_Table;
-import com.ruuvi.station.model.ScanEvent;
-import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.TagSensorReading;
-import com.ruuvi.station.scanning.BackgroundScanner;
 import com.ruuvi.station.util.AlarmChecker;
-import com.ruuvi.station.util.ComplexPreferences;
 import com.ruuvi.station.util.Constants;
-import com.ruuvi.station.util.DeviceIdentifier;
 import com.ruuvi.station.util.Foreground;
-import com.ruuvi.station.model.RuuviTagComplexList;
-import com.ruuvi.station.util.Utils;
-
-import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
-
-import static com.ruuvi.station.RuuviScannerApplication.useNewApi;
 
 
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
 
     private boolean scanning;
-
-    private no.nordicsemi.android.support.v18.scanner.ScanSettings scanSettings;
-    private BluetoothLeScannerCompat scanner;
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothLeScanner scanner;
+    private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
+    private ScanSettings scanSettings;
     private Handler handler;
     private Handler bgScanHandler;
     private boolean isForegroundMode = false;
@@ -112,12 +87,13 @@ public class ScannerService extends Service {
         Foreground.get().addListener(listener);
 
         foreground = true;
-        scanSettings = new no.nordicsemi.android.support.v18.scanner.ScanSettings.Builder()
+        scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
-                .setScanMode(no.nordicsemi.android.support.v18.scanner.ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setUseHardwareBatchingIfSupported(false).build();
-
-        scanner = BluetoothLeScannerCompat.getScanner();
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build();
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        scanner = bluetoothAdapter.getBluetoothLeScanner();
 
         if (getForegroundMode()) startFG();
         handler = new Handler();
@@ -218,11 +194,7 @@ public class ScannerService extends Service {
                 .setLargeIcon(bitmap)
                 .setContentIntent(pendingIntent);
 
-        if (Build.VERSION.SDK_INT < 21) {
-            notification.setSmallIcon(R.mipmap.ic_launcher_small);
-        } else {
-            notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
-        }
+        notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
 
         startForeground(1337, notification.build());
     }
@@ -249,9 +221,9 @@ public class ScannerService extends Service {
         scanner.stopScan(nsCallback);
     }
 
-    private no.nordicsemi.android.support.v18.scanner.ScanCallback nsCallback = new no.nordicsemi.android.support.v18.scanner.ScanCallback() {
+    private ScanCallback nsCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, no.nordicsemi.android.support.v18.scanner.ScanResult result) {
+        public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
         }
@@ -308,7 +280,7 @@ public class ScannerService extends Service {
                     PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
                     try {
                         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                                "MyWakelockTag");
+                                "ruuviStation:serviceWakelock");
                         wakeLock.acquire();
                         Log.d(TAG, "Acquired wakelock");
                     } catch (Exception e) {

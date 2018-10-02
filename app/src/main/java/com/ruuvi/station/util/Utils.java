@@ -69,6 +69,18 @@ public class Utils {
         });
     }
 
+    public static byte[] parseByteDataFromB64(String data) {
+        try {
+            byte[] bData = base64.decode(data);
+            int pData[] = new int[8];
+            for (int i = 0; i < bData.length; i++)
+                pData[i] = bData[i] & 0xFF;
+            return bData;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String strDescribingTimeSince(Date date) {
         String output = "";
         Date dateNow = new Date();

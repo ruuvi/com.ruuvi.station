@@ -2,10 +2,13 @@ package com.ruuvi.station.util
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.design.widget.Snackbar
@@ -19,14 +22,18 @@ import com.ruuvi.station.feature.TagDetails
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import com.ruuvi.station.feature.main.MainActivity.setBackgroundScanning
+import com.ruuvi.station.service.AltBeaconScannerService
 import com.ruuvi.station.service.ScannerService
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
+    var isScanning = false
     fun startScanning(): Boolean {
-        val scannerService = Intent(that, ScannerService::class.java)
-        that.startService(scannerService)
+        if (!isScanning) {
+            MainActivity.setBackgroundScanning(that, PreferenceManager.getDefaultSharedPreferences(that))
+            isScanning = true
+        }
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
             builder.setTitle(that.getString(R.string.locationServices))
@@ -52,10 +59,9 @@ class Starter(val that: AppCompatActivity) {
     }
 
     fun getThingsStarted() {
-        setBackgroundScanning(false, that, PreferenceManager.getDefaultSharedPreferences(that))
+        //setBackgroundScanning(false, that, PreferenceManager.getDefaultSharedPreferences(that))
         requestPermissions()
     }
-
 
     fun getNeededPermissions(): List<String> {
         val permissionCoarseLocation = ContextCompat.checkSelfPermission(that,

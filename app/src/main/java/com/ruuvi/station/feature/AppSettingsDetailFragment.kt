@@ -5,26 +5,22 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
+import android.support.v7.widget.SwitchCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
-import com.google.gson.JsonObject
-import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
-import com.koushikdutta.ion.Response
 
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.ScanEvent
-import com.ruuvi.station.model.ScanEventSingle
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.DeviceIdentifier
+import com.ruuvi.station.util.ServiceUtils
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
 private const val ARG_SETTING_RES = "arg_setting_res"
@@ -42,7 +38,7 @@ class AppSettingsDetailFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        MainActivity.setBackgroundScanning(true, activity, pref)
+        MainActivity.setBackgroundScanning(activity, pref)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +55,14 @@ class AppSettingsDetailFragment : Fragment() {
             scan_layout_container.visibility = View.VISIBLE
             (activity as AppSettingsActivity).setScanSwitchLayout(view)
             settings_info.text = getString(R.string.settings_background_scan_details)
+
+            val switch = view.findViewById<SwitchCompat>(R.id.foreground_scan_switch)
+            switch.isChecked = pref.getBoolean("foreground_service", false)
+            switch.setOnCheckedChangeListener { _, isChecked ->
+                pref.edit().putBoolean("foreground_service", isChecked).apply()
+                if (!isChecked) ServiceUtils(context!!).stopForegroundService();
+                //MainActivity.setBackgroundScanning(context, pref)
+            }
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
             val current = (activity as AppSettingsActivity).getIntFromPref("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)

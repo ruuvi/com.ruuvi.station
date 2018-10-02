@@ -4,16 +4,14 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
-import android.widget.CompoundButton
 import com.ruuvi.station.R
-import com.ruuvi.station.feature.main.MainActivity
 import android.support.v7.widget.SwitchCompat
 
 import kotlinx.android.synthetic.main.activity_app_settings.*
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
 class AppSettingsActivity : AppCompatActivity() {
     var showingFragmentTitle = -1
@@ -66,11 +64,17 @@ class AppSettingsActivity : AppCompatActivity() {
     fun setScanSwitchLayout(view: View) {
         val switch = view.findViewById<SwitchCompat>(R.id.bg_scan_switch)
         switch.isChecked = pref.getBoolean("pref_bgscan", false)
-        switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+        switch.setOnCheckedChangeListener { _, isChecked ->
             pref.edit().putBoolean("pref_bgscan", isChecked).apply()
-            MainActivity.setBackgroundScanning(true, this, pref)
+            //MainActivity.setBackgroundScanning(this, pref)
             //if (isChecked) MainActivity.checkAndAskForBatteryOptimization(this)
-        })
+            if (foreground_scan_switch != null) {
+                foreground_scan_switch.isEnabled = switch.isChecked
+            }
+        }
+        if (foreground_scan_switch != null) {
+            foreground_scan_switch.isEnabled = switch.isChecked
+        }
     }
 
     fun getStringFromPref(prefTag: String, default: String): String {

@@ -6,9 +6,9 @@ import static com.ruuvi.station.util.Utils.round;
 
 public class DecodeFormat2and4 implements RuuviTagDecoder {
     @Override
-    public RuuviTag decode(byte[] data) {
+    public RuuviTag decode(byte[] data, int offset) {
         int pData[] = new int[8];
-        for (int i = 0; i < data.length; i++)
+        for (int i = 0; i < data.length && i < 8; i++)
             pData[i] = data[i] & 0xFF;
 
         RuuviTag tag = new RuuviTag();

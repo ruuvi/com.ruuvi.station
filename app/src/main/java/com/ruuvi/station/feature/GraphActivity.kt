@@ -1,7 +1,5 @@
 package com.ruuvi.station.feature
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
@@ -13,7 +11,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -23,14 +20,11 @@ import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
 import kotlinx.android.synthetic.main.activity_graph.*
-import javax.xml.datatype.DatatypeConstants.HOURS
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.Utils
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class GraphActivity : AppCompatActivity() {
@@ -74,7 +68,7 @@ class GraphActivity : AppCompatActivity() {
                 simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes), {
                     _, _ ->
                     settings.edit().putBoolean("pref_bgscan", true).commit()
-                    MainActivity.setBackgroundScanning(true, application, settings)
+                    //MainActivity.setBackgroundScanning(true, application, settings)
                 })
                 simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no), {
                     _, _ ->

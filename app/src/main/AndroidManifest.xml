@@ -37,6 +37,12 @@
         <service
             android:name=".service.ScannerService"
             android:exported="false" />
+        <service
+            android:name=".service.AltBeaconScannerService"
+            android:exported="false" />
+        <service
+            android:name=".service.AltBeaconScannerForegroundService"
+            android:exported="false" />
 
         <service android:name=".service.ScannerJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
@@ -73,6 +79,7 @@
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.StartupActivity"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
