@@ -22,8 +22,6 @@ public class Http {
     private static final String TAG = "Http";
 
     public static void post(List<RuuviTag> tags, Location location, Context context){
-        String deviceId = DeviceIdentifier.id(context);
-
         ScanLocation scanLocation = null;
         if (location != null) {
             scanLocation = new ScanLocation();

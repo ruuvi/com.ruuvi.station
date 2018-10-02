@@ -12,20 +12,30 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.TagSensorReading;
+import com.ruuvi.station.util.AlarmChecker;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RuuviRangeNotifier implements RangeNotifier {
     private static final String TAG = "RuuviRangeNotifier";
     private String from;
     private Context context;
     private Location tagLocation;
+
+    private Map<String, Long> lastLogged = null;
+    private int LOG_INTERVAL = 5;
+
 
     public RuuviRangeNotifier(Context context, String from) {
         this.context = context;
@@ -56,10 +66,44 @@ public class RuuviRangeNotifier implements RangeNotifier {
             }
             RuuviTag tag = LeScanResult.fromAltbeacon(beacon);
             if (tag != null) {
-                tags.add(tag);
-                ScannerService.logTag(tag, context, true);
+                saveReading(tag);
+                if (tag.favorite) tags.add(tag);
             }
         }
         if (tags.size() > 0) Http.post(tags, tagLocation, context);
+    }
+
+    private void saveReading(RuuviTag ruuviTag) {
+        RuuviTag dbTag = RuuviTag.get(ruuviTag.id);
+        if (dbTag != null) {
+            ruuviTag = dbTag.preserveData(ruuviTag);
+            ruuviTag.update();
+            if (!dbTag.favorite) return;
+        } else {
+            ruuviTag.updateAt = new Date();
+            ruuviTag.save();
+            return;
+        }
+
+        if (lastLogged == null) lastLogged = new HashMap<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -LOG_INTERVAL);
+        long loggingThreshold = calendar.getTime().getTime();
+        for (Map.Entry<String, Long> entry : lastLogged.entrySet())
+        {
+            if (entry.getKey().equals(ruuviTag.id) && entry.getValue() > loggingThreshold) {
+                return;
+            }
+        }
+
+        if (ruuviTag.id.equals("FC:38:2B:A3:EB:D2")) {
+            Log.d(TAG, "SAVING");
+        }
+
+        lastLogged.put(ruuviTag.id, new Date().getTime());
+        TagSensorReading reading = new TagSensorReading(ruuviTag);
+        reading.save();
+        AlarmChecker.check(ruuviTag, context);
     }
 }

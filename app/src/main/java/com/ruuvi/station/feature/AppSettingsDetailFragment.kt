@@ -16,7 +16,6 @@ import com.koushikdutta.ion.Ion
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.ScanEvent
-import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.ServiceUtils

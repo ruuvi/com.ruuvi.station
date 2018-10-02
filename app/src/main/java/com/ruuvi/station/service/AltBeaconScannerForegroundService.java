@@ -30,7 +30,6 @@ import org.altbeacon.beacon.Region;
 public class AltBeaconScannerForegroundService extends Service implements BeaconConsumer {
     private static final String TAG = "AScannerFgService";
 
-    private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
     private BeaconManager beaconManager;
     private Region region;
 
