@@ -16,24 +16,26 @@ class StartupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_startup)
 
         DeviceIdentifier.id(applicationContext)
-        MainActivity.setBackgroundScanning(this)
 
         val prefs = Preferences(this)
 
         if (prefs.isFirstStart) {
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent)
-            return
         }
-        if (prefs.dashboardEnabled) {
+        else if (prefs.dashboardEnabled) {
             val intent = Intent(applicationContext, DashboardActivity::class.java)
             startActivity(intent)
-            return
+        } else {
+            val intent = Intent(applicationContext, TagDetails::class.java)
+            intent.putExtra(TagDetails.FROM_WELCOME,
+                    getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
+            )
+            startActivity(intent)
         }
-        val intent = Intent(applicationContext, TagDetails::class.java)
-        intent.putExtra(TagDetails.FROM_WELCOME,
-                getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
-        )
-        startActivity(intent)
+
+        Thread(Runnable {
+            MainActivity.setBackgroundScanning(this)
+        }).start()
     }
 }

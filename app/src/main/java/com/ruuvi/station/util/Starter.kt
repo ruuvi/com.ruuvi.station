@@ -17,10 +17,6 @@ import java.util.ArrayList
 class Starter(val that: AppCompatActivity) {
     var isScanning = false
     fun startScanning(): Boolean {
-        if (!isScanning) {
-            MainActivity.setBackgroundScanning(that)
-            isScanning = true
-        }
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
             builder.setTitle(that.getString(R.string.locationServices))

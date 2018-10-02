@@ -41,7 +41,7 @@ class AppSettingsDetailFragment : Fragment() {
         super.onPause()
         prefs.gatewayUrl = gatewayUrl
         prefs.deviceId = deviceId
-        MainActivity.setBackgroundScanning(activity)
+        //MainActivity.setBackgroundScanning(activity)
     }
 
     override fun onResume() {
@@ -67,7 +67,7 @@ class AppSettingsDetailFragment : Fragment() {
             switch.isChecked = prefs.foregroundServiceEnabled
             switch.setOnCheckedChangeListener { _, isChecked ->
                 prefs.foregroundServiceEnabled = isChecked
-                if (!isChecked) ServiceUtils(context!!).stopForegroundService();
+                if (!isChecked) ServiceUtils(context!!).stopForegroundService()
                 //MainActivity.setBackgroundScanning(context, pref)
             }
         } else if (res == R.string.background_scan_interval) {

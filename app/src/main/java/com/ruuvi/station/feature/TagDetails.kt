@@ -242,7 +242,6 @@ class TagDetails : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.setBackgroundScanning(this)
         tags = RuuviTag.getAll(true)
 
         for (tag in tags) {
