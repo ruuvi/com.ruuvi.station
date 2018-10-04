@@ -51,6 +51,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         startFG();
         beaconManager.bind(this);
+        RuuviScannerApplication.setupMedic(this);
     }
 
     private void startFG() {
