@@ -79,7 +79,7 @@
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.StartupActivity"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+            android:theme="@style/SplashTheme"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
