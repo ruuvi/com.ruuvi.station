@@ -1,14 +1,13 @@
 package com.ruuvi.station.feature
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.PreferenceKeys
-import com.ruuvi.station.util.PreferenceKeys.DASHBOARD_ENABLED_PREF
+import com.ruuvi.station.util.Preferences
 
 
 class StartupActivity : AppCompatActivity() {
@@ -16,29 +15,35 @@ class StartupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
-
         DeviceIdentifier.id(applicationContext)
-        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
+        val prefs = Preferences(this)
 
-        if (!getBoolPref(PreferenceKeys.FIRST_START_PREF)) {
+        if (prefs.isFirstStart) {
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent)
-            return
         }
-        if (getBoolPref(DASHBOARD_ENABLED_PREF)) {
+        else if (prefs.dashboardEnabled) {
             val intent = Intent(applicationContext, DashboardActivity::class.java)
             startActivity(intent)
-            return
+        } else {
+            val intent = Intent(applicationContext, TagDetails::class.java)
+            intent.putExtra(TagDetails.FROM_WELCOME,
+                    getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
+            )
+            startActivity(intent)
         }
-        val intent = Intent(applicationContext, TagDetails::class.java)
-        intent.putExtra(TagDetails.FROM_WELCOME,
-                getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
-        )
-        startActivity(intent)
-    }
 
-    fun getBoolPref(pref: String): Boolean {
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        return settings.getBoolean(pref, false)
+        val app = this
+        class StartScannerTask:
+            AsyncTask<Void, Void, String>() {
+            override fun doInBackground(vararg voids: Void): String {
+                MainActivity.setBackgroundScanning(app)
+                return "Ok"
+            }
+            override fun onPostExecute(result: String) {
+            }
+        }
+        StartScannerTask().execute()
+        finish()
     }
 }

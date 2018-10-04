@@ -1,23 +1,21 @@
 package com.ruuvi.station;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.preference.PreferenceManager;
+import android.content.Context;
 import android.util.Log;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.ruuvi.station.service.AltBeaconScannerForegroundService;
-import com.ruuvi.station.service.AltBeaconScannerService;
 import com.ruuvi.station.service.RuuviRangeNotifier;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
+import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.ServiceUtils;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Region;
+import org.altbeacon.bluetooth.BluetoothMedic;
 
 /**
  * Created by io53 on 10/09/17.
@@ -28,11 +26,11 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     BeaconManager beaconManager;
     Region region;
     boolean running = false;
+    Preferences prefs;
 
     public void stopScanning() {
         if (beaconManager == null) return;
         running = false;
-        Log.d(TAG, "DEBUG, Stopped background scanning");
         Log.d(TAG, "Stopped background scanning");
         beaconManager.setBackgroundMode(false);
         try {
@@ -47,9 +45,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
     private boolean runForegroundIfEnabled() {
         ServiceUtils su = new ServiceUtils(getApplicationContext());
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean bgScan = settings.getBoolean("pref_bgscan",false );
-        if (bgScan && settings.getBoolean("foreground_service", false)) {
+        if (prefs.getBackgroundScanEnabled() && prefs.getForegroundServiceEnabled()) {
             if (beaconManager != null) {
                 stopScanning();
             }
@@ -62,45 +58,43 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     public void startForegroundScanning() {
         Log.d(TAG, "Started foreground scanning");
         if (runForegroundIfEnabled()) return;
-        if (beaconManager == null) {
-            beaconManager = BeaconManager.getInstanceForApplication(this);
-            beaconManager.getBeaconParsers().clear();
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
-
-            region = new Region("com.ruuvi.station.leRegion", null, null, null);
-            beaconManager.bind(this);
-        }
+        bindBeaconManager(this, this);
         beaconManager.setBackgroundMode(false);
     }
 
     public void startBackgroundScanning() {
         Log.d(TAG, "Started background scanning");
         if (runForegroundIfEnabled()) return;
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        beaconManager.setBackgroundBetweenScanPeriod(prefs.getBackgroundScanInterval() * 1000);
+        beaconManager.setBackgroundScanPeriod(5000);
+        beaconManager.setBackgroundMode(true);
+        setupMedic(this);
+    }
+
+    public static void setupMedic(Context context) {
+        BluetoothMedic medic = BluetoothMedic.getInstance();
+        medic.enablePowerCycleOnFailures(context);
+        medic.enablePeriodicTests(context, BluetoothMedic.SCAN_TEST);
+    }
+
+    private void bindBeaconManager(BeaconConsumer consumer, Context context) {
         if (beaconManager == null) {
-            beaconManager = BeaconManager.getInstanceForApplication(this);
+            beaconManager = BeaconManager.getInstanceForApplication(context);
             beaconManager.getBeaconParsers().clear();
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
 
             region = new Region("com.ruuvi.station.leRegion", null, null, null);
-            beaconManager.bind(this);
+            beaconManager.bind(consumer);
         }
-
-        int backgroundScanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL);
-
-        beaconManager.setBackgroundBetweenScanPeriod(backgroundScanInterval * 1000);
-        beaconManager.setBackgroundScanPeriod(5000);
-        beaconManager.setBackgroundMode(true);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         FlowManager.init(this);
+        prefs = new Preferences(this);
         Foreground.init(this);
         Foreground.get().addListener(listener);
     }
@@ -111,9 +105,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
         }
 
         public void onBecameBackground() {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            boolean bgScan = settings.getBoolean("pref_bgscan",false );
-            if (bgScan) startBackgroundScanning();
+            if (prefs.getBackgroundScanEnabled()) startBackgroundScanning();
             else {
                 new ServiceUtils(getApplicationContext()).stopForegroundService();
                 stopScanning();

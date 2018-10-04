@@ -58,4 +58,8 @@
         <item name="android:layout_marginStart">84dp</item>
         <item name="android:layout_marginEnd">84dp</item>
     </style>
+
+    <style name="SplashTheme" parent="AppTheme.NoActionBar.TransparentStatusBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 </resources>

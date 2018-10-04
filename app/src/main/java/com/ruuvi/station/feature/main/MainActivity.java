@@ -8,15 +8,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -53,13 +50,12 @@ import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.ServiceUtils;
 import com.ruuvi.station.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String TAG = "MainActivity";
-    private static final String BATTERY_ASKED_PREF = "BATTERY_ASKED_PREF";
-    private static final String FIRST_START_PREF = "FIRST_START_PREF";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
@@ -71,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     public List<RuuviTag> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
-    SharedPreferences settings;
     boolean dashboardVisible = true;
+    Preferences prefs;
 
     private Runnable updater = new Runnable() {
         @Override
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         toolbar.setLogo(R.drawable.logo);
 
         handler = new Handler();
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = new Preferences(this);
         myRuuviTags = RuuviTag.getAll(true);
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
@@ -120,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         );
 
         drawerListView.setOnItemClickListener(drawerItemClicked);
-        if (!getPrefDone(FIRST_START_PREF)) {
+        if (prefs.isFirstStart()) {
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivityForResult(intent, FROM_WELCOME);
         } else {
@@ -141,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     };
 
-    public static void setBackgroundScanning(final Context context, final SharedPreferences settings) {
+    public static void setBackgroundScanning(final Context context) {
         Log.d(TAG, "DEBUG, setBackgroundScan");
         ((RuuviScannerApplication)(((Activity)context).getApplication())).startForegroundScanning();
         /*
@@ -330,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(getNeededPermissions().size() > 0) {
 
         } else {
-            settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
             refrshTagLists();
             handler.post(updater);
 
@@ -350,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     protected void onPause() {
         super.onPause();
-        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         if (scanner != null) scanner.stop();
         handler.removeCallbacks(updater);
         for (RuuviTag tag: myRuuviTags) {
@@ -451,16 +445,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         otherRuuviTags.add(tag);
     }
 
-    public void setPrefDone(String pref) {
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(pref, true);
-        editor.apply();
-    }
-
-    public boolean getPrefDone(String pref) {
-        return settings.getBoolean(pref, false);
-    }
-
     public static boolean isLocationEnabled(Context context) {
         int locationMode;
         String locationProviders;
@@ -478,13 +462,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             return !TextUtils.isEmpty(locationProviders);
         }
     }
-
-    public SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            //setBackgroundScanning(true, getApplicationContext(), settings);
-        }
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -507,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-        setPrefDone(FIRST_START_PREF);
+        prefs.setFirstStart(false);
         //setBackgroundScanning(false, this, settings);
         openFragment(goToAddTags ? 0 : 1);
         requestPermissions();

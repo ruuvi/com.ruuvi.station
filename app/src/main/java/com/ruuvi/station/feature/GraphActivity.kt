@@ -5,7 +5,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
@@ -22,6 +21,7 @@ import com.ruuvi.station.model.TagSensorReading
 import kotlinx.android.synthetic.main.activity_graph.*
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,25 +55,23 @@ class GraphActivity : AppCompatActivity() {
             background_view.setImageDrawable(BitmapDrawable(applicationContext.resources, bitmap))
         }
 
-        val settings = PreferenceManager.getDefaultSharedPreferences(applicationContext);
-        val bgScanEnabled = settings.getBoolean("pref_bgscan", false)
+        val prefs = Preferences(this)
+
+        val bgScanEnabled = prefs.backgroundScanEnabled
         if (!bgScanEnabled) {
             Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
 
-            if (settings.getBoolean("first_graph_visit", true)) {
+            if (prefs.isFirstGraphVisit) {
                 val simpleAlert = AlertDialog.Builder(this).create()
                 simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
                 simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
 
-                simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes), {
-                    _, _ ->
-                    settings.edit().putBoolean("pref_bgscan", true).commit()
-                    //MainActivity.setBackgroundScanning(true, application, settings)
-                })
-                simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no), {
-                    _, _ ->
-                    settings.edit().putBoolean("first_graph_visit", false).apply()
-                })
+                simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                    prefs.backgroundScanEnabled = true
+                }
+                simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                    prefs.isFirstGraphVisit = false
+                }
 
                 simpleAlert.show()
             }

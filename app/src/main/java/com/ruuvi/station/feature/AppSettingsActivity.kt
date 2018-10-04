@@ -2,27 +2,28 @@ package com.ruuvi.station.feature
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import com.ruuvi.station.R
 import android.support.v7.widget.SwitchCompat
+import com.ruuvi.station.util.Preferences
 
 import kotlinx.android.synthetic.main.activity_app_settings.*
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
 
 class AppSettingsActivity : AppCompatActivity() {
     var showingFragmentTitle = -1
-    lateinit var pref: SharedPreferences
+    lateinit var pref: Preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_settings)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        pref = PreferenceManager.getDefaultSharedPreferences(this)
+
+        pref = Preferences(this.applicationContext)
 
         openFragment(-1)
     }
@@ -63,9 +64,9 @@ class AppSettingsActivity : AppCompatActivity() {
 
     fun setScanSwitchLayout(view: View) {
         val switch = view.findViewById<SwitchCompat>(R.id.bg_scan_switch)
-        switch.isChecked = pref.getBoolean("pref_bgscan", false)
+        switch.isChecked = pref.backgroundScanEnabled
         switch.setOnCheckedChangeListener { _, isChecked ->
-            pref.edit().putBoolean("pref_bgscan", isChecked).apply()
+            pref.backgroundScanEnabled = isChecked
             //MainActivity.setBackgroundScanning(this, pref)
             //if (isChecked) MainActivity.checkAndAskForBatteryOptimization(this)
             if (foreground_scan_switch != null) {
@@ -75,13 +76,5 @@ class AppSettingsActivity : AppCompatActivity() {
         if (foreground_scan_switch != null) {
             foreground_scan_switch.isEnabled = switch.isChecked
         }
-    }
-
-    fun getStringFromPref(prefTag: String, default: String): String {
-        return pref.getString(prefTag, default)
-    }
-
-    fun getIntFromPref(prefTag: String, default: Int): Int {
-        return pref.getInt(prefTag, default)
     }
 }

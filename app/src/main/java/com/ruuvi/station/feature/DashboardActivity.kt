@@ -4,7 +4,6 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.View
 import android.widget.AdapterView
@@ -92,7 +91,7 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.setBackgroundScanning(this, PreferenceManager.getDefaultSharedPreferences(this))
+        MainActivity.setBackgroundScanning(this)
         handler.post(object: Runnable {
             override fun run() {
                 handler.postDelayed(this, 1000)

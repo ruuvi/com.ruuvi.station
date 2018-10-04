@@ -4,7 +4,6 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.preference.PreferenceManager
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.service.AltBeaconScannerService
 

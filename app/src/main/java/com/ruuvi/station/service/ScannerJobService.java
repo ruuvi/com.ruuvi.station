@@ -52,9 +52,6 @@ public class ScannerJobService extends JobService {
         Log.d(TAG, "Woke up");
         this.jobParameters = jobParameters;
 
-        //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        //MainActivity.setBackgroundScanning(true, getApplicationContext(), settings);
-
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
         if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {

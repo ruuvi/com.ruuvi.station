@@ -1,17 +1,10 @@
 package com.ruuvi.station.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.preference.PreferenceManager;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.google.android.gms.common.SignInButton;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -20,14 +13,9 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.LocalDatabase;
-import com.ruuvi.station.decoder.DecodeFormat2and4;
-import com.ruuvi.station.decoder.DecodeFormat3;
-import com.ruuvi.station.decoder.DecodeFormat5;
-import com.ruuvi.station.decoder.RuuviTagDecoder;
+import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
-import com.ruuvi.station.util.base64;
 
-import static com.ruuvi.station.util.Utils.round;
 
 /**
  * Created by tmakinen on 15.6.2017.
@@ -99,7 +87,7 @@ public class RuuviTag extends BaseModel {
     }
 
     public static String getTemperatureUnit(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString("pref_temperature_unit", "C");
+        return new Preferences(context).getTemperatureUnit();
     }
 
     public String getTemperatureString(Context context) {
