@@ -9,6 +9,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.database.LocalDatabase;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -71,12 +72,13 @@ public class TagSensorReading extends BaseModel {
     }
 
     public static List<TagSensorReading> getForTag(String id) {
-        Date from = new Date();
-        from.setHours(-24);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR, -24);
         return SQLite.select()
                 .from(TagSensorReading.class)
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
-                .and(TagSensorReading_Table.createdAt.greaterThan(from))
+                .and(TagSensorReading_Table.createdAt.greaterThan(cal.getTime()))
                 .queryList();
     }
 
