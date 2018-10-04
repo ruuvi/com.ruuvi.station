@@ -112,7 +112,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         beaconManager = null;
         stopForeground(true);
         if (new Preferences(this).getBackgroundScanEnabled()) {
-            ((RuuviScannerApplication)(this.getApplication())).startBackgroundScanning();
+            ((RuuviScannerApplication)(this.getApplication())).startForegroundScanning();
         }
         stopSelf();
     }
