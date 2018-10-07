@@ -41,6 +41,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "Starting foreground service");
         beaconManager = BeaconManager.getInstanceForApplication(this);
         if (beaconManager.isAnyConsumerBound()) beaconManager.unbind(this);
         beaconManager.getBeaconParsers().clear();
@@ -111,10 +112,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         beaconManager.setEnableScheduledScanJobs(true);
         beaconManager = null;
         stopForeground(true);
-        if (new Preferences(this).getBackgroundScanEnabled()) {
-            ((RuuviScannerApplication)(this.getApplication())).startForegroundScanning();
-        }
-        stopSelf();
+        ((RuuviScannerApplication)(this.getApplication())).startForegroundScanning();
     }
 
     @Nullable
@@ -124,12 +122,10 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     }
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {
-    }
-
-    @Override
     public void onBeaconServiceConnect() {
-        beaconManager.addRangeNotifier(new RuuviRangeNotifier(this, "AltBeaconScannerForegroundService"));
+        RuuviRangeNotifier ruuviRangeNotifier = new RuuviRangeNotifier(this, "AltBeaconScannerForegroundService");
+        ruuviRangeNotifier.gatewayOn = true;
+        beaconManager.addRangeNotifier(ruuviRangeNotifier);
 
         try {
             beaconManager.startRangingBeaconsInRegion(region);

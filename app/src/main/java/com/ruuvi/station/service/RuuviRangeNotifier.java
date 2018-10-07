@@ -35,6 +35,7 @@ public class RuuviRangeNotifier implements RangeNotifier {
 
     private Map<String, Long> lastLogged = null;
     private int LOG_INTERVAL = 5;
+    public boolean gatewayOn = false;
 
 
     public RuuviRangeNotifier(Context context, String from) {
@@ -70,7 +71,7 @@ public class RuuviRangeNotifier implements RangeNotifier {
                 if (tag.favorite) tags.add(tag);
             }
         }
-        if (tags.size() > 0) Http.post(tags, tagLocation, context);
+        if (tags.size() > 0 && gatewayOn) Http.post(tags, tagLocation, context);
     }
 
     private void saveReading(RuuviTag ruuviTag) {

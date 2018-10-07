@@ -37,13 +37,12 @@ class StartupActivity : AppCompatActivity() {
         class StartScannerTask:
             AsyncTask<Void, Void, String>() {
             override fun doInBackground(vararg voids: Void): String {
-                MainActivity.setBackgroundScanning(app)
+                //MainActivity.setBackgroundScanning(app)
                 return "Ok"
             }
             override fun onPostExecute(result: String) {
             }
         }
         StartScannerTask().execute()
-        finish()
     }
 }

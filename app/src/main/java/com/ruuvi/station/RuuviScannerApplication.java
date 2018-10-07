@@ -2,7 +2,9 @@ package com.ruuvi.station;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.ruuvi.station.service.RuuviRangeNotifier;
@@ -27,12 +29,15 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     Region region;
     boolean running = false;
     Preferences prefs;
+    RuuviRangeNotifier ruuviRangeNotifier;
+    private boolean foreground = true;
 
     public void stopScanning() {
+        Log.d(TAG, "Stopping scanning");
         if (beaconManager == null) return;
         running = false;
-        Log.d(TAG, "Stopped background scanning");
         beaconManager.setBackgroundMode(false);
+        ruuviRangeNotifier = null;
         try {
             beaconManager.removeAllRangeNotifiers();
             beaconManager.stopRangingBeaconsInRegion(region);
@@ -56,15 +61,17 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     }
 
     public void startForegroundScanning() {
-        Log.d(TAG, "Started foreground scanning");
+        Log.d(TAG, "Starting foreground scanning");
         if (runForegroundIfEnabled()) return;
         bindBeaconManager(this, this);
         beaconManager.setBackgroundMode(false);
+        ruuviRangeNotifier.gatewayOn = false;
     }
 
     public void startBackgroundScanning() {
-        Log.d(TAG, "Started background scanning");
+        Log.d(TAG, "Starting background scanning");
         if (runForegroundIfEnabled()) return;
+        bindBeaconManager(this, getApplicationContext());
         beaconManager.setBackgroundBetweenScanPeriod(prefs.getBackgroundScanInterval() * 1000);
         beaconManager.setBackgroundScanPeriod(5000);
         beaconManager.setBackgroundMode(true);
@@ -80,11 +87,12 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     private void bindBeaconManager(BeaconConsumer consumer, Context context) {
         if (beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(context);
+            /*
             beaconManager.getBeaconParsers().clear();
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
             beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
-
+            */
             region = new Region("com.ruuvi.station.leRegion", null, null, null);
             beaconManager.bind(consumer);
         }
@@ -97,25 +105,42 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
         prefs = new Preferences(this);
         Foreground.init(this);
         Foreground.get().addListener(listener);
+        BeaconManager bm = BeaconManager.getInstanceForApplication(this);
+        bm.getBeaconParsers().clear();
+        bm.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
+        bm.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
+        bm.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
+        new ServiceUtils(this).startService();
     }
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
-            startForegroundScanning();
+            //startForegroundScanning();
+            foreground = true;
+            stopScanning();
+            new ServiceUtils(getApplicationContext()).startService();
         }
 
         public void onBecameBackground() {
-            if (prefs.getBackgroundScanEnabled()) startBackgroundScanning();
-            else {
-                new ServiceUtils(getApplicationContext()).stopForegroundService();
-                stopScanning();
-            }
+            foreground = false;
+            // wait a bit before killing the service so scanning is not started too often
+            // when opening / closing the app quickly
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!foreground) {
+                        new ServiceUtils(getApplicationContext()).stopService();
+                    }
+                }
+            }, 5000);
         }
     };
 
     @Override
     public void onBeaconServiceConnect() {
-        beaconManager.addRangeNotifier(new RuuviRangeNotifier(this, "RuuviScannerApplication"));
+        if (ruuviRangeNotifier == null) ruuviRangeNotifier = new RuuviRangeNotifier(this, "RuuviScannerApplication");
+        ruuviRangeNotifier.gatewayOn = !foreground;
+        beaconManager.addRangeNotifier(ruuviRangeNotifier);
         try {
             beaconManager.startRangingBeaconsInRegion(region);
         } catch (Exception e) {
