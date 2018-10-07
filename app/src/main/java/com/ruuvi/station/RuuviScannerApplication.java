@@ -117,12 +117,14 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
         public void onBecameForeground() {
             //startForegroundScanning();
             foreground = true;
+            if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = false;
             stopScanning();
             new ServiceUtils(getApplicationContext()).startService();
         }
 
         public void onBecameBackground() {
             foreground = false;
+            if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
             // wait a bit before killing the service so scanning is not started too often
             // when opening / closing the app quickly
             new Handler().postDelayed(new Runnable() {
@@ -140,6 +142,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     public void onBeaconServiceConnect() {
         if (ruuviRangeNotifier == null) ruuviRangeNotifier = new RuuviRangeNotifier(this, "RuuviScannerApplication");
         ruuviRangeNotifier.gatewayOn = !foreground;
+        beaconManager.removeAllRangeNotifiers();
         beaconManager.addRangeNotifier(ruuviRangeNotifier);
         try {
             beaconManager.startRangingBeaconsInRegion(region);

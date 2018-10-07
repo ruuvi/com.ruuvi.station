@@ -36,15 +36,16 @@ public class RuuviRangeNotifier implements RangeNotifier {
     private Map<String, Long> lastLogged = null;
     private int LOG_INTERVAL = 5;
     public boolean gatewayOn = false;
+    FusedLocationProviderClient mFusedLocationClient;
 
 
     public RuuviRangeNotifier(Context context, String from) {
         this.context = context;
         this.from = from;
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
     private void updateLocation() {
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override

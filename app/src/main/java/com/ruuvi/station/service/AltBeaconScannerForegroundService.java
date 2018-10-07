@@ -32,6 +32,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
 
     private BeaconManager beaconManager;
     private Region region;
+    RuuviRangeNotifier ruuviRangeNotifier;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -123,10 +124,10 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
 
     @Override
     public void onBeaconServiceConnect() {
-        RuuviRangeNotifier ruuviRangeNotifier = new RuuviRangeNotifier(this, "AltBeaconScannerForegroundService");
+        if (ruuviRangeNotifier == null) ruuviRangeNotifier = new RuuviRangeNotifier(this, "AltBeaconScannerService");
         ruuviRangeNotifier.gatewayOn = true;
+        beaconManager.removeAllRangeNotifiers();
         beaconManager.addRangeNotifier(ruuviRangeNotifier);
-
         try {
             beaconManager.startRangingBeaconsInRegion(region);
         } catch (RemoteException e) {
