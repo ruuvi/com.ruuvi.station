@@ -14,6 +14,7 @@ import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
+import com.ruuvi.station.util.Constants;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;
@@ -34,12 +35,13 @@ public class RuuviRangeNotifier implements RangeNotifier {
     private Location tagLocation;
 
     private Map<String, Long> lastLogged = null;
-    private int LOG_INTERVAL = 5;
     public boolean gatewayOn = false;
-    FusedLocationProviderClient mFusedLocationClient;
+    private FusedLocationProviderClient mFusedLocationClient;
 
+    private long last = 0;
 
     public RuuviRangeNotifier(Context context, String from) {
+        Log.d(TAG, "Setting up range notifier from " + from);
         this.context = context;
         this.from = from;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
@@ -58,7 +60,13 @@ public class RuuviRangeNotifier implements RangeNotifier {
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-        updateLocation();
+        long now = System.currentTimeMillis();
+        if (now <= last + 500) {
+            Log.d(TAG, "Double range bug");
+            return;
+        }
+        last = now;
+        if (gatewayOn) updateLocation();
         List<RuuviTag> tags = new ArrayList<>();
         Log.d(TAG, from + " " + " found " + beacons.size());
         foundBeacon: for (Beacon beacon : beacons) {
@@ -90,7 +98,7 @@ public class RuuviRangeNotifier implements RangeNotifier {
         if (lastLogged == null) lastLogged = new HashMap<>();
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, -LOG_INTERVAL);
+        calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL);
         long loggingThreshold = calendar.getTime().getTime();
         for (Map.Entry<String, Long> entry : lastLogged.entrySet())
         {
