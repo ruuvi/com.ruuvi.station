@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.util.Constants;
@@ -25,6 +26,7 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
     private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
     private BeaconManager beaconManager;
     private Region region;
+    private RuuviRangeNotifier ruuviRangeNotifier;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -37,13 +39,15 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
 
+        Log.d(TAG, "Starting service");
         beaconManager = BeaconManager.getInstanceForApplication(this);
+        /*
         if (beaconManager.isAnyConsumerBound()) beaconManager.unbind(this);
         beaconManager.getBeaconParsers().clear();
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
-
+        */
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         beaconManager.bind(this);
     }
@@ -71,7 +75,6 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
             }
         }
         if (listener != null) Foreground.get().removeListener(listener);
-        stopSelf();
     }
 
     @Nullable
@@ -85,28 +88,15 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
         }
 
         public void onBecameBackground() {
-            onDestroy();
+            //onDestroy();
         }
     };
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        try {
-            beaconManager.removeAllRangeNotifiers();
-            beaconManager.stopRangingBeaconsInRegion(region);
-        } catch (Exception e) {
-            Log.d(TAG, "Could not remove ranging region");
-        }
-        beaconManager.unbind(this);
-        beaconManager = null;
-        Foreground.get().removeListener(listener);
-        stopSelf();
-    }
-
-    @Override
     public void onBeaconServiceConnect() {
-        beaconManager.addRangeNotifier(new RuuviRangeNotifier(this, "AltBeaconScannerService"));
-
+        if (ruuviRangeNotifier == null) ruuviRangeNotifier = new RuuviRangeNotifier(this, "AltBeaconScannerService");
+        beaconManager.removeAllRangeNotifiers();
+        beaconManager.addRangeNotifier(ruuviRangeNotifier);
         try {
             beaconManager.startRangingBeaconsInRegion(region);
         } catch (RemoteException e) {

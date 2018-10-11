@@ -130,7 +130,7 @@ public class LeScanResult {
                 tag.url = url;
                 tag.rawData = pData;
                 tag.rawDataBlob = new Blob(pData);
-                Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
+                //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                 return tag;
             } catch (Exception e) {
                 Log.e(TAG, "Failed to parse tag data");

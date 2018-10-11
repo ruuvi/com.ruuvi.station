@@ -15,7 +15,6 @@ import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
-    var isScanning = false
     fun startScanning(): Boolean {
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
