@@ -264,4 +264,7 @@
     <string name="wakelock_description">This will make the device stay awake while background scanning is enabled. It will improve background scanning reliability but will make the app use more battery.</string>
     <string name="use_foreground_service">Use foreground service</string>
     <string name="use_foreground_service_description">Background scanning will be running as a foreground service with notification showing.</string>
+    <string name="no_background_scanning">No background scanning</string>
+    <string name="background_scanning">Background scanning</string>
+    <string name="lazy_background_scanning">Lazy background scanning (EXPERIMENTAL)</string>
 </resources>

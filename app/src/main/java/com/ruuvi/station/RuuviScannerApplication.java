@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.ruuvi.station.service.RuuviRangeNotifier;
+import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
@@ -49,7 +50,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     }
 
     private boolean runForegroundIfEnabled() {
-        if (prefs.getBackgroundScanEnabled() && prefs.getForegroundServiceEnabled()) {
+        if (prefs.getBackgroundScanMode() == BackgroundScanModes.FOREGROUND) {
             ServiceUtils su = new ServiceUtils(getApplicationContext());
             stopScanning();
             su.startForegroundService();
@@ -69,11 +70,11 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
     public void startBackgroundScanning() {
         Log.d(TAG, "Starting background scanning");
-        if (!prefs.getBackgroundScanEnabled()) {
+        if (runForegroundIfEnabled()) return;
+        if (prefs.getBackgroundScanMode() != BackgroundScanModes.BACKGROUND) {
             Log.d(TAG, "Background scanning is not enabled, ignoring");
             return;
         }
-        if (runForegroundIfEnabled()) return;
         bindBeaconManager(this, getApplicationContext());
         beaconManager.setBackgroundBetweenScanPeriod(prefs.getBackgroundScanInterval() * 1000);
         beaconManager.setBackgroundMode(true);
@@ -114,12 +115,10 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
             @Override
             public void run() {
                 if (!foreground) {
-                    if (prefs.getBackgroundScanEnabled()) {
-                        if (prefs.getForegroundServiceEnabled()) {
-                            new ServiceUtils(getApplicationContext()).startForegroundService();
-                        } else {
-                            startBackgroundScanning();
-                        }
+                    if (prefs.getBackgroundScanMode() == BackgroundScanModes.FOREGROUND) {
+                        new ServiceUtils(getApplicationContext()).startForegroundService();
+                    } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                        startBackgroundScanning();
                     }
                 }
             }
@@ -142,12 +141,12 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
         public void onBecameBackground() {
             foreground = false;
-            if (prefs.getBackgroundScanEnabled()) {
-                startBackgroundScanning();
-            } else {
+            if (prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED) {
                 // background scanning is disabled so all scanning things will be killed
                 stopScanning();
                 new ServiceUtils(getApplicationContext()).stopForegroundService();
+            } else {
+                startBackgroundScanning();
             }
             if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
             // wait a bit before killing the service so scanning is not started too often

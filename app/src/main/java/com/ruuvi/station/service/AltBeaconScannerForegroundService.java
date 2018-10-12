@@ -19,7 +19,10 @@ import android.widget.Toast;
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.StartupActivity;
+import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
+import com.ruuvi.station.util.Foreground;
+import com.ruuvi.station.util.ServiceUtils;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;

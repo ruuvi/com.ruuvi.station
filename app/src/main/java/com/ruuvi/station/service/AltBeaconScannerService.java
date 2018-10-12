@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruuvi.station.RuuviScannerApplication;
+import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
@@ -41,13 +42,10 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
 
         Log.d(TAG, "Starting service");
         beaconManager = BeaconManager.getInstanceForApplication(this);
-        /*
-        if (beaconManager.isAnyConsumerBound()) beaconManager.unbind(this);
         beaconManager.getBeaconParsers().clear();
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
-        */
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         beaconManager.bind(this);
     }
@@ -67,12 +65,10 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
             beaconManager = null;
         }
         Preferences prefs = new Preferences(this);
-        if (prefs.getBackgroundScanEnabled()) {
-            if (prefs.getForegroundServiceEnabled()) {
-                new ServiceUtils(this).startForegroundService();
-            } else {
-                ((RuuviScannerApplication)(this.getApplication())).startBackgroundScanning();
-            }
+        if (prefs.getBackgroundScanMode() == BackgroundScanModes.FOREGROUND) {
+            new ServiceUtils(this).startForegroundService();
+        } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+            ((RuuviScannerApplication)(this.getApplication())).startBackgroundScanning();
         }
         if (listener != null) Foreground.get().removeListener(listener);
     }

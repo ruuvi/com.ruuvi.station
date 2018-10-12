@@ -61,20 +61,4 @@ class AppSettingsActivity : AppCompatActivity() {
         }
         return true
     }
-
-    fun setScanSwitchLayout(view: View) {
-        val switch = view.findViewById<SwitchCompat>(R.id.bg_scan_switch)
-        switch.isChecked = pref.backgroundScanEnabled
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            pref.backgroundScanEnabled = isChecked
-            //MainActivity.setBackgroundScanning(this, pref)
-            //if (isChecked) MainActivity.checkAndAskForBatteryOptimization(this)
-            if (foreground_scan_switch != null) {
-                foreground_scan_switch.isEnabled = switch.isChecked
-            }
-        }
-        if (foreground_scan_switch != null) {
-            foreground_scan_switch.isEnabled = switch.isChecked
-        }
-    }
 }

@@ -16,6 +16,7 @@ import com.koushikdutta.ion.Ion
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.ScanEvent
+import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.ServiceUtils
@@ -59,16 +60,29 @@ class AppSettingsDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (res == R.string.pref_bgscan) {
-            scan_layout_container.visibility = View.VISIBLE
-            (activity as AppSettingsActivity).setScanSwitchLayout(view)
-            settings_info.text = getString(R.string.settings_background_scan_details)
+            //scan_layout_container.visibility = View.VISIBLE
+            //(activity as AppSettingsActivity).setScanSwitchLayout(view)
 
-            val switch = view.findViewById<SwitchCompat>(R.id.foreground_scan_switch)
-            switch.isChecked = prefs.foregroundServiceEnabled
-            switch.setOnCheckedChangeListener { _, isChecked ->
-                prefs.foregroundServiceEnabled = isChecked
-                if (!isChecked) ServiceUtils(context!!).stopForegroundService()
-                //MainActivity.setBackgroundScanning(context, pref)
+            radio_setting_title.text = getString(res!!)
+            settings_info.text = getString(R.string.settings_background_scan_details)
+            radio_layout.visibility = View.VISIBLE
+            val list = listOf(
+                    getString(R.string.no_background_scanning),
+                    getString(R.string.background_scanning),
+                    getString(R.string.lazy_background_scanning)
+            )
+            var current = prefs.backgroundScanMode
+            list.forEachIndexed { index, option ->
+                val rb = RadioButton(activity)
+                rb.id = index
+                rb.text = option
+                rb.isChecked = (index == current.value)
+                radio_group.addView(rb)
+            }
+
+            radio_group.setOnCheckedChangeListener { radioGroup, i ->
+                current = BackgroundScanModes.fromInt(i)!!
+                prefs.backgroundScanMode = current
             }
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE

@@ -49,6 +49,7 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
+import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
@@ -114,7 +115,7 @@ public class ScannerService extends Service {
     private boolean getForegroundMode() {
         Preferences prefs = new Preferences(this);
         int getInterval =  prefs.getBackgroundScanInterval();
-        return prefs.getBackgroundScanEnabled() && getInterval < 15 * 60;
+        return prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED && getInterval < 15 * 60;
         //return settings.getBoolean("pref_bgscan", false);
     }
 

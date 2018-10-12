@@ -19,7 +19,7 @@ class AppSettingsListFragment : Fragment() {
 
         prefs = Preferences(context!!)
 
-        (activity as AppSettingsActivity).setScanSwitchLayout(view)
+        //(activity as AppSettingsActivity).setScanSwitchLayout(view)
         scan_layout.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
         }
