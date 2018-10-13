@@ -88,12 +88,23 @@ class AppSettingsDetailFragment : Fragment() {
             duration_picker.visibility = View.VISIBLE
             val current = prefs.backgroundScanInterval
 
-            val min = current / 60
-            val sec = current - min * 60
+            var min = current / 60
+            var sec = current - min * 60
 
             duration_minute.maxValue = 59
             duration_second.maxValue = 59
+
             if (min == 0) duration_second.minValue = 10
+
+            var minuteMinValue = 0
+            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+                minuteMinValue = 15
+                if (min <= minuteMinValue) {
+                    min = 15
+                    sec = 0
+                }
+            }
+            duration_minute.minValue = minuteMinValue
 
             duration_minute.value = min
             duration_second.value = sec

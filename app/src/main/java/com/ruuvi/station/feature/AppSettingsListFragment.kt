@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.ruuvi.station.R
+import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Preferences
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
@@ -52,8 +53,14 @@ class AppSettingsListFragment : Fragment() {
 
     fun updateSubs() {
         val bgScanInterval = prefs.backgroundScanInterval
-        val min = bgScanInterval / 60
-        val sec = bgScanInterval - min * 60
+        var min = bgScanInterval / 60
+        var sec = bgScanInterval - min * 60
+        if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+            if (min <= 15) {
+                min = 15
+                sec = 0
+            }
+        }
         var intervalText = ""
         if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
         intervalText += sec.toString() + " " + getString(R.string.seconds)
