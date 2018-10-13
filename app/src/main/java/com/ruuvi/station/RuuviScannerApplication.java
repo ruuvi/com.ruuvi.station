@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.ruuvi.station.service.AltBeaconScannerForegroundService;
 import com.ruuvi.station.service.RuuviRangeNotifier;
 import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
@@ -76,10 +77,18 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
             return;
         }
         bindBeaconManager(this, getApplicationContext());
-        beaconManager.setBackgroundBetweenScanPeriod(prefs.getBackgroundScanInterval() * 1000);
+        int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000;
+        if (scanInterval != beaconManager.getBackgroundBetweenScanPeriod()) {
+            beaconManager.setBackgroundBetweenScanPeriod(scanInterval);
+            try {
+                beaconManager.updateScanPeriods();
+            } catch (Exception e) {
+                Log.e(TAG, "Could not update scan intervals");
+            }
+        }
         beaconManager.setBackgroundMode(true);
         if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
-        medic = setupMedic(getApplicationContext());
+        if (medic == null) medic = setupMedic(getApplicationContext());
     }
 
     public static BluetoothMedic setupMedic(Context context) {
@@ -141,12 +150,20 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
         public void onBecameBackground() {
             foreground = false;
+            ServiceUtils su = new ServiceUtils(getApplicationContext());
             if (prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED) {
                 // background scanning is disabled so all scanning things will be killed
                 stopScanning();
-                new ServiceUtils(getApplicationContext()).stopForegroundService();
+                su.stopForegroundService();
+            } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                if (su.isRunning(AltBeaconScannerForegroundService.class)) {
+                    su.stopForegroundService();
+                } else {
+                    startBackgroundScanning();
+                }
             } else {
-                startBackgroundScanning();
+                stopScanning();
+                su.startForegroundService();
             }
             if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
             // wait a bit before killing the service so scanning is not started too often
