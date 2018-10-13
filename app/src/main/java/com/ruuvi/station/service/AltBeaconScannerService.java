@@ -46,6 +46,7 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
+        beaconManager.setBackgroundScanPeriod(5000);
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         beaconManager.bind(this);
     }
