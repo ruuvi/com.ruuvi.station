@@ -14,6 +14,13 @@ class Preferences(val context: Context) {
            pref.edit().putInt("pref_background_scan_interval", interval).apply()
        }
 
+    var backgroundScanMode: BackgroundScanModes
+        get() = BackgroundScanModes.fromInt(pref.getInt("pref_background_scan_mode", BackgroundScanModes.DISABLED.value))!!
+        set(mode) {
+            pref.edit().putInt("pref_background_scan_mode", mode.value).apply()
+        }
+
+    /*
     var backgroundScanEnabled: Boolean
         get() = pref.getBoolean("pref_bgscan", false)
         set(enabled) {
@@ -25,6 +32,7 @@ class Preferences(val context: Context) {
         set(enabled) {
             pref.edit().putBoolean("foreground_service", enabled).apply()
         }
+    */
 
     var isFirstStart: Boolean
         get() = pref.getBoolean("FIRST_START_PREF", true)

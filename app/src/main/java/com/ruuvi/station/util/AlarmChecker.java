@@ -113,6 +113,12 @@ public class AlarmChecker {
                 case Alarm.MOVEMENT:
                     List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
                     if (readings.size() == 2) {
+                        if (tag.dataFormat == 5) {
+                            if (readings.get(0).movementCounter != readings.get(1).movementCounter) {
+                                notificationTextResourceId = R.string.alert_notification_movement;
+                                break;
+                            }
+                        }
                         if (hasTagMoved(readings.get(0), readings.get(1))) {
                             notificationTextResourceId = R.string.alert_notification_movement;
                         }

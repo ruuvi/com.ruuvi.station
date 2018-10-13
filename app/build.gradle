@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10076
-        versionName "0.9.9.2.8"
+        versionCode 10078
+        versionName "0.9.9.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

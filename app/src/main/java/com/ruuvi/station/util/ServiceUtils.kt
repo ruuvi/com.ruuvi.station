@@ -40,7 +40,7 @@ class ServiceUtils(val context: Context) {
         return this
     }
 
-    private fun isRunning(serviceClass: Class<*>): Boolean {
+    fun isRunning(serviceClass: Class<*>): Boolean {
         val mgr = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
         for (service in mgr!!.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {

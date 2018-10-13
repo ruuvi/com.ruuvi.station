@@ -21,6 +21,7 @@ import com.ruuvi.station.model.TagSensorReading
 import kotlinx.android.synthetic.main.activity_graph.*
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
 import java.text.SimpleDateFormat
@@ -57,8 +58,8 @@ class GraphActivity : AppCompatActivity() {
 
         val prefs = Preferences(this)
 
-        val bgScanEnabled = prefs.backgroundScanEnabled
-        if (!bgScanEnabled) {
+        val bgScanEnabled = prefs.backgroundScanMode
+        if (bgScanEnabled == BackgroundScanModes.DISABLED) {
             Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
 
             if (prefs.isFirstGraphVisit) {
@@ -67,7 +68,7 @@ class GraphActivity : AppCompatActivity() {
                 simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
 
                 simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
-                    prefs.backgroundScanEnabled = true
+                    prefs.backgroundScanMode = BackgroundScanModes.FOREGROUND
                 }
                 simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                     prefs.isFirstGraphVisit = false
