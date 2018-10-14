@@ -139,7 +139,7 @@ public class TagSettings extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
                 builder.setTitle(getString(R.string.tag_name));
                 final EditText input = new EditText(TagSettings.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 input.setText(tag.name);
                 FrameLayout container = new FrameLayout(getApplicationContext());
                 FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
