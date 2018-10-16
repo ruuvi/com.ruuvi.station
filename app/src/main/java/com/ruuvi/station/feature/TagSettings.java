@@ -304,8 +304,6 @@ public class TagSettings extends AppCompatActivity {
             int setSeekbarColor = R.color.ap_gray;
             if (this.checked) {
                 setSeekbarColor = R.color.main;
-                seekBar.setLeftThumbDrawable(R.drawable.range_ball);
-                seekBar.setRightThumbDrawable(R.drawable.range_ball);
                 this.subtitle = getString(R.string.alert_substring_movement);
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
@@ -319,10 +317,12 @@ public class TagSettings extends AppCompatActivity {
                     }
                 }
             } else {
-                seekBar.setLeftThumbDrawable(R.drawable.range_ball_inactive);
-                seekBar.setRightThumbDrawable(R.drawable.range_ball_inactive);
                 this.subtitle = getString(R.string.alert_subtitle_off);
             }
+            seekBar.setRightThumbColor(getResources().getColor(setSeekbarColor));
+            seekBar.setRightThumbHighlightColor(getResources().getColor(setSeekbarColor));
+            seekBar.setLeftThumbColor(getResources().getColor(setSeekbarColor));
+            seekBar.setLeftThumbHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setBarHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setEnabled(this.checked);
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
