@@ -373,6 +373,12 @@ class TagDetails : AppCompatActivity() {
         if (tags.isNotEmpty()) {
             menuInflater.inflate(R.menu.menu_details, menu)
             val item = menu.findItem(R.id.action_alarm)
+            item.setOnMenuItemClickListener {
+                val intent = Intent(this, TagSettings::class.java)
+                intent.putExtra(TagSettings.TAG_ID, tag?.id)
+                this.startActivity(intent)
+                true
+            }
             if (tag != null) {
                 val status = AlarmChecker.getStatus(tag)
                 item.isVisible = status > -1
