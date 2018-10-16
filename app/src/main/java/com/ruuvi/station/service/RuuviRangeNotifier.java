@@ -81,6 +81,8 @@ public class RuuviRangeNotifier implements RangeNotifier {
             }
         }
         if (tags.size() > 0 && gatewayOn) Http.post(tags, tagLocation, context);
+
+        TagSensorReading.removeOlderThan(24);
     }
 
     private void saveReading(RuuviTag ruuviTag) {

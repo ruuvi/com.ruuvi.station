@@ -90,4 +90,15 @@ public class TagSensorReading extends BaseModel {
                 .limit(limit)
                 .queryList();
     }
+
+    public static void removeOlderThan(int hours) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR, -hours);
+        SQLite.delete()
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.createdAt.lessThan(cal.getTime()))
+                .async()
+                .execute();
+    }
 }
