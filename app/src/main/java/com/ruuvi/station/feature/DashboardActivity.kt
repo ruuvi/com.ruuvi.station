@@ -109,7 +109,7 @@ class DashboardActivity : AppCompatActivity() {
                     } else
                         noTagsFound.visibility = View.VISIBLE
                     adapter.notifyDataSetChanged()
-                    handler.postDelayed(this, 1000)
+                    handler.postDelayed(this, 500)
                 }
             })
 

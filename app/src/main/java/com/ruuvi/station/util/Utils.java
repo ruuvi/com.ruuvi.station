@@ -151,4 +151,9 @@ public class Utils {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
+    public static boolean removeStateFile(Context context) {
+        String path = context.getFilesDir().getPath() + "/android-beacon-library-scan-state";
+        return new File(path).delete();
+    }
 }

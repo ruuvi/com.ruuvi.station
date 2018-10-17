@@ -56,8 +56,6 @@
         android:layout_marginRight="32dp"
         app:bar_color="@color/ap_gray"
         app:bar_highlight_color="@color/main"
-        app:left_thumb_image="@drawable/range_ball_inactive"
-        app:right_thumb_image="@drawable/range_ball_inactive"
         app:data_type="_integer"
         />
 

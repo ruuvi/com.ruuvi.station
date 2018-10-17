@@ -14,6 +14,7 @@ import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.ServiceUtils;
+import com.ruuvi.station.util.Utils;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -138,6 +139,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
+            Utils.removeStateFile(getApplicationContext());
             foreground = true;
             if (beaconManager != null) {
                 // if background scanning is turned on

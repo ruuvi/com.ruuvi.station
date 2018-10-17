@@ -1,7 +1,7 @@
 package com.ruuvi.station.feature
 
 import android.Manifest
-import android.animation.ArgbEvaluator
+import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.AlertDialog
@@ -37,7 +37,6 @@ import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.*
 import java.util.*
 
@@ -54,13 +53,13 @@ class TagDetails : AppCompatActivity() {
     var backgroundFadeStarted: Long = 0
     var tag: RuuviTag? = null
     lateinit var tags: MutableList<RuuviTag>
+    var alarmStatus = HashMap<String, Int>()
 
     lateinit var handler: Handler
     private var openAddView = false
     lateinit var starter: Starter
 
     val backgrounds = HashMap<String, BitmapDrawable>()
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +102,7 @@ class TagDetails : AppCompatActivity() {
                     imageSwitcher.setImageDrawable(bitmapDrawable)
                     backgroundFadeStarted = Date().time
                 }
+                invalidateOptionsMenu()
                 prevTagId = tag!!.id
             }
         })
@@ -307,16 +307,25 @@ class TagDetails : AppCompatActivity() {
         }
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
-            (tag_pager.adapter as TagPager).updateView(tag!!)
+            (tag_pager.adapter as TagPager).updateView(it)
+            if (alarmStatus.containsKey(it.id)) {
+                val newStatus = AlarmChecker.getStatus(it)
+                if (alarmStatus[it.id] != newStatus) {
+                    alarmStatus[it.id] = AlarmChecker.getStatus(it)
+                    this.invalidateOptionsMenu()
+                }
+            } else {
+                alarmStatus[it.id] = AlarmChecker.getStatus(it)
+            }
         }
         if (tags.isEmpty()) {
             pager_title_strip.visibility = View.INVISIBLE
             noTags_textView.visibility = View.VISIBLE
-            this.invalidateOptionsMenu()
+            //this.invalidateOptionsMenu()
         } else {
             pager_title_strip.visibility = View.VISIBLE
             noTags_textView.visibility = View.INVISIBLE
-            this.invalidateOptionsMenu()
+            //this.invalidateOptionsMenu()
         }
     }
 
@@ -373,33 +382,44 @@ class TagDetails : AppCompatActivity() {
         if (tags.isNotEmpty()) {
             menuInflater.inflate(R.menu.menu_details, menu)
             val item = menu.findItem(R.id.action_alarm)
+            item.setOnMenuItemClickListener {
+                val intent = Intent(this, TagSettings::class.java)
+                intent.putExtra(TagSettings.TAG_ID, tag?.id)
+                this.startActivity(intent)
+                true
+            }
             if (tag != null) {
                 val status = AlarmChecker.getStatus(tag)
-                item.isVisible = status > -1
-                if (status == 0) {
-                    item.setIcon(R.drawable.ic_notifications_off_24px)
-                    val drawable = item.icon
-                    if(drawable != null) {
-                        drawable.mutate()
-                        drawable.setColorFilter(resources.getColor(R.color.white), PorterDuff.Mode.SRC_ATOP)
+                when (status) {
+                    -1 -> {
+                        // off
+                        item.setIcon(R.drawable.ic_notifications_off_24px)
                     }
-                } else if (status == 1) {
-                    item.setIcon(R.drawable.ic_notifications_active_24px)
-                    val drawable = item.icon
-                    if(drawable != null) {
-                        drawable.mutate()
-                        drawable.setColorFilter(resources.getColor(R.color.activeAlarm), PorterDuff.Mode.SRC_ATOP)
-                        try {
+                    0 -> {
+                        // on
+                        item.setIcon(R.drawable.ic_notifications_on_24px)
+                    }
+                    1 -> {
+                        // triggered
+                        item.setIcon(R.drawable.ic_notifications_active_24px)
+                        val drawable = item.icon
+                        if(drawable != null) {
+                            drawable.mutate()
                             val anim = ValueAnimator()
-                            anim.setIntValues(Color.WHITE, Color.RED)
-                            anim.setEvaluator(ArgbEvaluator());
+                            anim.setIntValues(1, 0)
+                            anim.setEvaluator(IntEvaluator())
                             anim.addUpdateListener {
-                                drawable.setColorFilter(it.animatedValue as Int, PorterDuff.Mode.SRC_ATOP)
+                                if (it.animatedFraction > 0.9) {
+                                    drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                                } else if (it.animatedFraction < 0.1) {
+                                    drawable.setColorFilter(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                                }
                             }
-                            anim.duration = 300
-                            anim.start()
-                        } catch (e: Exception) {
 
+                            anim.repeatMode = ValueAnimator.REVERSE
+                            anim.repeatCount = ValueAnimator.INFINITE
+                            anim.duration = 500
+                            anim.start()
                         }
                     }
                 }
@@ -409,11 +429,8 @@ class TagDetails : AppCompatActivity() {
     }
 }
 
-class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) : PagerAdapter() {
+class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val view: View) : PagerAdapter() {
     val VIEW_TAG = "DetailedTag"
-    var tags = tags
-    val context = context
-    val view = view
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
@@ -442,7 +459,7 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
         val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
 
-        var temperature = tag?.getTemperatureString(context)
+        var temperature = tag.getTemperatureString(context)
         val unit = temperature.substring(temperature.length - 2, temperature.length)
         temperature = temperature.substring(0, temperature.length - 2)
 
@@ -451,10 +468,10 @@ class TagPager constructor(tags: List<RuuviTag>, context: Context, view: View) :
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag?.humidity)
-        tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag?.pressure)
-        tag_signal.text = String.format(context.getString(R.string.signal_reading), tag?.rssi)
-        var updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag?.updateAt);
+        tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag.humidity)
+        tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag.pressure)
+        tag_signal.text = String.format(context.getString(R.string.signal_reading), tag.rssi)
+        val updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt)
         tag_updated.text = updatedAt
     }
 

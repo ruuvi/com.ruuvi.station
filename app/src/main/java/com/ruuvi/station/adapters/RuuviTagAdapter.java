@@ -1,5 +1,7 @@
 package com.ruuvi.station.adapters;
 
+import android.animation.IntEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,9 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -70,17 +74,23 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         String updatedAt = getContext().getResources().getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt);
 
         lastseen.setText(updatedAt);
-
         AppCompatImageView bell = convertView.findViewById(R.id.bell);
         int status = AlarmChecker.getStatus(tag);
-        bell.setVisibility(status == -1 ? View.INVISIBLE : View.VISIBLE);
-        if (status == 0) {
-            bell.setImageResource(R.drawable.ic_notifications_off_24px);
-            ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
-        } else if (status == 1) {
-            bell.setImageResource(R.drawable.ic_notifications_active_24px);
-            ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.activeAlarm)));
+        switch (status) {
+            case -1:
+                bell.setVisibility(View.VISIBLE);
+                bell.setImageResource(R.drawable.ic_notifications_off_24px);
+                break;
+            case 0:
+                bell.setVisibility(View.VISIBLE);
+                bell.setImageResource(R.drawable.ic_notifications_on_24px);
+                break;
+            case 1:
+                bell.setImageResource(R.drawable.ic_notifications_active_24px);
+                bell.setVisibility(bell.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                break;
         }
+        ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
 
         temp.setText(tag.getTemperatureString(getContext()));
         humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.humidity));

@@ -4,7 +4,7 @@
     <dimen name="title_font_size">16sp</dimen>
     <dimen name="tag_settings_text_padding">8dp</dimen>
 
-    <dimen name="letter_ball_radius">85px</dimen>
+    <dimen name="letter_ball_radius">26sp</dimen>
     <dimen name="tag_details_name">5sp</dimen>
 
     <dimen name="graph_description_size">4sp</dimen>
