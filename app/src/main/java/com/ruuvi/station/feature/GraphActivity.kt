@@ -33,7 +33,6 @@ class GraphActivity : AppCompatActivity() {
         val TAGID = "TAG_ID"
     }
 
-    var firstReadingTime: Long = 0
     var tagId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,12 +97,10 @@ class GraphActivity : AppCompatActivity() {
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
 
-        firstReadingTime = readings[0].createdAt.time
-
         val tempUnit = RuuviTag.getTemperatureUnit(this)
 
         readings.map { reading ->
-            val timestamp = (reading.createdAt.time - firstReadingTime).toFloat()
+            val timestamp = reading.createdAt.time.toFloat()
             if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
             else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
             humidData.add(Entry(timestamp, reading.humidity.toFloat()))
@@ -121,6 +118,11 @@ class GraphActivity : AppCompatActivity() {
         set.setDrawFilled(true)
         set.highLightColor = resources.getColor(R.color.main)
         set.circleRadius = (2).toFloat()
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        chart.xAxis.axisMaximum = cal.time.time.toFloat()
+        cal.add(Calendar.HOUR, -24)
+        chart.xAxis.axisMinimum = cal.time.time.toFloat()
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
@@ -138,7 +140,7 @@ class GraphActivity : AppCompatActivity() {
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             private val mFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                return mFormat.format(Date(firstReadingTime + value.toLong()))
+                return mFormat.format(Date(value.toLong()))
             }
         }
 
