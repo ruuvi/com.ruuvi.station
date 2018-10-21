@@ -242,6 +242,7 @@ class TagDetails : AppCompatActivity() {
         } else if (item?.title == "graphs") {
             showGraph = !showGraph
             updateUI()
+            invalidateOptionsMenu()
         } else {
             showOptionsMenu()
         }
@@ -408,6 +409,10 @@ class TagDetails : AppCompatActivity() {
                     -1 -> {
                         // off
                         item.setIcon(R.drawable.ic_notifications_off_24px)
+                        val drawable = item.icon
+                        if (drawable != null) {
+                            drawable.alpha = 128
+                        }
                     }
                     0 -> {
                         // on
@@ -417,7 +422,7 @@ class TagDetails : AppCompatActivity() {
                         // triggered
                         item.setIcon(R.drawable.ic_notifications_active_24px)
                         val drawable = item.icon
-                        if(drawable != null) {
+                        if (drawable != null) {
                             drawable.mutate()
                             val anim = ValueAnimator()
                             anim.setIntValues(1, 0)
@@ -437,6 +442,9 @@ class TagDetails : AppCompatActivity() {
                         }
                     }
                 }
+                val graphItem = menu.findItem(R.id.action_graph)
+                val graphDrawable = graphItem.icon
+                graphDrawable.alpha = if (showGraph) 255 else 128
             }
         }
         return true
