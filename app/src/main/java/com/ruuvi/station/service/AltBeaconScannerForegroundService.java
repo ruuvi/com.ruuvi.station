@@ -103,7 +103,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
                 .setLargeIcon(bitmap)
                 .setContentIntent(pendingIntent);
 
-        notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
+        notification.setSmallIcon(R.drawable.ic_ruuvi_bgscan_icon);
 
         //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
         beaconManager.setEnableScheduledScanJobs(false);

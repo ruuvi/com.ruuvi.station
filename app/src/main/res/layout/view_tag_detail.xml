@@ -2,7 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/tag_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tag_temp"
@@ -130,6 +136,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include layout="@layout/view_graphs"
+        android:id="@+id/tag_graphs"
+        android:visibility="invisible"
         />
 
 </android.support.constraint.ConstraintLayout>

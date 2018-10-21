@@ -5,16 +5,23 @@
     <item
         android:id="@+id/action_save"
         app:showAsAction="always"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="menu"
         android:icon="@drawable/ic_more_horiz_24px" />
 
     <item
         android:id="@+id/action_alarm"
         app:showAsAction="always"
-        android:orderInCategory="0"
+        android:orderInCategory="1"
         android:title="alarm"
         android:icon="@drawable/ic_notifications_off_24px" />
+
+    <item
+        android:id="@+id/action_graph"
+        app:showAsAction="always"
+        android:orderInCategory="0"
+        android:title="graphs"
+        android:icon="@drawable/ic_ruuvi_graphs_icon" />
 
     <!--
     <item
