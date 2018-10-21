@@ -62,6 +62,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     }
 
     public void startForegroundScanning() {
+        Utils.removeStateFile(getApplicationContext());
         foreground = true;
         Log.d(TAG, "Starting foreground scanning");
         if (runForegroundIfEnabled()) return;
