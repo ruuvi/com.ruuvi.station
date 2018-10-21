@@ -479,7 +479,7 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         val container = rootView.findViewById<View>(R.id.tag_container)
         if (showGraph && graph.visibility == View.INVISIBLE) {
             graph.visibility = View.VISIBLE
-            container.alpha = 0.2f
+            container.alpha = 0.1f
             GraphView(context).drawChart(tag.id, rootView)
         } else if (!showGraph && graph.visibility == View.VISIBLE) {
             graph.visibility = View.INVISIBLE
