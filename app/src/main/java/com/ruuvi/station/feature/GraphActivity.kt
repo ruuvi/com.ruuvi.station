@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_graph.*
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.GraphView
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
 import java.text.SimpleDateFormat
@@ -83,70 +84,12 @@ class GraphActivity : AppCompatActivity() {
         val handler = Handler()
         handler.post(object: Runnable {
             override fun run() {
-                drawChart()
+                GraphView(applicationContext).drawChart(tag.id, findViewById(android.R.id.content))
                 handler.postDelayed(this, 30000)
             }
         })
     }
 
-    fun drawChart() {
-        val readings = TagSensorReading.getForTag(tagId)
-        if (readings.size == 0) return
-
-        val tempData: MutableList<Entry> = ArrayList()
-        val humidData: MutableList<Entry> = ArrayList()
-        val pressureData: MutableList<Entry> = ArrayList()
-
-        val tempUnit = RuuviTag.getTemperatureUnit(this)
-
-        readings.map { reading ->
-            val timestamp = reading.createdAt.time.toFloat()
-            if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
-            else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
-            humidData.add(Entry(timestamp, reading.humidity.toFloat()))
-            pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
-        }
-
-        addDataToChart(tempData, tempChart, "Temperature")
-        addDataToChart(humidData, humidChart, "Humidity")
-        addDataToChart(pressureData, pressureChart, "Pressure")
-    }
-
-    fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
-        val set = LineDataSet(data, label)
-        set.setDrawValues(false)
-        set.setDrawFilled(true)
-        set.highLightColor = resources.getColor(R.color.main)
-        set.circleRadius = (2).toFloat()
-        val cal = Calendar.getInstance()
-        cal.time = Date()
-        chart.xAxis.axisMaximum = cal.time.time.toFloat()
-        cal.add(Calendar.HOUR, -24)
-        chart.xAxis.axisMinimum = cal.time.time.toFloat()
-        chart.xAxis.textColor = Color.WHITE
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
-        chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
-        chart.description.text = label
-        chart.description.textColor = Color.WHITE
-        chart.description.textSize = applicationContext.resources.getDimension(R.dimen.graph_description_size)
-        chart.setNoDataTextColor(Color.WHITE)
-        try {
-            chart.description.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat)
-        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
-        chart.legend.isEnabled = false
-        chart.data = LineData(set)
-
-        chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            private val mFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-            override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                return mFormat.format(Date(value.toLong()))
-            }
-        }
-
-        chart.notifyDataSetChanged()
-        chart.invalidate()
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         finish()
