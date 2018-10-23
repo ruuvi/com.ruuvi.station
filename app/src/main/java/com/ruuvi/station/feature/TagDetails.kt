@@ -37,25 +37,13 @@ import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.*
-import kotlinx.android.synthetic.main.view_tag_detail.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 
 class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
     private val REQUEST_ENABLE_BT = 1337
-    private val COARSE_LOCATION_PERMISSION = 1
     private val BACKGROUND_FADE_DURATION = 200
     companion object {
         val FROM_WELCOME = "FROM_WELCOME"
@@ -70,6 +58,7 @@ class TagDetails : AppCompatActivity() {
     private var openAddView = false
     lateinit var starter: Starter
     private var showGraph = false
+    private var updateGraph = false
 
     val backgrounds = HashMap<String, BitmapDrawable>()
 
@@ -258,6 +247,7 @@ class TagDetails : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        updateGraph = true
         tags = RuuviTag.getAll(true)
 
         for (tag in tags) {
@@ -317,14 +307,14 @@ class TagDetails : AppCompatActivity() {
         }
         tags = RuuviTag.getAll(true)
         for (mTag in tags) {
-            (tag_pager.adapter as TagPager).updateView(mTag, showGraph)
+            (tag_pager.adapter as TagPager).updateView(mTag, showGraph, updateGraph)
             if (tag != null && mTag.id == tag!!.id) {
                 tag = mTag
             }
         }
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
-            (tag_pager.adapter as TagPager).updateView(it, showGraph)
+            (tag_pager.adapter as TagPager).updateView(it, showGraph, updateGraph)
             if (alarmStatus.containsKey(it.id)) {
                 val newStatus = AlarmChecker.getStatus(it)
                 if (alarmStatus[it.id] != newStatus) {
@@ -342,6 +332,7 @@ class TagDetails : AppCompatActivity() {
             pager_title_strip.visibility = View.VISIBLE
             noTags_textView.visibility = View.INVISIBLE
         }
+        updateGraph = false
     }
 
     private fun showOptionsMenu() {
@@ -458,12 +449,11 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
         view.tag = VIEW_TAG + position
         (container as ViewPager).addView(view, 0)
-        updateView(tags[position], false)
+        updateView(tags[position], false, false)
         return view
     }
 
-    fun updateView(tag: RuuviTag, showGraph: Boolean) {
-
+    fun updateView(tag: RuuviTag, showGraph: Boolean, updateGraph: Boolean) {
         var pos = -1
         for ((index, aTag) in tags.withIndex()) {
             if (tag.id.equals(aTag.id)) {
@@ -477,13 +467,13 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
 
         val graph = rootView.findViewById<View>(R.id.tag_graphs)
         val container = rootView.findViewById<View>(R.id.tag_container)
-        if (showGraph && graph.visibility == View.INVISIBLE) {
+        if (showGraph && graph.visibility == View.INVISIBLE || showGraph && updateGraph) {
             graph.visibility = View.VISIBLE
-            container.alpha = 0.1f
+            container.visibility = View.INVISIBLE
             GraphView(context).drawChart(tag.id, rootView)
         } else if (!showGraph && graph.visibility == View.VISIBLE) {
             graph.visibility = View.INVISIBLE
-            container.alpha = 1f
+            container.visibility = View.VISIBLE
         }
 
         val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
