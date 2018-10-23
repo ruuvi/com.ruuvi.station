@@ -164,13 +164,8 @@ public class AlarmChecker {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
-                .setLargeIcon(bitmap);
-
-        if (Build.VERSION.SDK_INT < 21) {
-            notification.setSmallIcon(R.mipmap.ic_launcher_small);
-        } else {
-            notification.setSmallIcon(R.drawable.ic_ruuvi_notification_icon_v1);
-        }
+                .setLargeIcon(bitmap)
+                .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2);
 
         try {
             NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

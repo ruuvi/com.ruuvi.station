@@ -434,8 +434,11 @@ class TagDetails : AppCompatActivity() {
                     }
                 }
                 val graphItem = menu.findItem(R.id.action_graph)
-                val graphDrawable = graphItem.icon
-                graphDrawable.alpha = if (showGraph) 255 else 128
+                if (showGraph) {
+                    graphItem.setIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
+                } else {
+                    graphItem.setIcon(R.drawable.ic_ruuvi_graphs_icon)
+                }
             }
         }
         return true
