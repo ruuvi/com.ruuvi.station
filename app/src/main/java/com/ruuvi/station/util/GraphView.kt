@@ -71,6 +71,7 @@ class GraphView (val context: Context) {
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */ }
         chart.legend.isEnabled = false
         chart.data = LineData(set)
+        chart.data.isHighlightEnabled = false
 
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             private val mFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
