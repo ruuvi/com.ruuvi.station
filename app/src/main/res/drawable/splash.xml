@@ -6,8 +6,9 @@
 
     <item>
         <bitmap
-            android:gravity="center"
-            android:src="@drawable/eye" />
+            android:gravity="clip_horizontal"
+            android:dither="true"
+            android:src="@drawable/ruuvi_logo_nega" />
     </item>
 
 </layer-list>
