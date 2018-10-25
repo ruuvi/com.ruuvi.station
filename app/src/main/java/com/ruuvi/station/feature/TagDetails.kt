@@ -388,26 +388,18 @@ class TagDetails : AppCompatActivity() {
         if (tags.isNotEmpty()) {
             menuInflater.inflate(R.menu.menu_details, menu)
             val item = menu.findItem(R.id.action_alarm)
-            item.setOnMenuItemClickListener {
-                val intent = Intent(this, TagSettings::class.java)
-                intent.putExtra(TagSettings.TAG_ID, tag?.id)
-                this.startActivity(intent)
-                true
-            }
             if (tag != null) {
                 val status = AlarmChecker.getStatus(tag)
                 when (status) {
                     -1 -> {
                         // off
                         item.setIcon(R.drawable.ic_notifications_off_24px)
-                        val drawable = item.icon
-                        if (drawable != null) {
-                            drawable.alpha = 128
-                        }
+                        item.icon?.alpha = 128
                     }
                     0 -> {
                         // on
                         item.setIcon(R.drawable.ic_notifications_on_24px)
+                        item.icon?.alpha = 128
                     }
                     1 -> {
                         // triggered
@@ -415,6 +407,7 @@ class TagDetails : AppCompatActivity() {
                         val drawable = item.icon
                         if (drawable != null) {
                             drawable.mutate()
+                            drawable.alpha = 128
                             val anim = ValueAnimator()
                             anim.setIntValues(1, 0)
                             anim.setEvaluator(IntEvaluator())
