@@ -26,7 +26,9 @@ class AppSettingsListFragment : Fragment() {
         }
 
         scan_interval.setOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
+            if (prefs.backgroundScanMode != BackgroundScanModes.DISABLED) {
+                (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
+            }
         }
 
         gateway_url.setOnClickListener {
@@ -43,7 +45,7 @@ class AppSettingsListFragment : Fragment() {
             prefs.dashboardEnabled = isChecked
         }
 
-        updateSubs()
+        updateView()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -51,19 +53,23 @@ class AppSettingsListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_app_settings_list, container, false)
     }
 
-    fun updateSubs() {
-        val bgScanInterval = prefs.backgroundScanInterval
-        var min = bgScanInterval / 60
-        var sec = bgScanInterval - min * 60
-        if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-            if (min <= 15) {
-                min = 15
-                sec = 0
-            }
-        }
+    fun updateView() {
         var intervalText = ""
-        if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
-        intervalText += sec.toString() + " " + getString(R.string.seconds)
+        if (prefs.backgroundScanMode == BackgroundScanModes.DISABLED) {
+            intervalText = resources.getString(R.string.background_scanning_disabled)
+        } else {
+            val bgScanInterval = prefs.backgroundScanInterval
+            var min = bgScanInterval / 60
+            var sec = bgScanInterval - min * 60
+            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+                if (min <= 15) {
+                    min = 15
+                    sec = 0
+                }
+            }
+            if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
+            intervalText += sec.toString() + " " + getString(R.string.seconds)
+        }
         background_scan_interval_sub.text = intervalText
         gateway_url_sub.text = prefs.gatewayUrl
         if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
