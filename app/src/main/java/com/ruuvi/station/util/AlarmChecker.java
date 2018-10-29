@@ -19,8 +19,7 @@ import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.TagSensorReading;
-
-import org.apache.commons.lang3.ObjectUtils;
+import com.ruuvi.station.receivers.CancelAlarmReceiver;
 
 import java.util.List;
 
@@ -150,9 +149,17 @@ public class AlarmChecker {
 
         Intent intent = new Intent(context, TagDetails.class);
         intent.putExtra("id", mac);
+
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
                 .addNextIntent(intent)
                 .getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent cancelIntent = new Intent(context, CancelAlarmReceiver.class);
+        cancelIntent.putExtra("alarmId", _id);
+        cancelIntent.putExtra("notificationId", notificationId);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.disable_this_alarm), cancelPendingIntent);
+
         notification
                 = new NotificationCompat.Builder(context, "notify_001")
                 .setContentTitle(name)
@@ -165,7 +172,8 @@ public class AlarmChecker {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
                 .setLargeIcon(bitmap)
-                .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2);
+                .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
+                .addAction(action);
 
         try {
             NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

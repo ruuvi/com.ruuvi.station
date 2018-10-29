@@ -104,6 +104,9 @@
             tools:node="replace">
             <meta-data android:name="longScanForcingEnabled" android:value="true"/>
         </service>
+
+
+        <receiver android:name=".receivers.CancelAlarmReceiver" />
     </application>
 
 </manifest>

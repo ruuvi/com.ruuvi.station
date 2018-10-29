@@ -43,10 +43,23 @@ public class Alarm extends BaseModel {
         this.ruuviTagId = tagId;
     }
 
+    public static List<Alarm> getAll() {
+        return SQLite.select()
+                .from(Alarm.class)
+                .queryList();
+    }
+
     public static List<Alarm> getForTag(String id) {
         return SQLite.select()
                 .from(Alarm.class)
                 .where(Alarm_Table.ruuviTagId.eq(id))
                 .queryList();
+    }
+
+    public static Alarm get(int id) {
+        return SQLite.select()
+                .from(Alarm.class)
+                .where(Alarm_Table.id.eq(id))
+                .querySingle();
     }
 }
