@@ -240,7 +240,7 @@
 
                 <Button
                     android:id="@+id/remove_tag"
-                    android:text="@string/tag_delete_title"
+                    android:text="@string/remove_this_ruuvitag"
                     app:layout_constraintTop_toBottomOf="@id/input_mac"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
