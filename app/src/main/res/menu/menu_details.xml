@@ -7,7 +7,7 @@
         app:showAsAction="always"
         android:orderInCategory="2"
         android:title="menu"
-        android:icon="@drawable/ic_more_horiz_24px" />
+        android:icon="@drawable/ic_settings_24px" />
 
     <item
         android:id="@+id/action_graph"

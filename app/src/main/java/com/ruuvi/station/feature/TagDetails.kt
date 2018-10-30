@@ -233,7 +233,9 @@ class TagDetails : AppCompatActivity() {
             updateUI()
             invalidateOptionsMenu()
         } else {
-            showOptionsMenu()
+            val intent = Intent(this, TagSettings::class.java)
+            intent.putExtra(TagSettings.TAG_ID, tag?.id)
+            this.startActivity(intent)
         }
         return true
     }
@@ -341,40 +343,6 @@ class TagDetails : AppCompatActivity() {
             noTags_textView.visibility = View.INVISIBLE
         }
         updateGraph = false
-    }
-
-    private fun showOptionsMenu() {
-        val sheetDialog = BottomSheetDialog(this)
-        val listView = ListView(this)
-        val menu: List<String> = this.resources.getStringArray(R.array.station_tag_menu).toList()
-
-        listView.adapter = ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                menu
-        )
-
-        listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-            when (i) {
-                0 -> {
-                    val intent = Intent(this, GraphActivity::class.java)
-                    intent.putExtra(GraphActivity.TAGID, tag?.id)
-                    this.startActivity(intent)
-                }
-                1 -> {
-                    val intent = Intent(this, TagSettings::class.java)
-                    intent.putExtra(TagSettings.TAG_ID, tag?.id)
-                    this.startActivity(intent)
-                }
-                2 -> {
-                    delete()
-                }
-            }
-
-            sheetDialog.dismiss()
-        }
-
-        sheetDialog.setContentView(listView)
-        sheetDialog.show()
     }
 
     fun delete() {
