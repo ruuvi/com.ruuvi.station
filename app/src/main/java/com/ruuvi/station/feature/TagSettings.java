@@ -39,6 +39,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -203,6 +204,13 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.remove_tag).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delete();
+            }
+        });
+
         alarmItems.add(new AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85));
         alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
@@ -236,6 +244,26 @@ public class TagSettings extends AppCompatActivity {
             set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
             set.applyTo(parentLayout);
         }
+    }
+
+    private void delete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(this.getString(R.string.tag_delete_title));
+        builder.setMessage(this.getString(R.string.tag_delete_message));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                tag.deleteTagAndRelatives();
+                finish();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
     }
 
     CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {

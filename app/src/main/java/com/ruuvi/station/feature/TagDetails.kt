@@ -250,10 +250,18 @@ class TagDetails : AppCompatActivity() {
         updateGraph = true
         tags = RuuviTag.getAll(true)
 
+        var tagRemoved = true
         for (tag in tags) {
             Utils.getBackground(applicationContext, tag).let { bitmap ->
                 backgrounds.put(tag.id, BitmapDrawable(applicationContext.resources, bitmap))
             }
+            if (this.tag?.id == tag.id) tagRemoved = false
+        }
+        if (tag != null && tagRemoved) {
+            val intent = intent
+            finish()
+            startActivity(intent)
+            return
         }
         (tag_pager.adapter as TagPager).tags = tags
         tag_pager.adapter?.notifyDataSetChanged()
