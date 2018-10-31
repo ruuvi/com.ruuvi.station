@@ -231,6 +231,28 @@ class TagDetails : AppCompatActivity() {
             showGraph = !showGraph
             updateUI()
             invalidateOptionsMenu()
+
+            val prefs = Preferences(this)
+            val bgScanEnabled = prefs.backgroundScanMode
+            if (bgScanEnabled == BackgroundScanModes.DISABLED) {
+                if (prefs.isFirstGraphVisit) {
+                    val simpleAlert = android.support.v7.app.AlertDialog.Builder(this).create()
+                    simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
+                    simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
+
+                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                        prefs.backgroundScanMode = BackgroundScanModes.FOREGROUND
+                    }
+                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                    }
+                    simpleAlert.setOnDismissListener {
+                        Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
+                        prefs.isFirstGraphVisit = false
+                    }
+                    simpleAlert.show()
+                }
+            }
+
         } else {
             val intent = Intent(this, TagSettings::class.java)
             intent.putExtra(TagSettings.TAG_ID, tag?.id)
