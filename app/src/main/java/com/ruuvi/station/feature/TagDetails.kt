@@ -178,17 +178,23 @@ class TagDetails : AppCompatActivity() {
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             main_drawerLayout.closeDrawers()
             when (i) {
-                1 -> {
+                0 -> {
                     val settingsIntent = Intent(this, AppSettingsActivity::class.java)
                     startActivity(settingsIntent)
                 }
-                2 -> {
+                1 -> {
                     val aboutIntent = Intent(this, AboutActivity::class.java)
                     startActivity(aboutIntent)
                 }
-                else -> {
+                2 -> {
                     val addIntent = Intent(this, AddTagActivity::class.java)
                     startActivity(addIntent)
+                }
+                3 -> {
+                    val url = "https://ruuvi.com"
+                    val webIntent = Intent(Intent.ACTION_VIEW)
+                    webIntent.data = Uri.parse(url)
+                    startActivity(webIntent)
                 }
             }
         }
