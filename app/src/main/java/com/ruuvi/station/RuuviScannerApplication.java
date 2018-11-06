@@ -143,27 +143,25 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
             Log.d(TAG, "onBecameForeground");
-            if (!foreground) {
-                Utils.removeStateFile(getApplicationContext());
-                foreground = true;
-                if (beaconManager != null) {
-                    // if background scanning is turned on
-                    // beaconManager is already setup so it can just be set to foreground mode
-                    beaconManager.setBackgroundMode(false);
-                } else {
-                    startForegroundScanning();
-                }
-                if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = false;
+            Utils.removeStateFile(getApplicationContext());
+            foreground = true;
+            if (beaconManager != null) {
+                // if background scanning is turned on
+                // beaconManager is already setup so it can just be set to foreground mode
+                beaconManager.setBackgroundMode(false);
+            } else {
+                startForegroundScanning();
             }
+            if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = false;
         }
 
         public void onBecameBackground() {
             Log.d(TAG, "onBecameBackground");
+            foreground = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (!foreground) {
-                        foreground = false;
                         ServiceUtils su = new ServiceUtils(getApplicationContext());
                         if (prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED) {
                             // background scanning is disabled so all scanning things will be killed
