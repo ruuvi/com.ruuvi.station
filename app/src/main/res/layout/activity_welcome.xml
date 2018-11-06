@@ -82,7 +82,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_1" />
+                app:srcCompat="@drawable/ic_icon_intro_1" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_2" />
+                app:srcCompat="@drawable/ic_icon_intro_2" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_3" />
+                app:srcCompat="@drawable/ic_icon_intro_3" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_4" />
+                app:srcCompat="@drawable/ic_icon_intro_4" />
 
             <TextView
                 android:layout_height="wrap_content"
