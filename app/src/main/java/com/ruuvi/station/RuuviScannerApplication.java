@@ -80,6 +80,8 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
         }
         bindBeaconManager(this, getApplicationContext());
         int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000;
+        int minInterval = 15 * 60 * 1000;
+        if (scanInterval < minInterval) scanInterval = minInterval;
         if (scanInterval != beaconManager.getBackgroundBetweenScanPeriod()) {
             beaconManager.setBackgroundBetweenScanPeriod(scanInterval);
             try {
@@ -140,48 +142,47 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
-            Utils.removeStateFile(getApplicationContext());
-            foreground = true;
-            if (beaconManager != null) {
-                // if background scanning is turned on
-                // beaconManager is already setup so it can just be set to foreground mode
-                beaconManager.setBackgroundMode(false);
-            } else {
-                startForegroundScanning();
+            Log.d(TAG, "onBecameForeground");
+            if (!foreground) {
+                Utils.removeStateFile(getApplicationContext());
+                foreground = true;
+                if (beaconManager != null) {
+                    // if background scanning is turned on
+                    // beaconManager is already setup so it can just be set to foreground mode
+                    beaconManager.setBackgroundMode(false);
+                } else {
+                    startForegroundScanning();
+                }
+                if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = false;
             }
-            if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = false;
         }
 
         public void onBecameBackground() {
-            foreground = false;
-            ServiceUtils su = new ServiceUtils(getApplicationContext());
-            if (prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED) {
-                // background scanning is disabled so all scanning things will be killed
-                stopScanning();
-                su.stopForegroundService();
-            } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-                if (su.isRunning(AltBeaconScannerForegroundService.class)) {
-                    su.stopForegroundService();
-                } else {
-                    startBackgroundScanning();
-                }
-            } else {
-                stopScanning();
-                su.startForegroundService();
-            }
-            if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
-            // wait a bit before killing the service so scanning is not started too often
-            // when opening / closing the app quickly
-            /*
+            Log.d(TAG, "onBecameBackground");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (!foreground) {
-                        new ServiceUtils(getApplicationContext()).stopService();
+                        foreground = false;
+                        ServiceUtils su = new ServiceUtils(getApplicationContext());
+                        if (prefs.getBackgroundScanMode() == BackgroundScanModes.DISABLED) {
+                            // background scanning is disabled so all scanning things will be killed
+                            stopScanning();
+                            su.stopForegroundService();
+                        } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                            if (su.isRunning(AltBeaconScannerForegroundService.class)) {
+                                su.stopForegroundService();
+                            } else {
+                                startBackgroundScanning();
+                            }
+                        } else {
+                            stopScanning();
+                            su.startForegroundService();
+                        }
+                        if (ruuviRangeNotifier != null) ruuviRangeNotifier.gatewayOn = true;
                     }
                 }
             }, 5000);
-            */
         }
     };
 
