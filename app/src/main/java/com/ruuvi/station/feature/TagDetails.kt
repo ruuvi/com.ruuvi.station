@@ -179,16 +179,16 @@ class TagDetails : AppCompatActivity() {
             main_drawerLayout.closeDrawers()
             when (i) {
                 0 -> {
+                    val addIntent = Intent(this, AddTagActivity::class.java)
+                    startActivity(addIntent)
+                }
+                1 -> {
                     val settingsIntent = Intent(this, AppSettingsActivity::class.java)
                     startActivity(settingsIntent)
                 }
-                1 -> {
+                2 -> {
                     val aboutIntent = Intent(this, AboutActivity::class.java)
                     startActivity(aboutIntent)
-                }
-                2 -> {
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
                 }
                 3 -> {
                     val url = "https://ruuvi.com"
