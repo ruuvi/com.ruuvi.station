@@ -22,12 +22,11 @@
                 android:id="@+id/infoTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
+                android:paddingTop="50dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:paddingTop="50dp"
-                app:srcCompat="@drawable/title_ruuvi"
-                />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_title_ruuvi" />
 
             <TextView
                 android:id="@+id/aboutText"
