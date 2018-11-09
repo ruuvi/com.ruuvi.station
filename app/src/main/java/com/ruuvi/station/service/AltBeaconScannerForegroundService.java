@@ -89,10 +89,22 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
+        String notificationText = getString(R.string.scanner_notification_title);
+        notificationText = notificationText.replace("..", " every ");
+        int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval();
+        int min = scanInterval / 60;
+        int sec = scanInterval - min * 60;
+        if (min > 0) notificationText += min + " " + getString(R.string.minutes) + ", ";
+        if (sec > 0) notificationText += sec + " " + getString(R.string.seconds);
+        else {
+            notificationText = notificationText.replace(", ", "");
+        }
+
+
         NotificationCompat.Builder notification;
         notification
                 = new NotificationCompat.Builder(getApplicationContext(), channelId)
-                .setContentTitle(this.getString(R.string.scanner_notification_title))
+                .setContentTitle(notificationText)
                 .setSmallIcon(R.mipmap.ic_launcher_small)
                 .setTicker(this.getString(R.string.scanner_notification_ticker))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(this.getString(R.string.scanner_notification_message)))

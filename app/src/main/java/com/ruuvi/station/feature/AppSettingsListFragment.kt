@@ -53,8 +53,9 @@ class AppSettingsListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_app_settings_list, container, false)
     }
 
-    fun updateView() {
+    private fun updateView() {
         var intervalText = ""
+        setBackgroundModeText()
         if (prefs.backgroundScanMode == BackgroundScanModes.DISABLED) {
             intervalText = resources.getString(R.string.background_scanning_disabled)
         } else {
@@ -78,6 +79,14 @@ class AppSettingsListFragment : Fragment() {
             temperature_unit_sub.text = getString(R.string.celsius)
         } else {
             temperature_unit_sub.text = getString(R.string.fahrenheit )
+        }
+    }
+
+    private fun setBackgroundModeText() {
+        when (prefs.backgroundScanMode) {
+            BackgroundScanModes.BACKGROUND -> bg_scan_description.text = getString(R.string.lazy_background_scanning_enabled)
+            BackgroundScanModes.FOREGROUND -> bg_scan_description.text = getString(R.string.continuous_background_scanning_enabled)
+            else -> bg_scan_description.text = getString(R.string.no_background_scanning_enabled)
         }
     }
 }

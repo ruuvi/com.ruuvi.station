@@ -208,7 +208,7 @@
                     android:background="@color/backgroundLight"
                     android:fontFamily="@font/montserrat_bold"
                     android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/mac"
+                    android:text="@string/more_info"
                     android:textAllCaps="true"
                     android:textColor="@color/mainDark"
                     android:textSize="16sp"

@@ -5,7 +5,7 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_bgscan">Enable background scanning</string>
+    <string name="pref_bgscan">Background Scanning Settings</string>
     <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background.</string>
 
     <string name="pref_bgscan_battery_saving">Enable battery saving mode</string>
@@ -135,9 +135,9 @@
     <string name="tag_delete_title">Delete RuuviTag</string>
     <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
     <string name="temperature">Temperature</string>
-    <string name="humidity">Humidity</string>
+    <string name="humidity">Relative Air Humidity</string>
     <string name="pressure">Air Pressure</string>
-    <string name="rssi">RSSI</string>
+    <string name="rssi">Signal Strength (RSSI)</string>
     <string name="movement">Movement</string>
     <string name="tag_already_added">Tag is already added</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -224,7 +224,7 @@
     <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
 
     <string name="permission_dialog_title">Permission needed</string>
-    <string name="permission_dialog_request_message">Android requires permission to access your location in order to scan for RuuviTags.</string>
+    <string name="permission_dialog_request_message">Android operating system requires the app to access your location in order to scan nearby Bluetooth devices. Don\'t worry. Ruuvi Station won\'t track your movements.</string>
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
@@ -232,7 +232,7 @@
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
     <string name="title_activity_add_tag">Nearby Tags</string>
     <string name="title_activity_app_settings">App Settings</string>
-    <string name="background_scan_interval">Set scanning interval</string>
+    <string name="background_scan_interval">Background Scan Interval</string>
     <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
     <string name="device_identifier">Device identifier</string>
     <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
@@ -254,10 +254,10 @@
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
     <string name="gateway_settings">Gateway Settings</string>
-    <string name="mac_address">Mac address</string>
+    <string name="mac_address">MAC Address</string>
     <string name="mac">Mac</string>
     <string name="dashboard_pref">Dashboard</string>
-    <string name="dashboard_pref_sub">Enabled dashboard view (requires restart)</string>
+    <string name="dashboard_pref_sub">Use dashboard view to see multiple sensors at a glance. Restart the app after enabled.</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="test_gateway">Test gateway</string>
@@ -273,4 +273,8 @@
     <string name="background_scanning_disabled">Background scanning is disabled</string>
     <string name="disable_this_alarm">Disable this alarm</string>
     <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
+    <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.</string>
+    <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
+    <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
+    <string name="more_info">More info</string>
 </resources>
