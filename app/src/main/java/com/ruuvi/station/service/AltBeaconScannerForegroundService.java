@@ -1,5 +1,6 @@
 package com.ruuvi.station.service;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,6 +41,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     private Region region;
     RuuviRangeNotifier ruuviRangeNotifier;
     BluetoothMedic medic;
+    NotificationCompat.Builder notification;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -68,7 +70,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         medic = RuuviScannerApplication.setupMedic(getApplicationContext());
     }
 
-    private void startFG() {
+    private NotificationCompat.Builder setupNotification() {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -100,8 +102,6 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
             notificationText = notificationText.replace(", ", "");
         }
 
-
-        NotificationCompat.Builder notification;
         notification
                 = new NotificationCompat.Builder(getApplicationContext(), channelId)
                 .setContentTitle(notificationText)
@@ -117,14 +117,30 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
 
         notification.setSmallIcon(R.drawable.ic_ruuvi_bgscan_icon);
 
+        return notification;
+    }
+
+    private void startFG() {
+        setupNotification();
         //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
         beaconManager.setEnableScheduledScanJobs(false);
         startForeground(1337, notification.build());
     }
 
+    private void updateNotification() {
+        setupNotification();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        try {
+            mNotificationManager.notify(1337, notification.build());
+        } catch (NullPointerException e) {c
+            Log.d(TAG, "Could not update notification");
+        }
+    }
+
     private void setBackground() {
         int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000;
         if (scanInterval != beaconManager.getBackgroundBetweenScanPeriod()) {
+            updateNotification();
             beaconManager.setBackgroundBetweenScanPeriod(scanInterval);
             try {
                 beaconManager.updateScanPeriods();
