@@ -132,7 +132,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         try {
             mNotificationManager.notify(1337, notification.build());
-        } catch (NullPointerException e) {c
+        } catch (NullPointerException e) {
             Log.d(TAG, "Could not update notification");
         }
     }
