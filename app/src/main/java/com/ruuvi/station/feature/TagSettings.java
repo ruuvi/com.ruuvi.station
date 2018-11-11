@@ -221,7 +221,7 @@ public class TagSettings extends AppCompatActivity {
             AlarmItem item = alarmItems.get(alarm.type);
             item.high = alarm.high;
             item.low = alarm.low;
-            item.checked = true;
+            item.checked = alarm.enabled;
             item.alarm = alarm;
         }
 
@@ -382,12 +382,14 @@ public class TagSettings extends AppCompatActivity {
                     alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
                     alarmItem.alarm.save();
                 } else {
+                    alarmItem.alarm.enabled = true;
                     alarmItem.alarm.low = alarmItem.low;
                     alarmItem.alarm.high = alarmItem.high;
                     alarmItem.alarm.update();
                 }
             } else if (alarmItem.alarm != null) {
-                alarmItem.alarm.delete();
+                alarmItem.alarm.enabled = false;
+                alarmItem.alarm.update();
             }
         }
         // what are you doing here?

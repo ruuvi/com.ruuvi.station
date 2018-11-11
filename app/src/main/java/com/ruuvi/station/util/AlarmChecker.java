@@ -84,6 +84,7 @@ public class AlarmChecker {
 
         int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
+            if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
                     if (tag.temperature < alarm.low)

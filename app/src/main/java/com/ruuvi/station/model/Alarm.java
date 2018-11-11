@@ -32,6 +32,8 @@ public class Alarm extends BaseModel {
     public int high;
     @Column
     public int type;
+    @Column
+    public boolean enabled;
 
     public Alarm() {
     }
