@@ -174,7 +174,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         }
         medic = null;
         beaconManager.unbind(this);
-        beaconManager.disableForegroundServiceScanning();
+        //beaconManager.disableForegroundServiceScanning();
         beaconManager.setEnableScheduledScanJobs(true);
         beaconManager = null;
         ruuviRangeNotifier = null;
