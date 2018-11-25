@@ -76,7 +76,10 @@ public class AlarmChecker {
                 return 1;
             }
         }
-        return alarms.size() > 0 ? 0 : -1;
+        for (Alarm alarm: alarms) {
+            if (alarm.enabled) return 0;
+        }
+        return -1;
     }
 
     public static void check(RuuviTag tag, Context context) {

@@ -39,6 +39,7 @@ public class Alarm extends BaseModel {
     }
 
     public Alarm(int low, int high, int type, String tagId) {
+        this.enabled = true;
         this.low = low;
         this.high = high;
         this.type = type;
