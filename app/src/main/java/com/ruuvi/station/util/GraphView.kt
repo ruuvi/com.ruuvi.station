@@ -45,6 +45,13 @@ class GraphView (val context: Context) {
             pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
         }
 
+        if (readings.size == 0) {
+            val timestamp = to.toFloat()
+            tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(0.0).toFloat()))
+            humidData.add(Entry(timestamp, 0f))
+            pressureData.add(Entry(timestamp, 0f))
+        }
+
         addDataToChart(tempData, view.findViewById(R.id.tempChart), "Temperature")
         addDataToChart(humidData, view.findViewById(R.id.humidChart), "Humidity")
         addDataToChart(pressureData, view.findViewById(R.id.pressureChart), "Pressure")
