@@ -165,7 +165,7 @@
                 app:layout_constraintTop_toBottomOf="@id/troubleshootingTitle" />
 
             <TextView
-                android:id="@+id/versionInfo"
+                android:id="@+id/debugInfo"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="Version: ..."
