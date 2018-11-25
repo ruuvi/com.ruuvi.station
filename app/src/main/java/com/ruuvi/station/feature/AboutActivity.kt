@@ -34,8 +34,9 @@ class AboutActivity : AppCompatActivity() {
     fun drawDebugInfo() {
         val readingCount = TagSensorReading.countAll()
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
-        debugText += getString(R.string.seen_tags, RuuviTag.getAll(false).size) + "\n"
-        debugText += getString(R.string.added_tags, RuuviTag.getAll(true).size) + "\n"
+        val addedTags = RuuviTag.getAll(true).size
+        debugText += getString(R.string.seen_tags, addedTags + RuuviTag.getAll(false).size) + "\n"
+        debugText += getString(R.string.added_tags, addedTags) + "\n"
         debugText += getString(R.string.db_reading_rows, readingCount) + "\n"
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"

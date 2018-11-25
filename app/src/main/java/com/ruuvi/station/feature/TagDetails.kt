@@ -70,6 +70,8 @@ class TagDetails : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
+        starter = Starter(this)
+
         if (Preferences(this).dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             main_drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -147,10 +149,13 @@ class TagDetails : AppCompatActivity() {
             Log.e(TAG, "Failed to set pager font")
         }
 
-        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
-
         handler = Handler()
-        starter = Starter(this)
+        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
+        if (openAddView) {
+            val addIntent = Intent(this, AddTagActivity::class.java)
+            startActivity(addIntent)
+            return
+        }
         starter.getThingsStarted()
     }
 

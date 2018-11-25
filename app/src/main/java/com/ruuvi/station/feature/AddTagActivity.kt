@@ -1,9 +1,16 @@
 package com.ruuvi.station.feature
 
+import android.Manifest
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
+import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +21,7 @@ import com.ruuvi.station.adapters.AddTagAdapter
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.service.ScannerService
+import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 
 import kotlinx.android.synthetic.main.activity_add_tag.*
@@ -23,6 +31,7 @@ import java.util.*
 class AddTagActivity : AppCompatActivity() {
     private var adapter: AddTagAdapter? = null
     private var tags: MutableList<RuuviTag>? = null
+    lateinit var starter: Starter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +39,8 @@ class AddTagActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        starter = Starter(this)
 
         tags = ArrayList()
         adapter = AddTagAdapter(this, tags)
@@ -76,6 +87,8 @@ class AddTagActivity : AppCompatActivity() {
                 handler.postDelayed(this, 1000)
             }
         })
+
+        starter.getThingsStarted()
     }
 
     override fun onResume() {
@@ -98,7 +111,36 @@ class AddTagActivity : AppCompatActivity() {
         }
         return true
     }
-    
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            10 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // party
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        starter.requestPermissions()
+                    } else {
+                        showPermissionSnackbar(this)
+                    }
+                    Toast.makeText(applicationContext, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showPermissionSnackbar(activity: Activity) {
+        val snackbar = Snackbar.make(tag_layout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
+        snackbar.setAction(getString(R.string.settings)) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            val uri = Uri.fromParts("package", activity.packageName, null)
+            intent.data = uri
+            activity.startActivity(intent)
+        }
+        snackbar.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         finish()
