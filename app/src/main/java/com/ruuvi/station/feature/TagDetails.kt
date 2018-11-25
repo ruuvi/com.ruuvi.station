@@ -238,7 +238,7 @@ class TagDetails : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
-        } else if (item?.title == "graphs") {
+        } else if (item?.itemId == R.id.action_graph) {
             showGraph = !showGraph
             updateUI()
             invalidateOptionsMenu()
@@ -264,7 +264,7 @@ class TagDetails : AppCompatActivity() {
                 }
             }
 
-        } else {
+        } else if (item?.itemId == R.id.action_settings) {
             val intent = Intent(this, TagSettings::class.java)
             intent.putExtra(TagSettings.TAG_ID, tag?.id)
             this.startActivity(intent)
