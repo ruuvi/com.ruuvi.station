@@ -27,7 +27,10 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        aboutInfoText.movementMethod = LinkMovementMethod.getInstance()
+        operationsText.movementMethod = LinkMovementMethod.getInstance()
+        troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
+        openText.movementMethod = LinkMovementMethod.getInstance()
+        moreText.movementMethod = LinkMovementMethod.getInstance()
         drawDebugInfo()
     }
 

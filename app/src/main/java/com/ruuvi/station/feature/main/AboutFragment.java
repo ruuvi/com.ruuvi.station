@@ -32,11 +32,6 @@ public class AboutFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
-        ((TextView)view.findViewById(R.id.aboutInfoText)).setMovementMethod(LinkMovementMethod.getInstance());
-
-        ((TextView)view.findViewById(R.id.versionInfo))
-                .setText("Version: " + BuildConfig.VERSION_NAME);
-
         return view;
     }
 }
