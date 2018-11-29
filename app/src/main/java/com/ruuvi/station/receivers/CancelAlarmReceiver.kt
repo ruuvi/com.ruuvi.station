@@ -12,7 +12,11 @@ class CancelAlarmReceiver : BroadcastReceiver() {
         val alarmId = intent.getIntExtra("alarmId", -1)
         val notificationId = intent.getIntExtra("notificationId", -1)
         if (alarmId != -1) {
-            Alarm.get(alarmId)?.delete()
+            val alarm = Alarm.get(alarmId)
+            if (alarm != null) {
+                alarm.enabled = false
+                alarm.update()
+            }
         }
         if (notificationId != -1) {
             val ns = Context.NOTIFICATION_SERVICE
