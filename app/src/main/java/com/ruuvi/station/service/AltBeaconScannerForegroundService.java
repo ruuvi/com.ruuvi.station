@@ -192,7 +192,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     @Override
     public void onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect");
-        Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
         ruuviRangeNotifier.gatewayOn = true;
         if (!beaconManager.getRangingNotifiers().contains(ruuviRangeNotifier)) {
             beaconManager.addRangeNotifier(ruuviRangeNotifier);
