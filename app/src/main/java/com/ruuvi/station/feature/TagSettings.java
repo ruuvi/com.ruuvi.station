@@ -329,7 +329,7 @@ public class TagSettings extends AppCompatActivity {
 
         public void updateView() {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
-            int setSeekbarColor = R.color.ap_gray;
+            int setSeekbarColor = R.color.inactive;
             if (this.checked) {
                 setSeekbarColor = R.color.main;
                 this.subtitle = getString(R.string.alert_substring_movement);

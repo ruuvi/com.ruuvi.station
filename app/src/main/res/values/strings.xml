@@ -132,8 +132,8 @@
     <string name="no_tags_added">Your dashboard \nis empty</string>
     <string name="press_to_add">No tags added,\npress here to add tags</string>
     <string name="tag_not_found">Tag not found</string>
-    <string name="tag_delete_title">Delete RuuviTag</string>
-    <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
+    <string name="tag_delete_title">Remove RuuviTag</string>
+    <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
     <string name="temperature">Temperature</string>
     <string name="humidity">Relative Air Humidity</string>
     <string name="pressure">Air Pressure</string>
