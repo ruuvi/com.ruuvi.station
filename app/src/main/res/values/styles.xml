@@ -62,4 +62,9 @@
     <style name="SplashTheme" parent="AppTheme.NoActionBar.TransparentStatusBar">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
+
+    <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
+        <item name="colorAccent">@color/main</item>
+        <item name="android:textColorSecondary">@color/inactive</item>
+    </style>
 </resources>
