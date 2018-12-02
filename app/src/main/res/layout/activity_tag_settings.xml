@@ -208,7 +208,7 @@
                     android:background="@color/backgroundLight"
                     android:fontFamily="@font/montserrat_bold"
                     android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/mac"
+                    android:text="@string/more_info"
                     android:textAllCaps="true"
                     android:textColor="@color/mainDark"
                     android:textSize="16sp"
@@ -238,6 +238,22 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
+                <Button
+                    android:id="@+id/remove_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="16dp"
+                    android:paddingLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/button_rounded_corners"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/white"
+                    android:text="@string/remove_this_ruuvitag"
+                    android:textSize="12dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/input_mac" />
 
             </android.support.constraint.ConstraintLayout>
 

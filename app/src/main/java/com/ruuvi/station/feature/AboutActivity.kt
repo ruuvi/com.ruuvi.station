@@ -8,6 +8,9 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.database.LocalDatabase
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.TagSensorReading
 
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
@@ -24,21 +27,25 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        aboutInfoText.movementMethod = LinkMovementMethod.getInstance()
-        versionInfo.text = getString(R.string.version) + ": " + BuildConfig.VERSION_NAME
+        operationsText.movementMethod = LinkMovementMethod.getInstance()
+        troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
+        openText.movementMethod = LinkMovementMethod.getInstance()
+        moreText.movementMethod = LinkMovementMethod.getInstance()
+        drawDebugInfo()
+    }
 
-        //todo: remove me
-        val path = application.filesDir.path + "/android-beacon-library-scan-state"
-        val file = File(path)
-        val snack = Snackbar.make(about_root, "Size: " + file.length() / 1024 + "KB", Snackbar.LENGTH_INDEFINITE)
-        snack.setAction("Remove") {
-            if (file.delete()) {
-               Toast.makeText(this, "Deleted!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Could not delete", Toast.LENGTH_SHORT).show()
-            }
-        }
-        snack.show()
+    fun drawDebugInfo() {
+        val readingCount = TagSensorReading.countAll()
+        var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
+        val addedTags = RuuviTag.getAll(true).size
+        debugText += getString(R.string.seen_tags, addedTags + RuuviTag.getAll(false).size) + "\n"
+        debugText += getString(R.string.added_tags, addedTags) + "\n"
+        debugText += getString(R.string.db_reading_rows, readingCount) + "\n"
+
+        val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
+        val dbFile = File(dbPath)
+        debugText += getString(R.string.db_size, dbFile.length() / 1024)
+        debugInfo.text = debugText
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

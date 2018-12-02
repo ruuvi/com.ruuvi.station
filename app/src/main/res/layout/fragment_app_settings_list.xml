@@ -35,6 +35,7 @@
                     android:layout_height="wrap_content" />
 
                 <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/bg_scan_description"
                     android:text="@string/pref_bgscan_summ"
                     style="@style/PrefSecondaryText"
                     android:layout_width="match_parent"

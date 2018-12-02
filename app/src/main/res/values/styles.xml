@@ -49,14 +49,14 @@
     </style>
 
     <style name="WelcomeText">
-        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:fontFamily">@font/muli</item>
         <item name="android:textSize">@dimen/title_font_size</item>
+        <item name="android:lineHeight">20dp</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:layout_marginStart">84dp</item>
-        <item name="android:layout_marginEnd">84dp</item>
+        <item name="android:layout_width">300dp</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme.NoActionBar.TransparentStatusBar">

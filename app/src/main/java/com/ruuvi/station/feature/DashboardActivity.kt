@@ -1,6 +1,7 @@
 package com.ruuvi.station.feature
 
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -73,6 +74,10 @@ class DashboardActivity : AppCompatActivity() {
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             main_drawerLayout.closeDrawers()
             when (i) {
+                0 -> {
+                    val addIntent = Intent(this, AddTagActivity::class.java)
+                    startActivity(addIntent)
+                }
                 1 -> {
                     val settingsIntent = Intent(this, AppSettingsActivity::class.java)
                     startActivity(settingsIntent)
@@ -81,9 +86,11 @@ class DashboardActivity : AppCompatActivity() {
                     val aboutIntent = Intent(this, AboutActivity::class.java)
                     startActivity(aboutIntent)
                 }
-                else -> {
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
+                3 -> {
+                    val url = "https://ruuvi.com"
+                    val webIntent = Intent(Intent.ACTION_VIEW)
+                    webIntent.data = Uri.parse(url)
+                    startActivity(webIntent)
                 }
             }
         }

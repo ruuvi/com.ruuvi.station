@@ -51,6 +51,7 @@
 
         <activity
             android:name=".feature.TagDetails"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
         <activity
             android:name=".feature.WelcomeActivity"

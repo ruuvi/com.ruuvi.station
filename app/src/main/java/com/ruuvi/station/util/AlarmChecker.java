@@ -38,6 +38,7 @@ public class AlarmChecker {
 
         int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
+            if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
                     if (tag.temperature < alarm.low)
@@ -76,7 +77,10 @@ public class AlarmChecker {
                 return 1;
             }
         }
-        return alarms.size() > 0 ? 0 : -1;
+        for (Alarm alarm: alarms) {
+            if (alarm.enabled) return 0;
+        }
+        return -1;
     }
 
     public static void check(RuuviTag tag, Context context) {
@@ -84,6 +88,7 @@ public class AlarmChecker {
 
         int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
+            if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
                     if (tag.temperature < alarm.low)

@@ -24,7 +24,6 @@ class GraphView (val context: Context) {
 
     fun drawChart( tagId: String, view: View) {
         val readings = TagSensorReading.getForTag(tagId)
-        if (readings.size == 0) return
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
@@ -37,12 +36,21 @@ class GraphView (val context: Context) {
         cal.add(Calendar.HOUR, -24)
         from = cal.time.time
 
-        readings.map { reading ->
-            val timestamp = (reading.createdAt.time - from).toFloat()
-            if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
-            else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
-            humidData.add(Entry(timestamp, reading.humidity.toFloat()))
-            pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
+        if (readings.size > 0) {
+            if (from < readings[0].createdAt.time)
+                from = readings[0].createdAt.time
+            readings.map { reading ->
+                val timestamp = (reading.createdAt.time - from).toFloat()
+                if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+                else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
+                humidData.add(Entry(timestamp, reading.humidity.toFloat()))
+                pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
+            }
+        } else {
+            val timestamp = to.toFloat()
+            tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(0.0).toFloat()))
+            humidData.add(Entry(timestamp, 0f))
+            pressureData.add(Entry(timestamp, 0f))
         }
 
         addDataToChart(tempData, view.findViewById(R.id.tempChart), "Temperature")

@@ -101,4 +101,8 @@ public class TagSensorReading extends BaseModel {
                 .async()
                 .execute();
     }
+
+    public static long countAll() {
+        return SQLite.selectCountOf().from(TagSensorReading.class).count();
+    }
 }

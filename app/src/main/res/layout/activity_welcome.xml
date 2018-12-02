@@ -21,7 +21,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -49,15 +49,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/title_welcome" />
+                app:srcCompat="@drawable/ic_title_welcome" />
 
             <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_0"
                 style="@style/WelcomeText"
@@ -78,15 +77,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_1" />
+                app:srcCompat="@drawable/ic_icon_intro_1" />
 
             <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_1"
                 style="@style/WelcomeText"
@@ -107,15 +105,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_2" />
+                app:srcCompat="@drawable/ic_icon_intro_2" />
 
             <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_2"
                 style="@style/WelcomeText"
@@ -136,15 +133,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_3" />
+                app:srcCompat="@drawable/ic_icon_intro_3" />
 
             <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_3"
                 style="@style/WelcomeText"
@@ -165,15 +161,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/icon_intro_4" />
+                app:srcCompat="@drawable/ic_icon_intro_4" />
 
             <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_4"
                 style="@style/WelcomeText"
@@ -194,7 +189,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="32dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="150dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -203,7 +198,6 @@
 
             <TextView
                 android:id="@+id/welcome_text_5"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_5"
                 style="@style/WelcomeText"
@@ -215,7 +209,7 @@
                 android:id="@+id/start_button"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="75dp"
                 android:background="@drawable/border_button"
                 android:text="@string/scan"
                 android:textColor="@color/white"

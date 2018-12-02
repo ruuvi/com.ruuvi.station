@@ -39,6 +39,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -203,6 +204,13 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.remove_tag).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delete();
+            }
+        });
+
         alarmItems.add(new AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85));
         alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
@@ -213,7 +221,7 @@ public class TagSettings extends AppCompatActivity {
             AlarmItem item = alarmItems.get(alarm.type);
             item.high = alarm.high;
             item.low = alarm.low;
-            item.checked = true;
+            item.checked = alarm.enabled;
             item.alarm = alarm;
         }
 
@@ -236,6 +244,26 @@ public class TagSettings extends AppCompatActivity {
             set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
             set.applyTo(parentLayout);
         }
+    }
+
+    private void delete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(this.getString(R.string.tag_delete_title));
+        builder.setMessage(this.getString(R.string.tag_delete_message));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                tag.deleteTagAndRelatives();
+                finish();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
     }
 
     CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
@@ -301,7 +329,7 @@ public class TagSettings extends AppCompatActivity {
 
         public void updateView() {
             CrystalRangeSeekbar seekBar = this.view.findViewById(R.id.alert_seekBar);
-            int setSeekbarColor = R.color.ap_gray;
+            int setSeekbarColor = R.color.inactive;
             if (this.checked) {
                 setSeekbarColor = R.color.main;
                 this.subtitle = getString(R.string.alert_substring_movement);
@@ -354,12 +382,14 @@ public class TagSettings extends AppCompatActivity {
                     alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
                     alarmItem.alarm.save();
                 } else {
+                    alarmItem.alarm.enabled = true;
                     alarmItem.alarm.low = alarmItem.low;
                     alarmItem.alarm.high = alarmItem.high;
                     alarmItem.alarm.update();
                 }
             } else if (alarmItem.alarm != null) {
-                alarmItem.alarm.delete();
+                alarmItem.alarm.enabled = false;
+                alarmItem.alarm.update();
             }
         }
         // what are you doing here?

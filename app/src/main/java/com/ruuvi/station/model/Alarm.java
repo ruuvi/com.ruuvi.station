@@ -32,11 +32,14 @@ public class Alarm extends BaseModel {
     public int high;
     @Column
     public int type;
+    @Column
+    public boolean enabled;
 
     public Alarm() {
     }
 
     public Alarm(int low, int high, int type, String tagId) {
+        this.enabled = true;
         this.low = low;
         this.high = high;
         this.type = type;

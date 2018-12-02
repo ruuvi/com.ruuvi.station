@@ -21,6 +21,14 @@
         android:layout_height="match_parent">
     </ImageSwitcher>
 
+    <ImageView
+        android:id="@+id/background_fader"
+        android:animateLayoutChanges="true"
+        android:alpha="0"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
         android:fitsSystemWindows="true"
         android:orientation="vertical"

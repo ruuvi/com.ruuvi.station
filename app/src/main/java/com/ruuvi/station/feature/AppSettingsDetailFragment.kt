@@ -64,7 +64,6 @@ class AppSettingsDetailFragment : Fragment() {
             //(activity as AppSettingsActivity).setScanSwitchLayout(view)
 
             radio_setting_title.text = getString(res!!)
-            settings_info.text = getString(R.string.settings_background_scan_details)
             radio_layout.visibility = View.VISIBLE
             val list = listOf(
                     getString(R.string.no_background_scanning),
@@ -72,6 +71,7 @@ class AppSettingsDetailFragment : Fragment() {
                     getString(R.string.lazy_background_scanning)
             )
             var current = prefs.backgroundScanMode
+            setBackgroundScanText(current)
             list.forEachIndexed { index, option ->
                 val rb = RadioButton(activity)
                 rb.id = index
@@ -83,6 +83,7 @@ class AppSettingsDetailFragment : Fragment() {
             radio_group.setOnCheckedChangeListener { radioGroup, i ->
                 current = BackgroundScanModes.fromInt(i)!!
                 prefs.backgroundScanMode = current
+                setBackgroundScanText(current)
             }
         } else if (res == R.string.background_scan_interval) {
             duration_picker.visibility = View.VISIBLE
@@ -226,6 +227,14 @@ class AppSettingsDetailFragment : Fragment() {
                 }
             })
             settings_info.text = getString(R.string.settings_device_identifier_details)
+        }
+    }
+
+    fun setBackgroundScanText(mode: BackgroundScanModes) {
+        when (mode) {
+            BackgroundScanModes.BACKGROUND -> settings_info.text = getString(R.string.settings_background_scan_details_lazy)
+            BackgroundScanModes.FOREGROUND -> settings_info.text = getString(R.string.settings_background_scan_details_continuous)
+            else -> settings_info.text = getString(R.string.settings_background_scan_details)
         }
     }
 

@@ -16,7 +16,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
-import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.res.ResourcesCompat
@@ -70,6 +69,8 @@ class TagDetails : AppCompatActivity() {
 
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
+
+        starter = Starter(this)
 
         if (Preferences(this).dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -148,10 +149,13 @@ class TagDetails : AppCompatActivity() {
             Log.e(TAG, "Failed to set pager font")
         }
 
-        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
-
         handler = Handler()
-        starter = Starter(this)
+        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
+        if (openAddView) {
+            val addIntent = Intent(this, AddTagActivity::class.java)
+            startActivity(addIntent)
+            return
+        }
         starter.getThingsStarted()
     }
 
@@ -179,6 +183,10 @@ class TagDetails : AppCompatActivity() {
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             main_drawerLayout.closeDrawers()
             when (i) {
+                0 -> {
+                    val addIntent = Intent(this, AddTagActivity::class.java)
+                    startActivity(addIntent)
+                }
                 1 -> {
                     val settingsIntent = Intent(this, AppSettingsActivity::class.java)
                     startActivity(settingsIntent)
@@ -187,9 +195,11 @@ class TagDetails : AppCompatActivity() {
                     val aboutIntent = Intent(this, AboutActivity::class.java)
                     startActivity(aboutIntent)
                 }
-                else -> {
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
+                3 -> {
+                    val url = "https://ruuvi.com"
+                    val webIntent = Intent(Intent.ACTION_VIEW)
+                    webIntent.data = Uri.parse(url)
+                    startActivity(webIntent)
                 }
             }
         }
@@ -228,12 +238,36 @@ class TagDetails : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             finish()
-        } else if (item?.title == "graphs") {
+        } else if (item?.itemId == R.id.action_graph) {
             showGraph = !showGraph
             updateUI()
             invalidateOptionsMenu()
-        } else {
-            showOptionsMenu()
+
+            val prefs = Preferences(this)
+            val bgScanEnabled = prefs.backgroundScanMode
+            if (bgScanEnabled == BackgroundScanModes.DISABLED) {
+                if (prefs.isFirstGraphVisit) {
+                    val simpleAlert = android.support.v7.app.AlertDialog.Builder(this).create()
+                    simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
+                    simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
+
+                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                        prefs.backgroundScanMode = BackgroundScanModes.FOREGROUND
+                    }
+                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                    }
+                    simpleAlert.setOnDismissListener {
+                        Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
+                        prefs.isFirstGraphVisit = false
+                    }
+                    simpleAlert.show()
+                }
+            }
+
+        } else if (item?.itemId == R.id.action_settings) {
+            val intent = Intent(this, TagSettings::class.java)
+            intent.putExtra(TagSettings.TAG_ID, tag?.id)
+            this.startActivity(intent)
         }
         return true
     }
@@ -250,10 +284,18 @@ class TagDetails : AppCompatActivity() {
         updateGraph = true
         tags = RuuviTag.getAll(true)
 
+        var tagRemoved = true
         for (tag in tags) {
             Utils.getBackground(applicationContext, tag).let { bitmap ->
                 backgrounds.put(tag.id, BitmapDrawable(applicationContext.resources, bitmap))
             }
+            if (this.tag?.id == tag.id) tagRemoved = false
+        }
+        if (tag != null && tagRemoved) {
+            val intent = intent
+            finish()
+            startActivity(intent)
+            return
         }
         (tag_pager.adapter as TagPager).tags = tags
         tag_pager.adapter?.notifyDataSetChanged()
@@ -312,6 +354,11 @@ class TagDetails : AppCompatActivity() {
                 tag = mTag
             }
         }
+        if (showGraph && background_fader.alpha == 0f) {
+            background_fader.animate().alpha(0.5f).start()
+        } else if (!showGraph && background_fader.alpha != 0f) {
+            background_fader.animate().alpha(0f).start()
+        }
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
             (tag_pager.adapter as TagPager).updateView(it, showGraph, updateGraph)
@@ -333,40 +380,6 @@ class TagDetails : AppCompatActivity() {
             noTags_textView.visibility = View.INVISIBLE
         }
         updateGraph = false
-    }
-
-    private fun showOptionsMenu() {
-        val sheetDialog = BottomSheetDialog(this)
-        val listView = ListView(this)
-        val menu: List<String> = this.resources.getStringArray(R.array.station_tag_menu).toList()
-
-        listView.adapter = ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                menu
-        )
-
-        listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-            when (i) {
-                0 -> {
-                    val intent = Intent(this, GraphActivity::class.java)
-                    intent.putExtra(GraphActivity.TAGID, tag?.id)
-                    this.startActivity(intent)
-                }
-                1 -> {
-                    val intent = Intent(this, TagSettings::class.java)
-                    intent.putExtra(TagSettings.TAG_ID, tag?.id)
-                    this.startActivity(intent)
-                }
-                2 -> {
-                    delete()
-                }
-            }
-
-            sheetDialog.dismiss()
-        }
-
-        sheetDialog.setContentView(listView)
-        sheetDialog.show()
     }
 
     fun delete() {

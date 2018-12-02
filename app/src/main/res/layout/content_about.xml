@@ -19,117 +19,82 @@
             >
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/infoTitle"
+                android:id="@+id/ruuvi_image"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
+                android:paddingTop="50dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:paddingTop="50dp"
-                app:srcCompat="@drawable/title_ruuvi"
-                />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_title_ruuvi" />
 
             <TextView
-                android:id="@+id/aboutText"
+                android:id="@+id/infoTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_bold"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="24dp"
-                android:text="@string/about"
-                android:textAlignment="center"
+                android:text="@string/info_title"
+                android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/infoTitle" />
+                app:layout_constraintTop_toBottomOf="@id/ruuvi_image" />
 
             <TextView
-                android:id="@+id/aboutInfoText"
+                android:id="@+id/infoText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/muli"
                 android:lineSpacingExtra="6dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
-                android:paddingTop="24dp"
+                android:paddingTop="12dp"
                 android:text="@string/info_text"
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textColorLink="@color/href"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/aboutText" />
+                app:layout_constraintTop_toBottomOf="@id/infoTitle" />
 
             <TextView
-                android:id="@+id/quickStartTitle"
+                android:id="@+id/operationsTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_bold"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="24dp"
-                android:text="@string/quick_start_info_title"
-                android:textAlignment="center"
+                android:text="@string/operations_title"
+                android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/aboutInfoText" />
+                app:layout_constraintTop_toBottomOf="@id/infoText" />
 
             <TextView
-                android:id="@+id/quickStartText"
+                android:id="@+id/operationsText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/muli"
                 android:lineSpacingExtra="6dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
-                android:paddingTop="24dp"
-                android:text="@string/quick_start_info_text"
+                android:paddingTop="12dp"
+                android:text="@string/operations_text"
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textColorLink="@color/href"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/quickStartTitle" />
-
-            <TextView
-                android:id="@+id/gatewayTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:paddingLeft="40dp"
-                android:paddingRight="40dp"
-                android:paddingTop="24dp"
-                android:text="@string/gateway_info_title"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/quickStartText" />
-
-            <TextView
-                android:id="@+id/gatewayText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/muli"
-                android:lineSpacingExtra="6dp"
-                android:paddingLeft="40dp"
-                android:paddingRight="40dp"
-                android:paddingTop="24dp"
-                android:text="@string/gateway_info_text"
-                android:textAlignment="textStart"
-                android:textColor="@color/white"
-                android:textColorLink="@color/href"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/gatewayTitle" />
+                app:layout_constraintTop_toBottomOf="@id/operationsTitle" />
 
             <TextView
                 android:id="@+id/troubleshootingTitle"
@@ -139,14 +104,14 @@
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="24dp"
-                android:text="@string/troubleshooting_info_title"
-                android:textAlignment="center"
+                android:text="@string/troubleshooting_title"
+                android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gatewayText" />
+                app:layout_constraintTop_toBottomOf="@id/operationsText" />
 
             <TextView
                 android:id="@+id/troubleshootingText"
@@ -156,8 +121,8 @@
                 android:lineSpacingExtra="6dp"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
-                android:paddingTop="24dp"
-                android:text="@string/troubleshooting_info_text"
+                android:paddingTop="12dp"
+                android:text="@string/troubleshooting_text"
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textColorLink="@color/href"
@@ -166,19 +131,89 @@
                 app:layout_constraintTop_toBottomOf="@id/troubleshootingTitle" />
 
             <TextView
-                android:id="@+id/versionInfo"
+                android:id="@+id/openTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="24dp"
+                android:text="@string/open_source_title"
+                android:textAlignment="textStart"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/troubleshootingText" />
+
+            <TextView
+                android:id="@+id/openText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="12dp"
+                android:text="@string/open_source_text"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textColorLink="@color/href"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/openTitle" />
+
+            <TextView
+                android:id="@+id/moreTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="24dp"
+                android:text="@string/more_to_read_title"
+                android:textAlignment="textStart"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/openText" />
+
+            <TextView
+                android:id="@+id/moreText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="12dp"
+                android:text="@string/more_to_read_text"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textColorLink="@color/href"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/moreTitle" />
+
+            <TextView
+                android:id="@+id/debugInfo"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="Version: ..."
-                app:layout_constraintTop_toBottomOf="@id/troubleshootingText"
+                app:layout_constraintTop_toBottomOf="@id/moreText"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="24dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textAlignment="center"
+                android:textAlignment="textStart"
                 />
 
         </android.support.constraint.ConstraintLayout>

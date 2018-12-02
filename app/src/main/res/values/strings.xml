@@ -5,7 +5,7 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_bgscan">Enable background scanning</string>
+    <string name="pref_bgscan">Background Scanning Settings</string>
     <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background.</string>
 
     <string name="pref_bgscan_battery_saving">Enable battery saving mode</string>
@@ -132,12 +132,12 @@
     <string name="no_tags_added">Your dashboard \nis empty</string>
     <string name="press_to_add">No tags added,\npress here to add tags</string>
     <string name="tag_not_found">Tag not found</string>
-    <string name="tag_delete_title">Delete RuuviTag</string>
-    <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
+    <string name="tag_delete_title">Remove RuuviTag</string>
+    <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
     <string name="temperature">Temperature</string>
-    <string name="humidity">Humidity</string>
+    <string name="humidity">Relative Air Humidity</string>
     <string name="pressure">Air Pressure</string>
-    <string name="rssi">RSSI</string>
+    <string name="rssi">Signal Strength (RSSI)</string>
     <string name="movement">Movement</string>
     <string name="tag_already_added">Tag is already added</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -154,6 +154,7 @@
         <item>Add a New RuuviTag</item>
         <item>App Settings</item>
         <item>About / Help</item>
+        <item>Get More Sensors</item>
     </string-array>
 
     <string-array name="navigation_items_titles">
@@ -195,17 +196,21 @@
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes.\n
-        \nThe application is currently in beta testing stage and may still have unknown issues. Our team is determined to iron out all the kinks, and make sure the app works perfectly.\n
-        \nIf you notice any problems or have any comments about the functionality, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>. We’re grateful for your help!
+    <string name="info_title">About / Help</string>
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.
     </string>
-    <string name="quick_start_info_title">QUICK START GUIDE</string>
-    <string name="quick_start_info_text">1) Click ‘Add a new RuuviTag’ in the menu, add the tag or tags you want, and you’re ready to start using Ruuvi Station. Simple as that.</string>
-    <string name="gateway_info_title">GATEWAY</string>
-    <string name="gateway_info_text">Currently the gateway feature is available for advanced users only. You can review the documentation&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">here</a>.</string>
-    <string name="troubleshooting_info_title">TROUBLESHOOTING</string>
-    <string name="troubleshooting_info_text">RuuviTags are sending temperature data with 0.01 degree resolution. If at any point you notice lower accuracy, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.</string>
-    <string name="about">About / Help</string>
+    <string name="operations_title">OPERATIONS MANUAL</string>
+    <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.
+    </string>
+    <string name="troubleshooting_title">TROUBLESHOOTING</string>
+    <string name="troubleshooting_text">If you\'re experiencing problems and manuals didn\'t offer help, head to see our troubleshooting topics:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
+    </string>
+    <string name="open_source_title">OPEN-SOURCE</string>
+    <string name="open_source_text">Just like RuuviTag, so is Ruuvi Station open sourced:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
+    </string>
+    <string name="more_to_read_title">MORE TO READ</string>
+    <string name="more_to_read_text">Ruuvi\'s website:&#160;<a href="https://ruuvi.com">ruuvi.com</a>\nRuuvi Forum:&#160;<a href="https://f.ruuvi.com">f.ruuvi.com</a>\nRuuvi Blog:&#160;<a href="https://blog.ruuvi.com">blog.ruuvi.com</a>\nRuuvi on Twitter:&#160;<a href="https://twitter.com/ruuvicom">twitter.com/ruuvicom</a>
+    </string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
 
@@ -223,7 +228,7 @@
     <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
 
     <string name="permission_dialog_title">Permission needed</string>
-    <string name="permission_dialog_request_message">Android requires permission to access your location in order to scan for RuuviTags.</string>
+    <string name="permission_dialog_request_message">Android operating system requires the app to access your location in order to scan nearby Bluetooth devices. Don\'t worry. Ruuvi Station won\'t track your movements.</string>
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
@@ -231,7 +236,7 @@
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
     <string name="title_activity_add_tag">Nearby Tags</string>
     <string name="title_activity_app_settings">App Settings</string>
-    <string name="background_scan_interval">Set scanning interval</string>
+    <string name="background_scan_interval">Background Scan Interval</string>
     <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
     <string name="device_identifier">Device identifier</string>
     <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
@@ -242,19 +247,25 @@
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
     <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
+    <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notification). Allowing for very frequent and reliable scanning, even when you are not using the it.</string>
+    <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using androids job scheduler. It will use less battery than continuous mode but less frequently and less reliably.</string>
     <string name="settings_background_scan_battery_save_details">Enabling this feature will let the operating system choose when to do background scanning. It will result in longer battery life but scanning intervals will be very irregular.</string>
     <string name="settings_background_scan_interval_details">Here you can choose at what time interval you want the background scanning to run. For example, by setting it to 1 minute, the background scan will run once every minute. \n\n(N.B. Scanning intervals may not always be 100% accurate, depending on your device and the operating system.) \n\nScanning results are logged every 5 second while the application is active (in foreground), regardless of background scanning interval</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info,&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">check the documentation</a>.</string>
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want displayed.</string>
-    <string name="version">Version</string>
+    <string name="version" formatted="false">Version: %1$s</string>
+    <string name="db_reading_rows">Db reading rows: %1$,d</string>
+    <string name="added_tags">Added tags: %1$,d</string>
+    <string name="seen_tags">Seen tags: %1$,d</string>
+    <string name="db_size">Db size: %1$,d kB</string>
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
     <string name="gateway_settings">Gateway Settings</string>
-    <string name="mac_address">Mac address</string>
+    <string name="mac_address">MAC Address</string>
     <string name="mac">Mac</string>
     <string name="dashboard_pref">Dashboard</string>
-    <string name="dashboard_pref_sub">Enabled dashboard view (requires restart)</string>
+    <string name="dashboard_pref_sub">Use dashboard view to see multiple sensors at a glance. Restart the app after enabled.</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="test_gateway">Test gateway</string>
@@ -269,4 +280,9 @@
     <string name="lazy_background_scanning">Lazy background scanning (EXPERIMENTAL)</string>
     <string name="background_scanning_disabled">Background scanning is disabled</string>
     <string name="disable_this_alarm">Disable this alarm</string>
+    <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
+    <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.</string>
+    <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
+    <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
+    <string name="more_info">More info</string>
 </resources>
