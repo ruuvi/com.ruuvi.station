@@ -96,8 +96,20 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval();
         int min = scanInterval / 60;
         int sec = scanInterval - min * 60;
-        if (min > 0) notificationText += min + " " + getString(R.string.minutes) + ", ";
-        if (sec > 0) notificationText += sec + " " + getString(R.string.seconds);
+        if (min > 0) {
+            String minutes = getString(R.string.minutes).toLowerCase();
+            if (min == 1) {
+                minutes = minutes.substring(0, minutes.length() - 1);
+            }
+            notificationText += min + " " + minutes + ", ";
+        }
+        if (sec > 0) {
+            String seconds = getString(R.string.seconds).toLowerCase();
+            if (sec == 1) {
+                seconds = seconds.substring(0, seconds.length() - 1);
+            }
+            notificationText += sec + " " + seconds;
+        }
         else {
             notificationText = notificationText.replace(", ", "");
         }
