@@ -256,9 +256,10 @@
     <string name="settings_temperature_unit_details">Choose the temperature unit you want displayed.</string>
     <string name="version" formatted="false">Version: %1$s</string>
     <string name="db_reading_rows">Db reading rows: %1$,d</string>
+    <string name="db_data_points">Stored data points: %1$,d</string>
     <string name="added_tags">Added tags: %1$,d</string>
     <string name="seen_tags">Seen tags: %1$,d</string>
-    <string name="db_size">Db size: %1$,d kB</string>
+    <string name="db_size">Database size: %1$,d kB</string>
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
     <string name="gateway_settings">Gateway Settings</string>

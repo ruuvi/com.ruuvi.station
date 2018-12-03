@@ -40,7 +40,7 @@ class AboutActivity : AppCompatActivity() {
         val addedTags = RuuviTag.getAll(true).size
         debugText += getString(R.string.seen_tags, addedTags + RuuviTag.getAll(false).size) + "\n"
         debugText += getString(R.string.added_tags, addedTags) + "\n"
-        debugText += getString(R.string.db_reading_rows, readingCount) + "\n"
+        debugText += getString(R.string.db_data_points, readingCount*9) + "\n"
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
         val dbFile = File(dbPath)
