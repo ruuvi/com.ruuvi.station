@@ -162,7 +162,7 @@ public class AlarmChecker {
         Intent cancelIntent = new Intent(context, CancelAlarmReceiver.class);
         cancelIntent.putExtra("alarmId", _id);
         cancelIntent.putExtra("notificationId", notificationId);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, _id, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.disable_this_alarm), cancelPendingIntent);
 
         notification
