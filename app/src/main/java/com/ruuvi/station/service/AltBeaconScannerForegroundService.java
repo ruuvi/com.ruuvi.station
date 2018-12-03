@@ -45,6 +45,10 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
+        if (beaconManager != null) {
+            updateNotification();
+        }
         return Service.START_STICKY;
     }
 

@@ -40,6 +40,18 @@ class ServiceUtils(val context: Context) {
         return this
     }
 
+    fun forceStartIfRunningForegroundService(): ServiceUtils {
+        if (isRunning(AltBeaconScannerForegroundService::class.java)) {
+            val scannerService = Intent(context, AltBeaconScannerForegroundService::class.java)
+            if (Build.VERSION.SDK_INT >= 26) {
+                context.startForegroundService(scannerService)
+            } else {
+                context.startService(scannerService)
+            }
+        }
+        return this
+    }
+
     fun isRunning(serviceClass: Class<*>): Boolean {
         val mgr = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
         for (service in mgr!!.getRunningServices(Integer.MAX_VALUE)) {

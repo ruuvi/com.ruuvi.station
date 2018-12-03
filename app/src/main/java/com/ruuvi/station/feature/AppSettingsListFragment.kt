@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.ruuvi.station.R
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.util.ServiceUtils
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
 class AppSettingsListFragment : Fragment() {
@@ -46,6 +47,8 @@ class AppSettingsListFragment : Fragment() {
         }
 
         updateView()
+        // updates the scanning notification notification if the service is running
+        ServiceUtils(context!!).forceStartIfRunningForegroundService()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
