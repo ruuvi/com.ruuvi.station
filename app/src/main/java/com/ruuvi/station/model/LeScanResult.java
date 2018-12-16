@@ -104,7 +104,9 @@ public class LeScanResult {
                 pData[i] = (byte)(data.get(i) & 0xFF);
             RuuviTagDecoder decoder = null;
             String url = null;
-            switch (beacon.getBeaconTypeCode()) {
+            int format = beacon.getBeaconTypeCode();
+            if (data.size() > 0) format = pData[0];
+            switch (format) {
                 case 3:
                     decoder = new DecodeFormat3();
                     break;
