@@ -97,44 +97,49 @@ public class LeScanResult {
     }
 
     public static RuuviTag fromAltbeacon(Beacon beacon) {
-        byte pData[] = new byte[128];
-        List<Long> data = beacon.getDataFields();
-        for (int i = 0; i < data.size(); i++)
-            pData[i] = (byte)(data.get(i) & 0xFF);
-        RuuviTagDecoder decoder = null;
-        String url = null;
-        switch (beacon.getBeaconTypeCode()) {
-            case 3:
-                decoder = new DecodeFormat3();
-                break;
-            case 5:
-                decoder = new DecodeFormat5();
-                break;
-            case 0x10:
-                // format 2 & 4
-                if (beacon.getServiceUuid() == 0xfeaa) {
-                    url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-                    if (url.contains("https://ruu.vi/#")) {
-                        String urlData = url.split("#")[1];
-                        pData = Utils.parseByteDataFromB64(urlData);
-                        decoder = new DecodeFormat2and4();
+        try {
+            byte pData[] = new byte[128];
+            List<Long> data = beacon.getDataFields();
+            for (int i = 0; i < data.size(); i++)
+                pData[i] = (byte)(data.get(i) & 0xFF);
+            RuuviTagDecoder decoder = null;
+            String url = null;
+            switch (beacon.getBeaconTypeCode()) {
+                case 3:
+                    decoder = new DecodeFormat3();
+                    break;
+                case 5:
+                    decoder = new DecodeFormat5();
+                    break;
+                case 0x10:
+                    // format 2 & 4
+                    if (beacon.getServiceUuid() == 0xfeaa) {
+                        if (beacon.getId1() == null) break;
+                        url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
+                        if (url.contains("https://ruu.vi/#")) {
+                            String urlData = url.split("#")[1];
+                            pData = Utils.parseByteDataFromB64(urlData);
+                            decoder = new DecodeFormat2and4();
+                        }
                     }
-                }
-                break;
-        }
-        if (decoder != null) {
-            try {
-                RuuviTag tag = decoder.decode(pData, 0);
-                tag.id = beacon.getBluetoothAddress();
-                tag.rssi = beacon.getRssi();
-                tag.url = url;
-                tag.rawData = pData;
-                tag.rawDataBlob = new Blob(pData);
-                //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
-                return tag;
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to parse tag data");
+                    break;
             }
+            if (decoder != null) {
+                try {
+                    RuuviTag tag = decoder.decode(pData, 0);
+                    tag.id = beacon.getBluetoothAddress();
+                    tag.rssi = beacon.getRssi();
+                    tag.url = url;
+                    tag.rawData = pData;
+                    tag.rawDataBlob = new Blob(pData);
+                    //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
+                    return tag;
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to parse tag data");
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to parse ruuviTag");
         }
         return null;
     }
