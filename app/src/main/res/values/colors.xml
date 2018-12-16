@@ -5,13 +5,14 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="clear">#00000000</color>
-    <color name="main">#6beae1</color>
+    <color name="main">#158ea5</color>
     <color name="mainLight">#5DCEC6</color>
     <color name="mainDark">#003a58</color>
     <color name="backgroundLight">#f2f4f5</color>
     <color name="settingsTitleColor">#030303</color>
     <color name="settingsParagraphColor">#808080</color>
     <color name="lastSeenColor">#829fa5</color>
+    <color name="inactive">#b3b3b3</color>
     <color name="noTagsColor">#bbbbbb</color>
     <color name="divider">#dddddd</color>
     <color name="href">#6aeae1</color>

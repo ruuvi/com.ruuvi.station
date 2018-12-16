@@ -45,6 +45,10 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
+        if (beaconManager != null) {
+            updateNotification();
+        }
         return Service.START_STICKY;
     }
 
@@ -96,8 +100,20 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval();
         int min = scanInterval / 60;
         int sec = scanInterval - min * 60;
-        if (min > 0) notificationText += min + " " + getString(R.string.minutes) + ", ";
-        if (sec > 0) notificationText += sec + " " + getString(R.string.seconds);
+        if (min > 0) {
+            String minutes = getString(R.string.minutes).toLowerCase();
+            if (min == 1) {
+                minutes = minutes.substring(0, minutes.length() - 1);
+            }
+            notificationText += min + " " + minutes + ", ";
+        }
+        if (sec > 0) {
+            String seconds = getString(R.string.seconds).toLowerCase();
+            if (sec == 1) {
+                seconds = seconds.substring(0, seconds.length() - 1);
+            }
+            notificationText += sec + " " + seconds;
+        }
         else {
             notificationText = notificationText.replace(", ", "");
         }
@@ -174,8 +190,8 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         }
         medic = null;
         beaconManager.unbind(this);
+        //beaconManager.setEnableScheduledScanJobs(true);
         //beaconManager.disableForegroundServiceScanning();
-        beaconManager.setEnableScheduledScanJobs(true);
         beaconManager = null;
         ruuviRangeNotifier = null;
         stopForeground(true);
@@ -192,7 +208,7 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     @Override
     public void onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect");
-        Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
         ruuviRangeNotifier.gatewayOn = true;
         if (!beaconManager.getRangingNotifiers().contains(ruuviRangeNotifier)) {
             beaconManager.addRangeNotifier(ruuviRangeNotifier);

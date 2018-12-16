@@ -190,7 +190,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     @Override
     public void onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect");
-        Toast.makeText(getApplicationContext(), "Started scanning (Application)", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Started scanning (Application)", Toast.LENGTH_SHORT).show();
         ruuviRangeNotifier.gatewayOn = !foreground;
         if (!beaconManager.getRangingNotifiers().contains(ruuviRangeNotifier)) {
             beaconManager.addRangeNotifier(ruuviRangeNotifier);

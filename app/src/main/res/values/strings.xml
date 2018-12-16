@@ -106,7 +106,7 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="scanner_notification_title">Scanning RuuviTags..</string>
+    <string name="scanner_notification_title">Scanning..</string>
     <string name="scanner_notification_message">You can disable background scanning in settings</string>
     <string name="scanner_notification_ticker">Scanner started</string>
 
@@ -132,8 +132,8 @@
     <string name="no_tags_added">Your dashboard \nis empty</string>
     <string name="press_to_add">No tags added,\npress here to add tags</string>
     <string name="tag_not_found">Tag not found</string>
-    <string name="tag_delete_title">Delete RuuviTag</string>
-    <string name="tag_delete_message">Are you sure you want to delete this RuuviTag?</string>
+    <string name="tag_delete_title">Remove RuuviTag</string>
+    <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
     <string name="temperature">Temperature</string>
     <string name="humidity">Relative Air Humidity</string>
     <string name="pressure">Air Pressure</string>
@@ -196,17 +196,21 @@
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes.\n
-        \nThe application is currently in beta testing stage and may still have unknown issues. Our team is determined to iron out all the kinks, and make sure the app works perfectly.\n
-        \nIf you notice any problems or have any comments about the functionality, please let us know by filling out&#160;<a href="https://ruuvi.typeform.com/to/OEUkXq">this anonymous form</a>. We’re grateful for your help!
+    <string name="info_title">About / Help</string>
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.
     </string>
-    <string name="quick_start_info_title">QUICK START GUIDE</string>
-    <string name="quick_start_info_text">1) Click ‘Add a new RuuviTag’ in the menu, add the tag or tags you want, and you’re ready to start using Ruuvi Station. Simple as that.</string>
-    <string name="gateway_info_title">GATEWAY</string>
-    <string name="gateway_info_text">Currently the gateway feature is available for advanced users only. You can review the documentation&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">here</a>.</string>
-    <string name="troubleshooting_info_title">TROUBLESHOOTING</string>
-    <string name="troubleshooting_info_text">RuuviTags are sending temperature data with 0.01 degree resolution. If at any point you notice lower accuracy, make sure your RuuviTag is running the latest&#160;<a href="https://lab.ruuvi.com/dfu">Ruuvi Firmware</a>.</string>
-    <string name="about">About / Help</string>
+    <string name="operations_title">OPERATIONS MANUAL</string>
+    <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.
+    </string>
+    <string name="troubleshooting_title">TROUBLESHOOTING</string>
+    <string name="troubleshooting_text">If you\'re experiencing problems and manuals didn\'t offer help, head to see our troubleshooting topics:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
+    </string>
+    <string name="open_source_title">OPEN-SOURCE</string>
+    <string name="open_source_text">Just like RuuviTag, so is Ruuvi Station open sourced:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
+    </string>
+    <string name="more_to_read_title">MORE TO READ</string>
+    <string name="more_to_read_text">Ruuvi\'s website:&#160;<a href="https://ruuvi.com">ruuvi.com</a>\nRuuvi Forum:&#160;<a href="https://f.ruuvi.com">f.ruuvi.com</a>\nRuuvi Blog:&#160;<a href="https://blog.ruuvi.com">blog.ruuvi.com</a>\nRuuvi on Twitter:&#160;<a href="https://twitter.com/ruuvicom">twitter.com/ruuvicom</a>
+    </string>
     <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
     <string name="title_activity_tag_details">TagDetails</string>
 
@@ -252,9 +256,10 @@
     <string name="settings_temperature_unit_details">Choose the temperature unit you want displayed.</string>
     <string name="version" formatted="false">Version: %1$s</string>
     <string name="db_reading_rows">Db reading rows: %1$,d</string>
+    <string name="db_data_points">Stored data points: %1$,d</string>
     <string name="added_tags">Added tags: %1$,d</string>
     <string name="seen_tags">Seen tags: %1$,d</string>
-    <string name="db_size">Db size: %1$,d kB</string>
+    <string name="db_size">Database size: %1$,d kB</string>
     <string name="locationServices">Location services</string>
     <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
     <string name="gateway_settings">Gateway Settings</string>

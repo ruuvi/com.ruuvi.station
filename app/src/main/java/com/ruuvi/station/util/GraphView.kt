@@ -24,7 +24,6 @@ class GraphView (val context: Context) {
 
     fun drawChart( tagId: String, view: View) {
         val readings = TagSensorReading.getForTag(tagId)
-        if (readings.size == 0) return
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
