@@ -69,9 +69,9 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         ruuviRangeNotifier = new RuuviRangeNotifier(getApplicationContext(), "AltBeaconFGScannerService");
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         startFG();
-        if (Foreground.get().isBackground()) setBackground();
         beaconManager.bind(this);
         medic = RuuviScannerApplication.setupMedic(getApplicationContext());
+        setBackground(); // start in background mode
     }
 
     private NotificationCompat.Builder setupNotification() {
