@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -246,6 +247,21 @@ public class TagSettings extends AppCompatActivity {
         }
     }
 
+    private void updateReadings() {
+        RuuviTag newTag = RuuviTag.get(tag.id);
+        if (newTag != null) {
+            if (newTag.dataFormat == 3 || newTag.dataFormat == 5) {
+                findViewById(R.id.raw_values).setVisibility(View.VISIBLE);
+                ((TextView)(findViewById(R.id.input_voltage))).setText(newTag.voltage + " V");
+                ((TextView)(findViewById(R.id.input_x))).setText(newTag.accelX + "");
+                ((TextView)(findViewById(R.id.input_y))).setText(newTag.accelY + "");
+                ((TextView)(findViewById(R.id.input_z))).setText(newTag.accelZ + "");
+            } else {
+                findViewById(R.id.raw_values).setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void delete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(this.getString(R.string.tag_delete_title));
@@ -371,9 +387,23 @@ public class TagSettings extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
+
+    final Handler handler = new Handler();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.post(new Runnable(){
+            public void run(){
+                updateReadings();
+                handler.postDelayed(this, 1000);
+            }
+        });
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+        handler.removeCallbacksAndMessages(null);
         tag.favorite = true;
         tag.update();
         for (AlarmItem alarmItem: alarmItems) {
