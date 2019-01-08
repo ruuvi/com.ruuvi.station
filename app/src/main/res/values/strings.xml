@@ -286,4 +286,8 @@
     <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
     <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
     <string name="more_info">More info</string>
+    <string name="voltage">Voltage</string>
+    <string name="acc_x">Acceleration X</string>
+    <string name="acc_y">Acceleration Y</string>
+    <string name="acc_z">Acceleration Z</string>
 </resources>
