@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_save"
-        app:showAsAction="always"
-        android:orderInCategory="0"
-        android:title="@string/save" />
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        android:title="@string/export"
+        android:icon="@android:drawable/ic_menu_upload"
+        app:showAsAction="always" />
 
 </menu>
