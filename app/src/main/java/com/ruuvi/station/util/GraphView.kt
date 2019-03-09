@@ -48,11 +48,11 @@ class GraphView (val context: Context) {
                 from = readings[0].createdAt.time
             val grouped = readings.groupBy {
                 if (readings.size > 500)
-                    it.createdAt.hours.toString() + ":" + String.format("%02d", it.createdAt.minutes)[0]
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + String.format("%02d", it.createdAt.minutes)[0]
                 else if (readings.size > 100)
-                    it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString()
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString()
                 else
-                    it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString() + ":" + it.createdAt.seconds.toString()
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString() + ":" + it.createdAt.seconds.toString()
             }
             grouped.map {
                 val reading = it.value[it.value.size - 1]

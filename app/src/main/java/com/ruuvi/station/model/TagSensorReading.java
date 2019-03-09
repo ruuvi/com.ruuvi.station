@@ -79,6 +79,7 @@ public class TagSensorReading extends BaseModel {
                 .from(TagSensorReading.class)
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .and(TagSensorReading_Table.createdAt.greaterThan(cal.getTime()))
+                .orderBy(TagSensorReading_Table.createdAt, true)
                 .queryList();
     }
 
