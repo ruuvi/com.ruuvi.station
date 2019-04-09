@@ -27,7 +27,7 @@ public class DecodeFormat5 implements RuuviTagDecoder {
             tag.txPower = (powerInfo & 0b11111) * 2 - 40;
         }
         tag.movementCounter = data[15 + offset] & 0xFF;
-        tag.measurementSequenceNumber = (data[17 + offset] & 0xFF) << 8 | data[16 + offset] & 0xFF;
+        tag.measurementSequenceNumber = (data[16 + offset] & 0xFF) << 8 | data[17 + offset] & 0xFF;
 
         // make it pretty
         tag.temperature = round(tag.temperature, 2);
