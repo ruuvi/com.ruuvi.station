@@ -1,5 +1,6 @@
 package com.ruuvi.station.util;
 
+import android.bluetooth.le.ScanFilter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.ParcelUuid;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
 import android.util.Log;
@@ -17,10 +19,14 @@ import android.util.Log;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.RuuviTag;
 
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -155,5 +161,32 @@ public class Utils {
     public static boolean removeStateFile(Context context) {
         String path = context.getFilesDir().getPath() + "/android-beacon-library-scan-state";
         return new File(path).delete();
+    }
+
+    public static List<ScanFilter> getScanFilters() {
+        List<ScanFilter> filters = new ArrayList<>();
+        ScanFilter ruuviFilter = new ScanFilter.Builder()
+                .setManufacturerData(0x0499, new byte[] {})
+                .build();
+        ScanFilter eddystoneFilter = new ScanFilter.Builder()
+                .setServiceUuid(ParcelUuid.fromString("0000feaa-0000-1000-8000-00805f9b34fb"))
+                .build();
+        filters.add(ruuviFilter);
+        filters.add(eddystoneFilter);
+        return filters;
+    }
+
+    public static void setAltBeaconParsers(BeaconManager beaconManager) {
+        beaconManager.getBeaconParsers().clear();
+
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
+
+        BeaconParser v3Parser = new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT);
+        v3Parser.setHardwareAssistManufacturerCodes(new int[]{1177});
+        beaconManager.getBeaconParsers().add(v3Parser);
+
+        BeaconParser v5Parser = new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT);
+        v5Parser.setHardwareAssistManufacturerCodes(new int[]{1177});
+        beaconManager.getBeaconParsers().add(v5Parser);
     }
 }
