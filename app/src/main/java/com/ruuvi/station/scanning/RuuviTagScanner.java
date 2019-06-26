@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.Utils;
 
 public class RuuviTagScanner {
     private static final String TAG = "RuuviTagScanner";
@@ -39,7 +40,7 @@ public class RuuviTagScanner {
     public void start() {
         if (scanning || !canScan()) return;
         scanning = true;
-        scanner.startScan(null, scanSettings, nsCallback);
+        scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
     }
 
     public void stop() {

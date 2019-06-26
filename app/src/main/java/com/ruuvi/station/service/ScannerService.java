@@ -53,6 +53,7 @@ import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
+import com.ruuvi.station.util.Utils;
 
 
 public class ScannerService extends Service {
@@ -206,7 +207,7 @@ public class ScannerService extends Service {
         if (scanning || !canScan()) return;
         scanning = true;
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             scanning = false;

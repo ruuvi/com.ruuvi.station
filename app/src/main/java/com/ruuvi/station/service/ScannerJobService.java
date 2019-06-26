@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -88,7 +89,7 @@ public class ScannerJobService extends JobService {
         }, SCAN_TIME_MS);
 
         try {
-            scanner.startScan(null, scanSettings, nsCallback);
+            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
