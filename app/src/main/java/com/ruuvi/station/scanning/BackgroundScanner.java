@@ -139,7 +139,7 @@ public class BackgroundScanner extends BroadcastReceiver {
         while (itr.hasNext()) {
             LeScanResult element = itr.next();
 
-            RuuviTag tag  = element.parse();
+            RuuviTag tag  = element.parse(context);
             if (tag != null) addFoundTagToLists(tag, tags, context);
         }
 

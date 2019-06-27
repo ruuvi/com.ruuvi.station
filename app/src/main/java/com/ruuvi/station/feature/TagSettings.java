@@ -49,6 +49,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.Alarm;
+import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
@@ -204,6 +205,33 @@ public class TagSettings extends AppCompatActivity {
                 }
                 d.show();
                 input.requestFocus();
+            }
+        });
+
+        findViewById(R.id.calibrate_humidity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
+                builder.setTitle(getString(R.string.calibration_humidity));
+                //builder.setMessage(R.string.calibration_humidity_description);
+                builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RuuviTag latestTag = RuuviTag.get(tag.id);
+                        latestTag = HumidityCalibration.Companion.calibrate(getApplicationContext(), latestTag);
+                        latestTag.update();
+                    }
+                });
+                if (HumidityCalibration.Companion.get(getApplicationContext(), tag) != 0f) {
+                    builder.setNeutralButton("Clear calibration", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HumidityCalibration.Companion.clear(getApplicationContext(), tag);
+                        }
+                    });
+                }
+                builder.setNegativeButton("Cancel", null);
+                builder.create().show();
             }
         });
 

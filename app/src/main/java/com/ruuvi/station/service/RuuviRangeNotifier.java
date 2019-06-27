@@ -74,7 +74,7 @@ public class RuuviRangeNotifier implements RangeNotifier {
             for (RuuviTag tag : tags) {
                 if (tag.id.equals(beacon.getBluetoothAddress())) continue foundBeacon;
             }
-            RuuviTag tag = LeScanResult.fromAltbeacon(beacon);
+            RuuviTag tag = LeScanResult.fromAltbeacon(context, beacon);
             if (tag != null) {
                 saveReading(tag);
                 if (tag.favorite) tags.add(tag);

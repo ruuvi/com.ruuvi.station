@@ -281,6 +281,8 @@
     <string name="lazy_background_scanning">Lazy background scanning (EXPERIMENTAL)</string>
     <string name="background_scanning_disabled">Background scanning is disabled</string>
     <string name="disable_this_alarm">Disable this alarm</string>
+    <string name="calibration_humidity">Calibrate humidity (75% Salt test)</string>
+    <string name="calibration_humidity_description"></string>
     <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
     <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.</string>
     <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>

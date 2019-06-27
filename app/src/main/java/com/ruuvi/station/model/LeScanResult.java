@@ -1,6 +1,7 @@
 package com.ruuvi.station.model;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.util.Log;
 
 import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
@@ -32,7 +33,7 @@ public class LeScanResult {
     public int rssi;
     public byte[] scanData;
 
-    public RuuviTag parse() {
+    public RuuviTag parse(Context context) {
         RuuviTag tag = null;
 
         try {
@@ -47,25 +48,28 @@ public class LeScanResult {
                     // Eddystone URL
                     EddystoneURL es = (EddystoneURL) structure;
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                        tag = from(this.device.getAddress(), es.getURL().toString(), null, this.rssi);
+                        tag = from(context, this.device.getAddress(), es.getURL().toString(), null, this.rssi);
                     }
                 }
                 // If the AD structure represents Eddystone TLM.
                 else if (structure instanceof ADManufacturerSpecific) {
                     ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
                     if (es.getCompanyId() == 0x0499) {
-                        tag = from(this.device.getAddress(), null, this.scanData, this.rssi);
+                        tag = from(context, this.device.getAddress(), null, this.scanData, this.rssi);
                     }
                 }
             }
         } catch (Exception e) {
             Log.e(TAG, "Parsing ble data failed");
         }
+        if (tag != null) {
+            tag = HumidityCalibration.Companion.apply(context, tag);
+        }
 
         return tag;
     }
 
-    private static RuuviTag from(String id, String url, byte[] rawData, int rssi) {
+    private static RuuviTag from(Context context, String id, String url, byte[] rawData, int rssi) {
         RuuviTagDecoder decoder = null;
         if (url != null && url.contains("#")) {
             String data = url.split("#")[1];
@@ -90,13 +94,14 @@ public class LeScanResult {
                 tag.rssi = rssi;
                 tag.rawData = rawData;
                 tag.rawDataBlob = new Blob(rawData);
+                tag = HumidityCalibration.Companion.apply(context, tag);
             }
             return tag;
         }
         return null;
     }
 
-    public static RuuviTag fromAltbeacon(Beacon beacon) {
+    public static RuuviTag fromAltbeacon(Context context, Beacon beacon) {
         try {
             byte pData[] = new byte[128];
             List<Long> data = beacon.getDataFields();
@@ -134,6 +139,7 @@ public class LeScanResult {
                     tag.url = url;
                     tag.rawData = pData;
                     tag.rawDataBlob = new Blob(pData);
+                    tag = HumidityCalibration.Companion.apply(context, tag);
                     //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                     return tag;
                 } catch (Exception e) {

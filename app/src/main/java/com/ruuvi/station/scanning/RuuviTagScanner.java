@@ -22,9 +22,11 @@ public class RuuviTagScanner {
     private ScanSettings scanSettings;
     private BluetoothLeScanner scanner;
     private boolean scanning = false;
+    private Context context;
 
     public RuuviTagScanner(RuuviTagListener listener, Context context) {
         this.listener = listener;
+        this.context = context;
 
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
@@ -64,7 +66,7 @@ public class RuuviTagScanner {
         dev.scanData = data;
 
         Log.d(TAG, "found: " + device.getAddress());
-        RuuviTag tag = dev.parse();
+        RuuviTag tag = dev.parse(context);
         if (tag != null) listener.tagFound(tag);
     }
 

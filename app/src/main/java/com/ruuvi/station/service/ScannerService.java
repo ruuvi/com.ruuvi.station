@@ -236,7 +236,7 @@ public class ScannerService extends Service {
         dev.scanData = data;
 
         //Log.d(TAG, "found: " + device.getAddress());
-        RuuviTag tag = dev.parse();
+        RuuviTag tag = dev.parse(getApplicationContext());
         if (tag != null) logTag(tag, getApplicationContext(), foreground);
     }
 
