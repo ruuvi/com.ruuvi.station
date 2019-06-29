@@ -14,6 +14,7 @@ import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.ServiceUtils;
+import com.ruuvi.station.util.Utils;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -42,10 +43,7 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
 
         Log.d(TAG, "Starting service");
         beaconManager = BeaconManager.getInstanceForApplication(this);
-        beaconManager.getBeaconParsers().clear();
-        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
-        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
-        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
+        Utils.setAltBeaconParsers(beaconManager);
         beaconManager.setBackgroundScanPeriod(5000);
         region = new Region("com.ruuvi.station.leRegion", null, null, null);
         beaconManager.bind(this);

@@ -1,9 +1,14 @@
 package com.ruuvi.station.util
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
+import android.support.v4.content.ContextCompat.startActivity
+import android.support.v4.content.FileProvider
 import android.support.v4.content.res.ResourcesCompat
 import android.view.View
+import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -15,6 +20,8 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
+import java.io.File
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,7 +29,7 @@ class GraphView (val context: Context) {
     private var from: Long = 0
     private var to: Long = 0
 
-    fun drawChart( tagId: String, view: View) {
+    fun drawChart(tagId: String, view: View) {
         val readings = TagSensorReading.getForTag(tagId)
 
         val tempData: MutableList<Entry> = ArrayList()
@@ -39,7 +46,16 @@ class GraphView (val context: Context) {
         if (readings.size > 0) {
             if (from < readings[0].createdAt.time)
                 from = readings[0].createdAt.time
-            readings.map { reading ->
+            val grouped = readings.groupBy {
+                if (readings.size > 500)
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + String.format("%02d", it.createdAt.minutes)[0]
+                else if (readings.size > 100)
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString()
+                else
+                    it.createdAt.day.toString() + ":" + it.createdAt.hours.toString() + ":" + it.createdAt.minutes.toString() + ":" + it.createdAt.seconds.toString()
+            }
+            grouped.map {
+                val reading = it.value[it.value.size - 1]
                 val timestamp = (reading.createdAt.time - from).toFloat()
                 if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
                 else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
@@ -91,4 +107,5 @@ class GraphView (val context: Context) {
         chart.notifyDataSetChanged()
         chart.invalidate()
     }
+
 }

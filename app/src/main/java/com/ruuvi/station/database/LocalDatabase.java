@@ -15,7 +15,7 @@ import com.ruuvi.station.model.TagSensorReading;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 6;
+    public static final int VERSION = 7;
 
     @Migration(version = 6, database = LocalDatabase.class)
     public static class Migration6 extends AlterTableMigration<Alarm> {

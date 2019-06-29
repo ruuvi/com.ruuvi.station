@@ -117,10 +117,7 @@ public class RuuviScannerApplication extends Application implements BeaconConsum
     private void bindBeaconManager(BeaconConsumer consumer, Context context) {
         if (beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(context.getApplicationContext());
-            beaconManager.getBeaconParsers().clear();
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT));
-            beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT));
+            Utils.setAltBeaconParsers(beaconManager);
             beaconManager.setBackgroundScanPeriod(5000);
             beaconManager.bind(consumer);
         } else if (!running) {

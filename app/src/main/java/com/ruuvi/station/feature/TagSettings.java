@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -23,10 +24,12 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +50,9 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.Alarm;
+import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
 import java.io.File;
@@ -204,6 +209,55 @@ public class TagSettings extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.calibrate_humidity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
+                final LayoutInflater factory = getLayoutInflater();
+                final View content = factory.inflate(R.layout.dialog_humidity_calibration, null);
+                FrameLayout container = new FrameLayout(getApplicationContext());
+                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                content.setLayoutParams(params);
+                ((TextView)content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView)content.findViewById(R.id.calibration)).setText(Math.round(tag.humidity) +"% -> 75%");
+                final HumidityCalibration calibration = HumidityCalibration.get(tag);
+                builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RuuviTag latestTag = RuuviTag.get(tag.id);
+                        HumidityCalibration.calibrate(latestTag);
+                        if (calibration != null) latestTag.humidity -= calibration.humidityOffset;
+                        latestTag = HumidityCalibration.apply(latestTag);
+                        latestTag.update();
+                        // so the ui will show calibrated humidity if the user presses the calibration button again
+                        tag.humidity = latestTag.humidity;
+                        Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                if (calibration != null) {
+                    builder.setNegativeButton("Clear calibration", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HumidityCalibration.clear(tag);
+                            // so the ui will show the new uncalibrated value
+                            tag.humidity -= calibration.humidityOffset;
+                            // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
+                            RuuviTag latestTag = RuuviTag.get(tag.id);
+                            latestTag.humidity -= calibration.humidityOffset;
+                            latestTag.update();
+                        }
+                    });
+                    ((TextView)content.findViewById(R.id.timestamp)).setText("Calibrated: " +calibration.timestamp.toString());
+                }
+                builder.setNeutralButton("Cancel", null);
+                container.addView(content);
+                builder.setView(container);
+                builder.create().show();
+            }
+        });
+
         findViewById(R.id.remove_tag).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,6 +297,21 @@ public class TagSettings extends AppCompatActivity {
             set.connect(item.view.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
             set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
             set.applyTo(parentLayout);
+        }
+    }
+
+    private void updateReadings() {
+        RuuviTag newTag = RuuviTag.get(tag.id);
+        if (newTag != null) {
+            if (newTag.dataFormat == 3 || newTag.dataFormat == 5) {
+                findViewById(R.id.raw_values).setVisibility(View.VISIBLE);
+                ((TextView)(findViewById(R.id.input_voltage))).setText(newTag.voltage + " V");
+                ((TextView)(findViewById(R.id.input_x))).setText(newTag.accelX + "");
+                ((TextView)(findViewById(R.id.input_y))).setText(newTag.accelY + "");
+                ((TextView)(findViewById(R.id.input_z))).setText(newTag.accelZ + "");
+            } else {
+                findViewById(R.id.raw_values).setVisibility(View.GONE);
+            }
         }
     }
 
@@ -371,9 +440,23 @@ public class TagSettings extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
+
+    final Handler handler = new Handler();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.post(new Runnable(){
+            public void run(){
+                updateReadings();
+                handler.postDelayed(this, 1000);
+            }
+        });
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+        handler.removeCallbacksAndMessages(null);
         tag.favorite = true;
         tag.update();
         for (AlarmItem alarmItem: alarmItems) {
@@ -398,12 +481,21 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
+        if (item.getItemId() == R.id.action_export) {
+            CsvExporter exporter = new CsvExporter(this);
+            exporter.toCsv(tag.id);
+        } else {
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (tag.favorite) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_edit, menu);
+        }
         return true;
     }
 

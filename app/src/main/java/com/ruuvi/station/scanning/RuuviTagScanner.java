@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.util.Utils;
 
 public class RuuviTagScanner {
     private static final String TAG = "RuuviTagScanner";
@@ -21,9 +22,11 @@ public class RuuviTagScanner {
     private ScanSettings scanSettings;
     private BluetoothLeScanner scanner;
     private boolean scanning = false;
+    private Context context;
 
     public RuuviTagScanner(RuuviTagListener listener, Context context) {
         this.listener = listener;
+        this.context = context;
 
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
@@ -39,7 +42,7 @@ public class RuuviTagScanner {
     public void start() {
         if (scanning || !canScan()) return;
         scanning = true;
-        scanner.startScan(null, scanSettings, nsCallback);
+        scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
     }
 
     public void stop() {
@@ -63,7 +66,7 @@ public class RuuviTagScanner {
         dev.scanData = data;
 
         Log.d(TAG, "found: " + device.getAddress());
-        RuuviTag tag = dev.parse();
+        RuuviTag tag = dev.parse(context);
         if (tag != null) listener.tagFound(tag);
     }
 
