@@ -24,6 +24,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -219,6 +220,7 @@ public class TagSettings extends AppCompatActivity {
                 params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
                 params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
                 content.setLayoutParams(params);
+                ((TextView)content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView)content.findViewById(R.id.calibration)).setText(Math.round(tag.humidity) +"% -> 75%");
                 final HumidityCalibration calibration = HumidityCalibration.get(tag);
                 builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
