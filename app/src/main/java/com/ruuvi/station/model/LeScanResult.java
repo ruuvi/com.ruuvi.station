@@ -63,7 +63,7 @@ public class LeScanResult {
             Log.e(TAG, "Parsing ble data failed");
         }
         if (tag != null) {
-            tag = HumidityCalibration.Companion.apply(context, tag);
+            tag = HumidityCalibration.apply(tag);
         }
 
         return tag;
@@ -94,7 +94,7 @@ public class LeScanResult {
                 tag.rssi = rssi;
                 tag.rawData = rawData;
                 tag.rawDataBlob = new Blob(rawData);
-                tag = HumidityCalibration.Companion.apply(context, tag);
+                tag = HumidityCalibration.apply(tag);
             }
             return tag;
         }
@@ -139,7 +139,7 @@ public class LeScanResult {
                     tag.url = url;
                     tag.rawData = pData;
                     tag.rawDataBlob = new Blob(pData);
-                    tag = HumidityCalibration.Companion.apply(context, tag);
+                    tag = HumidityCalibration.apply(tag);
                     //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                     return tag;
                 } catch (Exception e) {

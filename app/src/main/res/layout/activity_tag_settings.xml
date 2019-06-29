@@ -343,7 +343,7 @@
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="@string/calibration_humidity"
+                    android:text="@string/calibration_humidity_button"
                     android:textColor="@color/white"
                     android:textSize="12dp"
                     app:layout_constraintLeft_toLeftOf="parent"
