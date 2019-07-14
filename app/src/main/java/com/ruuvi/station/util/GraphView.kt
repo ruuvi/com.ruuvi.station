@@ -32,6 +32,10 @@ class GraphView (val context: Context) {
     fun drawChart(tagId: String, view: View) {
         val readings = TagSensorReading.getForTag(tagId)
 
+        val tempChart: LineChart = view.findViewById(R.id.tempChart)
+        val humidChart: LineChart = view.findViewById(R.id.humidChart)
+        val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
+
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
@@ -69,9 +73,9 @@ class GraphView (val context: Context) {
             pressureData.add(Entry(timestamp, 0f))
         }
 
-        addDataToChart(tempData, view.findViewById(R.id.tempChart), "Temperature")
-        addDataToChart(humidData, view.findViewById(R.id.humidChart), "Humidity")
-        addDataToChart(pressureData, view.findViewById(R.id.pressureChart), "Pressure")
+        addDataToChart(tempData, tempChart, "Temperature")
+        addDataToChart(humidData, humidChart, "Humidity")
+        addDataToChart(pressureData, pressureChart, "Pressure")
     }
 
     fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
