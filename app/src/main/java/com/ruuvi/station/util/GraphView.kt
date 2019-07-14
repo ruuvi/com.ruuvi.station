@@ -3,10 +3,12 @@ package com.ruuvi.station.util
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Matrix
 import android.net.Uri
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v4.content.FileProvider
 import android.support.v4.content.res.ResourcesCompat
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
@@ -17,6 +19,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
@@ -76,6 +80,8 @@ class GraphView (val context: Context) {
         addDataToChart(tempData, tempChart, "Temperature")
         addDataToChart(humidData, humidChart, "Humidity")
         addDataToChart(pressureData, pressureChart, "Pressure")
+
+        synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
     }
 
     fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
@@ -112,4 +118,36 @@ class GraphView (val context: Context) {
         chart.invalidate()
     }
 
+    /**
+     * Binds [charts] together so that pinch and pan gestures
+     * in one apply to all of them.
+     */
+    private fun synchronizeChartGestures(charts: Set<LineChart>) {
+        charts.forEach { srcChart: LineChart ->
+            srcChart.onChartGestureListener = object : OnChartGestureListener {
+                override fun onChartGestureEnd(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
+                    val srcVals = FloatArray(9)
+                    srcChart.viewPortHandler.matrixTouch.getValues(srcVals)
+
+                    charts.minus(srcChart).forEach { dstChart: LineChart ->
+                        val dstMatrix = dstChart.viewPortHandler.matrixTouch
+                        val dstVals = FloatArray(9)
+                        dstMatrix.getValues(dstVals)
+                        dstVals[Matrix.MSCALE_X] = srcVals[Matrix.MSCALE_X]
+                        dstVals[Matrix.MTRANS_X] = srcVals[Matrix.MTRANS_X]
+                        dstMatrix.setValues(dstVals)
+                        dstChart.viewPortHandler.refresh(dstMatrix, dstChart, true)
+                    }
+                }
+
+                override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
+                override fun onChartSingleTapped(me: MotionEvent?) {}
+                override fun onChartGestureStart(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {}
+                override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {}
+                override fun onChartLongPressed(me: MotionEvent?) {}
+                override fun onChartDoubleTapped(me: MotionEvent?) {}
+                override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {}
+            }
+        }
+    }
 }
