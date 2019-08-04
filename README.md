@@ -6,13 +6,13 @@
 Ruuvi Station is an open-source Android app [available](https://play.google.com/store/apps/details?id=com.ruuvi.station) on the Google Play. You can observe the weather parameters, such as temperature, humidity, air pressure (and more) right on your Android device. Ruuvi Station is a companion app for open-source IoT BLE devices made by [Ruuvi](https://ruuvi.com).
 
 <p align="center">
-  <img src="/docs/screenshot0.jpeg?raw=true" alt="Ruuvi Station for Android" height="400"/>
-  <img src="/docs/screenshot1.jpeg?raw=true" alt="Ruuvi Station for Android" height="400"/>
-  <img src="/docs/screenshot2.jpeg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/screenshot0.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/screenshot1.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/screenshot2.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
 </p>
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.ruuvi.station"><img src="docs/google-play-badge.png" alt="Ruuvi Station for Android"></a>
+  <a href='https://play.google.com/store/apps/details?id=com.ruuvi.station&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 </p>
 
 ## RuuviTag
