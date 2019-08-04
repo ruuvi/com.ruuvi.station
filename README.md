@@ -12,7 +12,7 @@ Ruuvi Station is an open-source Android app [available](https://play.google.com/
 </p>
 
 <p align="center">
-  <a href='https://play.google.com/store/apps/details?id=com.ruuvi.station&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='46pt' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+  <a href='https://play.google.com/store/apps/details?id=com.ruuvi.station&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='60' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 </p>
 
 ## RuuviTag
