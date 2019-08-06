@@ -203,10 +203,10 @@
     <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.
     </string>
     <string name="troubleshooting_title">TROUBLESHOOTING</string>
-    <string name="troubleshooting_text">If you\'re experiencing problems and manuals didn\'t offer help, head to see our troubleshooting topics:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
+    <string name="troubleshooting_text">If you\'re experiencing problems and our manuals didn\'t provide the help you need, check out our many troubleshooting topics, here:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
     </string>
     <string name="open_source_title">OPEN-SOURCE</string>
-    <string name="open_source_text">Just like RuuviTag, so is Ruuvi Station open sourced:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
+    <string name="open_source_text">Just like RuuviTag, Ruuvi Station is also open-source:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
     </string>
     <string name="more_to_read_title">MORE TO READ</string>
     <string name="more_to_read_text">Ruuvi\'s website:&#160;<a href="https://ruuvi.com">ruuvi.com</a>\nRuuvi Forum:&#160;<a href="https://f.ruuvi.com">f.ruuvi.com</a>\nRuuvi Blog:&#160;<a href="https://blog.ruuvi.com">blog.ruuvi.com</a>\nRuuvi on Twitter:&#160;<a href="https://twitter.com/ruuvicom">twitter.com/ruuvicom</a>
@@ -247,10 +247,10 @@
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
     <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
-    <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notification). Allowing for very frequent and reliable scanning, even when you are not using the it.</string>
-    <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using androids job scheduler. It will use less battery than continuous mode but less frequently and less reliably.</string>
+    <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
+    <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using Android\'s job scheduler. It will use less battery than continuous background scanning mode, but will scan less frequently and less reliably.</string>
     <string name="settings_background_scan_battery_save_details">Enabling this feature will let the operating system choose when to do background scanning. It will result in longer battery life but scanning intervals will be very irregular.</string>
-    <string name="settings_background_scan_interval_details">Here you can choose at what time interval you want the background scanning to run. For example, by setting it to 1 minute, the background scan will run once every minute. \n\n(N.B. Scanning intervals may not always be 100% accurate, depending on your device and the operating system.) \n\nScanning results are logged every 5 second while the application is active (in foreground), regardless of background scanning interval</string>
+    <string name="settings_background_scan_interval_details">Here you can choose at what time interval you want the background scanning to run. For example, by setting it to 1 minute, the background scan will run once every minute. \n\n(N.B. Scanning intervals may not always be 100% accurate, depending on your device and the operating system.) \n\nScanning results are logged every 5 seconds while the application is active (in the foreground), regardless of the background scanning interval.</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info,&#160;<a href="https://github.com/ruuvi/com.ruuvi.station/wiki">check the documentation</a>.</string>
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want displayed.</string>
