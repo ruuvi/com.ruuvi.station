@@ -3,6 +3,7 @@ package com.ruuvi.station.util
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.ruuvi.station.model.HumidityUnit
 
 
 class Preferences(val context: Context) {
@@ -50,6 +51,20 @@ class Preferences(val context: Context) {
         get() = pref.getString("pref_temperature_unit", "C")
         set(unit) {
             pref.edit().putString("pref_temperature_unit", unit).apply()
+        }
+
+    var humidityUnit: HumidityUnit
+        get() {
+            val code = pref.getInt("pref_humidity_unit", 1)
+            return when (code) {
+                0 -> HumidityUnit.PERCENT
+                1 -> HumidityUnit.GM3
+                2 -> HumidityUnit.DEW
+                else -> HumidityUnit.PERCENT
+            }
+        }
+        set(value) {
+            pref.edit().putInt("pref_humidity_unit", value.code).apply()
         }
 
     var gatewayUrl: String
