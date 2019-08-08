@@ -501,7 +501,7 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag.humidity)
+        tag_humidity.text = tag.getHumidityString(context)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag.rssi)
         val updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt)

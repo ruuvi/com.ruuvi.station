@@ -13,6 +13,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.LocalDatabase;
+import com.ruuvi.station.util.Humidity;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
 
@@ -90,12 +91,37 @@ public class RuuviTag extends BaseModel {
         return new Preferences(context).getTemperatureUnit();
     }
 
+    public static HumidityUnit getHumidityUnit(Context context) {
+        return new Preferences(context).getHumidityUnit();
+    }
+
     public String getTemperatureString(Context context) {
         String temperatureUnit = RuuviTag.getTemperatureUnit(context);
         if (temperatureUnit.equals("C")) {
             return String.format(context.getString(R.string.temperature_reading), this.temperature) + temperatureUnit;
         }
         return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
+    }
+
+    public String getHumidityString(Context context) {
+        HumidityUnit humidityUnit = RuuviTag.getHumidityUnit(context);
+        Humidity calculation = new Humidity(temperature, humidity / 100.0);
+        switch (humidityUnit) {
+            case PERCENT:
+                return String.format(context.getString(R.string.humidity_reading), humidity);
+            case GM3:
+                return String.format(context.getString(R.string.humidity_absolute_reading), calculation.getAh());
+            case DEW:
+                String temperatureUnit = RuuviTag.getTemperatureUnit(context);
+                if (temperatureUnit.equals("C")) {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTd()) + temperatureUnit;
+                } else {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTdF()) + temperatureUnit;
+                }
+            default:
+                return context.getString(R.string.n_a);
+
+        }
     }
 
     public String getDispayName() {

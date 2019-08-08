@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.ruuvi.station.R
+import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.ServiceUtils
@@ -38,6 +39,10 @@ class AppSettingsListFragment : Fragment() {
 
         temperature_unit.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
+        }
+
+        humidity_unit.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.humidity_unit)
         }
 
         val switch = view.findViewById<SwitchCompat>(R.id.dashboard_switch)
@@ -82,6 +87,11 @@ class AppSettingsListFragment : Fragment() {
             temperature_unit_sub.text = getString(R.string.celsius)
         } else {
             temperature_unit_sub.text = getString(R.string.fahrenheit )
+        }
+        when (prefs.humidityUnit) {
+            HumidityUnit.PERCENT -> humidity_unit_sub.text = getString(R.string.relative_humidity_unit)
+            HumidityUnit.GM3 -> humidity_unit_sub.text = getString(R.string.absolute_humidity_unit)
+            HumidityUnit.DEW -> humidity_unit_sub.text = getString(R.string.dew_point_humidity_unit)
         }
     }
 
