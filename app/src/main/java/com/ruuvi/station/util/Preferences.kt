@@ -55,7 +55,7 @@ class Preferences(val context: Context) {
 
     var humidityUnit: HumidityUnit
         get() {
-            val code = pref.getInt("pref_humidity_unit", 1)
+            val code = pref.getInt("pref_humidity_unit", 0)
             return when (code) {
                 0 -> HumidityUnit.PERCENT
                 1 -> HumidityUnit.GM3
