@@ -4,6 +4,9 @@ import kotlin.math.E
 import kotlin.math.log10
 import kotlin.math.pow
 
+/***
+ * @see https://doi.org/10.1063/1.1461829
+ */
 data class Humidity(val c: Double, val rh: Double) {
 
     val k: Double = c + 273.15 // kelvin °K
