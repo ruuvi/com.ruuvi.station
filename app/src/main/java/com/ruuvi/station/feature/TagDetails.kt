@@ -493,8 +493,10 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
 
         var temperature = tag.getTemperatureString(context)
-        val unit = temperature.substring(temperature.length - 2, temperature.length)
-        temperature = temperature.substring(0, temperature.length - 2)
+        val isKelvin = temperature.endsWith("K")
+        val offset = if (isKelvin) 1 else  2
+        val unit = temperature.substring(temperature.length - offset, temperature.length)
+        temperature = temperature.substring(0, temperature.length - offset)
 
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)

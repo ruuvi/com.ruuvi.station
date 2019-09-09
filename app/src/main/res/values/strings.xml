@@ -196,10 +196,10 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="temperature_reading" formatted="false">%1$,.2f°</string>
+    <string name="temperature_reading" formatted="false">%1$,.2f</string>
     <string name="humidity_reading" formatted="false">%1$,.2f %%</string>
     <string name="humidity_absolute_reading" formatted="false">%1$,.2f g/m³</string>
-    <string name="humidity_dew_reading" formatted="false">%1$,.2f °</string>
+    <string name="humidity_dew_reading" formatted="false">%1$,.2f</string>
     <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
 
