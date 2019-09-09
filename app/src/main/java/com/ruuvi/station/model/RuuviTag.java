@@ -87,6 +87,10 @@ public class RuuviTag extends BaseModel {
         return Utils.celciusToFahrenheit(this.temperature);
     }
 
+    private double getKelvin() {
+        return Utils.celsiusToKelvin(this.temperature);
+    }
+
     public static String getTemperatureUnit(Context context) {
         return new Preferences(context).getTemperatureUnit();
     }
@@ -97,10 +101,13 @@ public class RuuviTag extends BaseModel {
 
     public String getTemperatureString(Context context) {
         String temperatureUnit = RuuviTag.getTemperatureUnit(context);
-        if (temperatureUnit.equals("C")) {
+        if (temperatureUnit.equals("K")) {
+            return String.format(context.getString(R.string.temperature_reading), this.getKelvin()) + temperatureUnit;
+        } else if (temperatureUnit.equals("F")) {
+            return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
+        } else {
             return String.format(context.getString(R.string.temperature_reading), this.temperature) + temperatureUnit;
         }
-        return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
     }
 
     public String getHumidityString(Context context) {
@@ -113,14 +120,15 @@ public class RuuviTag extends BaseModel {
                 return String.format(context.getString(R.string.humidity_absolute_reading), calculation.getAh());
             case DEW:
                 String temperatureUnit = RuuviTag.getTemperatureUnit(context);
-                if (temperatureUnit.equals("C")) {
-                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTd()) + temperatureUnit;
-                } else {
+                if (temperatureUnit.equals("K")) {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTdK()) + temperatureUnit;
+                } else if (temperatureUnit.equals("F")) {
                     return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTdF()) + temperatureUnit;
+                } else {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTd()) + temperatureUnit;
                 }
             default:
                 return context.getString(R.string.n_a);
-
         }
     }
 

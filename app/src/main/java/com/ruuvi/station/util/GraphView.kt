@@ -57,8 +57,13 @@ class GraphView (val context: Context) {
             grouped.map {
                 val reading = it.value[it.value.size - 1]
                 val timestamp = (reading.createdAt.time - from).toFloat()
-                if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
-                else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
+                if (tempUnit.equals("K")) {
+                    tempData.add(Entry(timestamp, Utils.celsiusToKelvin(reading.temperature).toFloat()))
+                } else if (tempUnit.equals("F")) {
+                    tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
+                } else {
+                    tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+                }
                 humidData.add(Entry(timestamp, reading.humidity.toFloat()))
                 pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
             }

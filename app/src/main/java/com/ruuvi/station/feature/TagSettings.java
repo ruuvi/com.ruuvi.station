@@ -405,12 +405,18 @@ public class TagSettings extends AppCompatActivity {
                 if (this.type == Alarm.MOVEMENT) {
                     this.subtitle = getString(R.string.alert_substring_movement);
                 } else {
-                    if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
-                        this.subtitle = String.format(getString(R.string.alert_subtitle_on),
-                                (int)Utils.celciusToFahrenheit(this.low),
-                                (int)Utils.celciusToFahrenheit(this.high));
-                    } else {
-                        this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                    if (type == Alarm.TEMPERATURE) {
+                        if (tempUnit.equals("K")) {
+                            this.subtitle = String.format(getString(R.string.alert_subtitle_on),
+                                    (int)Utils.celsiusToKelvin(this.low),
+                                    (int)Utils.celsiusToKelvin(this.high));
+                        } else if (tempUnit.equals("F")) {
+                            this.subtitle = String.format(getString(R.string.alert_subtitle_on),
+                                    (int)Utils.celciusToFahrenheit(this.low),
+                                    (int)Utils.celciusToFahrenheit(this.high));
+                        } else {
+                            this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                        }
                     }
                 }
             } else {
@@ -425,12 +431,17 @@ public class TagSettings extends AppCompatActivity {
             ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
             ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
             ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
-            if (type == Alarm.TEMPERATURE && tempUnit.equals("F")) {
-                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celciusToFahrenheit(this.low) + "");
-                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celciusToFahrenheit(this.high) + "");
-            } else {
-                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
-                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+            if (type == Alarm.TEMPERATURE) {
+                if (tempUnit.equals("K")) {
+                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celsiusToKelvin(this.low) + "");
+                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celsiusToKelvin(this.high) + "");
+                } else if (tempUnit.equals("F")) {
+                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celciusToFahrenheit(this.low) + "");
+                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celciusToFahrenheit(this.high) + "");
+                } else {
+                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+                }
             }
         }
     }

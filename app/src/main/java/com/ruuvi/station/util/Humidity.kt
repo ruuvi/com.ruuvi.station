@@ -9,7 +9,7 @@ import kotlin.math.pow
  */
 data class Humidity(val c: Double, val rh: Double) {
 
-    val k: Double = c + 273.15 // kelvin °K
+    val k: Double = c + 273.15 // kelvin K
     val f: Double = (c * 9.0/5.0) + 32.0 // fahrenheit °F
     val ah: Double by lazy { // absolute humidity g/m³
         cgkJ * (rh * Pws()) / k
@@ -29,6 +29,14 @@ data class Humidity(val c: Double, val rh: Double) {
     val TdF: Double? by lazy { // dew point °F
         if (Td != null) {
             (Td!! * 9.0 / 5.0) + 32.0
+        } else {
+            null
+        }
+    }
+
+    val TdK: Double? by lazy { // dew point K
+        if (Td != null) {
+            Td!! + 273.15
         } else {
             null
         }

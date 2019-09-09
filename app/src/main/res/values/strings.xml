@@ -97,6 +97,7 @@
     <string-array name="list_preference_temperature_unit_titles">
         <item>Celsius</item>
         <item>Fahrenheit</item>
+        <item>Kelvin</item>
     </string-array>
 
     <string-array name="list_preference_humidity_unit_titles">
@@ -114,6 +115,7 @@
     <string-array name="list_preference_temperature_unit_values">
         <item>C</item>
         <item>F</item>
+        <item>K</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
@@ -261,6 +263,7 @@
     <string name="humidity_unit_sum">Relative / Absolute / Dew Point</string>
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
     <string name="relative_humidity_unit">Relative (%)</string>
