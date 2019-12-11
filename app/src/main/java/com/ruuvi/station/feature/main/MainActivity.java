@@ -33,9 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.AboutActivity;
@@ -44,22 +41,22 @@ import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.scanning.BackgroundScanner;
-import com.ruuvi.station.service.AltBeaconScannerForegroundService;
-import com.ruuvi.station.service.AltBeaconScannerService;
-import com.ruuvi.station.service.ScannerService;
-import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.service.ScannerService;
+import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
-import com.ruuvi.station.util.ServiceUtils;
 import com.ruuvi.station.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
-    private static final int COARSE_LOCATION_PERMISSION = 1;
+    private static final int REQUEST_CODE_LOCATION_PERMISSIONS = 1;
 
     private DrawerLayout drawerLayout;
     private RuuviTagScanner scanner;
@@ -266,12 +263,14 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case COARSE_LOCATION_PERMISSION : {
+            case REQUEST_CODE_LOCATION_PERMISSIONS: {
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // party
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         requestPermissions();
                     } else {
                         showPermissionSnackbar(this);
@@ -307,6 +306,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
+        int permissionFineLocation = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
         return listPermissionsNeeded;
     }
 
@@ -314,7 +320,11 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         List<String> listPermissionsNeeded = getNeededPermissions();
 
         if(!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), COARSE_LOCATION_PERMISSION);
+            ActivityCompat.requestPermissions(
+                    activity,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                    REQUEST_CODE_LOCATION_PERMISSIONS
+            );
         }
 
         return !listPermissionsNeeded.isEmpty();

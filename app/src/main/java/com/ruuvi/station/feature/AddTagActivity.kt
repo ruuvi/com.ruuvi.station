@@ -23,10 +23,12 @@ import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
-
-import kotlinx.android.synthetic.main.activity_add_tag.*
-import kotlinx.android.synthetic.main.content_add_tag.*
-import java.util.*
+import kotlinx.android.synthetic.main.activity_add_tag.toolbar
+import kotlinx.android.synthetic.main.content_add_tag.no_tags
+import kotlinx.android.synthetic.main.content_add_tag.tag_layout
+import kotlinx.android.synthetic.main.content_add_tag.tag_listView
+import java.util.ArrayList
+import java.util.Calendar
 
 class AddTagActivity : AppCompatActivity() {
     private var adapter: AddTagAdapter? = null
@@ -118,7 +120,8 @@ class AddTagActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // party
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         starter.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
