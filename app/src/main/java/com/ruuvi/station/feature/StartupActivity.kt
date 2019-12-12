@@ -2,14 +2,12 @@ package com.ruuvi.station.feature
 
 import android.content.Intent
 import android.os.AsyncTask
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.RuuviScannerApplication
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.Preferences
-
 
 class StartupActivity : AppCompatActivity() {
 
@@ -19,7 +17,7 @@ class StartupActivity : AppCompatActivity() {
         DeviceIdentifier.id(applicationContext)
         val prefs = Preferences(this)
 
-        (this.applicationContext as RuuviScannerApplication).startForegroundScanning()
+        (this.applicationContext as RuuviScannerApplication).bluetoothInteractor.startForegroundScanning()
 
         if (prefs.isFirstStart) {
             val intent = Intent(this, WelcomeActivity::class.java)

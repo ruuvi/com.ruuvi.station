@@ -1,6 +1,5 @@
 package com.ruuvi.station.service;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,42 +10,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.StartupActivity;
-import com.ruuvi.station.util.BackgroundScanModes;
-import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
-import com.ruuvi.station.util.ServiceUtils;
 import com.ruuvi.station.util.Utils;
 
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.Region;
-import org.altbeacon.bluetooth.BluetoothMedic;
 
-
-public class AltBeaconScannerForegroundService extends Service implements BeaconConsumer {
+public class AltBeaconScannerForegroundService extends Service {
     private static final String TAG = "AScannerFgService";
 
-    private BeaconManager beaconManager;
-    private Region region;
-    RuuviRangeNotifier ruuviRangeNotifier;
-    BluetoothMedic medic;
     NotificationCompat.Builder notification;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        if (beaconManager != null) {
+        if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isForegroundBeaconManagerActive()) {
             updateNotification();
         }
         return Service.START_STICKY;
@@ -56,20 +40,16 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Starting foreground service");
-        beaconManager = BeaconManager.getInstanceForApplication(getApplicationContext());
-        Utils.setAltBeaconParsers(beaconManager);
-        beaconManager.setBackgroundScanPeriod(5000);
+        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.onCreateForegroundScanningService();
 
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
 
-        ruuviRangeNotifier = new RuuviRangeNotifier(getApplicationContext(), "AltBeaconFGScannerService");
-        region = new Region("com.ruuvi.station.leRegion", null, null, null);
-        startFG();
-        beaconManager.bind(this);
-        medic = RuuviScannerApplication.setupMedic(getApplicationContext());
-        setBackground(); // start in background mode
+        startFG(); // start foreground notification
+
+        startInBackgroundMode(); // start in background mode
     }
+
 
     private NotificationCompat.Builder setupNotification() {
         NotificationManager notificationManager =
@@ -136,7 +116,9 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     private void startFG() {
         setupNotification();
         //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
-        beaconManager.setEnableScheduledScanJobs(false);
+
+        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setEnableScheduledScanJobs(false);
+
         startForeground(1337, notification.build());
     }
 
@@ -150,28 +132,27 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         }
     }
 
-    private void setBackground() {
-        int scanInterval = new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000;
-        if (scanInterval != beaconManager.getBackgroundBetweenScanPeriod()) {
+    private void startInBackgroundMode() {
+        final Long scanInterval = (long) (new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000);
+        final Long backgroundBetweenScanPeriod = ((RuuviScannerApplication) getApplication())
+                .bluetoothInteractor.getBackgroundBetweenScanPeriod();
+
+        if (!scanInterval.equals(backgroundBetweenScanPeriod)) {
             updateNotification();
-            beaconManager.setBackgroundBetweenScanPeriod(scanInterval);
-            try {
-                beaconManager.updateScanPeriods();
-            } catch (Exception e) {
-                Log.e(TAG, "Could not update scan intervals");
-            }
+
+            ((RuuviScannerApplication) getApplication()).bluetoothInteractor.startInBackgroundMode(scanInterval);
         }
-        beaconManager.setBackgroundMode(true);
+        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setBackgroundMode(true);
     }
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
             Utils.removeStateFile(getApplicationContext());
-            beaconManager.setBackgroundMode(false);
+            ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setBackgroundMode(false);
         }
 
         public void onBecameBackground() {
-           setBackground();
+            startInBackgroundMode();
         }
     };
 
@@ -179,21 +160,12 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy =======");
-        beaconManager.removeRangeNotifier(ruuviRangeNotifier);
-        try {
-            beaconManager.stopRangingBeaconsInRegion(region);
-        } catch (Exception e) {
-            Log.d(TAG, "Could not stop ranging region");
-        }
-        medic = null;
-        beaconManager.unbind(this);
-        //beaconManager.setEnableScheduledScanJobs(true);
-        //beaconManager.disableForegroundServiceScanning();
-        beaconManager = null;
-        ruuviRangeNotifier = null;
+
+        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.onDestroyForegroundScannerService();
+
         stopForeground(true);
         if (listener != null) Foreground.get().removeListener(listener);
-        ((RuuviScannerApplication)getApplication()).startBackgroundScanning();
+        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.startBackgroundScanning();
     }
 
     @Nullable
@@ -202,18 +174,4 @@ public class AltBeaconScannerForegroundService extends Service implements Beacon
         return null;
     }
 
-    @Override
-    public void onBeaconServiceConnect() {
-        Log.d(TAG, "onBeaconServiceConnect");
-        //Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
-        ruuviRangeNotifier.gatewayOn = true;
-        if (!beaconManager.getRangingNotifiers().contains(ruuviRangeNotifier)) {
-            beaconManager.addRangeNotifier(ruuviRangeNotifier);
-        }
-        try {
-            beaconManager.startRangingBeaconsInRegion(region);
-        } catch (RemoteException e) {
-            Log.e(TAG, "Could not start ranging");
-        }
-    }
 }

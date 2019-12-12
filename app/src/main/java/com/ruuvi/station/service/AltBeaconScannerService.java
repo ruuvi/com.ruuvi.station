@@ -67,7 +67,7 @@ public class AltBeaconScannerService extends Service implements BeaconConsumer {
         if (prefs.getBackgroundScanMode() == BackgroundScanModes.FOREGROUND) {
             new ServiceUtils(this).startForegroundService();
         } else if (prefs.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-            ((RuuviScannerApplication)(this.getApplication())).startBackgroundScanning();
+            ((RuuviScannerApplication)(this.getApplication())).bluetoothInteractor.startBackgroundScanning();
         }
         if (listener != null) Foreground.get().removeListener(listener);
     }

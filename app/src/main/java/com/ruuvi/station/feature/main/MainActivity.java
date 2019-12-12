@@ -121,11 +121,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
-    public static boolean isBluetoothEnabled() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
-    }
-
     AdapterView.OnItemClickListener drawerItemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -136,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     public static void setBackgroundScanning(final Context context) {
         Log.d(TAG, "DEBUG, setBackgroundScan");
-        ((RuuviScannerApplication)(((Activity)context).getApplication())).startForegroundScanning();
+        ((RuuviScannerApplication) (((Activity) context).getApplication())).bluetoothInteractor.startForegroundScanning();
         /*
         Log.d(TAG, "DEBUG, stopped bg scan");
         ServiceUtils su = new ServiceUtils(context);
@@ -333,13 +328,13 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     protected void onResume() {
         super.onResume();
-        if(getNeededPermissions().size() > 0) {
+        if (getNeededPermissions().size() > 0) {
 
         } else {
             refrshTagLists();
             handler.post(updater);
 
-            if (isBluetoothEnabled()) {
+            if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isBluetoothEnabled()) {
                 Intent scannerService = new Intent(this, ScannerService.class);
                 startService(scannerService);
             }
@@ -488,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     private void getThingsStarted(boolean goToAddTags) {
-        if (isBluetoothEnabled()) {
+        if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isBluetoothEnabled()) {
             scanner = new RuuviTagScanner(this, getApplicationContext());
         } else {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);

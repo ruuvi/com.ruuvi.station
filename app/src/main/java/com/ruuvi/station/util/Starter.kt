@@ -1,7 +1,6 @@
 package com.ruuvi.station.util
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
@@ -10,11 +9,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
+import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
 import java.util.ArrayList
 
 class Starter(val that: AppCompatActivity) {
+
     fun startScanning(): Boolean {
         if (!MainActivity.isLocationEnabled(that)) {
             val builder = AlertDialog.Builder(that)
@@ -79,12 +79,6 @@ class Starter(val that: AppCompatActivity) {
         }
     }
 
-    fun checkBluetooth(): Boolean {
-        if (isBluetoothEnabled()) {
-            return true
-        }
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        that.startActivityForResult(enableBtIntent, 87)
-        return false
-    }
+    fun checkBluetooth(): Boolean =
+        (that.application as RuuviScannerApplication).bluetoothInteractor.checkAndEnableBluetoothForStarter(that)
 }

@@ -6,14 +6,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,24 +20,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
+import com.ruuvi.station.RuuviScannerApplication;
+import com.ruuvi.station.bluetooth.gateway.impl.ScannerServiceAndroidBluetoothGateway;
+import com.ruuvi.station.bluetooth.gateway.ScannerServiceBluetoothGateway;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
-import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.TagSensorReading;
@@ -54,26 +39,35 @@ import com.ruuvi.station.util.BackgroundScanModes;
 import com.ruuvi.station.util.Constants;
 import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
-import com.ruuvi.station.util.Utils;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
 
-    private boolean scanning;
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothLeScanner scanner;
-    private List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
-    private ScanSettings scanSettings;
     private Handler handler;
     private Handler bgScanHandler;
     private boolean isForegroundMode = false;
-    private boolean foreground = false;
     private int backgroundScanInterval = Constants.DEFAULT_SCAN_INTERVAL;
     private static List<RuuviTag> backgroundTags = new ArrayList<>();
     private static final int SCAN_TIME_MS = 5000;
     private Location tagLocation;
     private PowerManager.WakeLock wakeLock;
+    private ScannerServiceAndroidBluetoothGateway scannerServiceBluetoothGateway;
+    private ScannerServiceBluetoothGateway.DiscoveredRuuviTagListener tagListener = new ScannerServiceBluetoothGateway.DiscoveredRuuviTagListener() {
+        @Override
+        public void tagFound(@NotNull RuuviTag tag, boolean foreground) {
+            logTag(tag, getApplication(), foreground);
+        }
+    };
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -87,14 +81,10 @@ public class ScannerService extends Service {
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
 
-        foreground = true;
-        scanSettings = new ScanSettings.Builder()
-                .setReportDelay(0)
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        scanner = bluetoothAdapter.getBluetoothLeScanner();
+        scannerServiceBluetoothGateway =
+                ((RuuviScannerApplication) getApplication()).scannerServiceGatewayFactory.create();
+
+        scannerServiceBluetoothGateway.setForeground(true);
 
         if (getForegroundMode()) startFG();
         handler = new Handler();
@@ -125,8 +115,8 @@ public class ScannerService extends Service {
     private Runnable reStarter = new Runnable() {
         @Override
         public void run() {
-            stopScan();
-            startScan();
+            scannerServiceBluetoothGateway.stopScan();
+            scannerServiceBluetoothGateway.startScan(tagListener);
             handler.postDelayed(reStarter, 5 * 60 * 1000);
         }
     };
@@ -136,7 +126,7 @@ public class ScannerService extends Service {
         public void run() {
             Log.d(TAG, "Started background scan");
             backgroundTags.clear();
-            startScan();
+            scannerServiceBluetoothGateway.startScan(tagListener);
             updateLocation();
             Log.d(TAG, "Scheduling next scan in " + backgroundScanInterval + "s");
             bgScanHandler.postDelayed(bgLogger, backgroundScanInterval * 1000);
@@ -148,7 +138,7 @@ public class ScannerService extends Service {
         @Override
         public void run() {
             Log.d(TAG, "Stopping background scan, found " + backgroundTags.size() + " tags");
-            stopScan();
+            scannerServiceBluetoothGateway.stopScan();
             Http.post(backgroundTags, tagLocation, getApplicationContext());
 
             for (RuuviTag tag: backgroundTags) {
@@ -201,50 +191,9 @@ public class ScannerService extends Service {
         startForeground(1337, notification.build());
     }
 
-    private boolean canScan() {
-        return scanner != null;
-    }
-
-    public void startScan() {
-        if (scanning || !canScan()) return;
-        scanning = true;
-        try {
-            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            scanning = false;
-            Toast.makeText(getApplicationContext(), "Couldn't start scanning, is bluetooth disabled?", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void stopScan() {
-        if (!canScan()) return;
-        scanning = false;
-        scanner.stopScan(nsCallback);
-    }
-
-    private ScanCallback nsCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            foundDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
-        }
-    };
-
-    private void foundDevice(BluetoothDevice device, int rssi, byte[] data) {
-        LeScanResult dev = new LeScanResult();
-        dev.device = device;
-        dev.rssi = rssi;
-        dev.scanData = data;
-
-        //Log.d(TAG, "found: " + device.getAddress());
-        RuuviTag tag = dev.parse(getApplicationContext());
-        if (tag != null) logTag(tag, getApplicationContext(), foreground);
-    }
-
     @Override
     public void onDestroy() {
-        stopScan();
+        scannerServiceBluetoothGateway.stopScan();
         super.onDestroy();
     }
 
@@ -264,7 +213,7 @@ public class ScannerService extends Service {
                     Log.e(TAG, "Could not release wakelock");
                 }
             }
-            foreground = true;
+            scannerServiceBluetoothGateway.setForeground(true);
             handler.postDelayed(reStarter, 5 * 60 * 1000);
             if (!isRunning(ScannerService.class))
                 startService(new Intent(ScannerService.this, ScannerService.class));
@@ -272,7 +221,7 @@ public class ScannerService extends Service {
         }
 
         public void onBecameBackground() {
-            foreground = false;
+            scannerServiceBluetoothGateway.setForeground(false);
             handler.removeCallbacksAndMessages(null);
             if (!getForegroundMode()) {
                 stopSelf();
