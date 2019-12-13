@@ -2,7 +2,7 @@ package com.ruuvi.station.bluetooth.gateway.factory
 
 import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
 
-interface BluetoothRangeGatewayFactory {
+interface BluetoothTagGatewayFactory {
 
     fun create(): BluetoothTagGateway
 }

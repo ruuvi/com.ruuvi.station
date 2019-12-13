@@ -5,10 +5,10 @@ import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.gateway.factory.BackgroundBluetoothScannerGatewayFactory
-import com.ruuvi.station.bluetooth.gateway.factory.BluetoothRangeGatewayFactory
+import com.ruuvi.station.bluetooth.gateway.factory.BluetoothTagGatewayFactory
 import com.ruuvi.station.bluetooth.gateway.factory.BluetoothScanningGatewayFactory
 import com.ruuvi.station.bluetooth.gateway.factory.DefaultBackgroundBluetoothScannerGatewayFactory
-import com.ruuvi.station.bluetooth.gateway.factory.DefaultBluetoothRangeGatewayFactory
+import com.ruuvi.station.bluetooth.gateway.factory.DefaultBluetoothTagGatewayFactory
 import com.ruuvi.station.bluetooth.gateway.factory.DefaultBluetoothScanningGatewayFactory
 import com.ruuvi.station.bluetooth.model.factory.DefaultLeScanResultFactory
 import com.ruuvi.station.bluetooth.model.factory.LeScanResultFactory
@@ -21,7 +21,7 @@ class RuuviScannerApplication : Application() {
 
     val bluetoothScanningGatewayFactory: BluetoothScanningGatewayFactory by lazy { DefaultBluetoothScanningGatewayFactory(this) }
 
-    val bluetoothRangeGatewayFactory: BluetoothRangeGatewayFactory by lazy { DefaultBluetoothRangeGatewayFactory(this) }
+    val bluetoothRangeGatewayFactory: BluetoothTagGatewayFactory by lazy { DefaultBluetoothTagGatewayFactory(this) }
 
     val bluetoothInteractor by lazy { BluetoothInteractor(this) }
 
