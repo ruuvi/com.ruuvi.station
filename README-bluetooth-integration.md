@@ -2,13 +2,18 @@
 
 ## Interfaces to implement:
 
+The `BluetoothScanningGateway` scans for bluetooth devices and produces `LeScanResult` or a `RuuviTag`
+
 ### Factories:
 
-LeScanResultFactory
+`LeScanResultFactory`
 
-ScannerServiceBluetoothGatewayFactory
+`BluetoothScanningGatewayFactory`
 
 ### Gateways:
 
-BackgroundBluetoothScannerGateway
-ScannerServiceBluetoothGateway
+`BluetoothScanningGateway`
+
+### Models:
+
+`LeScanResult`

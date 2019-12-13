@@ -1,6 +1,5 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.bluetooth.model;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.util.Log;
 
@@ -9,25 +8,23 @@ import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
 import com.raizlabs.android.dbflow.data.Blob;
-import com.ruuvi.station.bluetooth.model.LeScanResult;
 import com.ruuvi.station.decoder.DecodeFormat2and4;
 import com.ruuvi.station.decoder.DecodeFormat3;
 import com.ruuvi.station.decoder.DecodeFormat5;
 import com.ruuvi.station.decoder.RuuviTagDecoder;
+import com.ruuvi.station.model.HumidityCalibration;
+import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * Created by berg on 28/09/17.
- */
 
 public class NeovisionariesLeScanResult implements LeScanResult {
 
     private static final String TAG = NeovisionariesLeScanResult.class.getSimpleName();
-    public BluetoothDevice device;
+    public String deviceAddress;
     public int rssi;
     public byte[] scanData;
 
@@ -47,14 +44,14 @@ public class NeovisionariesLeScanResult implements LeScanResult {
                     // Eddystone URL
                     EddystoneURL es = (EddystoneURL) structure;
                     if (es.getURL().toString().startsWith("https://ruu.vi/#") || es.getURL().toString().startsWith("https://r/")) {
-                        tag = from(context, this.device.getAddress(), es.getURL().toString(), null, this.rssi);
+                        tag = from(context, this.deviceAddress, es.getURL().toString(), null, this.rssi);
                     }
                 }
                 // If the AD structure represents Eddystone TLM.
                 else if (structure instanceof ADManufacturerSpecific) {
                     ADManufacturerSpecific es = (ADManufacturerSpecific) structure;
                     if (es.getCompanyId() == 0x0499) {
-                        tag = from(context, this.device.getAddress(), null, this.scanData, this.rssi);
+                        tag = from(context, this.deviceAddress, null, this.scanData, this.rssi);
                     }
                 }
             }
@@ -102,8 +99,8 @@ public class NeovisionariesLeScanResult implements LeScanResult {
 
     @Override
     public boolean hasSameDevice(@NotNull LeScanResult otherScanResult) {
-        return device.getAddress().equalsIgnoreCase(
-                ((NeovisionariesLeScanResult) otherScanResult).device.getAddress()
+        return deviceAddress.equalsIgnoreCase(
+                ((NeovisionariesLeScanResult) otherScanResult).deviceAddress
         );
     }
 }

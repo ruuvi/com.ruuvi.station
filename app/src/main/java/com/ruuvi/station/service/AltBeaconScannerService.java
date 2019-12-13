@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.util.BackgroundScanModes;
@@ -18,7 +17,6 @@ import com.ruuvi.station.util.Utils;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Region;
 
 

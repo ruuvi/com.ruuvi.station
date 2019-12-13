@@ -7,5 +7,6 @@ interface LeScanResult {
 
     fun parse(context: Context?): RuuviTag?
 
+
     fun hasSameDevice(otherScanResult: LeScanResult): Boolean
 }

@@ -9,8 +9,8 @@ import com.ruuvi.station.bluetooth.gateway.factory.BackgroundBluetoothScannerGat
 import com.ruuvi.station.bluetooth.gateway.factory.BluetoothScanningGatewayFactory;
 import com.ruuvi.station.bluetooth.gateway.factory.DefaultBackgroundBluetoothScannerGatewayFactory;
 import com.ruuvi.station.bluetooth.gateway.factory.DefaultBluetoothScanningGatewayFactory;
-import com.ruuvi.station.bluetooth.gateway.factory.DefaultScannerServiceBluetoothGatewayFactory;
-import com.ruuvi.station.bluetooth.gateway.factory.ScannerServiceBluetoothGatewayFactory;
+import com.ruuvi.station.bluetooth.model.factory.DefaultLeScanResultFactory;
+import com.ruuvi.station.bluetooth.model.factory.LeScanResultFactory;
 
 
 public class RuuviScannerApplication extends Application {
@@ -22,11 +22,10 @@ public class RuuviScannerApplication extends Application {
     public BackgroundBluetoothScannerGatewayFactory scannerGatewayFactory =
             new DefaultBackgroundBluetoothScannerGatewayFactory(this);
 
-    public ScannerServiceBluetoothGatewayFactory scannerServiceGatewayFactory =
-            new DefaultScannerServiceBluetoothGatewayFactory(this);
-
     public BluetoothScanningGatewayFactory bluetoothScanningGatewayFactory =
             new DefaultBluetoothScanningGatewayFactory(this);
+
+    public final LeScanResultFactory leScanResultFactory = new DefaultLeScanResultFactory(this);
 
     @Override
     public void onCreate() {

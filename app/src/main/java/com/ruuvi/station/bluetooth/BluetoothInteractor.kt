@@ -3,12 +3,10 @@ package com.ruuvi.station.bluetooth
 import android.app.Activity
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.le.ScanFilter
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Handler
-import android.os.ParcelUuid
 import android.os.RemoteException
 import android.util.Log
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
@@ -22,7 +20,6 @@ import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
-import java.util.ArrayList
 
 class BluetoothInteractor(private val application: Application) : BeaconConsumer {
 
@@ -59,11 +56,13 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         //Toast.makeText(getApplicationContext(), "Started scanning (Application)", Toast.LENGTH_SHORT).show();
         ruuviRangeNotifier?.gatewayOn = !foreground
         if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) == false) {
-            beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
+            ruuviRangeNotifier?.let {
+                beaconManager?.addRangeNotifier(it)
+            }
         }
         running = true
         try {
-            beaconManager!!.startRangingBeaconsInRegion(region)
+            beaconManager?.startRangingBeaconsInRegion(region)
         } catch (e: Throwable) {
             Log.e(TAG, "Could not start ranging")
         }
@@ -183,7 +182,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
             override fun onBecameForeground() {
                 Log.d(TAG, "onBecameForeground")
                 startForegroundScanning()
-                if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = false
+                if (ruuviRangeNotifier != null) ruuviRangeNotifier?.gatewayOn = false
             }
 
             override fun onBecameBackground() {
@@ -203,7 +202,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
                     disposeStuff()
                     su.startForegroundService()
                 }
-                if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = true
+                if (ruuviRangeNotifier != null) ruuviRangeNotifier?.gatewayOn = true
             }
         }
 
@@ -257,15 +256,15 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
     }
 
     fun onCreateForegroundScanningService() {
-        foregroundBeaconManager = BeaconManager.getInstanceForApplication(applicationContext)
+        foregroundBeaconManager = BeaconManager.getInstanceForApplication(application)
         Utils.setAltBeaconParsers(foregroundBeaconManager)
         foregroundBeaconManager?.backgroundScanPeriod = 5000
 
 
-        foregroundRuuviRangeNotifier = RuuviRangeNotifier(applicationContext, "AltBeaconFGScannerService")
+        foregroundRuuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService")
 
-        foregroundBeaconManager?.bind(this)
-        foregroundBluetoothMedic = setupMedic(applicationContext)
+        foregroundBeaconManager?.bind(foregroundBeaconConsumer)
+        foregroundBluetoothMedic = setupMedic(application)
     }
 
     fun onDestroyForegroundScannerService() {
@@ -279,7 +278,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
             Log.d(TAG, "Could not stop ranging region")
         }
         foregroundBluetoothMedic = null
-        foregroundBeaconManager?.unbind(this)
+        foregroundBeaconManager?.unbind(foregroundBeaconConsumer)
         //beaconManager.setEnableScheduledScanJobs(true);
         //beaconManager.disableForegroundServiceScanning();
         //beaconManager.setEnableScheduledScanJobs(true);
@@ -338,16 +337,4 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         return false
     }
 
-    fun getScanFilters(): List<ScanFilter>? {
-        val filters: MutableList<ScanFilter> = ArrayList()
-        val ruuviFilter = ScanFilter.Builder()
-            .setManufacturerData(0x0499, byteArrayOf())
-            .build()
-        val eddystoneFilter = ScanFilter.Builder()
-            .setServiceUuid(ParcelUuid.fromString("0000feaa-0000-1000-8000-00805f9b34fb"))
-            .build()
-        filters.add(ruuviFilter)
-        filters.add(eddystoneFilter)
-        return filters
-    }
 }

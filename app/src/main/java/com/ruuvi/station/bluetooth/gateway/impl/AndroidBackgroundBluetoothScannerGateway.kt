@@ -16,8 +16,8 @@ import android.util.Log
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.bluetooth.gateway.BackgroundBluetoothScannerGateway
-import com.ruuvi.station.bluetooth.gateway.factory.BluetoothScanningGateway
-import com.ruuvi.station.bluetooth.gateway.factory.LeScanResultListener
+import com.ruuvi.station.bluetooth.gateway.BluetoothScanningGateway
+import com.ruuvi.station.bluetooth.gateway.LeScanResultListener
 import com.ruuvi.station.bluetooth.model.LeScanResult
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
@@ -26,9 +26,9 @@ import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.Preferences
 import java.util.ArrayList
 
-class BackgroundAndroidBluetoothScannerGateway(private val application: Application) : BackgroundBluetoothScannerGateway {
+class AndroidBackgroundBluetoothScannerGateway(private val application: Application) : BackgroundBluetoothScannerGateway {
 
-    private val TAG = BackgroundAndroidBluetoothScannerGateway::class.java.simpleName
+    private val TAG = AndroidBackgroundBluetoothScannerGateway::class.java.simpleName
     private val SCAN_TIME_MS = 5000
 
     private var scanResults: MutableList<LeScanResult> = ArrayList()
@@ -124,11 +124,11 @@ class BackgroundAndroidBluetoothScannerGateway(private val application: Applicat
         return -1
     }
 
-    fun addFoundTagToLists(tag: RuuviTag, tags: MutableList<RuuviTag>, context: Context?) {
+    private fun addFoundTagToLists(tag: RuuviTag, tags: MutableList<RuuviTag>, context: Context?) {
         val index = checkForSameTag(tags, tag)
         if (index == -1) {
             tags.add(tag)
-            ScannerService.logTag(tag, context, true)
+            ScannerService.logTag(tag, context)
         }
     }
 }

@@ -486,7 +486,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isBluetoothEnabled()) {
             scanner = new RuuviTagScanner(this, getApplicationContext());
         } else {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            Intent enable
+            BtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         prefs.setFirstStart(false);

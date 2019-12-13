@@ -25,7 +25,7 @@
 //import com.ruuvi.station.RuuviScannerApplication;
 //import com.ruuvi.station.bluetooth.model.LeScanResult;
 //import com.ruuvi.station.gateway.Http;
-//import com.ruuvi.station.model.NeovisionariesLeScanResult;
+//import com.ruuvi.station.bluetooth.model.NeovisionariesLeScanResult;
 //import com.ruuvi.station.model.RuuviTag;
 //import com.ruuvi.station.util.Utils;
 //

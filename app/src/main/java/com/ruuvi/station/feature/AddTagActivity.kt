@@ -56,13 +56,13 @@ class AddTagActivity : AppCompatActivity() {
             }
             tag.defaultBackground = getKindaRandomBackground()
             tag.update()
-            ScannerService.logTag(tag, this, true)
+            ScannerService.logTag(tag, this)
             val settingsIntent = Intent(this, TagSettings::class.java)
             settingsIntent.putExtra(TagSettings.TAG_ID, tag.id)
             startActivityForResult(settingsIntent, 1)
         }
 
-        adapter!!.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
 
         val handler = Handler()
         handler.post(object : Runnable {

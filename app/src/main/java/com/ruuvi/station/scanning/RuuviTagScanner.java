@@ -3,7 +3,7 @@ package com.ruuvi.station.scanning;
 import android.content.Context;
 
 import com.ruuvi.station.RuuviScannerApplication;
-import com.ruuvi.station.bluetooth.gateway.factory.BluetoothScanningGateway;
+import com.ruuvi.station.bluetooth.gateway.BluetoothScanningGateway;
 
 public class RuuviTagScanner {
 

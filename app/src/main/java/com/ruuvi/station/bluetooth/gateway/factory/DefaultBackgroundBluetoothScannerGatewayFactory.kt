@@ -1,9 +1,9 @@
 package com.ruuvi.station.bluetooth.gateway.factory
 
 import android.app.Application
-import com.ruuvi.station.bluetooth.gateway.impl.BackgroundAndroidBluetoothScannerGateway
+import com.ruuvi.station.bluetooth.gateway.impl.AndroidBackgroundBluetoothScannerGateway
 
 class DefaultBackgroundBluetoothScannerGatewayFactory(private val application: Application) : BackgroundBluetoothScannerGatewayFactory {
 
-    override fun create(): BackgroundAndroidBluetoothScannerGateway = BackgroundAndroidBluetoothScannerGateway(application)
+    override fun create(): AndroidBackgroundBluetoothScannerGateway = AndroidBackgroundBluetoothScannerGateway(application)
 }
