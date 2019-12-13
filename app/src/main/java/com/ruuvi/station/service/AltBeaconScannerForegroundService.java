@@ -117,8 +117,6 @@ public class AltBeaconScannerForegroundService extends Service {
         setupNotification();
         //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
 
-        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().setEnableScheduledScanJobs(false);
-
         startForeground(1337, notification.build());
     }
 
@@ -135,7 +133,7 @@ public class AltBeaconScannerForegroundService extends Service {
     private void startInBackgroundMode() {
         final Long scanInterval = (long) (new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000);
         final Long backgroundBetweenScanPeriod = ((RuuviScannerApplication) getApplication())
-                .getBluetoothInteractor().getBackgroundBetweenScanPeriod();
+                .getBluetoothInteractor().getBackgroundBetweenScanInterval();
 
         if (!scanInterval.equals(backgroundBetweenScanPeriod)) {
             updateNotification();

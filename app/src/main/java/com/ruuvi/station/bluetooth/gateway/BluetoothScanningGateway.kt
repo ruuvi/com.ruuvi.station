@@ -27,16 +27,6 @@ interface BluetoothScanningGateway {
      */
     fun canScan(): Boolean
 
-    /**
-     * Start listening for range changes
-     */
-    fun listenForRangeChanges(rangeUniqueId: String, rangeListener: RangeListener)
-
-    interface RangeListener {
-
-        fun onRangeChanged()
-    }
-
 }
 
 interface LeScanResultListener {

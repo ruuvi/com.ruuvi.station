@@ -13,7 +13,7 @@ import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.RuuviScannerApplication
-import com.ruuvi.station.bluetooth.gateway.BluetoothRangeGateway
+import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
@@ -146,12 +146,8 @@ class BluetoothInteractor(private val application: Application) {
         gatewayOn = isBackgroundModeEnabled
     }
 
-    fun getBackgroundBetweenScanPeriod(): Long? =
-        bluetoothRangeGateway.getBackgroundBetweenScanPeriod()
-
-    fun setEnableScheduledScanJobs(areScheduledScanJobsEnabled: Boolean) {
-        bluetoothRangeGateway.setEnableScheduledScanJobs(areScheduledScanJobsEnabled)
-    }
+    fun getBackgroundBetweenScanInterval(): Long? =
+        bluetoothRangeGateway.getBackgroundBetweenScanInterval()
 
     fun isBluetoothEnabled(): Boolean {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -204,8 +200,8 @@ class BluetoothInteractor(private val application: Application) {
 
     private fun bindRangeGateway() {
 
-        bluetoothRangeGateway.listenForRangeChanges(
-            object : BluetoothRangeGateway.RangeListener {
+        bluetoothRangeGateway.listenForTags(
+            object : BluetoothTagGateway.OnTagsFoundListener  {
 
                 override fun onFoundTags(tags: List<RuuviTag>) {
 

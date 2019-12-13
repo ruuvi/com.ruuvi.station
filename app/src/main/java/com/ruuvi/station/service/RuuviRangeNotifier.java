@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.raizlabs.android.dbflow.data.Blob;
-import com.ruuvi.station.bluetooth.gateway.BluetoothRangeGateway;
+import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway;
 import com.ruuvi.station.decoder.DecodeFormat2and4;
 import com.ruuvi.station.decoder.DecodeFormat3;
 import com.ruuvi.station.decoder.DecodeFormat5;
@@ -32,14 +32,14 @@ public class RuuviRangeNotifier implements RangeNotifier {
     private long last = 0;
 
     @Nullable
-    private BluetoothRangeGateway.RangeListener rangeListener;
+    private BluetoothTagGateway.OnTagsFoundListener onTagsFoundListener;
 
     public RuuviRangeNotifier(
             Context context,
             String from,
-            @Nullable BluetoothRangeGateway.RangeListener rangeListener
+            @Nullable BluetoothTagGateway.OnTagsFoundListener onTagsFoundListener
     ) {
-        this.rangeListener = rangeListener;
+        this.onTagsFoundListener = onTagsFoundListener;
         Log.d(TAG, "Setting up range notifier from " + from);
         this.context = context;
         this.from = from;
@@ -71,8 +71,8 @@ public class RuuviRangeNotifier implements RangeNotifier {
             }
         }
 
-        if (rangeListener != null) {
-            rangeListener.onFoundTags(allTags);
+        if (onTagsFoundListener != null) {
+            onTagsFoundListener.onFoundTags(allTags);
         }
     }
 

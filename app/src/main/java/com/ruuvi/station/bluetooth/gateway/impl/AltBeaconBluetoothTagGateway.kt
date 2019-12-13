@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.util.Log
-import com.ruuvi.station.RuuviScannerApplication
-import com.ruuvi.station.bluetooth.BluetoothInteractor
-import com.ruuvi.station.bluetooth.gateway.BluetoothRangeGateway
+import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
 import com.ruuvi.station.service.RuuviRangeNotifier
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
@@ -16,11 +14,11 @@ import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
 
-class AltBeaconBluetoothRangeGateway(private val application: Application) : BluetoothRangeGateway {
+class AltBeaconBluetoothTagGateway(private val application: Application) : BluetoothTagGateway {
 
-    private val TAG = AltBeaconBluetoothRangeGateway::class.java.simpleName
+    private val TAG = AltBeaconBluetoothTagGateway::class.java.simpleName
 
-    private var rangeListener: BluetoothRangeGateway.RangeListener? = null
+    private var onTagsFoundListener: BluetoothTagGateway.OnTagsFoundListener? = null
 
     private var medic: BluetoothMedic? = null
 
@@ -61,9 +59,9 @@ class AltBeaconBluetoothRangeGateway(private val application: Application) : Blu
         }
     }
 
-    override fun listenForRangeChanges(rangeListener: BluetoothRangeGateway.RangeListener) {
+    override fun listenForTags(onTagsFoundListener: BluetoothTagGateway.OnTagsFoundListener) {
 
-        this.rangeListener = rangeListener
+        this.onTagsFoundListener = onTagsFoundListener
 
         if (beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(application)
@@ -72,7 +70,7 @@ class AltBeaconBluetoothRangeGateway(private val application: Application) : Blu
 
             beaconManager?.bind(beaconConsumer)
 
-            ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService", rangeListener)
+            ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService", onTagsFoundListener)
 
             this.medic = setupMedic(application)
         } else if (!running) {
@@ -108,6 +106,8 @@ class AltBeaconBluetoothRangeGateway(private val application: Application) : Blu
         this.medic = null
         if (beaconManager == null) return
 
+        setEnableScheduledScanJobs(false)
+
         running = false
         ruuviRangeNotifier?.let {
             beaconManager?.removeRangeNotifier(it)
@@ -132,13 +132,13 @@ class AltBeaconBluetoothRangeGateway(private val application: Application) : Blu
         Utils.setAltBeaconParsers(beaconManager)
         beaconManager?.backgroundScanPeriod = 5000
 
-        ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService", rangeListener)
+        ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService", onTagsFoundListener)
 
         beaconManager?.bind(beaconConsumer)
         medic = setupMedic(application)
     }
 
-    override fun getBackgroundBetweenScanPeriod(): Long? =
+    override fun getBackgroundBetweenScanInterval(): Long? =
         beaconManager?.backgroundBetweenScanPeriod
 
     override fun startBackgroundScanning(): Boolean {
@@ -164,7 +164,7 @@ class AltBeaconBluetoothRangeGateway(private val application: Application) : Blu
 
     override fun isForegroundScanningActive(): Boolean = beaconManager != null
 
-    override fun setEnableScheduledScanJobs(areScheduledScanJobsEnabled: Boolean) {
+    private fun setEnableScheduledScanJobs(areScheduledScanJobsEnabled: Boolean) {
         beaconManager?.setEnableScheduledScanJobs(areScheduledScanJobsEnabled)
     }
 

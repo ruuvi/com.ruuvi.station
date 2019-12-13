@@ -1,11 +1,11 @@
 package com.ruuvi.station.bluetooth.gateway.factory
 
 import android.app.Application
-import com.ruuvi.station.bluetooth.gateway.BluetoothRangeGateway
-import com.ruuvi.station.bluetooth.gateway.impl.AltBeaconBluetoothRangeGateway
+import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
+import com.ruuvi.station.bluetooth.gateway.impl.AltBeaconBluetoothTagGateway
 
 class DefaultBluetoothRangeGatewayFactory(private val application: Application) : BluetoothRangeGatewayFactory {
 
-    override fun create(): BluetoothRangeGateway =
-        AltBeaconBluetoothRangeGateway(application)
+    override fun create(): BluetoothTagGateway =
+        AltBeaconBluetoothTagGateway(application)
 }

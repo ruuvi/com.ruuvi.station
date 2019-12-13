@@ -93,8 +93,4 @@ class NeovisionariesBluetoothScanningGateway(
     override fun canScan(): Boolean {
         return scanner != null
     }
-
-    override fun listenForRangeChanges(rangeUniqueId: String, rangeListener: BluetoothScanningGateway.RangeListener) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }
