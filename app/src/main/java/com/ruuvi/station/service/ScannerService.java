@@ -65,7 +65,7 @@ public class ScannerService extends Service {
     private PowerManager.WakeLock wakeLock;
 
     private BluetoothScanningGateway bluetoothScanningGateway =
-            ((RuuviScannerApplication) getApplication()).bluetoothScanningGatewayFactory.create();
+            ((RuuviScannerApplication) getApplication()).getBluetoothScanningGatewayFactory().create();
 
     private RuuviTagListener tagListener = new RuuviTagListener() {
         @Override

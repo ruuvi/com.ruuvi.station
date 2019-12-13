@@ -30,12 +30,13 @@ interface BluetoothScanningGateway {
     /**
      * Start listening for range changes
      */
-    fun listenForRangeChanges(rangeListener: RangeListener)
+    fun listenForRangeChanges(rangeUniqueId: String, rangeListener: RangeListener)
 
     interface RangeListener {
 
         fun onRangeChanged()
     }
+
 }
 
 interface LeScanResultListener {

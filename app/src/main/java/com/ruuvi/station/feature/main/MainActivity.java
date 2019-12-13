@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     public static void setBackgroundScanning(final Context context) {
         Log.d(TAG, "DEBUG, setBackgroundScan");
-        ((RuuviScannerApplication) (((Activity) context).getApplication())).bluetoothInteractor.startForegroundScanning();
+        ((RuuviScannerApplication) (((Activity) context).getApplication())).getBluetoothInteractor().startForegroundScanning();
         /*
         Log.d(TAG, "DEBUG, stopped bg scan");
         ServiceUtils su = new ServiceUtils(context);
@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             refrshTagLists();
             handler.post(updater);
 
-            if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isBluetoothEnabled()) {
+            if (((RuuviScannerApplication) getApplication()).getBluetoothInteractor().isBluetoothEnabled()) {
                 Intent scannerService = new Intent(this, ScannerService.class);
                 startService(scannerService);
             }
@@ -483,11 +483,10 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     private void getThingsStarted(boolean goToAddTags) {
-        if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isBluetoothEnabled()) {
+        if (((RuuviScannerApplication) getApplication()).getBluetoothInteractor().isBluetoothEnabled()) {
             scanner = new RuuviTagScanner(this, getApplicationContext());
         } else {
-            Intent enable
-            BtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         prefs.setFirstStart(false);

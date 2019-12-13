@@ -14,7 +14,7 @@ public class RuuviTagScanner {
     public RuuviTagScanner(RuuviTagListener listener, Context context) {
         this.listener = listener;
         this.bluetoothScanningGateway = ((RuuviScannerApplication) context.getApplicationContext())
-                .bluetoothScanningGatewayFactory.create();
+                .getBluetoothScanningGatewayFactory().create();
     }
 
     public void start() {

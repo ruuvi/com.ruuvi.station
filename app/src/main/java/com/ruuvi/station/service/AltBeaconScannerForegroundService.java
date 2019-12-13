@@ -23,6 +23,7 @@ import com.ruuvi.station.util.Utils;
 
 
 public class AltBeaconScannerForegroundService extends Service {
+
     private static final String TAG = "AScannerFgService";
 
     NotificationCompat.Builder notification;
@@ -30,7 +31,7 @@ public class AltBeaconScannerForegroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        if (((RuuviScannerApplication) getApplication()).bluetoothInteractor.isForegroundBeaconManagerActive()) {
+        if (((RuuviScannerApplication) getApplication()).getBluetoothInteractor().isForegroundScanningActive()) {
             updateNotification();
         }
         return Service.START_STICKY;
@@ -40,7 +41,7 @@ public class AltBeaconScannerForegroundService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Starting foreground service");
-        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.onCreateForegroundScanningService();
+        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().onCreateForegroundScanningService();
 
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
@@ -49,7 +50,6 @@ public class AltBeaconScannerForegroundService extends Service {
 
         startInBackgroundMode(); // start in background mode
     }
-
 
     private NotificationCompat.Builder setupNotification() {
         NotificationManager notificationManager =
@@ -117,7 +117,7 @@ public class AltBeaconScannerForegroundService extends Service {
         setupNotification();
         //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
 
-        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setEnableScheduledScanJobs(false);
+        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().setEnableScheduledScanJobs(false);
 
         startForeground(1337, notification.build());
     }
@@ -135,20 +135,20 @@ public class AltBeaconScannerForegroundService extends Service {
     private void startInBackgroundMode() {
         final Long scanInterval = (long) (new Preferences(getApplicationContext()).getBackgroundScanInterval() * 1000);
         final Long backgroundBetweenScanPeriod = ((RuuviScannerApplication) getApplication())
-                .bluetoothInteractor.getBackgroundBetweenScanPeriod();
+                .getBluetoothInteractor().getBackgroundBetweenScanPeriod();
 
         if (!scanInterval.equals(backgroundBetweenScanPeriod)) {
             updateNotification();
 
-            ((RuuviScannerApplication) getApplication()).bluetoothInteractor.startInBackgroundMode(scanInterval);
+            ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().startInBackgroundMode();
         }
-        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setBackgroundMode(true);
+        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().setBackgroundMode(true);
     }
 
     Foreground.Listener listener = new Foreground.Listener() {
         public void onBecameForeground() {
             Utils.removeStateFile(getApplicationContext());
-            ((RuuviScannerApplication) getApplication()).bluetoothInteractor.setBackgroundMode(false);
+            ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().setBackgroundMode(false);
         }
 
         public void onBecameBackground() {
@@ -161,11 +161,11 @@ public class AltBeaconScannerForegroundService extends Service {
         super.onDestroy();
         Log.d(TAG, "onDestroy =======");
 
-        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.onDestroyForegroundScannerService();
+        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().onDestroyForegroundScannerService();
 
         stopForeground(true);
         if (listener != null) Foreground.get().removeListener(listener);
-        ((RuuviScannerApplication) getApplication()).bluetoothInteractor.startBackgroundScanning();
+        ((RuuviScannerApplication) getApplication()).getBluetoothInteractor().startBackgroundScanning();
     }
 
     @Nullable
