@@ -6,7 +6,8 @@ import android.preference.PreferenceManager
 
 
 class Preferences(val context: Context) {
-   var pref: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    val pref: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
    var backgroundScanInterval: Int
        get() = pref.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
