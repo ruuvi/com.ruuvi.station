@@ -37,9 +37,6 @@
             android:name=".service.ScannerService"
             android:exported="false" />
         <service
-            android:name=".service.AltBeaconScannerService"
-            android:exported="false" />
-        <service
             android:name=".service.AltBeaconScannerForegroundService"
             android:exported="false" />
 
