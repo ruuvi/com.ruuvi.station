@@ -21,7 +21,20 @@ class BluetoothScannerInteractor(private val application: Application) {
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
 
-    private var foreground: Boolean = true
+    private var foreground: Boolean = true.also {
+        val listener: Foreground.Listener = object : Foreground.Listener {
+            override fun onBecameForeground() {
+                foreground = true
+            }
+
+            override fun onBecameBackground() {
+                foreground = false
+            }
+        }
+
+        Foreground.init(application)
+        Foreground.get().addListener(listener)
+    }
 
     private val backgroundTags = ArrayList<RuuviTag>()
 
@@ -35,22 +48,6 @@ class BluetoothScannerInteractor(private val application: Application) {
             RuuviTagListener { logTag(it, application, foreground) },
             application
         )
-    }
-
-    init {
-
-        val listener: Foreground.Listener = object : Foreground.Listener {
-            override fun onBecameForeground() {
-                foreground = true
-            }
-
-            override fun onBecameBackground() {
-                foreground = false
-            }
-        }
-
-        Foreground.init(application)
-        Foreground.get().addListener(listener)
     }
 
     fun logTag(ruuviTag: RuuviTag, context: Context?, foreground: Boolean) {
@@ -99,7 +96,6 @@ class BluetoothScannerInteractor(private val application: Application) {
         scanning = true
         try {
             ruuviTagScanner.start()
-//            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback)
         } catch (e: Exception) {
             Log.e(TAG, e.message)
             scanning = false
@@ -111,7 +107,6 @@ class BluetoothScannerInteractor(private val application: Application) {
         if (!ruuviTagScanner.canScan()) return
         scanning = false
         ruuviTagScanner.stop()
-//        scanner.stopScan(nsCallback)
     }
 
     private val nsCallback: ScanCallback = object : ScanCallback() {
@@ -131,10 +126,6 @@ class BluetoothScannerInteractor(private val application: Application) {
         if (tag != null) logTag(tag, application, foreground)
     }
 
-//    private fun canScan(): Boolean {
-//        return scanner != null
-//    }
-
     private fun checkForSameTag(arr: List<RuuviTag>, ruuvi: RuuviTag): Int {
         for (i in arr.indices) {
             if (ruuvi.id == arr[i].id) {
@@ -143,5 +134,4 @@ class BluetoothScannerInteractor(private val application: Application) {
         }
         return -1
     }
-
 }

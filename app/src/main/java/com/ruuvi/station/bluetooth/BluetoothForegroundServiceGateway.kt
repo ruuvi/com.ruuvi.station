@@ -40,10 +40,7 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
     }
 
     fun startFGGateway() {
-//        setupNotification()
-        //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
         beaconManager!!.setEnableScheduledScanJobs(false)
-//        startForeground(1337, notification!!.build())
     }
 
     fun setBackgroundGateway() {
@@ -69,8 +66,7 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
         }
         medic = null
         beaconManager!!.unbind(this)
-        //beaconManager.setEnableScheduledScanJobs(true);
-//beaconManager.disableForegroundServiceScanning();
+
         beaconManager = null
         ruuviRangeNotifier = null
     }
@@ -87,7 +83,7 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
 
     override fun onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect")
-        //Toast.makeText(getapplication(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
+
         ruuviRangeNotifier?.gatewayOn = true
         if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
             beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)

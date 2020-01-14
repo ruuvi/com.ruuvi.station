@@ -27,24 +27,9 @@ import java.util.HashMap
 
 class BluetoothInteractor(private val application: Application) : BeaconConsumer {
 
-//    val isForegroundScanningActive: Boolean
-//        get() = bluetoothRangeGateway.isForegroundScanningActive()
-
     private val TAG: String = BluetoothInteractor::class.java.simpleName
 
     private val prefs: Preferences = Preferences(application)
-
-    private val bluetoothRangeGateway = BluetoothTagGateway()
-
-    private var tagLocation: Location? = null
-
-    private var lastLogged: MutableMap<String, Long> = HashMap()
-
-//    private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
-
-    private var gatewayOn: Boolean = false
-
-    private val backgroundTags: List<RuuviTag> = ArrayList()
 
     private var beaconManager: BeaconManager? = null
     private var region: Region? = null

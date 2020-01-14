@@ -333,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     protected void onPause() {
         super.onPause();
-        ((RuuviScannerApplication) getApplication()).getBluetoothForegroundScannerInteractor().stopScan();
         handler.removeCallbacks(updater);
         for (RuuviTag tag: myRuuviTags) {
             tag.update();
