@@ -39,8 +39,8 @@ import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.scanning.RuuviTagListener;
-import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.bluetooth.RuuviTagListener;
+import com.ruuvi.station.bluetooth.RuuviTagScanner;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(getNeededPermissions().size() > 0) {
 
         } else {
-            refrshTagLists();
+            refreshTagLists();
             handler.post(updater);
 
             if (isBluetoothEnabled()) {
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
-    private void refrshTagLists() {
+    private void refreshTagLists() {
         myRuuviTags.clear();
         myRuuviTags.addAll(RuuviTag.getAll(true));
         otherRuuviTags.clear();
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         dashboardVisible = false;
         switch (type) {
             case 1:
-                refrshTagLists();
+                refreshTagLists();
                 fragment = new DashboardFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 dashboardVisible = true;
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 startActivity(aboutIntent);
                 return;
             default:
-                refrshTagLists();
+                refreshTagLists();
                 //fragment = new AddTagFragment();
                 //fragmentWithCallback = (DataUpdateListener)fragment;
                 Intent addIntent = new Intent(this, AddTagActivity.class);

@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth.gateway
+package com.ruuvi.station.bluetooth
 
 import android.app.Application
 import android.content.Context
@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.RemoteException
 import android.util.Log
-import com.ruuvi.station.bluetooth.BluetoothInteractor
-import com.ruuvi.station.service.RuuviRangeNotifier
 import com.ruuvi.station.util.Preferences
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
@@ -90,7 +88,7 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
     override fun onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect")
         //Toast.makeText(getapplication(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
-        ruuviRangeNotifier!!.gatewayOn = true
+        ruuviRangeNotifier?.gatewayOn = true
         if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
             beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
         }

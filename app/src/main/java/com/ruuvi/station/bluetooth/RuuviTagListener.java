@@ -1,4 +1,4 @@
-package com.ruuvi.station.scanning;
+package com.ruuvi.station.bluetooth;
 
 import com.ruuvi.station.model.RuuviTag;
 

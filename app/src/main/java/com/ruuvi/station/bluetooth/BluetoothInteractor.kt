@@ -9,13 +9,8 @@ import android.os.Handler
 import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
-import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
-import com.ruuvi.station.service.RuuviRangeNotifier
-import com.ruuvi.station.service.ScannerService
-import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.Foreground
@@ -28,8 +23,6 @@ import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
 import java.util.ArrayList
-import java.util.Calendar
-import java.util.Date
 import java.util.HashMap
 
 class BluetoothInteractor(private val application: Application) : BeaconConsumer {

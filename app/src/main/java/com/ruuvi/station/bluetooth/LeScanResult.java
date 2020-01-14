@@ -1,4 +1,4 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -13,6 +13,8 @@ import com.ruuvi.station.decoder.DecodeFormat2and4;
 import com.ruuvi.station.decoder.DecodeFormat3;
 import com.ruuvi.station.decoder.DecodeFormat5;
 import com.ruuvi.station.decoder.RuuviTagDecoder;
+import com.ruuvi.station.model.HumidityCalibration;
+import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.Utils;
 
 import org.altbeacon.beacon.Beacon;
@@ -24,7 +26,7 @@ import java.util.List;
  * Created by berg on 28/09/17.
  */
 
-public class LeScanResult {
+class LeScanResult {
 
     private static final String TAG = "LeScanResult";
     public BluetoothDevice device;

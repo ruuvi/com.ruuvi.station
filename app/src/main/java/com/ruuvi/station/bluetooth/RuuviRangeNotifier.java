@@ -1,4 +1,4 @@
-package com.ruuvi.station.service;
+package com.ruuvi.station.bluetooth;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,7 +10,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.gateway.Http;
-import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
@@ -28,7 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RuuviRangeNotifier implements RangeNotifier {
+class RuuviRangeNotifier implements RangeNotifier {
+
     private static final String TAG = "RuuviRangeNotifier";
     private String from;
     private Context context;

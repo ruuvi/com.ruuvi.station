@@ -1,21 +1,26 @@
-package com.ruuvi.station.scanning;
+package com.ruuvi.station.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RuuviTagScanner {
+
     private static final String TAG = "RuuviTagScanner";
+
     private RuuviTagListener listener;
 
     private BluetoothAdapter bluetoothAdapter;
@@ -42,8 +47,22 @@ public class RuuviTagScanner {
     public void start() {
         if (scanning || !canScan()) return;
         scanning = true;
-        scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback);
+        scanner.startScan(getScanFilters(), scanSettings, nsCallback);
     }
+
+    private static List<ScanFilter> getScanFilters() {
+        List<ScanFilter> filters = new ArrayList<>();
+        ScanFilter ruuviFilter = new ScanFilter.Builder()
+                .setManufacturerData(0x0499, new byte[]{})
+                .build();
+        ScanFilter eddystoneFilter = new ScanFilter.Builder()
+                .setServiceUuid(ParcelUuid.fromString("0000feaa-0000-1000-8000-00805f9b34fb"))
+                .build();
+        filters.add(ruuviFilter);
+        filters.add(eddystoneFilter);
+        return filters;
+    }
+
 
     public void stop() {
         if (!canScan()) return;

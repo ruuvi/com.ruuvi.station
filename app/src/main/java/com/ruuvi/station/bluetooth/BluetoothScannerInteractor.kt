@@ -8,14 +8,10 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.ruuvi.station.gateway.Http
-import com.ruuvi.station.model.LeScanResult
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
-import com.ruuvi.station.scanning.RuuviTagListener
-import com.ruuvi.station.scanning.RuuviTagScanner
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Foreground
-import com.ruuvi.station.util.Preferences
 import java.util.ArrayList
 import java.util.Calendar
 import java.util.Date
@@ -25,29 +21,14 @@ class BluetoothScannerInteractor(private val application: Application) {
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
 
-    private val prefs: Preferences = Preferences(application)
-
     private var foreground: Boolean = true
 
     private val backgroundTags = ArrayList<RuuviTag>()
-
-    //    private val bluetoothAdapter: BluetoothAdapter? = null
-//    private val scanFilters: List<ScanFilter> = ArrayList()
 
     private val lastLogged: MutableMap<String, Long> = HashMap()
     private val LOG_INTERVAL = 5 // seconds
 
     private var scanning = false
-//    private val scanSettings = ScanSettings.Builder()
-//        .setReportDelay(0)
-//        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-//        .build()
-//
-//    val scanner by lazy {
-//        val bluetoothManager = application.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-//        val bluetoothAdapter = bluetoothManager.getAdapter()
-//        bluetoothAdapter.bluetoothLeScanner
-//    }
 
     private val ruuviTagScanner by lazy {
         RuuviTagScanner(
