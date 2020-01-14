@@ -24,13 +24,6 @@ public class RuuviScannerApplication extends Application {
         bluetoothInteractor.startBackgroundScanning();
     }
 
-    public static BluetoothMedic setupMedic(Context context) {
-        BluetoothMedic medic = BluetoothMedic.getInstance();
-        medic.enablePowerCycleOnFailures(context);
-        medic.enablePeriodicTests(context, BluetoothMedic.SCAN_TEST);
-        return medic;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
