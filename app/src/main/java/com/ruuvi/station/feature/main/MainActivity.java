@@ -3,7 +3,6 @@ package com.ruuvi.station.feature.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,9 +32,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.feature.AboutActivity;
@@ -43,13 +39,15 @@ import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.scanning.BackgroundScanner;
-import com.ruuvi.station.service.ScannerService;
-import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.scanning.RuuviTagListener;
 import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.service.ScannerService;
+import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
     private static final String TAG = "MainActivity";
@@ -246,11 +244,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 Log.d(TAG, "Could not set ignoring battery optimization");
             }
         }
-    }
-
-    private static PendingIntent getPendingIntent(Context context) {
-        Intent intent = new Intent(context, BackgroundScanner.class);
-        return PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
     }
 
     @Override

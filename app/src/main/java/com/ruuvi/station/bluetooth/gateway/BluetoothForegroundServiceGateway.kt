@@ -6,9 +6,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.RemoteException
 import android.util.Log
+import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.service.RuuviRangeNotifier
 import com.ruuvi.station.util.Preferences
-import com.ruuvi.station.util.Utils
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.Region
@@ -24,14 +24,14 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
     fun onCreate() {
         Log.d(TAG, "Starting foreground service")
         beaconManager = BeaconManager.getInstanceForApplication(application)
-        Utils.setAltBeaconParsers(beaconManager)
-        beaconManager!!.backgroundScanPeriod = 5000
-        ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService")
-        region = Region("com.ruuvi.station.leRegion", null, null, null)
-//        startFG()
-        beaconManager!!.bind(this)
-        medic = setupMedic(application)
-//        setBackground() // start in background mode
+        beaconManager?.let { beaconManager ->
+            BluetoothInteractor.setAltBeaconParsers(beaconManager)
+            beaconManager.backgroundScanPeriod = 5000
+            ruuviRangeNotifier = RuuviRangeNotifier(application, "AltBeaconFGScannerService")
+            region = Region("com.ruuvi.station.leRegion", null, null, null)
+            beaconManager.bind(this)
+            medic = setupMedic(application)
+        }
     }
 
     private fun setupMedic(context: Context?): BluetoothMedic? {

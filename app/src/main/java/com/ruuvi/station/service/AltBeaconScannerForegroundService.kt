@@ -9,7 +9,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
-import android.os.RemoteException
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.ruuvi.station.R
@@ -18,21 +17,13 @@ import com.ruuvi.station.feature.StartupActivity
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
-import org.altbeacon.beacon.BeaconConsumer
-import org.altbeacon.beacon.BeaconManager
-import org.altbeacon.beacon.Region
-import org.altbeacon.bluetooth.BluetoothMedic
 
-class AltBeaconScannerForegroundService : Service() { //, BeaconConsumer {
+class AltBeaconScannerForegroundService : Service() {
 
     private val bluetoothForegroundServiceGateway by lazy {
         (application as RuuviScannerApplication).bluetoothForegroundServiceGateway
     }
 
-    private var beaconManager: BeaconManager? = null
-    private var region: Region? = null
-    var ruuviRangeNotifier: RuuviRangeNotifier? = null
-    var medic: BluetoothMedic? = null
     var notification: NotificationCompat.Builder? = null
 
     private var listener: Foreground.Listener? = object : Foreground.Listener {
@@ -56,17 +47,10 @@ class AltBeaconScannerForegroundService : Service() { //, BeaconConsumer {
     override fun onCreate() {
         super.onCreate()
         bluetoothForegroundServiceGateway.onCreate()
-//        Log.d(TAG, "Starting foreground service")
-//        beaconManager = BeaconManager.getInstanceForApplication(applicationContext)
-//        Utils.setAltBeaconParsers(beaconManager)
-//        beaconManager!!.backgroundScanPeriod = 5000
+        Log.d(TAG, "Starting foreground service")
         Foreground.init(application)
         Foreground.get().addListener(listener)
-//        ruuviRangeNotifier = RuuviRangeNotifier(applicationContext, "AltBeaconFGScannerService")
-//        region = Region("com.ruuvi.station.leRegion", null, null, null)
         startFG()
-//        beaconManager!!.bind(this)
-//        medic = RuuviScannerApplication.setupMedic(applicationContext)
         setBackground() // start in background mode
     }
 
@@ -124,8 +108,7 @@ class AltBeaconScannerForegroundService : Service() { //, BeaconConsumer {
 
     private fun startFG() {
         setupNotification()
-        //beaconManager.enableForegroundServiceScanning(notification.build(), 1337);
-//        beaconManager!!.setEnableScheduledScanJobs(false)
+
         bluetoothForegroundServiceGateway.startFGGateway()
 
         startForeground(1337, notification!!.build())
@@ -142,35 +125,15 @@ class AltBeaconScannerForegroundService : Service() { //, BeaconConsumer {
     }
 
     private fun setBackground() {
-//        val scanInterval = Preferences(applicationContext).backgroundScanInterval * 1000
+        bluetoothForegroundServiceGateway.setBackgroundGateway()
         if (bluetoothForegroundServiceGateway.shouldUpdateScanInterval()) {
             updateNotification()
-//            beaconManager!!.backgroundBetweenScanPeriod = scanInterval.toLong()
-//            try {
-//                beaconManager!!.updateScanPeriods()
-//            } catch (e: Exception) {
-//                Log.e(TAG, "Could not update scan intervals")
-//            }
         }
-//        beaconManager!!.backgroundMode = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
         bluetoothForegroundServiceGateway.onDestroy()
-//        Log.d(TAG, "onDestroy =======")
-//        beaconManager!!.removeRangeNotifier(ruuviRangeNotifier!!)
-//        try {
-//            beaconManager!!.stopRangingBeaconsInRegion(region!!)
-//        } catch (e: Exception) {
-//            Log.d(TAG, "Could not stop ranging region")
-//        }
-//        medic = null
-//        beaconManager!!.unbind(this)
-//        //beaconManager.setEnableScheduledScanJobs(true);
-////beaconManager.disableForegroundServiceScanning();
-//        beaconManager = null
-//        ruuviRangeNotifier = null
         stopForeground(true)
         if (listener != null) Foreground.get().removeListener(listener)
         (application as RuuviScannerApplication).startBackgroundScanning()
@@ -179,20 +142,6 @@ class AltBeaconScannerForegroundService : Service() { //, BeaconConsumer {
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
-
-//    override fun onBeaconServiceConnect() {
-//        Log.d(TAG, "onBeaconServiceConnect")
-//        //Toast.makeText(getApplicationContext(), "Started scanning (Service)", Toast.LENGTH_SHORT).show();
-//        ruuviRangeNotifier!!.gatewayOn = true
-//        if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
-//            beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
-//        }
-//        try {
-//            beaconManager!!.startRangingBeaconsInRegion(region!!)
-//        } catch (e: RemoteException) {
-//            Log.e(TAG, "Could not start ranging")
-//        }
-//    }
 
     companion object {
         private const val TAG = "AScannerFgService"

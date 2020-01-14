@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import com.ruuvi.station.R
+import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.adapters.AddTagAdapter
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
@@ -55,7 +56,7 @@ class AddTagActivity : AppCompatActivity() {
             }
             tag.defaultBackground = getKindaRandomBackground()
             tag.update()
-            ScannerService.logTag(tag, this, true)
+            (application as RuuviScannerApplication).bluetoothScannerInteractor.logTag(tag, this, true)
             val settingsIntent = Intent(this, TagSettings::class.java)
             settingsIntent.putExtra(TagSettings.TAG_ID, tag.id)
             startActivityForResult(settingsIntent, 1)

@@ -9,17 +9,27 @@ import android.os.Handler
 import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
+import com.ruuvi.station.gateway.Http
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.service.RuuviRangeNotifier
+import com.ruuvi.station.service.ScannerService
+import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.ServiceUtils
 import com.ruuvi.station.util.Utils
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
+import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Date
 import java.util.HashMap
 
 class BluetoothInteractor(private val application: Application) : BeaconConsumer {
@@ -41,7 +51,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
 
     private var gatewayOn: Boolean = false
 
-    // NEW REFACTORING -------------------------------
+    private val backgroundTags: List<RuuviTag> = ArrayList()
 
     private var beaconManager: BeaconManager? = null
     private var region: Region? = null
@@ -130,9 +140,12 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
     private fun bindBeaconManager(consumer: BeaconConsumer?, context: Context) {
         if (beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(context.applicationContext)
-            Utils.setAltBeaconParsers(beaconManager)
-            beaconManager!!.backgroundScanPeriod = 5000
-            beaconManager!!.bind(consumer!!)
+
+            beaconManager?.let {
+                setAltBeaconParsers(it)
+                it.backgroundScanPeriod = 5000
+                it.bind(consumer!!)
+            }
         } else if (!running) {
             running = true
             try {
@@ -215,213 +228,19 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
             Log.e(TAG, "Could not start ranging")
         }
     }
-    // NEW REFACOTRING ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-//    fun stopScanning() {
-//        bluetoothRangeGateway.stopScanning()
-//    }
-//
-//    fun startForegroundScanning() {
-//        if (runForegroundIfEnabled()) return
-//        if (foreground) return
-//        foreground = true
-//        Utils.removeStateFile(application.applicationContext)
-//        Log.d(TAG, "Starting foreground scanning")
-//
-//        gatewayOn = false
-//
-//        bindRangeGateway()
-//
-//        bluetoothRangeGateway.setBackgroundMode(false)
-//    }
-//
-//    fun startBackgroundScanning() {
-//        Log.d(TAG, "Starting background scanning")
-//        if (runForegroundIfEnabled()) return
-//        if (prefs?.backgroundScanMode != BackgroundScanModes.BACKGROUND) {
-//            Log.d(TAG, "Background scanning is not enabled, ignoring")
-//            return
-//        }
-//
-//        gatewayOn = true
-//
-//        bindRangeGateway()
-//
-//        bluetoothRangeGateway.startBackgroundScanning()
-//    }
-//
-//    fun onAppCreated() {
-//
-//        prefs = Preferences(application.applicationContext)
-//
-//        val listener: Foreground.Listener = object : Foreground.Listener {
-//            override fun onBecameForeground() {
-//                Log.d(TAG, "onBecameForeground")
-//                startForegroundScanning()
-//            }
-//
-//            override fun onBecameBackground() {
-//                Log.d(TAG, "onBecameBackground")
-//                foreground = false
-//                val su = ServiceUtils(application.applicationContext)
-//                if (prefs?.backgroundScanMode === BackgroundScanModes.DISABLED) { // background scanning is disabled so all scanning things will be killed
-//                    stopScanning()
-//                    su.stopForegroundService()
-//                } else if (prefs?.backgroundScanMode === BackgroundScanModes.BACKGROUND) {
-//                    if (su.isRunning(AltBeaconScannerForegroundService::class.java)) {
-//                        su.stopForegroundService()
-//                    } else {
-//                        startBackgroundScanning()
-//                    }
-//                } else {
-//                    disposeStuff()
-//                    su.startForegroundService()
-//                }
-//            }
-//        }
-//
-//        Foreground.init(application)
-//        Foreground.get().addListener(listener)
-//        Handler().postDelayed(
-//            {
-//                if (!foreground) {
-//                    if (prefs?.backgroundScanMode == BackgroundScanModes.FOREGROUND) {
-//                        ServiceUtils(application.applicationContext).startForegroundService()
-//                    } else if (prefs?.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-//                        startBackgroundScanning()
-//                    }
-//                }
-//            },
-//            5000
-//        )
-//    }
-//
-//    fun onCreateForegroundScanningService() {
-//        bluetoothRangeGateway.reset()
-//    }
-//
-//    fun onDestroyForegroundScannerService() {
-//        bluetoothRangeGateway.reset()
-//    }
-//
-//    fun startInBackgroundMode() {
-//        bluetoothRangeGateway.startBackgroundScanning()
-//    }
-//
-//    /* Is called right after startInBackgroundMode */
-//    fun setBackgroundMode(isBackgroundModeEnabled: Boolean) {
-//
-//        bluetoothRangeGateway.setBackgroundMode(isBackgroundModeEnabled)
-//        gatewayOn = isBackgroundModeEnabled
-//    }
-//
-//    fun getBackgroundBetweenScanInterval(): Long? =
-//        bluetoothRangeGateway.getBackgroundBetweenScanInterval()
-//
-//    fun isBluetoothEnabled(): Boolean {
-//        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-//        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
-//    }
-//
-//    fun checkAndEnableBluetooth(activity: Activity): Boolean {
-//        if (isBluetoothEnabled()) {
-//            return true
-//        }
-//
-//        enableBluetooth(activity)
-//        return false
-//    }
-//
-//    fun checkAndEnableBluetoothForStarter(that: Activity): Boolean {
-//        if (isBluetoothEnabled()) {
-//            return true
-//        }
-//        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-//        that.startActivityForResult(enableBtIntent, 87)
-//        return false
-//    }
-//
-//    private fun enableBluetooth(activity: Activity) {
-//        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-//        activity.startActivity(enableBtIntent)
-//    }
-//
-//    private fun disposeStuff() {
-//        bluetoothRangeGateway.reset()
-//    }
-//
-//    private fun runForegroundIfEnabled(): Boolean {
-//        if (prefs?.backgroundScanMode == BackgroundScanModes.FOREGROUND) {
-//            val su = ServiceUtils(application.applicationContext)
-//            disposeStuff()
-//            su.startForegroundService()
-//            return true
-//        }
-//        return false
-//    }
-//
-//    private fun updateLocation() {
-//        if (ContextCompat.checkSelfPermission(application, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-//            && ContextCompat.checkSelfPermission(application, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
-//        }
-//    }
-//
-//    private fun bindRangeGateway() {
-//
-//        bluetoothRangeGateway.listenForTags(
-//            object : BluetoothTagGateway.OnTagsFoundListener  {
-//
-//                override fun onFoundTags(tags: List<RuuviTag>) {
-//
-//                    if (gatewayOn) updateLocation()
-//
-//                    // save all tags
-//                    for (tag in tags) {
-//                        saveReading(tag)
-//                    }
-//
-//                    val tagsToSend = tags.filter { it.favorite }
-//                    // send favorite tags
-//                    if (tagsToSend.isNotEmpty() && gatewayOn) Http.post(tagsToSend, tagLocation, application)
-//
-//                    TagSensorReading.removeOlderThan(24)
-//                }
-//            }
-//        )
-//    }
-//
-//    private fun saveReading(ruuviTag: RuuviTag) {
-//
-//        var ruuviTag = ruuviTag
-//
-//        val dbTag = RuuviTag.get(ruuviTag.id)
-//
-//        if (dbTag != null) {
-//            ruuviTag = dbTag.preserveData(ruuviTag)
-//            ruuviTag.update()
-//            if (!dbTag.favorite) return
-//        } else {
-//            ruuviTag.updateAt = Date()
-//            ruuviTag.save()
-//            return
-//        }
-//
-//        val calendar = Calendar.getInstance()
-//        calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL)
-//        val loggingThreshold = calendar.time.time
-//        for ((key, value) in lastLogged.entries) {
-//            if (key == ruuviTag.id && value > loggingThreshold) {
-//                return
-//            }
-//        }
-//        lastLogged[ruuviTag.id] = Date().time
-//        val reading = TagSensorReading(ruuviTag)
-//        reading.save()
-//        AlarmChecker.check(ruuviTag, application)
-//    }
 
     companion object {
         var foreground = false
+
+        fun setAltBeaconParsers(beaconManager: BeaconManager) {
+            beaconManager.beaconParsers.clear()
+            beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT))
+            val v3Parser = BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT)
+            v3Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
+            beaconManager.beaconParsers.add(v3Parser)
+            val v5Parser = BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT)
+            v5Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
+            beaconManager.beaconParsers.add(v5Parser)
+        }
     }
 }

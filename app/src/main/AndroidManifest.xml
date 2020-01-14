@@ -43,7 +43,7 @@
         <service android:name=".service.ScannerJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <receiver android:name=".scanning.BackgroundScanner" />
+<!--        <receiver android:name=".scanning.BackgroundScanner" />-->
 
         <activity
             android:name=".feature.TagDetails"

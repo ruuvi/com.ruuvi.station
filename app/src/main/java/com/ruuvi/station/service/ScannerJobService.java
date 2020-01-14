@@ -21,6 +21,7 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.LeScanResult;
 import com.ruuvi.station.model.RuuviTag;
@@ -29,8 +30,6 @@ import com.ruuvi.station.util.Utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.ruuvi.station.service.ScannerService.logTag;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScannerJobService extends JobService {
@@ -161,7 +160,8 @@ public class ScannerJobService extends JobService {
         int index = checkForSameTag(tags, tag);
         if (index == -1) {
             tags.add(tag);
-            logTag(tag, context, true);
+            ((RuuviScannerApplication) getApplication()).getBluetoothScannerInteractor()
+                    .logTag(tag, context, true);
         }
     }
 
