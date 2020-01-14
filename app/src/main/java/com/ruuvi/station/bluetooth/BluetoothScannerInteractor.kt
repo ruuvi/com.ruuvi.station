@@ -14,7 +14,6 @@ import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.LeScanResult
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
-import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.Preferences
@@ -36,6 +35,9 @@ class BluetoothScannerInteractor(private val application: Application) {
 
     //    private val bluetoothAdapter: BluetoothAdapter? = null
     private val scanFilters: List<ScanFilter> = ArrayList()
+
+    private val lastLogged: MutableMap<String, Long> = HashMap()
+    private val LOG_INTERVAL = 5 // seconds
 
     private var scanning = false
     private val scanSettings = ScanSettings.Builder()
@@ -83,11 +85,10 @@ class BluetoothScannerInteractor(private val application: Application) {
             }
             return
         }
-        if (ScannerService.lastLogged == null) ScannerService.lastLogged = HashMap()
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -ScannerService.LOG_INTERVAL)
+        calendar.add(Calendar.SECOND, -LOG_INTERVAL)
         val loggingThreshold = calendar.time.time
-        for ((key, value) in ScannerService.lastLogged) {
+        for ((key, value) in lastLogged) {
             if (key == ruuviTag.id && value > loggingThreshold) {
                 return
             }
@@ -95,7 +96,7 @@ class BluetoothScannerInteractor(private val application: Application) {
         val tags: MutableList<RuuviTag> = ArrayList()
         tags.add(ruuviTag)
         Http.post(tags, null, context)
-        ScannerService.lastLogged[ruuviTag.id] = Date().time
+        lastLogged[ruuviTag.id] = Date().time
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)

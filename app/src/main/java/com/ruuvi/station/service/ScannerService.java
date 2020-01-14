@@ -227,10 +227,6 @@ public class ScannerService extends Service {
         }
     };
 
-    public static Map<String, Long> lastLogged = null;
-    public static int LOG_INTERVAL = 5; // seconds
-
-
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopForeground(true);
