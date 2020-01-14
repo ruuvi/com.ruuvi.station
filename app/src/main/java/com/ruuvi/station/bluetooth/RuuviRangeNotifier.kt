@@ -32,9 +32,13 @@ internal class RuuviRangeNotifier(
     private val from: String
 ) : RangeNotifier {
 
+    private var tagListener: OnTagsFoundListener? = null
+
     private lateinit var medic: BluetoothMedic
     private lateinit var region: Region
     private lateinit var beaconManager: BeaconManager
+    private val lastLogged: MutableMap<String, Long> = HashMap()
+
     private val beaconConsumer = object : BeaconConsumer {
 
         override fun getApplicationContext(): Context = context
@@ -51,20 +55,8 @@ internal class RuuviRangeNotifier(
             Log.d(TAG, "onBeaconServiceConnect")
 
             startRanging()
-//
-//        RuuviRangeNotifier.gatewayOn = true
-//
-//        if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
-//            beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
-//        }
-//        try {
-//            beaconManager!!.startRangingBeaconsInRegion(region!!)
-//        } catch (e: RemoteException) {
-//            Log.e(TAG, "Could not start ranging")
-//        }
         }
     }
-    private var lastLogged: MutableMap<String, Long>? = null
     private val mFusedLocationClient: FusedLocationProviderClient
     private var last: Long = 0
 
@@ -79,7 +71,8 @@ internal class RuuviRangeNotifier(
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
-    fun startScan() {
+    fun startScan(tagListener: OnTagsFoundListener) {
+        this.tagListener = tagListener
         beaconManager = BeaconManager.getInstanceForApplication(context)
         BluetoothInteractor.setAltBeaconParsers(beaconManager)
         beaconManager.backgroundScanPeriod = 5000
@@ -131,7 +124,41 @@ internal class RuuviRangeNotifier(
         }
         if (tags.size > 0 && gatewayOn) Http.post(tags, tagLocation, context)
         TagSensorReading.removeOlderThan(24)
+
+//        tagListener?.onFoundTags(allTags =)
     }
+
+//    override fun didRangeBeaconsInRegion(beacons: Collection<Beacon>, region: Region) {
+//        val now = System.currentTimeMillis()
+//        if (now <= last + 500) {
+//            Log.d(TAG, "Double range bug")
+//            return
+//        }
+//        last = now
+//        if (gatewayOn) updateLocation()
+//        val favoriteTags: MutableList<RuuviTag> = ArrayList()
+//        val allTags: MutableList<RuuviTag> = ArrayList()
+//        Log.d(TAG, from + " " + " found " + beacons.size)
+//        foundBeacon@ for (beacon in beacons) { // the same tag can appear multiple times
+//            for (tag in favoriteTags) {
+//                if (tag.id == beacon.bluetoothAddress) continue@foundBeacon
+//            }
+//            val tag = LeScanResult.fromAltbeacon(context, beacon)
+//            if (tag != null) { //                saveReading(tag);
+//                allTags.add(tag)
+//                if (tag.favorite) favoriteTags.add(tag)
+//            }
+//        }
+//        tagListener?.onFoundTags(allTags)
+//        //
+////        for (RuuviTag tag : favoriteTags) {
+////            saveReading(tag);
+////        }
+////
+////        if (favoriteTags.size() > 0 && gatewayOn) Http.post(favoriteTags, tagLocation, context);
+////
+////        TagSensorReading.removeOlderThan(24);
+//    }
 
     private fun saveReading(ruuviTag: RuuviTag) {
         var ruuviTag = ruuviTag
@@ -145,7 +172,6 @@ internal class RuuviRangeNotifier(
             ruuviTag.save()
             return
         }
-        if (lastLogged == null) lastLogged = HashMap()
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL)
         val loggingThreshold = calendar.time.time
@@ -154,7 +180,7 @@ internal class RuuviRangeNotifier(
                 return
             }
         }
-        lastLogged!![ruuviTag.id] = Date().time
+        lastLogged[ruuviTag.id] = Date().time
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)
@@ -168,10 +194,7 @@ internal class RuuviRangeNotifier(
         } catch (e: Exception) {
             Log.d(TAG, "Could not stop ranging region")
         }
-//        medic = null
         beaconManager.unbind(beaconConsumer)
-
-//        beaconManager = null
     }
 
     fun enableBackgroundMode(isBackgroundModeEnabled: Boolean) {

@@ -1,17 +1,18 @@
-package com.ruuvi.station.bluetooth
+package com.ruuvi.station.bluetooth.domain
 
 import android.app.Application
+import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
+import com.ruuvi.station.bluetooth.RuuviRangeNotifier
 import com.ruuvi.station.util.Preferences
 
-class BluetoothForegroundServiceGateway(private val application: Application) {
+class BluetoothForegroundScanningInteractor(private val application: Application) {
 
     private val ruuviRangeNotifier by lazy { RuuviRangeNotifier(application, "AltBeaconFGScannerService") }
 
     fun startScanning() {
         stopScanning()
 
-        ruuviRangeNotifier
-        ruuviRangeNotifier.startScan()
+        ruuviRangeNotifier.startScan(DefaultOnTagFoundListener(application))
     }
 
     fun enableForegroundMode() {
