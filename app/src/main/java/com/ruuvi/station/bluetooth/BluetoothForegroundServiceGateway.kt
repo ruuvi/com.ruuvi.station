@@ -84,7 +84,8 @@ class BluetoothForegroundServiceGateway(private val application: Application) : 
     override fun onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect")
 
-        ruuviRangeNotifier?.gatewayOn = true
+        RuuviRangeNotifier.gatewayOn = true
+
         if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
             beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
         }

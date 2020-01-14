@@ -14,7 +14,7 @@ class RuuviScannerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        bluetoothInteractor.onCreate()
+        bluetoothInteractor.onAppCreated()
     }
 
     fun startForegroundScanning() {

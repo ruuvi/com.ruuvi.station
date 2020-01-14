@@ -1,9 +1,6 @@
 package com.ruuvi.station.bluetooth
 
 import android.app.Application
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -21,6 +18,13 @@ class BluetoothScannerInteractor(private val application: Application) {
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
 
+    private val backgroundTags = ArrayList<RuuviTag>()
+
+    private val lastLogged: MutableMap<String, Long> = HashMap()
+    private val LOG_INTERVAL = 5 // seconds
+
+    private var scanning = false
+
     private var foreground: Boolean = true.also {
         val listener: Foreground.Listener = object : Foreground.Listener {
             override fun onBecameForeground() {
@@ -35,13 +39,6 @@ class BluetoothScannerInteractor(private val application: Application) {
         Foreground.init(application)
         Foreground.get().addListener(listener)
     }
-
-    private val backgroundTags = ArrayList<RuuviTag>()
-
-    private val lastLogged: MutableMap<String, Long> = HashMap()
-    private val LOG_INTERVAL = 5 // seconds
-
-    private var scanning = false
 
     private val ruuviTagScanner by lazy {
         RuuviTagScanner(
@@ -107,23 +104,6 @@ class BluetoothScannerInteractor(private val application: Application) {
         if (!ruuviTagScanner.canScan()) return
         scanning = false
         ruuviTagScanner.stop()
-    }
-
-    private val nsCallback: ScanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult) {
-            super.onScanResult(callbackType, result)
-            foundDevice(result.device, result.rssi, result.scanRecord.bytes)
-        }
-    }
-
-    private fun foundDevice(device: BluetoothDevice, rssi: Int, data: ByteArray) {
-        val dev = LeScanResult()
-        dev.device = device
-        dev.rssi = rssi
-        dev.scanData = data
-        //Log.d(TAG, "found: " + device.getAddress());
-        val tag = dev.parse(application)
-        if (tag != null) logTag(tag, application, foreground)
     }
 
     private fun checkForSameTag(arr: List<RuuviTag>, ruuvi: RuuviTag): Int {

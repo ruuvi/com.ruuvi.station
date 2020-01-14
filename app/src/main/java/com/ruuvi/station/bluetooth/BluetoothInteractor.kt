@@ -4,12 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.location.Location
 import android.os.Handler
 import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
-import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Constants
@@ -22,8 +19,6 @@ import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
-import java.util.ArrayList
-import java.util.HashMap
 
 class BluetoothInteractor(private val application: Application) : BeaconConsumer {
 
@@ -48,7 +43,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         }
     }
 
-    fun disposeStuff() {
+    private fun disposeStuff() {
         Log.d(TAG, "Stopping scanning")
         medic = null
         if (beaconManager == null) return
@@ -81,7 +76,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         Log.d(TAG, "Starting foreground scanning")
         bindBeaconManager(this, application)
         beaconManager!!.backgroundMode = false
-        if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = false
+        if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = false
     }
 
     fun startBackgroundScanning() {
@@ -104,11 +99,11 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
             }
         }
         beaconManager!!.backgroundMode = true
-        if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = true
+        if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = true
         if (medic == null) medic = setupMedic(application)
     }
 
-    fun setupMedic(context: Context?): BluetoothMedic? {
+    private fun setupMedic(context: Context?): BluetoothMedic? {
         val medic = BluetoothMedic.getInstance()
         medic.enablePowerCycleOnFailures(context)
         medic.enablePeriodicTests(context, BluetoothMedic.SCAN_TEST)
@@ -134,7 +129,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         }
     }
 
-    fun onCreate() {
+    fun onAppCreated() {
         Log.d(TAG, "App class onCreate")
         FlowManager.init(application)
         ruuviRangeNotifier = RuuviRangeNotifier(application, "RuuviScannerApplication")
@@ -156,7 +151,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         override fun onBecameForeground() {
             Log.d(TAG, "onBecameForeground")
             startForegroundScanning()
-            if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = false
+            if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = false
         }
 
         override fun onBecameBackground() {
@@ -176,7 +171,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
                 disposeStuff()
                 su.startForegroundService()
             }
-            if (ruuviRangeNotifier != null) ruuviRangeNotifier!!.gatewayOn = true
+            if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = true
         }
     }
 
@@ -195,7 +190,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
     override fun onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect")
         //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
-        ruuviRangeNotifier!!.gatewayOn = !foreground
+        RuuviRangeNotifier.gatewayOn = !foreground
         if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
             beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
         }
