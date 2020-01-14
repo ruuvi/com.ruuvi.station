@@ -7,8 +7,6 @@ import android.content.ServiceConnection
 import android.location.Location
 import android.os.Handler
 import android.util.Log
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.gateway.BluetoothTagGateway
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
@@ -79,9 +77,9 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
 
     private fun runForegroundIfEnabled(): Boolean {
         if (prefs.backgroundScanMode === BackgroundScanModes.FOREGROUND) {
-            val su = ServiceUtils(application)
+            val serviceUtils = ServiceUtils(application)
             disposeStuff()
-            su.startForegroundService()
+            serviceUtils.startForegroundService()
             return true
         }
         return false
