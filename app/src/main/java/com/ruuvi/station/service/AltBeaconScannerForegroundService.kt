@@ -46,7 +46,7 @@ class AltBeaconScannerForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        bluetoothForegroundServiceGateway.onCreate()
+        bluetoothForegroundServiceGateway.startScanning()
         Log.d(TAG, "Starting foreground service")
         Foreground.init(application)
         Foreground.get().addListener(listener)
@@ -109,7 +109,7 @@ class AltBeaconScannerForegroundService : Service() {
     private fun startFG() {
         setupNotification()
 
-        bluetoothForegroundServiceGateway.startFGGateway()
+        bluetoothForegroundServiceGateway.enableForegroundMode()
 
         startForeground(1337, notification!!.build())
     }
@@ -125,7 +125,7 @@ class AltBeaconScannerForegroundService : Service() {
     }
 
     private fun setBackground() {
-        bluetoothForegroundServiceGateway.setBackgroundGateway()
+        bluetoothForegroundServiceGateway.enableBackgroundMode()
         if (bluetoothForegroundServiceGateway.shouldUpdateScanInterval()) {
             updateNotification()
         }
@@ -133,7 +133,7 @@ class AltBeaconScannerForegroundService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        bluetoothForegroundServiceGateway.onDestroy()
+        bluetoothForegroundServiceGateway.stopScanning()
         stopForeground(true)
         if (listener != null) Foreground.get().removeListener(listener)
         (application as RuuviScannerApplication).startBackgroundScanning()
