@@ -13,14 +13,11 @@ import com.ruuvi.station.decoder.DecodeFormat2and4;
 import com.ruuvi.station.decoder.DecodeFormat3;
 import com.ruuvi.station.decoder.DecodeFormat5;
 import com.ruuvi.station.decoder.RuuviTagDecoder;
-import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.Utils;
-import com.ruuvi.station.util.base64;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,6 +25,7 @@ import java.util.List;
  */
 
 public class LeScanResult {
+
     private static final String TAG = "LeScanResult";
     public BluetoothDevice device;
     public int rssi;

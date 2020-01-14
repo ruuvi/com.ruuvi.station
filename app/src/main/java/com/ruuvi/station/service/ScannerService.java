@@ -36,7 +36,6 @@ import com.ruuvi.station.util.Foreground;
 import com.ruuvi.station.util.Preferences;
 
 import java.util.List;
-import java.util.Map;
 
 
 public class ScannerService extends Service {

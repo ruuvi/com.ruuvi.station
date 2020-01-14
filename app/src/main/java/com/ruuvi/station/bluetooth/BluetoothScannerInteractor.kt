@@ -2,11 +2,8 @@ package com.ruuvi.station.bluetooth
 
 import android.app.Application
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -14,10 +11,11 @@ import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.LeScanResult
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
+import com.ruuvi.station.scanning.RuuviTagListener
+import com.ruuvi.station.scanning.RuuviTagScanner
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.Preferences
-import com.ruuvi.station.util.Utils
 import java.util.ArrayList
 import java.util.Calendar
 import java.util.Date
@@ -34,21 +32,28 @@ class BluetoothScannerInteractor(private val application: Application) {
     private val backgroundTags = ArrayList<RuuviTag>()
 
     //    private val bluetoothAdapter: BluetoothAdapter? = null
-    private val scanFilters: List<ScanFilter> = ArrayList()
+//    private val scanFilters: List<ScanFilter> = ArrayList()
 
     private val lastLogged: MutableMap<String, Long> = HashMap()
     private val LOG_INTERVAL = 5 // seconds
 
     private var scanning = false
-    private val scanSettings = ScanSettings.Builder()
-        .setReportDelay(0)
-        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-        .build()
+//    private val scanSettings = ScanSettings.Builder()
+//        .setReportDelay(0)
+//        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+//        .build()
+//
+//    val scanner by lazy {
+//        val bluetoothManager = application.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+//        val bluetoothAdapter = bluetoothManager.getAdapter()
+//        bluetoothAdapter.bluetoothLeScanner
+//    }
 
-    val scanner by lazy {
-        val bluetoothManager = application.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.getAdapter()
-        bluetoothAdapter.bluetoothLeScanner
+    private val ruuviTagScanner by lazy {
+        RuuviTagScanner(
+            RuuviTagListener { logTag(it, application, foreground) },
+            application
+        )
     }
 
     init {
@@ -109,10 +114,11 @@ class BluetoothScannerInteractor(private val application: Application) {
     }
 
     fun startScan() {
-        if (scanning || !canScan()) return
+        if (scanning || !ruuviTagScanner.canScan()) return
         scanning = true
         try {
-            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback)
+            ruuviTagScanner.start()
+//            scanner.startScan(Utils.getScanFilters(), scanSettings, nsCallback)
         } catch (e: Exception) {
             Log.e(TAG, e.message)
             scanning = false
@@ -121,9 +127,10 @@ class BluetoothScannerInteractor(private val application: Application) {
     }
 
     fun stopScan() {
-        if (!canScan()) return
+        if (!ruuviTagScanner.canScan()) return
         scanning = false
-        scanner.stopScan(nsCallback)
+        ruuviTagScanner.stop()
+//        scanner.stopScan(nsCallback)
     }
 
     private val nsCallback: ScanCallback = object : ScanCallback() {
@@ -143,9 +150,9 @@ class BluetoothScannerInteractor(private val application: Application) {
         if (tag != null) logTag(tag, application, foreground)
     }
 
-    private fun canScan(): Boolean {
-        return scanner != null
-    }
+//    private fun canScan(): Boolean {
+//        return scanner != null
+//    }
 
     private fun checkForSameTag(arr: List<RuuviTag>, ruuvi: RuuviTag): Int {
         for (i in arr.indices) {
@@ -156,11 +163,4 @@ class BluetoothScannerInteractor(private val application: Application) {
         return -1
     }
 
-//    fun Exists(id: String?): Boolean {
-//        val count = SQLite.selectCountOf()
-//            .from(RuuviTag::class.java)
-//            .where(RuuviTag_Table.id.eq(id))
-//            .count()
-//        return count > 0
-//    }
 }

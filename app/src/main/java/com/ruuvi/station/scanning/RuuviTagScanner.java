@@ -70,7 +70,7 @@ public class RuuviTagScanner {
         if (tag != null) listener.tagFound(tag);
     }
 
-    private boolean canScan() {
+    public boolean canScan() {
         return scanner != null;
     }
 }
