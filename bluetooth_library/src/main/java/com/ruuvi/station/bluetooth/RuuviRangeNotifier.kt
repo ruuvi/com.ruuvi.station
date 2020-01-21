@@ -1,16 +1,10 @@
 package com.ruuvi.station.bluetooth
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.RemoteException
-import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
 import org.altbeacon.beacon.Beacon
@@ -31,10 +25,8 @@ class RuuviRangeNotifier(
 
     private var tagListener: OnTagsFoundListener? = null
 
-    private val medic: BluetoothMedic = setupMedic(context)
     private val region = Region("com.ruuvi.station.leRegion", null, null, null)
     private val beaconManager = BeaconManager.getInstanceForApplication(context)
-    private val lastLogged: MutableMap<String, Long> = HashMap()
 
     private val beaconConsumer = object : BeaconConsumer {
 
@@ -54,18 +46,10 @@ class RuuviRangeNotifier(
             startRanging()
         }
     }
-    private val mFusedLocationClient: FusedLocationProviderClient
     private var last: Long = 0
-
-    private fun updateLocation() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
-        }
-    }
 
     init {
         Log.d(TAG, "Setting up range notifier from $from")
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
     fun startScan(tagListener: OnTagsFoundListener) {
@@ -114,8 +98,6 @@ class RuuviRangeNotifier(
         }
         last = now
 
-        updateLocation()
-
         val tags: MutableList<IRuuviTag> = ArrayList()
         val allTags: MutableList<IRuuviTag> = ArrayList()
         Log.d(TAG, from + " " + " found " + beacons.size)
@@ -126,12 +108,9 @@ class RuuviRangeNotifier(
             val tag = LeScanResult.fromAltbeacon(context, ruuviTagFactory, beacon)
             if (tag != null) {
                 allTags.add(tag)
-//                saveReading(tag)
                 if (tag.favorite) tags.add(tag)
             }
         }
-//        if (tags.size > 0 && gatewayOn) Http.post(tags, tagLocation, context)
-//        TagSensorReading.removeOlderThan(24)
 
         tagListener?.onFoundTags(allTags = allTags)
     }
@@ -172,16 +151,10 @@ class RuuviRangeNotifier(
 
     companion object {
         private const val TAG = "RuuviRangeNotifier"
-        // FIXME: remove tagLocation from static
-        var tagLocation: Location? = null
-        // FIXME: remove gateway on from static
 
         const val RuuviV2and4_LAYOUT = "s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-21v"
-        //const val RuuviV3_LAYOUT = "x,m:0-1=9904,m:2-2=03,i:3-15,d:3-3,d:4-4,d:5-5,d:6-7,d:8-9,d:10-11,d:12-13,d:14-15";
-        //const val RuuviV5_LAYOUT = "x,m:0-1=9904,m:2-2=05,i:20-25,d:3-4,d:5-6,d:7-8,d:9-10,d:11-12,d:13-14,d:15-16,d:17-17,d:18-19,d:20-25";
         const val RuuviV3_LAYOUT = "x,m:0-2=990403,i:2-15,d:2-2,d:3-3,d:4-4,d:5-5,d:6-6,d:7-7,d:8-8,d:9-9,d:10-10,d:11-11,d:12-12,d:13-13,d:14-14,d:15-15"
         const val RuuviV5_LAYOUT = "x,m:0-2=990405,i:20-25,d:2-2,d:3-3,d:4-4,d:5-5,d:6-6,d:7-7,d:8-8,d:9-9,d:10-10,d:11-11,d:12-12,d:13-13,d:14-14,d:15-15,d:16-16,d:17-17,d:18-18,d:19-19,d:20-20,d:21-21,d:22-22,d:23-23,d:24-24,d:25-25"
-        const val DATA_LOG_INTERVAL = 5
     }
 
     interface OnTagsFoundListener {

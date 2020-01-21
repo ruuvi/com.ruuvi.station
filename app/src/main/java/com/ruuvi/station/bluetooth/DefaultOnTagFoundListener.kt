@@ -1,6 +1,12 @@
 package com.ruuvi.station.bluetooth
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.support.v4.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
@@ -13,9 +19,15 @@ import java.util.HashMap
 
 class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTagsFoundListener {
 
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
+
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
     override fun onFoundTags(allTags: List<IRuuviTag>) {
+
+        updateLocation()
+
         val favoriteTags = ArrayList<IRuuviTag>()
 
         allTags.forEach {
@@ -29,7 +41,7 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
             }
         }
 
-        if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, RuuviRangeNotifier.tagLocation, context)
+        if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, tagLocation, context)
 
         TagSensorReading.removeOlderThan(24)
     }
@@ -62,7 +74,15 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
         AlarmChecker.check(ruuviTag, context)
     }
 
+    private fun updateLocation() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
+        }
+    }
+
     companion object {
         var gatewayOn = false
+
+        var tagLocation: Location? = null
     }
 }
