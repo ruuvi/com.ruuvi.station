@@ -1,5 +1,6 @@
 package com.ruuvi.station.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -47,6 +48,7 @@ public class RuuviTagScanner {
 
     }
 
+    @SuppressLint("MissingPermission")
     public void start() {
         if (scanning || !canScan()) return;
         scanning = true;
@@ -67,6 +69,7 @@ public class RuuviTagScanner {
     }
 
 
+    @SuppressLint("MissingPermission")
     public void stop() {
         if (!canScan()) return;
         scanning = false;

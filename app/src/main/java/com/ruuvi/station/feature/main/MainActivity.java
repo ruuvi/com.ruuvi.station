@@ -41,7 +41,6 @@ import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
-import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             handler.postDelayed(updater, TAG_UI_UPDATE_FREQ);
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
