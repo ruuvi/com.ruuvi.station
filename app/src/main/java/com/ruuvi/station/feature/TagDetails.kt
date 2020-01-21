@@ -42,9 +42,8 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.domain.IRuuviTag
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.GraphView

@@ -13,7 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 
 import java.io.File;
 import java.math.BigDecimal;

@@ -1,7 +1,7 @@
 package com.ruuvi.station.bluetooth
 
 import android.content.Context
-import com.ruuvi.station.bluetooth.domain.IRuuviTag
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.TagSensorReading
@@ -29,7 +29,7 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
             }
         }
 
-        if (favoriteTags.size > 0 && RuuviRangeNotifier.gatewayOn) Http.post(favoriteTags, RuuviRangeNotifier.tagLocation, context)
+        if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, RuuviRangeNotifier.tagLocation, context)
 
         TagSensorReading.removeOlderThan(24)
     }
@@ -60,5 +60,9 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)
+    }
+
+    companion object {
+        var gatewayOn = false
     }
 }

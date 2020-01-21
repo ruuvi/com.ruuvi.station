@@ -5,9 +5,10 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.ruuvi.station.bluetooth.HumidityCalibration
-import com.ruuvi.station.bluetooth.RuuviTagFactory
-import com.ruuvi.station.bluetooth.RuuviTagListener
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagListener
 import com.ruuvi.station.bluetooth.RuuviTagScanner
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.TagSensorReading

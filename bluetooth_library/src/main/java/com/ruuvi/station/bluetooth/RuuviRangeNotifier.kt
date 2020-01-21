@@ -11,7 +11,8 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.ruuvi.station.bluetooth.domain.IRuuviTag
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
@@ -88,8 +89,6 @@ class RuuviRangeNotifier(
 
     private fun startRanging() {
 
-        gatewayOn = true
-
         if (!beaconManager.rangingNotifiers.contains(this)) {
             beaconManager.addRangeNotifier(this)
         }
@@ -114,7 +113,9 @@ class RuuviRangeNotifier(
             return
         }
         last = now
-        if (gatewayOn) updateLocation()
+
+        updateLocation()
+
         val tags: MutableList<IRuuviTag> = ArrayList()
         val allTags: MutableList<IRuuviTag> = ArrayList()
         Log.d(TAG, from + " " + " found " + beacons.size)
@@ -174,7 +175,6 @@ class RuuviRangeNotifier(
         // FIXME: remove tagLocation from static
         var tagLocation: Location? = null
         // FIXME: remove gateway on from static
-        var gatewayOn = false
 
         const val RuuviV2and4_LAYOUT = "s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-21v"
         //const val RuuviV3_LAYOUT = "x,m:0-1=9904,m:2-2=03,i:3-15,d:3-3,d:4-4,d:5-5,d:6-7,d:8-9,d:10-11,d:12-13,d:14-15";

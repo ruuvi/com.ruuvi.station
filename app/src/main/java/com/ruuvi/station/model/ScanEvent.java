@@ -2,12 +2,9 @@ package com.ruuvi.station.model;
 
 import android.content.Context;
 
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
 
 /**
  * Created by ISOHAJA on 14.7.2017.

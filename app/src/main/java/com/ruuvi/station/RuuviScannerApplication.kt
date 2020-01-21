@@ -3,9 +3,9 @@ package com.ruuvi.station
 import android.app.Application
 import com.ruuvi.station.bluetooth.domain.BluetoothInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor
-import com.ruuvi.station.bluetooth.RuuviTagFactory
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
 import com.ruuvi.station.bluetooth.domain.BluetoothForegroundScanningInteractor
-import com.ruuvi.station.bluetooth.domain.IRuuviTag
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.model.RuuviTag
 
 class RuuviScannerApplication : Application() {

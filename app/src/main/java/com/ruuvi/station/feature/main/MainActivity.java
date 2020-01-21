@@ -34,8 +34,8 @@ import android.widget.Toast;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
-import com.ruuvi.station.bluetooth.RuuviTagListener;
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagListener;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;

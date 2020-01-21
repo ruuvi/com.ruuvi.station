@@ -1,6 +1,8 @@
 package com.ruuvi.station.bluetooth;
 
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagDecoder;
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

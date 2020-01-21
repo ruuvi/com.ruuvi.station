@@ -2,7 +2,7 @@ package com.ruuvi.station.bluetooth;
 
 import android.support.annotation.Nullable;
 
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 
 import java.util.Date;
 import java.util.HashMap;

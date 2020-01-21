@@ -26,7 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor;
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.TagSensorReading;

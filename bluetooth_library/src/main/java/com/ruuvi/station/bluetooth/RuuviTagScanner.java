@@ -13,7 +13,9 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory;
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,13 +85,13 @@ public class RuuviTagScanner {
     };
 
     private void foundDevice(BluetoothDevice device, int rssi, byte[] data) {
-        LeScanResult dev = new LeScanResult();
-        dev.device = device;
-        dev.rssi = rssi;
-        dev.scanData = data;
+        LeScanResult result = new LeScanResult();
+        result.device = device;
+        result.rssi = rssi;
+        result.scanData = data;
 
         Log.d(TAG, "found: " + device.getAddress());
-        IRuuviTag tag = dev.parse(context, ruuviTagFactory);
+        IRuuviTag tag = result.parse(context, ruuviTagFactory);
         if (tag != null) listener.tagFound(tag);
     }
 

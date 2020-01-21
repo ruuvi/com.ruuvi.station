@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth.domain
+package com.ruuvi.station.bluetooth.interfaces
 
 import java.util.Date
 

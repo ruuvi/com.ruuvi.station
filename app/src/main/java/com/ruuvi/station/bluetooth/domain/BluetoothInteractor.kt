@@ -9,7 +9,7 @@ import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.RuuviRangeNotifier
-import com.ruuvi.station.bluetooth.RuuviTagFactory
+import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Constants
@@ -42,6 +42,7 @@ class BluetoothInteractor(
     fun onAppCreated() {
         Log.d(TAG, "App class onCreate")
         FlowManager.init(application)
+        DefaultOnTagFoundListener.gatewayOn = true
         ruuviRangeNotifier = RuuviRangeNotifier(application, ruuviTagFactory, "RuuviScannerApplication")
         Foreground.init(application)
         Foreground.get().addListener(listener)
@@ -65,7 +66,7 @@ class BluetoothInteractor(
         Log.d(TAG, "Starting foreground scanning")
         bindBeaconManager(this, application)
         beaconManager!!.backgroundMode = false
-        if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = false
+        if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = false
     }
 
     fun startBackgroundScanning() {
@@ -88,7 +89,7 @@ class BluetoothInteractor(
             }
         }
         beaconManager?.backgroundMode = true
-        if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = true
+        if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = true
         if (medic == null) medic = setupMedic(application)
     }
 
@@ -157,7 +158,7 @@ class BluetoothInteractor(
         override fun onBecameForeground() {
             Log.d(TAG, "onBecameForeground")
             startForegroundScanning()
-            if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = false
+            if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = false
         }
 
         override fun onBecameBackground() {
@@ -177,7 +178,7 @@ class BluetoothInteractor(
                 disposeStuff()
                 su.startForegroundService()
             }
-            if (ruuviRangeNotifier != null) RuuviRangeNotifier.gatewayOn = true
+            if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = true
         }
     }
 
@@ -196,7 +197,7 @@ class BluetoothInteractor(
     override fun onBeaconServiceConnect() {
         Log.d(TAG, "onBeaconServiceConnect")
         //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
-        RuuviRangeNotifier.gatewayOn = !foreground
+        DefaultOnTagFoundListener.gatewayOn = !foreground
         if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) != true) {
             ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
             beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
