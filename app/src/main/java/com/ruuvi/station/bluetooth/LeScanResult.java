@@ -89,11 +89,11 @@ class LeScanResult {
         if (decoder != null) {
             RuuviTag tag = decoder.decode(rawData, 7);
             if (tag != null) {
-                tag.id = id;
-                tag.url = url;
-                tag.rssi = rssi;
-                tag.rawData = rawData;
-                tag.rawDataBlob = new Blob(rawData);
+                tag.setId(id);
+                tag.setUrl(url);
+                tag.setRssi(rssi);
+                tag.setRawData(rawData);
+                tag.setRawDataBlob(new Blob(rawData));
                 tag = HumidityCalibration.apply(tag);
             }
             return tag;
@@ -134,11 +134,11 @@ class LeScanResult {
             if (decoder != null) {
                 try {
                     RuuviTag tag = decoder.decode(pData, 0);
-                    tag.id = beacon.getBluetoothAddress();
-                    tag.rssi = beacon.getRssi();
-                    tag.url = url;
-                    tag.rawData = pData;
-                    tag.rawDataBlob = new Blob(pData);
+                    tag.setId(beacon.getBluetoothAddress());
+                    tag.setRssi(beacon.getRssi());
+                    tag.setUrl(url);
+                    tag.setRawData(pData);
+                    tag.setRawDataBlob(new Blob(pData));
                     tag = HumidityCalibration.apply(tag);
                     //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                     return tag;

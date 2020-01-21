@@ -60,7 +60,7 @@ public class Utils {
     public static void sortTagsByRssi(List<RuuviTag> tags) {
         Collections.sort(tags, new Comparator<RuuviTag>() {
             @Override public int compare(RuuviTag o1, RuuviTag o2) {
-                return o2.rssi - o1.rssi;
+                return o2.getRssi() - o1.getRssi();
             }
         });
     }
@@ -97,13 +97,13 @@ public class Utils {
 
     public static Bitmap getBackground(Context context, RuuviTag tag) {
         try {
-            Uri uri = Uri.parse(tag.userBackground);
+            Uri uri = Uri.parse(tag.getUserBackground());
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
         } catch (Exception e) {
             Log.e(TAG, "Could not set user background");
         }
 
-        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.defaultBackground));
+        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
     }
 
 

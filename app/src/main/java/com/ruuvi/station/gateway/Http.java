@@ -36,20 +36,20 @@ public class Http {
         ScanEvent eventBatch = new ScanEvent(context);
         eventBatch.location = scanLocation;
         for (int i = 0; i < tags.size(); i++) {
-            RuuviTag tagFromDb = RuuviTag.get(tags.get(i).id);
+            RuuviTag tagFromDb = RuuviTag.get(tags.get(i).getId());
             // don't send data about tags not in the list
-            if (tagFromDb == null || !tagFromDb.favorite) continue;
+            if (tagFromDb == null || !tagFromDb.isFavorite()) continue;
 
             eventBatch.tags.add(tagFromDb);
 
-            if (tagFromDb.gatewayUrl != null && !tagFromDb.gatewayUrl.isEmpty()) {
+            if (tagFromDb.getGatewayUrl() != null && !tagFromDb.getGatewayUrl().isEmpty()) {
                 // send the single tag to its gateway
                 ScanEventSingle single = new ScanEventSingle(context);
                 single.location = scanLocation;
                 single.tag = tagFromDb;
 
                 Ion.with(context)
-                        .load(tagFromDb.gatewayUrl)
+                        .load(tagFromDb.getGatewayUrl())
                         .setJsonPojoBody(single)
                         .asJsonObject()
                         .setCallback(new FutureCallback<JsonObject>() {

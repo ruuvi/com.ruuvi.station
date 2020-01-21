@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.content.FileProvider
 import android.widget.Toast
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.TagSensorReading
 import java.io.File
 import java.io.FileWriter
@@ -13,12 +13,12 @@ import java.util.*
 
 class CsvExporter(val context: Context) {
     fun toCsv(tagId: String) {
-        val tag = RuuviTag.get(tagId)
+        val tag = RuuviTagRepository.get(tagId)
         val readings = TagSensorReading.getForTag(tagId)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
         val csvFile = File.createTempFile(
-                tag.id + "_" + Date().time + "_",
+                tag?.id + "_" + Date().time + "_",
                 ".csv",
                 cacheDir
         )
@@ -29,8 +29,8 @@ class CsvExporter(val context: Context) {
             fileWriter = FileWriter(csvFile.absolutePath)
 
             fileWriter.append("timestamp,temperature,humidity,pressure,rssi")
-            if (tag.dataFormat == 3 || tag.dataFormat == 5) fileWriter.append(",acceleration x,acceleration y,acceleration z,voltage")
-            if (tag.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
+            if (tag?.dataFormat == 3 || tag?.dataFormat == 5) fileWriter.append(",acceleration x,acceleration y,acceleration z,voltage")
+            if (tag?.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
             fileWriter.append('\n')
 
 
@@ -44,7 +44,7 @@ class CsvExporter(val context: Context) {
                 fileWriter.append(it.pressure.toString())
                 fileWriter.append(',')
                 fileWriter.append(it.rssi.toString())
-                if (tag.dataFormat == 3 || tag.dataFormat == 5) {
+                if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
                     fileWriter.append(',')
                     fileWriter.append(it.accelX.toString())
                     fileWriter.append(',')
@@ -54,7 +54,7 @@ class CsvExporter(val context: Context) {
                     fileWriter.append(',')
                     fileWriter.append(it.voltage.toString())
                 }
-                if (tag.dataFormat == 5) {
+                if (tag?.dataFormat == 5) {
                     fileWriter.append(',')
                     fileWriter.append(it.movementCounter.toString())
                     fileWriter.append(',')
@@ -79,6 +79,6 @@ class CsvExporter(val context: Context) {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTag "+ tag.id +" csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, "RuuviTag "+ tag?.id +" csv export"))
     }
 }

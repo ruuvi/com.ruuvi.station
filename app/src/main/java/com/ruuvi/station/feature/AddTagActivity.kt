@@ -19,15 +19,17 @@ import android.widget.Toast
 import com.ruuvi.station.R
 import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.adapters.AddTagAdapter
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.service.ScannerService
 import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
-
-import kotlinx.android.synthetic.main.activity_add_tag.*
-import kotlinx.android.synthetic.main.content_add_tag.*
-import java.util.*
+import kotlinx.android.synthetic.main.activity_add_tag.toolbar
+import kotlinx.android.synthetic.main.content_add_tag.no_tags
+import kotlinx.android.synthetic.main.content_add_tag.tag_layout
+import kotlinx.android.synthetic.main.content_add_tag.tag_listView
+import java.util.ArrayList
+import java.util.Calendar
 
 class AddTagActivity : AppCompatActivity() {
     private var adapter: AddTagAdapter? = null
@@ -49,7 +51,7 @@ class AddTagActivity : AppCompatActivity() {
 
         tag_listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
             val tag = tag_listView.getItemAtPosition(i) as RuuviTag
-            if (RuuviTag.get(tag.id).favorite) {
+            if (RuuviTagRepository.get(tag.id)?.favorite == true) {
                 Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                         .show()
                 return@OnItemClickListener
@@ -68,23 +70,29 @@ class AddTagActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 tags?.clear()
-                tags?.addAll(RuuviTag.getAll(false))
+                tags?.addAll(RuuviTagRepository.getAll(false))
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.SECOND, -5)
                 var i = 0
-                while (i < tags!!.size) {
-                    if (tags!!.get(i).updateAt.time < calendar.time.time) {
-                        tags!!.removeAt(i)
-                        i--
-                    }
+                tags?.let { tags ->
+                    while (i < tags.size) {
+                        tags[i].updateAt?.time?.let { time ->
+                            if (time < calendar.time.time) {
+                                tags.removeAt(i)
+                                i--
+                            }
+                        }
                     i++
+                    }
+                    if (tags.size > 0) {
+                        Utils.sortTagsByRssi(tags)
+                        no_tags.visibility = View.INVISIBLE
+                    } else
+                        no_tags.visibility = View.VISIBLE
+                    if (adapter != null) adapter?.notifyDataSetChanged()
+
                 }
-                if (tags!!.size > 0) {
-                    Utils.sortTagsByRssi(tags)
-                    no_tags.visibility = View.INVISIBLE
-                } else
-                    no_tags.visibility = View.VISIBLE
-                if (adapter != null) adapter?.notifyDataSetChanged()
+
                 handler.postDelayed(this, 1000)
             }
         })
@@ -155,7 +163,7 @@ class AddTagActivity : AppCompatActivity() {
     }
 
     private fun getKindaRandomBackground(): Int {
-        val tags = RuuviTag.getAll(true)
+        val tags = RuuviTagRepository.getAll(true)
         var bg = (Math.random() * 9.0).toInt()
         for (i in 0..99) {
             if (!isBackgroundInUse(tags, bg)) {

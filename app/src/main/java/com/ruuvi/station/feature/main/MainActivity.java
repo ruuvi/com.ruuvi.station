@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     @Override
     public void tagFound(RuuviTag tag) {
         for (int i = 0; i < myRuuviTags.size(); i++) {
-            if (myRuuviTags.get(i).id.equals(tag.id)) {
+            if (myRuuviTags.get(i).getId().equals(tag.getId())) {
                 myRuuviTags.set(i, tag);
                 if (fragmentWithCallback != null) {
                     runOnUiThread(new Runnable() {
@@ -415,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
 
         for (int i = 0; i < otherRuuviTags.size(); i++) {
-            if (otherRuuviTags.get(i).id.equals(tag.id)) {
+            if (otherRuuviTags.get(i).getId().equals(tag.getId())) {
                 otherRuuviTags.set(i, tag);
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {

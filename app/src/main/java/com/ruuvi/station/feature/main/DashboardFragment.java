@@ -20,9 +20,6 @@ import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class DashboardFragment extends Fragment implements DataUpdateListener {
@@ -88,7 +85,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final RuuviTag tag = (RuuviTag)view.getTag();
             Intent intent = new Intent(getActivity(), TagDetails.class);
-            intent.putExtra("id", tag.id);
+            intent.putExtra("id", tag.getId());
             startActivity(intent);
         }
     };

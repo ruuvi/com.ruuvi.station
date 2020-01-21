@@ -1,7 +1,5 @@
 package com.ruuvi.station.model;
 
-import android.content.Context;
-
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -22,11 +20,11 @@ public class HumidityCalibration extends BaseModel {
             prevCalibrationValue = prevCalibration.humidityOffset;
             prevCalibration.delete();
         }
-        float calibration = 75f-((float)tag.humidity-prevCalibrationValue);
+        float calibration = 75f-((float) tag.getHumidity() -prevCalibrationValue);
         HumidityCalibration newCalibration = new HumidityCalibration();
         newCalibration.humidityOffset = calibration;
-        newCalibration.mac = tag.id;
-        cache.put(tag.id, newCalibration);
+        newCalibration.mac = tag.getId();
+        cache.put(tag.getId(), newCalibration);
         return newCalibration;
     }
     public static void clear(RuuviTag tag) {
@@ -34,22 +32,22 @@ public class HumidityCalibration extends BaseModel {
         if (calibration != null) {
             calibration.delete();
         }
-        cache.remove(tag.id);
+        cache.remove(tag.getId());
     }
     public static RuuviTag apply(RuuviTag tag) {
         HumidityCalibration calibration = get(tag);
         if (calibration != null) {
-            tag.humidity += calibration.humidityOffset;
+            tag.setHumidity(tag.getHumidity() + calibration.humidityOffset);
         }
         return tag;
     }
     public static HumidityCalibration get(RuuviTag tag) {
-        if (cache.containsKey(tag.id)) {
-            return cache.get(tag.id);
+        if (cache.containsKey(tag.getId())) {
+            return cache.get(tag.getId());
         }
         return SQLite.select()
                 .from(HumidityCalibration.class)
-                .where(HumidityCalibration_Table.mac.eq(tag.id))
+                .where(HumidityCalibration_Table.mac.eq(tag.getId()))
                 .querySingle();
     }
     public HumidityCalibration() {

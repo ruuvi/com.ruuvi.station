@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
@@ -49,7 +50,7 @@ class BluetoothScannerInteractor(private val application: Application) {
 
     fun logTag(ruuviTag: RuuviTag, context: Context?, foreground: Boolean) {
         var ruuviTag = ruuviTag
-        val dbTag = RuuviTag.get(ruuviTag.id)
+        val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             ruuviTag.update()
@@ -76,7 +77,9 @@ class BluetoothScannerInteractor(private val application: Application) {
         val tags: MutableList<RuuviTag> = ArrayList()
         tags.add(ruuviTag)
         Http.post(tags, null, context)
-        lastLogged[ruuviTag.id] = Date().time
+        ruuviTag.id?.let { id ->
+            lastLogged[id] = Date().time
+        }
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)

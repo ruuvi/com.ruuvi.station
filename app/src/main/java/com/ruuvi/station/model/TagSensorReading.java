@@ -1,7 +1,5 @@
 package com.ruuvi.station.model;
 
-import android.util.Log;
-
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -55,19 +53,19 @@ public class TagSensorReading extends BaseModel {
     }
 
     public TagSensorReading(RuuviTag tag) {
-        this.ruuviTagId = tag.id;
-        this.temperature = tag.temperature;
-        this.humidity = tag.humidity;
-        this.pressure = tag.pressure;
-        this.rssi = tag.rssi;
-        this.accelX = tag.accelX;
-        this.accelY = tag.accelY;
-        this.accelZ = tag.accelZ;
-        this.voltage = tag.voltage;
-        this.dataFormat = tag.dataFormat;
-        this.txPower = tag.txPower;
-        this.movementCounter = tag.movementCounter;
-        this.measurementSequenceNumber = tag.measurementSequenceNumber;
+        this.ruuviTagId = tag.getId();
+        this.temperature = tag.getTemperature();
+        this.humidity = tag.getHumidity();
+        this.pressure = tag.getPressure();
+        this.rssi = tag.getRssi();
+        this.accelX = tag.getAccelX();
+        this.accelY = tag.getAccelY();
+        this.accelZ = tag.getAccelZ();
+        this.voltage = tag.getVoltage();
+        this.dataFormat = tag.getDataFormat();
+        this.txPower = tag.getTxPower();
+        this.movementCounter = tag.getMovementCounter();
+        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber();
         this.createdAt = new Date();
     }
 

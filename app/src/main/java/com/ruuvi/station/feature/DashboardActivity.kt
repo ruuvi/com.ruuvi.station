@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.util.Starter
@@ -35,7 +36,7 @@ class DashboardActivity : AppCompatActivity() {
 
         setupDrawer()
 
-        tags = RuuviTag.getAll(true)
+        tags = ArrayList(RuuviTagRepository.getAll(true))
         val noTagsFound = findViewById<TextView>(R.id.noTags_textView)
 
         val beaconListView = findViewById<ListView>(R.id.dashboard_listView)
@@ -110,7 +111,7 @@ class DashboardActivity : AppCompatActivity() {
             handler.post(object : Runnable {
                 override fun run() {
                     tags.clear()
-                    tags.addAll(RuuviTag.getAll(true))
+                    tags.addAll(RuuviTagRepository.getAll(true))
                     if (tags.size > 0) {
                         noTagsFound.visibility = View.GONE
                     } else

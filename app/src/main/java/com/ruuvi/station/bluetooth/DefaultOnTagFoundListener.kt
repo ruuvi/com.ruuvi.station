@@ -1,6 +1,7 @@
 package com.ruuvi.station.bluetooth
 
 import android.content.Context
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
@@ -12,7 +13,7 @@ import java.util.HashMap
 
 class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTagsFoundListener {
 
-    private var lastLogged: MutableMap<String, Long>? = null
+    private var lastLogged: MutableMap<String, Long> = HashMap()
 
     override fun onFoundTags(allTags: List<RuuviTag>) {
         val favoriteTags = ArrayList<RuuviTag>()
@@ -32,7 +33,7 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
 
     private fun saveReading(ruuviTag: RuuviTag) {
         var ruuviTag = ruuviTag
-        val dbTag = RuuviTag.get(ruuviTag.id)
+        val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             ruuviTag.update()
@@ -42,7 +43,6 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
             ruuviTag.save()
             return
         }
-        if (lastLogged == null) lastLogged = HashMap()
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL)
         val loggingThreshold = calendar.time.time
@@ -51,7 +51,9 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
                 return
             }
         }
-        lastLogged!![ruuviTag.id] = Date().time
+        ruuviTag.id?.let { id ->
+            lastLogged[id] = Date().time
+        }
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)

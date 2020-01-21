@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
 import java.io.File
@@ -36,7 +37,7 @@ class GraphView (val context: Context) {
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
 
-        val tempUnit = RuuviTag.getTemperatureUnit(context)
+        val tempUnit = RuuviTagRepository.getTemperatureUnit(context)
 
         val cal = Calendar.getInstance()
         to = cal.time.time;

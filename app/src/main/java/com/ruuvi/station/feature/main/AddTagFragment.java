@@ -44,7 +44,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
 
     public static boolean isBackgroundInUse(List<RuuviTag> tags, int background) {
         for (RuuviTag tag: tags) {
-            if (tag.defaultBackground == background) return true;
+            if (tag.getDefaultBackground() == background) return true;
         }
         return false;
     }
@@ -77,19 +77,19 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RuuviTag tag = (RuuviTag)beaconListView.getItemAtPosition(i);
-                if (RuuviTag.get(tag.id).favorite) {
+                if (RuuviTag.get(tag.getId()).isFavorite()) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
-                tag.defaultBackground = getKindaRandomBackground();
+                tag.setDefaultBackground(getKindaRandomBackground());
                 tag.update();
 
                 ((RuuviScannerApplication) getActivity().getApplication())
                         .getBluetoothScannerInteractor().logTag(tag, getActivity(), true);
 
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
-                settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
+                settingsIntent.putExtra(TagSettings.TAG_ID, tag.getId());
                 startActivityForResult(settingsIntent, 1);
             }
         });
@@ -105,7 +105,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.SECOND, -5);
                 for (int i = 0; i < tags.size(); i++) {
-                    if (tags.get(i).updateAt.getTime() < calendar.getTime().getTime()) {
+                    if (tags.get(i).getUpdateAt().getTime() < calendar.getTime().getTime()) {
                         tags.remove(i);
                         i--;
                     }

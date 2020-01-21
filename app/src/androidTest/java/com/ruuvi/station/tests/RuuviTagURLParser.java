@@ -16,7 +16,7 @@ public class RuuviTagURLParser
         public void parserTests() throws Exception
         {
             RuuviTag tag = new RuuviTag("0","https://ruu.vi/#BAASADyM5",null,-87,false);
-            assertEquals(tag.temperature,18);
+            assertEquals(tag.getTemperature(),18);
         }
 }
 

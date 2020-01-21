@@ -1,33 +1,21 @@
 package com.ruuvi.station.feature
 
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.ruuvi.station.R
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.model.TagSensorReading
-import kotlinx.android.synthetic.main.activity_graph.*
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.GraphView
 import com.ruuvi.station.util.Preferences
 import com.ruuvi.station.util.Utils
-import java.text.SimpleDateFormat
-import java.util.*
-
+import kotlinx.android.synthetic.main.activity_graph.background_view
+import kotlinx.android.synthetic.main.activity_graph.toolbar_title
 
 class GraphActivity : AppCompatActivity() {
     companion object {
@@ -46,7 +34,7 @@ class GraphActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         tagId = intent.getStringExtra(TAGID)
-        val tag = RuuviTag.get(tagId)
+        val tag = RuuviTagRepository.get(tagId)
         if (tag == null) {
             finish()
             return
@@ -79,17 +67,18 @@ class GraphActivity : AppCompatActivity() {
         }
 
         supportActionBar!!.title = ""
-        toolbar_title.text = tag.dispayName.toUpperCase()
+        toolbar_title.text = tag.dispayName?.toUpperCase()
 
         val handler = Handler()
         handler.post(object: Runnable {
             override fun run() {
-                GraphView(applicationContext).drawChart(tag.id, findViewById(android.R.id.content))
+                tag.id?.let {
+                    GraphView(applicationContext).drawChart(it, findViewById(android.R.id.content))
                 handler.postDelayed(this, 30000)
+                }
             }
         })
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         finish()

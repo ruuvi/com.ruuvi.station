@@ -19,26 +19,47 @@ import android.provider.Settings
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
-import com.ruuvi.station.R
-import com.ruuvi.station.model.RuuviTag
-
-import kotlinx.android.synthetic.main.activity_tag_details.*
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import android.view.*
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
-import android.widget.*
-import kotlinx.android.synthetic.main.content_tag_details.*
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import com.ruuvi.station.util.*
-import java.util.*
-
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
+import com.ruuvi.station.R
+import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.util.AlarmChecker
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.GraphView
+import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.util.Starter
+import com.ruuvi.station.util.Utils
+import kotlinx.android.synthetic.main.activity_tag_details.background_fader
+import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
+import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
+import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
+import kotlinx.android.synthetic.main.activity_tag_details.toolbar
+import kotlinx.android.synthetic.main.content_tag_details.noTags_textView
+import kotlinx.android.synthetic.main.content_tag_details.pager_title_strip
+import kotlinx.android.synthetic.main.content_tag_details.tag_pager
+import java.util.Date
+import java.util.HashMap
 
 class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
@@ -105,23 +126,21 @@ class TagDetails : AppCompatActivity() {
                     backgroundFadeStarted = Date().time
                 }
                 invalidateOptionsMenu()
-                prevTagId = tag!!.id
+                prevTagId = tag?.id.orEmpty()
             }
         })
 
-        imageSwitcher.setFactory(object : ViewSwitcher.ViewFactory {
-            override fun makeView(): View {
-                val im = AppCompatImageView(applicationContext)
-                im.scaleType = ImageView.ScaleType.CENTER_CROP
-                im.layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT)
-                return im
-            }
-        })
+        imageSwitcher.setFactory {
+            val im = AppCompatImageView(applicationContext)
+            im.scaleType = ImageView.ScaleType.CENTER_CROP
+            im.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT)
+            im
+        }
 
-        val tagId = intent.getStringExtra("id");
-        tags = RuuviTag.getAll(true)
+        val tagId = intent.getStringExtra("id")
+        tags = ArrayList(RuuviTagRepository.getAll(true))
         val pagerAdapter = TagPager(tags, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 100
@@ -274,7 +293,7 @@ class TagDetails : AppCompatActivity() {
 
     private fun refrshTagLists() {
         tags.clear()
-        tags.addAll(RuuviTag.getAll(true))
+        tags.addAll(RuuviTagRepository.getAll(true))
         updateUI()
     }
 
@@ -282,14 +301,16 @@ class TagDetails : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateGraph = true
-        tags = RuuviTag.getAll(true)
+        tags = ArrayList(RuuviTagRepository.getAll(true))
 
         var tagRemoved = true
         for (tag in tags) {
-            Utils.getBackground(applicationContext, tag).let { bitmap ->
-                backgrounds.put(tag.id, BitmapDrawable(applicationContext.resources, bitmap))
+            tag.id?.let { tagId ->
+                Utils.getBackground(applicationContext, tag).let { bitmap ->
+                    backgrounds.put(tagId, BitmapDrawable(applicationContext.resources, bitmap))
+                }
+                if (this.tag?.id == tagId) tagRemoved = false
             }
-            if (this.tag?.id == tag.id) tagRemoved = false
         }
         if (tag != null && tagRemoved) {
             val intent = intent
@@ -347,7 +368,7 @@ class TagDetails : AppCompatActivity() {
             // maybe this would not be needed if the db call below was async
             return
         }
-        tags = RuuviTag.getAll(true)
+        tags = ArrayList(RuuviTagRepository.getAll(true))
         for (mTag in tags) {
             (tag_pager.adapter as TagPager).updateView(mTag, showGraph, updateGraph)
             if (tag != null && mTag.id == tag!!.id) {
@@ -362,14 +383,16 @@ class TagDetails : AppCompatActivity() {
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
             (tag_pager.adapter as TagPager).updateView(it, showGraph, updateGraph)
-            if (alarmStatus.containsKey(it.id)) {
+            it.id?.let { tagId ->
+                if (alarmStatus.containsKey(tagId)) {
                 val newStatus = AlarmChecker.getStatus(it)
-                if (alarmStatus[it.id] != newStatus) {
-                    alarmStatus[it.id] = AlarmChecker.getStatus(it)
+                    if (alarmStatus[tagId] != newStatus) {
+                        alarmStatus[tagId] = AlarmChecker.getStatus(it)
                     this.invalidateOptionsMenu()
                 }
             } else {
-                alarmStatus[it.id] = AlarmChecker.getStatus(it)
+                    alarmStatus[tagId] = AlarmChecker.getStatus(it)
+                }
             }
         }
         if (tags.isEmpty()) {
@@ -387,7 +410,7 @@ class TagDetails : AppCompatActivity() {
         builder.setTitle(this.getString(R.string.tag_delete_title))
         builder.setMessage(this.getString(R.string.tag_delete_message))
         builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-            tag?.deleteTagAndRelatives()
+            RuuviTagRepository.deleteTagAndRelatives(tag)
             val intent = intent
             finish()
             startActivity(intent)
@@ -479,7 +502,9 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         if (showGraph && graph.visibility == View.INVISIBLE || showGraph && updateGraph) {
             graph.visibility = View.VISIBLE
             container.visibility = View.INVISIBLE
-            GraphView(context).drawChart(tag.id, rootView)
+            tag.id?.let {
+                GraphView(context).drawChart(it, rootView)
+            }
         } else if (!showGraph && graph.visibility == View.VISIBLE) {
             graph.visibility = View.INVISIBLE
             container.visibility = View.VISIBLE
@@ -492,7 +517,7 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
         val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
 
-        var temperature = tag.getTemperatureString(context)
+        var temperature = RuuviTagRepository.getTemperatureString(context, tag)
         val unit = temperature.substring(temperature.length - 2, temperature.length)
         temperature = temperature.substring(0, temperature.length - 2)
 
@@ -512,8 +537,8 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
         return view == `object`
     }
 
-    override fun getPageTitle(position: Int): CharSequence {
-        return tags.get(position).dispayName.toUpperCase()
+    override fun getPageTitle(position: Int): String {
+        return tags.get(position).dispayName?.toUpperCase().orEmpty()
     }
 
     override fun getCount(): Int {

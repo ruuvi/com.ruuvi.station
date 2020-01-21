@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
@@ -160,7 +161,7 @@ internal class RuuviRangeNotifier(
 
     private fun saveReading(ruuviTag: RuuviTag) {
         var ruuviTag = ruuviTag
-        val dbTag = RuuviTag.get(ruuviTag.id)
+        val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             ruuviTag.update()
@@ -178,7 +179,9 @@ internal class RuuviRangeNotifier(
                 return
             }
         }
-        lastLogged[ruuviTag.id] = Date().time
+        ruuviTag.id?.let {
+            lastLogged[it] = Date().time
+        }
         val reading = TagSensorReading(ruuviTag)
         reading.save()
         AlarmChecker.check(ruuviTag, context)

@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.LocalDatabase
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
 
@@ -37,8 +38,8 @@ class AboutActivity : AppCompatActivity() {
     fun drawDebugInfo() {
         val readingCount = TagSensorReading.countAll()
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
-        val addedTags = RuuviTag.getAll(true).size
-        debugText += getString(R.string.seen_tags, addedTags + RuuviTag.getAll(false).size) + "\n"
+        val addedTags = RuuviTagRepository.getAll(true).size
+        debugText += getString(R.string.seen_tags, addedTags + RuuviTagRepository.getAll(false).size) + "\n"
         debugText += getString(R.string.added_tags, addedTags) + "\n"
         debugText += getString(R.string.db_data_points, readingCount*9) + "\n"
 
