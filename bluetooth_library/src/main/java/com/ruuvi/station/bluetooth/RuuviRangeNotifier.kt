@@ -13,9 +13,7 @@ import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.RangeNotifier
 import org.altbeacon.beacon.Region
-import org.altbeacon.bluetooth.BluetoothMedic
 import java.util.ArrayList
-import java.util.HashMap
 
 class RuuviRangeNotifier(
     private val context: Context,
@@ -32,12 +30,12 @@ class RuuviRangeNotifier(
 
         override fun getApplicationContext(): Context = context
 
-        override fun unbindService(p0: ServiceConnection?) {
-            context.unbindService(p0)
+        override fun unbindService(serviceConnection: ServiceConnection?) {
+            context.unbindService(serviceConnection)
         }
 
-        override fun bindService(p0: Intent?, p1: ServiceConnection?, p2: Int): Boolean {
-            return context.bindService(p0, p1, p2)
+        override fun bindService(intent: Intent?, serviceConnection: ServiceConnection?, flags: Int): Boolean {
+            return context.bindService(intent, serviceConnection, flags)
         }
 
         override fun onBeaconServiceConnect() {
@@ -58,61 +56,6 @@ class RuuviRangeNotifier(
         beaconManager.backgroundScanPeriod = 5000
 
         beaconManager.bind(beaconConsumer)
-    }
-
-    fun setAltBeaconParsers(beaconManager: BeaconManager) {
-        beaconManager.beaconParsers.clear()
-        beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout(RuuviV2and4_LAYOUT))
-        val v3Parser = BeaconParser().setBeaconLayout(RuuviV3_LAYOUT)
-        v3Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
-        beaconManager.beaconParsers.add(v3Parser)
-        val v5Parser = BeaconParser().setBeaconLayout(RuuviV5_LAYOUT)
-        v5Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
-        beaconManager.beaconParsers.add(v5Parser)
-    }
-
-    private fun startRanging() {
-
-        if (!beaconManager.rangingNotifiers.contains(this)) {
-            beaconManager.addRangeNotifier(this)
-        }
-        try {
-            beaconManager.startRangingBeaconsInRegion(region!!)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Could not start ranging")
-        }
-    }
-
-    private fun setupMedic(context: Context?): BluetoothMedic {
-        val medic = BluetoothMedic.getInstance()
-        medic.enablePowerCycleOnFailures(context)
-        medic.enablePeriodicTests(context, BluetoothMedic.SCAN_TEST)
-        return medic
-    }
-
-    override fun didRangeBeaconsInRegion(beacons: Collection<Beacon>, region: Region) {
-        val now = System.currentTimeMillis()
-        if (now <= last + 500) {
-            Log.d(TAG, "Double range bug")
-            return
-        }
-        last = now
-
-        val tags: MutableList<IRuuviTag> = ArrayList()
-        val allTags: MutableList<IRuuviTag> = ArrayList()
-        Log.d(TAG, from + " " + " found " + beacons.size)
-        for (beacon in beacons) { // the same tag can appear multiple times
-            for (tag in tags) {
-                if (tag.id == beacon.bluetoothAddress) continue
-            }
-            val tag = LeScanResult.fromAltbeacon(context, ruuviTagFactory, beacon)
-            if (tag != null) {
-                allTags.add(tag)
-                if (tag.favorite) tags.add(tag)
-            }
-        }
-
-        tagListener?.onFoundTags(allTags = allTags)
     }
 
     fun stopScanning() {
@@ -147,6 +90,54 @@ class RuuviRangeNotifier(
 
     fun addTagListener(onTagsFoundListener: OnTagsFoundListener) {
         tagListener = onTagsFoundListener
+    }
+
+    private fun setAltBeaconParsers(beaconManager: BeaconManager) {
+        beaconManager.beaconParsers.clear()
+        beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout(RuuviV2and4_LAYOUT))
+        val v3Parser = BeaconParser().setBeaconLayout(RuuviV3_LAYOUT)
+        v3Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
+        beaconManager.beaconParsers.add(v3Parser)
+        val v5Parser = BeaconParser().setBeaconLayout(RuuviV5_LAYOUT)
+        v5Parser.setHardwareAssistManufacturerCodes(intArrayOf(1177))
+        beaconManager.beaconParsers.add(v5Parser)
+    }
+
+    private fun startRanging() {
+
+        if (!beaconManager.rangingNotifiers.contains(this)) {
+            beaconManager.addRangeNotifier(this)
+        }
+        try {
+            beaconManager.startRangingBeaconsInRegion(region!!)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Could not start ranging")
+        }
+    }
+
+    override fun didRangeBeaconsInRegion(beacons: Collection<Beacon>, region: Region) {
+        val now = System.currentTimeMillis()
+        if (now <= last + 500) {
+            Log.d(TAG, "Double range bug")
+            return
+        }
+        last = now
+
+        val tags: MutableList<IRuuviTag> = ArrayList()
+        val allTags: MutableList<IRuuviTag> = ArrayList()
+        Log.d(TAG, from + " " + " found " + beacons.size)
+        for (beacon in beacons) { // the same tag can appear multiple times
+            for (tag in tags) {
+                if (tag.id == beacon.bluetoothAddress) continue
+            }
+            val tag = LeScanResult.fromAltbeacon(context, ruuviTagFactory, beacon)
+            if (tag != null) {
+                allTags.add(tag)
+                if (tag.favorite) tags.add(tag)
+            }
+        }
+
+        tagListener?.onFoundTags(allTags = allTags)
     }
 
     companion object {
