@@ -192,6 +192,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
         //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
         RuuviRangeNotifier.gatewayOn = !foreground
         if (!beaconManager!!.rangingNotifiers.contains(ruuviRangeNotifier)) {
+            ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
             beaconManager!!.addRangeNotifier(ruuviRangeNotifier!!)
         }
         running = true

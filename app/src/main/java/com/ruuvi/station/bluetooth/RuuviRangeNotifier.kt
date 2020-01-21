@@ -110,6 +110,7 @@ internal class RuuviRangeNotifier(
         last = now
         if (gatewayOn) updateLocation()
         val tags: MutableList<RuuviTag> = ArrayList()
+        val allTags: MutableList<RuuviTag> = ArrayList()
         Log.d(TAG, from + " " + " found " + beacons.size)
         for (beacon in beacons) { // the same tag can appear multiple times
             for (tag in tags) {
@@ -117,14 +118,15 @@ internal class RuuviRangeNotifier(
             }
             val tag = LeScanResult.fromAltbeacon(context, beacon)
             if (tag != null) {
-                saveReading(tag)
+                allTags.add(tag)
+//                saveReading(tag)
                 if (tag.favorite) tags.add(tag)
             }
         }
         if (tags.size > 0 && gatewayOn) Http.post(tags, tagLocation, context)
         TagSensorReading.removeOlderThan(24)
 
-//        tagListener?.onFoundTags(allTags =)
+        tagListener?.onFoundTags(allTags = allTags)
     }
 
 //    override fun didRangeBeaconsInRegion(beacons: Collection<Beacon>, region: Region) {
@@ -215,6 +217,10 @@ internal class RuuviRangeNotifier(
         } catch (e: Exception) {
             Log.e(TAG, "Could not update scan intervals")
         }
+    }
+
+    fun addTagListener(onTagsFoundListener: OnTagsFoundListener) {
+        tagListener = onTagsFoundListener
     }
 
     companion object {
