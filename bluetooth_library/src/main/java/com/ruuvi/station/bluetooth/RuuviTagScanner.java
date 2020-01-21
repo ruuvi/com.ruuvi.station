@@ -67,7 +67,6 @@ public class RuuviTagScanner {
         return filters;
     }
 
-
     @SuppressLint("MissingPermission")
     public void stop() {
         if (!canScan()) return;

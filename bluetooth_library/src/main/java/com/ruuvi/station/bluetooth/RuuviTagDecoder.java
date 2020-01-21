@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth.decoder;
+package com.ruuvi.station.bluetooth;
 
 import com.ruuvi.station.bluetooth.RuuviTagFactory;
 import com.ruuvi.station.bluetooth.domain.IRuuviTag;

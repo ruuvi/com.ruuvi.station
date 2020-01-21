@@ -1,12 +1,11 @@
-package com.ruuvi.station.bluetooth.decoder;
+package com.ruuvi.station.bluetooth;
 
-import com.ruuvi.station.bluetooth.RuuviTagFactory;
 import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class DecodeFormat5 implements RuuviTagDecoder {
+class DecodeFormat5 implements RuuviTagDecoder {
     // offset = 7
     @Override
     public IRuuviTag decode(RuuviTagFactory factory, byte[] data, int offset) {
