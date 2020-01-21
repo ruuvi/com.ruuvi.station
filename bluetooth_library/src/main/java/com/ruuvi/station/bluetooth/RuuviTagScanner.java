@@ -15,7 +15,6 @@ import android.util.Log;
 
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory;
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,5 +96,11 @@ public class RuuviTagScanner {
 
     public boolean canScan() {
         return scanner != null;
+    }
+
+    public interface RuuviTagListener {
+
+        void tagFound(IRuuviTag tag);
+
     }
 }

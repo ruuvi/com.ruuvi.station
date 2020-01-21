@@ -34,7 +34,7 @@ import android.widget.Toast;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagListener;
+import com.ruuvi.station.bluetooth.RuuviTagScanner;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
@@ -49,7 +49,7 @@ import com.ruuvi.station.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+public class MainActivity extends AppCompatActivity implements RuuviTagScanner.RuuviTagListener {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1337;
