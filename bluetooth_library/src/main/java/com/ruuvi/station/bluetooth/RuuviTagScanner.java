@@ -14,7 +14,6 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.ruuvi.station.bluetooth.domain.IRuuviTag;
-import com.ruuvi.station.bluetooth.domain.LeScanResult;
 
 import java.util.ArrayList;
 import java.util.List;

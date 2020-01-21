@@ -12,7 +12,6 @@ import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.bluetooth.domain.IRuuviTag
-import com.ruuvi.station.bluetooth.domain.LeScanResult
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager

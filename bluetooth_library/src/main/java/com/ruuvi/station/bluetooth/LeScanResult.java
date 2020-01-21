@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth.domain;
+package com.ruuvi.station.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -8,12 +8,12 @@ import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
 import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
-import com.ruuvi.station.bluetooth.RuuviTagFactory;
 import com.ruuvi.station.bluetooth.decoder.DecodeFormat2and4;
 import com.ruuvi.station.bluetooth.decoder.DecodeFormat3;
 import com.ruuvi.station.bluetooth.decoder.DecodeFormat5;
 import com.ruuvi.station.bluetooth.decoder.RuuviTagDecoder;
 import com.ruuvi.station.bluetooth.decoder.base64;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
@@ -21,14 +21,16 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 import java.util.List;
 
 
-public class LeScanResult {
+class LeScanResult {
 
     private static final String TAG = "LeScanResult";
-    public BluetoothDevice device;
-    public int rssi;
-    public byte[] scanData;
 
-    public IRuuviTag parse(Context context, RuuviTagFactory factory) {
+    BluetoothDevice device;
+    byte[] scanData;
+
+    public int rssi;
+
+    IRuuviTag parse(Context context, RuuviTagFactory factory) {
         IRuuviTag tag = null;
 
         try {
@@ -64,9 +66,6 @@ public class LeScanResult {
         } catch (Exception e) {
             Log.e(TAG, "Parsing ble data failed");
         }
-        if (tag != null) {
-            tag = HumidityCalibration.apply(tag);
-        }
 
         return tag;
     }
@@ -96,14 +95,13 @@ public class LeScanResult {
                 tag.setRssi(rssi);
                 tag.setRawData(rawData);
                 tag.setRawDataBlob(rawData);
-                tag = HumidityCalibration.apply(tag);
             }
             return tag;
         }
         return null;
     }
 
-    public static IRuuviTag fromAltbeacon(Context context, RuuviTagFactory factory, Beacon beacon) {
+    static IRuuviTag fromAltbeacon(Context context, RuuviTagFactory factory, Beacon beacon) {
         try {
             byte pData[] = new byte[128];
             List<Long> data = beacon.getDataFields();
@@ -141,7 +139,6 @@ public class LeScanResult {
                     tag.setUrl(url);
                     tag.setRawData(pData);
                     tag.setRawDataBlob(pData);
-                    tag = HumidityCalibration.apply(tag);
                     //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                     return tag;
                 } catch (Exception e) {
@@ -154,8 +151,7 @@ public class LeScanResult {
         return null;
     }
 
-
-    public static byte[] parseByteDataFromB64(String data) {
+    private static byte[] parseByteDataFromB64(String data) {
         try {
             byte[] bData = base64.decode(data);
             int pData[] = new int[8];

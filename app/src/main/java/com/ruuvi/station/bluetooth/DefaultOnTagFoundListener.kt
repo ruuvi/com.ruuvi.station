@@ -4,7 +4,6 @@ import android.content.Context
 import com.ruuvi.station.bluetooth.domain.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Constants
@@ -20,10 +19,13 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
         val favoriteTags = ArrayList<IRuuviTag>()
 
         allTags.forEach {
-            saveReading(it)
 
-            if (it.favorite) {
-                favoriteTags.add(it)
+            val tag = HumidityCalibration.apply(it)
+
+            saveReading(tag)
+
+            if (tag.favorite) {
+                favoriteTags.add(tag)
             }
         }
 

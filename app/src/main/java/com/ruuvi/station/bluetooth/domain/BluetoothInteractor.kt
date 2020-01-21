@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth
+package com.ruuvi.station.bluetooth.domain
 
 import android.app.Application
 import android.content.Context
@@ -7,6 +7,9 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.util.Log
 import com.raizlabs.android.dbflow.config.FlowManager
+import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
+import com.ruuvi.station.bluetooth.RuuviRangeNotifier
+import com.ruuvi.station.bluetooth.RuuviTagFactory
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Constants
