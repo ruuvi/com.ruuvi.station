@@ -19,6 +19,7 @@ import android.widget.Toast
 import com.ruuvi.station.R
 import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.adapters.AddTagAdapter
+import com.ruuvi.station.bluetooth.domain.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTag
@@ -33,7 +34,7 @@ import java.util.Calendar
 
 class AddTagActivity : AppCompatActivity() {
     private var adapter: AddTagAdapter? = null
-    private var tags: MutableList<RuuviTag>? = null
+    private var tags: MutableList<IRuuviTag>? = null
     lateinit var starter: Starter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +71,7 @@ class AddTagActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 tags?.clear()
-                tags?.addAll(RuuviTagRepository.getAll(false))
+                tags?.addAll(ArrayList(RuuviTagRepository.getAll(false)))
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.SECOND, -5)
                 var i = 0
@@ -155,7 +156,7 @@ class AddTagActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun isBackgroundInUse(tags: List<RuuviTag>, background: Int): Boolean {
+    private fun isBackgroundInUse(tags: List<IRuuviTag>, background: Int): Boolean {
         for (tag in tags) {
             if (tag.defaultBackground == background) return true
         }

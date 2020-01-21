@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Calendar;
@@ -52,7 +53,7 @@ public class TagSensorReading extends BaseModel {
     public TagSensorReading() {
     }
 
-    public TagSensorReading(RuuviTag tag) {
+    public TagSensorReading(IRuuviTag tag) {
         this.ruuviTagId = tag.getId();
         this.temperature = tag.getTemperature();
         this.humidity = tag.getHumidity();

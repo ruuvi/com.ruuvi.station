@@ -15,7 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.Utils;
 
@@ -25,10 +26,10 @@ import java.util.List;
  * Created by berg on 13/09/17.
  */
 
-public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
-    private List<RuuviTag> tags;
+public class RuuviTagAdapter extends ArrayAdapter<IRuuviTag> {
+    private List<IRuuviTag> tags;
 
-    public RuuviTagAdapter(@NonNull Context context, List<RuuviTag> tags) {
+    public RuuviTagAdapter(@NonNull Context context, List<IRuuviTag> tags) {
         super(context, 0, tags);
         this.tags = tags;
     }
@@ -36,7 +37,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final RuuviTag tag = getItem(position);
+        final IRuuviTag tag = getItem(position);
 
 
         if (convertView == null) {
@@ -84,7 +85,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
         }
         ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
 
-        temp.setText(tag.getTemperatureString(getContext()));
+        temp.setText(RuuviTagRepository.getTemperatureString(getContext(), tag));
         humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.getHumidity()));
         pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.getPressure()));
         signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.getRssi()));

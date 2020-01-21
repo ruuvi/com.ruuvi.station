@@ -6,7 +6,6 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.data.Blob;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.R;
 import com.ruuvi.station.bluetooth.domain.IRuuviTag;
@@ -15,7 +14,6 @@ import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -73,7 +71,7 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     public RuuviTag() {
     }
 
-    public RuuviTag preserveData(RuuviTag tag) {
+    public IRuuviTag preserveData(IRuuviTag tag) {
         tag.setName(this.getName());
         tag.setFavorite(this.isFavorite());
         tag.setGatewayUrl(this.getGatewayUrl());
@@ -102,33 +100,33 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     public String getDispayName() {
         return (this.getName() != null && !this.getName().isEmpty()) ? this.getName() : this.getId();
     }
-
-    public static List<RuuviTag> getAll(boolean favorite) {
-        return SQLite.select()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.favorite.eq(favorite))
-                .queryList();
-    }
-
-    public static RuuviTag get(String id) {
-        return SQLite.select()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.id.eq(id))
-                .querySingle();
-    }
-
-    public void deleteTagAndRelatives() {
-        SQLite.delete()
-                .from(Alarm.class)
-                .where(Alarm_Table.ruuviTagId.eq(this.getId()))
-                .execute();
-        SQLite.delete()
-                .from(TagSensorReading.class)
-                .where(TagSensorReading_Table.ruuviTagId.eq(this.getId()))
-                .execute();
-
-        this.delete();
-    }
+//
+//    public static List<? extends IRuuviTag> getAll(boolean favorite) {
+//        return SQLite.select()
+//                .from(RuuviTag.class)
+//                .where(RuuviTag_Table.favorite.eq(favorite))
+//                .queryList();
+//    }
+//
+//    public static RuuviTag get(String id) {
+//        return SQLite.select()
+//                .from(RuuviTag.class)
+//                .where(RuuviTag_Table.id.eq(id))
+//                .querySingle();
+//    }
+//
+//    public void deleteTagAndRelatives() {
+//        SQLite.delete()
+//                .from(Alarm.class)
+//                .where(Alarm_Table.ruuviTagId.eq(this.getId()))
+//                .execute();
+//        SQLite.delete()
+//                .from(TagSensorReading.class)
+//                .where(TagSensorReading_Table.ruuviTagId.eq(this.getId()))
+//                .execute();
+//
+//        this.delete();
+//    }
 
 
     @org.jetbrains.annotations.Nullable
@@ -226,13 +224,13 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public Object getRawDataBlob() {
-        return rawDataBlob;
+    public byte[] getRawDataBlob() {
+        return rawDataBlob.getBlob();
     }
 
     @Override
-    public void setRawDataBlob(Object rawDataBlob) {
-        this.rawDataBlob = (Blob) rawDataBlob;
+    public void setRawDataBlob(byte[] rawDataBlob) {
+        this.rawDataBlob = new Blob(rawDataBlob);
     }
 
     @org.jetbrains.annotations.Nullable

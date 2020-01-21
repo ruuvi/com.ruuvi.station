@@ -12,7 +12,7 @@ interface IRuuviTag {
     var humidity: Double
     var pressure: Double
     var favorite: Boolean
-    var rawDataBlob: Any?
+    var rawDataBlob: ByteArray?
     var rawData: ByteArray?
     var accelX: Double
     var accelY: Double

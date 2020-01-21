@@ -48,8 +48,10 @@ import android.widget.Toast;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
+import com.ruuvi.station.bluetooth.domain.HumidityCalibration;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
@@ -87,7 +89,7 @@ public class TagSettings extends AppCompatActivity {
 
         String tagId = getIntent().getStringExtra(TAG_ID);
 
-        tag = RuuviTag.get(tagId);
+        tag = RuuviTagRepository.get(tagId);
         if (tag == null) {
             finish();
             return;
@@ -225,11 +227,11 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        RuuviTag latestTag = RuuviTag.get(tag.getId());
+                        IRuuviTag latestTag = RuuviTagRepository.get(tag.getId());
                         HumidityCalibration.calibrate(latestTag);
                         if (calibration != null) latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                         latestTag = HumidityCalibration.apply(latestTag);
-                        latestTag.update();
+                        RuuviTagRepository.update(latestTag);
                         // so the ui will show calibrated humidity if the user presses the calibration button again
                         tag.setHumidity(latestTag.getHumidity());
                         Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
@@ -243,7 +245,7 @@ public class TagSettings extends AppCompatActivity {
                             // so the ui will show the new uncalibrated value
                             tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
                             // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
-                            RuuviTag latestTag = RuuviTag.get(tag.getId());
+                            RuuviTag latestTag = RuuviTagRepository.get(tag.getId());
                             latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                             latestTag.update();
                         }
@@ -300,7 +302,7 @@ public class TagSettings extends AppCompatActivity {
     }
 
     private void updateReadings() {
-        RuuviTag newTag = RuuviTag.get(tag.getId());
+        RuuviTag newTag = RuuviTagRepository.get(tag.getId());
         if (newTag != null) {
             if (newTag.getDataFormat() == 3 || newTag.getDataFormat() == 5) {
                 findViewById(R.id.raw_values).setVisibility(View.VISIBLE);
@@ -321,7 +323,7 @@ public class TagSettings extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                tag.deleteTagAndRelatives();
+                RuuviTagRepository.deleteTagAndRelatives(tag);
                 finish();
             }
         });

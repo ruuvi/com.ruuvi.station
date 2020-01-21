@@ -1,6 +1,7 @@
 package com.ruuvi.station.bluetooth
 
 import android.content.Context
+import com.ruuvi.station.bluetooth.domain.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
@@ -15,8 +16,8 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
-    override fun onFoundTags(allTags: List<RuuviTag>) {
-        val favoriteTags = ArrayList<RuuviTag>()
+    override fun onFoundTags(allTags: List<IRuuviTag>) {
+        val favoriteTags = ArrayList<IRuuviTag>()
 
         allTags.forEach {
             saveReading(it)
@@ -31,16 +32,16 @@ class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTag
         TagSensorReading.removeOlderThan(24)
     }
 
-    private fun saveReading(ruuviTag: RuuviTag) {
+    private fun saveReading(ruuviTag: IRuuviTag) {
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
-            ruuviTag.update()
+            RuuviTagRepository.update(ruuviTag)
             if (!dbTag.favorite) return
         } else {
             ruuviTag.updateAt = Date()
-            ruuviTag.save()
+            RuuviTagRepository.save(ruuviTag)
             return
         }
         val calendar = Calendar.getInstance()

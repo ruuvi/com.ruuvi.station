@@ -35,6 +35,8 @@ import android.widget.Toast;
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.RuuviTagListener;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+
     private static final String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
@@ -56,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private static final int COARSE_LOCATION_PERMISSION = 1;
 
     private DrawerLayout drawerLayout;
-    public List<RuuviTag> myRuuviTags = new ArrayList<>();
-    public List<RuuviTag> otherRuuviTags = new ArrayList<>();
+    public List<IRuuviTag> myRuuviTags = new ArrayList<>();
+    public List<IRuuviTag> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
     boolean dashboardVisible = true;
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         handler = new Handler();
         prefs = new Preferences(this);
-        myRuuviTags = RuuviTag.getAll(true);
+        myRuuviTags = new ArrayList<>(RuuviTagRepository.getAll(true));
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -326,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     private void refreshTagLists() {
         myRuuviTags.clear();
-        myRuuviTags.addAll(RuuviTag.getAll(true));
+        myRuuviTags.addAll(RuuviTagRepository.getAll(true));
         otherRuuviTags.clear();
     }
 
@@ -334,8 +337,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(updater);
-        for (RuuviTag tag: myRuuviTags) {
-            tag.update();
+        for (IRuuviTag tag: myRuuviTags) {
+            RuuviTagRepository.update(tag);
         }
     }
 
@@ -398,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     @Override
-    public void tagFound(RuuviTag tag) {
+    public void tagFound(IRuuviTag tag) {
         for (int i = 0; i < myRuuviTags.size(); i++) {
             if (myRuuviTags.get(i).getId().equals(tag.getId())) {
                 myRuuviTags.set(i, tag);

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.ruuvi.station.bluetooth.domain.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.RuuviTag
@@ -15,11 +16,14 @@ import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
-class BluetoothScannerInteractor(private val application: Application) {
+class BluetoothScannerInteractor(
+    private val application: Application,
+    private val ruuviTagFactory: RuuviTagFactory
+) {
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
 
-    private val backgroundTags = ArrayList<RuuviTag>()
+    private val backgroundTags = ArrayList<IRuuviTag>()
 
     private val lastLogged: MutableMap<String, Long> = HashMap()
     private val LOG_INTERVAL = 5 // seconds
@@ -44,20 +48,21 @@ class BluetoothScannerInteractor(private val application: Application) {
     private val ruuviTagScanner by lazy {
         RuuviTagScanner(
             RuuviTagListener { logTag(it, application, foreground) },
+            ruuviTagFactory,
             application
         )
     }
 
-    fun logTag(ruuviTag: RuuviTag, context: Context?, foreground: Boolean) {
+    fun logTag(ruuviTag: IRuuviTag, context: Context?, foreground: Boolean) {
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
-            ruuviTag.update()
+            RuuviTagRepository.update(ruuviTag)
             if (!dbTag.favorite) return
         } else {
             ruuviTag.updateAt = Date()
-            ruuviTag.save()
+            RuuviTagRepository.save(ruuviTag)
             return
         }
         if (!foreground) {
@@ -74,7 +79,7 @@ class BluetoothScannerInteractor(private val application: Application) {
                 return
             }
         }
-        val tags: MutableList<RuuviTag> = ArrayList()
+        val tags: MutableList<IRuuviTag> = ArrayList()
         tags.add(ruuviTag)
         Http.post(tags, null, context)
         ruuviTag.id?.let { id ->
@@ -85,7 +90,7 @@ class BluetoothScannerInteractor(private val application: Application) {
         AlarmChecker.check(ruuviTag, context)
     }
 
-    fun getBackgroundTags(): List<RuuviTag> = backgroundTags
+    fun getBackgroundTags(): List<IRuuviTag> = backgroundTags
 
     fun clearBackgroundTags() {
         backgroundTags.clear()
@@ -109,7 +114,7 @@ class BluetoothScannerInteractor(private val application: Application) {
         ruuviTagScanner.stop()
     }
 
-    private fun checkForSameTag(arr: List<RuuviTag>, ruuvi: RuuviTag): Int {
+    private fun checkForSameTag(arr: List<IRuuviTag>, ruuvi: IRuuviTag): Int {
         for (i in arr.indices) {
             if (ruuvi.id == arr[i].id) {
                 return i

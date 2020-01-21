@@ -14,6 +14,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
@@ -33,7 +35,7 @@ public class AlarmChecker {
     private static final String TAG = "AlarmChecker";
 
     // returns 1 for triggered alarm, 0 for non triggered alarm, -1 if tag has no alarm
-    public static int getStatus(RuuviTag tag) {
+    public static int getStatus(IRuuviTag tag) {
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
@@ -83,7 +85,7 @@ public class AlarmChecker {
         return -1;
     }
 
-    public static void check(RuuviTag tag, Context context) {
+    public static void check(IRuuviTag tag, Context context) {
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
@@ -130,7 +132,7 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001) {
-                RuuviTag fromDb = RuuviTag.get(tag.getId());
+                RuuviTag fromDb = RuuviTagRepository.get(tag.getId());
                 sendAlert(notificationTextResourceId, alarm.id, fromDb.getDispayName(), fromDb.getId(), context);
             }
         }

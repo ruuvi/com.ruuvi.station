@@ -2,6 +2,8 @@ package com.ruuvi.station.model;
 
 import android.content.Context;
 
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -11,7 +13,7 @@ import java.util.UUID;
  */
 
 public class ScanEventSingle extends Event {
-    public RuuviTag tag;
+    public IRuuviTag tag;
 
     public ScanEventSingle(Context context) {
         super(context);

@@ -13,7 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -57,9 +57,10 @@ public class Utils {
         return bitmap;
     }
 
-    public static void sortTagsByRssi(List<RuuviTag> tags) {
-        Collections.sort(tags, new Comparator<RuuviTag>() {
-            @Override public int compare(RuuviTag o1, RuuviTag o2) {
+    public static void sortTagsByRssi(List<IRuuviTag> tags) {
+        Collections.sort(tags, new Comparator<IRuuviTag>() {
+            @Override
+            public int compare(IRuuviTag o1, IRuuviTag o2) {
                 return o2.getRssi() - o1.getRssi();
             }
         });
@@ -95,7 +96,7 @@ public class Utils {
         return output;
     }
 
-    public static Bitmap getBackground(Context context, RuuviTag tag) {
+    public static Bitmap getBackground(Context context, IRuuviTag tag) {
         try {
             Uri uri = Uri.parse(tag.getUserBackground());
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);

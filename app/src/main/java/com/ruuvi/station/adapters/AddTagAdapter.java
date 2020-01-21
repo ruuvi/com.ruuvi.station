@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 import com.ruuvi.station.model.RuuviTag;
 
 import java.util.List;
@@ -19,10 +20,11 @@ import java.util.List;
  * Created by berg on 10/10/17.
  */
 
-public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
-    private List<RuuviTag> tags;
+public class AddTagAdapter extends ArrayAdapter<IRuuviTag> {
 
-    public AddTagAdapter(@NonNull Context context, List<RuuviTag> tags) {
+    private List<IRuuviTag> tags;
+
+    public AddTagAdapter(@NonNull Context context, List<IRuuviTag> tags) {
         super(context, 0, tags);
         this.tags = tags;
     }
@@ -30,7 +32,7 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTag> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final RuuviTag tag = getItem(position);
+        final IRuuviTag tag = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_add, parent, false);

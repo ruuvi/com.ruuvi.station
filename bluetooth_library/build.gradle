@@ -47,7 +47,7 @@ dependencies {
 //    implementation "com.android.support:cardview-v7:${support_version}"
 //    implementation "com.android.support:gridlayout-v7:${support_version}"
 //    implementation "com.android.support:exifinterface:${support_version}"
-//    implementation 'com.neovisionaries:nv-bluetooth:1.8'
+    implementation 'com.neovisionaries:nv-bluetooth:1.8'
 
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 

@@ -15,11 +15,14 @@ import android.widget.ListView;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.adapters.RuuviTagAdapter;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardFragment extends Fragment implements DataUpdateListener {
@@ -27,7 +30,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
     private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private View noTagsFound;
-    private List<RuuviTag> tags;
+    private List<IRuuviTag> tags;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -51,7 +54,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        tags = RuuviTag.getAll(true);
+        tags = new ArrayList<>(RuuviTagRepository.getAll(true));
         noTagsFound = view.findViewById(R.id.noTags_textView);
 
         DeviceIdentifier.id(getActivity());
@@ -67,7 +70,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
             @Override
             public void run() {
                 tags.clear();
-                tags.addAll(RuuviTag.getAll(true));
+                tags.addAll(new ArrayList<>(RuuviTagRepository.getAll(true)));
                 if (tags.size() > 0) {
                     noTagsFound.setVisibility(View.GONE);
                 }
@@ -98,7 +101,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ((MainActivity)getActivity()).myRuuviTags.remove(tag);
-                tag.deleteTagAndRelatives();
+                RuuviTagRepository.deleteTagAndRelatives(tag);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

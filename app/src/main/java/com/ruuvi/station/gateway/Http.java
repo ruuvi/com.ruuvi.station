@@ -9,6 +9,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
@@ -20,7 +22,7 @@ import java.util.List;
 public class Http {
     private static final String TAG = "Http";
 
-    public static void post(List<RuuviTag> tags, Location location, Context context){
+    public static void post(List<IRuuviTag> tags, Location location, Context context){
         ScanLocation scanLocation = null;
         if (location != null) {
             scanLocation = new ScanLocation();
@@ -36,9 +38,9 @@ public class Http {
         ScanEvent eventBatch = new ScanEvent(context);
         eventBatch.location = scanLocation;
         for (int i = 0; i < tags.size(); i++) {
-            RuuviTag tagFromDb = RuuviTag.get(tags.get(i).getId());
+            IRuuviTag tagFromDb = RuuviTagRepository.get(tags.get(i).getId());
             // don't send data about tags not in the list
-            if (tagFromDb == null || !tagFromDb.isFavorite()) continue;
+            if (tagFromDb == null || !tagFromDb.getFavorite()) continue;
 
             eventBatch.tags.add(tagFromDb);
 

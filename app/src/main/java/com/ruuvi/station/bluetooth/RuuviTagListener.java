@@ -1,7 +1,9 @@
 package com.ruuvi.station.bluetooth;
 
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 
 public interface RuuviTagListener {
-    void tagFound(RuuviTag tag);
+
+    void tagFound(IRuuviTag tag);
+
 }

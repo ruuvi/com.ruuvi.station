@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.Alarm_Table;
-import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.RuuviTag_Table;
 import com.ruuvi.station.model.TagSensorReading;
@@ -14,6 +14,9 @@ import com.ruuvi.station.model.TagSensorReading_Table;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,11 +26,11 @@ public class RuuviTagRepository {
         return (tag.getName() != null && !tag.getName().isEmpty()) ? tag.getName() : tag.getId();
     }
 
-    public static List<RuuviTag> getAll(boolean favorite) {
-        return SQLite.select()
+    public static List<IRuuviTag> getAll(boolean favorite) {
+        return new ArrayList<IRuuviTag>(SQLite.select()
                 .from(RuuviTag.class)
                 .where(RuuviTag_Table.favorite.eq(favorite))
-                .queryList();
+                .queryList());
     }
 
     public static RuuviTag get(String id) {
@@ -67,4 +70,13 @@ public class RuuviTagRepository {
         return new Preferences(context).getTemperatureUnit();
     }
 
+    public static void update(IRuuviTag tag) {
+        //FIXME: remove cast
+        ((com.ruuvi.station.model.RuuviTag) tag).update();
+    }
+
+    public static void save(@NotNull IRuuviTag tag) {
+        //FIXME: remove cast
+        ((com.ruuvi.station.model.RuuviTag) tag).save();
+    }
 }

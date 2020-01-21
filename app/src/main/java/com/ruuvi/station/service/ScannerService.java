@@ -24,10 +24,11 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.R;
+import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.BluetoothScannerInteractor;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
-import com.ruuvi.station.model.RuuviTag;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.BackgroundScanModes;
@@ -59,7 +60,10 @@ public class ScannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        bluetoothScannerInteractor = new BluetoothScannerInteractor(getApplication());
+        bluetoothScannerInteractor = new BluetoothScannerInteractor(
+                getApplication(),
+                ((RuuviScannerApplication) getApplication()).getRuuviTagFactory()
+        );
 
         Foreground.init(getApplication());
         Foreground.get().addListener(listener);
@@ -114,13 +118,13 @@ public class ScannerService extends Service {
     private Runnable bgLoggerDone = new Runnable() {
         @Override
         public void run() {
-            List<RuuviTag> backgroundTags = bluetoothScannerInteractor.getBackgroundTags();
+            List<IRuuviTag> backgroundTags = bluetoothScannerInteractor.getBackgroundTags();
 
             Log.d(TAG, "Stopping background scan, found " + backgroundTags.size() + " tags");
             bluetoothScannerInteractor.stopScan();
             Http.post(backgroundTags, tagLocation, getApplicationContext());
 
-            for (RuuviTag tag: backgroundTags) {
+            for (IRuuviTag tag : backgroundTags) {
                 TagSensorReading reading = new TagSensorReading(tag);
                 reading.save();
                 AlarmChecker.check(tag, getApplicationContext());

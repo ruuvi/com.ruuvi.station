@@ -20,7 +20,10 @@ import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.Region
 import org.altbeacon.bluetooth.BluetoothMedic
 
-class BluetoothInteractor(private val application: Application) : BeaconConsumer {
+class BluetoothInteractor(
+    private val application: Application,
+    private val ruuviTagFactory: RuuviTagFactory
+) : BeaconConsumer {
 
     private val TAG: String = BluetoothInteractor::class.java.simpleName
 
@@ -132,7 +135,7 @@ class BluetoothInteractor(private val application: Application) : BeaconConsumer
     fun onAppCreated() {
         Log.d(TAG, "App class onCreate")
         FlowManager.init(application)
-        ruuviRangeNotifier = RuuviRangeNotifier(application, "RuuviScannerApplication")
+        ruuviRangeNotifier = RuuviRangeNotifier(application, ruuviTagFactory,"RuuviScannerApplication")
         Foreground.init(application)
         Foreground.get().addListener(listener)
         Handler().postDelayed({

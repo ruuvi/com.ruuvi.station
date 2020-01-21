@@ -1,17 +1,20 @@
-package com.ruuvi.station.decoder;
+package com.ruuvi.station.bluetooth.decoder;
 
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.bluetooth.RuuviTagFactory;
+import com.ruuvi.station.bluetooth.domain.IRuuviTag;
 
-import static com.ruuvi.station.util.Utils.round;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class DecodeFormat2and4 implements RuuviTagDecoder {
+
     @Override
-    public RuuviTag decode(byte[] data, int offset) {
+    public IRuuviTag decode(RuuviTagFactory factory, byte[] data, int offset) {
         int pData[] = new int[8];
         for (int i = 0; i < data.length && i < 8; i++)
             pData[i] = data[i] & 0xFF;
 
-        RuuviTag tag = new RuuviTag();
+        IRuuviTag tag = factory.createTag();
         tag.setDataFormat(pData[0]);
         tag.setHumidity(((float) (pData[1] & 0xFF)) / 2f);
         double uTemp = (((pData[2] & 127) << 8) | pData[3]);
@@ -24,5 +27,13 @@ public class DecodeFormat2and4 implements RuuviTagDecoder {
         tag.setHumidity(round(tag.getHumidity(), 2));
         tag.setPressure(round(tag.getPressure(), 2));
         return tag;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
