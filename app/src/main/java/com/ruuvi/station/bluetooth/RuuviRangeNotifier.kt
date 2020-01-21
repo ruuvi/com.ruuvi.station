@@ -34,9 +34,9 @@ internal class RuuviRangeNotifier(
 
     private var tagListener: OnTagsFoundListener? = null
 
-    private lateinit var medic: BluetoothMedic
-    private lateinit var region: Region
-    private lateinit var beaconManager: BeaconManager
+    private val medic: BluetoothMedic = setupMedic(context)
+    private val region = Region("com.ruuvi.station.leRegion", null, null, null)
+    private val beaconManager = BeaconManager.getInstanceForApplication(context)
     private val lastLogged: MutableMap<String, Long> = HashMap()
 
     private val beaconConsumer = object : BeaconConsumer {
@@ -73,12 +73,10 @@ internal class RuuviRangeNotifier(
 
     fun startScan(tagListener: OnTagsFoundListener) {
         this.tagListener = tagListener
-        beaconManager = BeaconManager.getInstanceForApplication(context)
         BluetoothInteractor.setAltBeaconParsers(beaconManager)
         beaconManager.backgroundScanPeriod = 5000
-        region = Region("com.ruuvi.station.leRegion", null, null, null)
+
         beaconManager.bind(beaconConsumer)
-        medic = setupMedic(context)
     }
 
     private fun startRanging() {
@@ -112,9 +110,9 @@ internal class RuuviRangeNotifier(
         if (gatewayOn) updateLocation()
         val tags: MutableList<RuuviTag> = ArrayList()
         Log.d(TAG, from + " " + " found " + beacons.size)
-        foundBeacon@ for (beacon in beacons) { // the same tag can appear multiple times
+        for (beacon in beacons) { // the same tag can appear multiple times
             for (tag in tags) {
-                if (tag.id == beacon.bluetoothAddress) continue@foundBeacon
+                if (tag.id == beacon.bluetoothAddress) continue
             }
             val tag = LeScanResult.fromAltbeacon(context, beacon)
             if (tag != null) {

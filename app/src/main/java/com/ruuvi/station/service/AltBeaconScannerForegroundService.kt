@@ -46,12 +46,13 @@ class AltBeaconScannerForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        bluetoothForegroundServiceGateway.startScanning()
         Log.d(TAG, "Starting foreground service")
         Foreground.init(application)
         Foreground.get().addListener(listener)
         startFG()
         setBackground() // start in background mode
+
+        bluetoothForegroundServiceGateway.startScanning()
     }
 
     private fun setupNotification(): NotificationCompat.Builder? {
@@ -111,7 +112,7 @@ class AltBeaconScannerForegroundService : Service() {
 
         bluetoothForegroundServiceGateway.enableForegroundMode()
 
-        startForeground(1337, notification!!.build())
+        startForeground(1337, notification?.build())
     }
 
     private fun updateNotification() {
