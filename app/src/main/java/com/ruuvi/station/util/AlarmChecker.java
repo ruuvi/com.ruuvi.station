@@ -19,7 +19,7 @@ import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.receivers.CancelAlarmReceiver;
 
@@ -132,7 +132,7 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001) {
-                RuuviTag fromDb = RuuviTagRepository.get(tag.getId());
+                RuuviTagEntity fromDb = RuuviTagRepository.get(tag.getId());
                 sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
             }
         }

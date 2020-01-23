@@ -19,7 +19,7 @@ import com.ruuvi.station.adapters.AddTagAdapter;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagSettings;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Utils;
 
@@ -78,7 +78,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RuuviTag tag = (RuuviTag)beaconListView.getItemAtPosition(i);
+                RuuviTagEntity tag = (RuuviTagEntity)beaconListView.getItemAtPosition(i);
                 if (RuuviTagRepository.get(tag.getId()).isFavorite()) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                             .show();

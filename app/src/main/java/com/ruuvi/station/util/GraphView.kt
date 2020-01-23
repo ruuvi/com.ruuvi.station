@@ -1,14 +1,9 @@
 package com.ruuvi.station.util
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v4.content.FileProvider
 import android.support.v4.content.res.ResourcesCompat
 import android.view.View
-import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -19,10 +14,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.model.TagSensorReading
-import java.io.File
-import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 

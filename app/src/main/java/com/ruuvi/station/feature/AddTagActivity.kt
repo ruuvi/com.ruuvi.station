@@ -22,7 +22,7 @@ import com.ruuvi.station.adapters.AddTagAdapter
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_add_tag.toolbar
@@ -51,7 +51,7 @@ class AddTagActivity : AppCompatActivity() {
         tag_listView.adapter = adapter
 
         tag_listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-            val tag = tag_listView.getItemAtPosition(i) as RuuviTag
+            val tag = tag_listView.getItemAtPosition(i) as RuuviTagEntity
             if (RuuviTagRepository.get(tag.id)?.favorite == true) {
                 Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                         .show()

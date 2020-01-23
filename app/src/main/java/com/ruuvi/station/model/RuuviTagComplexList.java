@@ -7,13 +7,13 @@ import java.util.List;
  */
 
 public class RuuviTagComplexList {
-    public List<RuuviTag> ruuviTags;
+    public List<RuuviTagEntity> ruuviTags;
 
-    public List<RuuviTag> getRuuviTags() {
+    public List<RuuviTagEntity> getRuuviTags() {
         return ruuviTags;
     }
 
-    public void setRuuviTags(List<RuuviTag> ruuviTags) {
+    public void setRuuviTags(List<RuuviTagEntity> ruuviTags) {
         this.ruuviTags = ruuviTags;
     }
 }

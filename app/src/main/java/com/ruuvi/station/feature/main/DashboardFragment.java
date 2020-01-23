@@ -18,7 +18,7 @@ import com.ruuvi.station.adapters.RuuviTagAdapter;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
 
@@ -86,14 +86,14 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
     private AdapterView.OnItemClickListener tagClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final RuuviTag tag = (RuuviTag)view.getTag();
+            final RuuviTagEntity tag = (RuuviTagEntity)view.getTag();
             Intent intent = new Intent(getActivity(), TagDetails.class);
             intent.putExtra("id", tag.getId());
             startActivity(intent);
         }
     };
 
-    public void delete(final RuuviTag tag) {
+    public void delete(final RuuviTagEntity tag) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getActivity().getString(R.string.tag_delete_title));
         builder.setMessage(getActivity().getString(R.string.tag_delete_message));

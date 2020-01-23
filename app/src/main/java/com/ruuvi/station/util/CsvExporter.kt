@@ -79,6 +79,6 @@ class CsvExporter(val context: Context) {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTag "+ tag?.id +" csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity "+ tag?.id +" csv export"))
     }
 }

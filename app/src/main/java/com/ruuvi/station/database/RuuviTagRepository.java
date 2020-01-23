@@ -7,8 +7,8 @@ import com.ruuvi.station.R;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.Alarm_Table;
-import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.model.RuuviTag_Table;
+import com.ruuvi.station.model.RuuviTagEntity;
+import com.ruuvi.station.model.RuuviTagEntity_Table;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.model.TagSensorReading_Table;
 import com.ruuvi.station.util.Preferences;
@@ -28,15 +28,15 @@ public class RuuviTagRepository {
 
     public static List<IRuuviTag> getAll(boolean favorite) {
         return new ArrayList<IRuuviTag>(SQLite.select()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.favorite.eq(favorite))
+                .from(RuuviTagEntity.class)
+                .where(RuuviTagEntity_Table.favorite.eq(favorite))
                 .queryList());
     }
 
-    public static RuuviTag get(String id) {
+    public static RuuviTagEntity get(String id) {
         return SQLite.select()
-                .from(RuuviTag.class)
-                .where(RuuviTag_Table.id.eq(id))
+                .from(RuuviTagEntity.class)
+                .where(RuuviTagEntity_Table.id.eq(id))
                 .querySingle();
     }
 
@@ -51,7 +51,7 @@ public class RuuviTagRepository {
                 .execute();
 
         // FIXME: remove cast
-        ((com.ruuvi.station.model.RuuviTag) tag).delete();
+        ((RuuviTagEntity) tag).delete();
     }
 
     public static String getTemperatureString(Context context, IRuuviTag tag) {
@@ -72,11 +72,11 @@ public class RuuviTagRepository {
 
     public static void update(IRuuviTag tag) {
         //FIXME: remove cast
-        ((com.ruuvi.station.model.RuuviTag) tag).update();
+        ((RuuviTagEntity) tag).update();
     }
 
     public static void save(@NotNull IRuuviTag tag) {
         //FIXME: remove cast
-        ((com.ruuvi.station.model.RuuviTag) tag).save();
+        ((RuuviTagEntity) tag).save();
     }
 }

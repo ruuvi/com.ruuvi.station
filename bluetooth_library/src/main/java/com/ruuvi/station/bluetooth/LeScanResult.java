@@ -90,8 +90,6 @@ class LeScanResult {
                 tag.setId(id);
                 tag.setUrl(url);
                 tag.setRssi(rssi);
-                tag.setRawData(rawData);
-                tag.setRawDataBlob(rawData);
             }
             return tag;
         }
@@ -134,8 +132,6 @@ class LeScanResult {
                     tag.setId(beacon.getBluetoothAddress());
                     tag.setRssi(beacon.getRssi());
                     tag.setUrl(url);
-                    tag.setRawData(pData);
-                    tag.setRawDataBlob(pData);
                     //Log.d(TAG, "logged tag with format: " + tag.dataFormat + " and mac: " + tag.id + " temp: " + tag.temperature);
                     return tag;
                 } catch (Exception e) {

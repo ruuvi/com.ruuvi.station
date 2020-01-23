@@ -16,7 +16,7 @@ import com.ruuvi.station.adapters.RuuviTagAdapter
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.Starter
 import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
@@ -131,7 +131,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private val tagClick = AdapterView.OnItemClickListener { parent, view, position, id ->
-        val tag = view.tag as RuuviTag
+        val tag = view.tag as RuuviTagEntity
         val intent = Intent(applicationContext, TagDetails::class.java)
         intent.putExtra("id", tag.id)
         startActivity(intent)

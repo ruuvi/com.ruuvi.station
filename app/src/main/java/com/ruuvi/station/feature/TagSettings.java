@@ -52,7 +52,7 @@ import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
@@ -69,7 +69,7 @@ public class TagSettings extends AppCompatActivity {
     private static final String TAG = "TagSettings";
     public static final String TAG_ID = "TAG_ID";
 
-    private RuuviTag tag;
+    private RuuviTagEntity tag;
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
     private boolean somethinghaschanged = false;
@@ -96,7 +96,7 @@ public class TagSettings extends AppCompatActivity {
         }
         tagAlarms = Alarm.getForTag(tagId);
 
-        tempUnit = RuuviTag.getTemperatureUnit(this);
+        tempUnit = RuuviTagEntity.getTemperatureUnit(this);
 
         ((TextView)findViewById(R.id.input_mac)).setText(tag.getId());
         findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
@@ -245,7 +245,7 @@ public class TagSettings extends AppCompatActivity {
                             // so the ui will show the new uncalibrated value
                             tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
                             // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
-                            RuuviTag latestTag = RuuviTagRepository.get(tag.getId());
+                            RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
                             latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                             latestTag.update();
                         }
@@ -302,7 +302,7 @@ public class TagSettings extends AppCompatActivity {
     }
 
     private void updateReadings() {
-        RuuviTag newTag = RuuviTagRepository.get(tag.getId());
+        RuuviTagEntity newTag = RuuviTagRepository.get(tag.getId());
         if (newTag != null) {
             if (newTag.getDataFormat() == 3 || newTag.getDataFormat() == 5) {
                 findViewById(R.id.raw_values).setVisibility(View.VISIBLE);

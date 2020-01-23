@@ -17,12 +17,9 @@ import com.ruuvi.station.util.Utils;
 import java.util.Date;
 
 
-/**
- * Created by tmakinen on 15.6.2017.
- */
-
 @Table(database = LocalDatabase.class)
-public class RuuviTag extends BaseModel implements IRuuviTag {
+public class RuuviTagEntity extends BaseModel implements IRuuviTag {
+
     @Column
     @PrimaryKey
     private String id;
@@ -41,9 +38,6 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     private double pressure;
     @Column
     private boolean favorite;
-    @Column
-    public Blob rawDataBlob;
-    private byte[] rawData;
     @Column
     private double accelX;
     @Column
@@ -69,7 +63,7 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     @Column
     private int measurementSequenceNumber;
 
-    public RuuviTag() {
+    public RuuviTagEntity() {
     }
 
     public IRuuviTag preserveData(IRuuviTag tag) {
@@ -91,7 +85,7 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     public String getTemperatureString(Context context) {
-        String temperatureUnit = RuuviTag.getTemperatureUnit(context);
+        String temperatureUnit = RuuviTagEntity.getTemperatureUnit(context);
         if (temperatureUnit.equals("C")) {
             return String.format(context.getString(R.string.temperature_reading), this.getTemperature()) + temperatureUnit;
         }
@@ -104,14 +98,14 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
 //
 //    public static List<? extends IRuuviTag> getAll(boolean favorite) {
 //        return SQLite.select()
-//                .from(RuuviTag.class)
+//                .from(RuuviTagEntity.class)
 //                .where(RuuviTag_Table.favorite.eq(favorite))
 //                .queryList();
 //    }
 //
-//    public static RuuviTag get(String id) {
+//    public static RuuviTagEntity get(String id) {
 //        return SQLite.select()
-//                .from(RuuviTag.class)
+//                .from(RuuviTagEntity.class)
 //                .where(RuuviTag_Table.id.eq(id))
 //                .querySingle();
 //    }
@@ -221,28 +215,6 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     @Override
     public void setFavorite(Boolean favorite) {
         this.favorite = favorite;
-    }
-
-    @org.jetbrains.annotations.Nullable
-    @Override
-    public byte[] getRawDataBlob() {
-        return rawDataBlob.getBlob();
-    }
-
-    @Override
-    public void setRawDataBlob(byte[] rawDataBlob) {
-        this.rawDataBlob = new Blob(rawDataBlob);
-    }
-
-    @org.jetbrains.annotations.Nullable
-    @Override
-    public byte[] getRawData() {
-        return rawData;
-    }
-
-    @Override
-    public void setRawData(byte[] rawData) {
-        this.rawData = rawData;
     }
 
     @Override

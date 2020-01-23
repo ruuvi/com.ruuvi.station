@@ -7,12 +7,12 @@ import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.bluetooth.domain.BluetoothForegroundScanningInteractor
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.RuuviTagEntity
 
 class RuuviScannerApplication : Application() {
 
     val ruuviTagFactory = object : IRuuviTagFactory {
-        override fun createTag(): IRuuviTag = RuuviTag()
+        override fun createTag(): IRuuviTag = RuuviTagEntity()
     }
     val bluetoothScannerInteractor = BluetoothScannerInteractor(this, ruuviTagFactory)
     val bluetoothInteractor = BluetoothInteractor(this, ruuviTagFactory)
