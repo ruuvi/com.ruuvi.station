@@ -22,7 +22,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
     private static final String TAG = "RuuviTagScanner";
 
-    private RuuviTagListener listener;
+    private OnTagFoundListener listener;
 
     private ScanSettings scanSettings;
     private BluetoothLeScanner scanner;
@@ -43,7 +43,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
     @Override
     @SuppressLint("MissingPermission")
-    public void startScanning(RuuviTagListener ruuviTagListener) {
+    public void startScanning(OnTagFoundListener ruuviTagListener) {
         if (scanning || !canScan()) return;
         this.listener = ruuviTagListener;
         scanning = true;
@@ -87,7 +87,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
         Log.d(TAG, "found: " + device.getAddress());
         FoundRuuviTag tag = result.parse();
-        if (tag != null) listener.tagFound(tag);
+        if (tag != null) listener.onTagFound(tag);
     }
 
     @Override

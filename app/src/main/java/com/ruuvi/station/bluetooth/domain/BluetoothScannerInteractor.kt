@@ -102,8 +102,8 @@ class BluetoothScannerInteractor(
         scanning = true
         try {
 
-            ruuviTagScanner.startScanning(object : IRuuviTagScanner.RuuviTagListener {
-                override fun tagFound(tag: FoundRuuviTag) {
+            ruuviTagScanner.startScanning(object : IRuuviTagScanner.OnTagFoundListener {
+                override fun onTagFound(tag: FoundRuuviTag) {
                     logTag(RuuviTagEntity(tag), application, foreground)
                 }
             })

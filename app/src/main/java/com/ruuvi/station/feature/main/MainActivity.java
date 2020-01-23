@@ -50,7 +50,7 @@ import com.ruuvi.station.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RuuviTagScanner.RuuviTagListener {
+public class MainActivity extends AppCompatActivity implements RuuviTagScanner.OnTagFoundListener {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1337;
@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
     }
 
     @Override
-    public void tagFound(FoundRuuviTag foundTag) {
+    public void onTagFound(FoundRuuviTag foundTag) {
         final RuuviTagEntity tag = new RuuviTagEntity(foundTag);
         for (int i = 0; i < myRuuviTags.size(); i++) {
             final String tagId = myRuuviTags.get(i).getId();
