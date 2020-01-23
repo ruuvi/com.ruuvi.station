@@ -24,7 +24,7 @@ class BluetoothForegroundScanningInteractor(
     fun startScanning() {
         stopScanning()
 
-        ruuviRangeNotifier.startScan(DefaultOnTagFoundListener(application))
+        ruuviRangeNotifier.startScan(DefaultOnTagFoundListener(application), false)
     }
 
     fun enableForegroundMode() {
