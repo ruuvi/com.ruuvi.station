@@ -21,7 +21,7 @@ import java.util.List;
 
 public class RuuviTagRepository {
 
-    public static String getDispayName(IRuuviTag tag) {
+    public static String getDispayName(RuuviTagEntity tag) {
         return (tag.getName() != null && !tag.getName().isEmpty()) ? tag.getName() : tag.getId();
     }
 
@@ -39,7 +39,7 @@ public class RuuviTagRepository {
                 .querySingle();
     }
 
-    public static void deleteTagAndRelatives(IRuuviTag tag) {
+    public static void deleteTagAndRelatives(RuuviTagEntity tag) {
         SQLite.delete()
                 .from(Alarm.class)
                 .where(Alarm_Table.ruuviTagId.eq(tag.getId()))
@@ -49,11 +49,10 @@ public class RuuviTagRepository {
                 .where(TagSensorReading_Table.ruuviTagId.eq(tag.getId()))
                 .execute();
 
-        // FIXME: remove cast
-        ((RuuviTagEntity) tag).delete();
+        tag.delete();
     }
 
-    public static String getTemperatureString(Context context, IRuuviTag tag) {
+    public static String getTemperatureString(Context context, RuuviTagEntity tag) {
         String temperatureUnit = getTemperatureUnit(context);
         if (temperatureUnit.equals("C")) {
             return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + temperatureUnit;
@@ -61,7 +60,7 @@ public class RuuviTagRepository {
         return String.format(context.getString(R.string.temperature_reading), getFahrenheit(tag)) + temperatureUnit;
     }
 
-    public static double getFahrenheit(IRuuviTag tag) {
+    public static double getFahrenheit(RuuviTagEntity tag) {
         return Utils.celciusToFahrenheit(tag.getTemperature());
     }
 
@@ -69,13 +68,11 @@ public class RuuviTagRepository {
         return new Preferences(context).getTemperatureUnit();
     }
 
-    public static void update(IRuuviTag tag) {
-        //FIXME: remove cast
-        ((RuuviTagEntity) tag).update();
+    public static void update(RuuviTagEntity tag) {
+        tag.update();
     }
 
-    public static void save(@NotNull IRuuviTag tag) {
-        //FIXME: remove cast
-        ((RuuviTagEntity) tag).save();
+    public static void save(@NotNull RuuviTagEntity tag) {
+        tag.save();
     }
 }

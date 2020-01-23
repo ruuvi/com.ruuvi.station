@@ -35,7 +35,7 @@ public class AlarmChecker {
     private static final String TAG = "AlarmChecker";
 
     // returns 1 for triggered alarm, 0 for non triggered alarm, -1 if tag has no alarm
-    public static int getStatus(IRuuviTag tag) {
+    public static int getStatus(RuuviTagEntity tag) {
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
@@ -85,7 +85,7 @@ public class AlarmChecker {
         return -1;
     }
 
-    public static void check(IRuuviTag tag, Context context) {
+    public static void check(RuuviTagEntity tag, Context context) {
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;

@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(updater);
-        for (IRuuviTag tag: myRuuviTags) {
+        for (RuuviTagEntity tag : myRuuviTags) {
             RuuviTagRepository.update(tag);
         }
     }
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
         for (int i = 0; i < otherRuuviTags.size(); i++) {
             String tagId = otherRuuviTags.get(i).getId();
             if (tagId != null && tagId.equals(tag.getId())) {
-                otherRuuviTags.set(i, new RuuviTagEntity(tag));
+                otherRuuviTags.set(i, tag);
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
                     runOnUiThread(new Runnable() {

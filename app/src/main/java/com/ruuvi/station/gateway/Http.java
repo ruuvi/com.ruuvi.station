@@ -38,7 +38,7 @@ public class Http {
         ScanEvent eventBatch = new ScanEvent(context);
         eventBatch.location = scanLocation;
         for (int i = 0; i < tags.size(); i++) {
-            IRuuviTag tagFromDb = RuuviTagRepository.get(tags.get(i).getId());
+            RuuviTagEntity tagFromDb = RuuviTagRepository.get(tags.get(i).getId());
             // don't send data about tags not in the list
             if (tagFromDb == null || !tagFromDb.getFavorite()) continue;
 

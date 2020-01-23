@@ -53,7 +53,7 @@ public class TagSensorReading extends BaseModel {
     public TagSensorReading() {
     }
 
-    public TagSensorReading(IRuuviTag tag) {
+    public TagSensorReading(RuuviTagEntity tag) {
         this.ruuviTagId = tag.getId();
         this.temperature = tag.getTemperature();
         this.humidity = tag.getHumidity();

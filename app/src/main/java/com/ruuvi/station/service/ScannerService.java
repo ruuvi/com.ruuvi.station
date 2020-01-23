@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
 import com.ruuvi.station.model.RuuviTagEntity;
@@ -125,7 +124,7 @@ public class ScannerService extends Service {
             bluetoothScannerInteractor.stopScan();
             Http.post(backgroundTags, tagLocation, getApplicationContext());
 
-            for (IRuuviTag tag : backgroundTags) {
+            for (RuuviTagEntity tag : backgroundTags) {
                 TagSensorReading reading = new TagSensorReading(tag);
                 reading.save();
                 AlarmChecker.check(tag, getApplicationContext());

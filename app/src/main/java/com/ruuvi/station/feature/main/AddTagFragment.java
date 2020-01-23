@@ -45,7 +45,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     }
 
     public static boolean isBackgroundInUse(List<RuuviTagEntity> tags, int background) {
-        for (IRuuviTag tag : tags) {
+        for (RuuviTagEntity tag : tags) {
             if (tag.getDefaultBackground() == background) return true;
         }
         return false;

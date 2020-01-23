@@ -59,9 +59,9 @@ public class Utils {
     }
 
     public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
-        Collections.sort(tags, new Comparator<IRuuviTag>() {
+        Collections.sort(tags, new Comparator<RuuviTagEntity>() {
             @Override
-            public int compare(IRuuviTag o1, IRuuviTag o2) {
+            public int compare(RuuviTagEntity o1, RuuviTagEntity o2) {
                 return o2.getRssi() - o1.getRssi();
             }
         });
@@ -97,7 +97,7 @@ public class Utils {
         return output;
     }
 
-    public static Bitmap getBackground(Context context, IRuuviTag tag) {
+    public static Bitmap getBackground(Context context, RuuviTagEntity tag) {
         try {
             Uri uri = Uri.parse(tag.getUserBackground());
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
