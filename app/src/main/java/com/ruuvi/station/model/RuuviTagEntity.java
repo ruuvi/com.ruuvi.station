@@ -13,7 +13,7 @@ import java.util.Date;
 
 
 @Table(database = LocalDatabase.class)
-public class RuuviTagEntity extends BaseModel implements IRuuviTag {
+public class RuuviTagEntity extends BaseModel {
 
     @Column
     @PrimaryKey
@@ -64,25 +64,26 @@ public class RuuviTagEntity extends BaseModel implements IRuuviTag {
     public RuuviTagEntity(IRuuviTag tag) {
         this.id = tag.getId();
         this.url = tag.getUrl();
-        this.rssi = tag.getRssi();
+        this.rssi = tag.getRssi() != null ? tag.getRssi() : 0;
         this.data = tag.getData();
         this.name = tag.getName();
-        this.temperature = tag.getTemperature();
-        this.humidity = tag.getHumidity();
-        this.pressure = tag.getPressure();
+        this.temperature = tag.getTemperature() != null ? tag.getTemperature() : 0.0;
+        this.humidity = tag.getHumidity() != null ? tag.getHumidity() : 0.0;
+        this.pressure = tag.getPressure() != null ? tag.getPressure() : 0.0;
         this.favorite = tag.getFavorite();
-        this.accelX = tag.getAccelX();
-        this.accelY = tag.getAccelY();
-        this.accelZ = tag.getAccelZ();
-        this.voltage = tag.getVoltage();
+        this.accelX = tag.getAccelX() != null ? tag.getAccelX() : 0.0;
+        this.accelY = tag.getAccelY() != null ? tag.getAccelY() : 0.0;
+        this.accelZ = tag.getAccelZ() != null ? tag.getAccelZ() : 0.0;
+        this.voltage = tag.getVoltage() != null ? tag.getVoltage() : 0.0;
         this.updateAt = tag.getUpdateAt();
         this.gatewayUrl = tag.getGatewayUrl();
-        this.defaultBackground = tag.getDefaultBackground();
+        this.defaultBackground = tag.getDefaultBackground() != null ? tag.getDefaultBackground() : 0;
         this.userBackground = tag.getUserBackground();
-        this.dataFormat = tag.getDataFormat();
-        this.txPower = tag.getTxPower();
-        this.movementCounter = tag.getMovementCounter();
-        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber();
+        this.dataFormat = tag.getDataFormat() != null ? tag.getDataFormat() : 0;
+        this.txPower = tag.getTxPower() != null ? tag.getTxPower() : 0;
+        this.movementCounter = tag.getMovementCounter() != null ? tag.getMovementCounter() : 0;
+        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber() != null
+                ? tag.getMeasurementSequenceNumber() : 0;
     }
 
     public RuuviTagEntity preserveData(RuuviTagEntity tag) {
@@ -100,85 +101,85 @@ public class RuuviTagEntity extends BaseModel implements IRuuviTag {
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public String getId() {
         return id;
     }
 
-    @Override
+    //@Override
     public void setId(String id) {
         this.id = id;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public String getUrl() {
         return url;
     }
 
-    @Override
+    //@Override
     public void setUrl(String url) {
         this.url = url;
     }
 
-    @Override
+    //@Override
     public Integer getRssi() {
         return rssi;
     }
 
-    @Override
+    //@Override
     public void setRssi(Integer rssi) {
         this.rssi = rssi;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public double[] getData() {
         return data;
     }
 
-    @Override
+    //@Override
     public void setData(double[] data) {
         this.data = data;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public String getName() {
         return name;
     }
 
-    @Override
+    //@Override
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
+    //@Override
     public Double getTemperature() {
         return temperature;
     }
 
-    @Override
+    //@Override
     public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 
-    @Override
+    //@Override
     public Double getHumidity() {
         return humidity;
     }
 
-    @Override
+    //@Override
     public void setHumidity(Double humidity) {
         this.humidity = humidity;
     }
 
-    @Override
+    //@Override
     public Double getPressure() {
         return pressure;
     }
 
-    @Override
+    //@Override
     public void setPressure(Double pressure) {
         this.pressure = pressure;
     }
@@ -187,136 +188,136 @@ public class RuuviTagEntity extends BaseModel implements IRuuviTag {
         return favorite;
     }
 
-    @Override
+    //@Override
     public void setFavorite(Boolean favorite) {
         this.favorite = favorite;
     }
 
-    @Override
+    //@Override
     public Double getAccelX() {
         return accelX;
     }
 
-    @Override
+    //@Override
     public void setAccelX(Double accelX) {
         this.accelX = accelX;
     }
 
-    @Override
+    //@Override
     public Double getAccelY() {
         return accelY;
     }
 
-    @Override
+    //@Override
     public void setAccelY(Double accelY) {
         this.accelY = accelY;
     }
 
-    @Override
+    //@Override
     public Double getAccelZ() {
         return accelZ;
     }
 
-    @Override
+    //@Override
     public void setAccelZ(Double accelZ) {
         this.accelZ = accelZ;
     }
 
-    @Override
+    //@Override
     public Double getVoltage() {
         return voltage;
     }
 
-    @Override
+    //@Override
     public void setVoltage(Double voltage) {
         this.voltage = voltage;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public Date getUpdateAt() {
         return updateAt;
     }
 
-    @Override
+    //@Override
     public void setUpdateAt(Date updateAt) {
         this.updateAt = updateAt;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public String getGatewayUrl() {
         return gatewayUrl;
     }
 
-    @Override
+    //@Override
     public void setGatewayUrl(String gatewayUrl) {
         this.gatewayUrl = gatewayUrl;
     }
 
-    @Override
+    //@Override
     public Integer getDefaultBackground() {
         return defaultBackground;
     }
 
-    @Override
+    //@Override
     public void setDefaultBackground(Integer defaultBackground) {
         this.defaultBackground = defaultBackground;
     }
 
-    @Override
+    //@Override
     public Integer getDataFormat() {
         return dataFormat;
     }
 
-    @Override
+    //@Override
     public void setDataFormat(Integer dataFormat) {
         this.dataFormat = dataFormat;
     }
 
-    @Override
+    //@Override
     public Double getTxPower() {
         return txPower;
     }
 
-    @Override
+    //@Override
     public void setTxPower(Double txPower) {
         this.txPower = txPower;
     }
 
-    @Override
+    //@Override
     public Integer getMovementCounter() {
         return movementCounter;
     }
 
-    @Override
+    //@Override
     public void setMovementCounter(Integer movementCounter) {
         this.movementCounter = movementCounter;
     }
 
-    @Override
+    //@Override
     @Nullable
     public Integer getMeasurementSequenceNumber() {
         return measurementSequenceNumber;
     }
 
-    @Override
+    //@Override
     public void setMeasurementSequenceNumber(Integer measurementSequenceNumber) {
         this.measurementSequenceNumber = measurementSequenceNumber;
     }
 
     @org.jetbrains.annotations.Nullable
-    @Override
+//@Override
     public String getUserBackground() {
         return userBackground;
     }
 
-    @Override
+    //@Override
     public void setUserBackground(String userBackground) {
         this.userBackground = userBackground;
     }
 
-    @Override
+    //@Override
     @Nullable
     public Boolean getFavorite() {
         return favorite;
