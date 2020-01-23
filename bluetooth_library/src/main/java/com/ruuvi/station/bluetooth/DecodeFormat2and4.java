@@ -1,7 +1,6 @@
 package com.ruuvi.station.bluetooth;
 
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,12 +8,12 @@ import java.math.RoundingMode;
 class DecodeFormat2and4 implements LeScanResult.RuuviTagDecoder {
 
     @Override
-    public IRuuviTag decode(IRuuviTagFactory factory, byte[] data, int offset) {
+    public IRuuviTag decode(byte[] data, int offset) {
         int[] pData = new int[8];
         for (int i = 0; i < data.length && i < 8; i++)
             pData[i] = data[i] & 0xFF;
 
-        IRuuviTag tag = factory.createTag();
+        IRuuviTag tag = new IRuuviTag();
         tag.setDataFormat(pData[0]);
         tag.setHumidity(((pData[1] & 0xFF)) / 2.0);
         double uTemp = (((pData[2] & 127) << 8) | pData[3]);

@@ -3,12 +3,10 @@ package com.ruuvi.station.bluetooth.domain
 import android.app.Application
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.RuuviRangeNotifier
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.util.Preferences
 
 class BluetoothForegroundScanningInteractor(
-    private val application: Application,
-    private val ruuviTagFactory: IRuuviTagFactory
+    private val application: Application
 ) {
 
     private val ruuviRangeNotifier by lazy {
@@ -16,7 +14,6 @@ class BluetoothForegroundScanningInteractor(
 
         RuuviRangeNotifier(
             application,
-            ruuviTagFactory,
             "AltBeaconFGScannerService"
         )
     }

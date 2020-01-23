@@ -7,7 +7,6 @@ import android.os.RemoteException
 import android.util.Log
 import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
@@ -19,7 +18,6 @@ import java.util.ArrayList
 
 class RuuviRangeNotifier(
     private val context: Context,
-    private val ruuviTagFactory: IRuuviTagFactory,
     private val from: String
 ) : IRuuviRangeNotifier {
 
@@ -47,7 +45,7 @@ class RuuviRangeNotifier(
                 for (tag in tags) {
                     if (tag.id == beacon.bluetoothAddress) continue
                 }
-                val tag = LeScanResult.fromAltbeacon(context, ruuviTagFactory, beacon)
+                val tag = LeScanResult.fromAltbeacon(beacon)
                 if (tag != null) {
                     allTags.add(tag)
                     if (tag.favorite == true) tags.add(tag)

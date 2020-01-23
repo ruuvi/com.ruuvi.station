@@ -24,7 +24,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.ruuvi.station.R;
-import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
@@ -61,8 +60,7 @@ public class ScannerService extends Service {
     public void onCreate() {
         super.onCreate();
         bluetoothScannerInteractor = new BluetoothScannerInteractor(
-                getApplication(),
-                ((RuuviScannerApplication) getApplication()).getRuuviTagFactory()
+                getApplication()
         );
 
         Foreground.init(getApplication());

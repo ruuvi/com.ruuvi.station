@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.ruuvi.station.bluetooth.RuuviTagScanner
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
@@ -19,8 +18,7 @@ import java.util.Date
 import java.util.HashMap
 
 class BluetoothScannerInteractor(
-    private val application: Application,
-    private val ruuviTagFactory: IRuuviTagFactory
+    private val application: Application
 ) {
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
@@ -50,7 +48,6 @@ class BluetoothScannerInteractor(
     private val ruuviTagScanner by lazy {
         RuuviTagScanner(
             RuuviTagScanner.RuuviTagListener { logTag(RuuviTagEntity(it), application, foreground) },
-            ruuviTagFactory,
             application
         )
     }
