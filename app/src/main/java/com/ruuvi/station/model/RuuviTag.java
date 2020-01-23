@@ -1,6 +1,7 @@
 package com.ruuvi.station.model;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -152,12 +153,12 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     @Override
-    public int getRssi() {
+    public Integer getRssi() {
         return rssi;
     }
 
     @Override
-    public void setRssi(int rssi) {
+    public void setRssi(Integer rssi) {
         this.rssi = rssi;
     }
 
@@ -184,41 +185,41 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     @Override
-    public double getTemperature() {
+    public Double getTemperature() {
         return temperature;
     }
 
     @Override
-    public void setTemperature(double temperature) {
+    public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 
     @Override
-    public double getHumidity() {
+    public Double getHumidity() {
         return humidity;
     }
 
     @Override
-    public void setHumidity(double humidity) {
+    public void setHumidity(Double humidity) {
         this.humidity = humidity;
     }
 
     @Override
-    public double getPressure() {
+    public Double getPressure() {
         return pressure;
     }
 
     @Override
-    public void setPressure(double pressure) {
+    public void setPressure(Double pressure) {
         this.pressure = pressure;
     }
 
-    public boolean isFavorite() {
+    public Boolean isFavorite() {
         return favorite;
     }
 
     @Override
-    public void setFavorite(boolean favorite) {
+    public void setFavorite(Boolean favorite) {
         this.favorite = favorite;
     }
 
@@ -245,42 +246,42 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     @Override
-    public double getAccelX() {
+    public Double getAccelX() {
         return accelX;
     }
 
     @Override
-    public void setAccelX(double accelX) {
+    public void setAccelX(Double accelX) {
         this.accelX = accelX;
     }
 
     @Override
-    public double getAccelY() {
+    public Double getAccelY() {
         return accelY;
     }
 
     @Override
-    public void setAccelY(double accelY) {
+    public void setAccelY(Double accelY) {
         this.accelY = accelY;
     }
 
     @Override
-    public double getAccelZ() {
+    public Double getAccelZ() {
         return accelZ;
     }
 
     @Override
-    public void setAccelZ(double accelZ) {
+    public void setAccelZ(Double accelZ) {
         this.accelZ = accelZ;
     }
 
     @Override
-    public double getVoltage() {
+    public Double getVoltage() {
         return voltage;
     }
 
     @Override
-    public void setVoltage(double voltage) {
+    public void setVoltage(Double voltage) {
         this.voltage = voltage;
     }
 
@@ -307,52 +308,53 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     @Override
-    public int getDefaultBackground() {
+    public Integer getDefaultBackground() {
         return defaultBackground;
     }
 
     @Override
-    public void setDefaultBackground(int defaultBackground) {
+    public void setDefaultBackground(Integer defaultBackground) {
         this.defaultBackground = defaultBackground;
     }
 
     @Override
-    public int getDataFormat() {
+    public Integer getDataFormat() {
         return dataFormat;
     }
 
     @Override
-    public void setDataFormat(int dataFormat) {
+    public void setDataFormat(Integer dataFormat) {
         this.dataFormat = dataFormat;
     }
 
     @Override
-    public double getTxPower() {
+    public Double getTxPower() {
         return txPower;
     }
 
     @Override
-    public void setTxPower(double txPower) {
+    public void setTxPower(Double txPower) {
         this.txPower = txPower;
     }
 
     @Override
-    public int getMovementCounter() {
+    public Integer getMovementCounter() {
         return movementCounter;
     }
 
     @Override
-    public void setMovementCounter(int movementCounter) {
+    public void setMovementCounter(Integer movementCounter) {
         this.movementCounter = movementCounter;
     }
 
     @Override
-    public int getMeasurementSequenceNumber() {
+    @Nullable
+    public Integer getMeasurementSequenceNumber() {
         return measurementSequenceNumber;
     }
 
     @Override
-    public void setMeasurementSequenceNumber(int measurementSequenceNumber) {
+    public void setMeasurementSequenceNumber(Integer measurementSequenceNumber) {
         this.measurementSequenceNumber = measurementSequenceNumber;
     }
 
@@ -368,7 +370,8 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
     }
 
     @Override
-    public boolean getFavorite() {
+    @Nullable
+    public Boolean getFavorite() {
         return favorite;
     }
 }

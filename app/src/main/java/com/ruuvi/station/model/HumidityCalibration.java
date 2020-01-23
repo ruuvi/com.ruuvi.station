@@ -12,16 +12,16 @@ public class HumidityCalibration {
     private static HashMap<String, HumidityCalibration> cache = new HashMap<>();
 
     public String mac;
-    public float humidityOffset;
+    public double humidityOffset;
     public Date timestamp = new Date();
 
     public static HumidityCalibration calibrate(IRuuviTag tag) {
         HumidityCalibration prevCalibration = HumidityCalibration.get(tag);
-        float prevCalibrationValue = 0f;
+        double prevCalibrationValue = 0f;
         if (prevCalibration != null) {
             prevCalibrationValue = prevCalibration.humidityOffset;
         }
-        float calibration = 75f-((float) tag.getHumidity() -prevCalibrationValue);
+        double calibration = 75f - (tag.getHumidity() != null ? tag.getHumidity() : 0.0 - prevCalibrationValue);
         HumidityCalibration newCalibration = new HumidityCalibration();
         newCalibration.humidityOffset = calibration;
         newCalibration.mac = tag.getId();

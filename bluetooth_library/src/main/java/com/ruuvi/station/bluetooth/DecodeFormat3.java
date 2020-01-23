@@ -12,37 +12,37 @@ class DecodeFormat3 implements LeScanResult.RuuviTagDecoder {
     public IRuuviTag decode(IRuuviTagFactory factory, byte[] data, int offset) {
         IRuuviTag tag = factory.createTag();
         tag.setDataFormat(3);
-        tag.setHumidity(((float) (data[1 + offset] & 0xFF)) / 2f);
+        tag.setHumidity(((float) (data[1 + offset] & 0xFF)) / 2.0);
 
-        int temperatureSign = (data[2 + offset] >> 7) & 1;
-        int temperatureBase = (data[2 + offset] & 0x7F);
-        float temperatureFraction = ((float) data[3 + offset]) / 100f;
-        tag.setTemperature(((float) temperatureBase) + temperatureFraction);
+        double temperatureSign = (data[2 + offset] >> 7) & 1;
+        double temperatureBase = (data[2 + offset] & 0x7F);
+        double temperatureFraction = (data[3 + offset]) / 100.0;
+        tag.setTemperature(temperatureBase + temperatureFraction);
         if (temperatureSign == 1) {
-            tag.setTemperature(tag.getTemperature() * -1);
+            tag.setTemperature(tag.getTemperature() != null ? tag.getTemperature() : 0.0 * -1);
         }
 
-        int pressureHi = data[4 + offset] & 0xFF;
-        int pressureLo = data[5 + offset] & 0xFF;
+        double pressureHi = data[4 + offset] & 0xFF;
+        double pressureLo = data[5 + offset] & 0xFF;
         tag.setPressure(pressureHi * 256 + 50000 + pressureLo);
-        tag.setPressure(tag.getPressure() / 100.0);
+        tag.setPressure(tag.getPressure() != null ? tag.getPressure() : 0.0 / 100.0);
 
-        tag.setAccelX((data[6 + offset] << 8 | data[7 + offset] & 0xFF) / 1000f);
-        tag.setAccelY((data[8 + offset] << 8 | data[9 + offset] & 0xFF) / 1000f);
-        tag.setAccelZ((data[10 + offset] << 8 | data[11 + offset] & 0xFF) / 1000f);
+        tag.setAccelX((data[6 + offset] << 8 | data[7 + offset] & 0xFF) / 1000.0);
+        tag.setAccelY((data[8 + offset] << 8 | data[9 + offset] & 0xFF) / 1000.0);
+        tag.setAccelZ((data[10 + offset] << 8 | data[11 + offset] & 0xFF) / 1000.0);
 
         int battHi = data[12 + offset] & 0xFF;
         int battLo = data[13 + offset] & 0xFF;
-        tag.setVoltage((battHi * 256 + battLo) / 1000f);
+        tag.setVoltage((battHi * 256 + battLo) / 1000.0);
 
         // make it pretty
-        tag.setTemperature(round(tag.getTemperature(), 2));
-        tag.setHumidity(round(tag.getHumidity(), 2));
+        tag.setTemperature(round(tag.getTemperature() != null ? tag.getTemperature() : 0.0, 2));
+        tag.setHumidity(round(tag.getHumidity() != null ? tag.getHumidity() : 0.0, 2));
         tag.setPressure(round(tag.getPressure(), 2));
-        tag.setVoltage(round(tag.getVoltage(), 4));
-        tag.setAccelX(round(tag.getAccelX(), 4));
-        tag.setAccelY(round(tag.getAccelY(), 4));
-        tag.setAccelZ(round(tag.getAccelZ(), 4));
+        tag.setVoltage(round(tag.getVoltage() != null ? tag.getVoltage() : 0.0, 4));
+        tag.setAccelX(round(tag.getAccelX() != null ? tag.getAccelX() : 0.0, 4));
+        tag.setAccelY(round(tag.getAccelY() != null ? tag.getAccelY() : 0.0, 4));
+        tag.setAccelZ(round(tag.getAccelZ() != null ? tag.getAccelZ() : 0.0, 4));
         return tag;
     }
 

@@ -4,12 +4,12 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.bluetooth.RuuviTagScanner
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
+import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Foreground
@@ -62,14 +62,14 @@ class BluetoothScannerInteractor(
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             RuuviTagRepository.update(ruuviTag)
-            if (!dbTag.favorite) return
+            if (dbTag.favorite != true) return
         } else {
             ruuviTag.updateAt = Date()
             RuuviTagRepository.save(ruuviTag)
             return
         }
         if (!foreground) {
-            if (ruuviTag.favorite && checkForSameTag(backgroundTags, ruuviTag) == -1) {
+            if (ruuviTag.favorite == true && checkForSameTag(backgroundTags, ruuviTag) == -1) {
                 backgroundTags.add(ruuviTag)
             }
             return

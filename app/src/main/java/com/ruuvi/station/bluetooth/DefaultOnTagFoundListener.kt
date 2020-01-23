@@ -38,7 +38,7 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
 
             saveReading(tag)
 
-            if (tag.favorite) {
+            if (tag.favorite == true) {
                 favoriteTags.add(tag)
             }
         }
@@ -54,7 +54,7 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             RuuviTagRepository.update(ruuviTag)
-            if (!dbTag.favorite) return
+            if (dbTag.favorite!=true) return
         } else {
             ruuviTag.updateAt = Date()
             RuuviTagRepository.save(ruuviTag)
