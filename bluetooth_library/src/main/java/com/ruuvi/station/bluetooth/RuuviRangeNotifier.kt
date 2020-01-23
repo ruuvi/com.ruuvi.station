@@ -47,7 +47,6 @@ class RuuviRangeNotifier(
                 val tag = LeScanResult.fromAltbeacon(beacon)
                 if (tag != null) {
                     allTags.add(tag)
-                    if (tag.favorite == true) tags.add(tag)
                 }
             }
 
