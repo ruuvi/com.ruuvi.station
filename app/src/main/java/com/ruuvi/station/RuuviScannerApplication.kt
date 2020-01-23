@@ -2,17 +2,16 @@ package com.ruuvi.station
 
 import android.app.Application
 import com.raizlabs.android.dbflow.config.FlowManager
+import com.ruuvi.station.bluetooth.domain.BluetoothForegroundScanningInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
-import com.ruuvi.station.bluetooth.domain.BluetoothForegroundScanningInteractor
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.model.RuuviTagEntity
 
 class RuuviScannerApplication : Application() {
 
     val ruuviTagFactory = object : IRuuviTagFactory {
-        override fun createTag(): IRuuviTag = RuuviTagEntity()
+        override fun createTag(): RuuviTagEntity = RuuviTagEntity()
     }
     val bluetoothScannerInteractor = BluetoothScannerInteractor(this, ruuviTagFactory)
     val bluetoothInteractor = BluetoothInteractor(this, ruuviTagFactory)

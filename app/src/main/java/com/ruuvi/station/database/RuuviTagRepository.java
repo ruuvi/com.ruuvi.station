@@ -16,7 +16,6 @@ import com.ruuvi.station.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,11 +25,11 @@ public class RuuviTagRepository {
         return (tag.getName() != null && !tag.getName().isEmpty()) ? tag.getName() : tag.getId();
     }
 
-    public static List<IRuuviTag> getAll(boolean favorite) {
-        return new ArrayList<IRuuviTag>(SQLite.select()
+    public static List<RuuviTagEntity> getAll(boolean favorite) {
+        return SQLite.select()
                 .from(RuuviTagEntity.class)
                 .where(RuuviTagEntity_Table.favorite.eq(favorite))
-                .queryList());
+                .queryList();
     }
 
     public static RuuviTagEntity get(String id) {

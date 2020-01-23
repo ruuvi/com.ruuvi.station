@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.ruuvi.station.R;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.Utils;
 
@@ -26,10 +27,11 @@ import java.util.List;
  * Created by berg on 13/09/17.
  */
 
-public class RuuviTagAdapter extends ArrayAdapter<IRuuviTag> {
-    private List<IRuuviTag> tags;
+public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
 
-    public RuuviTagAdapter(@NonNull Context context, List<IRuuviTag> tags) {
+    private List<RuuviTagEntity> tags;
+
+    public RuuviTagAdapter(@NonNull Context context, List<RuuviTagEntity> tags) {
         super(context, 0, tags);
         this.tags = tags;
     }
@@ -37,7 +39,7 @@ public class RuuviTagAdapter extends ArrayAdapter<IRuuviTag> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final IRuuviTag tag = getItem(position);
+        final RuuviTagEntity tag = getItem(position);
 
 
         if (convertView == null) {

@@ -1,18 +1,13 @@
 package com.ruuvi.station.model;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.data.Blob;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.ruuvi.station.R;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
-import com.ruuvi.station.util.Preferences;
-import com.ruuvi.station.util.Utils;
 
 import java.util.Date;
 
@@ -66,7 +61,31 @@ public class RuuviTagEntity extends BaseModel implements IRuuviTag {
     public RuuviTagEntity() {
     }
 
-    public IRuuviTag preserveData(IRuuviTag tag) {
+    public RuuviTagEntity(IRuuviTag tag) {
+        this.id = tag.getId();
+        this.url = tag.getUrl();
+        this.rssi = tag.getRssi();
+        this.data = tag.getData();
+        this.name = tag.getName();
+        this.temperature = tag.getTemperature();
+        this.humidity = tag.getHumidity();
+        this.pressure = tag.getPressure();
+        this.favorite = tag.getFavorite();
+        this.accelX = tag.getAccelX();
+        this.accelY = tag.getAccelY();
+        this.accelZ = tag.getAccelZ();
+        this.voltage = tag.getVoltage();
+        this.updateAt = tag.getUpdateAt();
+        this.gatewayUrl = tag.getGatewayUrl();
+        this.defaultBackground = tag.getDefaultBackground();
+        this.userBackground = tag.getUserBackground();
+        this.dataFormat = tag.getDataFormat();
+        this.txPower = tag.getTxPower();
+        this.movementCounter = tag.getMovementCounter();
+        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber();
+    }
+
+    public RuuviTagEntity preserveData(RuuviTagEntity tag) {
         tag.setName(this.getName());
         tag.setFavorite(this.isFavorite());
         tag.setGatewayUrl(this.getGatewayUrl());
@@ -76,53 +95,9 @@ public class RuuviTagEntity extends BaseModel implements IRuuviTag {
         return tag;
     }
 
-    private double getFahrenheit() {
-        return Utils.celciusToFahrenheit(this.getTemperature());
-    }
-
-    public static String getTemperatureUnit(Context context) {
-        return new Preferences(context).getTemperatureUnit();
-    }
-
-    public String getTemperatureString(Context context) {
-        String temperatureUnit = RuuviTagEntity.getTemperatureUnit(context);
-        if (temperatureUnit.equals("C")) {
-            return String.format(context.getString(R.string.temperature_reading), this.getTemperature()) + temperatureUnit;
-        }
-        return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
-    }
-
     public String getDisplayName() {
         return (this.getName() != null && !this.getName().isEmpty()) ? this.getName() : this.getId();
     }
-//
-//    public static List<? extends IRuuviTag> getAll(boolean favorite) {
-//        return SQLite.select()
-//                .from(RuuviTagEntity.class)
-//                .where(RuuviTag_Table.favorite.eq(favorite))
-//                .queryList();
-//    }
-//
-//    public static RuuviTagEntity get(String id) {
-//        return SQLite.select()
-//                .from(RuuviTagEntity.class)
-//                .where(RuuviTag_Table.id.eq(id))
-//                .querySingle();
-//    }
-//
-//    public void deleteTagAndRelatives() {
-//        SQLite.delete()
-//                .from(Alarm.class)
-//                .where(Alarm_Table.ruuviTagId.eq(this.getId()))
-//                .execute();
-//        SQLite.delete()
-//                .from(TagSensorReading.class)
-//                .where(TagSensorReading_Table.ruuviTagId.eq(this.getId()))
-//                .execute();
-//
-//        this.delete();
-//    }
-
 
     @org.jetbrains.annotations.Nullable
     @Override

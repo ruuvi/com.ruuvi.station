@@ -42,8 +42,8 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.GraphView
@@ -70,8 +70,8 @@ class TagDetails : AppCompatActivity() {
     }
 
     var backgroundFadeStarted: Long = 0
-    var tag: IRuuviTag? = null
-    lateinit var tags: MutableList<IRuuviTag>
+    var tag: RuuviTagEntity? = null
+    lateinit var tags: MutableList<RuuviTagEntity>
     var alarmStatus = HashMap<String, Int>()
 
     lateinit var handler: Handler
@@ -474,7 +474,7 @@ class TagDetails : AppCompatActivity() {
     }
 }
 
-class TagPager constructor(var tags: List<IRuuviTag>, val context: Context, val view: View) : PagerAdapter() {
+class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context, val view: View) : PagerAdapter() {
     val VIEW_TAG = "DetailedTag"
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -485,7 +485,7 @@ class TagPager constructor(var tags: List<IRuuviTag>, val context: Context, val 
         return view
     }
 
-    fun updateView(tag: IRuuviTag, showGraph: Boolean, updateGraph: Boolean) {
+    fun updateView(tag: RuuviTagEntity, showGraph: Boolean, updateGraph: Boolean) {
         var pos = -1
         for ((index, aTag) in tags.withIndex()) {
             if (tag.id.equals(aTag.id)) {

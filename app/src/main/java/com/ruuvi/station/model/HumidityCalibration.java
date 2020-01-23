@@ -2,8 +2,6 @@ package com.ruuvi.station.model;
 
 import android.support.annotation.Nullable;
 
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
-
 import java.util.Date;
 import java.util.HashMap;
 
@@ -15,7 +13,7 @@ public class HumidityCalibration {
     public double humidityOffset;
     public Date timestamp = new Date();
 
-    public static HumidityCalibration calibrate(IRuuviTag tag) {
+    public static HumidityCalibration calibrate(RuuviTagEntity tag) {
         HumidityCalibration prevCalibration = HumidityCalibration.get(tag);
         double prevCalibrationValue = 0f;
         if (prevCalibration != null) {
@@ -29,11 +27,11 @@ public class HumidityCalibration {
         return newCalibration;
     }
 
-    public static void clear(IRuuviTag tag) {
+    public static void clear(RuuviTagEntity tag) {
         cache.remove(tag.getId());
     }
 
-    public static IRuuviTag apply(IRuuviTag tag) {
+    public static RuuviTagEntity apply(RuuviTagEntity tag) {
         HumidityCalibration calibration = get(tag);
         if (calibration != null) {
             tag.setHumidity(tag.getHumidity() + calibration.humidityOffset);
@@ -42,7 +40,7 @@ public class HumidityCalibration {
     }
 
     @Nullable
-    public static HumidityCalibration get(IRuuviTag tag) {
+    public static HumidityCalibration get(RuuviTagEntity tag) {
         if (cache.containsKey(tag.getId())) {
             return cache.get(tag.getId());
         }

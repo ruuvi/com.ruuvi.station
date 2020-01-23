@@ -41,6 +41,7 @@ import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
@@ -58,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
     private static final int COARSE_LOCATION_PERMISSION = 1;
 
     private DrawerLayout drawerLayout;
-    public List<IRuuviTag> myRuuviTags = new ArrayList<>();
-    public List<IRuuviTag> otherRuuviTags = new ArrayList<>();
+    public List<RuuviTagEntity> myRuuviTags = new ArrayList<>();
+    public List<RuuviTagEntity> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
     boolean dashboardVisible = true;
@@ -399,9 +400,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
     }
 
     @Override
-    public void tagFound(IRuuviTag tag) {
+    public void tagFound(IRuuviTag foundTag) {
+        final RuuviTagEntity tag = new RuuviTagEntity(foundTag);
         for (int i = 0; i < myRuuviTags.size(); i++) {
-            if (myRuuviTags.get(i).getId().equals(tag.getId())) {
+            final String tagId = myRuuviTags.get(i).getId();
+
+            if (tagId != null && tagId.equals(tag.getId())) {
                 myRuuviTags.set(i, tag);
                 if (fragmentWithCallback != null) {
                     runOnUiThread(new Runnable() {
@@ -416,8 +420,9 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
         }
 
         for (int i = 0; i < otherRuuviTags.size(); i++) {
-            if (otherRuuviTags.get(i).getId().equals(tag.getId())) {
-                otherRuuviTags.set(i, tag);
+            String tagId = otherRuuviTags.get(i).getId();
+            if (tagId != null && tagId.equals(tag.getId())) {
+                otherRuuviTags.set(i, new RuuviTagEntity(tag));
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
                     runOnUiThread(new Runnable() {

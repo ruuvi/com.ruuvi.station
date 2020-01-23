@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -57,7 +58,7 @@ public class Utils {
         return bitmap;
     }
 
-    public static void sortTagsByRssi(List<IRuuviTag> tags) {
+    public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
         Collections.sort(tags, new Comparator<IRuuviTag>() {
             @Override
             public int compare(IRuuviTag o1, IRuuviTag o2) {

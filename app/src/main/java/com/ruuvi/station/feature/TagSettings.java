@@ -96,7 +96,7 @@ public class TagSettings extends AppCompatActivity {
         }
         tagAlarms = Alarm.getForTag(tagId);
 
-        tempUnit = RuuviTagEntity.getTemperatureUnit(this);
+        tempUnit = RuuviTagRepository.getTemperatureUnit(this);
 
         ((TextView)findViewById(R.id.input_mac)).setText(tag.getId());
         findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
@@ -227,7 +227,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        IRuuviTag latestTag = RuuviTagRepository.get(tag.getId());
+                        RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
                         HumidityCalibration.calibrate(latestTag);
                         if (calibration != null) latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                         latestTag = HumidityCalibration.apply(latestTag);

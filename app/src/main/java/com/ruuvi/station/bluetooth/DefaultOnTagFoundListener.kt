@@ -12,6 +12,7 @@ import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Constants
@@ -30,11 +31,11 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
 
         updateLocation()
 
-        val favoriteTags = ArrayList<IRuuviTag>()
+        val favoriteTags = ArrayList<RuuviTagEntity>()
 
         allTags.forEach {
 
-            val tag = HumidityCalibration.apply(it)
+            val tag = HumidityCalibration.apply(RuuviTagEntity(it))
 
             saveReading(tag)
 
@@ -48,7 +49,7 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
         TagSensorReading.removeOlderThan(24)
     }
 
-    private fun saveReading(ruuviTag: IRuuviTag) {
+    private fun saveReading(ruuviTag: RuuviTagEntity) {
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {

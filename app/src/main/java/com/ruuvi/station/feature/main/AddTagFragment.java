@@ -31,7 +31,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     private AddTagAdapter adapter;
     private ListView beaconListView;
     private TextView noTagsTextView;
-    private List<IRuuviTag> tags;
+    private List<RuuviTagEntity> tags;
 
     public AddTagFragment() {
         // Required empty public constructor
@@ -44,7 +44,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         return fragment;
     }
 
-    public static boolean isBackgroundInUse(List<IRuuviTag> tags, int background) {
+    public static boolean isBackgroundInUse(List<RuuviTagEntity> tags, int background) {
         for (IRuuviTag tag : tags) {
             if (tag.getDefaultBackground() == background) return true;
         }
@@ -52,7 +52,7 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
     }
 
     public static int getKindaRandomBackground() {
-        List<IRuuviTag> tags = RuuviTagRepository.getAll(true);
+        List<RuuviTagEntity> tags = RuuviTagRepository.getAll(true);
         int bg = (int)(Math.random() * 9.0);
         for (int i = 0; i < 100; i++) {
             if (!isBackgroundInUse(tags, bg)) {

@@ -30,7 +30,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
     private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private View noTagsFound;
-    private List<IRuuviTag> tags;
+    private List<RuuviTagEntity> tags;
 
     public DashboardFragment() {
         // Required empty public constructor

@@ -5,11 +5,11 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.ruuvi.station.bluetooth.RuuviTagScanner
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Foreground
@@ -25,7 +25,7 @@ class BluetoothScannerInteractor(
 
     private val TAG: String = BluetoothScannerInteractor::class.java.simpleName
 
-    private val backgroundTags = ArrayList<IRuuviTag>()
+    private val backgroundTags = ArrayList<RuuviTagEntity>()
 
     private val lastLogged: MutableMap<String, Long> = HashMap()
     private val LOG_INTERVAL = 5 // seconds
@@ -49,13 +49,13 @@ class BluetoothScannerInteractor(
 
     private val ruuviTagScanner by lazy {
         RuuviTagScanner(
-            RuuviTagScanner.RuuviTagListener { logTag(it, application, foreground) },
+            RuuviTagScanner.RuuviTagListener { logTag(RuuviTagEntity(it), application, foreground) },
             ruuviTagFactory,
             application
         )
     }
 
-    fun logTag(ruuviTag: IRuuviTag, context: Context?, foreground: Boolean) {
+    fun logTag(ruuviTag: RuuviTagEntity, context: Context?, foreground: Boolean) {
         var ruuviTag = HumidityCalibration.apply(ruuviTag)
 
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
@@ -82,7 +82,7 @@ class BluetoothScannerInteractor(
                 return
             }
         }
-        val tags: MutableList<IRuuviTag> = ArrayList()
+        val tags: MutableList<RuuviTagEntity> = ArrayList()
         tags.add(ruuviTag)
         Http.post(tags, null, context)
         ruuviTag.id?.let { id ->
@@ -93,7 +93,7 @@ class BluetoothScannerInteractor(
         AlarmChecker.check(ruuviTag, context)
     }
 
-    fun getBackgroundTags(): List<IRuuviTag> = backgroundTags
+    fun getBackgroundTags(): List<RuuviTagEntity> = backgroundTags
 
     fun clearBackgroundTags() {
         backgroundTags.clear()
@@ -117,7 +117,7 @@ class BluetoothScannerInteractor(
         ruuviTagScanner.stop()
     }
 
-    private fun checkForSameTag(arr: List<IRuuviTag>, ruuvi: IRuuviTag): Int {
+    private fun checkForSameTag(arr: List<RuuviTagEntity>, ruuvi: RuuviTagEntity): Int {
         for (i in arr.indices) {
             if (ruuvi.id == arr[i].id) {
                 return i

@@ -29,6 +29,7 @@ import com.ruuvi.station.bluetooth.domain.BluetoothScannerInteractor;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.feature.StartupActivity;
 import com.ruuvi.station.gateway.Http;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.BackgroundScanModes;
@@ -118,7 +119,7 @@ public class ScannerService extends Service {
     private Runnable bgLoggerDone = new Runnable() {
         @Override
         public void run() {
-            List<IRuuviTag> backgroundTags = bluetoothScannerInteractor.getBackgroundTags();
+            List<RuuviTagEntity> backgroundTags = bluetoothScannerInteractor.getBackgroundTags();
 
             Log.d(TAG, "Stopping background scan, found " + backgroundTags.size() + " tags");
             bluetoothScannerInteractor.stopScan();

@@ -13,7 +13,6 @@ import android.widget.ListView
 import android.widget.TextView
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.RuuviTagEntity
@@ -25,7 +24,7 @@ class DashboardActivity : AppCompatActivity() {
 
     lateinit var handler: Handler
     lateinit var starter: Starter
-    lateinit var tags: MutableList<IRuuviTag>
+    lateinit var tags: MutableList<RuuviTagEntity>
     lateinit var adapter: RuuviTagAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
