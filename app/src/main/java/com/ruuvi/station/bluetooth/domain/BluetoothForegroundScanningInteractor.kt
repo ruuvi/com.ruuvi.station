@@ -25,13 +25,13 @@ class BluetoothForegroundScanningInteractor(
     }
 
     fun enableForegroundMode() {
-        ruuviRangeNotifier.setEnableScheduledScanJobs(false)
+        ruuviRangeNotifier.enableScheduledScans(false)
     }
 
     fun enableBackgroundMode() {
        if(shouldUpdateScanInterval()){
            val scanInterval = Preferences(application).backgroundScanInterval * 1000
-           ruuviRangeNotifier.setBackgroundScanInterval(scanInterval.toLong())
+           ruuviRangeNotifier.setBackgroundScheduledScanInterval(scanInterval.toLong())
         }
         ruuviRangeNotifier.enableBackgroundMode(true)
     }

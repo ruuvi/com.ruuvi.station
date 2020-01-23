@@ -102,7 +102,7 @@ class BluetoothScannerInteractor(
         scanning = true
         try {
 
-            ruuviTagScanner.start(object : IRuuviTagScanner.RuuviTagListener {
+            ruuviTagScanner.startScanning(object : IRuuviTagScanner.RuuviTagListener {
                 override fun tagFound(tag: FoundRuuviTag) {
                     logTag(RuuviTagEntity(tag), application, foreground)
                 }
@@ -118,7 +118,7 @@ class BluetoothScannerInteractor(
     fun stopScan() {
         if (!ruuviTagScanner.canScan()) return
         scanning = false
-        ruuviTagScanner.stop()
+        ruuviTagScanner.stopScanning()
     }
 
     private fun checkForSameTag(arr: List<RuuviTagEntity>, ruuvi: RuuviTagEntity): Int {

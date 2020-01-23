@@ -26,7 +26,7 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
-    override fun onFoundTags(allTags: List<FoundRuuviTag>) {
+    override fun onTagsFound(allTags: List<FoundRuuviTag>) {
 
         updateLocation()
 

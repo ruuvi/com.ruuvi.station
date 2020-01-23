@@ -136,7 +136,11 @@ class BluetoothInteractor(
         shouldLaunchInBackground: Boolean,
         backgroundScanIntervalMilliseconds: Long? = null
     ) {
-        ruuviRangeNotifier?.startScanning(tagsFoundListener, shouldLaunchInBackground, backgroundScanIntervalMilliseconds)
+        ruuviRangeNotifier?.startScanning(tagsFoundListener, shouldLaunchInBackground)
+
+        backgroundScanIntervalMilliseconds?.let { backgroundScanIntervalMilliseconds ->
+            ruuviRangeNotifier?.setBackgroundScheduledScanInterval(backgroundScanIntervalMilliseconds)
+        }
     }
 
     private fun stopScanning() {

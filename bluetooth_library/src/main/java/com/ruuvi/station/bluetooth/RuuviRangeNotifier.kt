@@ -51,7 +51,7 @@ class RuuviRangeNotifier(
                 }
             }
 
-            tagListener?.onFoundTags(allTags = allTags)
+            tagListener?.onTagsFound(allTags = allTags)
         }
     }
     private val beaconConsumer = object : BeaconConsumer {
@@ -79,8 +79,7 @@ class RuuviRangeNotifier(
 
     override fun startScanning(
         tagsFoundListener: IRuuviRangeNotifier.OnTagsFoundListener,
-        shouldLaunchInBackground: Boolean,
-        backgroundScanIntervalMilliseconds: Long?
+        shouldLaunchInBackground: Boolean
     ) {
         this.tagListener = tagsFoundListener
 
@@ -96,9 +95,7 @@ class RuuviRangeNotifier(
                 beaconManager.backgroundScanPeriod = 5000
                 beaconManager.backgroundMode = shouldLaunchInBackground
 
-                if (shouldLaunchInBackground && backgroundScanIntervalMilliseconds != null) {
-
-                    beaconManager.backgroundBetweenScanPeriod = backgroundScanIntervalMilliseconds
+                if (shouldLaunchInBackground) {
 
                     try {
                         beaconManager.updateScanPeriods()
@@ -135,11 +132,11 @@ class RuuviRangeNotifier(
 
     override fun getBackgroundScanInterval(): Long? = beaconManager?.backgroundBetweenScanPeriod
 
-    override fun setEnableScheduledScanJobs(areScheduledScanJobsEnabled: Boolean) {
-        beaconManager?.setEnableScheduledScanJobs(areScheduledScanJobsEnabled)
+    override fun enableScheduledScans(areScheduledScansEnabled: Boolean) {
+        beaconManager?.setEnableScheduledScanJobs(areScheduledScansEnabled)
     }
 
-    override fun setBackgroundScanInterval(scanInterval: Long) {
+    override fun setBackgroundScheduledScanInterval(scanInterval: Long) {
         beaconManager?.backgroundBetweenScanPeriod = scanInterval
         try {
             beaconManager?.updateScanPeriods()

@@ -43,7 +43,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
     @Override
     @SuppressLint("MissingPermission")
-    public void start(RuuviTagListener ruuviTagListener) {
+    public void startScanning(RuuviTagListener ruuviTagListener) {
         if (scanning || !canScan()) return;
         this.listener = ruuviTagListener;
         scanning = true;
@@ -65,7 +65,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
     @Override
     @SuppressLint("MissingPermission")
-    public void stop() {
+    public void stopScanning() {
         if (!canScan()) return;
         scanning = false;
         scanner.stopScan(nsCallback);

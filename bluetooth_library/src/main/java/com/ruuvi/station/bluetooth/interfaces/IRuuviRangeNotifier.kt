@@ -6,8 +6,7 @@ interface IRuuviRangeNotifier {
 
     fun startScanning(
         tagsFoundListener: OnTagsFoundListener,
-        shouldLaunchInBackground: Boolean,
-        backgroundScanIntervalMilliseconds: Long? = null
+        shouldLaunchInBackground: Boolean
     )
 
     fun stopScanning()
@@ -16,12 +15,12 @@ interface IRuuviRangeNotifier {
 
     fun getBackgroundScanInterval(): Long?
 
-    fun setEnableScheduledScanJobs(areScheduledScanJobsEnabled: Boolean)
+    fun setBackgroundScheduledScanInterval(scanInterval: Long)
 
-    fun setBackgroundScanInterval(scanInterval: Long)
+    fun enableScheduledScans(areScheduledScansEnabled: Boolean)
 
     interface OnTagsFoundListener {
 
-        fun onFoundTags(allTags: List<FoundRuuviTag>)
+        fun onTagsFound(allTags: List<FoundRuuviTag>)
     }
 }

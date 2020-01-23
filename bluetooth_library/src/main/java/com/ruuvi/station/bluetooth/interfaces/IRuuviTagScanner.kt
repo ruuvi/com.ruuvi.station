@@ -4,9 +4,9 @@ import com.ruuvi.station.bluetooth.FoundRuuviTag
 
 interface IRuuviTagScanner {
 
-    fun start(listener: RuuviTagListener)
+    fun startScanning(listener: RuuviTagListener)
 
-    fun stop()
+    fun stopScanning()
 
     fun canScan(): Boolean
 
