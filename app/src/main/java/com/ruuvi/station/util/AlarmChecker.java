@@ -133,7 +133,7 @@ public class AlarmChecker {
             }
             if (notificationTextResourceId != -9001) {
                 RuuviTag fromDb = RuuviTagRepository.get(tag.getId());
-                sendAlert(notificationTextResourceId, alarm.id, fromDb.getDispayName(), fromDb.getId(), context);
+                sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
             }
         }
     }

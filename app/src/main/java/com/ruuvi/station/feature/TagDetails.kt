@@ -538,7 +538,7 @@ class TagPager constructor(var tags: List<IRuuviTag>, val context: Context, val 
     }
 
     override fun getPageTitle(position: Int): String {
-        return tags.get(position).dispayName?.toUpperCase().orEmpty()
+        return tags.get(position).displayName?.toUpperCase().orEmpty()
     }
 
     override fun getCount(): Int {

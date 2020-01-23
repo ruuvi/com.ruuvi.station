@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import com.ruuvi.station.R
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.RuuviTag
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.GraphView
 import com.ruuvi.station.util.Preferences
@@ -67,7 +66,7 @@ class GraphActivity : AppCompatActivity() {
         }
 
         supportActionBar!!.title = ""
-        toolbar_title.text = tag.dispayName?.toUpperCase()
+        toolbar_title.text = tag.displayName?.toUpperCase()
 
         val handler = Handler()
         handler.post(object: Runnable {

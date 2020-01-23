@@ -97,7 +97,7 @@ public class RuuviTag extends BaseModel implements IRuuviTag {
         return String.format(context.getString(R.string.temperature_reading), this.getFahrenheit()) + temperatureUnit;
     }
 
-    public String getDispayName() {
+    public String getDisplayName() {
         return (this.getName() != null && !this.getName().isEmpty()) ? this.getName() : this.getId();
     }
 //

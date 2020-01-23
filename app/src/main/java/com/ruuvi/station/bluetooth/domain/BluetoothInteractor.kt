@@ -5,7 +5,8 @@ import android.os.Handler
 import android.util.Log
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.RuuviRangeNotifier
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory
+import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Foreground
@@ -15,7 +16,7 @@ import com.ruuvi.station.util.Utils
 
 class BluetoothInteractor(
     private val application: Application,
-    private val ruuviTagFactory: RuuviTagFactory
+    private val ruuviTagFactory: IRuuviTagFactory
 ) {
 
     private val TAG: String = BluetoothInteractor::class.java.simpleName
@@ -133,11 +134,11 @@ class BluetoothInteractor(
     }
 
     private fun startScan(
-        tagsFoundListener: RuuviRangeNotifier.OnTagsFoundListener,
+        tagsFoundListener: IRuuviRangeNotifier.OnTagsFoundListener,
         shouldLaunchInBackground: Boolean,
         backgroundScanIntervalMilliseconds: Long? = null
     ) {
-        ruuviRangeNotifier?.startScan(tagsFoundListener, shouldLaunchInBackground, backgroundScanIntervalMilliseconds)
+        ruuviRangeNotifier?.startScanning(tagsFoundListener, shouldLaunchInBackground, backgroundScanIntervalMilliseconds)
     }
 
     private fun stopScanning() {

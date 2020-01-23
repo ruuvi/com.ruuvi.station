@@ -26,5 +26,5 @@ interface IRuuviTag {
     var txPower: Double
     var movementCounter: Int
     var measurementSequenceNumber: Int
-    val dispayName: String?
+    val displayName: String?
 }

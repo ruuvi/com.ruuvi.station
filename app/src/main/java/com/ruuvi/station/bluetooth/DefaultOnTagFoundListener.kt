@@ -7,9 +7,11 @@ import android.location.Location
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
+import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
 import com.ruuvi.station.util.Constants
@@ -17,7 +19,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
-class DefaultOnTagFoundListener(val context: Context) : RuuviRangeNotifier.OnTagsFoundListener {
+class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTagsFoundListener {
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)

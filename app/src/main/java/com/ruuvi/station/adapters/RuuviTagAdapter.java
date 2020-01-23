@@ -51,7 +51,7 @@ public class RuuviTagAdapter extends ArrayAdapter<IRuuviTag> {
         TextView pres = convertView.findViewById(R.id.row_main_pressure);
         TextView signal = convertView.findViewById(R.id.row_main_signal);
 
-        txtId.setText(tag.getDispayName());
+        txtId.setText(tag.getDisplayName());
 
         int ballColorRes = (position % 2 == 0) ? R.color.main : R.color.mainLight;
 

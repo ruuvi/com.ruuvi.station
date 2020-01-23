@@ -48,7 +48,7 @@ import android.widget.Toast;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
-import com.ruuvi.station.bluetooth.HumidityCalibration;
+import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.Alarm;
@@ -134,7 +134,7 @@ public class TagSettings extends AppCompatActivity {
         });
 
         final TextView nameTextView = findViewById(R.id.input_name);
-        nameTextView.setText(tag.getDispayName());
+        nameTextView.setText(tag.getDisplayName());
 
         final TextView gatewayTextView = findViewById(R.id.input_gatewayUrl);
         if (tag.getGatewayUrl() != null && !tag.getGatewayUrl().isEmpty()) gatewayTextView.setText(tag.getGatewayUrl());

@@ -14,25 +14,25 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTagScanner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RuuviTagScanner {
+public class RuuviTagScanner implements IRuuviTagScanner {
 
     private static final String TAG = "RuuviTagScanner";
 
     private RuuviTagListener listener;
 
-    private BluetoothAdapter bluetoothAdapter;
     private ScanSettings scanSettings;
     private BluetoothLeScanner scanner;
     private boolean scanning = false;
-    private RuuviTagFactory ruuviTagFactory;
+    private IRuuviTagFactory ruuviTagFactory;
     private Context context;
 
-    public RuuviTagScanner(RuuviTagListener listener, RuuviTagFactory ruuviTagFactory, Context context) {
+    public RuuviTagScanner(RuuviTagListener listener, IRuuviTagFactory ruuviTagFactory, Context context) {
         this.listener = listener;
         this.ruuviTagFactory = ruuviTagFactory;
         this.context = context;
@@ -43,11 +43,12 @@ public class RuuviTagScanner {
                 .build();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         scanner = bluetoothAdapter.getBluetoothLeScanner();
 
     }
 
+    @Override
     @SuppressLint("MissingPermission")
     public void start() {
         if (scanning || !canScan()) return;
@@ -68,6 +69,7 @@ public class RuuviTagScanner {
         return filters;
     }
 
+    @Override
     @SuppressLint("MissingPermission")
     public void stop() {
         if (!canScan()) return;
@@ -94,6 +96,7 @@ public class RuuviTagScanner {
         if (tag != null) listener.tagFound(tag);
     }
 
+    @Override
     public boolean canScan() {
         return scanner != null;
     }

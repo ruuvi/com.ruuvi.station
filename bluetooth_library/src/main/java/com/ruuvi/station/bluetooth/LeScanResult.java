@@ -9,8 +9,7 @@ import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagDecoder;
-import com.ruuvi.station.bluetooth.interfaces.RuuviTagFactory;
+import com.ruuvi.station.bluetooth.interfaces.IRuuviTagFactory;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
@@ -28,7 +27,7 @@ class LeScanResult {
 
     public int rssi;
 
-    IRuuviTag parse(Context context, RuuviTagFactory factory) {
+    IRuuviTag parse(Context context, IRuuviTagFactory factory) {
         IRuuviTag tag = null;
 
         try {
@@ -68,7 +67,7 @@ class LeScanResult {
         return tag;
     }
 
-    private static IRuuviTag from(Context context, RuuviTagFactory factory, String id, String url, byte[] rawData, int rssi) {
+    private static IRuuviTag from(Context context, IRuuviTagFactory factory, String id, String url, byte[] rawData, int rssi) {
         RuuviTagDecoder decoder = null;
         if (url != null && url.contains("#")) {
             String data = url.split("#")[1];
@@ -99,7 +98,7 @@ class LeScanResult {
         return null;
     }
 
-    static IRuuviTag fromAltbeacon(Context context, RuuviTagFactory factory, Beacon beacon) {
+    static IRuuviTag fromAltbeacon(Context context, IRuuviTagFactory factory, Beacon beacon) {
         try {
             byte pData[] = new byte[128];
             List<Long> data = beacon.getDataFields();
@@ -250,5 +249,11 @@ class LeScanResult {
             i += 4;
         }
         return buffer.toByteArray();
+    }
+
+    public interface RuuviTagDecoder {
+
+        IRuuviTag decode(IRuuviTagFactory factory, byte[] data, int offset);
+
     }
 }
