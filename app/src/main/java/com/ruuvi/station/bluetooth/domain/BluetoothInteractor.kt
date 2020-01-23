@@ -51,26 +51,47 @@ class BluetoothInteractor(
             return application.bindService(intent, serviceConnection, flags)
         }
 
-//        override fun onBeaconServiceConnect() {
-//            Log.d(TAG, "onBeaconServiceConnect")
-//
-//            startRanging()
-//        }
-
         override fun onBeaconServiceConnect() {
             Log.d(TAG, "onBeaconServiceConnect")
-            //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
+
             DefaultOnTagFoundListener.gatewayOn = !foreground
-            if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) != true) {
-                ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
-                beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
-            }
+
+            ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
+
+            startRanging()
             running = true
-            try {
-                beaconManager?.startRangingBeaconsInRegion(region!!)
-            } catch (e: Exception) {
-                Log.e(TAG, "Could not start ranging")
-            }
+        }
+
+//        override fun onBeaconServiceConnect() {
+//            Log.d(TAG, "onBeaconServiceConnect")
+//            //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
+//            DefaultOnTagFoundListener.gatewayOn = !foreground
+//            if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) != true) {
+//                ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
+//                beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
+//            }
+//            running = true
+//            try {
+//                beaconManager?.startRangingBeaconsInRegion(region!!)
+//            } catch (e: Exception) {
+//                Log.e(TAG, "Could not start ranging")
+//            }
+//        }
+    }
+
+    private fun startRanging() {
+
+        Log.d(TAG, "onBeaconServiceConnect")
+        //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
+        if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) != true) {
+
+            beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
+        }
+
+        try {
+            beaconManager?.startRangingBeaconsInRegion(region!!)
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not start ranging")
         }
     }
 
@@ -99,8 +120,11 @@ class BluetoothInteractor(
         foreground = true
         Utils.removeStateFile(application)
         Log.d(TAG, "Starting foreground scanning")
-        bindBeaconManager(beaconConsumer, application)
-        beaconManager!!.backgroundMode = false
+
+        val beaconManager = bindBeaconManager(beaconConsumer, application)
+
+
+        beaconManager.backgroundMode = false
         if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = false
     }
 
@@ -111,19 +135,21 @@ class BluetoothInteractor(
             Log.d(TAG, "Background scanning is not enabled, ignoring")
             return
         }
-        bindBeaconManager(beaconConsumer, application)
+
+        val beaconManager = bindBeaconManager(beaconConsumer, application)
+
         var scanInterval = Preferences(application).backgroundScanInterval * 1000
         val minInterval = 15 * 60 * 1000
         if (scanInterval < minInterval) scanInterval = minInterval
-        if (scanInterval.toLong() != beaconManager?.backgroundBetweenScanPeriod) {
-            beaconManager?.backgroundBetweenScanPeriod = scanInterval.toLong()
+        if (scanInterval.toLong() != beaconManager.backgroundBetweenScanPeriod) {
+            beaconManager.backgroundBetweenScanPeriod = scanInterval.toLong()
             try {
-                beaconManager?.updateScanPeriods()
+                beaconManager.updateScanPeriods()
             } catch (e: Exception) {
                 Log.e(TAG, "Could not update scan intervals")
             }
         }
-        beaconManager?.backgroundMode = true
+        beaconManager.backgroundMode = true
         if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = true
         if (medic == null) medic = setupMedic(application)
     }
@@ -170,7 +196,7 @@ class BluetoothInteractor(
         return medic
     }
 
-    private fun bindBeaconManager(consumer: BeaconConsumer?, context: Context) {
+    private fun bindBeaconManager(consumer: BeaconConsumer?, context: Context): BeaconManager {
         if (beaconManager == null) {
             beaconManager = BeaconManager.getInstanceForApplication(context.applicationContext)
 
@@ -187,6 +213,7 @@ class BluetoothInteractor(
                 Log.d(TAG, "Could not start ranging again")
             }
         }
+        return beaconManager!!
     }
 
     private var listener: Foreground.Listener = object : Foreground.Listener {
