@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
@@ -27,7 +26,7 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
-    override fun onFoundTags(allTags: List<IRuuviTag>) {
+    override fun onFoundTags(allTags: List<FoundRuuviTag>) {
 
         updateLocation()
 

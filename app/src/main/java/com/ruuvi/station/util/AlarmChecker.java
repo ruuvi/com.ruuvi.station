@@ -14,7 +14,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.feature.main.MainActivity;

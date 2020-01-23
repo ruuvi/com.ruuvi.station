@@ -1,8 +1,8 @@
-package com.ruuvi.station.bluetooth.interfaces
+package com.ruuvi.station.bluetooth
 
 import java.util.Date
 
-class IRuuviTag {
+class FoundRuuviTag {
     var id: String? = null
     var url: String? = null
     var rssi: Int? = null
@@ -24,5 +24,4 @@ class IRuuviTag {
     var txPower: Double? = null
     var movementCounter: Int? = null
     var measurementSequenceNumber: Int? = null
-    val displayName: String? = null
 }

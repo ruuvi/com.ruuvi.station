@@ -5,7 +5,6 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Calendar;

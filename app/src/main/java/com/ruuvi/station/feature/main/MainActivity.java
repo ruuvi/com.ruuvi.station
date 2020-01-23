@@ -35,7 +35,7 @@ import android.widget.Toast;
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.RuuviTagScanner;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
+import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagScanner.R
     }
 
     @Override
-    public void tagFound(IRuuviTag foundTag) {
+    public void tagFound(FoundRuuviTag foundTag) {
         final RuuviTagEntity tag = new RuuviTagEntity(foundTag);
         for (int i = 0; i < myRuuviTags.size(); i++) {
             final String tagId = myRuuviTags.get(i).getId();

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.Alarm_Table;
 import com.ruuvi.station.model.RuuviTagEntity;

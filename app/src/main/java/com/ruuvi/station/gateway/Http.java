@@ -9,7 +9,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.ScanEvent;

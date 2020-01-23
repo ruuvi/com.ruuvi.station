@@ -7,7 +7,6 @@ import com.neovisionaries.bluetooth.ble.advertising.ADManufacturerSpecific;
 import com.neovisionaries.bluetooth.ble.advertising.ADPayloadParser;
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.EddystoneURL;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
@@ -25,8 +24,8 @@ class LeScanResult {
 
     public int rssi;
 
-    IRuuviTag parse() {
-        IRuuviTag tag = null;
+    FoundRuuviTag parse() {
+        FoundRuuviTag tag = null;
 
         try {
             // Parse the payload of the advertisement packet
@@ -63,7 +62,7 @@ class LeScanResult {
         return tag;
     }
 
-    private static IRuuviTag from(String id, String url, byte[] rawData, int rssi) {
+    private static FoundRuuviTag from(String id, String url, byte[] rawData, int rssi) {
         RuuviTagDecoder decoder = null;
         if (url != null && url.contains("#")) {
             String data = url.split("#")[1];
@@ -81,7 +80,7 @@ class LeScanResult {
             }
         }
         if (decoder != null) {
-            IRuuviTag tag = decoder.decode(rawData, 7);
+            FoundRuuviTag tag = decoder.decode(rawData, 7);
             if (tag != null) {
                 tag.setId(id);
                 tag.setUrl(url);
@@ -92,7 +91,7 @@ class LeScanResult {
         return null;
     }
 
-    static IRuuviTag fromAltbeacon(Beacon beacon) {
+    static FoundRuuviTag fromAltbeacon(Beacon beacon) {
         try {
             byte pData[] = new byte[128];
             List<Long> data = beacon.getDataFields();
@@ -124,7 +123,7 @@ class LeScanResult {
             }
             if (decoder != null) {
                 try {
-                    IRuuviTag tag = decoder.decode(pData, 0);
+                    FoundRuuviTag tag = decoder.decode(pData, 0);
                     tag.setId(beacon.getBluetoothAddress());
                     tag.setRssi(beacon.getRssi());
                     tag.setUrl(url);
@@ -245,7 +244,7 @@ class LeScanResult {
 
     public interface RuuviTagDecoder {
 
-        IRuuviTag decode(byte[] data, int offset);
+        FoundRuuviTag decode(byte[] data, int offset);
 
     }
 }

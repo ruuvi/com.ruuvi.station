@@ -13,7 +13,6 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.bluetooth.interfaces.IRuuviTagScanner;
 
 import java.util.ArrayList;
@@ -28,11 +27,8 @@ public class RuuviTagScanner implements IRuuviTagScanner {
     private ScanSettings scanSettings;
     private BluetoothLeScanner scanner;
     private boolean scanning = false;
-    private Context context;
 
-    public RuuviTagScanner(RuuviTagListener listener, Context context) {
-        this.listener = listener;
-        this.context = context;
+    public RuuviTagScanner(Context context) {
 
         scanSettings = new ScanSettings.Builder()
                 .setReportDelay(0)
@@ -47,8 +43,9 @@ public class RuuviTagScanner implements IRuuviTagScanner {
 
     @Override
     @SuppressLint("MissingPermission")
-    public void start() {
+    public void start(RuuviTagListener ruuviTagListener) {
         if (scanning || !canScan()) return;
+        this.listener = ruuviTagListener;
         scanning = true;
         scanner.startScan(getScanFilters(), scanSettings, nsCallback);
     }
@@ -89,7 +86,7 @@ public class RuuviTagScanner implements IRuuviTagScanner {
         result.scanData = data;
 
         Log.d(TAG, "found: " + device.getAddress());
-        IRuuviTag tag = result.parse();
+        FoundRuuviTag tag = result.parse();
         if (tag != null) listener.tagFound(tag);
     }
 
@@ -98,9 +95,4 @@ public class RuuviTagScanner implements IRuuviTagScanner {
         return scanner != null;
     }
 
-    public interface RuuviTagListener {
-
-        void tagFound(IRuuviTag tag);
-
-    }
 }

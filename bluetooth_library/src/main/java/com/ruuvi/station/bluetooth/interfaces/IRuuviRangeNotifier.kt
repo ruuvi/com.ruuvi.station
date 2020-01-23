@@ -1,5 +1,7 @@
 package com.ruuvi.station.bluetooth.interfaces
 
+import com.ruuvi.station.bluetooth.FoundRuuviTag
+
 interface IRuuviRangeNotifier {
 
     fun startScanning(
@@ -20,6 +22,6 @@ interface IRuuviRangeNotifier {
 
     interface OnTagsFoundListener {
 
-        fun onFoundTags(allTags: List<IRuuviTag>)
+        fun onFoundTags(allTags: List<FoundRuuviTag>)
     }
 }

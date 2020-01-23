@@ -6,7 +6,6 @@ import android.content.ServiceConnection
 import android.os.RemoteException
 import android.util.Log
 import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager
@@ -38,8 +37,8 @@ class RuuviRangeNotifier(
             }
             last = now
 
-            val tags: MutableList<IRuuviTag> = ArrayList()
-            val allTags: MutableList<IRuuviTag> = ArrayList()
+            val tags: MutableList<FoundRuuviTag> = ArrayList()
+            val allTags: MutableList<FoundRuuviTag> = ArrayList()
             Log.d(TAG, from + " " + " found " + beacons.size)
             for (beacon in beacons) { // the same tag can appear multiple times
                 for (tag in tags) {

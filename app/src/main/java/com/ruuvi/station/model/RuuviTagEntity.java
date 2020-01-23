@@ -6,7 +6,7 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
+import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Date;
@@ -61,7 +61,7 @@ public class RuuviTagEntity extends BaseModel {
     public RuuviTagEntity() {
     }
 
-    public RuuviTagEntity(IRuuviTag tag) {
+    public RuuviTagEntity(FoundRuuviTag tag) {
         this.id = tag.getId();
         this.url = tag.getUrl();
         this.rssi = tag.getRssi() != null ? tag.getRssi() : 0;

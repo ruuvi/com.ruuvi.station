@@ -15,7 +15,6 @@ import android.widget.ListView;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.adapters.RuuviTagAdapter;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.model.RuuviTagEntity;

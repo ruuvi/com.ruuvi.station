@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTag;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.AlarmChecker;
