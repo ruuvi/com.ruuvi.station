@@ -33,7 +33,7 @@ class BluetoothInteractor(
     private val prefs: Preferences = Preferences(application)
 
     private var beaconManager: BeaconManager? = null
-    private var region: Region? = null
+    private var region: Region = Region("com.ruuvi.station.leRegion", null, null, null)
     private var running = false
     private var ruuviRangeNotifier: RuuviRangeNotifier? = null
     private var foreground = false
@@ -56,27 +56,9 @@ class BluetoothInteractor(
 
             DefaultOnTagFoundListener.gatewayOn = !foreground
 
-            ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
-
             startRanging()
             running = true
         }
-
-//        override fun onBeaconServiceConnect() {
-//            Log.d(TAG, "onBeaconServiceConnect")
-//            //Toast.makeText(application, "Started scanning (Application)", Toast.LENGTH_SHORT).show();
-//            DefaultOnTagFoundListener.gatewayOn = !foreground
-//            if (beaconManager?.rangingNotifiers?.contains(ruuviRangeNotifier) != true) {
-//                ruuviRangeNotifier?.addTagListener(DefaultOnTagFoundListener(application))
-//                beaconManager?.addRangeNotifier(ruuviRangeNotifier!!)
-//            }
-//            running = true
-//            try {
-//                beaconManager?.startRangingBeaconsInRegion(region!!)
-//            } catch (e: Exception) {
-//                Log.e(TAG, "Could not start ranging")
-//            }
-//        }
     }
 
     private fun startRanging() {
@@ -100,6 +82,8 @@ class BluetoothInteractor(
         FlowManager.init(application)
         DefaultOnTagFoundListener.gatewayOn = true
         ruuviRangeNotifier = RuuviRangeNotifier(application, ruuviTagFactory, "RuuviScannerApplication")
+            .apply { addTagListener(DefaultOnTagFoundListener(application)) }
+
         Foreground.init(application)
         Foreground.get().addListener(listener)
         Handler().postDelayed({
@@ -111,7 +95,6 @@ class BluetoothInteractor(
                 }
             }
         }, 5000)
-        region = Region("com.ruuvi.station.leRegion", null, null, null)
     }
 
     fun startForegroundScanning() {
@@ -123,9 +106,9 @@ class BluetoothInteractor(
 
         val beaconManager = bindBeaconManager(beaconConsumer, application)
 
-
         beaconManager.backgroundMode = false
-        if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = false
+
+        DefaultOnTagFoundListener.gatewayOn = false
     }
 
     fun startBackgroundScanning() {
@@ -150,7 +133,7 @@ class BluetoothInteractor(
             }
         }
         beaconManager.backgroundMode = true
-        if (ruuviRangeNotifier != null) DefaultOnTagFoundListener.gatewayOn = true
+        DefaultOnTagFoundListener.gatewayOn = true
         if (medic == null) medic = setupMedic(application)
     }
 
@@ -189,7 +172,7 @@ class BluetoothInteractor(
         return false
     }
 
-    private fun setupMedic(context: Context?): BluetoothMedic? {
+    private fun setupMedic(context: Context?): BluetoothMedic {
         val medic = BluetoothMedic.getInstance()
         medic.enablePowerCycleOnFailures(context)
         medic.enablePeriodicTests(context, BluetoothMedic.SCAN_TEST)
