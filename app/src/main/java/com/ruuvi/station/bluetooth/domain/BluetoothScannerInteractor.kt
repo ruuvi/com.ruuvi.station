@@ -47,7 +47,7 @@ class BluetoothScannerInteractor(
         Foreground.get().addListener(listener)
     }
 
-    private val ruuviTagScanner by lazy {
+    private val ruuviTagScanner: IRuuviTagScanner by lazy {
         RuuviTagScanner(
             application
         )

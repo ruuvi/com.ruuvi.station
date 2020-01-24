@@ -22,7 +22,7 @@ class BluetoothInteractor(
     private val prefs: Preferences = Preferences(application)
 
     private var isRunningInForeground = false
-    private var ruuviRangeNotifier: RuuviRangeNotifier? = null
+    private var ruuviRangeNotifier: IRuuviRangeNotifier? = null
 
     private val listener: Foreground.Listener = object : Foreground.Listener {
 
