@@ -1,8 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
+
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
@@ -12,17 +14,23 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
         abortOnError false
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dexOptions {
+        preDexLibraries = false
     }
 }
 
@@ -39,9 +47,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation project(':bluetooth_library')
-    implementation project(':default_bluetooth_library')
-    
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:-SNAPSHOT'
+
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "com.android.support:appcompat-v7:${support_version}"
