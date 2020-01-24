@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import com.ruuvi.station.bluetooth.FoundRuuviTag
 import com.ruuvi.station.bluetooth.RuuviTagScanner
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagScanner
+import com.ruuvi.station.bluetooth.IRuuviTagScanner
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration

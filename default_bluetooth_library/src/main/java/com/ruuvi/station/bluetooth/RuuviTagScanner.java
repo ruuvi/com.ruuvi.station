@@ -13,8 +13,6 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.ruuvi.station.bluetooth.interfaces.IRuuviTagScanner;
-
 import java.util.ArrayList;
 import java.util.List;
 

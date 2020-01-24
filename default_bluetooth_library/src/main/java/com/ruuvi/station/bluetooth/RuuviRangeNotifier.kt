@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.RemoteException
 import android.util.Log
-import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconConsumer
 import org.altbeacon.beacon.BeaconManager

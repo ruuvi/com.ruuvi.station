@@ -5,7 +5,7 @@ import android.os.Handler
 import android.util.Log
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.RuuviRangeNotifier
-import com.ruuvi.station.bluetooth.interfaces.IRuuviRangeNotifier
+import com.ruuvi.station.bluetooth.IRuuviRangeNotifier
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Foreground
