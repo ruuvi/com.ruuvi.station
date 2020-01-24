@@ -474,7 +474,7 @@ class TagDetails : AppCompatActivity() {
     }
 }
 
-class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val view: View) : PagerAdapter() {
+class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context, val view: View) : PagerAdapter() {
     val VIEW_TAG = "DetailedTag"
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -528,7 +528,7 @@ class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val v
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_humidity.text = tag.getHumidityString(context)
+        tag_humidity.text = RuuviTagRepository.getHumidityString(context, tag)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag.rssi)
         val updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt)

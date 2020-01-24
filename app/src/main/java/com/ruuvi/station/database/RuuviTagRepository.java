@@ -6,10 +6,12 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.Alarm_Table;
+import com.ruuvi.station.model.HumidityUnit;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.RuuviTagEntity_Table;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.model.TagSensorReading_Table;
+import com.ruuvi.station.util.Humidity;
 import com.ruuvi.station.util.Preferences;
 import com.ruuvi.station.util.Utils;
 
@@ -51,16 +53,46 @@ public class RuuviTagRepository {
         tag.delete();
     }
 
+    private static double getFahrenheit(RuuviTagEntity tag) {
+        return Utils.celciusToFahrenheit(tag.getTemperature());
+    }
+
+    private static double getKelvin(RuuviTagEntity tag) {
+        return Utils.celsiusToKelvin(tag.getTemperature());
+    }
+
+    public static HumidityUnit getHumidityUnit(Context context) {
+        return new Preferences(context).getHumidityUnit();
+    }
+
+    public static String getHumidityString(Context context, RuuviTagEntity tag) {
+        HumidityUnit humidityUnit = getHumidityUnit(context);
+        Humidity calculation = new Humidity(tag.getTemperature(), tag.getHumidity() / 100.0);
+        switch (humidityUnit) {
+            case PERCENT:
+                return String.format(context.getString(R.string.humidity_reading), tag.getHumidity());
+            case GM3:
+                return String.format(context.getString(R.string.humidity_absolute_reading), calculation.getAh());
+            case DEW:
+                String temperatureUnit = getTemperatureUnit(context);
+                if (temperatureUnit.equals("K")) {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTdK()) + " " + temperatureUnit;
+                } else if (temperatureUnit.equals("F")) {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTdF()) + " °" + temperatureUnit;
+                } else {
+                    return String.format(context.getString(R.string.humidity_dew_reading), calculation.getTd()) + " °" + temperatureUnit;
+                }
+            default:
+                return context.getString(R.string.n_a);
+        }
+    }
+
     public static String getTemperatureString(Context context, RuuviTagEntity tag) {
         String temperatureUnit = getTemperatureUnit(context);
         if (temperatureUnit.equals("C")) {
             return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + temperatureUnit;
         }
         return String.format(context.getString(R.string.temperature_reading), getFahrenheit(tag)) + temperatureUnit;
-    }
-
-    public static double getFahrenheit(RuuviTagEntity tag) {
-        return Utils.celciusToFahrenheit(tag.getTemperature());
     }
 
     public static String getTemperatureUnit(Context context) {
