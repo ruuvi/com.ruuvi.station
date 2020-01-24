@@ -2,7 +2,9 @@ package com.ruuvi.station.util
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Matrix
 import android.support.v4.content.res.ResourcesCompat
+import android.view.MotionEvent
 import android.view.View
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -12,11 +14,16 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.TagSensorReading
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class GraphView (val context: Context) {
     private var from: Long = 0
@@ -24,6 +31,10 @@ class GraphView (val context: Context) {
 
     fun drawChart(tagId: String, view: View) {
         val readings = TagSensorReading.getForTag(tagId)
+
+        val tempChart: LineChart = view.findViewById(R.id.tempChart)
+        val humidChart: LineChart = view.findViewById(R.id.humidChart)
+        val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
@@ -50,8 +61,13 @@ class GraphView (val context: Context) {
             grouped.map {
                 val reading = it.value[it.value.size - 1]
                 val timestamp = (reading.createdAt.time - from).toFloat()
-                if (tempUnit.equals("C")) tempData.add(Entry(timestamp, reading.temperature.toFloat()))
-                else tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
+                if (tempUnit.equals("K")) {
+                    tempData.add(Entry(timestamp, Utils.celsiusToKelvin(reading.temperature).toFloat()))
+                } else if (tempUnit.equals("F")) {
+                    tempData.add(Entry(timestamp, Utils.celciusToFahrenheit(reading.temperature).toFloat()))
+                } else {
+                    tempData.add(Entry(timestamp, reading.temperature.toFloat()))
+                }
                 humidData.add(Entry(timestamp, reading.humidity.toFloat()))
                 pressureData.add(Entry(timestamp, reading.pressure.toFloat()))
             }
@@ -62,9 +78,11 @@ class GraphView (val context: Context) {
             pressureData.add(Entry(timestamp, 0f))
         }
 
-        addDataToChart(tempData, view.findViewById(R.id.tempChart), "Temperature")
-        addDataToChart(humidData, view.findViewById(R.id.humidChart), "Humidity")
-        addDataToChart(pressureData, view.findViewById(R.id.pressureChart), "Pressure")
+        addDataToChart(tempData, tempChart, "Temperature")
+        addDataToChart(humidData, humidChart, "Humidity")
+        addDataToChart(pressureData, pressureChart, "Pressure")
+
+        synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
     }
 
     fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
@@ -101,4 +119,36 @@ class GraphView (val context: Context) {
         chart.invalidate()
     }
 
+    /**
+     * Binds [charts] together so that pinch and pan gestures
+     * in one apply to all of them.
+     */
+    private fun synchronizeChartGestures(charts: Set<LineChart>) {
+        charts.forEach { srcChart: LineChart ->
+            srcChart.onChartGestureListener = object : OnChartGestureListener {
+                override fun onChartGestureEnd(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
+                    val srcVals = FloatArray(9)
+                    srcChart.viewPortHandler.matrixTouch.getValues(srcVals)
+
+                    charts.minus(srcChart).forEach { dstChart: LineChart ->
+                        val dstMatrix = dstChart.viewPortHandler.matrixTouch
+                        val dstVals = FloatArray(9)
+                        dstMatrix.getValues(dstVals)
+                        dstVals[Matrix.MSCALE_X] = srcVals[Matrix.MSCALE_X]
+                        dstVals[Matrix.MTRANS_X] = srcVals[Matrix.MTRANS_X]
+                        dstMatrix.setValues(dstVals)
+                        dstChart.viewPortHandler.refresh(dstMatrix, dstChart, true)
+                    }
+                }
+
+                override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
+                override fun onChartSingleTapped(me: MotionEvent?) {}
+                override fun onChartGestureStart(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {}
+                override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {}
+                override fun onChartLongPressed(me: MotionEvent?) {}
+                override fun onChartDoubleTapped(me: MotionEvent?) {}
+                override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {}
+            }
+        }
+    }
 }

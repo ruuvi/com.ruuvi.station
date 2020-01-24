@@ -15,6 +15,7 @@ import com.koushikdutta.ion.Ion
 
 import com.ruuvi.station.R
 import com.ruuvi.station.feature.main.MainActivity
+import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.model.ScanEvent
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdentifier
@@ -147,6 +148,28 @@ class AppSettingsDetailFragment : Fragment() {
                 prefs.temperatureUnit = values[i]
             }
             settings_info.text = getString(R.string.settings_temperature_unit_details)
+        } else if (res == R.string.humidity_unit) {
+            radio_layout.visibility = View.VISIBLE
+            radio_setting_title.text = getString(res!!)
+            val current = prefs.humidityUnit
+            val options = resources.getStringArray(R.array.list_preference_humidity_unit_titles)
+            val values = resources.getIntArray(R.array.list_preference_humidity_unit_values)
+            options.forEachIndexed { index, option ->
+                val rb = RadioButton(activity)
+                rb.id = index
+                rb.text = option
+                rb.isChecked = (values[index] == current.code)
+                radio_group.addView(rb)
+            }
+
+            radio_group.setOnCheckedChangeListener { radioGroup, i ->
+                when (values[i]) {
+                    0 -> prefs.humidityUnit = HumidityUnit.PERCENT
+                    1 -> prefs.humidityUnit = HumidityUnit.GM3
+                    2 -> prefs.humidityUnit = HumidityUnit.DEW
+                }
+            }
+            settings_info.text = getString(R.string.settings_humidity_unit_details)
         } else if (res == R.string.gateway_url) {
             input_layout.visibility = View.VISIBLE
             input_setting_title.text = getString(res!!)

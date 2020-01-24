@@ -474,7 +474,7 @@ class TagDetails : AppCompatActivity() {
     }
 }
 
-class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context, val view: View) : PagerAdapter() {
+class TagPager constructor(var tags: List<RuuviTag>, val context: Context, val view: View) : PagerAdapter() {
     val VIEW_TAG = "DetailedTag"
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -518,15 +518,17 @@ class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context,
         val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
 
         var temperature = RuuviTagRepository.getTemperatureString(context, tag)
-        val unit = temperature.substring(temperature.length - 2, temperature.length)
-        temperature = temperature.substring(0, temperature.length - 2)
+        val isKelvin = temperature.endsWith("K")
+        val offset = if (isKelvin) 1 else  2
+        val unit = temperature.substring(temperature.length - offset, temperature.length)
+        temperature = temperature.substring(0, temperature.length - offset)
 
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
 
         tag_temp_unit.text = unitSpan
         tag_temp.text = temperature
-        tag_humidity.text = String.format(context.getString(R.string.humidity_reading), tag.humidity)
+        tag_humidity.text = tag.getHumidityString(context)
         tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag.pressure)
         tag_signal.text = String.format(context.getString(R.string.signal_reading), tag.rssi)
         val updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt)

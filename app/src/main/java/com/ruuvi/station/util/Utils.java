@@ -141,6 +141,10 @@ public class Utils {
         return round(celcius * 1.8 + 32.0, 2);
     }
 
+    public static double celsiusToKelvin(double celsius) {
+        return celsius + 273.15;
+    }
+
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
