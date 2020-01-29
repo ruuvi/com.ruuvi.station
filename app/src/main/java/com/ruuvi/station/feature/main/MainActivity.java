@@ -3,7 +3,6 @@ package com.ruuvi.station.feature.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,14 +34,14 @@ import android.widget.Toast;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.RuuviScannerApplication;
+import com.ruuvi.station.bluetooth.FoundRuuviTag;
+import com.ruuvi.station.bluetooth.IRuuviTagScanner;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
 import com.ruuvi.station.feature.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
-import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.scanning.BackgroundScanner;
-import com.ruuvi.station.scanning.RuuviTagListener;
-import com.ruuvi.station.scanning.RuuviTagScanner;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Preferences;
@@ -51,7 +50,8 @@ import com.ruuvi.station.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RuuviTagListener {
+public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.OnTagFoundListener {
+
     private static final String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
@@ -59,13 +59,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     private static final int REQUEST_CODE_LOCATION_PERMISSIONS = 1;
 
     private DrawerLayout drawerLayout;
-    private RuuviTagScanner scanner;
-    public List<RuuviTag> myRuuviTags = new ArrayList<>();
-    public List<RuuviTag> otherRuuviTags = new ArrayList<>();
+    public List<RuuviTagEntity> myRuuviTags = new ArrayList<>();
+    public List<RuuviTagEntity> otherRuuviTags = new ArrayList<>();
     private DataUpdateListener fragmentWithCallback;
     private Handler handler;
-    boolean dashboardVisible = true;
-    Preferences prefs;
+    private boolean dashboardVisible = true;
+    private Preferences prefs;
 
     private Runnable updater = new Runnable() {
         @Override
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
             handler.postDelayed(updater, TAG_UI_UPDATE_FREQ);
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
         handler = new Handler();
         prefs = new Preferences(this);
-        myRuuviTags = RuuviTag.getAll(true);
+        myRuuviTags = new ArrayList<>(RuuviTagRepository.getAll(true));
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -248,11 +246,6 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
-    private static PendingIntent getPendingIntent(Context context) {
-        Intent intent = new Intent(context, BackgroundScanner.class);
-        return PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE);
-    }
-
     @Override
     protected void onStart() {
         //Intent intent = new Intent(MainActivity.this, ScannerService.class);
@@ -336,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         if(getNeededPermissions().size() > 0) {
 
         } else {
-            refrshTagLists();
+            refreshTagLists();
             handler.post(updater);
 
             if (isBluetoothEnabled()) {
@@ -346,19 +339,18 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
     }
 
-    private void refrshTagLists() {
+    private void refreshTagLists() {
         myRuuviTags.clear();
-        myRuuviTags.addAll(RuuviTag.getAll(true));
+        myRuuviTags.addAll(RuuviTagRepository.getAll(true));
         otherRuuviTags.clear();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (scanner != null) scanner.stop();
         handler.removeCallbacks(updater);
-        for (RuuviTag tag: myRuuviTags) {
-            tag.update();
+        for (RuuviTagEntity tag : myRuuviTags) {
+            RuuviTagRepository.update(tag);
         }
     }
 
@@ -382,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         dashboardVisible = false;
         switch (type) {
             case 1:
-                refrshTagLists();
+                refreshTagLists();
                 fragment = new DashboardFragment();
                 fragmentWithCallback = (DataUpdateListener)fragment;
                 dashboardVisible = true;
@@ -400,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
                 startActivity(aboutIntent);
                 return;
             default:
-                refrshTagLists();
+                refreshTagLists();
                 //fragment = new AddTagFragment();
                 //fragmentWithCallback = (DataUpdateListener)fragment;
                 Intent addIntent = new Intent(this, AddTagActivity.class);
@@ -421,9 +413,12 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
     }
 
     @Override
-    public void tagFound(RuuviTag tag) {
+    public void onTagFound(FoundRuuviTag foundTag) {
+        final RuuviTagEntity tag = new RuuviTagEntity(foundTag);
         for (int i = 0; i < myRuuviTags.size(); i++) {
-            if (myRuuviTags.get(i).id.equals(tag.id)) {
+            final String tagId = myRuuviTags.get(i).getId();
+
+            if (tagId != null && tagId.equals(tag.getId())) {
                 myRuuviTags.set(i, tag);
                 if (fragmentWithCallback != null) {
                     runOnUiThread(new Runnable() {
@@ -438,7 +433,8 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         }
 
         for (int i = 0; i < otherRuuviTags.size(); i++) {
-            if (otherRuuviTags.get(i).id.equals(tag.id)) {
+            String tagId = otherRuuviTags.get(i).getId();
+            if (tagId != null && tagId.equals(tag.getId())) {
                 otherRuuviTags.set(i, tag);
                 Utils.sortTagsByRssi(otherRuuviTags);
                 if (fragmentWithCallback != null) {
@@ -478,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             if (requestCode == REQUEST_ENABLE_BT) {
-                scanner = new RuuviTagScanner(MainActivity.this, getApplicationContext());
+
             }
         } else {
             if (requestCode == FROM_WELCOME) {
@@ -489,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements RuuviTagListener 
 
     private void getThingsStarted(boolean goToAddTags) {
         if (isBluetoothEnabled()) {
-            scanner = new RuuviTagScanner(this, getApplicationContext());
+
         } else {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);

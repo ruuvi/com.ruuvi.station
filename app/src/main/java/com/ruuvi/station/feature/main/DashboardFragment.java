@@ -15,14 +15,13 @@ import android.widget.ListView;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.adapters.RuuviTagAdapter;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class DashboardFragment extends Fragment implements DataUpdateListener {
@@ -30,7 +29,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
     private RuuviTagAdapter adapter;
     private ListView beaconListView;
     private View noTagsFound;
-    private List<RuuviTag> tags;
+    private List<RuuviTagEntity> tags;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -54,7 +53,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        tags = RuuviTag.getAll(true);
+        tags = new ArrayList<>(RuuviTagRepository.getAll(true));
         noTagsFound = view.findViewById(R.id.noTags_textView);
 
         DeviceIdentifier.id(getActivity());
@@ -70,7 +69,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
             @Override
             public void run() {
                 tags.clear();
-                tags.addAll(RuuviTag.getAll(true));
+                tags.addAll(new ArrayList<>(RuuviTagRepository.getAll(true)));
                 if (tags.size() > 0) {
                     noTagsFound.setVisibility(View.GONE);
                 }
@@ -86,14 +85,14 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
     private AdapterView.OnItemClickListener tagClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final RuuviTag tag = (RuuviTag)view.getTag();
+            final RuuviTagEntity tag = (RuuviTagEntity)view.getTag();
             Intent intent = new Intent(getActivity(), TagDetails.class);
-            intent.putExtra("id", tag.id);
+            intent.putExtra("id", tag.getId());
             startActivity(intent);
         }
     };
 
-    public void delete(final RuuviTag tag) {
+    public void delete(final RuuviTagEntity tag) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getActivity().getString(R.string.tag_delete_title));
         builder.setMessage(getActivity().getString(R.string.tag_delete_message));
@@ -101,7 +100,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ((MainActivity)getActivity()).myRuuviTags.remove(tag);
-                tag.deleteTagAndRelatives();
+                RuuviTagRepository.deleteTagAndRelatives(tag);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

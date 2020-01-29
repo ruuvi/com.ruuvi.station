@@ -14,23 +14,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.adapters.AddTagAdapter;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagSettings;
-import com.ruuvi.station.model.RuuviTag;
-import com.ruuvi.station.service.ScannerService;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class AddTagFragment extends Fragment implements DataUpdateListener {
     private AddTagAdapter adapter;
     private ListView beaconListView;
     private TextView noTagsTextView;
-    private List<RuuviTag> tags;
+    private List<RuuviTagEntity> tags;
 
     public AddTagFragment() {
         // Required empty public constructor
@@ -43,15 +43,15 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         return fragment;
     }
 
-    public static boolean isBackgroundInUse(List<RuuviTag> tags, int background) {
-        for (RuuviTag tag: tags) {
-            if (tag.defaultBackground == background) return true;
+    public static boolean isBackgroundInUse(List<RuuviTagEntity> tags, int background) {
+        for (RuuviTagEntity tag : tags) {
+            if (tag.getDefaultBackground() == background) return true;
         }
         return false;
     }
 
     public static int getKindaRandomBackground() {
-        List<RuuviTag> tags = RuuviTag.getAll(true);
+        List<RuuviTagEntity> tags = RuuviTagRepository.getAll(true);
         int bg = (int)(Math.random() * 9.0);
         for (int i = 0; i < 100; i++) {
             if (!isBackgroundInUse(tags, bg)) {
@@ -77,17 +77,20 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
         beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RuuviTag tag = (RuuviTag)beaconListView.getItemAtPosition(i);
-                if (RuuviTag.get(tag.id).favorite) {
+                RuuviTagEntity tag = (RuuviTagEntity)beaconListView.getItemAtPosition(i);
+                if (RuuviTagRepository.get(tag.getId()).isFavorite()) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
-                tag.defaultBackground = getKindaRandomBackground();
+                tag.setDefaultBackground(getKindaRandomBackground());
                 tag.update();
-                ScannerService.logTag(tag, getActivity(), true);
+
+                ((RuuviScannerApplication) getActivity().getApplication())
+                        .getBluetoothScannerInteractor().logTag(tag, getActivity(), true);
+
                 Intent settingsIntent = new Intent(getActivity(), TagSettings.class);
-                settingsIntent.putExtra(TagSettings.TAG_ID, tag.id);
+                settingsIntent.putExtra(TagSettings.TAG_ID, tag.getId());
                 startActivityForResult(settingsIntent, 1);
             }
         });
@@ -99,11 +102,11 @@ public class AddTagFragment extends Fragment implements DataUpdateListener {
             @Override
             public void run() {
                 tags.clear();
-                tags.addAll(RuuviTag.getAll(false));
+                tags.addAll(RuuviTagRepository.getAll(false));
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.SECOND, -5);
                 for (int i = 0; i < tags.size(); i++) {
-                    if (tags.get(i).updateAt.getTime() < calendar.getTime().getTime()) {
+                    if (tags.get(i).getUpdateAt().getTime() < calendar.getTime().getTime()) {
                         tags.remove(i);
                         i--;
                     }

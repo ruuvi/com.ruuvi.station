@@ -1,43 +1,33 @@
 package com.ruuvi.station.util;
 
-import android.bluetooth.le.ScanFilter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.ParcelUuid;
 import android.provider.MediaStore;
-import android.support.media.ExifInterface;
 import android.util.Log;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.RuuviTag;
-
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
+import com.ruuvi.station.model.RuuviTagEntity;
 
 import java.io.File;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by admin on 09/09/2017.
- */
 
 public class Utils {
+
     private static final String TAG = "Utils";
+
     public static final java.lang.String DB_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 
     public static boolean tryParse(String value) {
@@ -67,10 +57,11 @@ public class Utils {
         return bitmap;
     }
 
-    public static void sortTagsByRssi(List<RuuviTag> tags) {
-        Collections.sort(tags, new Comparator<RuuviTag>() {
-            @Override public int compare(RuuviTag o1, RuuviTag o2) {
-                return o2.rssi - o1.rssi;
+    public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
+        Collections.sort(tags, new Comparator<RuuviTagEntity>() {
+            @Override
+            public int compare(RuuviTagEntity o1, RuuviTagEntity o2) {
+                return o2.getRssi() - o1.getRssi();
             }
         });
     }
@@ -105,15 +96,15 @@ public class Utils {
         return output;
     }
 
-    public static Bitmap getBackground(Context context, RuuviTag tag) {
+    public static Bitmap getBackground(Context context, RuuviTagEntity tag) {
         try {
-            Uri uri = Uri.parse(tag.userBackground);
+            Uri uri = Uri.parse(tag.getUserBackground());
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
         } catch (Exception e) {
             Log.e(TAG, "Could not set user background");
         }
 
-        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.defaultBackground));
+        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
     }
 
 
@@ -165,32 +156,5 @@ public class Utils {
     public static boolean removeStateFile(Context context) {
         String path = context.getFilesDir().getPath() + "/android-beacon-library-scan-state";
         return new File(path).delete();
-    }
-
-    public static List<ScanFilter> getScanFilters() {
-        List<ScanFilter> filters = new ArrayList<>();
-        ScanFilter ruuviFilter = new ScanFilter.Builder()
-                .setManufacturerData(0x0499, new byte[] {})
-                .build();
-        ScanFilter eddystoneFilter = new ScanFilter.Builder()
-                .setServiceUuid(ParcelUuid.fromString("0000feaa-0000-1000-8000-00805f9b34fb"))
-                .build();
-        filters.add(ruuviFilter);
-        filters.add(eddystoneFilter);
-        return filters;
-    }
-
-    public static void setAltBeaconParsers(BeaconManager beaconManager) {
-        beaconManager.getBeaconParsers().clear();
-
-        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(Constants.RuuviV2and4_LAYOUT));
-
-        BeaconParser v3Parser = new BeaconParser().setBeaconLayout(Constants.RuuviV3_LAYOUT);
-        v3Parser.setHardwareAssistManufacturerCodes(new int[]{1177});
-        beaconManager.getBeaconParsers().add(v3Parser);
-
-        BeaconParser v5Parser = new BeaconParser().setBeaconLayout(Constants.RuuviV5_LAYOUT);
-        v5Parser.setHardwareAssistManufacturerCodes(new int[]{1177});
-        beaconManager.getBeaconParsers().add(v5Parser);
     }
 }

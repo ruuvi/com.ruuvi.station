@@ -1,16 +1,11 @@
 package com.ruuvi.station.util
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Matrix
-import android.net.Uri
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v4.content.FileProvider
 import android.support.v4.content.res.ResourcesCompat
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -22,12 +17,13 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.TagSensorReading
-import java.io.File
-import java.io.FileWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class GraphView (val context: Context) {
     private var from: Long = 0
@@ -44,7 +40,7 @@ class GraphView (val context: Context) {
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
 
-        val tempUnit = RuuviTag.getTemperatureUnit(context)
+        val tempUnit = RuuviTagRepository.getTemperatureUnit(context)
 
         val cal = Calendar.getInstance()
         to = cal.time.time;

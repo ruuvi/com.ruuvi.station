@@ -5,22 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
-import com.ruuvi.station.service.AltBeaconScannerService
 
 class ServiceUtils(val context: Context) {
-    fun stopService(): ServiceUtils {
-        val scannerService = Intent(context, AltBeaconScannerService::class.java)
-        context.stopService(scannerService)
-        return this
-    }
-
-    fun startService(): ServiceUtils {
-        if (!isRunning(AltBeaconScannerService::class.java)) {
-            val scannerService = Intent(context, AltBeaconScannerService::class.java)
-            context.startService(scannerService)
-        }
-        return this
-    }
 
     fun stopForegroundService(): ServiceUtils {
         val scannerService = Intent(context, AltBeaconScannerForegroundService::class.java)

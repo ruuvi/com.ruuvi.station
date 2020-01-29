@@ -5,7 +5,7 @@ import com.raizlabs.android.dbflow.annotation.Migration;
 import com.raizlabs.android.dbflow.sql.SQLiteType;
 import com.raizlabs.android.dbflow.sql.migration.AlterTableMigration;
 import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.TagSensorReading;
 
 /**
@@ -45,8 +45,8 @@ public class LocalDatabase {
     }
 
     @Migration(version = 4, database = LocalDatabase.class)
-    public static class Migration4 extends AlterTableMigration<RuuviTag> {
-        public Migration4(Class<RuuviTag> table) {
+    public static class Migration4 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration4(Class<RuuviTagEntity> table) {
             super(table);
         }
 
@@ -60,8 +60,8 @@ public class LocalDatabase {
     }
 
     @Migration(version = 3, database = LocalDatabase.class)
-    public static class Migration3 extends AlterTableMigration<RuuviTag> {
-        public Migration3(Class<RuuviTag> table) {
+    public static class Migration3 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration3(Class<RuuviTagEntity> table) {
             super(table);
         }
 
@@ -73,8 +73,8 @@ public class LocalDatabase {
     }
 
     @Migration(version = 2, database = LocalDatabase.class)
-    public static class Migration2 extends AlterTableMigration<RuuviTag> {
-        public Migration2(Class<RuuviTag> table) {
+    public static class Migration2 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration2(Class<RuuviTagEntity> table) {
             super(table);
         }
 

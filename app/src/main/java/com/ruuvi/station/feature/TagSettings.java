@@ -42,16 +42,16 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.HumidityCalibration;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
+import com.ruuvi.station.model.Alarm;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
@@ -68,7 +68,7 @@ public class TagSettings extends AppCompatActivity {
     private static final String TAG = "TagSettings";
     public static final String TAG_ID = "TAG_ID";
 
-    private RuuviTag tag;
+    private RuuviTagEntity tag;
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
     private boolean somethinghaschanged = false;
@@ -88,21 +88,21 @@ public class TagSettings extends AppCompatActivity {
 
         String tagId = getIntent().getStringExtra(TAG_ID);
 
-        tag = RuuviTag.get(tagId);
+        tag = RuuviTagRepository.get(tagId);
         if (tag == null) {
             finish();
             return;
         }
         tagAlarms = Alarm.getForTag(tagId);
 
-        tempUnit = RuuviTag.getTemperatureUnit(this);
+        tempUnit = RuuviTagRepository.getTemperatureUnit(this);
 
-        ((TextView)findViewById(R.id.input_mac)).setText(tag.id);
+        ((TextView)findViewById(R.id.input_mac)).setText(tag.getId());
         findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Mac address", tag.id);
+                ClipData clip = ClipData.newPlainText("Mac address", tag.getId());
                 try {
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
@@ -125,18 +125,18 @@ public class TagSettings extends AppCompatActivity {
         findViewById(R.id.tag_image_select_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tag.defaultBackground = tag.defaultBackground == 8 ? 0 : tag.defaultBackground + 1;
-                tag.userBackground = null;
-                tagImage.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, getApplicationContext()));
+                tag.setDefaultBackground(tag.getDefaultBackground() == 8 ? 0 : tag.getDefaultBackground() + 1);
+                tag.setUserBackground(null);
+                tagImage.setImageDrawable(Utils.getDefaultBackground(tag.getDefaultBackground(), getApplicationContext()));
                 somethinghaschanged = true;
             }
         });
 
         final TextView nameTextView = findViewById(R.id.input_name);
-        nameTextView.setText(tag.getDispayName());
+        nameTextView.setText(tag.getDisplayName());
 
         final TextView gatewayTextView = findViewById(R.id.input_gatewayUrl);
-        if (tag.gatewayUrl != null && !tag.gatewayUrl.isEmpty()) gatewayTextView.setText(tag.gatewayUrl);
+        if (tag.getGatewayUrl() != null && !tag.getGatewayUrl().isEmpty()) gatewayTextView.setText(tag.getGatewayUrl());
 
         // TODO: 25/10/17 make this less ugly
         nameTextView.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +146,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setTitle(getString(R.string.tag_name));
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                input.setText(tag.name);
+                input.setText(tag.getName());
                 FrameLayout container = new FrameLayout(getApplicationContext());
                 FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
@@ -158,8 +158,8 @@ public class TagSettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         somethinghaschanged = true;
-                        tag.name = input.getText().toString();
-                        nameTextView.setText(tag.name);
+                        tag.setName(input.getText().toString());
+                        nameTextView.setText(tag.getName());
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -181,7 +181,7 @@ public class TagSettings extends AppCompatActivity {
                 builder.setTitle(getString(R.string.gateway_url));
                 final EditText input = new EditText(TagSettings.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setText(tag.gatewayUrl);
+                input.setText(tag.getGatewayUrl());
                 FrameLayout container = new FrameLayout(getApplicationContext());
                 FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
@@ -193,8 +193,8 @@ public class TagSettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         somethinghaschanged = true;
-                        tag.gatewayUrl = input.getText().toString();
-                        gatewayTextView.setText(!tag.gatewayUrl.isEmpty() ? tag.gatewayUrl : getString(R.string.no_gateway_url));
+                        tag.setGatewayUrl(input.getText().toString());
+                        gatewayTextView.setText(!tag.getGatewayUrl().isEmpty() ? tag.getGatewayUrl() : getString(R.string.no_gateway_url));
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -221,18 +221,18 @@ public class TagSettings extends AppCompatActivity {
                 params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
                 content.setLayoutParams(params);
                 ((TextView)content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView)content.findViewById(R.id.calibration)).setText(Math.round(tag.humidity) +"% -> 75%");
+                ((TextView)content.findViewById(R.id.calibration)).setText(Math.round(tag.getHumidity()) +"% -> 75%");
                 final HumidityCalibration calibration = HumidityCalibration.get(tag);
                 builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        RuuviTag latestTag = RuuviTag.get(tag.id);
+                        RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
                         HumidityCalibration.calibrate(latestTag);
-                        if (calibration != null) latestTag.humidity -= calibration.humidityOffset;
+                        if (calibration != null) latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                         latestTag = HumidityCalibration.apply(latestTag);
-                        latestTag.update();
+                        RuuviTagRepository.update(latestTag);
                         // so the ui will show calibrated humidity if the user presses the calibration button again
-                        tag.humidity = latestTag.humidity;
+                        tag.setHumidity(latestTag.getHumidity());
                         Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -242,10 +242,10 @@ public class TagSettings extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             HumidityCalibration.clear(tag);
                             // so the ui will show the new uncalibrated value
-                            tag.humidity -= calibration.humidityOffset;
+                            tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
                             // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
-                            RuuviTag latestTag = RuuviTag.get(tag.id);
-                            latestTag.humidity -= calibration.humidityOffset;
+                            RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
+                            latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
                             latestTag.update();
                         }
                     });
@@ -301,14 +301,14 @@ public class TagSettings extends AppCompatActivity {
     }
 
     private void updateReadings() {
-        RuuviTag newTag = RuuviTag.get(tag.id);
+        RuuviTagEntity newTag = RuuviTagRepository.get(tag.getId());
         if (newTag != null) {
-            if (newTag.dataFormat == 3 || newTag.dataFormat == 5) {
+            if (newTag.getDataFormat() == 3 || newTag.getDataFormat() == 5) {
                 findViewById(R.id.raw_values).setVisibility(View.VISIBLE);
-                ((TextView)(findViewById(R.id.input_voltage))).setText(newTag.voltage + " V");
-                ((TextView)(findViewById(R.id.input_x))).setText(newTag.accelX + "");
-                ((TextView)(findViewById(R.id.input_y))).setText(newTag.accelY + "");
-                ((TextView)(findViewById(R.id.input_z))).setText(newTag.accelZ + "");
+                ((TextView)(findViewById(R.id.input_voltage))).setText(newTag.getVoltage() + " V");
+                ((TextView)(findViewById(R.id.input_x))).setText(newTag.getAccelX() + "");
+                ((TextView)(findViewById(R.id.input_y))).setText(newTag.getAccelY() + "");
+                ((TextView)(findViewById(R.id.input_z))).setText(newTag.getAccelZ() + "");
             } else {
                 findViewById(R.id.raw_values).setVisibility(View.GONE);
             }
@@ -322,7 +322,7 @@ public class TagSettings extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                tag.deleteTagAndRelatives();
+                RuuviTagRepository.deleteTagAndRelatives(tag);
                 finish();
             }
         });
@@ -468,12 +468,12 @@ public class TagSettings extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         handler.removeCallbacksAndMessages(null);
-        tag.favorite = true;
+        tag.setFavorite(true);
         tag.update();
         for (AlarmItem alarmItem: alarmItems) {
             if (alarmItem.checked) {
                 if (alarmItem.alarm == null) {
-                    alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.id);
+                    alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.getId());
                     alarmItem.alarm.save();
                 } else {
                     alarmItem.alarm.enabled = true;
@@ -494,7 +494,7 @@ public class TagSettings extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_export) {
             CsvExporter exporter = new CsvExporter(this);
-            exporter.toCsv(tag.id);
+            exporter.toCsv(tag.getId());
         } else {
             finish();
         }
@@ -503,7 +503,7 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (tag.favorite) {
+        if (tag.isFavorite()) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.menu_edit, menu);
         }
@@ -543,7 +543,7 @@ public class TagSettings extends AppCompatActivity {
     String mCurrentPhotoPath;
 
     private File createImageFile() throws IOException {
-        String imageFileName = "background_" + tag.id;
+        String imageFileName = "background_" + tag.getId();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,
@@ -600,7 +600,7 @@ public class TagSettings extends AppCompatActivity {
             if (file != null) {
                 int rotation = getCameraPhotoOrientation(file);
                 resize(file, rotation);
-                tag.userBackground = file.toString();
+                tag.setUserBackground(file.toString());
                 Bitmap background = Utils.getBackground(getApplicationContext(), tag);
                 tagImage.setImageBitmap(background);
                 somethinghaschanged = true;
@@ -640,7 +640,7 @@ public class TagSettings extends AppCompatActivity {
                     Uri uri = Uri.fromFile(photoFile);
                     int rotation = getCameraPhotoOrientation(uri);
                     resize(uri, rotation);
-                    tag.userBackground = uri.toString();
+                    tag.setUserBackground(uri.toString());
                     Bitmap background = Utils.getBackground(getApplicationContext(), tag);
                     tagImage.setImageBitmap(background);
                     somethinghaschanged = true;

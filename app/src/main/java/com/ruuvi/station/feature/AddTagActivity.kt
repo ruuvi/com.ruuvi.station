@@ -17,10 +17,11 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import com.ruuvi.station.R
+import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.adapters.AddTagAdapter
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.model.RuuviTag
-import com.ruuvi.station.service.ScannerService
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_add_tag.toolbar
@@ -32,7 +33,7 @@ import java.util.Calendar
 
 class AddTagActivity : AppCompatActivity() {
     private var adapter: AddTagAdapter? = null
-    private var tags: MutableList<RuuviTag>? = null
+    private var tags: MutableList<RuuviTagEntity>? = null
     lateinit var starter: Starter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,15 +50,15 @@ class AddTagActivity : AppCompatActivity() {
         tag_listView.adapter = adapter
 
         tag_listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-            val tag = tag_listView.getItemAtPosition(i) as RuuviTag
-            if (RuuviTag.get(tag.id).favorite) {
+            val tag = tag_listView.getItemAtPosition(i) as RuuviTagEntity
+            if (RuuviTagRepository.get(tag.id)?.favorite == true) {
                 Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                         .show()
                 return@OnItemClickListener
             }
             tag.defaultBackground = getKindaRandomBackground()
             tag.update()
-            ScannerService.logTag(tag, this, true)
+            (application as RuuviScannerApplication).bluetoothScannerInteractor.logTag(tag, this, true)
             val settingsIntent = Intent(this, TagSettings::class.java)
             settingsIntent.putExtra(TagSettings.TAG_ID, tag.id)
             startActivityForResult(settingsIntent, 1)
@@ -69,23 +70,29 @@ class AddTagActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 tags?.clear()
-                tags?.addAll(RuuviTag.getAll(false))
+                tags?.addAll(ArrayList(RuuviTagRepository.getAll(false)))
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.SECOND, -5)
                 var i = 0
-                while (i < tags!!.size) {
-                    if (tags!!.get(i).updateAt.time < calendar.time.time) {
-                        tags!!.removeAt(i)
-                        i--
-                    }
+                tags?.let { tags ->
+                    while (i < tags.size) {
+                        tags[i].updateAt?.time?.let { time ->
+                            if (time < calendar.time.time) {
+                                tags.removeAt(i)
+                                i--
+                            }
+                        }
                     i++
+                    }
+                    if (tags.size > 0) {
+                        Utils.sortTagsByRssi(tags)
+                        no_tags.visibility = View.INVISIBLE
+                    } else
+                        no_tags.visibility = View.VISIBLE
+                    if (adapter != null) adapter?.notifyDataSetChanged()
+
                 }
-                if (tags!!.size > 0) {
-                    Utils.sortTagsByRssi(tags)
-                    no_tags.visibility = View.INVISIBLE
-                } else
-                    no_tags.visibility = View.VISIBLE
-                if (adapter != null) adapter?.notifyDataSetChanged()
+
                 handler.postDelayed(this, 1000)
             }
         })
@@ -149,7 +156,7 @@ class AddTagActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun isBackgroundInUse(tags: List<RuuviTag>, background: Int): Boolean {
+    private fun isBackgroundInUse(tags: List<RuuviTagEntity>, background: Int): Boolean {
         for (tag in tags) {
             if (tag.defaultBackground == background) return true
         }
@@ -157,7 +164,7 @@ class AddTagActivity : AppCompatActivity() {
     }
 
     private fun getKindaRandomBackground(): Int {
-        val tags = RuuviTag.getAll(true)
+        val tags = RuuviTagRepository.getAll(true)
         var bg = (Math.random() * 9.0).toInt()
         for (i in 0..99) {
             if (!isBackgroundInUse(tags, bg)) {

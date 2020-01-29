@@ -9,7 +9,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.database.RuuviTagRepository;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.ScanEvent;
 import com.ruuvi.station.model.ScanEventSingle;
 import com.ruuvi.station.model.ScanLocation;
@@ -20,7 +21,7 @@ import java.util.List;
 public class Http {
     private static final String TAG = "Http";
 
-    public static void post(List<RuuviTag> tags, Location location, Context context){
+    public static void post(List<RuuviTagEntity> tags, Location location, Context context){
         ScanLocation scanLocation = null;
         if (location != null) {
             scanLocation = new ScanLocation();
@@ -36,20 +37,20 @@ public class Http {
         ScanEvent eventBatch = new ScanEvent(context);
         eventBatch.location = scanLocation;
         for (int i = 0; i < tags.size(); i++) {
-            RuuviTag tagFromDb = RuuviTag.get(tags.get(i).id);
+            RuuviTagEntity tagFromDb = RuuviTagRepository.get(tags.get(i).getId());
             // don't send data about tags not in the list
-            if (tagFromDb == null || !tagFromDb.favorite) continue;
+            if (tagFromDb == null || !tagFromDb.getFavorite()) continue;
 
             eventBatch.tags.add(tagFromDb);
 
-            if (tagFromDb.gatewayUrl != null && !tagFromDb.gatewayUrl.isEmpty()) {
+            if (tagFromDb.getGatewayUrl() != null && !tagFromDb.getGatewayUrl().isEmpty()) {
                 // send the single tag to its gateway
                 ScanEventSingle single = new ScanEventSingle(context);
                 single.location = scanLocation;
                 single.tag = tagFromDb;
 
                 Ion.with(context)
-                        .load(tagFromDb.gatewayUrl)
+                        .load(tagFromDb.getGatewayUrl())
                         .setJsonPojoBody(single)
                         .asJsonObject()
                         .setCallback(new FutureCallback<JsonObject>() {

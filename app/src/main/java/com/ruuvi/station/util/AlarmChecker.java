@@ -14,10 +14,11 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.ruuvi.station.R;
+import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetails;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTag;
+import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.receivers.CancelAlarmReceiver;
 
@@ -33,39 +34,39 @@ public class AlarmChecker {
     private static final String TAG = "AlarmChecker";
 
     // returns 1 for triggered alarm, 0 for non triggered alarm, -1 if tag has no alarm
-    public static int getStatus(RuuviTag tag) {
-        List<Alarm> alarms = Alarm.getForTag(tag.id);
+    public static int getStatus(RuuviTagEntity tag) {
+        List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
             if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
-                    if (tag.temperature < alarm.low)
+                    if (tag.getTemperature() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_temperature_low;
-                    if (tag.temperature > alarm.high)
+                    if (tag.getTemperature() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_temperature_high;
                     break;
                 case Alarm.HUMIDITY:
-                    if (tag.humidity < alarm.low)
+                    if (tag.getHumidity() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_humidity_low;
-                    if (tag.humidity > alarm.high)
+                    if (tag.getHumidity() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_humidity_high;
                     break;
                 case Alarm.PERSSURE:
-                    if (tag.pressure < alarm.low)
+                    if (tag.getPressure() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_pressure_low;
-                    if (tag.pressure > alarm.high)
+                    if (tag.getPressure() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_pressure_high;
                     break;
                 case Alarm.RSSI:
-                    if (tag.rssi < alarm.low)
+                    if (tag.getRssi() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_rssi_low;
-                    if (tag.rssi > alarm.high)
+                    if (tag.getRssi() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_rssi_high;
                     break;
                 case Alarm.MOVEMENT:
-                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.getId(), 2);
                     if (readings.size() == 2) {
                         if (hasTagMoved(readings.get(0), readings.get(1))) {
                             notificationTextResourceId = R.string.alert_notification_movement;
@@ -83,41 +84,41 @@ public class AlarmChecker {
         return -1;
     }
 
-    public static void check(RuuviTag tag, Context context) {
-        List<Alarm> alarms = Alarm.getForTag(tag.id);
+    public static void check(RuuviTagEntity tag, Context context) {
+        List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
             if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
-                    if (tag.temperature < alarm.low)
+                    if (tag.getTemperature() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_temperature_low;
-                    if (tag.temperature > alarm.high)
+                    if (tag.getTemperature() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_temperature_high;
                     break;
                 case Alarm.HUMIDITY:
-                    if (tag.humidity < alarm.low)
+                    if (tag.getHumidity() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_humidity_low;
-                    if (tag.humidity > alarm.high)
+                    if (tag.getHumidity() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_humidity_high;
                     break;
                 case Alarm.PERSSURE:
-                    if (tag.pressure < alarm.low)
+                    if (tag.getPressure() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_pressure_low;
-                    if (tag.pressure > alarm.high)
+                    if (tag.getPressure() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_pressure_high;
                     break;
                 case Alarm.RSSI:
-                    if (tag.rssi < alarm.low)
+                    if (tag.getRssi() < alarm.low)
                         notificationTextResourceId = R.string.alert_notification_rssi_low;
-                    if (tag.rssi > alarm.high)
+                    if (tag.getRssi() > alarm.high)
                         notificationTextResourceId = R.string.alert_notification_rssi_high;
                     break;
                 case Alarm.MOVEMENT:
-                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.id, 2);
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.getId(), 2);
                     if (readings.size() == 2) {
-                        if (tag.dataFormat == 5) {
+                        if (tag.getDataFormat() == 5) {
                             if (readings.get(0).movementCounter != readings.get(1).movementCounter) {
                                 notificationTextResourceId = R.string.alert_notification_movement;
                                 break;
@@ -130,8 +131,8 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001) {
-                RuuviTag fromDb = RuuviTag.get(tag.id);
-                sendAlert(notificationTextResourceId, alarm.id, fromDb.getDispayName(), fromDb.id, context);
+                RuuviTagEntity fromDb = RuuviTagRepository.get(tag.getId());
+                sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
             }
         }
     }

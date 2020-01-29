@@ -2,10 +2,10 @@ package com.ruuvi.station.feature
 
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,16 +13,18 @@ import android.widget.ListView
 import android.widget.TextView
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
+import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.model.RuuviTag
+import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.Starter
-import kotlinx.android.synthetic.main.activity_tag_details.*
+import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
+import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 
 class DashboardActivity : AppCompatActivity() {
 
     lateinit var handler: Handler
     lateinit var starter: Starter
-    lateinit var tags: MutableList<RuuviTag>
+    lateinit var tags: MutableList<RuuviTagEntity>
     lateinit var adapter: RuuviTagAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +37,7 @@ class DashboardActivity : AppCompatActivity() {
 
         setupDrawer()
 
-        tags = RuuviTag.getAll(true)
+        tags = ArrayList(RuuviTagRepository.getAll(true))
         val noTagsFound = findViewById<TextView>(R.id.noTags_textView)
 
         val beaconListView = findViewById<ListView>(R.id.dashboard_listView)
@@ -110,7 +112,7 @@ class DashboardActivity : AppCompatActivity() {
             handler.post(object : Runnable {
                 override fun run() {
                     tags.clear()
-                    tags.addAll(RuuviTag.getAll(true))
+                    tags.addAll(ArrayList(RuuviTagRepository.getAll(true)))
                     if (tags.size > 0) {
                         noTagsFound.visibility = View.GONE
                     } else
@@ -128,7 +130,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private val tagClick = AdapterView.OnItemClickListener { parent, view, position, id ->
-        val tag = view.tag as RuuviTag
+        val tag = view.tag as RuuviTagEntity
         val intent = Intent(applicationContext, TagDetails::class.java)
         intent.putExtra("id", tag.id)
         startActivity(intent)
