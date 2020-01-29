@@ -212,7 +212,8 @@ class TagDetails : AppCompatActivity() {
                     // party
                     if (openAddView) noTags_textView.callOnClick()
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         starter.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
