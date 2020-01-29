@@ -45,17 +45,24 @@ class Starter(val that: AppCompatActivity) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
 
+        val permissionFineLocation = ContextCompat.checkSelfPermission(that,
+            Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
         return listPermissionsNeeded
     }
 
     private fun showPermissionDialog(activity: AppCompatActivity): Boolean {
         val listPermissionsNeeded = getNeededPermissions()
 
-        if (!listPermissionsNeeded.isEmpty()) {
+        if (listPermissionsNeeded.isNotEmpty()) {
             ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toTypedArray(), 10)
         }
 
-        return !listPermissionsNeeded.isEmpty()
+        return listPermissionsNeeded.isNotEmpty()
     }
 
     fun requestPermissions() {

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
     private static final int REQUEST_ENABLE_BT = 1337;
     private static final int TAG_UI_UPDATE_FREQ = 1000;
     private static final int FROM_WELCOME = 1447;
-    private static final int COARSE_LOCATION_PERMISSION = 1;
+    private static final int REQUEST_CODE_LOCATION_PERMISSIONS = 1;
 
     private DrawerLayout drawerLayout;
     public List<RuuviTagEntity> myRuuviTags = new ArrayList<>();
@@ -256,12 +256,14 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case COARSE_LOCATION_PERMISSION : {
+            case REQUEST_CODE_LOCATION_PERMISSIONS: {
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // party
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         requestPermissions();
                     } else {
                         showPermissionSnackbar(this);
@@ -297,6 +299,13 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
+        int permissionFineLocation = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
         return listPermissionsNeeded;
     }
 
@@ -304,7 +313,11 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
         List<String> listPermissionsNeeded = getNeededPermissions();
 
         if(!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), COARSE_LOCATION_PERMISSION);
+            ActivityCompat.requestPermissions(
+                    activity,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                    REQUEST_CODE_LOCATION_PERMISSIONS
+            );
         }
 
         return !listPermissionsNeeded.isEmpty();
