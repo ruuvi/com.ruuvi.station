@@ -4,8 +4,8 @@ import android.app.Application
 import android.os.Handler
 import android.util.Log
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
-import com.ruuvi.station.bluetooth.RuuviRangeNotifier
 import com.ruuvi.station.bluetooth.IRuuviRangeNotifier
+import com.ruuvi.station.bluetooth.fake.FakeRuuviRangeNotifier
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Foreground
@@ -68,7 +68,9 @@ class BluetoothInteractor(
 
         DefaultOnTagFoundListener.gatewayOn = true
 
-        ruuviRangeNotifier = RuuviRangeNotifier(application, "RuuviScannerApplication")
+        ruuviRangeNotifier =
+            FakeRuuviRangeNotifier()
+//            RuuviRangeNotifier(application, "RuuviScannerApplication")
 
         Foreground.init(application)
         Foreground.get().addListener(listener)
