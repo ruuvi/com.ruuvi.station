@@ -3,8 +3,10 @@ package com.ruuvi.station.bluetooth.domain
 import android.app.Application
 import android.os.Handler
 import android.util.Log
+import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.IRuuviRangeNotifier
+import com.ruuvi.station.bluetooth.RuuviRangeNotifier
 import com.ruuvi.station.bluetooth.fake.FakeRuuviRangeNotifier
 import com.ruuvi.station.service.AltBeaconScannerForegroundService
 import com.ruuvi.station.util.BackgroundScanModes
@@ -28,7 +30,7 @@ class BluetoothInteractor(
 
         override fun onBecameForeground() {
 
-            Log.d(TAG, "onBecameForeground")
+            Log.d(TAG, "ruuvi onBecameForeground start foreground scanning")
 
             startForegroundScanning()
 
@@ -36,24 +38,31 @@ class BluetoothInteractor(
         }
 
         override fun onBecameBackground() {
-            Log.d(TAG, "onBecameBackground")
 
             isRunningInForeground = false
 
             val serviceUtils = ServiceUtils(application)
 
             if (prefs.backgroundScanMode === BackgroundScanModes.DISABLED) { // background scanning is disabled so all scanning things will be killed
+                Log.d(TAG, "ruuvi onBecameBackground stop scanning, background scan mode DISABLED")
 
                 stopScanning()
                 serviceUtils.stopForegroundService()
             } else if (prefs.backgroundScanMode === BackgroundScanModes.BACKGROUND) {
 
                 if (serviceUtils.isRunning(AltBeaconScannerForegroundService::class.java)) {
+
+                    Log.d(TAG, "ruuvi onBecameBackground stop foreground scanning, background scan mode enabled(BACKGROUND)")
+
                     serviceUtils.stopForegroundService()
-                } else {
-                    startBackgroundScanning()
                 }
-            } else {
+
+                Log.d(TAG, "ruuvi onBecameBackground start background scanning, background scan mode enabled(BACKGROUND)")
+
+                startBackgroundScanning()
+
+            } else if (prefs.backgroundScanMode === BackgroundScanModes.FOREGROUND) {
+                Log.d(TAG, "ruuvi onBecameBackground stop scanning and start foreground scanning, background scan mode FOREGROUND")
 
                 stopScanning()
                 serviceUtils.startForegroundService()
@@ -69,8 +78,8 @@ class BluetoothInteractor(
         DefaultOnTagFoundListener.gatewayOn = true
 
         ruuviRangeNotifier =
-            FakeRuuviRangeNotifier()
-//            RuuviRangeNotifier(application, "RuuviScannerApplication")
+            if (RuuviScannerApplication.isBluetoothFakingEnabled) FakeRuuviRangeNotifier()
+            else RuuviRangeNotifier(application, "RuuviScannerApplication")
 
         Foreground.init(application)
         Foreground.get().addListener(listener)
@@ -117,6 +126,8 @@ class BluetoothInteractor(
         var scanInterval = Preferences(application).backgroundScanInterval * 1000L
 
         if (scanInterval < MIN_SCAN_INTERVAL_MILLISECONDS) scanInterval = MIN_SCAN_INTERVAL_MILLISECONDS
+
+        Log.d(TAG, "ruuvi scanInterval $scanInterval")
 
         startScan(DefaultOnTagFoundListener(application), true, scanInterval)
 

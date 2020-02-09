@@ -65,6 +65,7 @@ class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
     private val REQUEST_ENABLE_BT = 1337
     private val BACKGROUND_FADE_DURATION = 200
+
     companion object {
         val FROM_WELCOME = "FROM_WELCOME"
     }
@@ -79,6 +80,7 @@ class TagDetails : AppCompatActivity() {
     lateinit var starter: Starter
     private var showGraph = false
     private var updateGraph = false
+    private var lastSelectedTag = 0
 
     val backgrounds = HashMap<String, BitmapDrawable>()
 
@@ -113,6 +115,7 @@ class TagDetails : AppCompatActivity() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
+                lastSelectedTag = position
                 tag = tags[position]
                 if (!prevTagId.isEmpty()) {
                     backgrounds[prevTagId].let { bitmapDrawable ->
@@ -134,8 +137,8 @@ class TagDetails : AppCompatActivity() {
             val im = AppCompatImageView(applicationContext)
             im.scaleType = ImageView.ScaleType.CENTER_CROP
             im.layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT)
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT)
             im
         }
 
@@ -158,7 +161,7 @@ class TagDetails : AppCompatActivity() {
         }
 
         try {
-            for (i in 0..(pager_title_strip.childCount-1)) {
+            for (i in 0..(pager_title_strip.childCount - 1)) {
                 val child = pager_title_strip.getChildAt(i)
                 if (child is TextView) {
                     child.typeface = ResourcesCompat.getFont(applicationContext, R.font.montserrat_bold)
@@ -172,6 +175,7 @@ class TagDetails : AppCompatActivity() {
         openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
         if (openAddView) {
             val addIntent = Intent(this, AddTagActivity::class.java)
+            intent.putExtra(FROM_WELCOME, false)
             startActivity(addIntent)
             return
         }
@@ -232,7 +236,7 @@ class TagDetails : AppCompatActivity() {
                     if (openAddView) noTags_textView.callOnClick()
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         starter.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
@@ -292,7 +296,7 @@ class TagDetails : AppCompatActivity() {
         return true
     }
 
-    private fun refrshTagLists() {
+    private fun refreshTagLists() {
         tags.clear()
         tags.addAll(RuuviTagRepository.getAll(true))
         updateUI()
@@ -302,7 +306,12 @@ class TagDetails : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateGraph = true
-        tags = ArrayList(RuuviTagRepository.getAll(true))
+
+        val newTagsList = RuuviTagRepository.getAll(true)
+        if (newTagsList.size != tags.size) {
+            lastSelectedTag = newTagsList.size - 1
+            tags = newTagsList
+        }
 
         var tagRemoved = true
         for (tag in tags) {
@@ -314,22 +323,27 @@ class TagDetails : AppCompatActivity() {
             }
         }
         if (tag != null && tagRemoved) {
-            val intent = intent
+            if (tags.size > 0) {
+                intent.putExtra("id", tags[tags.size - 1].id)
+            }
             finish()
             startActivity(intent)
             return
         }
         (tag_pager.adapter as TagPager).tags = tags
         tag_pager.adapter?.notifyDataSetChanged()
+
+        tag_pager.currentItem = lastSelectedTag
+
         if (tags.isNotEmpty()) {
-            backgrounds[tags.get(tag_pager.currentItem).id].let { bitmap ->
+            backgrounds[tags[tag_pager.currentItem].id].let { bitmap ->
                 imageSwitcher.setImageDrawable(bitmap)
             }
         }
 
         if (starter.getNeededPermissions().isEmpty()) {
-            refrshTagLists()
-            handler.post(object: Runnable {
+            refreshTagLists()
+            handler.post(object : Runnable {
                 override fun run() {
                     updateUI()
                     handler.postDelayed(this, 1000)
@@ -386,12 +400,12 @@ class TagDetails : AppCompatActivity() {
             (tag_pager.adapter as TagPager).updateView(it, showGraph, updateGraph)
             it.id?.let { tagId ->
                 if (alarmStatus.containsKey(tagId)) {
-                val newStatus = AlarmChecker.getStatus(it)
+                    val newStatus = AlarmChecker.getStatus(it)
                     if (alarmStatus[tagId] != newStatus) {
                         alarmStatus[tagId] = AlarmChecker.getStatus(it)
-                    this.invalidateOptionsMenu()
-                }
-            } else {
+                        this.invalidateOptionsMenu()
+                    }
+                } else {
                     alarmStatus[tagId] = AlarmChecker.getStatus(it)
                 }
             }
@@ -520,7 +534,7 @@ class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context,
 
         var temperature = RuuviTagRepository.getTemperatureString(context, tag)
         val isKelvin = temperature.endsWith("K")
-        val offset = if (isKelvin) 1 else  2
+        val offset = if (isKelvin) 1 else 2
         val unit = temperature.substring(temperature.length - offset, temperature.length)
         temperature = temperature.substring(0, temperature.length - offset)
 
