@@ -104,4 +104,25 @@ public class TagSensorReading extends BaseModel {
     public static long countAll() {
         return SQLite.selectCountOf().from(TagSensorReading.class).count();
     }
+
+    @Override
+    public String toString() {
+        return "TagSensorReading{" +
+                "id=" + id +
+                ", ruuviTagId='" + ruuviTagId + '\'' +
+                ", createdAt=" + createdAt +
+                ", temperature=" + temperature +
+                ", humidity=" + humidity +
+                ", pressure=" + pressure +
+                ", rssi=" + rssi +
+                ", accelX=" + accelX +
+                ", accelY=" + accelY +
+                ", accelZ=" + accelZ +
+                ", voltage=" + voltage +
+                ", dataFormat=" + dataFormat +
+                ", txPower=" + txPower +
+                ", movementCounter=" + movementCounter +
+                ", measurementSequenceNumber=" + measurementSequenceNumber +
+                '}';
+    }
 }

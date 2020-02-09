@@ -126,6 +126,8 @@ public class ScannerService extends Service {
 
             for (RuuviTagEntity tag : backgroundTags) {
                 TagSensorReading reading = new TagSensorReading(tag);
+
+                Log.d(TAG, "saved reading " + reading);
                 reading.save();
                 AlarmChecker.check(tag, getApplicationContext());
             }

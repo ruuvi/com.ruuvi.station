@@ -4,9 +4,11 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.ruuvi.station.RuuviScannerApplication
 import com.ruuvi.station.bluetooth.FoundRuuviTag
-import com.ruuvi.station.bluetooth.RuuviTagScanner
 import com.ruuvi.station.bluetooth.IRuuviTagScanner
+import com.ruuvi.station.bluetooth.RuuviTagScanner
+import com.ruuvi.station.bluetooth.fake.FakeRuuviTagScanner
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
@@ -48,9 +50,8 @@ class BluetoothScannerInteractor(
     }
 
     private val ruuviTagScanner: IRuuviTagScanner by lazy {
-        RuuviTagScanner(
-            application
-        )
+        if (RuuviScannerApplication.isBluetoothFakingEnabled) FakeRuuviTagScanner()
+        else RuuviTagScanner(application)
     }
 
     fun logTag(ruuviTag: RuuviTagEntity, context: Context?, foreground: Boolean) {
@@ -88,6 +89,9 @@ class BluetoothScannerInteractor(
         }
         val reading = TagSensorReading(ruuviTag)
         reading.save()
+
+        Log.d(TAG,"logtag  saved reading $reading")
+
         AlarmChecker.check(ruuviTag, context)
     }
 

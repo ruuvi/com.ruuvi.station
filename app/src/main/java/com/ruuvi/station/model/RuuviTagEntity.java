@@ -12,7 +12,8 @@ import com.ruuvi.station.database.LocalDatabase;
 import java.util.Date;
 
 
-@Table(database = LocalDatabase.class)
+// FIXME: change to the same database table name as was before the refactoring
+@Table(name = "RuuviTag", database = LocalDatabase.class)
 public class RuuviTagEntity extends BaseModel {
 
     @Column

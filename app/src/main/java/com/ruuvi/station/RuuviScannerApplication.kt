@@ -1,6 +1,7 @@
 package com.ruuvi.station
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.bluetooth.domain.BluetoothForegroundScanningInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothInteractor
@@ -18,6 +19,10 @@ class RuuviScannerApplication : Application() {
 
         FlowManager.init(this)
 
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
+        }
+
         bluetoothInteractor.onAppCreated()
     }
 
@@ -27,5 +32,14 @@ class RuuviScannerApplication : Application() {
 
     fun startBackgroundScanning() {
         bluetoothInteractor.startBackgroundScanning()
+    }
+
+    companion object {
+
+        private const val isBluetoothFakingEnabledInDebug = false
+
+        val isBluetoothFakingEnabled =
+            if (BuildConfig.DEBUG) isBluetoothFakingEnabledInDebug
+            else /*if release */ false
     }
 }
