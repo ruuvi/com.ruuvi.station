@@ -60,6 +60,8 @@ dependencies {
     implementation "com.android.support:gridlayout-v7:${support_version}"
     implementation "com.android.support:exifinterface:${support_version}"
 
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     implementation 'com.koushikdutta.ion:ion:2.2.1'
