@@ -52,8 +52,6 @@ class AppSettingsListFragment : Fragment() {
         }
 
         updateView()
-        // updates the scanning notification notification if the service is running
-        ServiceUtils(context!!).forceStartIfRunningForegroundService()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

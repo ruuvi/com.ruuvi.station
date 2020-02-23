@@ -29,37 +29,23 @@ import android.support.v7.widget.AppCompatImageView
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.widget.*
 import com.ruuvi.station.R
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.RuuviTagEntity
-import com.ruuvi.station.util.AlarmChecker
-import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.GraphView
-import com.ruuvi.station.util.Preferences
-import com.ruuvi.station.util.Starter
-import com.ruuvi.station.util.Utils
-import kotlinx.android.synthetic.main.activity_tag_details.background_fader
-import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
-import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
-import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
-import kotlinx.android.synthetic.main.activity_tag_details.toolbar
-import kotlinx.android.synthetic.main.content_tag_details.noTags_textView
-import kotlinx.android.synthetic.main.content_tag_details.pager_title_strip
-import kotlinx.android.synthetic.main.content_tag_details.tag_pager
-import java.util.Date
-import java.util.HashMap
+import com.ruuvi.station.util.*
+import kotlinx.android.synthetic.main.activity_tag_details.*
+import kotlinx.android.synthetic.main.content_tag_details.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.get
+import kotlin.collections.indices
+import kotlin.collections.isNotEmpty
+import kotlin.collections.set
+import kotlin.collections.withIndex
 
 class TagDetails : AppCompatActivity() {
     private val TAG = "TagDetails"
@@ -79,7 +65,6 @@ class TagDetails : AppCompatActivity() {
     private var openAddView = false
     lateinit var starter: Starter
     private var showGraph = false
-    private var updateGraph = false
     private var lastSelectedTag = 0
 
     val backgrounds = HashMap<String, BitmapDrawable>()
@@ -305,7 +290,6 @@ class TagDetails : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        updateGraph = true
 
         val newTagsList = RuuviTagRepository.getAll(true)
         if (newTagsList.size != tags.size) {
@@ -385,7 +369,7 @@ class TagDetails : AppCompatActivity() {
         }
         tags = ArrayList(RuuviTagRepository.getAll(true))
         for (mTag in tags) {
-            (tag_pager.adapter as TagPager).updateView(mTag, showGraph, updateGraph)
+            (tag_pager.adapter as TagPager).updateView(mTag, showGraph)
             if (tag != null && mTag.id == tag!!.id) {
                 tag = mTag
             }
@@ -397,7 +381,7 @@ class TagDetails : AppCompatActivity() {
         }
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
-            (tag_pager.adapter as TagPager).updateView(it, showGraph, updateGraph)
+            (tag_pager.adapter as TagPager).updateView(it, showGraph)
             it.id?.let { tagId ->
                 if (alarmStatus.containsKey(tagId)) {
                     val newStatus = AlarmChecker.getStatus(it)
@@ -417,7 +401,6 @@ class TagDetails : AppCompatActivity() {
             pager_title_strip.visibility = View.VISIBLE
             noTags_textView.visibility = View.INVISIBLE
         }
-        updateGraph = false
     }
 
     fun delete() {
@@ -496,11 +479,11 @@ class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context,
         val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
         view.tag = VIEW_TAG + position
         (container as ViewPager).addView(view, 0)
-        updateView(tags[position], false, false)
+        updateView(tags[position], false)
         return view
     }
 
-    fun updateView(tag: RuuviTagEntity, showGraph: Boolean, updateGraph: Boolean) {
+    fun updateView(tag: RuuviTagEntity, showGraph: Boolean) {
         var pos = -1
         for ((index, aTag) in tags.withIndex()) {
             if (tag.id.equals(aTag.id)) {
@@ -514,7 +497,7 @@ class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context,
 
         val graph = rootView.findViewById<View>(R.id.tag_graphs)
         val container = rootView.findViewById<View>(R.id.tag_container)
-        if (showGraph && graph.visibility == View.INVISIBLE || showGraph && updateGraph) {
+        if (showGraph && graph.visibility == View.INVISIBLE || showGraph) {
             graph.visibility = View.VISIBLE
             container.visibility = View.INVISIBLE
             tag.id?.let {

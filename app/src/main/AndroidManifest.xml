@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -35,11 +36,14 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".service.ScannerService"
-            android:exported="false" />
+            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <service
-            android:name=".service.AltBeaconScannerForegroundService"
-            android:exported="false" />
+            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
 <!--        <service android:name=".service.ScannerJobService"-->
 <!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
@@ -98,13 +102,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name="org.altbeacon.beacon.service.BeaconService"
-            tools:node="replace">
-            <meta-data android:name="longScanForcingEnabled" android:value="true"/>
-        </service>
-
-
         <receiver android:name=".receivers.CancelAlarmReceiver" />
+        <receiver android:name="com.ruuvi.station.bluetooth.ScanningPeriodicReceiver" />
     </application>
 
 </manifest>

@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.ruuvi.station.R
 import com.ruuvi.station.RuuviScannerApplication
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.util.Preferences
 

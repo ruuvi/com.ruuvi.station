@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 10115
-        versionName "1.0.0.6.6"
+        targetSdkVersion 29
+        versionCode 10116
+        versionName "1.0.0.6.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -60,14 +60,14 @@ dependencies {
     implementation "com.android.support:gridlayout-v7:${support_version}"
     implementation "com.android.support:exifinterface:${support_version}"
 
-    implementation 'com.facebook.stetho:stetho:1.5.1'
-
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     implementation 'com.koushikdutta.ion:ion:2.2.1'
     implementation "com.androidplot:androidplot-core:1.5.0"
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
 //    kapt "com.github.agrosner.dbflow:processor:${dbflow_version}"
@@ -78,6 +78,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:1.10.19'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
