@@ -9,8 +9,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 10116
-        versionName "1.0.0.6.7"
+        versionCode 10118
+        versionName "1.0.0.6.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -47,8 +47,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
+    implementation project(':libraryName')
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:-SNAPSHOT'
+//    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:-SNAPSHOT'
 
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'

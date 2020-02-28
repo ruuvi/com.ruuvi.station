@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
     <application
@@ -44,11 +44,6 @@
             android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-<!--        <service android:name=".service.ScannerJobService"-->
-<!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
-
-<!--        <receiver android:name=".scanning.BackgroundScanner" />-->
 
         <activity
             android:name=".feature.TagDetails"
@@ -104,6 +99,11 @@
 
         <receiver android:name=".receivers.CancelAlarmReceiver" />
         <receiver android:name="com.ruuvi.station.bluetooth.ScanningPeriodicReceiver" />
+        <receiver android:name="com.ruuvi.station.receivers.RebootSchedulerReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
