@@ -7,14 +7,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
     <application
-        android:name=".RuuviScannerApplication"
+        android:name=".app.RuuviScannerApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -35,21 +36,19 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".service.ScannerService"
-            android:exported="false" />
-        <service
-            android:name=".service.AltBeaconScannerForegroundService"
-            android:exported="false" />
+            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-<!--        <service android:name=".service.ScannerJobService"-->
-<!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
-
-<!--        <receiver android:name=".scanning.BackgroundScanner" />-->
+        <service android:name=".bluetooth.BluetoothForegroundService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
             android:name=".feature.TagDetails"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
+
         <activity
             android:name=".feature.WelcomeActivity"
             android:screenOrientation="portrait"
@@ -98,13 +97,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name="org.altbeacon.beacon.service.BeaconService"
-            tools:node="replace">
-            <meta-data android:name="longScanForcingEnabled" android:value="true"/>
-        </service>
-
-
         <receiver android:name=".receivers.CancelAlarmReceiver" />
+        <receiver android:name="com.ruuvi.station.bluetooth.ScanningPeriodicReceiver" />
+        <receiver android:name="com.ruuvi.station.receivers.RebootSchedulerReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.ruuvi.station.RuuviScannerApplication
+import com.ruuvi.station.app.RuuviScannerApplication
 import com.ruuvi.station.bluetooth.FoundRuuviTag
 import com.ruuvi.station.bluetooth.IRuuviTagScanner
 import com.ruuvi.station.bluetooth.RuuviTagScanner

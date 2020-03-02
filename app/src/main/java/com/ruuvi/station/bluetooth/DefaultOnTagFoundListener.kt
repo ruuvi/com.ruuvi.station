@@ -13,37 +13,27 @@ import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
-import com.ruuvi.station.util.Constants
+import com.ruuvi.station.util.Preferences
 import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
-class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTagsFoundListener {
+class DefaultOnTagFoundListener(val context: Context) : IRuuviTagScanner.OnTagFoundListener {
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
-    override fun onTagsFound(allTags: List<FoundRuuviTag>) {
-
+    override fun onTagFound(foundTag: FoundRuuviTag) {
         updateLocation()
-
         val favoriteTags = ArrayList<RuuviTagEntity>()
-
-        allTags.forEach {
-
-            val tag = HumidityCalibration.apply(RuuviTagEntity(it))
-
-            saveReading(tag)
-
-            if (tag.favorite == true) {
-                favoriteTags.add(tag)
-            }
+        val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
+        saveReading(tag)
+        if (tag.favorite == true) {
+            favoriteTags.add(tag)
         }
-
         if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, tagLocation, context)
-
         TagSensorReading.removeOlderThan(24)
     }
 
@@ -53,25 +43,26 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             RuuviTagRepository.update(ruuviTag)
-            if (dbTag.favorite!=true) return
+            if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
         } else {
             ruuviTag.updateAt = Date()
             RuuviTagRepository.save(ruuviTag)
-            return
         }
+    }
+
+    private fun saveFavouriteReading(ruuviTag: RuuviTagEntity) {
+        val interval = Preferences(context).backgroundScanInterval
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL)
+        calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
-        for ((key, value) in lastLogged!!) {
-            if (key == ruuviTag.id && value > loggingThreshold) {
-                return
+        var lastLoggedDate = lastLogged[ruuviTag.id]
+        if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
+            ruuviTag.id?.let {
+                lastLogged[it] = Date().time
+                val reading = TagSensorReading(ruuviTag)
+                reading.save()
             }
         }
-        ruuviTag.id?.let { id ->
-            lastLogged[id] = Date().time
-        }
-        val reading = TagSensorReading(ruuviTag)
-        reading.save()
         AlarmChecker.check(ruuviTag, context)
     }
 
@@ -83,7 +74,6 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTa
 
     companion object {
         var gatewayOn = false
-
         var tagLocation: Location? = null
     }
 }

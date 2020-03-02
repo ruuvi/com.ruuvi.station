@@ -90,7 +90,7 @@ public class RuuviTagRepository {
     public static String getTemperatureString(Context context, RuuviTagEntity tag) {
         String temperatureUnit = getTemperatureUnit(context);
         if (temperatureUnit.equals("C")) {
-            return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + temperatureUnit;
+            return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + "°" + temperatureUnit;
         }
         return String.format(context.getString(R.string.temperature_reading), getFahrenheit(tag)) + temperatureUnit;
     }

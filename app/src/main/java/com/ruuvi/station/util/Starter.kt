@@ -52,6 +52,15 @@ class Starter(val that: AppCompatActivity) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q){
+            val permissionBackgroundLocation = ContextCompat.checkSelfPermission(that,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
+            if (permissionBackgroundLocation != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
+        }
+
         return listPermissionsNeeded
     }
 
