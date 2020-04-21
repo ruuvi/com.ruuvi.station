@@ -12,10 +12,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
     <application
-        android:name=".RuuviScannerApplication"
+        android:name=".app.RuuviScannerApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -40,15 +42,15 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service
-            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".bluetooth.BluetoothForegroundService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
-            android:name=".feature.TagDetails"
+            android:name=".feature.TagDetailsActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
+
         <activity
             android:name=".feature.WelcomeActivity"
             android:screenOrientation="portrait"
@@ -60,10 +62,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".feature.GraphActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
             android:name=".feature.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
@@ -71,7 +69,7 @@
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.AppSettingsActivity"
+            android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
             android:label="@string/title_activity_app_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
@@ -98,10 +96,16 @@
         </provider>
 
         <receiver android:name=".receivers.CancelAlarmReceiver" />
-        <receiver android:name="com.ruuvi.station.bluetooth.ScanningPeriodicReceiver" />
-        <receiver android:name="com.ruuvi.station.receivers.RebootSchedulerReceiver">
+        <receiver android:name=".bluetooth.ScanningPeriodicReceiver" />
+        <receiver
+            android:name=".receivers.RebootSchedulerReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
     </application>

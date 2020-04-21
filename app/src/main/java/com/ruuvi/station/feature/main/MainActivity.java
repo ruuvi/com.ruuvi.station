@@ -32,17 +32,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.ruuvi.station.R;
-import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.bluetooth.IRuuviTagScanner;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
-import com.ruuvi.station.feature.AppSettingsActivity;
+import com.ruuvi.station.settings.ui.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
-import com.ruuvi.station.util.Preferences;
+import com.ruuvi.station.app.preferences.Preferences;
 import com.ruuvi.station.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,11 +127,6 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
             openFragment(i);
         }
     };
-
-    public static void setBackgroundScanning(final Context context) {
-        Log.d(TAG, "DEBUG, setBackgroundScan");
-        ((RuuviScannerApplication)(((Activity)context).getApplication())).startForegroundScanning();
-    }
 
     public static void requestIgnoreBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

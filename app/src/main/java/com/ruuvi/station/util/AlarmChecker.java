@@ -11,18 +11,18 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
-
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.feature.TagDetails;
+import com.ruuvi.station.feature.TagDetailsActivity;
 import com.ruuvi.station.feature.main.MainActivity;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.receivers.CancelAlarmReceiver;
-
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import timber.log.Timber;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -54,9 +54,9 @@ public class AlarmChecker {
                         notificationTextResourceId = R.string.alert_notification_humidity_high;
                     break;
                 case Alarm.PERSSURE:
-                    if (tag.getPressure() < alarm.low)
+                    if (tag.getPressure() < alarm.low * 100)
                         notificationTextResourceId = R.string.alert_notification_pressure_low;
-                    if (tag.getPressure() > alarm.high)
+                    if (tag.getPressure() > alarm.high * 100)
                         notificationTextResourceId = R.string.alert_notification_pressure_high;
                     break;
                 case Alarm.RSSI:
@@ -85,10 +85,11 @@ public class AlarmChecker {
     }
 
     public static void check(RuuviTagEntity tag, Context context) {
+        Timber.d("check alarm tag.id = %1$s", tag.getId());
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
-        int notificationTextResourceId = -9001;
         for (Alarm alarm : alarms) {
+            int notificationTextResourceId = -9001;
             if (!alarm.enabled) continue;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
@@ -104,9 +105,9 @@ public class AlarmChecker {
                         notificationTextResourceId = R.string.alert_notification_humidity_high;
                     break;
                 case Alarm.PERSSURE:
-                    if (tag.getPressure() < alarm.low)
+                    if (tag.getPressure() < alarm.low * 100)
                         notificationTextResourceId = R.string.alert_notification_pressure_low;
-                    if (tag.getPressure() > alarm.high)
+                    if (tag.getPressure() > alarm.high * 100)
                         notificationTextResourceId = R.string.alert_notification_pressure_high;
                     break;
                 case Alarm.RSSI:
@@ -130,9 +131,21 @@ public class AlarmChecker {
                     }
                     break;
             }
-            if (notificationTextResourceId != -9001) {
+            if (notificationTextResourceId != -9001 && canNotify(alarm.id)) {
                 RuuviTagEntity fromDb = RuuviTagRepository.get(tag.getId());
                 sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
+            }
+        }
+    }
+
+    public static void dismissNotification(Integer notificationId, Context context) {
+        Timber.d("dismissNotification with id = %1$s", notificationId);
+        if (notificationId != -1) {
+            try {
+                NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                NotifyMgr.cancel(notificationId);
+            } catch (Exception e) {
+                Timber.e(e,"Failed to dismiss notification with id = %1$s", notificationId);
             }
         }
     }
@@ -148,21 +161,38 @@ public class AlarmChecker {
         return Math.abs(one - two);
     }
 
+    private static HashMap<Integer, Long> lastFiredNotification = new HashMap<Integer, Long>();
+
+    private static Boolean canNotify(int alarmId) {
+        Long lastNotificationTime = lastFiredNotification.get(alarmId);
+        Calendar calendar = Calendar.getInstance();
+        Long now = calendar.getTimeInMillis();
+        calendar.add(Calendar.SECOND, -10);
+        Long notificationThreshold = calendar.getTimeInMillis();
+        if (lastNotificationTime == null || lastNotificationTime < notificationThreshold) {
+            lastFiredNotification.put(alarmId, now);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private static void sendAlert(int stringResId, int _id, String name, String mac, Context context) {
+        Timber.d("sendAlert tag.name = %1$s; alarm.id = %2$s; stringResId = %3$s", name, _id, stringResId);
+
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-        int notificationId = _id + stringResId;
         NotificationCompat.Builder notification;
 
-        Intent intent = new Intent(context, TagDetails.class);
+        Intent intent = new Intent(context, TagDetailsActivity.class);
         intent.putExtra("id", mac);
 
         PendingIntent pendingIntent = TaskStackBuilder.create(context)
                 .addNextIntent(intent)
-                .getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+                .getPendingIntent(_id, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent cancelIntent = new Intent(context, CancelAlarmReceiver.class);
         cancelIntent.putExtra("alarmId", _id);
-        cancelIntent.putExtra("notificationId", notificationId);
+        cancelIntent.putExtra("notificationId", _id);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, _id, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.disable_this_alarm), cancelPendingIntent);
 
@@ -191,9 +221,9 @@ public class AlarmChecker {
                 NotifyMgr.createNotificationChannel(channel);
             }
 
-            NotifyMgr.notify(notificationId, notification.build());
+            NotifyMgr.notify(_id, notification.build());
         } catch (Exception e) {
-            Log.d(TAG, "Failed to create notification");
+            Timber.e(e, "Failed to create notification");
         }
     }
 

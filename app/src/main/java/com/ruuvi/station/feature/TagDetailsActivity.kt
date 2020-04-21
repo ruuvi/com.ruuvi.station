@@ -5,7 +5,6 @@ import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -19,37 +18,49 @@ import android.provider.Settings
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
-import android.text.SpannableString
-import android.text.style.SuperscriptSpan
-import android.util.Log
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import com.ruuvi.station.R
 import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.model.RuuviTagEntity
-import com.ruuvi.station.util.*
-import kotlinx.android.synthetic.main.activity_tag_details.*
-import kotlinx.android.synthetic.main.content_tag_details.*
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.MutableList
-import kotlin.collections.get
-import kotlin.collections.indices
-import kotlin.collections.isNotEmpty
+import com.ruuvi.station.util.AlarmChecker
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.util.Starter
+import com.ruuvi.station.util.Utils
+import kotlinx.android.synthetic.main.activity_tag_details.background_fader
+import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
+import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
+import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
+import kotlinx.android.synthetic.main.activity_tag_details.toolbar
+import kotlinx.android.synthetic.main.content_tag_details.noTags_textView
+import kotlinx.android.synthetic.main.content_tag_details.pager_title_strip
+import kotlinx.android.synthetic.main.content_tag_details.tag_pager
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
+import timber.log.Timber
+import java.util.Date
+import java.util.HashMap
 import kotlin.collections.set
-import kotlin.collections.withIndex
 
-class TagDetails : AppCompatActivity() {
-    private val TAG = "TagDetails"
-    private val REQUEST_ENABLE_BT = 1337
+class TagDetailsActivity : AppCompatActivity(), KodeinAware {
+    override val kodein by closestKodein()
+    private val preferences: Preferences by instance()
     private val BACKGROUND_FADE_DURATION = 200
 
     companion object {
@@ -80,7 +91,7 @@ class TagDetails : AppCompatActivity() {
 
         starter = Starter(this)
 
-        if (Preferences(this).dashboardEnabled) {
+        if (preferences.dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             main_drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
@@ -88,14 +99,13 @@ class TagDetails : AppCompatActivity() {
         }
 
         noTags_textView.setOnClickListener {
-            val addIntent = Intent(this, AddTagActivity::class.java)
-            startActivity(addIntent)
+            startActivity(Intent(this, AddTagActivity::class.java))
         }
 
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
         var prevTagId = ""
-        tag_pager.setOnPageChangeListener(object : OnPageChangeListener {
+        tag_pager.addOnPageChangeListener (object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
@@ -129,14 +139,15 @@ class TagDetails : AppCompatActivity() {
 
         val tagId = intent.getStringExtra("id")
         tags = ArrayList(RuuviTagRepository.getAll(true))
-        val pagerAdapter = TagPager(tags, applicationContext, tag_pager)
+        val pagerAdapter = TagDetailsPagerAdapter(tags, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
-        tag_pager.offscreenPageLimit = 100
+        tag_pager.offscreenPageLimit = 1
 
         for (i in tags.indices) {
             if (tags[i].id == tagId) {
                 tag = tags[i]
                 tag_pager.currentItem = i
+                break
             }
         }
 
@@ -153,7 +164,7 @@ class TagDetails : AppCompatActivity() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to set pager font")
+            Timber.e(e, "Failed to set pager font")
         }
 
         handler = Handler()
@@ -174,9 +185,9 @@ class TagDetails : AppCompatActivity() {
         )
 
         main_drawerLayout.addDrawerListener(drawerToggle)
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setHomeButtonEnabled(true)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeButtonEnabled(true)
         }
         drawerToggle.syncState()
 
@@ -245,38 +256,40 @@ class TagDetails : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
-            finish()
-        } else if (item?.itemId == R.id.action_graph) {
-            showGraph = !showGraph
-            updateUI()
-            invalidateOptionsMenu()
+        when (item?.itemId) {
+            R.id.action_graph -> {
+                showGraph = !showGraph
+                updateUI()
+                invalidateOptionsMenu()
 
-            val prefs = Preferences(this)
-            val bgScanEnabled = prefs.backgroundScanMode
-            if (bgScanEnabled == BackgroundScanModes.DISABLED) {
-                if (prefs.isFirstGraphVisit) {
-                    val simpleAlert = android.support.v7.app.AlertDialog.Builder(this).create()
-                    simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
-                    simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
+                val bgScanEnabled = preferences.backgroundScanMode
+                if (bgScanEnabled == BackgroundScanModes.DISABLED) {
+                    if (preferences.isFirstGraphVisit) {
+                        val simpleAlert = android.support.v7.app.AlertDialog.Builder(this).create()
+                        simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
+                        simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
 
-                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
-                        prefs.backgroundScanMode = BackgroundScanModes.FOREGROUND
+                        simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                            preferences.backgroundScanMode = BackgroundScanModes.BACKGROUND
+                        }
+                        simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                        }
+                        simpleAlert.setOnDismissListener {
+                            Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
+                            preferences.isFirstGraphVisit = false
+                        }
+                        simpleAlert.show()
                     }
-                    simpleAlert.setButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
-                    }
-                    simpleAlert.setOnDismissListener {
-                        Toast.makeText(applicationContext, resources.getText(R.string.bg_scan_for_graphs), Toast.LENGTH_LONG).show()
-                        prefs.isFirstGraphVisit = false
-                    }
-                    simpleAlert.show()
                 }
             }
-
-        } else if (item?.itemId == R.id.action_settings) {
-            val intent = Intent(this, TagSettings::class.java)
-            intent.putExtra(TagSettings.TAG_ID, tag?.id)
-            this.startActivity(intent)
+            R.id.action_settings -> {
+                val intent = Intent(this, TagSettings::class.java)
+                intent.putExtra(TagSettings.TAG_ID, tag?.id)
+                this.startActivity(intent)
+            }
+            android.R.id.home -> {
+                finish()
+            }
         }
         return true
     }
@@ -287,15 +300,14 @@ class TagDetails : AppCompatActivity() {
         updateUI()
     }
 
-
     override fun onResume() {
         super.onResume()
 
         val newTagsList = RuuviTagRepository.getAll(true)
         if (newTagsList.size != tags.size) {
             lastSelectedTag = newTagsList.size - 1
-            tags = newTagsList
         }
+        tags = newTagsList
 
         var tagRemoved = true
         for (tag in tags) {
@@ -314,7 +326,7 @@ class TagDetails : AppCompatActivity() {
             startActivity(intent)
             return
         }
-        (tag_pager.adapter as TagPager).tags = tags
+        (tag_pager.adapter as TagDetailsPagerAdapter).tags = tags
         tag_pager.adapter?.notifyDataSetChanged()
 
         tag_pager.currentItem = lastSelectedTag
@@ -351,15 +363,6 @@ class TagDetails : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_ENABLE_BT) {
-            }
-
-        }
-    }
-
     fun updateUI() {
         val now = Date().time
         if (backgroundFadeStarted + BACKGROUND_FADE_DURATION > now) {
@@ -369,7 +372,7 @@ class TagDetails : AppCompatActivity() {
         }
         tags = ArrayList(RuuviTagRepository.getAll(true))
         for (mTag in tags) {
-            (tag_pager.adapter as TagPager).updateView(mTag, showGraph)
+            (tag_pager.adapter as TagDetailsPagerAdapter).updateView(mTag, showGraph)
             if (tag != null && mTag.id == tag!!.id) {
                 tag = mTag
             }
@@ -381,7 +384,7 @@ class TagDetails : AppCompatActivity() {
         }
         if (tag == null && tags.isNotEmpty()) tag = tags[0]
         tag?.let {
-            (tag_pager.adapter as TagPager).updateView(it, showGraph)
+            (tag_pager.adapter as TagDetailsPagerAdapter).updateView(it, showGraph)
             it.id?.let { tagId ->
                 if (alarmStatus.containsKey(tagId)) {
                     val newStatus = AlarmChecker.getStatus(it)
@@ -469,79 +472,5 @@ class TagDetails : AppCompatActivity() {
             }
         }
         return true
-    }
-}
-
-class TagPager constructor(var tags: List<RuuviTagEntity>, val context: Context, val view: View) : PagerAdapter() {
-    val VIEW_TAG = "DetailedTag"
-
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = LayoutInflater.from(context).inflate(R.layout.view_tag_detail, container, false)
-        view.tag = VIEW_TAG + position
-        (container as ViewPager).addView(view, 0)
-        updateView(tags[position], false)
-        return view
-    }
-
-    fun updateView(tag: RuuviTagEntity, showGraph: Boolean) {
-        var pos = -1
-        for ((index, aTag) in tags.withIndex()) {
-            if (tag.id.equals(aTag.id)) {
-                pos = index
-                break
-            }
-        }
-        if (pos == -1) return
-
-        val rootView = view.findViewWithTag<View>(VIEW_TAG + pos) ?: return
-
-        val graph = rootView.findViewById<View>(R.id.tag_graphs)
-        val container = rootView.findViewById<View>(R.id.tag_container)
-        if (showGraph && graph.visibility == View.INVISIBLE || showGraph) {
-            graph.visibility = View.VISIBLE
-            container.visibility = View.INVISIBLE
-            tag.id?.let {
-                GraphView(context).drawChart(it, rootView)
-            }
-        } else if (!showGraph && graph.visibility == View.VISIBLE) {
-            graph.visibility = View.INVISIBLE
-            container.visibility = View.VISIBLE
-        }
-
-        val tag_temp = rootView.findViewById<TextView>(R.id.tag_temp)
-        val tag_humidity = rootView.findViewById<TextView>(R.id.tag_humidity)
-        val tag_pressure = rootView.findViewById<TextView>(R.id.tag_pressure)
-        val tag_signal = rootView.findViewById<TextView>(R.id.tag_signal)
-        val tag_updated = rootView.findViewById<TextView>(R.id.tag_updated)
-        val tag_temp_unit = rootView.findViewById<TextView>(R.id.tag_temp_unit)
-
-        var temperature = RuuviTagRepository.getTemperatureString(context, tag)
-        val isKelvin = temperature.endsWith("K")
-        val offset = if (isKelvin) 1 else 2
-        val unit = temperature.substring(temperature.length - offset, temperature.length)
-        temperature = temperature.substring(0, temperature.length - offset)
-
-        val unitSpan = SpannableString(unit)
-        unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
-
-        tag_temp_unit.text = unitSpan
-        tag_temp.text = temperature
-        tag_humidity.text = RuuviTagRepository.getHumidityString(context, tag)
-        tag_pressure.text = String.format(context.getString(R.string.pressure_reading), tag.pressure / 100.0)
-        tag_signal.text = String.format(context.getString(R.string.signal_reading), tag.rssi)
-        val updatedAt = context.resources.getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.updateAt)
-        tag_updated.text = updatedAt
-    }
-
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view == `object`
-    }
-
-    override fun getPageTitle(position: Int): String {
-        return tags.get(position).displayName?.toUpperCase().orEmpty()
-    }
-
-    override fun getCount(): Int {
-        return tags.size
     }
 }

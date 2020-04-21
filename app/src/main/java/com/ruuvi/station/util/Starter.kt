@@ -45,6 +45,13 @@ class Starter(val that: AppCompatActivity) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
 
+        val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
         val permissionFineLocation = ContextCompat.checkSelfPermission(that,
             Manifest.permission.ACCESS_FINE_LOCATION)
 

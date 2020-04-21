@@ -4,8 +4,7 @@ import android.content.Intent
 import android.content.BroadcastReceiver
 import android.content.Context
 import com.ruuvi.station.model.Alarm
-import android.app.NotificationManager
-
+import com.ruuvi.station.util.AlarmChecker
 
 class CancelAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -18,10 +17,6 @@ class CancelAlarmReceiver : BroadcastReceiver() {
                 alarm.update()
             }
         }
-        if (notificationId != -1) {
-            val ns = Context.NOTIFICATION_SERVICE
-            val nMgr = context.getSystemService(ns) as NotificationManager
-            nMgr.cancel(notificationId)
-        }
+        AlarmChecker.dismissNotification(notificationId, context)
     }
 }

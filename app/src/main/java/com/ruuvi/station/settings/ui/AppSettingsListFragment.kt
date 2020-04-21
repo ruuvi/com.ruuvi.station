@@ -1,4 +1,4 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.settings.ui
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,9 +9,8 @@ import android.view.ViewGroup
 
 import com.ruuvi.station.R
 import com.ruuvi.station.model.HumidityUnit
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.Preferences
-import com.ruuvi.station.util.ServiceUtils
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
 class AppSettingsListFragment : Fragment() {
@@ -61,23 +60,20 @@ class AppSettingsListFragment : Fragment() {
 
     private fun updateView() {
         var intervalText = ""
-        setBackgroundModeText()
-        if (prefs.backgroundScanMode == BackgroundScanModes.DISABLED) {
-            intervalText = resources.getString(R.string.background_scanning_disabled)
-        } else {
+        if (prefs.backgroundScanMode != BackgroundScanModes.DISABLED) {
             val bgScanInterval = prefs.backgroundScanInterval
-            var min = bgScanInterval / 60
-            var sec = bgScanInterval - min * 60
-            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-                if (min <= 15) {
-                    min = 15
-                    sec = 0
-                }
-            }
+            val min = bgScanInterval / 60
+            val sec = bgScanInterval - min * 60
             if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
             intervalText += sec.toString() + " " + getString(R.string.seconds)
         }
         background_scan_interval_sub.text = intervalText
+        if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+            bg_scan_description.text = getString(R.string.continuous_background_scanning_enabled, intervalText)
+        } else {
+            bg_scan_description.text = getString(R.string.no_background_scanning_enabled)
+        }
+
         gateway_url_sub.text = prefs.gatewayUrl
         if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
         //device_identifier_sub.text = pref.getString("pref_device_id", "")
@@ -92,14 +88,6 @@ class AppSettingsListFragment : Fragment() {
             HumidityUnit.PERCENT -> humidity_unit_sub.text = getString(R.string.relative_humidity_unit)
             HumidityUnit.GM3 -> humidity_unit_sub.text = getString(R.string.absolute_humidity_unit)
             HumidityUnit.DEW -> humidity_unit_sub.text = getString(R.string.dew_point_humidity_unit)
-        }
-    }
-
-    private fun setBackgroundModeText() {
-        when (prefs.backgroundScanMode) {
-            BackgroundScanModes.BACKGROUND -> bg_scan_description.text = getString(R.string.lazy_background_scanning_enabled)
-            BackgroundScanModes.FOREGROUND -> bg_scan_description.text = getString(R.string.continuous_background_scanning_enabled)
-            else -> bg_scan_description.text = getString(R.string.no_background_scanning_enabled)
         }
     }
 }

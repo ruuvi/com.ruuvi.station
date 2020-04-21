@@ -1,37 +1,30 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.settings.ui
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import android.view.View
 import com.ruuvi.station.R
-import android.support.v7.widget.SwitchCompat
-import com.ruuvi.station.util.Preferences
-
 import kotlinx.android.synthetic.main.activity_app_settings.*
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 
-class AppSettingsActivity : AppCompatActivity() {
+class AppSettingsActivity : AppCompatActivity(), KodeinAware {
+    override val kodein by closestKodein()
     var showingFragmentTitle = -1
-    lateinit var pref: Preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_settings)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        pref = Preferences(this.applicationContext)
-
         openFragment(-1)
     }
 
     fun openFragment(res: Int) {
         showingFragmentTitle = res
         val transaction = supportFragmentManager.beginTransaction()
-        var fragment: Fragment?
+        val fragment: Fragment?
         if (res == -1 || res == R.string.title_activity_app_settings) {
             fragment = AppSettingsListFragment()
             showingFragmentTitle = R.string.title_activity_app_settings
@@ -40,7 +33,11 @@ class AppSettingsActivity : AppCompatActivity() {
             }
         } else {
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
-            fragment = AppSettingsDetailFragment.newInstance(res)
+            fragment = if (res == R.string.pref_bgscan) {
+                AppSettingsBackgroundScanFragment.newInstance()
+            } else {
+                AppSettingsDetailFragment.newInstance(res)
+            }
         }
         transaction.replace(R.id.settings_frame, fragment)
                 .commit()

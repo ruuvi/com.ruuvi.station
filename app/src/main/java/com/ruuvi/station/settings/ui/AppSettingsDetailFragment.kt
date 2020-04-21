@@ -1,9 +1,8 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.settings.ui
 
-import android.os.Bundle
 import android.graphics.Color
+import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.SwitchCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
@@ -12,16 +11,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import com.koushikdutta.ion.Ion
-
 import com.ruuvi.station.R
-import com.ruuvi.station.feature.main.MainActivity
 import com.ruuvi.station.model.HumidityUnit
-import com.ruuvi.station.model.ScanEvent
-import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.gateway.data.ScanEvent
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.Preferences
-import com.ruuvi.station.util.ServiceUtils
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.*
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.device_identifier_input
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.device_identifier_layout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_test_button
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_test_result
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_tester_layout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_layout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_setting
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_setting_title
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_group
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_layout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_setting_title
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.settings_info
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelock_layout_container
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelock_switch
 
 private const val ARG_SETTING_RES = "arg_setting_res"
 
@@ -60,77 +68,7 @@ class AppSettingsDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (res == R.string.pref_bgscan) {
-            //scan_layout_container.visibility = View.VISIBLE
-            //(activity as AppSettingsActivity).setScanSwitchLayout(view)
-
-            radio_setting_title.text = getString(res!!)
-            radio_layout.visibility = View.VISIBLE
-            val list = listOf(
-                    getString(R.string.no_background_scanning),
-                    getString(R.string.continuous_background_scanning),
-                    getString(R.string.lazy_background_scanning)
-            )
-            var current = prefs.backgroundScanMode
-            setBackgroundScanText(current)
-            list.forEachIndexed { index, option ->
-                val rb = RadioButton(activity)
-                rb.id = index
-                rb.text = option
-                rb.isChecked = (index == current.value)
-                radio_group.addView(rb)
-            }
-
-            radio_group.setOnCheckedChangeListener { radioGroup, i ->
-                current = BackgroundScanModes.fromInt(i)!!
-                prefs.backgroundScanMode = current
-                setBackgroundScanText(current)
-            }
-        } else if (res == R.string.background_scan_interval) {
-            duration_picker.visibility = View.VISIBLE
-            val current = prefs.backgroundScanInterval
-
-            var min = current / 60
-            var sec = current - min * 60
-
-            duration_minute.maxValue = 59
-            duration_second.maxValue = 59
-
-            if (min == 0) duration_second.minValue = 10
-
-            var minuteMinValue = 0
-            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-                minuteMinValue = 15
-                if (min <= minuteMinValue) {
-                    min = 15
-                    sec = 0
-                }
-            }
-            duration_minute.minValue = minuteMinValue
-
-            duration_minute.value = min
-            duration_second.value = sec
-
-            duration_minute.setOnValueChangedListener { numberPicker, old, new ->
-                if (new == 0) {
-                    duration_second.minValue = 10
-                    if (duration_second.value < 10) duration_second.value = 10
-                } else {
-                    duration_second.minValue = 0
-                }
-                prefs.backgroundScanInterval = new * 60 + duration_second.value
-            }
-
-            duration_second.setOnValueChangedListener { numberPicker, old, new ->
-                prefs.backgroundScanInterval = duration_minute.value * 60 + new
-            }
-
-            settings_info.text = getString(R.string.settings_background_scan_interval_details)
-
-            ignore_battery_layout.setOnClickListener {
-                MainActivity.requestIgnoreBatteryOptimization(context)
-            }
-        } else if (res == R.string.temperature_unit) {
+        if (res == R.string.temperature_unit) {
             radio_layout.visibility = View.VISIBLE
             radio_setting_title.text = getString(res!!)
             val current = prefs.temperatureUnit
@@ -250,14 +188,6 @@ class AppSettingsDetailFragment : Fragment() {
                 }
             })
             settings_info.text = getString(R.string.settings_device_identifier_details)
-        }
-    }
-
-    fun setBackgroundScanText(mode: BackgroundScanModes) {
-        when (mode) {
-            BackgroundScanModes.BACKGROUND -> settings_info.text = getString(R.string.settings_background_scan_details_lazy)
-            BackgroundScanModes.FOREGROUND -> settings_info.text = getString(R.string.settings_background_scan_details_continuous)
-            else -> settings_info.text = getString(R.string.settings_background_scan_details)
         }
     }
 

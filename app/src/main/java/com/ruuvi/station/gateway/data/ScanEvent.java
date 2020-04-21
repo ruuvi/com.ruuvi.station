@@ -1,6 +1,9 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.gateway.data;
 
 import android.content.Context;
+
+import com.ruuvi.station.model.Event;
+import com.ruuvi.station.model.RuuviTagEntity;
 
 import java.util.ArrayList;
 

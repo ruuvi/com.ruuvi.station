@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".feature.AppSettingsDetailFragment">
+    tools:context=".settings.ui.AppSettingsDetailFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -363,7 +363,8 @@
                     android:id="@+id/input_setting"
                     app:layout_constraintTop_toBottomOf="@id/input_info_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLength="64"/>
 
             </android.support.constraint.ConstraintLayout>
 
@@ -392,7 +393,9 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:maxLength="32"
+                        />
 
                     <android.support.v7.widget.AppCompatEditText
                         android:id="@+id/device_identifier_input"
@@ -400,7 +403,9 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:maxLength="32"
+                        />
 
                 </android.support.constraint.ConstraintLayout>
 
