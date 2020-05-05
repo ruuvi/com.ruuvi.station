@@ -5,13 +5,17 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.ruuvi.station.R
-import com.ruuvi.station.RuuviScannerApplication
-import com.ruuvi.station.feature.main.MainActivity
+import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.util.DeviceIdentifier
-import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.app.preferences.Preferences
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 
-class StartupActivity : AppCompatActivity() {
+class StartupActivity : AppCompatActivity(), KodeinAware {
+    override val kodein by closestKodein()
+    val bluetoothInteractor: BluetoothInteractor by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +23,8 @@ class StartupActivity : AppCompatActivity() {
         DeviceIdentifier.id(applicationContext)
         val prefs = Preferences(this)
 
-        (this.applicationContext as RuuviScannerApplication).startForegroundScanning()
+        if (bluetoothInteractor.canScan())
+            bluetoothInteractor.startForegroundScanning()
 
         if (prefs.isFirstStart) {
             val intent = Intent(this, WelcomeActivity::class.java)
@@ -29,9 +34,9 @@ class StartupActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, DashboardActivity::class.java)
             startActivity(intent)
         } else {
-            val intent = Intent(applicationContext, TagDetails::class.java)
-            intent.putExtra(TagDetails.FROM_WELCOME,
-                    getIntent().getBooleanExtra(TagDetails.FROM_WELCOME, false)
+            val intent = Intent(applicationContext, TagDetailsActivity::class.java)
+            intent.putExtra(TagDetailsActivity.FROM_WELCOME,
+                    getIntent().getBooleanExtra(TagDetailsActivity.FROM_WELCOME, false)
             )
             startActivity(intent)
         }

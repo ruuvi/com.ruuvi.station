@@ -23,10 +23,10 @@ import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +52,7 @@ import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.model.Alarm;
 import com.ruuvi.station.model.RuuviTagEntity;
+import com.ruuvi.station.util.AlarmChecker;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
@@ -63,6 +64,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 
 public class TagSettings extends AppCompatActivity {
     private static final String TAG = "TagSettings";
@@ -71,7 +74,6 @@ public class TagSettings extends AppCompatActivity {
     private RuuviTagEntity tag;
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
-    private boolean somethinghaschanged = false;
     private Uri file;
     AppCompatImageView tagImage;
     String tempUnit = "C";
@@ -107,7 +109,7 @@ public class TagSettings extends AppCompatActivity {
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    Log.d(TAG, "Could not copy mac to clipboard");
+                    Timber.e(e,"Could not copy mac to clipboard");
                 }
                 return false;
             }
@@ -128,7 +130,6 @@ public class TagSettings extends AppCompatActivity {
                 tag.setDefaultBackground(tag.getDefaultBackground() == 8 ? 0 : tag.getDefaultBackground() + 1);
                 tag.setUserBackground(null);
                 tagImage.setImageDrawable(Utils.getDefaultBackground(tag.getDefaultBackground(), getApplicationContext()));
-                somethinghaschanged = true;
             }
         });
 
@@ -145,6 +146,7 @@ public class TagSettings extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
                 builder.setTitle(getString(R.string.tag_name));
                 final EditText input = new EditText(TagSettings.this);
+                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(32)});
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 input.setText(tag.getName());
                 FrameLayout container = new FrameLayout(getApplicationContext());
@@ -157,7 +159,6 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        somethinghaschanged = true;
                         tag.setName(input.getText().toString());
                         nameTextView.setText(tag.getName());
                     }
@@ -167,7 +168,7 @@ public class TagSettings extends AppCompatActivity {
                 try {
                     d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 } catch (Exception e) {
-                    Log.d(TAG, "Could not open keyboard");
+                    Timber.e(e,"Could not open keyboard");
                 }
                 d.show();
                 input.requestFocus();
@@ -192,7 +193,6 @@ public class TagSettings extends AppCompatActivity {
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        somethinghaschanged = true;
                         tag.setGatewayUrl(input.getText().toString());
                         gatewayTextView.setText(!tag.getGatewayUrl().isEmpty() ? tag.getGatewayUrl() : getString(R.string.no_gateway_url));
                     }
@@ -202,7 +202,7 @@ public class TagSettings extends AppCompatActivity {
                 try {
                     d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 } catch (Exception e) {
-                    Log.d(TAG, "Could not open keyboard");
+                    Timber.d("Could not open keyboard");
                 }
                 d.show();
                 input.requestFocus();
@@ -319,26 +319,29 @@ public class TagSettings extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(this.getString(R.string.tag_delete_title));
         builder.setMessage(this.getString(R.string.tag_delete_message));
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                RuuviTagRepository.deleteTagAndRelatives(tag);
-                finish();
-            }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+        builder.setPositiveButton(
+                android.R.string.ok,
+                (dialog, which) -> {
+                    for (AlarmItem alarm : alarmItems) {
+                        if (alarm.alarm != null) {
+                            AlarmChecker.dismissNotification(alarm.alarm.id, this);
+                        }
+                    }
+                    RuuviTagRepository.deleteTagAndRelatives(tag);
+                    finish();
+                }
+        );
+        builder.setNegativeButton(
+                android.R.string.cancel,
+                (dialog, which) -> {
+                }
+        );
         builder.show();
     }
 
     CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            somethinghaschanged = true;
             AlarmItem ai = alarmItems.get((int)buttonView.getTag());
             ai.checked = isChecked;
             ai.updateView();
@@ -378,9 +381,6 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                 @Override
                 public void valueChanged(Number minValue, Number maxValue) {
-                    if (low != minValue.intValue() || high != maxValue.intValue()) {
-                        somethinghaschanged = true;
-                    }
                     low = minValue.intValue();
                     high = maxValue.intValue();
                     updateView();
@@ -402,10 +402,11 @@ public class TagSettings extends AppCompatActivity {
             if (this.checked) {
                 setSeekbarColor = R.color.main;
                 this.subtitle = getString(R.string.alert_substring_movement);
-                if (this.type == Alarm.MOVEMENT) {
-                    this.subtitle = getString(R.string.alert_substring_movement);
-                } else {
-                    if (type == Alarm.TEMPERATURE) {
+                switch (type) {
+                    case (Alarm.MOVEMENT):
+                        this.subtitle = getString(R.string.alert_substring_movement);
+                        break;
+                    case (Alarm.TEMPERATURE):
                         if (tempUnit.equals("K")) {
                             this.subtitle = String.format(getString(R.string.alert_subtitle_on),
                                     (int)Utils.celsiusToKelvin(this.low),
@@ -417,7 +418,10 @@ public class TagSettings extends AppCompatActivity {
                         } else {
                             this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
                         }
-                    }
+                        break;
+                    default:
+                        this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
+                        break;
                 }
             } else {
                 this.subtitle = getString(R.string.alert_subtitle_off);
@@ -442,6 +446,9 @@ public class TagSettings extends AppCompatActivity {
                     ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
                     ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
                 }
+            } else {
+                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
             }
         }
     }
@@ -471,12 +478,13 @@ public class TagSettings extends AppCompatActivity {
         tag.setFavorite(true);
         tag.update();
         for (AlarmItem alarmItem: alarmItems) {
-            if (alarmItem.checked) {
+            if (alarmItem.checked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
                     alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.getId());
+                    alarmItem.alarm.enabled = alarmItem.checked;
                     alarmItem.alarm.save();
                 } else {
-                    alarmItem.alarm.enabled = true;
+                    alarmItem.alarm.enabled = alarmItem.checked;
                     alarmItem.alarm.low = alarmItem.low;
                     alarmItem.alarm.high = alarmItem.high;
                     alarmItem.alarm.update();
@@ -485,9 +493,11 @@ public class TagSettings extends AppCompatActivity {
                 alarmItem.alarm.enabled = false;
                 alarmItem.alarm.update();
             }
+
+            if (!alarmItem.checked) {
+                AlarmChecker.dismissNotification(alarmItem.alarm != null ? alarmItem.alarm.id : -1, this);
+            }
         }
-        // what are you doing here?
-        //finish();
     }
 
     @Override
@@ -603,7 +613,6 @@ public class TagSettings extends AppCompatActivity {
                 tag.setUserBackground(file.toString());
                 Bitmap background = Utils.getBackground(getApplicationContext(), tag);
                 tagImage.setImageBitmap(background);
-                somethinghaschanged = true;
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == RESULT_OK) {
             try {
@@ -643,7 +652,6 @@ public class TagSettings extends AppCompatActivity {
                     tag.setUserBackground(uri.toString());
                     Bitmap background = Utils.getBackground(getApplicationContext(), tag);
                     tagImage.setImageBitmap(background);
-                    somethinghaschanged = true;
                 }
             } catch (Exception e) {
                 // ... O.o
@@ -686,7 +694,7 @@ public class TagSettings extends AppCompatActivity {
                     break;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Could not get orientation of image");
+            Timber.e(e, "Could not get orientation of image");
         }
         return rotate;
     }
@@ -716,7 +724,7 @@ public class TagSettings extends AppCompatActivity {
             b.recycle();
             out.recycle();
         } catch (Exception e) {
-            Log.e(TAG, "Could not resize background image");
+            Timber.e(e, "Could not resize background image");
         }
     }
 }

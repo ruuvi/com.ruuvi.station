@@ -12,7 +12,7 @@ import com.ruuvi.station.model.RuuviTagEntity_Table;
 import com.ruuvi.station.model.TagSensorReading;
 import com.ruuvi.station.model.TagSensorReading_Table;
 import com.ruuvi.station.util.Humidity;
-import com.ruuvi.station.util.Preferences;
+import com.ruuvi.station.app.preferences.Preferences;
 import com.ruuvi.station.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
@@ -89,10 +89,17 @@ public class RuuviTagRepository {
 
     public static String getTemperatureString(Context context, RuuviTagEntity tag) {
         String temperatureUnit = getTemperatureUnit(context);
-        if (temperatureUnit.equals("C")) {
-            return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + temperatureUnit;
+        String formatTemplate = context.getString(R.string.temperature_reading);
+        switch (temperatureUnit) {
+            case "C":
+                return String.format(formatTemplate, tag.getTemperature()) + "°" + temperatureUnit;
+            case "K":
+                return String.format(formatTemplate, getKelvin(tag)) + temperatureUnit;
+            case "F":
+                return String.format(formatTemplate, getFahrenheit(tag)) + "°" + temperatureUnit;
+            default:
+                return "Error";
         }
-        return String.format(context.getString(R.string.temperature_reading), getFahrenheit(tag)) + temperatureUnit;
     }
 
     public static String getTemperatureUnit(Context context) {

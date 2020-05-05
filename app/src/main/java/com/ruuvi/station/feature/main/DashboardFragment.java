@@ -16,7 +16,7 @@ import android.widget.ListView;
 import com.ruuvi.station.R;
 import com.ruuvi.station.adapters.RuuviTagAdapter;
 import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.feature.TagDetails;
+import com.ruuvi.station.feature.TagDetailsActivity;
 import com.ruuvi.station.model.RuuviTagEntity;
 import com.ruuvi.station.util.DataUpdateListener;
 import com.ruuvi.station.util.DeviceIdentifier;
@@ -86,7 +86,7 @@ public class DashboardFragment extends Fragment implements DataUpdateListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final RuuviTagEntity tag = (RuuviTagEntity)view.getTag();
-            Intent intent = new Intent(getActivity(), TagDetails.class);
+            Intent intent = new Intent(getActivity(), TagDetailsActivity.class);
             intent.putExtra("id", tag.getId());
             startActivity(intent);
         }

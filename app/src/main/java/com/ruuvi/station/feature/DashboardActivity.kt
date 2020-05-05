@@ -13,15 +13,20 @@ import android.widget.ListView
 import android.widget.TextView
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
+import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.feature.main.MainActivity
+import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.util.Starter
 import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
-class DashboardActivity : AppCompatActivity() {
-
+class DashboardActivity : AppCompatActivity() , KodeinAware {
+    override val kodein by closestKodein()
+    val bluetoothInteractor: BluetoothInteractor by instance()
     lateinit var handler: Handler
     lateinit var starter: Starter
     lateinit var tags: MutableList<RuuviTagEntity>
@@ -100,7 +105,8 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.setBackgroundScanning(this)
+        if (bluetoothInteractor.canScan())
+            bluetoothInteractor.startForegroundScanning()
         handler.post(object: Runnable {
             override fun run() {
                 handler.postDelayed(this, 1000)
@@ -131,7 +137,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private val tagClick = AdapterView.OnItemClickListener { parent, view, position, id ->
         val tag = view.tag as RuuviTagEntity
-        val intent = Intent(applicationContext, TagDetails::class.java)
+        val intent = Intent(applicationContext, TagDetailsActivity::class.java)
         intent.putExtra("id", tag.id)
         startActivity(intent)
     }

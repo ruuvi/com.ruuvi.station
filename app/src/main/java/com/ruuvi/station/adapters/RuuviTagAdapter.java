@@ -88,7 +88,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
 
         temp.setText(RuuviTagRepository.getTemperatureString(getContext(), tag));
         humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.getHumidity()));
-        pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.getPressure()));
+        pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.getPressure() / 100.0));
         signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.getRssi()));
 
         return convertView;

@@ -31,22 +31,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.ruuvi.station.R;
-import com.ruuvi.station.RuuviScannerApplication;
 import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.bluetooth.IRuuviTagScanner;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.AboutActivity;
 import com.ruuvi.station.feature.AddTagActivity;
-import com.ruuvi.station.feature.AppSettingsActivity;
+import com.ruuvi.station.settings.ui.AppSettingsActivity;
 import com.ruuvi.station.feature.WelcomeActivity;
 import com.ruuvi.station.model.RuuviTagEntity;
-import com.ruuvi.station.service.ScannerService;
 import com.ruuvi.station.util.DataUpdateListener;
-import com.ruuvi.station.util.Preferences;
+import com.ruuvi.station.app.preferences.Preferences;
 import com.ruuvi.station.util.Utils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,101 +128,6 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
         }
     };
 
-    public static void setBackgroundScanning(final Context context) {
-        Log.d(TAG, "DEBUG, setBackgroundScan");
-        ((RuuviScannerApplication)(((Activity)context).getApplication())).startForegroundScanning();
-        /*
-        Log.d(TAG, "DEBUG, stopped bg scan");
-        ServiceUtils su = new ServiceUtils(context);
-        if (settings.getBoolean("foreground_service", false)) {
-            if (su.isRunning(AltBeaconScannerService.class)) {
-                su.stopService();
-            } else {
-                su.startForegroundService();
-            }
-        }
-        else {
-            if (su.isRunning(AltBeaconScannerForegroundService.class)) {
-                new ServiceUtils(context).stopForegroundService();
-            } else {
-                su.startService();
-            }
-        }
-        */
-        //new ServiceUtils(context).stopService().startService();
-        /*
-        boolean shouldRun = settings.getBoolean("pref_bgscan", false);
-        if (shouldRun) {
-            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
-            JobScheduler jobScheduler = (JobScheduler)context
-                    .getSystemService(JOB_SCHEDULER_SERVICE);
-            if (scanInterval < 15 * 60 * 1000) {
-                try {
-                    jobScheduler.cancel(1);
-                } catch (Exception e) {
-                }
-                return;
-            }
-            ComponentName componentName = new ComponentName(context,
-                    ScannerJobService.class);
-            //JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                    //.setMinimumLatency(scanInterval).build();
-            JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .setRequiresCharging(false)
-                    .setPeriodic(scanInterval).build();
-            try {
-                jobScheduler.schedule(jobInfo);
-            } catch (NullPointerException e) {
-                Log.e(TAG, "Could not start background job");
-            }
-        }
-        */
-        /*
-        PendingIntent pendingIntent = getPendingIntent(context);
-        boolean isRunning = pendingIntent != null;
-        if (isRunning && (!shouldRun || restartFlag)) {
-            AlarmManager am = (AlarmManager) context
-                    .getSystemService(ALARM_SERVICE);
-            try {
-                am.cancel(pendingIntent);
-            } catch (Exception e) {
-                Log.d(TAG, "Could not cancel background intent");
-            }
-            pendingIntent.cancel();
-            isRunning = false;
-        }
-        if (shouldRun && !isRunning) {
-            //int scanInterval = Integer.parseInt(settings.getString("pref_scaninterval", "30")) * 1000;
-            int scanInterval = settings.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL) * 1000;
-            if (scanInterval < 15 * 1000) scanInterval = 15 * 1000;
-
-            boolean batterySaving = settings.getBoolean("pref_bgscan_battery_saving", false);
-            Intent intent = new Intent(context, BackgroundScanner.class);
-            PendingIntent sender = PendingIntent.getBroadcast(context, BackgroundScanner.REQUEST_CODE, intent, 0);
-            AlarmManager am = (AlarmManager) context
-                    .getSystemService(ALARM_SERVICE);
-            try {
-                //if (batterySaving) {
-                    am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                            scanInterval, sender);
-//                } else {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                        SharedPreferences.Editor editor = settings.edit();
-//                        editor.putBoolean(BATTERY_ASKED_PREF, true).apply();
-//                        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-//                    }
-//                    else {
-//                        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + scanInterval, sender);
-//                    }
-//                }
-            } catch (Exception e) {
-                Toast.makeText(context, "Could not start background scanning", Toast.LENGTH_LONG).show();
-            }
-        }
-        */
-    }
-
     public static void requestIgnoreBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
@@ -248,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
 
     @Override
     protected void onStart() {
-        //Intent intent = new Intent(MainActivity.this, ScannerService.class);
-        //startService(intent);
         super.onStart();
     }
 
@@ -331,11 +230,6 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
         } else {
             refreshTagLists();
             handler.post(updater);
-
-            if (isBluetoothEnabled()) {
-                Intent scannerService = new Intent(this, ScannerService.class);
-                startService(scannerService);
-            }
         }
     }
 
@@ -380,21 +274,15 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
                 dashboardVisible = true;
                 break;
             case 2:
-                //fragment = new SettingsFragment();
-                //fragmentWithCallback = null;
                 Intent settingsIntent = new Intent(this, AppSettingsActivity.class);
                 startActivity(settingsIntent);
                 return;
             case 3:
-                //fragment = new AboutFragment();
-                //fragmentWithCallback = null;
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
                 return;
             default:
                 refreshTagLists();
-                //fragment = new AddTagFragment();
-                //fragmentWithCallback = (DataUpdateListener)fragment;
                 Intent addIntent = new Intent(this, AddTagActivity.class);
                 startActivity(addIntent);
                 type = 0;
@@ -491,7 +379,6 @@ public class MainActivity extends AppCompatActivity implements IRuuviTagScanner.
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         prefs.setFirstStart(false);
-        //setBackgroundScanning(false, this, settings);
         openFragment(goToAddTags ? 0 : 1);
         requestPermissions();
     }

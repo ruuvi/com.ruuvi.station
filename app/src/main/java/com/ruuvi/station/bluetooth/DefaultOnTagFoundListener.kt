@@ -8,82 +8,85 @@ import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.model.RuuviTagEntity
 import com.ruuvi.station.model.TagSensorReading
 import com.ruuvi.station.util.AlarmChecker
+import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.util.Constants
+import com.ruuvi.station.util.extensions.logData
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
-class DefaultOnTagFoundListener(val context: Context) : IRuuviRangeNotifier.OnTagsFoundListener {
+class DefaultOnTagFoundListener(
+        private val context: Context,
+        private val preferences: Preferences,
+        private val gatewaySender: GatewaySender
+): IRuuviTagScanner.OnTagFoundListener {
+
+    var isForeground = false
 
     private val fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(context)
+            LocationServices.getFusedLocationProviderClient(context)
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
-    override fun onTagsFound(allTags: List<FoundRuuviTag>) {
-
+    override fun onTagFound(foundTag: FoundRuuviTag) {
+        Timber.d("onTagFound: ${foundTag.logData()}")
         updateLocation()
-
-        val favoriteTags = ArrayList<RuuviTagEntity>()
-
-        allTags.forEach {
-
-            val tag = HumidityCalibration.apply(RuuviTagEntity(it))
-
-            saveReading(tag)
-
-            if (tag.favorite == true) {
-                favoriteTags.add(tag)
-            }
-        }
-
-        if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, tagLocation, context)
-
+        val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
+        saveReading(tag)
         TagSensorReading.removeOlderThan(24)
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
+        Timber.d("saveReading")
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
             RuuviTagRepository.update(ruuviTag)
-            if (dbTag.favorite!=true) return
+            if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
         } else {
             ruuviTag.updateAt = Date()
             RuuviTagRepository.save(ruuviTag)
-            return
         }
+    }
+
+    private fun saveFavouriteReading(ruuviTag: RuuviTagEntity) {
+        val interval = if (isForeground) {
+            Constants.DATA_LOG_INTERVAL
+        } else {
+            preferences.backgroundScanInterval
+        }
+        Timber.d("saveFavouriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -Constants.DATA_LOG_INTERVAL)
+        calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
-        for ((key, value) in lastLogged!!) {
-            if (key == ruuviTag.id && value > loggingThreshold) {
-                return
+        var lastLoggedDate = lastLogged[ruuviTag.id]
+        if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
+            ruuviTag.id?.let {
+                Timber.d("saveFavouriteReading actual saving")
+                lastLogged[it] = Date().time
+                val reading = TagSensorReading(ruuviTag)
+                reading.save()
+                gatewaySender.sendData(ruuviTag, tagLocation)
             }
         }
-        ruuviTag.id?.let { id ->
-            lastLogged[id] = Date().time
-        }
-        val reading = TagSensorReading(ruuviTag)
-        reading.save()
         AlarmChecker.check(ruuviTag, context)
     }
 
     private fun updateLocation() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Timber.d("updateLocation")
             fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
         }
     }
 
     companion object {
-        var gatewayOn = false
-
         var tagLocation: Location? = null
     }
 }
