@@ -1,4 +1,4 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.database.tables;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -7,6 +7,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.database.LocalDatabase;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +35,8 @@ public class Alarm extends BaseModel {
     public int type;
     @Column
     public boolean enabled;
-
+    @Column
+    public Date mutedTill;
     public Alarm() {
     }
 

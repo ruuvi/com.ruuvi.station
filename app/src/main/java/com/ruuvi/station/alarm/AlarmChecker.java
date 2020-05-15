@@ -1,4 +1,4 @@
-package com.ruuvi.station.util;
+package com.ruuvi.station.alarm;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,13 +12,13 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.ruuvi.station.R;
+import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.feature.TagDetailsActivity;
-import com.ruuvi.station.feature.main.MainActivity;
-import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTagEntity;
-import com.ruuvi.station.model.TagSensorReading;
-import com.ruuvi.station.receivers.CancelAlarmReceiver;
+import com.ruuvi.station.database.tables.Alarm;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.database.tables.TagSensorReading;
+import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -131,7 +131,7 @@ public class AlarmChecker {
                     }
                     break;
             }
-            if (notificationTextResourceId != -9001 && canNotify(alarm.id)) {
+            if (notificationTextResourceId != -9001 && canNotify(alarm)) {
                 RuuviTagEntity fromDb = RuuviTagRepository.get(tag.getId());
                 sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
             }
@@ -163,14 +163,15 @@ public class AlarmChecker {
 
     private static HashMap<Integer, Long> lastFiredNotification = new HashMap<Integer, Long>();
 
-    private static Boolean canNotify(int alarmId) {
-        Long lastNotificationTime = lastFiredNotification.get(alarmId);
+    private static Boolean canNotify(Alarm alarm) {
+        Long lastNotificationTime = lastFiredNotification.get(alarm.id);
         Calendar calendar = Calendar.getInstance();
         Long now = calendar.getTimeInMillis();
         calendar.add(Calendar.SECOND, -10);
         Long notificationThreshold = calendar.getTimeInMillis();
-        if (lastNotificationTime == null || lastNotificationTime < notificationThreshold) {
-            lastFiredNotification.put(alarmId, now);
+        boolean muted = alarm.mutedTill != null && alarm.mutedTill.getTime() > now;
+        if (!muted && (lastNotificationTime == null || lastNotificationTime < notificationThreshold)) {
+            lastFiredNotification.put(alarm.id, now);
             return true;
         } else {
             return false;
@@ -196,6 +197,10 @@ public class AlarmChecker {
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, _id, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.disable_this_alarm), cancelPendingIntent);
 
+        Intent muteIntent = new Intent(context, MuteAlarmReceiver.class);
+        muteIntent.putExtra(MuteAlarmReceiver.ALARM_ID, _id);
+        PendingIntent mutePendingIntent = PendingIntent.getBroadcast(context, _id, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         notification
                 = new NotificationCompat.Builder(context, "notify_001")
                 .setContentTitle(name)
@@ -207,6 +212,7 @@ public class AlarmChecker {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
+                .setDeleteIntent(mutePendingIntent)
                 .setLargeIcon(bitmap)
                 .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
                 .addAction(action);
@@ -225,11 +231,5 @@ public class AlarmChecker {
         } catch (Exception e) {
             Timber.e(e, "Failed to create notification");
         }
-    }
-
-    private static boolean isNotificationVisible(Context context, int id) {
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-        PendingIntent test = PendingIntent.getActivity(context, id, notificationIntent, PendingIntent.FLAG_NO_CREATE);
-        return test != null;
     }
 }

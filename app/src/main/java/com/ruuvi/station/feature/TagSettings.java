@@ -50,9 +50,9 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.RuuviTagEntity;
-import com.ruuvi.station.util.AlarmChecker;
+import com.ruuvi.station.database.tables.Alarm;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.alarm.AlarmChecker;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import timber.log.Timber;
@@ -95,6 +96,12 @@ public class TagSettings extends AppCompatActivity {
             finish();
             return;
         }
+        if (!tag.isFavorite()) {
+            tag.setFavorite(true);
+            tag.createDate = new Date();
+            tag.update();
+        }
+
         tagAlarms = Alarm.getForTag(tagId);
 
         tempUnit = RuuviTagRepository.getTemperatureUnit(this);
@@ -475,7 +482,6 @@ public class TagSettings extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         handler.removeCallbacksAndMessages(null);
-        tag.setFavorite(true);
         tag.update();
         for (AlarmItem alarmItem: alarmItems) {
             if (alarmItem.checked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {

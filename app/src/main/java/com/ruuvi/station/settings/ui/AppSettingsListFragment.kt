@@ -6,11 +6,12 @@ import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.test.StressTestGenerator
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 
 class AppSettingsListFragment : Fragment() {
@@ -21,7 +22,6 @@ class AppSettingsListFragment : Fragment() {
 
         prefs = Preferences(context!!)
 
-        //(activity as AppSettingsActivity).setScanSwitchLayout(view)
         scan_layout.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
         }
@@ -42,6 +42,11 @@ class AppSettingsListFragment : Fragment() {
 
         humidity_unit.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.humidity_unit)
+        }
+
+        debug_tools.visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        debug_tools.setOnClickListener {
+            StressTestGenerator.generateData(8, 15000)
         }
 
         val switch = view.findViewById<SwitchCompat>(R.id.dashboard_switch)
@@ -76,7 +81,6 @@ class AppSettingsListFragment : Fragment() {
 
         gateway_url_sub.text = prefs.gatewayUrl
         if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
-        //device_identifier_sub.text = pref.getString("pref_device_id", "")
         if (prefs.temperatureUnit == "K") {
             temperature_unit_sub.text = getString(R.string.kelvin)
         } else if (prefs.temperatureUnit == "F") {

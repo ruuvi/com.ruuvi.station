@@ -11,7 +11,7 @@ import java.util.List;
 
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.Alarm;
+import com.ruuvi.station.database.tables.Alarm;
 
 /**
  * Created by tmakinen on 26.7.2017.

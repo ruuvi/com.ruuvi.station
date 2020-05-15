@@ -1,6 +1,8 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.database.tables;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.Index;
+import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -15,13 +17,18 @@ import java.util.List;
  * Created by elias on 15.9.2017.
  */
 
-@Table(database = LocalDatabase.class)
+@Table(
+        database = LocalDatabase.class,
+        indexGroups = { @IndexGroup(number = 1, name = "TagId")}
+        )
 public class TagSensorReading extends BaseModel {
     @PrimaryKey(autoincrement = true)
     @Column
     public int id;
+    @Index(indexGroups = 1)
     @Column
     public String ruuviTagId;
+    @Index(indexGroups = 1)
     @Column
     public Date createdAt;
     @Column
@@ -75,6 +82,7 @@ public class TagSensorReading extends BaseModel {
         cal.add(Calendar.HOUR, -24);
         return SQLite.select()
                 .from(TagSensorReading.class)
+                .indexedBy(TagSensorReading_Table.index_TagId)
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .and(TagSensorReading_Table.createdAt.greaterThan(cal.getTime()))
                 .orderBy(TagSensorReading_Table.createdAt, true)
@@ -97,6 +105,14 @@ public class TagSensorReading extends BaseModel {
         SQLite.delete()
                 .from(TagSensorReading.class)
                 .where(TagSensorReading_Table.createdAt.lessThan(cal.getTime()))
+                .async()
+                .execute();
+    }
+
+    public static void removeForTag(String id) {
+        SQLite.delete()
+                .from(TagSensorReading.class)
+                .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .async()
                 .execute();
     }

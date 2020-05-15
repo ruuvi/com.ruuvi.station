@@ -13,7 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.RuuviTagEntity;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
 
 import java.io.File;
 import java.math.BigDecimal;

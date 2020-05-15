@@ -1,5 +1,7 @@
 package com.ruuvi.station.model;
 
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+
 import java.util.List;
 
 /**

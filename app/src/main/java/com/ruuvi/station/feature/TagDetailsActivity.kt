@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -34,14 +33,12 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.AlarmChecker
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.settings.ui.AppSettingsActivity
-import com.ruuvi.station.model.RuuviTagEntity
-import com.ruuvi.station.util.AlarmChecker
-import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.util.Starter
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.*
 import kotlinx.android.synthetic.main.activity_tag_details.background_fader
 import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
 import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
@@ -50,6 +47,9 @@ import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_tag_details.noTags_textView
 import kotlinx.android.synthetic.main.content_tag_details.pager_title_strip
 import kotlinx.android.synthetic.main.content_tag_details.tag_pager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
@@ -71,15 +71,14 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     var tag: RuuviTagEntity? = null
     lateinit var tags: MutableList<RuuviTagEntity>
     var alarmStatus = HashMap<String, Int>()
-
+    private val uiScope = CoroutineScope(Dispatchers.Main)
     lateinit var handler: Handler
     private var openAddView = false
     lateinit var starter: Starter
-    private var showGraph = false
     private var lastSelectedTag = 0
+    private lateinit var pagerAdapter: TagDetailsPagerAdapter
 
     val backgrounds = HashMap<String, BitmapDrawable>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,7 +138,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         val tagId = intent.getStringExtra("id")
         tags = ArrayList(RuuviTagRepository.getAll(true))
-        val pagerAdapter = TagDetailsPagerAdapter(tags, applicationContext, tag_pager)
+        pagerAdapter = TagDetailsPagerAdapter(tags, applicationContext, tag_pager)
         tag_pager.adapter = pagerAdapter
         tag_pager.offscreenPageLimit = 1
 
@@ -258,7 +257,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_graph -> {
-                showGraph = !showGraph
+                pagerAdapter.showGraph = !pagerAdapter.showGraph
                 updateUI()
                 invalidateOptionsMenu()
 
@@ -326,8 +325,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             startActivity(intent)
             return
         }
-        (tag_pager.adapter as TagDetailsPagerAdapter).tags = tags
-        tag_pager.adapter?.notifyDataSetChanged()
+        pagerAdapter.tags = tags
+        pagerAdapter.notifyDataSetChanged()
 
         tag_pager.currentItem = lastSelectedTag
 
@@ -370,55 +369,45 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             // maybe this would not be needed if the db call below was async
             return
         }
-        tags = ArrayList(RuuviTagRepository.getAll(true))
-        for (mTag in tags) {
-            (tag_pager.adapter as TagDetailsPagerAdapter).updateView(mTag, showGraph)
-            if (tag != null && mTag.id == tag!!.id) {
-                tag = mTag
-            }
-        }
-        if (showGraph && background_fader.alpha == 0f) {
-            background_fader.animate().alpha(0.5f).start()
-        } else if (!showGraph && background_fader.alpha != 0f) {
-            background_fader.animate().alpha(0f).start()
-        }
-        if (tag == null && tags.isNotEmpty()) tag = tags[0]
-        tag?.let {
-            (tag_pager.adapter as TagDetailsPagerAdapter).updateView(it, showGraph)
-            it.id?.let { tagId ->
-                if (alarmStatus.containsKey(tagId)) {
-                    val newStatus = AlarmChecker.getStatus(it)
-                    if (alarmStatus[tagId] != newStatus) {
-                        alarmStatus[tagId] = AlarmChecker.getStatus(it)
-                        this.invalidateOptionsMenu()
+        CoroutineScope(Dispatchers.IO).launch {
+            tags = ArrayList(RuuviTagRepository.getAll(true))
+            uiScope.launch {
+                for (mTag in tags) {
+                    if (tag != null && mTag.id == tag?.id) {
+                        tag = mTag
+                    } else {
+                        pagerAdapter.updateView(mTag)
                     }
+                }
+                if (pagerAdapter.showGraph && background_fader.alpha == 0f) {
+                    background_fader.animate().alpha(0.5f).start()
+                } else if (!pagerAdapter.showGraph && background_fader.alpha != 0f) {
+                    background_fader.animate().alpha(0f).start()
+                }
+                if (tag == null && tags.isNotEmpty()) tag = tags[0]
+                tag?.let {
+                    pagerAdapter.updateView(it)
+                    it.id?.let { tagId ->
+                        if (alarmStatus.containsKey(tagId)) {
+                            val newStatus = AlarmChecker.getStatus(it)
+                            if (alarmStatus[tagId] != newStatus) {
+                                alarmStatus[tagId] = AlarmChecker.getStatus(it)
+                                invalidateOptionsMenu()
+                            }
+                        } else {
+                            alarmStatus[tagId] = AlarmChecker.getStatus(it)
+                        }
+                    }
+                }
+                if (tags.isEmpty()) {
+                    pager_title_strip.visibility = View.INVISIBLE
+                    noTags_textView.visibility = View.VISIBLE
                 } else {
-                    alarmStatus[tagId] = AlarmChecker.getStatus(it)
+                    pager_title_strip.visibility = View.VISIBLE
+                    noTags_textView.visibility = View.INVISIBLE
                 }
             }
         }
-        if (tags.isEmpty()) {
-            pager_title_strip.visibility = View.INVISIBLE
-            noTags_textView.visibility = View.VISIBLE
-        } else {
-            pager_title_strip.visibility = View.VISIBLE
-            noTags_textView.visibility = View.INVISIBLE
-        }
-    }
-
-    fun delete() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(this.getString(R.string.tag_delete_title))
-        builder.setMessage(this.getString(R.string.tag_delete_message))
-        builder.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-            RuuviTagRepository.deleteTagAndRelatives(tag)
-            val intent = intent
-            finish()
-            startActivity(intent)
-        }
-        builder.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> }
-
-        builder.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -464,7 +453,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     }
                 }
                 val graphItem = menu.findItem(R.id.action_graph)
-                if (showGraph) {
+                if (pagerAdapter.showGraph) {
                     graphItem.setIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
                 } else {
                     graphItem.setIcon(R.drawable.ic_ruuvi_graphs_icon)

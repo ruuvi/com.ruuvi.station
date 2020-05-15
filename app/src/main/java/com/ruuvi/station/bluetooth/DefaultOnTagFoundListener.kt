@@ -9,9 +9,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.HumidityCalibration
-import com.ruuvi.station.model.RuuviTagEntity
-import com.ruuvi.station.model.TagSensorReading
-import com.ruuvi.station.util.AlarmChecker
+import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.alarm.AlarmChecker
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.util.Constants
@@ -43,7 +43,7 @@ class DefaultOnTagFoundListener(
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
-        Timber.d("saveReading")
+        Timber.d("saveReading for tag(${ruuviTag.id})")
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
@@ -60,7 +60,7 @@ class DefaultOnTagFoundListener(
         val interval = if (isForeground) {
             Constants.DATA_LOG_INTERVAL
         } else {
-            preferences.backgroundScanInterval
+            preferences.backgroundScanInterval + 4
         }
         Timber.d("saveFavouriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()
@@ -69,12 +69,14 @@ class DefaultOnTagFoundListener(
         var lastLoggedDate = lastLogged[ruuviTag.id]
         if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
             ruuviTag.id?.let {
-                Timber.d("saveFavouriteReading actual saving")
+                Timber.d("saveFavouriteReading actual SAVING for [${ruuviTag.name}] (${ruuviTag.id})")
                 lastLogged[it] = Date().time
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
                 gatewaySender.sendData(ruuviTag, tagLocation)
             }
+        } else {
+            Timber.d("saveFavouriteReading SKIPPED [${ruuviTag.name}] (${ruuviTag.id}) lastLogged = ${Date(lastLoggedDate)}")
         }
         AlarmChecker.check(ruuviTag, context)
     }

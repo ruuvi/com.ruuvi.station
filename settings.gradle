@@ -1,1 +1,3 @@
+include ':libraryName', ':MPChartLib'
+project(':libraryName').projectDir=new File('../ruuvi_bluetooth_default/default_bluetooth_library')
 include ':app'

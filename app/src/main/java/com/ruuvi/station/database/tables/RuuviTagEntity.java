@@ -1,4 +1,4 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.database.tables;
 
 import android.support.annotation.Nullable;
 
@@ -58,6 +58,8 @@ public class RuuviTagEntity extends BaseModel {
     private int movementCounter;
     @Column
     private int measurementSequenceNumber;
+    @Column
+    public Date createDate;
 
     public RuuviTagEntity() {
     }
@@ -82,6 +84,7 @@ public class RuuviTagEntity extends BaseModel {
 
     public RuuviTagEntity preserveData(RuuviTagEntity tag) {
         tag.setName(this.getName());
+        tag.setCreateDate(this.getCreateDate());
         tag.setFavorite(this.isFavorite());
         tag.setGatewayUrl(this.getGatewayUrl());
         tag.setDefaultBackground(this.getDefaultBackground());
@@ -315,5 +318,14 @@ public class RuuviTagEntity extends BaseModel {
     @Nullable
     public Boolean getFavorite() {
         return favorite;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 }

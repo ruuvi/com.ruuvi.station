@@ -1,7 +1,6 @@
 package com.ruuvi.station.feature
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.ruuvi.station.R
@@ -40,17 +39,5 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
             )
             startActivity(intent)
         }
-
-        val app = this
-        class StartScannerTask:
-            AsyncTask<Void, Void, String>() {
-            override fun doInBackground(vararg voids: Void): String {
-                //MainActivity.setBackgroundScanning(app)
-                return "Ok"
-            }
-            override fun onPostExecute(result: String) {
-            }
-        }
-        StartScannerTask().execute()
     }
 }

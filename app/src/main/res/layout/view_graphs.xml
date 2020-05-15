@@ -12,21 +12,24 @@
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/tempChart"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/humidChart"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/pressureChart"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

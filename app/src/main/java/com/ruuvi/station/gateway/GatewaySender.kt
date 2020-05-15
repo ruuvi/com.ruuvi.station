@@ -6,7 +6,7 @@ import android.util.Log
 import com.google.gson.GsonBuilder
 import com.koushikdutta.ion.Ion
 import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.model.RuuviTagEntity
+import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.gateway.data.ScanEvent
 import com.ruuvi.station.gateway.data.ScanEventSingle
 import com.ruuvi.station.gateway.data.ScanLocation
@@ -16,6 +16,8 @@ class GatewaySender (private val context: Context, private val preferences: Pref
     private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()
 
     fun sendData(tag: RuuviTagEntity, location: Location?){
+        Timber.d("sendData for [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
+
         var scanLocation: ScanLocation? = null
         location?.let {
             scanLocation = ScanLocation(
@@ -37,7 +39,7 @@ class GatewaySender (private val context: Context, private val preferences: Pref
                     .asJsonObject()
                     .setCallback { e, _ ->
                         if (e != null) {
-                            Timber.e(e, "Sending failed tag(${tag.id}) to ${tag.gatewayUrl}")
+                            Timber.e(e, "Sending failed [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
                         }
                     }
         }
