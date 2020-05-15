@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.model.RuuviTagEntity;
-import com.ruuvi.station.util.AlarmChecker;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.alarm.AlarmChecker;
 import com.ruuvi.station.util.Utils;
 
 import java.util.List;

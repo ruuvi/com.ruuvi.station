@@ -198,7 +198,11 @@
                     android:textSize="16sp"
                     app:layout_constraintLeft_toRightOf="@id/title_gatewayUrl"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/gateway_header" />
+                    app:layout_constraintTop_toBottomOf="@id/gateway_header"
+                    android:maxLength="64"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    />
 
 
                 <TextView
@@ -345,7 +349,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/calibration_humidity_button"
                     android:textColor="@color/white"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/raw_values" />
@@ -361,7 +365,7 @@
                     android:paddingRight="16dp"
                     android:text="@string/remove_this_ruuvitag"
                     android:textColor="@color/white"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/calibrate_humidity" />

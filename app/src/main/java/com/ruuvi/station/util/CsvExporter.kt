@@ -5,7 +5,7 @@ import android.content.Intent
 import android.support.v4.content.FileProvider
 import android.widget.Toast
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.TagSensorReading
+import com.ruuvi.station.database.tables.TagSensorReading
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat

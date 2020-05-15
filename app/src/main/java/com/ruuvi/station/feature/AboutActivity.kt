@@ -8,7 +8,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.LocalDatabase
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.TagSensorReading
+import com.ruuvi.station.database.tables.TagSensorReading
 
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*

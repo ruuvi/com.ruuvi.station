@@ -4,15 +4,15 @@ import android.content.Context;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.Alarm;
-import com.ruuvi.station.model.Alarm_Table;
+import com.ruuvi.station.database.tables.Alarm;
+import com.ruuvi.station.database.tables.Alarm_Table;
+import com.ruuvi.station.database.tables.RuuviTagEntity_Table;
+import com.ruuvi.station.database.tables.TagSensorReading_Table;
 import com.ruuvi.station.model.HumidityUnit;
-import com.ruuvi.station.model.RuuviTagEntity;
-import com.ruuvi.station.model.RuuviTagEntity_Table;
-import com.ruuvi.station.model.TagSensorReading;
-import com.ruuvi.station.model.TagSensorReading_Table;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.util.Humidity;
-import com.ruuvi.station.util.Preferences;
+import com.ruuvi.station.app.preferences.Preferences;
 import com.ruuvi.station.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +30,7 @@ public class RuuviTagRepository {
         return SQLite.select()
                 .from(RuuviTagEntity.class)
                 .where(RuuviTagEntity_Table.favorite.eq(favorite))
+                .orderBy(RuuviTagEntity_Table.createDate, true)
                 .queryList();
     }
 
@@ -89,10 +90,17 @@ public class RuuviTagRepository {
 
     public static String getTemperatureString(Context context, RuuviTagEntity tag) {
         String temperatureUnit = getTemperatureUnit(context);
-        if (temperatureUnit.equals("C")) {
-            return String.format(context.getString(R.string.temperature_reading), tag.getTemperature()) + "°" + temperatureUnit;
+        String formatTemplate = context.getString(R.string.temperature_reading);
+        switch (temperatureUnit) {
+            case "C":
+                return String.format(formatTemplate, tag.getTemperature()) + "°" + temperatureUnit;
+            case "K":
+                return String.format(formatTemplate, getKelvin(tag)) + temperatureUnit;
+            case "F":
+                return String.format(formatTemplate, getFahrenheit(tag)) + "°" + temperatureUnit;
+            default:
+                return "Error";
         }
-        return String.format(context.getString(R.string.temperature_reading), getFahrenheit(tag)) + temperatureUnit;
     }
 
     public static String getTemperatureUnit(Context context) {

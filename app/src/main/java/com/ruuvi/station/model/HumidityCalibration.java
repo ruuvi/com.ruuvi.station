@@ -2,6 +2,8 @@ package com.ruuvi.station.model;
 
 import android.support.annotation.Nullable;
 
+import com.ruuvi.station.database.tables.RuuviTagEntity;
+
 import java.util.Date;
 import java.util.HashMap;
 

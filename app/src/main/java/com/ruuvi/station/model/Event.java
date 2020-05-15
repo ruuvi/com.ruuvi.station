@@ -5,6 +5,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.util.Log;
 
+import com.ruuvi.station.gateway.data.ScanLocation;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.Date;

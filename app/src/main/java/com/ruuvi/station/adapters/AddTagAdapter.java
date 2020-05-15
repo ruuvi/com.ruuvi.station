@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.RuuviTagEntity;
+import com.ruuvi.station.database.tables.RuuviTagEntity;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_bgscan">Background Scanning Settings</string>
-    <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background.</string>
+    <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background and define how often the background scanning will run</string>
 
     <string name="pref_bgscan_battery_saving">Enable battery saving mode</string>
     <string name="pref_bgscan_battery_saving_summ">Allows the operating system to decide when to scan for data.</string>
@@ -124,6 +124,11 @@
     <string name="scanner_notification_title">Scanning..</string>
     <string name="scanner_notification_message">You can disable background scanning in settings</string>
     <string name="scanner_notification_ticker">Scanner started</string>
+    <string name="scanner_notification_scanning_every">Scanning every</string>
+    <string name="scanner_notification_minute">minute</string>
+    <string name="scanner_notification_minutes">minutes</string>
+    <string name="scanner_notification_seconds">seconds</string>
+    <string name="scanner_notification_second">second</string>
 
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_title_new_message_notifications">New message notifications</string>
@@ -302,14 +307,13 @@
     <string name="use_foreground_service_description">Background scanning will be running as a foreground service with notification showing.</string>
     <string name="no_background_scanning">No background scanning</string>
     <string name="continuous_background_scanning">Continuous background scanning</string>
-    <string name="lazy_background_scanning">Lazy background scanning (EXPERIMENTAL)</string>
     <string name="background_scanning_disabled">Background scanning is disabled</string>
     <string name="disable_this_alarm">Disable this alarm</string>
     <string name="calibration_humidity_button">Calibrate hygrometer</string>
     <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See <a href="https://www.youtube.com/results?search_query=hygrometer+salt+calibration">video tutorials</a> on how to easily do it at home.</string>
     <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall &amp; install, you may need to recalibrate</string>
     <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
-    <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.</string>
+    <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.\nBackground scan interval: %1$s</string>
     <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
     <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
     <string name="more_info">More info</string>
@@ -319,4 +323,12 @@
     <string name="acc_z">Acceleration Z</string>
 
     <string name="export">Export</string>
+    <string name="disable_battery_optimization">If you experience any issues with background scanning you should disable battery optimization for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="background_scan_important_note">Background scan important note</string>
+    <string name="background_scan_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimization and select Don\'t Optimize for Ruuvi Station</string>
+    <string name="background_scan_samsung_instructions">On Samsung devices go to Android Settings -> Device Maintenance (or Device Care) -> Battery. Disable Put unused apps to sleep. Disable Auto-disable unused apps. Remove Ruuvi Station from the list of sleeping apps. Disable background restrictions for Ruuvi Station.</string>
+    <string name="background_scan_samsung23_instructions">On Samsung devices go to Android Settings -> Battery -> App power saving detail and set option \'Turned off\' for Ruuvi Station.</string>
+    <string name="background_scan_xiaomi_instructions">On Xiaomi devices go to Android Settings -> Apps -> Manage apps -> Ruuvi Station. Enable Autostart and set Battery Saver to \'No restrictions\'.</string>
+    <string name="background_scan_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable Manage Automatically and enable options: Auto-Launch, Secondary Launch and Run in background.</string>
 </resources>

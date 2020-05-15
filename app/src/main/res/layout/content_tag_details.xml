@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ruuvi.station.feature.TagDetails"
+    tools:context="com.ruuvi.station.feature.TagDetailsActivity"
     tools:showIn="@layout/activity_tag_details">
 
-    <android.support.v4.view.ViewPager
+    <com.ruuvi.station.app.ui.MultitouchViewPager
         android:id="@+id/tag_pager"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -27,7 +27,7 @@
             app:layout_constraintRight_toRightOf="parent"
             />
 
-    </android.support.v4.view.ViewPager>
+    </com.ruuvi.station.app.ui.MultitouchViewPager>
 
     <TextView
         android:id="@+id/dummyTextView"

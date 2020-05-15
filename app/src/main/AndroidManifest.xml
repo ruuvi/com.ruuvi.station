@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
     <application
@@ -23,11 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity
-            android:name=".feature.main.MainActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".feature.TagSettings"
             android:configChanges="orientation|screenSize"
@@ -45,7 +42,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".feature.TagDetails"
+            android:name=".feature.TagDetailsActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
 
@@ -60,10 +57,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".feature.GraphActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
             android:name=".feature.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
@@ -71,7 +64,7 @@
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.AppSettingsActivity"
+            android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
             android:label="@string/title_activity_app_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
@@ -97,11 +90,19 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".receivers.CancelAlarmReceiver" />
-        <receiver android:name="com.ruuvi.station.bluetooth.ScanningPeriodicReceiver" />
-        <receiver android:name="com.ruuvi.station.receivers.RebootSchedulerReceiver">
+        <receiver android:name=".alarm.receiver.CancelAlarmReceiver" />
+        <receiver android:name=".alarm.receiver.MuteAlarmReceiver" />
+        <receiver android:name=".bluetooth.ScanningPeriodicReceiver" />
+        <receiver
+            android:name=".receivers.RebootSchedulerReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
     </application>

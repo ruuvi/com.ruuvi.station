@@ -2,21 +2,23 @@ package com.ruuvi.station.util
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.ruuvi.station.R
-import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
-import java.util.ArrayList
+import timber.log.Timber
+import java.util.*
 
 class Starter(val that: AppCompatActivity) {
     fun startScanning(): Boolean {
-        if (!MainActivity.isLocationEnabled(that)) {
+        if (!isLocationEnabled()) {
             val builder = AlertDialog.Builder(that)
             builder.setTitle(that.getString(R.string.locationServices))
             builder.setMessage(that.getString(R.string.enableLocationServices))
@@ -43,6 +45,13 @@ class Starter(val that: AppCompatActivity) {
 
         if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
+        val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
 
         val permissionFineLocation = ContextCompat.checkSelfPermission(that,
@@ -95,5 +104,25 @@ class Starter(val that: AppCompatActivity) {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         that.startActivityForResult(enableBtIntent, 87)
         return false
+    }
+
+    fun isLocationEnabled(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val locationManager = that.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            return locationManager.isLocationEnabled
+        } else {
+            try {
+                val locationMode = Settings.Secure.getInt(that.contentResolver, Settings.Secure.LOCATION_MODE)
+                return locationMode != Settings.Secure.LOCATION_MODE_OFF
+            } catch (e: Settings.SettingNotFoundException) {
+                Timber.e(e, "Could not get LOCATION_MODE")
+                return false
+            }
+        }
+    }
+
+    fun isBluetoothEnabled(): Boolean {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
     }
 }

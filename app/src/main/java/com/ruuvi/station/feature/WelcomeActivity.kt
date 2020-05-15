@@ -7,7 +7,7 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import com.ruuvi.station.R
-import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.app.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 class WelcomeActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ class WelcomeActivity : AppCompatActivity() {
         start_button.setOnClickListener {
             Preferences(this).isFirstStart = false
             val intent = Intent(this, StartupActivity::class.java)
-            intent.putExtra(TagDetails.FROM_WELCOME, true)
+            intent.putExtra(TagDetailsActivity.FROM_WELCOME, true)
             startActivity(intent)
         }
     }

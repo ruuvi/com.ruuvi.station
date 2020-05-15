@@ -1,6 +1,6 @@
 package com.ruuvi.station.util.extensions
 
-private val HEX_CHARS = "0123456789ABCDEF"
+private const val HEX_CHARS = "0123456789ABCDEF"
 
 fun String.hexStringToByteArray() : ByteArray {
     val input = this.toUpperCase()

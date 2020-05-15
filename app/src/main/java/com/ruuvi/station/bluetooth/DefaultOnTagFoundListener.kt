@@ -8,36 +8,42 @@ import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.gateway.Http
 import com.ruuvi.station.model.HumidityCalibration
-import com.ruuvi.station.model.RuuviTagEntity
-import com.ruuvi.station.model.TagSensorReading
-import com.ruuvi.station.util.AlarmChecker
-import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.alarm.AlarmChecker
+import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.util.Constants
+import com.ruuvi.station.util.extensions.logData
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
-class DefaultOnTagFoundListener(val context: Context) : IRuuviTagScanner.OnTagFoundListener {
+class DefaultOnTagFoundListener(
+        private val context: Context,
+        private val preferences: Preferences,
+        private val gatewaySender: GatewaySender
+): IRuuviTagScanner.OnTagFoundListener {
+
+    var isForeground = false
 
     private val fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(context)
+            LocationServices.getFusedLocationProviderClient(context)
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
 
     override fun onTagFound(foundTag: FoundRuuviTag) {
+        Timber.d("onTagFound: ${foundTag.logData()}")
         updateLocation()
-        val favoriteTags = ArrayList<RuuviTagEntity>()
         val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
         saveReading(tag)
-        if (tag.favorite == true) {
-            favoriteTags.add(tag)
-        }
-        if (favoriteTags.size > 0 && gatewayOn) Http.post(favoriteTags, tagLocation, context)
         TagSensorReading.removeOlderThan(24)
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
+        Timber.d("saveReading for tag(${ruuviTag.id})")
         var ruuviTag = ruuviTag
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
@@ -51,29 +57,38 @@ class DefaultOnTagFoundListener(val context: Context) : IRuuviTagScanner.OnTagFo
     }
 
     private fun saveFavouriteReading(ruuviTag: RuuviTagEntity) {
-        val interval = Preferences(context).backgroundScanInterval
+        val interval = if (isForeground) {
+            Constants.DATA_LOG_INTERVAL
+        } else {
+            preferences.backgroundScanInterval + 4
+        }
+        Timber.d("saveFavouriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
         var lastLoggedDate = lastLogged[ruuviTag.id]
         if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
             ruuviTag.id?.let {
+                Timber.d("saveFavouriteReading actual SAVING for [${ruuviTag.name}] (${ruuviTag.id})")
                 lastLogged[it] = Date().time
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
+                gatewaySender.sendData(ruuviTag, tagLocation)
             }
+        } else {
+            Timber.d("saveFavouriteReading SKIPPED [${ruuviTag.name}] (${ruuviTag.id}) lastLogged = ${Date(lastLoggedDate)}")
         }
         AlarmChecker.check(ruuviTag, context)
     }
 
     private fun updateLocation() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Timber.d("updateLocation")
             fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
         }
     }
 
     companion object {
-        var gatewayOn = false
         var tagLocation: Location? = null
     }
 }
