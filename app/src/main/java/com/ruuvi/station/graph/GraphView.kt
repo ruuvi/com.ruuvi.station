@@ -33,8 +33,9 @@ class GraphView {
     private val HUMIDITY = "Humidity"
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
+    private var isZoomed = false
 
-    fun drawChart(inputReadings: MutableList<TagSensorReading>, view: View, context: Context) {
+    fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
         val tempChart: LineChart = view.findViewById(R.id.tempChart)
         tempChart.visibility = View.VISIBLE
         val humidChart: LineChart = view.findViewById(R.id.humidChart)
@@ -48,7 +49,7 @@ class GraphView {
             to = cal.time.time;
             cal.add(Calendar.HOUR, -24)
             from = cal.time.time
-            storedReadings = inputReadings
+            storedReadings = inputReadings.toMutableList()
         }
 
         tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
@@ -59,12 +60,14 @@ class GraphView {
         val humidData: MutableList<Entry> = ArrayList()
         val pressureData: MutableList<Entry> = ArrayList()
 
-        storedReadings?.let{ tagReadings ->
+        storedReadings?.let { tagReadings ->
             if (tagReadings.size > 0) {
                 from = tagReadings[0].createdAt.time
 
                 val viewFrom = tempChart.lowestVisibleX
-                val viewTo = tempChart.highestVisibleX
+                var viewTo = tempChart.highestVisibleX
+                if (viewTo == 0F) viewTo = (tagReadings.maxBy{ it.createdAt.time }?.createdAt?.time?.toFloat() ?: 0f) - from
+                isZoomed = isZoomed(viewFrom, viewTo)
 
                 val entries = tagReadings.map {
                     GraphEntry(
@@ -126,7 +129,7 @@ class GraphView {
         set.setDrawFilled(true)
         set.highLightColor = context.resources.getColor(R.color.main)
         set.circleRadius = 2f
-        set.setDrawCircles(isZoomed(chart))
+        set.setDrawCircles(isZoomed)
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
@@ -179,7 +182,7 @@ class GraphView {
                     targetChart.viewPortHandler.refresh(targetMatrix, targetChart, true)
                 }
                 val lineDataSet = targetChart.data.maxEntryCountSet as LineDataSet
-                lineDataSet.setDrawCircles(isZoomed(targetChart))
+                lineDataSet.setDrawCircles(isZoomed(targetChart.lowestVisibleX, targetChart.highestVisibleX))
             }
         }
 
@@ -216,9 +219,9 @@ class GraphView {
         }
     }
 
-    private fun isZoomed(chart: LineChart): Boolean {
+    private fun isZoomed(viewFrom: Float, viewTo: Float): Boolean {
         val showDotsThreshold = 900
-        val visibleInterval = (chart.highestVisibleX - chart.lowestVisibleX) / 1000
+        val visibleInterval = (viewTo - viewFrom) / 1000
         return visibleInterval > 0 && visibleInterval < showDotsThreshold
     }
 

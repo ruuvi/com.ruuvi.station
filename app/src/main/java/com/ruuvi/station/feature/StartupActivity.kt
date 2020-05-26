@@ -7,6 +7,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.util.DeviceIdentifier
 import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance

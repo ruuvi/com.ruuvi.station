@@ -14,11 +14,11 @@ import android.support.v4.app.TaskStackBuilder;
 import com.ruuvi.station.R;
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver;
 import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.feature.TagDetailsActivity;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver;
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +38,10 @@ public class AlarmChecker {
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
         int notificationTextResourceId = -9001;
+        boolean anyEnabled = false;
         for (Alarm alarm : alarms) {
             if (!alarm.enabled) continue;
+            anyEnabled = true;
             switch (alarm.type) {
                 case Alarm.TEMPERATURE:
                     if (tag.getTemperature() < alarm.low)
@@ -78,9 +80,7 @@ public class AlarmChecker {
                 return 1;
             }
         }
-        for (Alarm alarm: alarms) {
-            if (alarm.enabled) return 0;
-        }
+        if (anyEnabled) return 0;
         return -1;
     }
 

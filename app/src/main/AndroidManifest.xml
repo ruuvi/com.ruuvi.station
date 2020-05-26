@@ -26,6 +26,10 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".tagdetails.ui.TagDetailsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
             android:name=".feature.TagSettings"
             android:configChanges="orientation|screenSize"
             android:label="Tag Settings"
@@ -40,11 +44,6 @@
         <service android:name=".bluetooth.BluetoothForegroundService"
             android:enabled="true"
             android:exported="true" />
-
-        <activity
-            android:name=".feature.TagDetailsActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"/>
 
         <activity
             android:name=".feature.WelcomeActivity"
