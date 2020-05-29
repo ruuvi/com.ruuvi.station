@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 class WelcomeActivity : AppCompatActivity() {

@@ -17,6 +17,7 @@ import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.Starter
 import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
