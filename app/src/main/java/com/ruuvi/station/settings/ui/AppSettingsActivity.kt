@@ -1,8 +1,8 @@
 package com.ruuvi.station.settings.ui
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.activity_app_settings.*
@@ -33,10 +33,10 @@ class AppSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         } else {
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
-            fragment = if (res == R.string.pref_bgscan) {
-                AppSettingsBackgroundScanFragment.newInstance()
-            } else {
-                AppSettingsDetailFragment.newInstance(res)
+            fragment = when (res) {
+                R.string.pref_bgscan -> AppSettingsBackgroundScanFragment.newInstance()
+                R.string.preferences_graph_settings -> AppSettingsGraphFragment.newInstance()
+                else -> AppSettingsDetailFragment.newInstance(res)
             }
         }
         transaction.replace(R.id.settings_frame, fragment)

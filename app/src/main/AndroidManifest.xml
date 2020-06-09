@@ -67,7 +67,7 @@
             android:label="@string/title_activity_app_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.StartupActivity"
+            android:name=".startup.ui.StartupActivity"
             android:theme="@style/SplashTheme"
             android:noHistory="true">
             <intent-filter>
@@ -76,11 +76,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".feature.DashboardActivity"
+        <activity android:name=".dashboard.ui.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.ruuvi.station.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

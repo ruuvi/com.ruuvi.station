@@ -1,8 +1,8 @@
 package com.ruuvi.station.settings.ui
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.SwitchCompat
+import androidx.fragment.app.Fragment
+import androidx.appcompat.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ class AppSettingsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = Preferences(context!!)
+        prefs = Preferences(requireContext())
 
         scan_layout.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
@@ -34,6 +34,10 @@ class AppSettingsListFragment : Fragment() {
 
         gateway_url.setOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
+        }
+
+        graphSettingsLayout.setOnClickListener {
+            (activity as AppSettingsActivity).openFragment(R.string.preferences_graph_settings)
         }
 
         temperature_unit.setOnClickListener {

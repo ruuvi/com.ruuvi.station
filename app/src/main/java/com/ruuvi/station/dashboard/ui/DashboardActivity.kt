@@ -1,33 +1,37 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.dashboard.ui
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
+import androidx.core.view.isVisible
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
-import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.feature.AboutActivity
+import com.ruuvi.station.feature.AddTagActivity
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.Starter
 import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
 
-class DashboardActivity : AppCompatActivity() , KodeinAware {
+class DashboardActivity : AppCompatActivity(), KodeinAware {
+
     override val kodein by closestKodein()
-    val bluetoothInteractor: BluetoothInteractor by instance()
+
+    private val viewModel: DashboardActivityViewModel by viewModel()
+
     lateinit var handler: Handler
     lateinit var starter: Starter
     lateinit var tags: MutableList<RuuviTagEntity>
@@ -44,7 +48,6 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
         setupDrawer()
 
         tags = ArrayList(RuuviTagRepository.getAll(true))
-        val noTagsFound = findViewById<TextView>(R.id.noTags_textView)
 
         val beaconListView = findViewById<ListView>(R.id.dashboard_listView)
         adapter = RuuviTagAdapter(applicationContext, tags)
@@ -58,10 +61,10 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
         starter.getThingsStarted()
     }
 
-    fun setupDrawer() {
+    private fun setupDrawer() {
         val drawerToggle = ActionBarDrawerToggle(
-                this, main_drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, main_drawerLayout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
 
         main_drawerLayout.addDrawerListener(drawerToggle)
@@ -74,9 +77,9 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
         val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
 
         drawerListView.adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                resources.getStringArray(R.array.navigation_items_card_view)
+            this,
+            android.R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.navigation_items_card_view)
         )
 
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
@@ -106,9 +109,8 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
 
     override fun onResume() {
         super.onResume()
-        if (bluetoothInteractor.canScan())
-            bluetoothInteractor.startForegroundScanning()
-        handler.post(object: Runnable {
+        viewModel.startForegroundScanning()
+        handler.post(object : Runnable {
             override fun run() {
                 handler.postDelayed(this, 1000)
             }
@@ -120,10 +122,7 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
                 override fun run() {
                     tags.clear()
                     tags.addAll(ArrayList(RuuviTagRepository.getAll(true)))
-                    if (tags.size > 0) {
-                        noTagsFound.visibility = View.GONE
-                    } else
-                        noTagsFound.visibility = View.VISIBLE
+                    noTagsFound.isVisible = tags.size <= 0
                     adapter.notifyDataSetChanged()
                     handler.postDelayed(this, 500)
                 }
@@ -132,11 +131,10 @@ class DashboardActivity : AppCompatActivity() , KodeinAware {
             if (starter.checkBluetooth()) {
                 starter.startScanning()
             }
-        } else {
         }
     }
 
-    private val tagClick = AdapterView.OnItemClickListener { parent, view, position, id ->
+    private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
         val tag = view.tag as RuuviTagEntity
         val intent = Intent(applicationContext, TagDetailsActivity::class.java)
         intent.putExtra("id", tag.id)

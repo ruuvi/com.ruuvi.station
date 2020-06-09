@@ -16,6 +16,14 @@
     <string name="pref_scaninterval_summ">Set time between background scans</string>
 
     <string name="pref_title_scaninterval">Set scanning interval</string>
+
+    <string name="preferences_graph_settings">Graph Settings</string>
+    <string name="preferences_graph_interval">Graph interval</string>
+    <string name="preferences_graph_interval_description">Set interval between points for graph from 1 to 60 minutes. Less value means more accurate chart, but higher requirements to performance of your device</string>
+    <string name="preferences_graph_view_period">Graph history view period</string>
+    <string name="preferences_graph_view_period_description">Configure history diapason to be shown on graph from 1 to 72 hours</string>
+    <string name="preferences_graph_settings_description">Configure interval between points shown on graph</string>
+
     <string-array name="pref_scaninterval_titles">
         <item>15 seconds</item>
         <item>30 seconds</item>
@@ -190,7 +198,7 @@
         <item>Remove Tag</item>
     </string-array>
 
-    <string name="updated">Updated</string>
+    <string name="updated">Updated %1$s</string>
     <string name="alerts">Alerts</string>
     <string name="signal">Signal</string>
     <string name="share">Share</string>
@@ -271,6 +279,7 @@
     <string name="kelvin">Kelvin</string>
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
+    <string name="hours">Hours</string>
     <string name="relative_humidity_unit">Relative (%)</string>
     <string name="absolute_humidity_unit">Absolute (g/m³)</string>
     <string name="dew_point_humidity_unit">Dew Point (°)</string>

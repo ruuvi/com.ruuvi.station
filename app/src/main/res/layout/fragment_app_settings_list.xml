@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:layout_width="match_parent"
@@ -27,14 +27,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/bg_scan_title"
                     android:text="@string/pref_bgscan"
                     style="@style/PrefTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/bg_scan_description"
                     android:text="@string/pref_bgscan_summ"
                     style="@style/PrefSecondaryText"
@@ -43,9 +43,9 @@
 
             </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scan_interval"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/bg_scan_interval_title"
                 android:text="@string/background_scan_interval"
                 style="@style/PrefTitleText"
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/background_scan_interval_sub"
                 android:text="@string/background_scan_interval_sum"
                 style="@style/PrefSecondaryText"
@@ -72,21 +72,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/temperature_unit"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/temperatureUnit_title"
                 android:text="@string/temperature_unit"
                 style="@style/PrefTitleText"
@@ -95,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/temperature_unit_sub"
                 android:text="@string/temperature_unit_sum"
                 style="@style/PrefSecondaryText"
@@ -105,21 +105,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/humidity_unit"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/humidity_unit_title"
                 android:text="@string/humidity_unit"
                 style="@style/PrefTitleText"
@@ -128,7 +128,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/humidity_unit_sub"
                 android:text="@string/humidity_unit_sum"
                 style="@style/PrefSecondaryText"
@@ -138,14 +138,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:layout_width="match_parent"
@@ -159,14 +159,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/dashboard_title"
                     android:text="@string/dashboard_pref"
                     style="@style/PrefTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:text="@string/dashboard_pref_sub"
                     style="@style/PrefSecondaryText"
                     android:layout_width="match_parent"
@@ -174,7 +174,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/dashboard_switch"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -182,21 +182,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gateway_url"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gateway_title"
                 android:text="@string/gateway_settings"
                 style="@style/PrefTitleText"
@@ -206,7 +206,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gateway_url_sub"
                 android:text="@string/gateway_url"
                 style="@style/PrefSecondaryText"
@@ -220,9 +220,47 @@
                 android:ellipsize="end"
                 />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/graphSettingsLayout"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/graphSettingsTitleTextView"
+                android:text="@string/preferences_graph_settings"
+                style="@style/PrefTitleText"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/graphSettingsDescriptionTextView"
+                android:text="@string/preferences_graph_settings_description"
+                style="@style/PrefSecondaryText"
+                app:layout_constraintTop_toBottomOf="@id/graphSettingsTitleTextView"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLength="64"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/debug_tools"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
@@ -230,7 +268,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/debug_tools_title"
                 android:text="Debug"
                 style="@style/PrefTitleText"
@@ -240,7 +278,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/debug_tools_sub"
                 android:text="add fake tags and readings"
                 style="@style/PrefSecondaryText"
@@ -254,7 +292,7 @@
                 android:ellipsize="end"
                 />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </LinearLayout>

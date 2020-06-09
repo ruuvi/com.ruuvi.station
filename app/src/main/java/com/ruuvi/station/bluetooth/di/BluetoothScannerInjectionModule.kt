@@ -9,7 +9,7 @@ import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.IRuuviTagScanner
 import com.ruuvi.station.bluetooth.util.ScannerSettings
-import com.ruuvi.station.feature.StartupActivity
+import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.bluetooth.domain.BluetoothStateWatcher
@@ -62,10 +62,10 @@ object BluetoothScannerInjectionModule {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
                     return PendingIntent.getActivity(
-                            context,
-                            0,
-                            resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
+                        context,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
                     )
                 }
             }

@@ -1,6 +1,6 @@
 package com.ruuvi.station.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 

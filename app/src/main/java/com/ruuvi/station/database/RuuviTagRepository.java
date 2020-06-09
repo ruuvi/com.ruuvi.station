@@ -22,7 +22,7 @@ import java.util.List;
 
 public class RuuviTagRepository {
 
-    public static String getDispayName(RuuviTagEntity tag) {
+    public static String getDisplayName(RuuviTagEntity tag) {
         return (tag.getName() != null && !tag.getName().isEmpty()) ? tag.getName() : tag.getId();
     }
 

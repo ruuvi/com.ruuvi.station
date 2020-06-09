@@ -2,13 +2,13 @@ package com.ruuvi.station.app.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.v7.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.Constants
 
 class Preferences(val context: Context) {
-    val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     var backgroundScanInterval: Int
         get() = sharedPreferences.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
@@ -42,8 +42,7 @@ class Preferences(val context: Context) {
 
     var humidityUnit: HumidityUnit
         get() {
-            val code = sharedPreferences.getInt("pref_humidity_unit", 0)
-            return when (code) {
+            return when (sharedPreferences.getInt("pref_humidity_unit", 0)) {
                 0 -> HumidityUnit.PERCENT
                 1 -> HumidityUnit.GM3
                 2 -> HumidityUnit.DEW
@@ -84,9 +83,25 @@ class Preferences(val context: Context) {
             sharedPreferences.edit().putBoolean("pref_bgscan_battery_saving", enabled).apply()
         }
 
+    // chart interval between data points (in minutes)
+    var graphPointInterval: Int
+        get() = sharedPreferences.getInt("pref_graph_point_interval", DEFAULT_GRAPH_POINT_INTERVAL)
+        set(interval) {
+            sharedPreferences.edit().putInt("pref_graph_point_interval", interval).apply()
+        }
+
+    // chart view period (in hours)
+    var graphViewPeriod: Int
+        get() = sharedPreferences.getInt("pref_graph_view_period", DEFAULT_GRAPH_VIEW_PERIOD)
+        set(period) {
+            sharedPreferences.edit().putInt("pref_graph_view_period", period).apply()
+        }
+
     companion object {
         const val DEFAULT_TEMPERATURE_UNIT = "C"
         const val DEFAULT_GATEWAY_URL = ""
         const val DEFAULT_DEVICE_ID = ""
+        const val DEFAULT_GRAPH_POINT_INTERVAL = 1
+        const val DEFAULT_GRAPH_VIEW_PERIOD = 24
     }
 }

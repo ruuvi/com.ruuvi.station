@@ -1,150 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:animateLayoutChanges="true"
-    tools:background="@color/gray"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:background="@color/gray">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tag_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tag_temp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:fontFamily="@font/oswald_bold"
-        android:text="@string/temperature_reading"
-        android:textColor="@color/white"
-        android:textSize="76sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tag_temp_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="76dp"
-        android:fontFamily="@font/oswald_light"
-        android:text="°U"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/tag_temp"
-        app:layout_constraintLeft_toRightOf="@id/tag_temp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/tag_humidity_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/tag_pressure_layout"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="16dp"
-        >
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/tag_humidity_icon"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tag_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/icon_measure_humidity" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/tag_humidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/humidity_reading"
+            android:layout_marginTop="50dp"
+            android:text="@string/temperature_reading"
+            android:fontFamily="@font/oswald_bold"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="76sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tag_pressure_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/tag_signal_layout"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="16dp"
-        >
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/tag_pressure_icon"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tag_temp_unit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/icon_measure_pressure" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/tag_pressure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/pressure_reading"
+            android:layout_height="0dp"
+            android:layout_marginTop="76dp"
+            android:gravity="center"
+            android:fontFamily="@font/oswald_light"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="40sp"
+            app:layout_constraintBottom_toBottomOf="@id/tag_temp"
+            app:layout_constraintLeft_toRightOf="@id/tag_temp"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="°U" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tag_signal_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="48dp"
-        >
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/tag_signal_icon"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/tag_humidity_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/icon_measure_signal" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toTopOf="@id/tag_pressure_layout">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/tag_signal"
-            android:layout_width="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tag_humidity_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_measure_humidity" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tag_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/humidity_reading"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tag_pressure_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/signal_reading"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toTopOf="@id/tag_signal_layout">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tag_pressure_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_measure_pressure" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tag_pressure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/pressure_reading"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tag_signal_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="56dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tag_signal_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_measure_signal" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tag_signal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/signal_reading"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tag_updated"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:alpha="0.5"
+            android:text="@string/updated"
+            android:textAlignment="textEnd"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tag_updated"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:alpha="0.5"
-        android:layout_margin="16dp"
-        android:textAlignment="textEnd"
-        android:text="@string/updated"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
-
-    </android.support.constraint.ConstraintLayout>
-
-    <include layout="@layout/view_graphs"
+    <include
         android:id="@+id/tag_graphs"
-        android:visibility="invisible"
-        />
+        layout="@layout/view_graphs"
+        android:visibility="invisible" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

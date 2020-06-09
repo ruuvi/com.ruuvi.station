@@ -26,8 +26,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
     override val kodein = ConfigurableKodein()
 
     val defaultOnTagFoundListener: DefaultOnTagFoundListener by instance()
-    val fakesSender: FakeScanResultsSender by instance()
-    val bluetoothWatcher: BluetoothStateWatcher by instance()
+    private val fakesSender: FakeScanResultsSender by instance()
+    private val bluetoothWatcher: BluetoothStateWatcher by instance()
 
     private var isInForeground: Boolean = true.also {
         val listener: Foreground.Listener = object : Foreground.Listener {
@@ -62,7 +62,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
             //turn on for debug if you don't have real ruuvi tag
-            //fakesSender.startSendFakes()
+            fakesSender.startSendFakes()
         }
 
         registerReceiver(bluetoothWatcher, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))

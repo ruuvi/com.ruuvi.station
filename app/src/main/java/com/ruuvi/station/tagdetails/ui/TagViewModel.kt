@@ -1,47 +1,35 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.os.Handler
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Timer
+import kotlin.concurrent.scheduleAtFixedRate
 
-class TagViewModel (
-        private val tagDetailsInteractor: TagDetailsInteractor
+class TagViewModel(
+    private val tagDetailsInteractor: TagDetailsInteractor,
+    tagId: String
 ) : ViewModel() {
-    private val tagEntry = MutableLiveData<RuuviTagEntity>()
-    private val tagReadings = MutableLiveData<List<TagSensorReading>>()
+    val tagEntry = Channel<RuuviTagEntity>()
 
-    private val handler = Handler()
-    private val uiScope = CoroutineScope(Dispatchers.Main)
+    val tagReadings = Channel<List<TagSensorReading>>()
+
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
     private var showGraph = false
 
+    private val timer = Timer("tagViewModelTimer", true)
+
     init {
-        Timber.d("vm initialized")
-    }
-
-    fun observeTagEntry(): LiveData<RuuviTagEntity> = tagEntry
-
-    fun observeTagReadings(): LiveData<List<TagSensorReading>> = tagReadings
-
-    fun getTagInfo(tagId: String) {
-        Timber.d("getTagInfo $tagId")
-        handler.removeCallbacksAndMessages(null)
-        tagEntry.value = tagDetailsInteractor.getTag(tagId)
-        handler.post( object : Runnable{
-            override fun run() {
-                Timber.d("handler for $tagId")
-                getTagEntryData(tagId)
-                if (showGraph) getGraphData(tagId)
-                handler.postDelayed(this, 1000)
-            }
-        })
+        Timber.d("TagViewModel initialized")
+        getTagInfo(tagId)
     }
 
     fun startShowGraph() {
@@ -52,27 +40,54 @@ class TagViewModel (
         showGraph = false
     }
 
-    private fun getGraphData(tagId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val readings = tagDetailsInteractor.getTagReadings(tagId)
-            uiScope.launch {
-                tagReadings.value = readings
+    private fun getTagInfo(tagId: String) {
+        Timber.d("getTagInfo $tagId")
+        ioScope.launch {
+            timer.scheduleAtFixedRate(0, 1000) {
+                getTagEntryData(tagId)
+                if (showGraph) getGraphData(tagId)
             }
+        }
+    }
+
+    private fun getGraphData(tagId: String) {
+        Timber.d("Get graph data for tagId = $tagId")
+        ioScope.launch {
+            tagDetailsInteractor
+                .getTagReadings(tagId)
+                ?.let {
+                    tagReadings.send(it)
+                }
         }
     }
 
     private fun getTagEntryData(tagId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            var tag = tagDetailsInteractor.getTag(tagId)
-            uiScope.launch {
-                tagEntry.value = tag
-            }
+        Timber.d("getTagEntryData for tagId = $tagId")
+        ioScope.launch {
+            tagDetailsInteractor
+                .getTag(tagId)
+                ?.let {
+                    tagEntry.send(it)
+                }
         }
     }
 
+    fun getTemperatureString(context: Context, tag: RuuviTagEntity): String =
+        tagDetailsInteractor.getTemperatureString(context, tag)
+
+    fun getHumidityString(context: Context, tag: RuuviTagEntity): String =
+        tagDetailsInteractor.getHumidityString(context, tag)
+
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacksAndMessages(null)
+
+        cancelTimerAndChannels()
         Timber.d("TagViewModel cleared!")
+    }
+
+    private fun cancelTimerAndChannels() {
+        timer.cancel()
+        tagReadings.cancel()
+        tagEntry.cancel()
     }
 }

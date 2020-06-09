@@ -3,10 +3,10 @@ package com.ruuvi.station.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.ImageViewCompat;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.ImageViewCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +28,8 @@ import java.util.List;
 
 public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
 
-    private List<RuuviTagEntity> tags;
-
     public RuuviTagAdapter(@NonNull Context context, List<RuuviTagEntity> tags) {
         super(context, 0, tags);
-        this.tags = tags;
     }
 
     @NonNull
@@ -40,13 +37,12 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final RuuviTagEntity tag = getItem(position);
 
-
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_main, parent, false);
         }
 
         TextView txtId = convertView.findViewById(R.id.id);
-        TextView lastseen = convertView.findViewById(R.id.lastseen);
+        TextView lastSeen = convertView.findViewById(R.id.lastSeenTextView);
         TextView temp = convertView.findViewById(R.id.row_main_temperature);
         TextView humid = convertView.findViewById(R.id.row_main_humidity);
         TextView pres = convertView.findViewById(R.id.row_main_pressure);
@@ -65,9 +61,9 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
         convertView.findViewById(R.id.row_main_root).setTag(tag);
         //convertView.findViewById(R.id.row_main_letter).setOnClickListener(tagMenuClickListener);
 
-        String updatedAt = getContext().getResources().getString(R.string.updated) + " " + Utils.strDescribingTimeSince(tag.getUpdateAt());
+        String updatedAt = String.format(getContext().getString(R.string.updated), Utils.strDescribingTimeSince(tag.getUpdateAt()));
 
-        lastseen.setText(updatedAt);
+        lastSeen.setText(updatedAt);
         AppCompatImageView bell = convertView.findViewById(R.id.bell);
         int status = AlarmChecker.getStatus(tag);
         switch (status) {

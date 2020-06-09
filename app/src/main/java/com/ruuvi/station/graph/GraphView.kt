@@ -3,9 +3,11 @@ package com.ruuvi.station.graph
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -37,18 +39,18 @@ class GraphView {
 
     fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
         val tempChart: LineChart = view.findViewById(R.id.tempChart)
-        tempChart.visibility = View.VISIBLE
+        tempChart.isVisible = true
         val humidChart: LineChart = view.findViewById(R.id.humidChart)
-        humidChart.visibility = View.VISIBLE
+        humidChart.isVisible = true
         val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
-        pressureChart.visibility = View.VISIBLE
+        pressureChart.isVisible = true
         val temperatureUnit: String = RuuviTagRepository.getTemperatureUnit(context)
 
         if (storedReadings == null || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
-            val cal = Calendar.getInstance()
-            to = cal.time.time;
-            cal.add(Calendar.HOUR, -24)
-            from = cal.time.time
+            val calendar = Calendar.getInstance()
+            to = calendar.time.time;
+            calendar.add(Calendar.HOUR, -24)
+            from = calendar.time.time
             storedReadings = inputReadings.toMutableList()
         }
 
@@ -66,31 +68,31 @@ class GraphView {
 
                 val viewFrom = tempChart.lowestVisibleX
                 var viewTo = tempChart.highestVisibleX
-                if (viewTo == 0F) viewTo = (tagReadings.maxBy{ it.createdAt.time }?.createdAt?.time?.toFloat() ?: 0f) - from
+                if (viewTo == 0F) viewTo = (tagReadings.maxBy { it.createdAt.time }?.createdAt?.time?.toFloat() ?: 0f) - from
                 isZoomed = isZoomed(viewFrom, viewTo)
 
                 val entries = tagReadings.map {
                     GraphEntry(
-                            timestamp = (it.createdAt.time - from).toFloat(),
-                            temperature = when {
-                                temperatureUnit == "K" -> {
-                                    Utils.celsiusToKelvin(it.temperature).toFloat()
-                                }
-                                temperatureUnit == "F" -> {
-                                    Utils.celciusToFahrenheit(it.temperature).toFloat()
-                                }
-                                else -> {
-                                    it.temperature.toFloat()
-                                }
-                            },
-                            humidity = it.humidity.toFloat(),
-                            pressure = it.pressure.toFloat() / 100.0f
+                        timestamp = (it.createdAt.time - from).toFloat(),
+                        temperature = when (temperatureUnit) {
+                            "K" -> {
+                                Utils.celsiusToKelvin(it.temperature).toFloat()
+                            }
+                            "F" -> {
+                                Utils.celciusToFahrenheit(it.temperature).toFloat()
+                            }
+                            else -> {
+                                it.temperature.toFloat()
+                            }
+                        },
+                        humidity = it.humidity.toFloat(),
+                        pressure = it.pressure.toFloat() / 100.0f
                     )
                 }
                 val viewPortCount = entries.count { it.timestamp in viewFrom..viewTo }
 
-                if (viewPortCount > 75) {
-                    val step = (viewTo - viewFrom) / 75.0f
+                if (viewPortCount > 150) {
+                    val step = (viewTo - viewFrom) / 150.0f
                     var current = 0f
                     entries.forEach {
                         if (it.timestamp >= current) {
@@ -123,11 +125,11 @@ class GraphView {
         }
     }
 
-    fun addDataToChart(context: Context, data: MutableList<Entry>, chart: LineChart, label: String) {
+    private fun addDataToChart(context: Context, data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
         set.setDrawValues(false)
         set.setDrawFilled(true)
-        set.highLightColor = context.resources.getColor(R.color.main)
+        set.highLightColor = ContextCompat.getColor(context, R.color.main)
         set.circleRadius = 2f
         set.setDrawCircles(isZoomed)
         chart.xAxis.axisMaximum = (to - from).toFloat()
@@ -189,27 +191,30 @@ class GraphView {
         charts.forEach { chart: LineChart ->
             chart.onChartGestureListener = object : OnChartGestureListener {
                 override fun onChartGestureEnd(
-                        me: MotionEvent?,
-                        lastPerformedGesture: ChartTouchListener.ChartGesture?
+                    me: MotionEvent?,
+                    lastPerformedGesture: ChartTouchListener.ChartGesture?
                 ) {
-                     charts.forEach {
+                    charts.forEach {
                         it.setTouchEnabled(true)
                     }
                     synchronizeCharts(chart)
                 }
+
                 override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
                 override fun onChartSingleTapped(me: MotionEvent?) {}
                 override fun onChartGestureStart(
-                        me: MotionEvent?,
-                        lastPerformedGesture: ChartTouchListener.ChartGesture?
+                    me: MotionEvent?,
+                    lastPerformedGesture: ChartTouchListener.ChartGesture?
                 ) {
                     charts.minus(chart).forEach {
                         it.setTouchEnabled(false)
                     }
                 }
+
                 override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
                     synchronizeCharts(chart)
                 }
+
                 override fun onChartLongPressed(me: MotionEvent?) {}
                 override fun onChartDoubleTapped(me: MotionEvent?) {}
                 override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
@@ -225,32 +230,32 @@ class GraphView {
         return visibleInterval > 0 && visibleInterval < showDotsThreshold
     }
 
-    private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart){
+    private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
         if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
             tempChart.setViewPortOffsets(
-                    pressureChart.viewPortHandler.offsetLeft(),
-                    pressureChart.viewPortHandler.offsetTop(),
-                    pressureChart.viewPortHandler.offsetRight(),
-                    pressureChart.viewPortHandler.offsetBottom()
+                pressureChart.viewPortHandler.offsetLeft(),
+                pressureChart.viewPortHandler.offsetTop(),
+                pressureChart.viewPortHandler.offsetRight(),
+                pressureChart.viewPortHandler.offsetBottom()
             )
             humidChart.setViewPortOffsets(
-                    pressureChart.viewPortHandler.offsetLeft(),
-                    pressureChart.viewPortHandler.offsetTop(),
-                    pressureChart.viewPortHandler.offsetRight(),
-                    pressureChart.viewPortHandler.offsetBottom()
+                pressureChart.viewPortHandler.offsetLeft(),
+                pressureChart.viewPortHandler.offsetTop(),
+                pressureChart.viewPortHandler.offsetRight(),
+                pressureChart.viewPortHandler.offsetBottom()
             )
         } else {
             pressureChart.setViewPortOffsets(
-                    tempChart.viewPortHandler.offsetLeft(),
-                    tempChart.viewPortHandler.offsetTop(),
-                    tempChart.viewPortHandler.offsetRight(),
-                    tempChart.viewPortHandler.offsetBottom()
+                tempChart.viewPortHandler.offsetLeft(),
+                tempChart.viewPortHandler.offsetTop(),
+                tempChart.viewPortHandler.offsetRight(),
+                tempChart.viewPortHandler.offsetBottom()
             )
             humidChart.setViewPortOffsets(
-                    tempChart.viewPortHandler.offsetLeft(),
-                    tempChart.viewPortHandler.offsetTop(),
-                    tempChart.viewPortHandler.offsetRight(),
-                    tempChart.viewPortHandler.offsetBottom()
+                tempChart.viewPortHandler.offsetLeft(),
+                tempChart.viewPortHandler.offsetTop(),
+                tempChart.viewPortHandler.offsetRight(),
+                tempChart.viewPortHandler.offsetBottom()
             )
         }
     }
