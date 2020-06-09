@@ -1,6 +1,6 @@
 package com.ruuvi.station.app.di
 
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import com.ruuvi.station.app.ui.ViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind

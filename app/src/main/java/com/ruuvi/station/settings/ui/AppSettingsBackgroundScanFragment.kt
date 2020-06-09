@@ -1,14 +1,13 @@
 package com.ruuvi.station.settings.ui
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*
@@ -17,19 +16,11 @@ import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.dura
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
-import org.kodein.di.generic.instance
 
-class AppSettingsBackgroundScanFragment : Fragment(), KodeinAware {
+class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_settings_background_scan), KodeinAware {
     override val kodein: Kodein by closestKodein()
-    private val viewModeFactory: ViewModelProvider.Factory by instance()
-    private val viewModel: AppSettingsBackgroundScanViewModel by lazy {
-        ViewModelProviders.of(this, viewModeFactory).get(AppSettingsBackgroundScanViewModel::class.java)
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_app_settings_background_scan, container, false)
-    }
+    private val viewModel: AppSettingsBackgroundScanViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,9 +78,9 @@ class AppSettingsBackgroundScanFragment : Fragment(), KodeinAware {
 
     private fun observeInterval() {
         viewModel.observeInterval().observe(viewLifecycleOwner, Observer {
-            it?.let {interval ->
-                var min = interval / 60
-                var sec = interval - min * 60
+            it?.let { interval ->
+                val min = interval / 60
+                val sec = interval - min * 60
 
                 if (min == 0) duration_second.minValue = 10
 

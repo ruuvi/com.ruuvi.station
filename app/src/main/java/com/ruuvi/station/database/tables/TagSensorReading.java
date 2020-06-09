@@ -1,11 +1,14 @@
 package com.ruuvi.station.database.tables;
 
+import android.annotation.SuppressLint;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.database.LocalDatabase;
 
@@ -87,6 +90,23 @@ public class TagSensorReading extends BaseModel {
                 .and(TagSensorReading_Table.createdAt.greaterThan(cal.getTime()))
                 .orderBy(TagSensorReading_Table.createdAt, true)
                 .queryList();
+    }
+
+    public static List<TagSensorReading> getForTagPruned(String id, Integer interval, Integer period) {
+        Calendar fromDate = Calendar.getInstance();
+        fromDate.setTime(new Date());
+        fromDate.add(Calendar.HOUR, -period);
+        Integer pruningInterval = 1000 * 60 * interval;
+
+        // seems like setSelectionArgs not working for StringQuery so we have to use String.Format instead
+        @SuppressLint("DefaultLocale")
+        String sqlString = String.format("Select * from TagSensorReading "+
+                "where RuuviTagId = '%s' and createdAt > %d group by createdAt / %d",
+                id, fromDate.getTimeInMillis(), pruningInterval);
+
+        StringQuery<TagSensorReading> query = new StringQuery<>(TagSensorReading.class, sqlString);
+        List<TagSensorReading> result2 =  query.queryList();
+        return result2;
     }
 
     public static List<TagSensorReading> getLatestForTag(String id, int limit) {

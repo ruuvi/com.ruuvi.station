@@ -8,10 +8,10 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.R
 import timber.log.Timber
 import java.util.*
@@ -39,7 +39,7 @@ class Starter(val that: AppCompatActivity) {
 
     fun getNeededPermissions(): List<String> {
         val permissionCoarseLocation = ContextCompat.checkSelfPermission(that,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+            Manifest.permission.ACCESS_COARSE_LOCATION)
 
         val listPermissionsNeeded = ArrayList<String>()
 
@@ -48,7 +48,7 @@ class Starter(val that: AppCompatActivity) {
         }
 
         val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -61,9 +61,9 @@ class Starter(val that: AppCompatActivity) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val permissionBackgroundLocation = ContextCompat.checkSelfPermission(that,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
             if (permissionBackgroundLocation != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -85,10 +85,10 @@ class Starter(val that: AppCompatActivity) {
 
     fun requestPermissions() {
         if (getNeededPermissions().isNotEmpty()) {
-            val alertDialog = android.support.v7.app.AlertDialog.Builder(that).create()
+            val alertDialog = AlertDialog.Builder(that).create()
             alertDialog.setTitle(that.getString(R.string.permission_dialog_title))
             alertDialog.setMessage(that.getString(R.string.permission_dialog_request_message))
-            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
             ) { dialog, _ -> dialog.dismiss() }
             alertDialog.setOnDismissListener { showPermissionDialog(that) }
             alertDialog.show()
@@ -106,20 +106,19 @@ class Starter(val that: AppCompatActivity) {
         return false
     }
 
-    fun isLocationEnabled(): Boolean {
+    private fun isLocationEnabled(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val locationManager = that.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            return locationManager.isLocationEnabled
+            locationManager.isLocationEnabled
         } else {
             try {
                 val locationMode = Settings.Secure.getInt(that.contentResolver, Settings.Secure.LOCATION_MODE)
-                return locationMode != Settings.Secure.LOCATION_MODE_OFF
+                locationMode != Settings.Secure.LOCATION_MODE_OFF
             } catch (e: Settings.SettingNotFoundException) {
                 Timber.e(e, "Could not get LOCATION_MODE")
-                return false
+                false
             }
         }
-    }
 
     fun isBluetoothEnabled(): Boolean {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()

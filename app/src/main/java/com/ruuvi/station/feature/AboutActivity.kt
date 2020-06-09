@@ -1,7 +1,7 @@
 package com.ruuvi.station.feature
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import com.ruuvi.station.BuildConfig
@@ -32,7 +32,7 @@ class AboutActivity : AppCompatActivity() {
         drawDebugInfo()
     }
 
-    fun drawDebugInfo() {
+    private fun drawDebugInfo() {
         val readingCount = TagSensorReading.countAll()
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
         val addedTags = RuuviTagRepository.getAll(true).size

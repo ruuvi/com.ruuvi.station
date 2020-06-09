@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+
 import com.ruuvi.station.R;
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver;
 import com.ruuvi.station.database.RuuviTagRepository;
@@ -19,9 +21,11 @@ import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver;
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
 import timber.log.Timber;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -145,7 +149,7 @@ public class AlarmChecker {
                 NotificationManager NotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
                 NotifyMgr.cancel(notificationId);
             } catch (Exception e) {
-                Timber.e(e,"Failed to dismiss notification with id = %1$s", notificationId);
+                Timber.e(e, "Failed to dismiss notification with id = %1$s", notificationId);
             }
         }
     }

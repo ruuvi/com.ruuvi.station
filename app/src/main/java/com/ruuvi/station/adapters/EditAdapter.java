@@ -28,8 +28,8 @@ public class EditAdapter extends ArrayAdapter<Alarm> {
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_alarm, parent, false);
         }
-        TextView type = (TextView) convertView.findViewById(R.id.alarm_name);
-        TextView range = (TextView) convertView.findViewById(R.id.alarm_range);
+        TextView type = convertView.findViewById(R.id.alarm_name);
+        TextView range = convertView.findViewById(R.id.alarm_range);
         type.setText(alarm.type == Alarm.TEMPERATURE ? getContext().getString(R.string.temperature) :
                         alarm.type == Alarm.HUMIDITY ? getContext().getString(R.string.humidity) :
                         alarm.type == Alarm.PERSSURE ? getContext().getString(R.string.pressure) :

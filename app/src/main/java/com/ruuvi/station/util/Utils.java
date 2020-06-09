@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
@@ -22,6 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import timber.log.Timber;
 
 
 public class Utils {
@@ -101,7 +102,7 @@ public class Utils {
             Uri uri = Uri.parse(tag.getUserBackground());
             return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
         } catch (Exception e) {
-            Log.e(TAG, "Could not set user background");
+            Timber.e("Could not set user background");
         }
 
         return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));

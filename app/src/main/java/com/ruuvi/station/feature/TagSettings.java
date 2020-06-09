@@ -12,17 +12,23 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.media.ExifInterface;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import androidx.exifinterface.media.ExifInterface;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.LinkMovementMethod;
@@ -35,17 +41,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
 import com.ruuvi.station.model.HumidityCalibration;
@@ -64,9 +69,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import timber.log.Timber;
-
 
 public class TagSettings extends AppCompatActivity {
     private static final String TAG = "TagSettings";
@@ -78,6 +83,11 @@ public class TagSettings extends AppCompatActivity {
     private Uri file;
     AppCompatImageView tagImage;
     String tempUnit = "C";
+    CompoundButton.OnCheckedChangeListener alarmCheckboxListener = (buttonView, isChecked) -> {
+        AlarmItem ai = alarmItems.get((int) buttonView.getTag());
+        ai.checked = isChecked;
+        ai.updateView();
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +96,7 @@ public class TagSettings extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         String tagId = getIntent().getStringExtra(TAG_ID);
@@ -106,179 +116,167 @@ public class TagSettings extends AppCompatActivity {
 
         tempUnit = RuuviTagRepository.getTemperatureUnit(this);
 
-        ((TextView)findViewById(R.id.input_mac)).setText(tag.getId());
-        findViewById(R.id.input_mac).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Mac address", tag.getId());
-                try {
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Timber.e(e,"Could not copy mac to clipboard");
-                }
-                return false;
-            }
-        });
+        setupTagName();
+        setupGatewayUrl();
+        setupInputMac();
+        setupTagImage();
+        calibrateHumidity();
+        setupAlarmItems();
 
-        tagImage = findViewById(R.id.tag_image);
-        tagImage.setImageBitmap(Utils.getBackground(this, tag));
-        findViewById(R.id.tag_image_camera_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showImageSourceSheet();
-            }
-        });
+        findViewById(R.id.remove_tag).setOnClickListener(v -> delete());
+    }
 
-        findViewById(R.id.tag_image_select_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tag.setDefaultBackground(tag.getDefaultBackground() == 8 ? 0 : tag.getDefaultBackground() + 1);
-                tag.setUserBackground(null);
-                tagImage.setImageDrawable(Utils.getDefaultBackground(tag.getDefaultBackground(), getApplicationContext()));
-            }
-        });
-
+    private void setupTagName() {
         final TextView nameTextView = findViewById(R.id.input_name);
         nameTextView.setText(tag.getDisplayName());
 
+        // TODO: 25/10/17 make this less ugly
+        nameTextView.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
+            builder.setTitle(getString(R.string.tag_name));
+            final EditText input = new EditText(TagSettings.this);
+            input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(32)});
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            input.setText(tag.getName());
+            FrameLayout container = new FrameLayout(getApplicationContext());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            input.setLayoutParams(params);
+            container.addView(input);
+            builder.setView(container);
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                tag.setName(input.getText().toString());
+                nameTextView.setText(tag.getName());
+            });
+            builder.setNegativeButton("Cancel", null);
+            Dialog dialog = builder.create();
+            try {
+                Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            } catch (Exception e) {
+                Timber.e(e, "Could not open keyboard");
+            }
+            dialog.show();
+            input.requestFocus();
+        });
+    }
+
+    private void setupGatewayUrl() {
         final TextView gatewayTextView = findViewById(R.id.input_gatewayUrl);
         if (tag.getGatewayUrl() != null && !tag.getGatewayUrl().isEmpty()) gatewayTextView.setText(tag.getGatewayUrl());
 
-        // TODO: 25/10/17 make this less ugly
-        nameTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
-                builder.setTitle(getString(R.string.tag_name));
-                final EditText input = new EditText(TagSettings.this);
-                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(32)});
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                input.setText(tag.getName());
-                FrameLayout container = new FrameLayout(getApplicationContext());
-                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                input.setLayoutParams(params);
-                container.addView(input);
-                builder.setView(container);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        tag.setName(input.getText().toString());
-                        nameTextView.setText(tag.getName());
-                    }
-                });
-                builder.setNegativeButton("Cancel", null);
-                Dialog d = builder.create();
-                try {
-                    d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                } catch (Exception e) {
-                    Timber.e(e,"Could not open keyboard");
+        gatewayTextView.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
+            builder.setTitle(getString(R.string.gateway_url));
+            final EditText input = new EditText(TagSettings.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setText(tag.getGatewayUrl());
+            FrameLayout container = new FrameLayout(getApplicationContext());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            input.setLayoutParams(params);
+            container.addView(input);
+            builder.setView(container);
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                tag.setGatewayUrl(input.getText().toString());
+                gatewayTextView.setText(!tag.getGatewayUrl().isEmpty() ? tag.getGatewayUrl() : getString(R.string.no_gateway_url));
+            });
+            builder.setNegativeButton("Cancel", null);
+            Dialog d = builder.create();
+            try {
+                Objects.requireNonNull(d.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            } catch (Exception e) {
+                Timber.d("Could not open keyboard");
+            }
+            d.show();
+            input.requestFocus();
+        });
+    }
+
+    private void setupInputMac() {
+        ((TextView) findViewById(R.id.input_mac)).setText(tag.getId());
+        findViewById(R.id.input_mac).setOnLongClickListener(view -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Mac address", tag.getId());
+            try {
+                assert clipboard != null;
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(TagSettings.this, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Timber.e(e, "Could not copy mac to clipboard");
+            }
+            return false;
+        });
+    }
+
+    private void setupTagImage() {
+        tagImage = findViewById(R.id.tag_image);
+        tagImage.setImageBitmap(Utils.getBackground(this, tag));
+
+        findViewById(R.id.tag_image_camera_button).setOnClickListener(view -> showImageSourceSheet());
+
+        findViewById(R.id.tag_image_select_button).setOnClickListener(view -> {
+            tag.setDefaultBackground(tag.getDefaultBackground() == 8 ? 0 : tag.getDefaultBackground() + 1);
+            tag.setUserBackground(null);
+            tagImage.setImageDrawable(Utils.getDefaultBackground(tag.getDefaultBackground(), getApplicationContext()));
+        });
+    }
+
+    private void calibrateHumidity() {
+        findViewById(R.id.calibrate_humidity).setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
+            final LayoutInflater factory = getLayoutInflater();
+            final View content = factory.inflate(R.layout.dialog_humidity_calibration, null);
+            FrameLayout container = new FrameLayout(getApplicationContext());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+            content.setLayoutParams(params);
+            ((TextView) content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) content.findViewById(R.id.calibration)).setText(Math.round(tag.getHumidity()) + "% -> 75%");
+            final HumidityCalibration calibration = HumidityCalibration.get(tag);
+            builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
+                    HumidityCalibration.calibrate(latestTag);
+                    if (calibration != null)
+                        latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
+                    latestTag = HumidityCalibration.apply(latestTag);
+                    RuuviTagRepository.update(latestTag);
+                    // so the ui will show calibrated humidity if the user presses the calibration button again
+                    tag.setHumidity(latestTag.getHumidity());
+                    Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
                 }
-                d.show();
-                input.requestFocus();
-            }
-        });
-
-        gatewayTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
-                builder.setTitle(getString(R.string.gateway_url));
-                final EditText input = new EditText(TagSettings.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setText(tag.getGatewayUrl());
-                FrameLayout container = new FrameLayout(getApplicationContext());
-                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                input.setLayoutParams(params);
-                container.addView(input);
-                builder.setView(container);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        tag.setGatewayUrl(input.getText().toString());
-                        gatewayTextView.setText(!tag.getGatewayUrl().isEmpty() ? tag.getGatewayUrl() : getString(R.string.no_gateway_url));
-                    }
+            });
+            if (calibration != null) {
+                builder.setNegativeButton("Clear calibration", (dialog, which) -> {
+                    HumidityCalibration.clear(tag);
+                    // so the ui will show the new uncalibrated value
+                    tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
+                    // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
+                    RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
+                    latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
+                    latestTag.update();
                 });
-                builder.setNegativeButton("Cancel", null);
-                Dialog d = builder.create();
-                try {
-                    d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                } catch (Exception e) {
-                    Timber.d("Could not open keyboard");
-                }
-                d.show();
-                input.requestFocus();
+                ((TextView) content.findViewById(R.id.timestamp)).setText("Calibrated: " + calibration.timestamp.toString());
             }
+            builder.setNeutralButton("Cancel", null);
+            container.addView(content);
+            builder.setView(container);
+            builder.create().show();
         });
+    }
 
-        findViewById(R.id.calibrate_humidity).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
-                final LayoutInflater factory = getLayoutInflater();
-                final View content = factory.inflate(R.layout.dialog_humidity_calibration, null);
-                FrameLayout container = new FrameLayout(getApplicationContext());
-                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                content.setLayoutParams(params);
-                ((TextView)content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView)content.findViewById(R.id.calibration)).setText(Math.round(tag.getHumidity()) +"% -> 75%");
-                final HumidityCalibration calibration = HumidityCalibration.get(tag);
-                builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
-                        HumidityCalibration.calibrate(latestTag);
-                        if (calibration != null) latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
-                        latestTag = HumidityCalibration.apply(latestTag);
-                        RuuviTagRepository.update(latestTag);
-                        // so the ui will show calibrated humidity if the user presses the calibration button again
-                        tag.setHumidity(latestTag.getHumidity());
-                        Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                if (calibration != null) {
-                    builder.setNegativeButton("Clear calibration", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            HumidityCalibration.clear(tag);
-                            // so the ui will show the new uncalibrated value
-                            tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
-                            // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
-                            RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
-                            latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
-                            latestTag.update();
-                        }
-                    });
-                    ((TextView)content.findViewById(R.id.timestamp)).setText("Calibrated: " +calibration.timestamp.toString());
-                }
-                builder.setNeutralButton("Cancel", null);
-                container.addView(content);
-                builder.setView(container);
-                builder.create().show();
-            }
-        });
-
-        findViewById(R.id.remove_tag).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delete();
-            }
-        });
-
+    private void setupAlarmItems() {
         alarmItems.add(new AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85));
         alarmItems.add(new AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100));
         alarmItems.add(new AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100));
-        alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105 ,0));
-        alarmItems.add(new AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0 ,0));
+        alarmItems.add(new AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0));
+        alarmItems.add(new AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0));
 
-        for (Alarm alarm: tagAlarms) {
+        for (Alarm alarm : tagAlarms) {
             AlarmItem item = alarmItems.get(alarm.type);
             item.high = alarm.high;
             item.low = alarm.low;
@@ -287,7 +285,7 @@ public class TagSettings extends AppCompatActivity {
         }
 
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout parentLayout = findViewById(R.id.alerts_container);
+        LinearLayout parentLayout = findViewById(R.id.alerts_container);
 
         for (int i = 0; i < alarmItems.size(); i++) {
             AlarmItem item = alarmItems.get(i);
@@ -297,13 +295,8 @@ public class TagSettings extends AppCompatActivity {
             checkBox.setTag(i);
             checkBox.setOnCheckedChangeListener(alarmCheckboxListener);
             item.createView();
+
             parentLayout.addView(item.view);
-            ConstraintSet set = new ConstraintSet();
-            set.clone(parentLayout);
-            set.connect(item.view.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
-            set.connect(item.view.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-            set.connect(item.view.getId(), ConstraintSet.TOP, (i == 0 ? ConstraintSet.PARENT_ID : alarmItems.get(i - 1).view.getId()), ConstraintSet.BOTTOM);
-            set.applyTo(parentLayout);
         }
     }
 
@@ -312,10 +305,10 @@ public class TagSettings extends AppCompatActivity {
         if (newTag != null) {
             if (newTag.getDataFormat() == 3 || newTag.getDataFormat() == 5) {
                 findViewById(R.id.raw_values).setVisibility(View.VISIBLE);
-                ((TextView)(findViewById(R.id.input_voltage))).setText(newTag.getVoltage() + " V");
-                ((TextView)(findViewById(R.id.input_x))).setText(newTag.getAccelX() + "");
-                ((TextView)(findViewById(R.id.input_y))).setText(newTag.getAccelY() + "");
-                ((TextView)(findViewById(R.id.input_z))).setText(newTag.getAccelZ() + "");
+                ((TextView) (findViewById(R.id.input_voltage))).setText(newTag.getVoltage() + " V");
+                ((TextView) (findViewById(R.id.input_x))).setText(newTag.getAccelX() + "");
+                ((TextView) (findViewById(R.id.input_y))).setText(newTag.getAccelY() + "");
+                ((TextView) (findViewById(R.id.input_z))).setText(newTag.getAccelZ() + "");
             } else {
                 findViewById(R.id.raw_values).setVisibility(View.GONE);
             }
@@ -345,15 +338,6 @@ public class TagSettings extends AppCompatActivity {
         );
         builder.show();
     }
-
-    CompoundButton.OnCheckedChangeListener alarmCheckboxListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            AlarmItem ai = alarmItems.get((int)buttonView.getTag());
-            ai.checked = isChecked;
-            ai.updateView();
-        }
-    };
 
     private class AlarmItem {
         public String name;
@@ -385,13 +369,10 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setMaxStartValue(this.high);
             seekBar.apply();
 
-            seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
-                @Override
-                public void valueChanged(Number minValue, Number maxValue) {
-                    low = minValue.intValue();
-                    high = maxValue.intValue();
-                    updateView();
-                }
+            seekBar.setOnRangeSeekbarChangeListener((minValue, maxValue) -> {
+                low = minValue.intValue();
+                high = maxValue.intValue();
+                updateView();
             });
 
             if (this.min == 0 && this.max == 0) {
@@ -416,12 +397,12 @@ public class TagSettings extends AppCompatActivity {
                     case (Alarm.TEMPERATURE):
                         if (tempUnit.equals("K")) {
                             this.subtitle = String.format(getString(R.string.alert_subtitle_on),
-                                    (int)Utils.celsiusToKelvin(this.low),
-                                    (int)Utils.celsiusToKelvin(this.high));
+                                    (int) Utils.celsiusToKelvin(this.low),
+                                    (int) Utils.celsiusToKelvin(this.high));
                         } else if (tempUnit.equals("F")) {
                             this.subtitle = String.format(getString(R.string.alert_subtitle_on),
-                                    (int)Utils.celciusToFahrenheit(this.low),
-                                    (int)Utils.celciusToFahrenheit(this.high));
+                                    (int) Utils.celciusToFahrenheit(this.low),
+                                    (int) Utils.celciusToFahrenheit(this.high));
                         } else {
                             this.subtitle = String.format(getString(R.string.alert_subtitle_on), this.low, this.high);
                         }
@@ -439,23 +420,23 @@ public class TagSettings extends AppCompatActivity {
             seekBar.setLeftThumbHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setBarHighlightColor(getResources().getColor(setSeekbarColor));
             seekBar.setEnabled(this.checked);
-            ((CheckBox)this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
-            ((TextView)this.view.findViewById(R.id.alert_title)).setText(this.name);
-            ((TextView)this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
+            ((CheckBox) this.view.findViewById(R.id.alert_checkbox)).setChecked(this.checked);
+            ((TextView) this.view.findViewById(R.id.alert_title)).setText(this.name);
+            ((TextView) this.view.findViewById(R.id.alert_subtitle)).setText(this.subtitle);
             if (type == Alarm.TEMPERATURE) {
                 if (tempUnit.equals("K")) {
-                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celsiusToKelvin(this.low) + "");
-                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celsiusToKelvin(this.high) + "");
+                    ((TextView) this.view.findViewById(R.id.alert_min_value)).setText((int) Utils.celsiusToKelvin(this.low) + "");
+                    ((TextView) this.view.findViewById(R.id.alert_max_value)).setText((int) Utils.celsiusToKelvin(this.high) + "");
                 } else if (tempUnit.equals("F")) {
-                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText((int)Utils.celciusToFahrenheit(this.low) + "");
-                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText((int)Utils.celciusToFahrenheit(this.high) + "");
+                    ((TextView) this.view.findViewById(R.id.alert_min_value)).setText((int) Utils.celciusToFahrenheit(this.low) + "");
+                    ((TextView) this.view.findViewById(R.id.alert_max_value)).setText((int) Utils.celciusToFahrenheit(this.high) + "");
                 } else {
-                    ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
-                    ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+                    ((TextView) this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                    ((TextView) this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
                 }
             } else {
-                ((TextView)this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
-                ((TextView)this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
+                ((TextView) this.view.findViewById(R.id.alert_min_value)).setText(this.low + "");
+                ((TextView) this.view.findViewById(R.id.alert_max_value)).setText(this.high + "");
             }
         }
     }
@@ -467,11 +448,12 @@ public class TagSettings extends AppCompatActivity {
 
 
     final Handler handler = new Handler();
+
     @Override
     protected void onResume() {
         super.onResume();
-        handler.post(new Runnable(){
-            public void run(){
+        handler.post(new Runnable() {
+            public void run() {
                 updateReadings();
                 handler.postDelayed(this, 1000);
             }
@@ -483,7 +465,7 @@ public class TagSettings extends AppCompatActivity {
         super.onPause();
         handler.removeCallbacksAndMessages(null);
         tag.update();
-        for (AlarmItem alarmItem: alarmItems) {
+        for (AlarmItem alarmItem : alarmItems) {
             if (alarmItem.checked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
                     alarmItem.alarm = new Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tag.getId());
@@ -536,19 +518,16 @@ public class TagSettings extends AppCompatActivity {
         };
 
         listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, menu));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        dispatchTakePictureIntent();
-                        break;
-                    case 1:
-                        getImageFromGallery();
-                        break;
-                }
-                sheetDialog.dismiss();
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            switch (position) {
+                case 0:
+                    dispatchTakePictureIntent();
+                    break;
+                case 1:
+                    getImageFromGallery();
+                    break;
             }
+            sheetDialog.dismiss();
         });
 
         sheetDialog.setContentView(listView);
@@ -612,6 +591,7 @@ public class TagSettings extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (file != null) {
                 int rotation = getCameraPhotoOrientation(file);
@@ -682,7 +662,7 @@ public class TagSettings extends AppCompatActivity {
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
-    public int getCameraPhotoOrientation(Uri file){
+    public int getCameraPhotoOrientation(Uri file) {
         int rotate = 0;
         try (InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(file)) {
             ExifInterface exif = new ExifInterface(inputStream);
@@ -714,10 +694,10 @@ public class TagSettings extends AppCompatActivity {
             Bitmap b = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
             b = rotate(b, rotation);
             Bitmap out;
-            if ((int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()) > targetWidth) {
-                out = Bitmap.createScaledBitmap(b,  (int)(((float)targetHeight / (float)b.getHeight()) * b.getWidth()), targetHeight, false);
+            if ((int) (((float) targetHeight / (float) b.getHeight()) * b.getWidth()) > targetWidth) {
+                out = Bitmap.createScaledBitmap(b, (int) (((float) targetHeight / (float) b.getHeight()) * b.getWidth()), targetHeight, false);
             } else {
-                out = Bitmap.createScaledBitmap(b, targetWidth, (int)(((float)targetWidth / (float)b.getWidth()) * b.getHeight()), false);
+                out = Bitmap.createScaledBitmap(b, targetWidth, (int) (((float) targetWidth / (float) b.getWidth()) * b.getHeight()), false);
             }
             int x = (out.getWidth() / 2) - (targetWidth / 2);
             if (x < 0) x = 0;

@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.ruuvi.station.database.RuuviTagRepository
@@ -39,7 +39,7 @@ class DefaultOnTagFoundListener(
         updateLocation()
         val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
         saveReading(tag)
-        TagSensorReading.removeOlderThan(24)
+        TagSensorReading.removeOlderThan(72)
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {

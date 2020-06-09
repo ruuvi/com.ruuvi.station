@@ -1,6 +1,6 @@
 package com.ruuvi.station.database.tables;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;

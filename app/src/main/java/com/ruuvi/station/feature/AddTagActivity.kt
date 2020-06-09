@@ -9,9 +9,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -47,11 +47,11 @@ class AddTagActivity : AppCompatActivity() {
         adapter = AddTagAdapter(this, tags)
         tag_listView.adapter = adapter
 
-        tag_listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+        tag_listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = tag_listView.getItemAtPosition(i) as RuuviTagEntity
             if (RuuviTagRepository.get(tag.id)?.favorite == true) {
                 Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
-                        .show()
+                    .show()
                 return@OnItemClickListener
             }
             tag.defaultBackground = getKindaRandomBackground()
@@ -79,7 +79,7 @@ class AddTagActivity : AppCompatActivity() {
                                 i--
                             }
                         }
-                    i++
+                        i++
                     }
                     if (tags.size > 0) {
                         Utils.sortTagsByRssi(tags)
@@ -102,7 +102,7 @@ class AddTagActivity : AppCompatActivity() {
         checkBluetooth()
     }
 
-    fun checkBluetooth(): Boolean {
+    private fun checkBluetooth(): Boolean {
         if (starter.isBluetoothEnabled()) {
             return true
         }
