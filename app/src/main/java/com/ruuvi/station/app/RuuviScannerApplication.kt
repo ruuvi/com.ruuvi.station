@@ -51,7 +51,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-        } else {
+        } else if (BuildConfig.FILE_LOGS_ENABLED) {
             Timber.plant(ReleaseTree());
         }
 

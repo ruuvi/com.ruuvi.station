@@ -8,7 +8,6 @@ import com.koushikdutta.ion.Ion
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.gateway.data.ScanEvent
-import com.ruuvi.station.gateway.data.ScanEventSingle
 import com.ruuvi.station.gateway.data.ScanLocation
 import timber.log.Timber
 
@@ -28,21 +27,6 @@ class GatewaySender(private val context: Context, private val preferences: Prefe
         }
 
         Ion.getDefault(context).configure().gson = gson
-
-        if (!tag.gatewayUrl.isNullOrEmpty()) {
-            val single = ScanEventSingle(context)
-            single.location = scanLocation
-            single.tag = tag
-            Ion.with(context)
-                .load(tag.gatewayUrl)
-                .setJsonPojoBody(single)
-                .asJsonObject()
-                .setCallback { e, _ ->
-                    if (e != null) {
-                        Timber.e(e, "Sending failed [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
-                    }
-                }
-        }
 
         val backendUrl = preferences.gatewayUrl
         if (backendUrl.isNotEmpty()) {

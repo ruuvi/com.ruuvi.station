@@ -11,8 +11,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 10134
-        versionName "1.0.0.7.14"
+        versionCode 10135
+        versionName "1.0.0.7.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -41,6 +41,17 @@ android {
 
     dexOptions {
         preDexLibraries = false
+    }
+    flavorDimensions 'fileLogs'
+    productFlavors {
+        withFileLogs {
+            dimension = 'fileLogs'
+            buildConfigField 'boolean', 'FILE_LOGS_ENABLED', 'true'
+        }
+        withoutFileLogs {
+            dimension = 'fileLogs'
+            buildConfigField 'boolean', 'FILE_LOGS_ENABLED', 'false'
+        }
     }
 }
 

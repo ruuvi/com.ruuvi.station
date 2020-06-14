@@ -38,6 +38,7 @@ class GraphView {
     private var isZoomed = false
 
     fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
+        Timber.d("drawChart pointsCount = ${inputReadings.size}")
         val tempChart: LineChart = view.findViewById(R.id.tempChart)
         tempChart.isVisible = true
         val humidChart: LineChart = view.findViewById(R.id.humidChart)
@@ -89,27 +90,12 @@ class GraphView {
                         pressure = it.pressure.toFloat() / 100.0f
                     )
                 }
-                val viewPortCount = entries.count { it.timestamp in viewFrom..viewTo }
 
-                if (viewPortCount > 150) {
-                    val step = (viewTo - viewFrom) / 150.0f
-                    var current = 0f
-                    entries.forEach {
-                        if (it.timestamp >= current) {
-                            tempData.add(Entry(it.timestamp, it.temperature))
-                            humidData.add(Entry(it.timestamp, it.humidity))
-                            pressureData.add(Entry(it.timestamp, it.pressure))
-                            current = it.timestamp + step
-                        }
-                    }
-                } else {
-                    entries.forEach {
-                        tempData.add(Entry(it.timestamp, it.temperature))
-                        humidData.add(Entry(it.timestamp, it.humidity))
-                        pressureData.add(Entry(it.timestamp, it.pressure))
-                    }
+                entries.forEach {
+                    tempData.add(Entry(it.timestamp, it.temperature))
+                    humidData.add(Entry(it.timestamp, it.humidity))
+                    pressureData.add(Entry(it.timestamp, it.pressure))
                 }
-                Timber.d("tag ${tagReadings[0].ruuviTagId} readings = ${tagReadings.size} viewCount = $viewPortCount filtered = ${tempData.size}")
             } else {
                 val timestamp = to.toFloat()
                 tempData.add(Entry(timestamp, 0f))
