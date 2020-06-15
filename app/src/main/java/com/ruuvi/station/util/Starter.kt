@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import timber.log.Timber
 import java.util.*
@@ -47,11 +48,13 @@ class Starter(val that: AppCompatActivity) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
 
-        val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (BuildConfig.FILE_LOGS_ENABLED) {
+            val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
 
         val permissionFineLocation = ContextCompat.checkSelfPermission(that,

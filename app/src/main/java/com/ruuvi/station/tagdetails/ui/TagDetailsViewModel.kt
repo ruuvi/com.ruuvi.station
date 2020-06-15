@@ -1,30 +1,37 @@
 package com.ruuvi.station.tagdetails.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.alarm.AlarmChecker
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
+@ExperimentalCoroutinesApi
 class TagDetailsViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
     val preferences: Preferences
 ) : ViewModel() {
 
-    private var tags = MutableLiveData<List<RuuviTagEntity>>()
-    private var selectedTag = MutableLiveData<RuuviTagEntity>()
-    private var showGraph = MutableLiveData<Boolean>()
-    private var alarmStatus = MutableLiveData<Int>()
-    private val uiScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var timer = Timer("timer", true)
+
+    private val isShowGraph = MutableStateFlow<Boolean>(false)
+    val isShowGraphFlow: StateFlow<Boolean> = isShowGraph
+
+    private val selectedTag = MutableStateFlow<RuuviTagEntity?>(null)
+    val selectedTagFlow: StateFlow<RuuviTagEntity?> = selectedTag
+
+    private val tags = MutableStateFlow<List<RuuviTagEntity>?>(null)
+    val tagsFlow: StateFlow<List<RuuviTagEntity>?> = tags
+
+    private val alarmStatus = MutableStateFlow<Int>(-1)
+    val alarmStatusFlow: StateFlow<Int> = alarmStatus
 
     var dashboardEnabled = preferences.dashboardEnabled
     var tag: RuuviTagEntity? = null
@@ -39,29 +46,24 @@ class TagDetailsViewModel(
         }
     }
 
-    fun observeTags(): LiveData<List<RuuviTagEntity>> = tags
-
-    fun observeSelectedTag(): LiveData<RuuviTagEntity> = selectedTag
-
-    fun observeAlarmStatus(): LiveData<Int> = alarmStatus
-
-    fun observeShowGraph(): LiveData<Boolean> = showGraph
-
     fun pageSelected(pageIndex: Int) {
-        selectedTag.value = tags.value?.get(pageIndex)
-        ioScope.launch {
+        viewModelScope.launch {
+            tags.value?.let {
+                selectedTag.value = it[pageIndex]
+            }
             checkForAlarm()
         }
     }
 
-    fun switchGraphVisibility() {
-        showGraph.value = !(showGraph.value ?: false)
+    fun switchShowGraphChannel() {
+        isShowGraph.value = !isShowGraph.value
     }
+
 
     fun refreshTags() {
         ioScope.launch {
             val list = tagDetailsInteractor.getAllTags()
-            uiScope.launch {
+            withContext(Dispatchers.Main) {
                 tags.value = list
             }
         }
@@ -72,15 +74,13 @@ class TagDetailsViewModel(
             selectedTag.value?.id?.let { tagId ->
                 val tagEntry = tagDetailsInteractor.getTag(tagId)
                 tagEntry?.let {
-                    uiScope.launch {
+                    withContext(Dispatchers.Main) {
                         alarmStatus.value = AlarmChecker.getStatus(it)
                     }
                 }
             }
         }
     }
-
-    fun getCurrentShowGraph() = showGraph.value ?: false
 
     override fun onCleared() {
         timer.cancel()

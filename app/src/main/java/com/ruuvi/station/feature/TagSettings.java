@@ -117,7 +117,6 @@ public class TagSettings extends AppCompatActivity {
         tempUnit = RuuviTagRepository.getTemperatureUnit(this);
 
         setupTagName();
-        setupGatewayUrl();
         setupInputMac();
         setupTagImage();
         calibrateHumidity();
@@ -157,39 +156,6 @@ public class TagSettings extends AppCompatActivity {
                 Timber.e(e, "Could not open keyboard");
             }
             dialog.show();
-            input.requestFocus();
-        });
-    }
-
-    private void setupGatewayUrl() {
-        final TextView gatewayTextView = findViewById(R.id.input_gatewayUrl);
-        if (tag.getGatewayUrl() != null && !tag.getGatewayUrl().isEmpty()) gatewayTextView.setText(tag.getGatewayUrl());
-
-        gatewayTextView.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(TagSettings.this, R.style.AppTheme));
-            builder.setTitle(getString(R.string.gateway_url));
-            final EditText input = new EditText(TagSettings.this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            input.setText(tag.getGatewayUrl());
-            FrameLayout container = new FrameLayout(getApplicationContext());
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-            params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-            input.setLayoutParams(params);
-            container.addView(input);
-            builder.setView(container);
-            builder.setPositiveButton("Ok", (dialog, which) -> {
-                tag.setGatewayUrl(input.getText().toString());
-                gatewayTextView.setText(!tag.getGatewayUrl().isEmpty() ? tag.getGatewayUrl() : getString(R.string.no_gateway_url));
-            });
-            builder.setNegativeButton("Cancel", null);
-            Dialog d = builder.create();
-            try {
-                Objects.requireNonNull(d.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            } catch (Exception e) {
-                Timber.d("Could not open keyboard");
-            }
-            d.show();
             input.requestFocus();
         });
     }

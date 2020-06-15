@@ -100,13 +100,13 @@ public class TagSensorReading extends BaseModel {
 
         // seems like setSelectionArgs not working for StringQuery so we have to use String.Format instead
         @SuppressLint("DefaultLocale")
-        String sqlString = String.format("Select * from TagSensorReading "+
-                "where RuuviTagId = '%s' and createdAt > %d group by createdAt / %d",
+        String sqlString = String.format("Select tr.* from "+
+                        "(select min(id) as id from TagSensorReading where RuuviTagId = '%s' and createdAt > %d group by createdAt / %d ) gr "+
+                        "join TagSensorReading tr on gr.id = tr.id",
                 id, fromDate.getTimeInMillis(), pruningInterval);
 
         StringQuery<TagSensorReading> query = new StringQuery<>(TagSensorReading.class, sqlString);
-        List<TagSensorReading> result2 =  query.queryList();
-        return result2;
+        return query.queryList();
     }
 
     public static List<TagSensorReading> getLatestForTag(String id, int limit) {

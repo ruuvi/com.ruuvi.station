@@ -1,15 +1,13 @@
 package com.ruuvi.station.tagdetails.ui
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.sharedViewModel
 import com.flexsentlabs.extensions.viewModel
@@ -18,14 +16,20 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tagdetails.di.TagViewModelArgs
 import com.ruuvi.station.util.Utils
-import kotlinx.android.synthetic.main.view_tag_detail.*
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.view_tag_detail.tag_humidity
+import kotlinx.android.synthetic.main.view_tag_detail.tag_pressure
+import kotlinx.android.synthetic.main.view_tag_detail.tag_signal
+import kotlinx.android.synthetic.main.view_tag_detail.tag_temp
+import kotlinx.android.synthetic.main.view_tag_detail.tag_temp_unit
+import kotlinx.android.synthetic.main.view_tag_detail.tag_updated
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import timber.log.Timber
 
+@ExperimentalCoroutinesApi
 class TagFragment : Fragment(), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
@@ -47,36 +51,23 @@ class TagFragment : Fragment(), KodeinAware {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.view_tag_detail, container, false)
-        val showGraph = activityViewModel.getCurrentShowGraph()
-        setupViewVisibility(view, showGraph)
-        return view
+        return inflater.inflate(R.layout.view_tag_detail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         observeShowGraph()
         observeTagEntry()
         observeTagReadings()
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.stopShowGraph()
-    }
-    override fun onResume() {
-        super.onResume()
-        if (activityViewModel.getCurrentShowGraph()) {
-            viewModel.startShowGraph()
-        } else {
-            viewModel.stopShowGraph()
-        }
-    }
-
     private fun observeTagEntry() {
         lifecycleScope.launch {
-            viewModel.tagEntry.consumeEach {
-                updateTagData(it)
+            viewModel.tagEntryFlow.collect {
+                it?.let {
+                    updateTagData(it)
+                }
             }
         }
     }
@@ -100,31 +91,30 @@ class TagFragment : Fragment(), KodeinAware {
     }
 
     private fun observeShowGraph() {
-        activityViewModel.observeShowGraph().observe(viewLifecycleOwner, Observer { showGraph ->
-            view?.let {
-                setupViewVisibility(it, showGraph)
-                if (showGraph == true && lifecycle.currentState == Lifecycle.State.RESUMED) {
-                    viewModel.startShowGraph()
-                } else {
-                    viewModel.stopShowGraph()
+        lifecycleScope.launchWhenResumed {
+            activityViewModel.isShowGraphFlow.collect { isShowGraph ->
+                view?.let {
+                    setupViewVisibility(it, isShowGraph)
+                    viewModel.isShowGraph(isShowGraph)
                 }
             }
-        })
+        }
     }
 
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
         val graph = view.findViewById<View>(R.id.tag_graphs)
         val container = view.findViewById<View>(R.id.tag_container)
-
         graph.isInvisible = !showGraph
         container.isInvisible = showGraph
     }
 
     private fun observeTagReadings() {
         lifecycleScope.launch {
-            viewModel.tagReadings.consumeEach { readings ->
-                view?.let { view ->
-                    graphView.drawChart(readings, view, requireContext())
+            viewModel.tagReadingsFlow.collect { readings ->
+                readings?.let {
+                    view?.let { view ->
+                        graphView.drawChart(readings, view, requireContext())
+                    }
                 }
             }
         }

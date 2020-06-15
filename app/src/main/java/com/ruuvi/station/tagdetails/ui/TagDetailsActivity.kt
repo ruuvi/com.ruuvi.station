@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
-import androidx.lifecycle.Observer
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -29,6 +28,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.lifecycleScope
+import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -41,27 +42,28 @@ import com.ruuvi.station.util.Starter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_tag_details.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 import java.util.*
 
+@ExperimentalCoroutinesApi
 class TagDetailsActivity : AppCompatActivity(), KodeinAware {
-
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: TagDetailsViewModel by viewModel()
 
-    lateinit var adapter: TagsFragmentPagerAdapter
+    private val adapter: TagsFragmentPagerAdapter by lazy {
+        TagsFragmentPagerAdapter(supportFragmentManager)
+    }
 
-    var isEmptyList = true
-    var alarmStatus: Int? = null
+    private var isEmptyList = true
+    private var alarmStatus: Int? = null
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    var backgroundFadeStarted: Long = 0
-    lateinit var starter: Starter
+    private lateinit var starter: Starter
     private var openAddView = false
     private var desiredTag: String? = null
 
@@ -89,7 +91,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        noTags_textView.setOnClickListener {
+        noTags_textView.setDebouncedOnClickListener {
             startActivity(Intent(this, AddTagActivity::class.java))
         }
 
@@ -109,7 +111,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             setupDrawer()
         }
 
-        adapter = TagsFragmentPagerAdapter(supportFragmentManager)
         tag_pager.adapter = adapter
         tag_pager.offscreenPageLimit = 1
         tag_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -124,84 +125,108 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupViewModel() {
-        viewModel.observeTags().observe(this, Observer { tags ->
-            val previousTagsSize = adapter.count
-            var currentSize = 0
-            isEmptyList = tags.isNullOrEmpty()
-            tags?.let {
-                adapter.setTags(tags)
+        observeTags()
 
-                tags.forEach {
-                    it.id?.let { tagId ->
-                        Utils.getBackground(applicationContext, it).let { bitmap ->
-                            backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
+        observeSelectedTag()
+
+        observeAlarmStatus()
+
+        listenToShowGraph()
+    }
+
+    private fun observeTags() {
+        lifecycleScope.launch {
+            viewModel.tagsFlow.collect { tags ->
+                val previousTagsSize = adapter.count
+                isEmptyList = tags.isNullOrEmpty()
+                tags?.let {
+                    adapter.setTags(tags)
+
+                    tags.forEach { tag ->
+                        tag.id?.let { tagId ->
+                            Utils.getBackground(applicationContext, tag).let { bitmap ->
+                                backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
+                            }
+                        }
+                    }
+
+                    val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
+                    setupVisibility(isEmptyList)
+
+                    if (tags.isNotEmpty()) {
+                        if (!desiredTag.isNullOrEmpty()) {
+                            val index = tags.indexOfFirst { t -> t.id == desiredTag }
+                            desiredTag = null
+                            intent.putExtra("id", null as String?)
+                            index.let {
+                                tag_pager.currentItem = it
+                            }
+                        } else {
+                            if (isSizeChanged) {
+                                tag_pager.currentItem = tags.size - 1
+                            } else {
+                                viewModel.pageSelected(tag_pager.currentItem)
+                            }
                         }
                     }
                 }
-                currentSize = tags.size
             }
+        }
+    }
 
-            val sizeChanged = previousTagsSize > 0 && tags?.size != previousTagsSize
-            setupVisibility(isEmptyList)
+    private fun observeSelectedTag() {
+        lifecycleScope.launchWhenResumed {
+            viewModel.selectedTagFlow.collect { selectedTag ->
+                val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
+                if (previousBitmapDrawable != null) {
+                    tag_background_view.setImageDrawable(previousBitmapDrawable)
+                }
 
-            if (tags?.size ?: 0 > 0) {
-                if (!desiredTag.isNullOrEmpty()) {
-                    val index = tags?.indexOfFirst { t -> t.id == desiredTag }
-                    index?.let {
-                        tag_pager.currentItem = index
+                viewModel.tag = selectedTag
+                backgrounds[selectedTag?.id].let { bitmapDrawable ->
+                    if (bitmapDrawable != null) {
+                        imageSwitcher.setImageDrawable(bitmapDrawable)
                     }
-                    desiredTag = null
+                }
+            }
+        }
+    }
+
+    private fun listenToShowGraph() {
+        lifecycleScope.launch {
+            viewModel.isShowGraphFlow.collect { isShowGraph ->
+                if (isShowGraph) {
+                    tag_pager.isSwipeEnabled = false
+                    pager_title_strip.isTabSwitchEnabled = false
+                    if (pager_title_strip.textSpacing != 1000) {
+                        val animator = ValueAnimator.ofInt(0, 1000)
+                        animator.addUpdateListener {
+                            pager_title_strip.textSpacing = animator.animatedValue as Int
+                        }
+                        animator.start()
+                    }
                 } else {
-                    if (sizeChanged) {
-                        tag_pager.currentItem = currentSize - 1
-                    } else {
-                        viewModel.pageSelected(tag_pager.currentItem)
+                    tag_pager.isSwipeEnabled = true
+                    pager_title_strip.isTabSwitchEnabled = true
+                    if (pager_title_strip.textSpacing != 0) {
+                        val animator = ValueAnimator.ofInt(1000, 0)
+                        animator.addUpdateListener {
+                            pager_title_strip.textSpacing = animator.animatedValue as Int
+                        }
+                        animator.start()
                     }
                 }
             }
-        })
+        }
+    }
 
-        viewModel.observeSelectedTag().observe(this, Observer { selectedTag ->
-            val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
-            if (previousBitmapDrawable != null) tag_background_view.setImageDrawable(previousBitmapDrawable)
-
-            viewModel.tag = selectedTag
-            backgrounds[selectedTag?.id].let { bitmapDrawable ->
-                if (bitmapDrawable != null) {
-                    imageSwitcher.setImageDrawable(bitmapDrawable)
-                    backgroundFadeStarted = Date().time
-                }
+    private fun observeAlarmStatus() {
+        lifecycleScope.launch {
+            viewModel.alarmStatusFlow.collect {
+                alarmStatus = it
+                invalidateOptionsMenu()
             }
-        })
-
-        viewModel.observeAlarmStatus().observe(this, Observer { alarmStatus ->
-            this.alarmStatus = alarmStatus
-            invalidateOptionsMenu()
-        })
-
-        viewModel.observeShowGraph().observe(this, Observer { showGraph ->
-            if (showGraph) {
-                tag_pager.isSwipeEnabled = false
-                pager_title_strip.isTabSwitchEnabled = false
-                if (pager_title_strip.textSpacing != 1000) {
-                    val animator = ValueAnimator.ofInt(0, 1000)
-                    animator.addUpdateListener {
-                        pager_title_strip.textSpacing = animator.animatedValue as Int
-                    }
-                    animator.start()
-                }
-            } else {
-                tag_pager.isSwipeEnabled = true
-                pager_title_strip.isTabSwitchEnabled = true
-                if (pager_title_strip.textSpacing != 0) {
-                    val animator = ValueAnimator.ofInt(1000, 0)
-                    animator.addUpdateListener {
-                        pager_title_strip.textSpacing = animator.animatedValue as Int
-                    }
-                    animator.start()
-                }
-            }
-        })
+        }
     }
 
     private fun setupDrawer() {
@@ -306,7 +331,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         when (item?.itemId) {
             R.id.action_graph -> {
                 invalidateOptionsMenu()
-                viewModel.switchGraphVisibility()
+                viewModel.switchShowGraphChannel()
                 val bgScanEnabled = viewModel.preferences.backgroundScanMode
                 if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                     if (viewModel.preferences.isFirstGraphVisit) {
@@ -341,9 +366,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onResume() {
         super.onResume()
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.refreshTags()
-        }
+        viewModel.refreshTags()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -380,11 +403,14 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private fun setupVisibility(emptyList: Boolean) {
         if (emptyList) {
             pager_title_strip.isInvisible = true
+            tag_pager.isInvisible = true
             noTags_textView.isVisible = true
         } else {
             pager_title_strip.isVisible = true
+            tag_pager.isVisible = true
             noTags_textView.isInvisible = true
         }
+        invalidateOptionsMenu()
     }
 
     class TagsFragmentPagerAdapter(manager: FragmentManager)

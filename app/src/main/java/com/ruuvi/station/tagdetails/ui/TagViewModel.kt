@@ -7,19 +7,24 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
+@ExperimentalCoroutinesApi
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
-    tagId: String
+    val tagId: String
 ) : ViewModel() {
-    val tagEntry = Channel<RuuviTagEntity>()
+    private val tagEntry = MutableStateFlow<RuuviTagEntity?>(null)
+    val tagEntryFlow: StateFlow<RuuviTagEntity?> = tagEntry
 
-    val tagReadings = Channel<List<TagSensorReading>>()
+    private val tagReadings = MutableStateFlow<List<TagSensorReading>?>(null)
+    val tagReadingsFlow: StateFlow<List<TagSensorReading>?> = tagReadings
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -32,12 +37,8 @@ class TagViewModel(
         getTagInfo(tagId)
     }
 
-    fun startShowGraph() {
-        showGraph = true
-    }
-
-    fun stopShowGraph() {
-        showGraph = false
+    fun isShowGraph(isShow: Boolean) {
+        showGraph = isShow
     }
 
     private fun getTagInfo(tagId: String) {
@@ -56,7 +57,7 @@ class TagViewModel(
             tagDetailsInteractor
                 .getTagReadings(tagId)
                 ?.let {
-                    tagReadings.send(it)
+                    tagReadings.value = it
                 }
         }
     }
@@ -67,7 +68,7 @@ class TagViewModel(
             tagDetailsInteractor
                 .getTag(tagId)
                 ?.let {
-                    tagEntry.send(it)
+                    tagEntry.value = it
                 }
         }
     }
@@ -87,7 +88,5 @@ class TagViewModel(
 
     private fun cancelTimerAndChannels() {
         timer.cancel()
-        tagReadings.cancel()
-        tagEntry.cancel()
     }
 }
