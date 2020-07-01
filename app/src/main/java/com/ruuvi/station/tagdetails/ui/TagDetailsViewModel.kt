@@ -37,8 +37,6 @@ class TagDetailsViewModel(
     var tag: RuuviTagEntity? = null
 
     init {
-        refreshTags()
-
         ioScope.launch {
             timer.scheduleAtFixedRate(0, 1000) {
                 checkForAlarm()

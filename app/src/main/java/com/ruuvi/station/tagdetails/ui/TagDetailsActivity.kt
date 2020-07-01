@@ -47,7 +47,6 @@ import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import timber.log.Timber
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -135,7 +134,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             viewModel.tagsFlow.collect { tags ->
                 val previousTagsSize = adapter.count
                 isEmptyList = tags.isNullOrEmpty()
@@ -159,7 +158,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             desiredTag = null
                             intent.putExtra("id", null as String?)
                             index.let {
-                                tag_pager.currentItem = it
+                                if (tag_pager.currentItem == it) viewModel.pageSelected(tag_pager.currentItem)
+                                else tag_pager.currentItem = it
                             }
                         } else {
                             if (isSizeChanged) {
@@ -170,6 +170,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeAlarmStatus() {
+        lifecycleScope.launchWhenResumed {
+            viewModel.alarmStatusFlow.collect {
+                alarmStatus = it
+                invalidateOptionsMenu()
             }
         }
     }
@@ -216,15 +225,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                         animator.start()
                     }
                 }
-            }
-        }
-    }
-
-    private fun observeAlarmStatus() {
-        lifecycleScope.launch {
-            viewModel.alarmStatusFlow.collect {
-                alarmStatus = it
-                invalidateOptionsMenu()
             }
         }
     }
@@ -431,7 +431,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
 
         override fun getItemPosition(`object`: Any): Int {
-            return PagerAdapter.POSITION_UNCHANGED
+            return PagerAdapter.POSITION_NONE
         }
 
         fun setTags(tags: List<RuuviTagEntity>) {

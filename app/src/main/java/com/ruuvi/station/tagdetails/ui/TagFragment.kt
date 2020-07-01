@@ -62,11 +62,34 @@ class TagFragment : Fragment(), KodeinAware {
         observeTagReadings()
     }
 
+    private fun observeShowGraph() {
+        lifecycleScope.launchWhenResumed {
+            activityViewModel.isShowGraphFlow.collect { isShowGraph ->
+                view?.let {
+                    setupViewVisibility(it, isShowGraph)
+                    viewModel.isShowGraph(isShowGraph)
+                }
+            }
+        }
+    }
+
     private fun observeTagEntry() {
         lifecycleScope.launch {
             viewModel.tagEntryFlow.collect {
                 it?.let {
                     updateTagData(it)
+                }
+            }
+        }
+    }
+
+    private fun observeTagReadings() {
+        lifecycleScope.launchWhenResumed {
+            viewModel.tagReadingsFlow.collect { readings ->
+                readings?.let {
+                    view?.let { view ->
+                        graphView.drawChart(readings, view, requireContext())
+                    }
                 }
             }
         }
@@ -90,34 +113,11 @@ class TagFragment : Fragment(), KodeinAware {
         tag_temp_unit.text = unitSpan
     }
 
-    private fun observeShowGraph() {
-        lifecycleScope.launchWhenResumed {
-            activityViewModel.isShowGraphFlow.collect { isShowGraph ->
-                view?.let {
-                    setupViewVisibility(it, isShowGraph)
-                    viewModel.isShowGraph(isShowGraph)
-                }
-            }
-        }
-    }
-
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
         val graph = view.findViewById<View>(R.id.tag_graphs)
         val container = view.findViewById<View>(R.id.tag_container)
         graph.isInvisible = !showGraph
         container.isInvisible = showGraph
-    }
-
-    private fun observeTagReadings() {
-        lifecycleScope.launch {
-            viewModel.tagReadingsFlow.collect { readings ->
-                readings?.let {
-                    view?.let { view ->
-                        graphView.drawChart(readings, view, requireContext())
-                    }
-                }
-            }
-        }
     }
 
     companion object {

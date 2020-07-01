@@ -47,7 +47,7 @@ class GraphView {
         pressureChart.isVisible = true
         val temperatureUnit: String = RuuviTagRepository.getTemperatureUnit(context)
 
-        if (storedReadings == null || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
+        if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
             to = calendar.time.time;
             calendar.add(Calendar.HOUR, -24)
