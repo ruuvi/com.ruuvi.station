@@ -97,11 +97,19 @@ class Preferences(val context: Context) {
             sharedPreferences.edit().putInt("pref_graph_view_period", period).apply()
         }
 
+    var graphShowAllPoint: Boolean
+        get() = sharedPreferences.getBoolean("pref_graph_show_all_points", DEFAULT_GRAPH_SHOW_ALL_POINTS)
+        set(period) {
+            sharedPreferences.edit().putBoolean("pref_graph_show_all_points", period).apply()
+        }
+
     companion object {
         const val DEFAULT_TEMPERATURE_UNIT = "C"
         const val DEFAULT_GATEWAY_URL = ""
         const val DEFAULT_DEVICE_ID = ""
         const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         const val DEFAULT_GRAPH_VIEW_PERIOD = 24
+        const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
+
     }
 }

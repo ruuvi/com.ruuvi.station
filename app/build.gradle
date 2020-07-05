@@ -5,14 +5,14 @@ apply plugin: 'kotlin-android-extensions'
 android {
 
     compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 10137
-        versionName "1.0.0.7.17"
+        versionCode 10182
+        versionName "1.0.0.8.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -65,9 +65,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation project(':libraryName')
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
-//    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:-SNAPSHOT'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:28b2d9db68'
+//    implementation project(':default_bluetooth_library')
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

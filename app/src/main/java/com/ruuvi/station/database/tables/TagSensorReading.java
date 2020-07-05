@@ -80,9 +80,13 @@ public class TagSensorReading extends BaseModel {
     }
 
     public static List<TagSensorReading> getForTag(String id) {
+        return getForTag(id, 24);
+    }
+
+    public static List<TagSensorReading> getForTag(String id, int period) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.HOUR, -24);
+        cal.add(Calendar.HOUR, -period);
         return SQLite.select()
                 .from(TagSensorReading.class)
                 .indexedBy(TagSensorReading_Table.index_TagId)
@@ -100,8 +104,8 @@ public class TagSensorReading extends BaseModel {
 
         // seems like setSelectionArgs not working for StringQuery so we have to use String.Format instead
         @SuppressLint("DefaultLocale")
-        String sqlString = String.format("Select tr.* from "+
-                        "(select min(id) as id from TagSensorReading where RuuviTagId = '%s' and createdAt > %d group by createdAt / %d ) gr "+
+        String sqlString = String.format("Select tr.* from " +
+                        "(select min(id) as id from TagSensorReading where RuuviTagId = '%s' and createdAt > %d group by createdAt / %d ) gr " +
                         "join TagSensorReading tr on gr.id = tr.id",
                 id, fromDate.getTimeInMillis(), pruningInterval);
 

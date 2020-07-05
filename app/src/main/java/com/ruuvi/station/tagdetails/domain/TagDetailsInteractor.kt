@@ -12,11 +12,17 @@ class TagDetailsInteractor(val preferences: Preferences) {
 
     fun getTag(tagId: String): RuuviTagEntity? = RuuviTagRepository.get(tagId)
 
-    fun getTagReadings(tagId: String): List<TagSensorReading>? = TagSensorReading.getForTagPruned(
-            tagId,
-            preferences.graphPointInterval,
-            preferences.graphViewPeriod
-    )
+    fun getTagReadings(tagId: String): List<TagSensorReading>? {
+        return if (preferences.graphShowAllPoint) {
+            TagSensorReading.getForTag(tagId, preferences.graphViewPeriod)
+        } else {
+            TagSensorReading.getForTagPruned(
+                    tagId,
+                    preferences.graphPointInterval,
+                    preferences.graphViewPeriod
+            )
+        }
+    }
 
     fun getTemperatureString(context: Context, tag: RuuviTagEntity): String =
         RuuviTagRepository.getTemperatureString(context, tag)

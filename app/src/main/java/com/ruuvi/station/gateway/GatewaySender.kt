@@ -15,21 +15,21 @@ class GatewaySender(private val context: Context, private val preferences: Prefe
     private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()
 
     fun sendData(tag: RuuviTagEntity, location: Location?) {
-        Timber.d("sendData for [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
-
-        var scanLocation: ScanLocation? = null
-        location?.let {
-            scanLocation = ScanLocation(
-                it.latitude,
-                it.longitude,
-                it.accuracy
-            )
-        }
-
-        Ion.getDefault(context).configure().gson = gson
-
         val backendUrl = preferences.gatewayUrl
         if (backendUrl.isNotEmpty()) {
+            Timber.d("sendData for [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
+
+            var scanLocation: ScanLocation? = null
+            location?.let {
+                scanLocation = ScanLocation(
+                        it.latitude,
+                        it.longitude,
+                        it.accuracy
+                )
+            }
+
+            Ion.getDefault(context).configure().gson = gson
+
             val eventBatch = ScanEvent(context)
             eventBatch.location = scanLocation
             eventBatch.tags.add(tag)

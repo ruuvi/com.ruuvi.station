@@ -46,6 +46,7 @@ class Starter(val that: AppCompatActivity) {
 
         if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            Timber.d("ACCESS_COARSE_LOCATION needed")
         }
 
         if (BuildConfig.FILE_LOGS_ENABLED) {
@@ -54,6 +55,7 @@ class Starter(val that: AppCompatActivity) {
 
             if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Timber.d("WRITE_EXTERNAL_STORAGE needed")
             }
         }
 
@@ -62,15 +64,7 @@ class Starter(val that: AppCompatActivity) {
 
         if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val permissionBackgroundLocation = ContextCompat.checkSelfPermission(that,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-
-            if (permissionBackgroundLocation != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            }
+            Timber.d("ACCESS_FINE_LOCATION needed")
         }
 
         return listPermissionsNeeded
@@ -87,14 +81,19 @@ class Starter(val that: AppCompatActivity) {
     }
 
     fun requestPermissions() {
-        if (getNeededPermissions().isNotEmpty()) {
-            val alertDialog = AlertDialog.Builder(that).create()
-            alertDialog.setTitle(that.getString(R.string.permission_dialog_title))
-            alertDialog.setMessage(that.getString(R.string.permission_dialog_request_message))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener { showPermissionDialog(that) }
-            alertDialog.show()
+        val neededPermissions = getNeededPermissions()
+        if (neededPermissions.isNotEmpty()) {
+            if (neededPermissions.size == 1 && neededPermissions.first() == Manifest.permission.ACCESS_FINE_LOCATION) {
+                showPermissionDialog(that)
+            } else {
+                val alertDialog = AlertDialog.Builder(that).create()
+                alertDialog.setTitle(that.getString(R.string.permission_dialog_title))
+                alertDialog.setMessage(that.getString(R.string.permission_dialog_request_message))
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
+                ) { dialog, _ -> dialog.dismiss() }
+                alertDialog.setOnDismissListener { showPermissionDialog(that) }
+                alertDialog.show()
+            }
         } else {
             checkBluetooth()
         }
