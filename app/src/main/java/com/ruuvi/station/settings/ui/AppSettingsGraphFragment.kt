@@ -30,6 +30,7 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
         setupViews()
         observeInterval()
         observePeriod()
+        observeShowAllPoints()
     }
 
     private fun setupViews() {
@@ -45,6 +46,10 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
         viewPeriodNumberPicker.setOnValueChangedListener { _, _, new ->
             viewModel.setViewPeriod(new)
         }
+
+        graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setShowAllPoints(isChecked)
+        }
     }
 
     private fun observeInterval() {
@@ -59,6 +64,15 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
         lifecycleScope.launch {
             viewModel.observeViewPeriod().collect {
                 viewPeriodNumberPicker.value = it
+            }
+        }
+    }
+
+    private fun observeShowAllPoints() {
+        lifecycleScope.launch {
+            viewModel.showAllPointsFlow.collect{
+                graphAllPointsSwitch.isChecked = it
+                graphIntervalNumberPicker.isEnabled = !graphAllPointsSwitch.isChecked
             }
         }
     }

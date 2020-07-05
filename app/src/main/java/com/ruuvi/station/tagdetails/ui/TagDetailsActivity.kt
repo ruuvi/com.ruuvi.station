@@ -69,12 +69,13 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag_details)
+        desiredTag = intent.getStringExtra("id")
+        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
+
         starter = Starter(this)
         setupViewModel()
         setupUI()
 
-        desiredTag = intent.getStringExtra("id")
-        openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
         if (openAddView) {
             val addIntent = Intent(this, AddTagActivity::class.java)
             intent.putExtra(FROM_WELCOME, false)
@@ -134,44 +135,42 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.tagsFlow.collect { tags ->
-                val previousTagsSize = adapter.count
-                isEmptyList = tags.isNullOrEmpty()
-                tags?.let {
-                    adapter.setTags(tags)
+        viewModel.tags.observe(this, androidx.lifecycle.Observer { tags ->
+            val previousTagsSize = adapter.count
+            isEmptyList = tags.isNullOrEmpty()
+            tags?.let {
+                adapter.setTags(tags)
 
-                    tags.forEach { tag ->
-                        tag.id?.let { tagId ->
-                            Utils.getBackground(applicationContext, tag).let { bitmap ->
-                                backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
-                            }
+                tags.forEach { tag ->
+                    tag.id?.let { tagId ->
+                        Utils.getBackground(applicationContext, tag).let { bitmap ->
+                            backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
                         }
                     }
+                }
 
-                    val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
-                    setupVisibility(isEmptyList)
+                val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
+                setupVisibility(isEmptyList)
 
-                    if (tags.isNotEmpty()) {
-                        if (!desiredTag.isNullOrEmpty()) {
-                            val index = tags.indexOfFirst { t -> t.id == desiredTag }
-                            desiredTag = null
-                            intent.putExtra("id", null as String?)
-                            index.let {
-                                if (tag_pager.currentItem == it) viewModel.pageSelected(tag_pager.currentItem)
-                                else tag_pager.currentItem = it
-                            }
+                if (tags.isNotEmpty()) {
+                    if (!desiredTag.isNullOrEmpty()) {
+                        val index = tags.indexOfFirst { t -> t.id == desiredTag }
+                        desiredTag = null
+                        intent.putExtra("id", null as String?)
+                        index.let {
+                            if (tag_pager.currentItem == it) viewModel.pageSelected(tag_pager.currentItem)
+                            else tag_pager.setCurrentItem(it, false)
+                        }
+                    } else {
+                        if (isSizeChanged) {
+                            tag_pager.setCurrentItem(tags.size - 1, false)
                         } else {
-                            if (isSizeChanged) {
-                                tag_pager.currentItem = tags.size - 1
-                            } else {
-                                viewModel.pageSelected(tag_pager.currentItem)
-                            }
+                            viewModel.pageSelected(tag_pager.currentItem)
                         }
                     }
                 }
             }
-        }
+        })
     }
 
     private fun observeAlarmStatus() {

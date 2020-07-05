@@ -35,7 +35,6 @@ class GraphView {
     private val HUMIDITY = "Humidity"
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
-    private var isZoomed = false
 
     fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
@@ -66,11 +65,6 @@ class GraphView {
         storedReadings?.let { tagReadings ->
             if (tagReadings.size > 0) {
                 from = tagReadings[0].createdAt.time
-
-                val viewFrom = tempChart.lowestVisibleX
-                var viewTo = tempChart.highestVisibleX
-                if (viewTo == 0F) viewTo = (tagReadings.maxBy { it.createdAt.time }?.createdAt?.time?.toFloat() ?: 0f) - from
-                isZoomed = isZoomed(viewFrom, viewTo)
 
                 val entries = tagReadings.map {
                     GraphEntry(
@@ -113,11 +107,11 @@ class GraphView {
 
     private fun addDataToChart(context: Context, data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
+        set.setDrawCircles(false)
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.main)
         set.circleRadius = 2f
-        set.setDrawCircles(isZoomed)
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
@@ -169,8 +163,6 @@ class GraphView {
                     targetMatrix.setValues(targetMatrixValues)
                     targetChart.viewPortHandler.refresh(targetMatrix, targetChart, true)
                 }
-                val lineDataSet = targetChart.data.maxEntryCountSet as LineDataSet
-                lineDataSet.setDrawCircles(isZoomed(targetChart.lowestVisibleX, targetChart.highestVisibleX))
             }
         }
 
@@ -208,12 +200,6 @@ class GraphView {
                 }
             }
         }
-    }
-
-    private fun isZoomed(viewFrom: Float, viewTo: Float): Boolean {
-        val showDotsThreshold = 900
-        val visibleInterval = (viewTo - viewFrom) / 1000
-        return visibleInterval > 0 && visibleInterval < showDotsThreshold
     }
 
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {

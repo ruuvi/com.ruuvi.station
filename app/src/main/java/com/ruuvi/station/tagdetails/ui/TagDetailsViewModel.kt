@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.alarm.AlarmChecker
@@ -27,8 +28,8 @@ class TagDetailsViewModel(
     private val selectedTag = MutableStateFlow<RuuviTagEntity?>(null)
     val selectedTagFlow: StateFlow<RuuviTagEntity?> = selectedTag
 
-    private val tags = MutableStateFlow<List<RuuviTagEntity>?>(null)
-    val tagsFlow: StateFlow<List<RuuviTagEntity>?> = tags
+    //FIXME change livedata to coroutines
+    val tags = MutableLiveData<List<RuuviTagEntity>>()
 
     private val alarmStatus = MutableStateFlow<Int>(-1)
     val alarmStatusFlow: StateFlow<Int> = alarmStatus
@@ -57,14 +58,8 @@ class TagDetailsViewModel(
         isShowGraph.value = !isShowGraph.value
     }
 
-
     fun refreshTags() {
-        ioScope.launch {
-            val list = tagDetailsInteractor.getAllTags()
-            withContext(Dispatchers.Main) {
-                tags.value = list
-            }
-        }
+        tags.value = tagDetailsInteractor.getAllTags()
     }
 
     private fun checkForAlarm() {

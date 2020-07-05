@@ -23,13 +23,37 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/graphAllPointsTitleTextView"
+            android:text="@string/preferences_graph_all_points_title"
+            style="@style/PrefTitleText"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/graphAllPointsSecondaryTextView"
+            android:text="@string/preferences_graph_all_points_secondary"
+            app:layout_constraintTop_toBottomOf="@id/graphAllPointsTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/graphAllPointsSwitch"
+            app:layout_constraintTop_toTopOf="@id/graphAllPointsTitleTextView"
+            app:layout_constraintBottom_toBottomOf="@id/graphAllPointsSecondaryTextView"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/intervalTitleTextView"
             android:text="@string/preferences_graph_interval"
             style="@style/PrefTitleText"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/graphAllPointsSecondaryTextView"
             />
 
         <LinearLayout

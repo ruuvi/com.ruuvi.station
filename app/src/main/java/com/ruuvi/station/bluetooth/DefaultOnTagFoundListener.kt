@@ -60,7 +60,7 @@ class DefaultOnTagFoundListener(
         val interval = if (isForeground) {
             Constants.DATA_LOG_INTERVAL
         } else {
-            preferences.backgroundScanInterval + 4
+            preferences.backgroundScanInterval
         }
         Timber.d("saveFavouriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()
@@ -82,7 +82,10 @@ class DefaultOnTagFoundListener(
     }
 
     private fun updateLocation() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (
+                preferences.gatewayUrl.isNotEmpty() &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) {
             Timber.d("updateLocation")
             fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }
         }
