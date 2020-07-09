@@ -248,6 +248,7 @@ public class TagSettings extends AppCompatActivity {
             item.low = alarm.low;
             item.checked = alarm.enabled;
             item.alarm = alarm;
+            item.normalizeValues();
         }
 
         LayoutInflater inflater = getLayoutInflater();
@@ -325,6 +326,20 @@ public class TagSettings extends AppCompatActivity {
             this.max = max;
             this.low = min;
             this.high = max;
+        }
+
+        public void normalizeValues() {
+            if (low < min) low = min;
+            if (low >= max) low = max - 1;
+
+            if (high > max) high = max;
+            if (high < min) high = min + 1;
+
+            if (low > high) {
+                int temp = high;
+                high = low;
+                low = temp;
+            }
         }
 
         public void createView() {
