@@ -83,7 +83,7 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
         ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
 
         temp.setText(RuuviTagRepository.getTemperatureString(getContext(), tag));
-        humid.setText(String.format(getContext().getString(R.string.humidity_reading), tag.getHumidity()));
+        humid.setText(RuuviTagRepository.getHumidityString(getContext(), tag));
         pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.getPressure() / 100.0));
         signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.getRssi()));
 
