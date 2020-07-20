@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_main_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
     <LinearLayout
         android:id="@+id/row_name_layout"
@@ -12,73 +14,71 @@
         android:background="@color/backgroundLight"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/letter_ball_radius"
+        android:paddingStart="@dimen/letter_ball_radius"
+        android:paddingEnd="0sp"
         android:paddingTop="8dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_bold"
+            android:layout_marginStart="@dimen/letter_ball_radius"
+            android:paddingStart="34dp"
+            android:paddingEnd="0dp"
             android:textAllCaps="true"
-            android:layout_marginLeft="@dimen/letter_ball_radius"
-            android:paddingLeft="34dp"
-            android:text="01:01:01:01:01:01"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/mainDark"
             android:textSize="16sp"
-            />
+            tools:text="01:01:01:01:01:01"/>
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/bell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                app:srcCompat="@drawable/ic_notifications_off_24px"
-                android:layout_alignParentRight="true"
-                />
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="8dp"
+                app:srcCompat="@drawable/ic_notifications_off_24px" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/row_main_letter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="12dp"
-        />
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_below="@id/row_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/row_name_layout"
-        android:layout_toRightOf="@id/row_main_letter"
-        android:orientation="vertical">
+        android:layout_toEndOf="@id/row_main_letter">
 
-        <android.support.v7.widget.GridLayout
+        <androidx.gridlayout.widget.GridLayout
             android:id="@+id/row_main_grid"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:padding="8dp"
-            app:useDefaultMargins="true"
             app:columnCount="2"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent">
+            app:useDefaultMargins="true">
 
             <RelativeLayout
-                app:layout_columnWeight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_columnWeight="1">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/row_main_temp_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,24 +87,24 @@
 
                 <TextView
                     android:id="@+id/row_main_temperature"
-                    android:text="@string/temperature_reading"
-                    android:textStyle="bold"
-                    android:textColor="@color/mainDark"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/row_main_temp_icon"
-                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/row_main_temp_icon"
+                    android:text="@string/temperature_reading"
+                    android:textColor="@color/mainDark"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
             <RelativeLayout
-                app:layout_columnWeight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_columnWeight="1">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/row_main_humid_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,24 +113,24 @@
 
                 <TextView
                     android:id="@+id/row_main_humidity"
-                    android:text="@string/humidity_reading"
-                    android:textStyle="bold"
-                    android:textColor="@color/mainDark"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/row_main_humid_icon"
-                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/row_main_humid_icon"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/humidity_reading"
+                    android:textColor="@color/mainDark"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
             <RelativeLayout
-                app:layout_columnWeight="1"
+                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                app:layout_columnWeight="1">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/row_main_pres_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -139,25 +139,25 @@
 
                 <TextView
                     android:id="@+id/row_main_pressure"
-                    android:text="@string/pressure_reading"
-                    android:textStyle="bold"
-                    android:textColor="@color/mainDark"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/row_main_pres_icon"
-                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/row_main_pres_icon"
+                    android:text="@string/pressure_reading"
+                    android:textColor="@color/mainDark"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
 
             <RelativeLayout
-                app:layout_columnWeight="1"
+                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                app:layout_columnWeight="1">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/row_main_signal_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -166,33 +166,33 @@
 
                 <TextView
                     android:id="@+id/row_main_signal"
-                    android:text="@string/signal_reading"
-                    android:textStyle="bold"
-                    android:textColor="@color/mainDark"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/row_main_signal_icon"
-                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/row_main_signal_icon"
+                    android:text="@string/signal_reading"
+                    android:textColor="@color/mainDark"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
-        </android.support.v7.widget.GridLayout>
+        </androidx.gridlayout.widget.GridLayout>
 
         <TextView
-            android:id="@+id/lastseen"
-            android:gravity="end"
-            android:paddingRight="8dp"
-            android:paddingBottom="8dp"
+            android:id="@+id/lastSeenTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Updated 2 h 5 min 45 s ago"
+            android:paddingBottom="8dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="8dp"
+            android:gravity="end"
             android:textColor="@color/lastSeenColor"
             android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@+id/row_main_grid"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/row_main_grid"
+            tools:text="Updated 2 h 5 min 45 s ago"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

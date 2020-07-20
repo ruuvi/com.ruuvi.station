@@ -5,11 +5,14 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.util.Log;
 
+import com.ruuvi.station.gateway.data.ScanLocation;
 import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
+
+import timber.log.Timber;
 
 import static android.content.Context.BATTERY_SERVICE;
 
@@ -29,7 +32,7 @@ public class Event {
                 BatteryManager bm = (BatteryManager)context.getSystemService(BATTERY_SERVICE);
                 this.batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
             } catch (Exception e) {
-                Log.e("TEST", e.getMessage());
+                Timber.tag("TEST").e(e);
             }
         }
     }

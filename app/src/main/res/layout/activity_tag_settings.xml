@@ -1,85 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@color/white"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
     tools:context="com.ruuvi.station.feature.TagSettings">
 
     <RelativeLayout
-        android:id="@+id/toolbarContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="@drawable/header"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:id="@+id/toolbarContainer"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:background="@color/ap_transparent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
                 android:background="@drawable/header"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:background="@color/white"
             android:layout_below="@id/appBarLayout"
-            android:background="@color/white">
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/tag_settings_item_layout"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:paddingBottom="32dp">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tag_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
                     android:adjustViewBounds="true"
+                    android:layout_height="200dp"
+                    android:layout_width="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@drawable/bg3"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                <androidx.appcompat.widget.AppCompatImageView
                     android:adjustViewBounds="true"
+                    android:layout_height="200dp"
+                    android:layout_width="match_parent"
                     android:scaleType="fitXY"
                     android:src="@drawable/tag_bg_layer"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tag_image_select_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="52dp"
-                    android:layout_marginRight="60dp"
                     android:alpha="0.7"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="60dp"
+                    android:layout_marginTop="52dp"
                     android:scaleType="fitCenter"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tag_image"
                     app:srcCompat="@drawable/icon_bg_refresh" />
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tag_image_camera_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginLeft="60dp"
-                    android:layout_marginTop="52dp"
                     android:alpha="0.7"
+                    android:layout_height="32dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="52dp"
                     android:scaleType="fitCenter"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -87,10 +88,10 @@
                     app:srcCompat="@drawable/icon_bg_camera_01" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
                     android:text="@string/background_image"
                     android:textAlignment="center"
                     android:textAllCaps="true"
@@ -100,274 +101,244 @@
 
                 <TextView
                     android:id="@+id/name_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:background="@color/backgroundLight"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/name"
                     android:textAllCaps="true"
                     android:textColor="@color/mainDark"
                     android:textSize="16sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tag_image" />
 
                 <TextView
                     android:id="@+id/name_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/name_header"
                     android:fontFamily="@font/roboto_medium"
+                    android:layout_below="@id/name_header"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/tag_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/name_header" />
 
                 <TextView
                     android:id="@+id/input_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:inputType="text"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
                     android:padding="@dimen/tag_settings_text_padding"
-                    android:text="00:00:00:00:00:00"
                     android:textSize="16sp"
-                    app:layout_constraintLeft_toRightOf="@id/name_title"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/name_header" />
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:layout_constraintStart_toEndOf="@id/name_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name_header"
+                    tools:text="00:00:00:00:00:00" />
 
                 <TextView
                     android:id="@+id/alerts_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:background="@color/backgroundLight"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/alerts"
                     android:textAllCaps="true"
                     android:textColor="@color/mainDark"
                     android:textSize="16sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/input_name" />
 
-                <android.support.constraint.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/alerts_container"
-                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/alerts_header" />
-
-
-                <TextView
-                    android:id="@+id/gateway_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@color/backgroundLight"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/gateway"
-                    android:textAllCaps="true"
-                    android:textColor="@color/mainDark"
-                    android:textSize="16sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alerts_container" />
-
-                <TextView
-                    android:id="@+id/title_gatewayUrl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/gateway_url"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textSize="16sp"
-                    app:layout_constraintTop_toBottomOf="@id/gateway_header" />
-
-                <TextView
-                    android:id="@+id/input_gatewayUrl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/no_gateway_url"
-                    android:textSize="16sp"
-                    app:layout_constraintLeft_toRightOf="@id/title_gatewayUrl"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/gateway_header" />
-
 
                 <TextView
                     android:id="@+id/mac_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:background="@color/backgroundLight"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/more_info"
                     android:textAllCaps="true"
                     android:textColor="@color/mainDark"
                     android:textSize="16sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/title_gatewayUrl" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/alerts_container" />
 
                 <TextView
                     android:id="@+id/title_mac"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/mac_address"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
                 <TextView
                     android:id="@+id/input_mac"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:gravity="end"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
                     android:padding="@dimen/tag_settings_text_padding"
                     android:textSize="16sp"
-                    app:layout_constraintLeft_toRightOf="@id/title_mac"
-                    app:layout_constraintRight_toRightOf="parent"
+                    android:focusable="true"
+                    android:longClickable="true"
+                    app:layout_constraintStart_toEndOf="@id/title_mac"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/raw_values"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
                     app:layout_constraintTop_toBottomOf="@id/title_mac">
 
                     <TextView
                         android:id="@+id/title_voltage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/voltage"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/input_voltage"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:gravity="end"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:textSize="16sp"
-                        app:layout_constraintLeft_toRightOf="@id/title_voltage"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/title_voltage"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/title_x"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/acc_x"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_voltage" />
 
                     <TextView
                         android:id="@+id/input_x"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:gravity="end"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:textSize="16sp"
-                        app:layout_constraintLeft_toRightOf="@id/title_x"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/title_x"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_voltage" />
 
                     <TextView
                         android:id="@+id/title_y"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/acc_y"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_x" />
 
                     <TextView
                         android:id="@+id/input_y"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:gravity="end"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:textSize="16sp"
-                        app:layout_constraintLeft_toRightOf="@id/title_y"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/title_y"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_x" />
 
                     <TextView
                         android:id="@+id/title_z"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/acc_z"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_y" />
 
                     <TextView
                         android:id="@+id/input_z"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:gravity="end"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
                         android:padding="@dimen/tag_settings_text_padding"
                         android:textSize="16sp"
-                        app:layout_constraintLeft_toRightOf="@id/title_z"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/title_z"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_y" />
 
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <Button
                     android:id="@+id/calibrate_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:background="@drawable/button_rounded_corners"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:layout_marginTop="16dp"
                     android:text="@string/calibration_humidity_button"
                     android:textColor="@color/white"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/raw_values" />
 
                 <Button
                     android:id="@+id/remove_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:background="@drawable/button_rounded_corners"
                     android:fontFamily="@font/montserrat_bold"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:text="@string/remove_this_ruuvitag"
                     android:textColor="@color/white"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/calibrate_humidity" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
     </RelativeLayout>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

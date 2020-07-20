@@ -1,13 +1,16 @@
 package com.ruuvi.station.feature
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.view.PagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.ruuvi.station.R
-import com.ruuvi.station.util.Preferences
+import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.startup.ui.StartupActivity
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 class WelcomeActivity : AppCompatActivity() {
@@ -22,17 +25,16 @@ class WelcomeActivity : AppCompatActivity() {
 
         tab_layout.setupWithViewPager(welcome_pager)
 
-        start_button.setOnClickListener {
+        start_button.setDebouncedOnClickListener {
             Preferences(this).isFirstStart = false
             val intent = Intent(this, StartupActivity::class.java)
-            intent.putExtra(TagDetails.FROM_WELCOME, true)
+            intent.putExtra(TagDetailsActivity.FROM_WELCOME, true)
             startActivity(intent)
         }
     }
 }
 
-
-class WelcomePager: PagerAdapter() {
+class WelcomePager : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         var resId = 0
         when (position) {

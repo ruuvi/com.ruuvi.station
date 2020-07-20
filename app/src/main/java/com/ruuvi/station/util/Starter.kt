@@ -2,21 +2,24 @@ package com.ruuvi.station.util
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.os.Build
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.feature.main.MainActivity
-import com.ruuvi.station.feature.main.MainActivity.isBluetoothEnabled
-import java.util.ArrayList
+import timber.log.Timber
+import java.util.*
 
 class Starter(val that: AppCompatActivity) {
     fun startScanning(): Boolean {
-        if (!MainActivity.isLocationEnabled(that)) {
+        if (!isLocationEnabled()) {
             val builder = AlertDialog.Builder(that)
             builder.setTitle(that.getString(R.string.locationServices))
             builder.setMessage(that.getString(R.string.enableLocationServices))
@@ -37,12 +40,31 @@ class Starter(val that: AppCompatActivity) {
 
     fun getNeededPermissions(): List<String> {
         val permissionCoarseLocation = ContextCompat.checkSelfPermission(that,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+            Manifest.permission.ACCESS_COARSE_LOCATION)
 
         val listPermissionsNeeded = ArrayList<String>()
 
         if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            Timber.d("ACCESS_COARSE_LOCATION needed")
+        }
+
+        if (BuildConfig.FILE_LOGS_ENABLED) {
+            val permissionWriteStorage = ContextCompat.checkSelfPermission(that,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Timber.d("WRITE_EXTERNAL_STORAGE needed")
+            }
+        }
+
+        val permissionFineLocation = ContextCompat.checkSelfPermission(that,
+            Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            Timber.d("ACCESS_FINE_LOCATION needed")
         }
 
         return listPermissionsNeeded
@@ -51,22 +73,27 @@ class Starter(val that: AppCompatActivity) {
     private fun showPermissionDialog(activity: AppCompatActivity): Boolean {
         val listPermissionsNeeded = getNeededPermissions()
 
-        if (!listPermissionsNeeded.isEmpty()) {
+        if (listPermissionsNeeded.isNotEmpty()) {
             ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toTypedArray(), 10)
         }
 
-        return !listPermissionsNeeded.isEmpty()
+        return listPermissionsNeeded.isNotEmpty()
     }
 
     fun requestPermissions() {
-        if (getNeededPermissions().isNotEmpty()) {
-            val alertDialog = android.support.v7.app.AlertDialog.Builder(that).create()
-            alertDialog.setTitle(that.getString(R.string.permission_dialog_title))
-            alertDialog.setMessage(that.getString(R.string.permission_dialog_request_message))
-            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener { showPermissionDialog(that) }
-            alertDialog.show()
+        val neededPermissions = getNeededPermissions()
+        if (neededPermissions.isNotEmpty()) {
+            if (neededPermissions.size == 1 && neededPermissions.first() == Manifest.permission.ACCESS_FINE_LOCATION) {
+                showPermissionDialog(that)
+            } else {
+                val alertDialog = AlertDialog.Builder(that).create()
+                alertDialog.setTitle(that.getString(R.string.permission_dialog_title))
+                alertDialog.setMessage(that.getString(R.string.permission_dialog_request_message))
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, that.getString(R.string.ok)
+                ) { dialog, _ -> dialog.dismiss() }
+                alertDialog.setOnDismissListener { showPermissionDialog(that) }
+                alertDialog.show()
+            }
         } else {
             checkBluetooth()
         }
@@ -79,5 +106,24 @@ class Starter(val that: AppCompatActivity) {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         that.startActivityForResult(enableBtIntent, 87)
         return false
+    }
+
+    private fun isLocationEnabled(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val locationManager = that.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locationManager.isLocationEnabled
+        } else {
+            try {
+                val locationMode = Settings.Secure.getInt(that.contentResolver, Settings.Secure.LOCATION_MODE)
+                locationMode != Settings.Secure.LOCATION_MODE_OFF
+            } catch (e: Settings.SettingNotFoundException) {
+                Timber.e(e, "Could not get LOCATION_MODE")
+                false
+            }
+        }
+
+    fun isBluetoothEnabled(): Boolean {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
     }
 }
