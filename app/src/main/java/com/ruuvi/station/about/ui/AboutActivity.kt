@@ -1,20 +1,31 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.about.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.LocalDatabase
-import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
-
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 import java.io.File
 
-class AboutActivity : AppCompatActivity() {
+@ExperimentalCoroutinesApi
+class AboutActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein: Kodein by closestKodein()
+
+    private val viewModel: AboutActivityViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,16 +40,24 @@ class AboutActivity : AppCompatActivity() {
         troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
         openText.movementMethod = LinkMovementMethod.getInstance()
         moreText.movementMethod = LinkMovementMethod.getInstance()
-        drawDebugInfo()
+
+        lifecycleScope.launch {
+            viewModel.tagsSizesFlow.collect {
+                drawDebugInfo(it)
+            }
+        }
     }
 
-    private fun drawDebugInfo() {
+    private fun drawDebugInfo(sizes: Pair<Int, Int>?) {
         val readingCount = TagSensorReading.countAll()
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
-        val addedTags = RuuviTagRepository.getAll(true).size
-        debugText += getString(R.string.seen_tags, addedTags + RuuviTagRepository.getAll(false).size) + "\n"
-        debugText += getString(R.string.added_tags, addedTags) + "\n"
-        debugText += getString(R.string.db_data_points, readingCount*9) + "\n"
+
+        sizes?.let {
+            val addedTags = it.first
+            debugText += getString(R.string.seen_tags, addedTags + it.second) + "\n"
+            debugText += getString(R.string.added_tags, addedTags) + "\n"
+            debugText += getString(R.string.db_data_points, readingCount * 9) + "\n"
+        }
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
         val dbFile = File(dbPath)

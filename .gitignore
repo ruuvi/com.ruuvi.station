@@ -36,3 +36,4 @@ build/
 obj/
 
 app/release/
+/app/withoutFileLogs/release/output.json
