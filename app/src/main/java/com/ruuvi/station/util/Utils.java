@@ -42,7 +42,7 @@ public class Utils {
 
     public static Bitmap createBall(int radius, int ballColor, int letterColor, String letter) {
         letter = letter.toUpperCase();
-        Bitmap bitmap = Bitmap.createBitmap(radius*2, radius*2, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint2 = new Paint();
         paint2.setColor(ballColor);
@@ -87,9 +87,9 @@ public class Utils {
         if (diffInMS > 24 * 60 * 60 * 1000) {
             output += date.toString();
         } else {
-            int seconds = (int) (diffInMS / 1000) % 60 ;
-            int minutes = (int) ((diffInMS / (1000*60)) % 60);
-            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
+            int seconds = (int) (diffInMS / 1000) % 60;
+            int minutes = (int) ((diffInMS / (1000 * 60)) % 60);
+            int hours = (int) ((diffInMS / (1000 * 60 * 60)) % 24);
             if (hours > 0) output += hours + " h ";
             if (minutes > 0) output += minutes + " min ";
             output += seconds + " s ago";

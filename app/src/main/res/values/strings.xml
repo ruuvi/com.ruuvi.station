@@ -221,6 +221,7 @@
     <string name="tag_name">Tag name</string>
     <string name="gateway">Gateway</string>
     <string name="gateway_url">Gateway URL</string>
+    <string name="gateway_url_disabled">Disabled</string>
     <string name="no_gateway_url">No gateway URL</string>
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
@@ -321,12 +322,15 @@
     <string name="calibration_humidity_button">Calibrate hygrometer</string>
     <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See <a href="https://www.youtube.com/results?search_query=hygrometer+salt+calibration">video tutorials</a> on how to easily do it at home.</string>
     <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall &amp; install, you may need to recalibrate</string>
+    <string name="calibration_hint">%1$d%% -&gt; 75%%</string>
+    <string name="calibrated">Calibrated: %1$s</string>
     <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
     <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.\nBackground scan interval: %1$s</string>
     <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
     <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
     <string name="more_info">More info</string>
     <string name="voltage">Voltage</string>
+    <string name="voltage_format">%1$s V</string>
     <string name="acc_x">Acceleration X</string>
     <string name="acc_y">Acceleration Y</string>
     <string name="acc_z">Acceleration Z</string>
@@ -342,4 +346,7 @@
     <string name="background_scan_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable Manage Automatically and enable options: Auto-Launch, Secondary Launch and Run in background.</string>
     <string name="preferences_graph_all_points_title">Show all points</string>
     <string name="preferences_graph_all_points_secondary">Enabling it may cause slow graph work</string>
+
+    <string name="app_settings_debug">Debug</string>
+    <string name="app_settings_add_fake_tags">Add fake tags and readings</string>
 </resources>

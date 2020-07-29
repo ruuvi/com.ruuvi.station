@@ -11,7 +11,7 @@ object DashboardActivityInjectionModule {
     val module = Kodein.Module(DashboardActivityInjectionModule.javaClass.name) {
 
         bind<DashboardActivityViewModel>() with provider {
-            DashboardActivityViewModel(instance())
+            DashboardActivityViewModel(instance(), instance())
         }
     }
 }

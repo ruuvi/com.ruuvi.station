@@ -110,6 +110,5 @@ class Preferences(val context: Context) {
         const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
-
     }
 }

@@ -2,100 +2,105 @@ package com.ruuvi.station.settings.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.appcompat.widget.SwitchCompat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
+import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.model.HumidityUnit
-import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.test.StressTestGenerator
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class AppSettingsListFragment : Fragment() {
-    lateinit var prefs: Preferences
+class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), KodeinAware {
+
+    override val kodein: Kodein by closestKodein()
+
+    private val viewModel: AppSettingsListViewModel by viewModel()
+
+    private val repository: TagRepository by instance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = Preferences(requireContext())
-
-        scan_layout.setOnClickListener {
+        scanLayout.setDebouncedOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
         }
 
-        scan_interval.setOnClickListener {
-            if (prefs.backgroundScanMode != BackgroundScanModes.DISABLED) {
+        scanIntervalLayout.setDebouncedOnClickListener {
+            if (viewModel.getBackgroundScanMode() != BackgroundScanModes.DISABLED) {
                 (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
             }
         }
 
-        gateway_url.setOnClickListener {
+        gatewaySettingsLayout.setDebouncedOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
         }
 
-        graphSettingsLayout.setOnClickListener {
+        graphSettingsLayout.setDebouncedOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.preferences_graph_settings)
         }
 
-        temperature_unit.setOnClickListener {
+        temperatureUnitLayout.setDebouncedOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
         }
 
-        humidity_unit.setOnClickListener {
+        humidityUnitLayout.setDebouncedOnClickListener {
             (activity as AppSettingsActivity).openFragment(R.string.humidity_unit)
         }
 
-        debug_tools.visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
-        debug_tools.setOnClickListener {
-            StressTestGenerator.generateData(8, 15000)
+        debugToolsLayout.isVisible = BuildConfig.DEBUG
+        debugToolsLayout.setDebouncedOnClickListener {
+            StressTestGenerator.generateData(8, 15000, repository)
         }
 
-        val switch = view.findViewById<SwitchCompat>(R.id.dashboard_switch)
-        switch.isChecked = prefs.dashboardEnabled
-        switch.setOnCheckedChangeListener{ _, isChecked ->
-            prefs.dashboardEnabled = isChecked
+        dashboardSwitch.isChecked = viewModel.isDashboardEnabled()
+        dashboardSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setIsDashboardEnabled(isChecked)
         }
 
         updateView()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_app_settings_list, container, false)
-    }
-
     private fun updateView() {
         var intervalText = ""
-        if (prefs.backgroundScanMode != BackgroundScanModes.DISABLED) {
-            val bgScanInterval = prefs.backgroundScanInterval
+        if (viewModel.getBackgroundScanMode() != BackgroundScanModes.DISABLED) {
+            val bgScanInterval = viewModel.getBackgroundScanInterval()
             val min = bgScanInterval / 60
             val sec = bgScanInterval - min * 60
             if (min > 0) intervalText += min.toString() + " " + getString(R.string.minutes) + ", "
             intervalText += sec.toString() + " " + getString(R.string.seconds)
         }
-        background_scan_interval_sub.text = intervalText
-        if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-            bg_scan_description.text = getString(R.string.continuous_background_scanning_enabled, intervalText)
+        backgroundScanIntervalSubTextView.text = intervalText
+        if (viewModel.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+            bgScanDescriptionTextView.text = getString(R.string.continuous_background_scanning_enabled, intervalText)
         } else {
-            bg_scan_description.text = getString(R.string.no_background_scanning_enabled)
+            bgScanDescriptionTextView.text = getString(R.string.no_background_scanning_enabled)
         }
 
-        gateway_url_sub.text = prefs.gatewayUrl
-        if (gateway_url_sub.text.isEmpty()) gateway_url_sub.text = "Disabled"
-        if (prefs.temperatureUnit == "K") {
-            temperature_unit_sub.text = getString(R.string.kelvin)
-        } else if (prefs.temperatureUnit == "F") {
-            temperature_unit_sub.text = getString(R.string.fahrenheit )
-        } else {
-            temperature_unit_sub.text = getString(R.string.celsius)
+        gatewayUrlSubTextView.text = viewModel.getGatewayUrl()
+        if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.gateway_url_disabled)
+        when (viewModel.getTemperatureUnit()) {
+            "K" -> {
+                temperatureUnitSubTextView.text = getString(R.string.kelvin)
+            }
+            "F" -> {
+                temperatureUnitSubTextView.text = getString(R.string.fahrenheit)
+            }
+            else -> {
+                temperatureUnitSubTextView.text = getString(R.string.celsius)
+            }
         }
-        when (prefs.humidityUnit) {
-            HumidityUnit.PERCENT -> humidity_unit_sub.text = getString(R.string.relative_humidity_unit)
-            HumidityUnit.GM3 -> humidity_unit_sub.text = getString(R.string.absolute_humidity_unit)
-            HumidityUnit.DEW -> humidity_unit_sub.text = getString(R.string.dew_point_humidity_unit)
+        when (viewModel.getHumidityUnit()) {
+            HumidityUnit.PERCENT -> humidityUnitSubTextView.text = getString(R.string.relative_humidity_unit)
+            HumidityUnit.GM3 -> humidityUnitSubTextView.text = getString(R.string.absolute_humidity_unit)
+            HumidityUnit.DEW -> humidityUnitSubTextView.text = getString(R.string.dew_point_humidity_unit)
         }
     }
 }

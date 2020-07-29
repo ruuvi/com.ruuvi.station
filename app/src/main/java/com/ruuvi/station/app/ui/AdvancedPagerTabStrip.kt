@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.PagerTabStrip
 
-class AdvancedPagerTabStrip(context: Context, attributeSet: AttributeSet): PagerTabStrip(context, attributeSet) {
+class AdvancedPagerTabStrip(context: Context, attributeSet: AttributeSet) : PagerTabStrip(context, attributeSet) {
     var isTabSwitchEnabled = true
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {

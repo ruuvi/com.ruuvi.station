@@ -8,7 +8,7 @@ import timber.log.Timber
 class FakeScanResultsSender(private val defaultOnTagFoundListener: DefaultOnTagFoundListener) {
     private val handler = Handler()
 
-    var sender = object:Runnable {
+    var sender = object : Runnable {
         override fun run() {
             Timber.d("Sending fake tag data with interval = $interval")
             defaultOnTagFoundListener.onTagFound(getTagInfo())

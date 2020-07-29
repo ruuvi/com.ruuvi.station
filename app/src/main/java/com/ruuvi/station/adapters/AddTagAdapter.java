@@ -1,9 +1,11 @@
 package com.ruuvi.station.adapters;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +39,8 @@ public class AddTagAdapter extends ArrayAdapter<RuuviTagEntity> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_add, parent, false);
         }
 
-        ((TextView)convertView.findViewById(R.id.address)).setText(tag.getId());
-        ((TextView)convertView.findViewById(R.id.rssi)).setText(String.format(getContext().getResources().getString(R.string.signal_reading), tag.getRssi()));
+        ((TextView) convertView.findViewById(R.id.address)).setText(tag.getId());
+        ((TextView) convertView.findViewById(R.id.rssi)).setText(String.format(getContext().getResources().getString(R.string.signal_reading), tag.getRssi()));
 
         AppCompatImageView signalIcon = convertView.findViewById(R.id.signalIcon);
         if (tag.getRssi() < -80) signalIcon.setImageResource(R.drawable.icon_connection_1);

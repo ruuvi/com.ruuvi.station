@@ -25,15 +25,15 @@ public class EditAdapter extends ArrayAdapter<Alarm> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Alarm alarm = getItem(position);
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_alarm, parent, false);
         }
         TextView type = convertView.findViewById(R.id.alarm_name);
         TextView range = convertView.findViewById(R.id.alarm_range);
         type.setText(alarm.type == Alarm.TEMPERATURE ? getContext().getString(R.string.temperature) :
-                        alarm.type == Alarm.HUMIDITY ? getContext().getString(R.string.humidity) :
+                alarm.type == Alarm.HUMIDITY ? getContext().getString(R.string.humidity) :
                         alarm.type == Alarm.PERSSURE ? getContext().getString(R.string.pressure) :
-                        getContext().getString(R.string.rssi)
+                                getContext().getString(R.string.rssi)
         );
         range.setText("Normal range: " + String.valueOf(alarm.low) + " - " + String.valueOf(alarm.high));
         return convertView;

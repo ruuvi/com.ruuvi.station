@@ -9,10 +9,10 @@ import java.io.ByteArrayOutputStream;
 public class base64 {
     public static String encode(byte[] data) {
         char[] tbl = {
-                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-                'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f',
-                'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
-                'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/' };
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'};
 
         StringBuilder buffer = new StringBuilder();
         int pad = 0;
@@ -20,12 +20,12 @@ public class base64 {
 
             int b = ((data[i] & 0xFF) << 16) & 0xFFFFFF;
             if (i + 1 < data.length) {
-                b |= (data[i+1] & 0xFF) << 8;
+                b |= (data[i + 1] & 0xFF) << 8;
             } else {
                 pad++;
             }
             if (i + 2 < data.length) {
-                b |= (data[i+2] & 0xFF);
+                b |= (data[i + 2] & 0xFF);
             } else {
                 pad++;
             }
@@ -59,7 +59,7 @@ public class base64 {
                 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         byte[] bytes = data.getBytes();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         for (int i = 0; i < bytes.length; ) {
@@ -74,22 +74,22 @@ public class base64 {
             }
 
             int num = 0;
-            if (i + 1 < bytes.length && tbl[bytes[i+1]] != -1) {
-                b = b | ((tbl[bytes[i+1]] & 0xFF) << 12);
+            if (i + 1 < bytes.length && tbl[bytes[i + 1]] != -1) {
+                b = b | ((tbl[bytes[i + 1]] & 0xFF) << 12);
                 num++;
             }
-            if (i + 2 < bytes.length && tbl[bytes[i+2]] != -1) {
-                b = b | ((tbl[bytes[i+2]] & 0xFF) << 6);
+            if (i + 2 < bytes.length && tbl[bytes[i + 2]] != -1) {
+                b = b | ((tbl[bytes[i + 2]] & 0xFF) << 6);
                 num++;
             }
-            if (i + 3 < bytes.length && tbl[bytes[i+3]] != -1) {
-                b = b | (tbl[bytes[i+3]] & 0xFF);
+            if (i + 3 < bytes.length && tbl[bytes[i + 3]] != -1) {
+                b = b | (tbl[bytes[i + 3]] & 0xFF);
                 num++;
             }
 
             while (num > 0) {
                 int c = (b & 0xFF0000) >> 16;
-                buffer.write((char)c);
+                buffer.write((char) c);
                 b <<= 8;
                 num--;
             }

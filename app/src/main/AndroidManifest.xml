@@ -27,7 +27,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.TagSettings"
+            android:name=".tagsettings.ui.TagSettingsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Tag Settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
@@ -54,10 +54,10 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".feature.AboutActivity"
+            android:name=".about.ui.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.AddTagActivity"
+            android:name=".addtag.ui.AddTagActivity"
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity

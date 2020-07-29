@@ -7,7 +7,7 @@
     android:layout_width="match_parent">
 
     <TextView
-        android:id="@+id/noTags_textView"
+        android:id="@+id/noTagsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/dashboard_listView"
+        android:id="@+id/dashboardListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"

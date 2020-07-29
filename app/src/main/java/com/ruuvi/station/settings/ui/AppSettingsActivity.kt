@@ -10,8 +10,10 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
 class AppSettingsActivity : AppCompatActivity(), KodeinAware {
+
     override val kodein by closestKodein()
-    var showingFragmentTitle = -1
+
+    private var showingFragmentTitle = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +42,7 @@ class AppSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         }
         transaction.replace(R.id.settings_frame, fragment)
-                .commit()
+            .commit()
         title = getString(showingFragmentTitle)
     }
 

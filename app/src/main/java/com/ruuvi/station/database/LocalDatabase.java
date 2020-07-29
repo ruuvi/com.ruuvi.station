@@ -29,7 +29,8 @@ public class LocalDatabase {
 
         @Override
         public void onPreMigrate() {
-            addColumn(SQLiteType.INTEGER, "mutedTill"); }
+            addColumn(SQLiteType.INTEGER, "mutedTill");
+        }
     }
 
     @Migration(version = 10, database = LocalDatabase.class)
@@ -60,7 +61,8 @@ public class LocalDatabase {
 
         @Override
         public void onPreMigrate() {
-            addColumn(SQLiteType.INTEGER, "createDate"); }
+            addColumn(SQLiteType.INTEGER, "createDate");
+        }
     }
 
     @Migration(version = 6, database = LocalDatabase.class)
