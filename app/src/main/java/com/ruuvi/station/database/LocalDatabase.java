@@ -6,7 +6,9 @@ import com.raizlabs.android.dbflow.annotation.Database;
 import com.raizlabs.android.dbflow.annotation.Migration;
 import com.raizlabs.android.dbflow.sql.SQLiteType;
 import com.raizlabs.android.dbflow.sql.migration.AlterTableMigration;
+import com.raizlabs.android.dbflow.sql.migration.BaseMigration;
 import com.raizlabs.android.dbflow.sql.migration.IndexMigration;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.database.tables.TagSensorReading;
@@ -19,9 +21,9 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 11;
+    public static final int VERSION = 12;
 
-    @Migration(version = 11, database = LocalDatabase.class)
+    @Migration(version = 12, database = LocalDatabase.class)
     public static class Migration11 extends AlterTableMigration<Alarm> {
         public Migration11(Class<Alarm> table) {
             super(table);
@@ -30,6 +32,15 @@ public class LocalDatabase {
         @Override
         public void onPreMigrate() {
             addColumn(SQLiteType.INTEGER, "mutedTill");
+        }
+    }
+
+    @Migration(version = 11, database = LocalDatabase.class)
+    public static class Migration11Data extends BaseMigration {
+        @Override
+        public void migrate(@NonNull DatabaseWrapper database) {
+            database.execSQL("UPDATE TagSensorReading SET pressure = pressure * 100 WHERE pressure < 2000");
+            database.execSQL("UPDATE RuuviTag SET pressure = pressure * 100 WHERE pressure < 2000");
         }
     }
 

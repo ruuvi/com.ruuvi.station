@@ -35,13 +35,22 @@ class DefaultOnTagFoundListener(
         LocationServices.getFusedLocationProviderClient(context)
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
+    private var lastCleanedDate: Long = Date().time
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
         updateLocation()
         val tag = HumidityCalibration.apply(RuuviTagEntity(tag))
         saveReading(tag)
-        TagSensorReading.removeOlderThan(72)
+
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, -10)
+        val cleaningThreshold = calendar.time.time
+        if (lastCleanedDate == null || lastCleanedDate < cleaningThreshold) {
+            Timber.d("Cleaning DB from old tag readings")
+            TagSensorReading.removeOlderThan(72)
+            lastCleanedDate = Date().time
+        }
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
