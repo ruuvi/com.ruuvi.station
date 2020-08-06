@@ -14,7 +14,6 @@ import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
 import com.ruuvi.station.settings.ui.AppSettingsActivity
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -142,7 +141,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
-        val tag = view.tag as RuuviTagEntity
+        val tag = view.tag as RuuviTag
         val intent = Intent(applicationContext, TagDetailsActivity::class.java)
         intent.putExtra("id", tag.id)
         startActivity(intent)

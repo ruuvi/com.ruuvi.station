@@ -59,18 +59,13 @@ public class Utils {
     }
 
     public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
-        Collections.sort(tags, new Comparator<RuuviTagEntity>() {
-            @Override
-            public int compare(RuuviTagEntity o1, RuuviTagEntity o2) {
-                return o2.getRssi() - o1.getRssi();
-            }
-        });
+        Collections.sort(tags, (o1, o2) -> o2.getRssi() - o1.getRssi());
     }
 
     public static byte[] parseByteDataFromB64(String data) {
         try {
             byte[] bData = base64.decode(data);
-            int pData[] = new int[8];
+            int[] pData = new int[8];
             for (int i = 0; i < bData.length; i++)
                 pData[i] = bData[i] & 0xFF;
             return bData;
@@ -115,8 +110,6 @@ public class Utils {
 
     private static int getDefaultBackground(int number) {
         switch (number) {
-            case 0:
-                return R.drawable.bg1;
             case 1:
                 return R.drawable.bg2;
             case 2:

@@ -47,6 +47,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.AlarmCheckInteractor
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.model.HumidityCalibration
@@ -68,10 +69,12 @@ import kotlinx.android.synthetic.main.activity_tag_settings.xInputTextView
 import kotlinx.android.synthetic.main.activity_tag_settings.yInputTextView
 import kotlinx.android.synthetic.main.activity_tag_settings.zInputTextView
 import kotlinx.android.synthetic.main.dialog_humidity_calibration.timestamp
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -79,6 +82,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.Date
 
+@ExperimentalCoroutinesApi
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -88,6 +92,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             TagSettingsViewModelArgs(it)
         }
     }
+
+    private val repository: TagRepository by instance()
 
     private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
         val item = viewModel.alarmItems[buttonView.tag as Int]
@@ -138,8 +144,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.file != null) {
                 val rotation = getCameraPhotoOrientation(viewModel.file)
                 resize(viewModel.file, rotation)
-                viewModel.tag?.userBackground = viewModel.file.toString()
-                val background = Utils.getBackground(applicationContext, viewModel.tag)
+                viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
+                val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
                 tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -176,12 +182,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val uri = Uri.fromFile(photoFile)
                         val rotation = getCameraPhotoOrientation(uri)
                         resize(uri, rotation)
-                        viewModel.tag?.userBackground = uri.toString()
-                        val background = Utils.getBackground(applicationContext, viewModel.tag)
+                        viewModel.tagFlow.value?.userBackground = uri.toString()
+                        val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
                         tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
                     // ... O.o
+                    Timber.e("Could not load photo: $e")
                 }
             }
         }
@@ -189,8 +196,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, viewModel.getRepositoryInstance())
-            viewModel.tag?.id?.let {
+            val exporter = CsvExporter(this, repository)
+            viewModel.tagFlow.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -200,7 +207,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        viewModel.tag?.let {
+        viewModel.tagFlow.value?.let {
             if (it.isFavorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
             }
@@ -458,7 +465,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     AlarmCheckInteractor.dismissNotification(it.id, this)
                 }
             }
-            viewModel.tag?.let { viewModel.deleteTag(it) }
+            viewModel.tagFlow.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 
@@ -605,15 +612,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight)
 
-            val file = File(currentPhotoPath)
+            val file = currentPhotoPath?.let { File(it) }
 
-            val fileOutputStream = FileOutputStream(file)
+            out.compress(Bitmap.CompressFormat.JPEG, 60, file?.let { FileOutputStream(it) })
 
-            out.compress(Bitmap.CompressFormat.JPEG, 60, fileOutputStream)
+            file?.let { FileOutputStream(it) }?.flush()
 
-            fileOutputStream.flush()
-
-            fileOutputStream.close()
+            file?.let { FileOutputStream(it) }?.close()
 
             bitmap.recycle()
 
