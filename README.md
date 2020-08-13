@@ -60,7 +60,8 @@ We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE
 7. Now you can run project on emulator or phone
 
 Watch video showing build process:
-<a href="https://www.youtube.com/watch?v=1sXIASGXaaw"><img src="/docs/playvideo.png?raw=true" alt="Watch video" height="200"/></a>
+
+<a href="https://www.youtube.com/watch?v=1sXIASGXaaw"><img src="/docs/playvideo.png?raw=true" alt="Watch video" height="400"/></a>
 
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
