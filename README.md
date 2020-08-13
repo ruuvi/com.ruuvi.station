@@ -49,6 +49,9 @@ You can order RuuviTag sensors [online](https://shop.ruuvi.com). Find more info 
 
 We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE`` file for more info.
 
+## How to build
+
+[![Watch the video](https://ruuvi.com/i/brand/download/thumb-ruuvi-logo.jpg)](https://www.youtube.com/watch?v=1sXIASGXaaw&feature=youtu.be)
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
