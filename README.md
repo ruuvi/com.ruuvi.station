@@ -51,7 +51,17 @@ We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE
 
 ## How to build
 
-[![Watch the video](https://ruuvi.com/i/brand/download/thumb-ruuvi-logo.jpg)](https://www.youtube.com/watch?v=1sXIASGXaaw&feature=youtu.be)
+1. Open Android Studio (4.0 or newer)
+2. Select 'Get from Version Control
+3. Enter repository URL: https://github.com/ruuvi/com.ruuvi.station
+4. Clone repository
+5. Select a branch you want to build
+6. Sync project with Gradle file
+7. Now you can run project on emulator or phone
+
+Watch video showing build process:
+<a href="https://www.youtube.com/watch?v=1sXIASGXaaw"><img src="/docs/playvideo.png?raw=true" alt="Watch video" height="200"/></a>
+
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
