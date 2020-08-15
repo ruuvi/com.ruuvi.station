@@ -16,7 +16,7 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
         context?.let {
             val prefs = Preferences(it)
             Timber.d("Start from reboot")
-            if (prefs.backgroundScanMode != BackgroundScanModes.DISABLED) {
+            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
                 ScanningPeriodicReceiver.start(it, prefs.backgroundScanInterval * 1000L)
                 startForegroundService(it)
             } else {
