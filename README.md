@@ -49,6 +49,20 @@ You can order RuuviTag sensors [online](https://shop.ruuvi.com). Find more info 
 
 We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE`` file for more info.
 
+## How to build
+
+1. Open Android Studio (4.0 or newer)
+2. Select 'Get from Version Control
+3. Enter repository URL: https://github.com/ruuvi/com.ruuvi.station
+4. Clone repository
+5. Select a branch you want to build
+6. Sync project with Gradle file
+7. Now you can run project on emulator or phone
+
+Watch video showing build process:
+
+<a href="https://www.youtube.com/watch?v=1sXIASGXaaw"><img src="/docs/playvideo.png?raw=true" alt="Watch video" height="400"/></a>
+
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 

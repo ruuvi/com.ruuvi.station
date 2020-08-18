@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "443545302471",
+    "firebase_url": "https://ruuvi-station.firebaseio.com",
+    "project_id": "ruuvi-station",
+    "storage_bucket": "ruuvi-station.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443545302471:android:da47e07a59a9c59bf5d5e2",
+        "android_client_info": {
+          "package_name": "com.ruuvi.station"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "443545302471-2hhu2ojg14co447fbveaq8b1hbnag2n8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDONuO_MkSWu5LuOA7_Qf2_A62PMpajEH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "443545302471-2hhu2ojg14co447fbveaq8b1hbnag2n8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "443545302471-ctu94f8ao0aabjg8alsa5ker1p2iuuvj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ruuvi.station",
+                "app_store_id": "1384475885"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
