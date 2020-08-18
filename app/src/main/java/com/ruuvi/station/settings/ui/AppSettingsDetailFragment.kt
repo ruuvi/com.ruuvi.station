@@ -144,6 +144,7 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                 }
                 gateway_tester_layout.isVisible = true
                 gateway_test_button.setDebouncedOnClickListener {
+                    gateway_test_result.visibility = View.VISIBLE
                     gateway_test_result.text = "Testing.."
                     gateway_test_result.setTextColor(Color.DKGRAY)
                     val scanEvent = ScanEvent(context)
