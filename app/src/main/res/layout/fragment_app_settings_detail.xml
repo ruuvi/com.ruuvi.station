@@ -385,7 +385,7 @@
                     android:id="@+id/input_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="64"
+                    android:maxLength="255"
                     app:layout_constraintTop_toBottomOf="@id/input_info_layout"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -449,26 +449,24 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="12dp"
                     android:paddingTop="12dp">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/gateway_test_result"
-                        style="@style/PrefTitleText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/gateway_test_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/test_gateway"
-                        app:layout_constraintTop_toBottomOf="@id/gateway_test_result"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/gateway_test_result"
+                        style="@style/PrefTitleText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        app:layout_constraintTop_toBottomOf="@id/gateway_test_button"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
