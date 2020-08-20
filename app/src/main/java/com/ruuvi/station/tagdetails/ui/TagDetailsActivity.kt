@@ -69,6 +69,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private lateinit var permissionsHelper: PermissionsHelper
     private var openAddView = false
     private var desiredTag: String? = null
+    private var tagPagerScrolling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +122,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {}
 
-            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+                tagPagerScrolling = p2 != 0
+            }
 
             override fun onPageSelected(p0: Int) {
                 viewModel.pageSelected(p0)
@@ -351,32 +354,36 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_graph -> {
-                invalidateOptionsMenu()
-                viewModel.switchShowGraphChannel()
-                val backgroundScanMode = viewModel.getBackgroundScanMode()
-                if (backgroundScanMode == BackgroundScanModes.DISABLED) {
-                    if (viewModel.isFirstGraphVisit()) {
-                        val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
-                        simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
-                        simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
+                if (!tagPagerScrolling) {
+                    invalidateOptionsMenu()
+                    viewModel.switchShowGraphChannel()
+                    val bgScanEnabled = viewModel.preferences.backgroundScanMode
+                    if (bgScanEnabled == BackgroundScanModes.DISABLED) {
+                        if (viewModel.preferences.isFirstGraphVisit) {
+                            val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
+                            simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
+                            simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
 
-                        simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
-                            viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                                viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+                            }
+                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                            }
+                            simpleAlert.setOnDismissListener {
+                                viewModel.setIsFirstGraphVisit(false)
+                            }
+                            simpleAlert.show()
                         }
-                        simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
-                        }
-                        simpleAlert.setOnDismissListener {
-                            viewModel.setIsFirstGraphVisit(false)
-                        }
-                        simpleAlert.show()
                     }
+                    adapter.showGraph = !adapter.showGraph
                 }
-                adapter.showGraph = !adapter.showGraph
             }
             R.id.action_settings -> {
-                val intent = Intent(this, TagSettingsActivity::class.java)
-                intent.putExtra(TagSettingsActivity.TAG_ID, viewModel.tag?.id)
-                this.startActivity(intent)
+                if (!tagPagerScrolling) {
+                    val intent = Intent(this, TagSettings::class.java)
+                    intent.putExtra(TagSettings.TAG_ID, viewModel.tag?.id)
+                    this.startActivity(intent)
+                }
             }
             android.R.id.home -> {
                 finish()

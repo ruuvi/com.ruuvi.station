@@ -302,7 +302,12 @@
                         android:layout_height="wrap_content"
                         android:tooltipText="Seconds" />
 
-                </LinearLayout>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/input_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="255"
+                    app:layout_constraintTop_toBottomOf="@id/input_info_layout"/>
 
             </LinearLayout>
 
@@ -410,24 +415,27 @@
                     style="@style/PrefTitleText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/device_identifier"
-                    android:maxLength="32"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/deviceIdentifierInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="32"
-                    app:layout_constraintTop_toBottomOf="@id/deviceIdTitleTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
+                    android:paddingBottom="12dp"
+                    android:paddingTop="12dp">
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/gateway_test_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/test_gateway"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/gateway_test_result"
+                        style="@style/PrefTitleText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/gateway_test_button"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/gatewayTesterLayout"

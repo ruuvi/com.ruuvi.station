@@ -17,7 +17,8 @@ class Preferences(val context: Context) {
         }
 
     var backgroundScanMode: BackgroundScanModes
-        get() = BackgroundScanModes.fromInt(sharedPreferences.getInt("pref_background_scan_mode", BackgroundScanModes.DISABLED.value))!!
+        get() = BackgroundScanModes.fromInt(sharedPreferences.getInt("pref_background_scan_mode", BackgroundScanModes.DISABLED.value))
+                ?: BackgroundScanModes.DISABLED
         set(mode) {
             sharedPreferences.edit().putInt("pref_background_scan_mode", mode.value).apply()
         }
