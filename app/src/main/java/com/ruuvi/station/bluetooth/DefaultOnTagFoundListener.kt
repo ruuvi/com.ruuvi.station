@@ -7,12 +7,12 @@ import android.location.Location
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.alarm.AlarmChecker
+import com.ruuvi.station.alarm.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.extensions.logData
@@ -21,24 +21,26 @@ import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
+@Suppress("NAME_SHADOWING")
 class DefaultOnTagFoundListener(
-        private val context: Context,
-        private val preferences: Preferences,
-        private val gatewaySender: GatewaySender
-): IRuuviTagScanner.OnTagFoundListener {
+    private val context: Context,
+    private val preferences: Preferences,
+    private val gatewaySender: GatewaySender,
+    private val repository: TagRepository
+) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
 
     private val fusedLocationClient: FusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(context)
+        LocationServices.getFusedLocationProviderClient(context)
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
     private var lastCleanedDate: Long = Date().time
 
-    override fun onTagFound(foundTag: FoundRuuviTag) {
-        Timber.d("onTagFound: ${foundTag.logData()}")
+    override fun onTagFound(tag: FoundRuuviTag) {
+        Timber.d("onTagFound: ${tag.logData()}")
         updateLocation()
-        val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
+        val tag = HumidityCalibration.apply(RuuviTagEntity(tag))
         saveReading(tag)
 
         val calendar = Calendar.getInstance()
@@ -53,15 +55,14 @@ class DefaultOnTagFoundListener(
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
         Timber.d("saveReading for tag(${ruuviTag.id})")
-        var ruuviTag = ruuviTag
-        val dbTag = RuuviTagRepository.get(ruuviTag.id)
+        val dbTag = ruuviTag.id?.let { repository.getTagById(it) }
         if (dbTag != null) {
-            ruuviTag = dbTag.preserveData(ruuviTag)
-            RuuviTagRepository.update(ruuviTag)
+            val ruuviTag = dbTag.preserveData(ruuviTag)
+            repository.updateTag(ruuviTag)
             if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
         } else {
             ruuviTag.updateAt = Date()
-            RuuviTagRepository.save(ruuviTag)
+            repository.saveTag(ruuviTag)
         }
     }
 
@@ -75,7 +76,7 @@ class DefaultOnTagFoundListener(
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
-        var lastLoggedDate = lastLogged[ruuviTag.id]
+        val lastLoggedDate = lastLogged[ruuviTag.id]
         if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
             ruuviTag.id?.let {
                 Timber.d("saveFavouriteReading actual SAVING for [${ruuviTag.name}] (${ruuviTag.id})")
@@ -87,13 +88,13 @@ class DefaultOnTagFoundListener(
         } else {
             Timber.d("saveFavouriteReading SKIPPED [${ruuviTag.name}] (${ruuviTag.id}) lastLogged = ${Date(lastLoggedDate)}")
         }
-        AlarmChecker.check(ruuviTag, context)
+        AlarmCheckInteractor.check(ruuviTag, context, repository)
     }
 
     private fun updateLocation() {
         if (
-                preferences.gatewayUrl.isNotEmpty() &&
-                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            preferences.gatewayUrl.isNotEmpty() &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         ) {
             Timber.d("updateLocation")
             fusedLocationClient.lastLocation.addOnSuccessListener { location -> tagLocation = location }

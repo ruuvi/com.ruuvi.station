@@ -30,7 +30,7 @@
     </RelativeLayout>
 
     <ListView
-        android:id="@+id/navigationDrawer_listView"
+        android:id="@+id/navigationDrawerListView"
         android:layout_below="@id/navigation_header_view"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">

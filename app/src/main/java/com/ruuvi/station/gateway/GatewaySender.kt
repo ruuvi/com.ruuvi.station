@@ -22,9 +22,9 @@ class GatewaySender(private val context: Context, private val preferences: Prefe
             var scanLocation: ScanLocation? = null
             location?.let {
                 scanLocation = ScanLocation(
-                        it.latitude,
-                        it.longitude,
-                        it.accuracy
+                    it.latitude,
+                    it.longitude,
+                    it.accuracy
                 )
             }
 

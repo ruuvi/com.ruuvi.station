@@ -3,39 +3,48 @@ package com.ruuvi.station.dashboard.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.RuuviTagAdapter
-import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.settings.ui.AppSettingsActivity
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.feature.AboutActivity
-import com.ruuvi.station.feature.AddTagActivity
+import com.ruuvi.station.about.ui.AboutActivity
+import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.util.Starter
-import kotlinx.android.synthetic.main.activity_tag_details.main_drawerLayout
+import com.ruuvi.station.util.PermissionsHelper
+import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
+import kotlinx.android.synthetic.main.content_dashboard.dashboardListView
+import kotlinx.android.synthetic.main.content_dashboard.noTagsTextView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import java.util.Timer
+import kotlin.concurrent.scheduleAtFixedRate
 
+@ExperimentalCoroutinesApi
 class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val viewModel: DashboardActivityViewModel by viewModel()
 
-    lateinit var handler: Handler
-    lateinit var starter: Starter
-    lateinit var tags: MutableList<RuuviTagEntity>
-    lateinit var adapter: RuuviTagAdapter
+    private lateinit var permissionsHelper: PermissionsHelper
+    private lateinit var tags: MutableList<RuuviTag>
+    private lateinit var adapter: RuuviTagAdapter
+
+    private val timer = Timer("DashboardActivityTimer", false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,35 +55,39 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.setIcon(R.drawable.logo)
 
         setupDrawer()
+        setupListView()
 
-        tags = ArrayList(RuuviTagRepository.getAll(true))
+        dashboardListView.onItemClickListener = tagClick
 
-        val beaconListView = findViewById<ListView>(R.id.dashboard_listView)
-        adapter = RuuviTagAdapter(applicationContext, tags)
-        beaconListView.adapter = adapter
+        permissionsHelper = PermissionsHelper(this)
+        permissionsHelper.requestPermissions()
+    }
 
-        beaconListView.onItemClickListener = tagClick
+    private fun setupListView() {
+        lifecycleScope.launchWhenCreated {
+            viewModel.tagsFlow.value.let {
+                tags = ArrayList(it)
+                adapter = RuuviTagAdapter(applicationContext, tags)
+                dashboardListView.adapter = adapter
+            }
+        }
 
-        handler = Handler()
-
-        starter = Starter(this)
-        starter.getThingsStarted()
+        dashboardListView.onItemClickListener = tagClick
     }
 
     private fun setupDrawer() {
         val drawerToggle = ActionBarDrawerToggle(
-            this, main_drawerLayout, toolbar,
+            this, mainDrawerLayout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
 
-        main_drawerLayout.addDrawerListener(drawerToggle)
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setHomeButtonEnabled(true)
-        }
+        mainDrawerLayout.addDrawerListener(drawerToggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
+        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
 
         drawerListView.adapter = ArrayAdapter(
             this,
@@ -82,9 +95,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             resources.getStringArray(R.array.navigation_items_card_view)
         )
 
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            main_drawerLayout.closeDrawers()
-            when (i) {
+        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            mainDrawerLayout.closeDrawers()
+            when (position) {
                 0 -> {
                     val addIntent = Intent(this, AddTagActivity::class.java)
                     startActivity(addIntent)
@@ -110,39 +123,27 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     override fun onResume() {
         super.onResume()
         viewModel.startForegroundScanning()
-        handler.post(object : Runnable {
-            override fun run() {
-                handler.postDelayed(this, 1000)
-            }
-        })
 
-        if (starter.getNeededPermissions().isEmpty()) {
-            val noTagsFound = findViewById<TextView>(R.id.noTags_textView)
-            handler.post(object : Runnable {
-                override fun run() {
-                    tags.clear()
-                    tags.addAll(ArrayList(RuuviTagRepository.getAll(true)))
-                    noTagsFound.isVisible = tags.size <= 0
-                    adapter.notifyDataSetChanged()
-                    handler.postDelayed(this, 500)
+        CoroutineScope(Dispatchers.IO).launch {
+            if (permissionsHelper.arePermissionsGranted()) {
+                timer.scheduleAtFixedRate(1000, 500) {
+                    lifecycleScope.launchWhenResumed {
+                        viewModel.tagsFlow.collect {
+                            tags.clear()
+                            tags.addAll(it)
+                            noTagsTextView.isVisible = tags.isEmpty()
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
                 }
-            })
-
-            if (starter.checkBluetooth()) {
-                starter.startScanning()
             }
         }
     }
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
-        val tag = view.tag as RuuviTagEntity
+        val tag = view.tag as RuuviTag
         val intent = Intent(applicationContext, TagDetailsActivity::class.java)
         intent.putExtra("id", tag.id)
         startActivity(intent)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacksAndMessages(null)
     }
 }

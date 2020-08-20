@@ -21,9 +21,9 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 11;
+    public static final int VERSION = 12;
 
-    @Migration(version = 11, database = LocalDatabase.class)
+    @Migration(version = 12, database = LocalDatabase.class)
     public static class Migration11 extends AlterTableMigration<Alarm> {
         public Migration11(Class<Alarm> table) {
             super(table);
@@ -72,7 +72,8 @@ public class LocalDatabase {
 
         @Override
         public void onPreMigrate() {
-            addColumn(SQLiteType.INTEGER, "createDate"); }
+            addColumn(SQLiteType.INTEGER, "createDate");
+        }
     }
 
     @Migration(version = 6, database = LocalDatabase.class)

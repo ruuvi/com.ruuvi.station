@@ -4,27 +4,28 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import android.widget.Toast
-import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CsvExporter(val context: Context) {
+class CsvExporter(val context: Context, private val repository: TagRepository) {
+
     fun toCsv(tagId: String) {
-        val tag = RuuviTagRepository.get(tagId)
+        val tag = repository.getTagById(tagId)
         val readings = TagSensorReading.getForTag(tagId)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
         val csvFile = File.createTempFile(
-                tag?.id + "_" + Date().time + "_",
-                ".csv",
-                cacheDir
+            tag?.id + "_" + Date().time + "_",
+            ".csv",
+            cacheDir
         )
-        var fileWriter: FileWriter?
+        val fileWriter: FileWriter?
 
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
         try {
             fileWriter = FileWriter(csvFile.absolutePath)
 
@@ -35,7 +36,7 @@ class CsvExporter(val context: Context) {
 
 
             readings.forEach {
-                fileWriter.append(df.format(it.createdAt))
+                fileWriter.append(dateFormat.format(it.createdAt))
                 fileWriter.append(',')
                 fileWriter.append(it.temperature.toString())
                 fileWriter.append(',')
@@ -79,6 +80,6 @@ class CsvExporter(val context: Context) {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity "+ tag?.id +" csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity " + tag?.id + " csv export"))
     }
 }

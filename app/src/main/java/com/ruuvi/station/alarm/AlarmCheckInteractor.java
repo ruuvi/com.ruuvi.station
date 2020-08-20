@@ -15,11 +15,12 @@ import androidx.core.app.TaskStackBuilder;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver;
-import com.ruuvi.station.database.RuuviTagRepository;
+import com.ruuvi.station.database.TagRepository;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver;
+import com.ruuvi.station.tag.domain.RuuviTag;
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity;
 
 import java.util.Calendar;
@@ -34,8 +35,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * Created by berg on 01/10/17.
  */
 
-public class AlarmChecker {
-    private static final String TAG = "AlarmChecker";
+public class AlarmCheckInteractor {
+    private static final String TAG = "AlarmCheckInteractor";
 
     // returns 1 for triggered alarm, 0 for non triggered alarm, -1 if tag has no alarm
     public static int getStatus(RuuviTagEntity tag) {
@@ -88,7 +89,57 @@ public class AlarmChecker {
         return -1;
     }
 
-    public static void check(RuuviTagEntity tag, Context context) {
+    public static int getStatus(RuuviTag tag) {
+        List<Alarm> alarms = Alarm.getForTag(tag.getId());
+
+        int notificationTextResourceId = -9001;
+        boolean anyEnabled = false;
+        for (Alarm alarm : alarms) {
+            if (!alarm.enabled) continue;
+            anyEnabled = true;
+            switch (alarm.type) {
+                case Alarm.TEMPERATURE:
+                    if (tag.getTemperature() < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_temperature_low;
+                    if (tag.getTemperature() > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_temperature_high;
+                    break;
+                case Alarm.HUMIDITY:
+                    if (tag.getHumidity() < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_humidity_low;
+                    if (tag.getHumidity() > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_humidity_high;
+                    break;
+                case Alarm.PERSSURE:
+                    if (tag.getPressure() < alarm.low * 100)
+                        notificationTextResourceId = R.string.alert_notification_pressure_low;
+                    if (tag.getPressure() > alarm.high * 100)
+                        notificationTextResourceId = R.string.alert_notification_pressure_high;
+                    break;
+                case Alarm.RSSI:
+                    if (tag.getRssi() < alarm.low)
+                        notificationTextResourceId = R.string.alert_notification_rssi_low;
+                    if (tag.getRssi() > alarm.high)
+                        notificationTextResourceId = R.string.alert_notification_rssi_high;
+                    break;
+                case Alarm.MOVEMENT:
+                    List<TagSensorReading> readings = TagSensorReading.getLatestForTag(tag.getId(), 2);
+                    if (readings.size() == 2) {
+                        if (hasTagMoved(readings.get(0), readings.get(1))) {
+                            notificationTextResourceId = R.string.alert_notification_movement;
+                        }
+                    }
+                    break;
+            }
+            if (notificationTextResourceId != -9001) {
+                return 1;
+            }
+        }
+        if (anyEnabled) return 0;
+        return -1;
+    }
+
+    public static void check(RuuviTagEntity tag, Context context, TagRepository tagRepository) {
         Timber.d("check alarm tag.id = %1$s", tag.getId());
         List<Alarm> alarms = Alarm.getForTag(tag.getId());
 
@@ -136,7 +187,7 @@ public class AlarmChecker {
                     break;
             }
             if (notificationTextResourceId != -9001 && canNotify(alarm)) {
-                RuuviTagEntity fromDb = RuuviTagRepository.get(tag.getId());
+                RuuviTagEntity fromDb = tagRepository.getTagById(tag.getId());
                 sendAlert(notificationTextResourceId, alarm.id, fromDb.getDisplayName(), fromDb.getId(), context);
             }
         }

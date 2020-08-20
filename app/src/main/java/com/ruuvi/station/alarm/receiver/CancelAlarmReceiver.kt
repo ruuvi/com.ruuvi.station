@@ -4,7 +4,7 @@ import android.content.Intent
 import android.content.BroadcastReceiver
 import android.content.Context
 import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.alarm.AlarmChecker
+import com.ruuvi.station.alarm.AlarmCheckInteractor
 
 class CancelAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -17,6 +17,6 @@ class CancelAlarmReceiver : BroadcastReceiver() {
                 alarm.update()
             }
         }
-        AlarmChecker.dismissNotification(notificationId, context)
+        AlarmCheckInteractor.dismissNotification(notificationId, context)
     }
 }

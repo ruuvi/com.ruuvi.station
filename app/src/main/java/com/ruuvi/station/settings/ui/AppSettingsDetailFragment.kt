@@ -10,38 +10,42 @@ import android.view.View
 import android.widget.RadioButton
 import androidx.core.view.isVisible
 import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
+import com.flexsentlabs.extensions.viewModel
 import com.koushikdutta.ion.Ion
 import com.ruuvi.station.R
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.gateway.data.ScanEvent
-import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.util.DeviceIdentifier
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.device_identifier_input
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.device_identifier_layout
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_test_button
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_test_result
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.gateway_tester_layout
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_layout
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_setting
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.input_setting_title
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_group
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_layout
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.radio_setting_title
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.settings_info
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelock_layout_container
-import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelock_switch
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.deviceIdentifierInput
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.deviceIdentifierLayout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gatewayTestButton
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gatewayTestResultTextView
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.gatewayTesterLayout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.inputLayout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.inputSettingEditText
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.inputSettingTitleTextView
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radioGroup
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radioLayout
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.radioSettingTitleTextView
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.settingsInfoTextView
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelockLayoutContainer
+import kotlinx.android.synthetic.main.fragment_app_settings_detail.wakelockSwitch
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.support.closestKodein
 
 private const val ARG_SETTING_RES = "arg_setting_res"
 
-class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail) {
+class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail), KodeinAware {
+
+    override val kodein: Kodein by closestKodein()
+
+    private val viewModel: AppSettingsDetailViewModel by viewModel()
+
     private var res: Int? = null
-    lateinit var prefs: Preferences
-    private var gatewayUrl = ""
-    private var deviceId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        prefs = Preferences(this.requireContext())
         arguments?.let {
             res = it.getInt(ARG_SETTING_RES)
         }
@@ -49,15 +53,12 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
 
     override fun onPause() {
         super.onPause()
-        prefs.gatewayUrl = gatewayUrl
-        prefs.deviceId = deviceId
-        //MainActivity.setBackgroundScanning(activity)
+        viewModel.saveUrlAndDeviceId()
     }
 
     override fun onResume() {
         super.onResume()
-        if (gatewayUrl.isEmpty()) gatewayUrl = prefs.gatewayUrl
-        if (deviceId.isEmpty()) deviceId = prefs.deviceId
+        viewModel.restoreUrlAndDeviceId()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,9 +66,9 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
 
         when (res) {
             R.string.temperature_unit -> {
-                radio_layout.isVisible = true
-                res?.let { radio_setting_title.text = getString(it) }
-                val current = prefs.temperatureUnit
+                radioLayout.isVisible = true
+                res?.let { radioSettingTitleTextView.text = getString(it) }
+                val current = viewModel.getTemperatureUnit()
                 val options = resources.getStringArray(R.array.list_preference_temperature_unit_titles)
                 val values = resources.getStringArray(R.array.list_preference_temperature_unit_values)
                 options.forEachIndexed { index, option ->
@@ -75,18 +76,18 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     radioButton.id = index
                     radioButton.text = option
                     radioButton.isChecked = (values[index] == current)
-                    radio_group.addView(radioButton)
+                    radioGroup.addView(radioButton)
                 }
 
-                radio_group.setOnCheckedChangeListener { _, i ->
-                    prefs.temperatureUnit = values[i]
+                radioGroup.setOnCheckedChangeListener { _, i ->
+                    viewModel.setTemperatureUnit(values[i])
                 }
-                settings_info.text = getString(R.string.settings_temperature_unit_details)
+                settingsInfoTextView.text = getString(R.string.settings_temperature_unit_details)
             }
             R.string.humidity_unit -> {
-                radio_layout.isVisible = true
-                res?.let { radio_setting_title.text = getString(it) }
-                val current = prefs.humidityUnit
+                radioLayout.isVisible = true
+                res?.let { radioSettingTitleTextView.text = getString(it) }
+                val current = viewModel.getHumidityUnit()
                 val options = resources.getStringArray(R.array.list_preference_humidity_unit_titles)
                 val values = resources.getIntArray(R.array.list_preference_humidity_unit_values)
                 options.forEachIndexed { index, option ->
@@ -94,24 +95,24 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     radioButton.id = index
                     radioButton.text = option
                     radioButton.isChecked = (values[index] == current.code)
-                    radio_group.addView(radioButton)
+                    radioGroup.addView(radioButton)
                 }
 
-                radio_group.setOnCheckedChangeListener { _, i ->
+                radioGroup.setOnCheckedChangeListener { _, i ->
                     when (values[i]) {
-                        0 -> prefs.humidityUnit = HumidityUnit.PERCENT
-                        1 -> prefs.humidityUnit = HumidityUnit.GM3
-                        2 -> prefs.humidityUnit = HumidityUnit.DEW
+                        0 -> viewModel.setHumidityUnit(HumidityUnit.PERCENT)
+                        1 -> viewModel.setHumidityUnit(HumidityUnit.GM3)
+                        2 -> viewModel.setHumidityUnit(HumidityUnit.DEW)
                     }
                 }
-                settings_info.text = getString(R.string.settings_humidity_unit_details)
+                settingsInfoTextView.text = getString(R.string.settings_humidity_unit_details)
             }
             R.string.gateway_url -> {
-                input_layout.isVisible = true
-                res?.let { input_setting_title.text = getString(it) }
-                input_setting.setText(prefs.gatewayUrl)
-                input_setting.hint = "https://your.gateway/..."
-                input_setting.addTextChangedListener(object : TextWatcher {
+                inputLayout.isVisible = true
+                res?.let { inputSettingTitleTextView.text = getString(it) }
+                inputSettingEditText.setText(viewModel.gatewayUrl)
+                inputSettingEditText.hint = "https://your.gateway/..."
+                inputSettingEditText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     }
 
@@ -119,14 +120,14 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     }
 
                     override fun afterTextChanged(p0: Editable?) {
-                        gatewayUrl = p0.toString()
+                        viewModel.gatewayUrl = p0.toString()
                     }
                 })
-                //settings_info.text = getString(R.string.settings_gateway_details)
-                settings_info.movementMethod = LinkMovementMethod.getInstance()
-                device_identifier_layout.isVisible = true
-                device_identifier_input.setText(prefs.deviceId)
-                device_identifier_input.addTextChangedListener(object : TextWatcher {
+                //settingsInfoTextView.text = getString(R.string.settings_gateway_details)
+                settingsInfoTextView.movementMethod = LinkMovementMethod.getInstance()
+                deviceIdentifierLayout.isVisible = true
+                deviceIdentifierInput.setText(viewModel.deviceId)
+                deviceIdentifierInput.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     }
 
@@ -134,63 +135,64 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     }
 
                     override fun afterTextChanged(p0: Editable?) {
-                        deviceId = p0.toString()
+                        viewModel.deviceId = p0.toString()
                     }
                 })
-                wakelock_layout_container.isVisible = true
-                wakelock_switch.isChecked = prefs.serviceWakelock
-                wakelock_switch.setOnCheckedChangeListener { _, checked ->
-                    prefs.serviceWakelock = checked
+                wakelockLayoutContainer.isVisible = true
+                wakelockSwitch.isChecked = viewModel.isServiceWakeLock()
+                wakelockSwitch.setOnCheckedChangeListener { _, checked ->
+                    viewModel.setIsServiceWakeLock(checked)
                 }
                 gateway_tester_layout.isVisible = true
                 gateway_test_button.setDebouncedOnClickListener {
                     gateway_test_result.visibility = View.VISIBLE
                     gateway_test_result.text = "Testing.."
                     gateway_test_result.setTextColor(Color.DKGRAY)
+
                     val scanEvent = ScanEvent(context)
-                    scanEvent.deviceId = device_identifier_input.text.toString()
+                    scanEvent.deviceId = deviceIdentifierInput.text.toString()
                     Ion.with(context)
-                        .load(input_setting.text.toString())
+                        .load(inputSettingEditText.text.toString())
                         .setJsonPojoBody(scanEvent)
                         .asJsonObject()
                         .withResponse()
                         .setCallback { e, result ->
                             when {
                                 e != null -> {
-                                    gateway_test_result.setTextColor(Color.RED)
-                                    gateway_test_result.text = "Nope, did not work. Is the URL correct?"
+                                    gatewayTestResultTextView.setTextColor(Color.RED)
+                                    gatewayTestResultTextView.text = "Nope, did not work. Is the URL correct?"
                                 }
                                 result.headers.code() != 200 -> {
-                                    gateway_test_result.setTextColor(Color.RED)
-                                    gateway_test_result.text = "Nope, did not work. Response code: " + result.headers.code()
+                                    gatewayTestResultTextView.setTextColor(Color.RED)
+                                    gatewayTestResultTextView.text = "Nope, did not work. Response code: " + result.headers.code()
                                 }
                                 else -> {
-                                    gateway_test_result.setTextColor(Color.GREEN)
-                                    gateway_test_result.text = "Gateway works! Response code: " + result.headers.code()
+                                    gatewayTestResultTextView.setTextColor(Color.GREEN)
+                                    gatewayTestResultTextView.text = "Gateway works! Response code: " + result.headers.code()
                                 }
                             }
                         }
                 }
             }
             R.string.device_identifier -> {
-                input_layout.isVisible = true
-                res?.let { input_setting_title.text = getString(it) }
-                input_setting.setText(prefs.deviceId)
-                input_setting.addTextChangedListener(object : TextWatcher {
+                inputLayout.isVisible = true
+                res?.let { inputSettingTitleTextView.text = getString(it) }
+                inputSettingEditText.setText(viewModel.deviceId)
+                inputSettingEditText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     }
 
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                        deviceId = p0.toString()
+                        viewModel.deviceId = p0.toString()
                         if (p0.toString().isEmpty()) {
-                            deviceId = DeviceIdentifier.generateId()
+                            viewModel.deviceId = DeviceIdentifier.generateId()
                         }
                     }
 
                     override fun afterTextChanged(p0: Editable?) {
                     }
                 })
-                settings_info.text = getString(R.string.settings_device_identifier_details)
+                settingsInfoTextView.text = getString(R.string.settings_device_identifier_details)
             }
         }
     }

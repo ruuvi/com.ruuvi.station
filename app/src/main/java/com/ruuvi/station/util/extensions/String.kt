@@ -2,7 +2,7 @@ package com.ruuvi.station.util.extensions
 
 private const val HEX_CHARS = "0123456789ABCDEF"
 
-fun String.hexStringToByteArray() : ByteArray {
+fun String.hexStringToByteArray(): ByteArray {
     val input = this.toUpperCase()
 
     val result = ByteArray(length / 2)
@@ -12,7 +12,7 @@ fun String.hexStringToByteArray() : ByteArray {
         val secondIndex = HEX_CHARS.indexOf(input[i + 1]);
 
         val octet = firstIndex.shl(4).or(secondIndex)
-        result.set(i.shr(1), octet.toByte())
+        result[i.shr(1)] = octet.toByte()
     }
 
     return result

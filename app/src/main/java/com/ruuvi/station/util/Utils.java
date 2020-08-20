@@ -42,7 +42,7 @@ public class Utils {
 
     public static Bitmap createBall(int radius, int ballColor, int letterColor, String letter) {
         letter = letter.toUpperCase();
-        Bitmap bitmap = Bitmap.createBitmap(radius*2, radius*2, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint2 = new Paint();
         paint2.setColor(ballColor);
@@ -59,18 +59,13 @@ public class Utils {
     }
 
     public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
-        Collections.sort(tags, new Comparator<RuuviTagEntity>() {
-            @Override
-            public int compare(RuuviTagEntity o1, RuuviTagEntity o2) {
-                return o2.getRssi() - o1.getRssi();
-            }
-        });
+        Collections.sort(tags, (o1, o2) -> o2.getRssi() - o1.getRssi());
     }
 
     public static byte[] parseByteDataFromB64(String data) {
         try {
             byte[] bData = base64.decode(data);
-            int pData[] = new int[8];
+            int[] pData = new int[8];
             for (int i = 0; i < bData.length; i++)
                 pData[i] = bData[i] & 0xFF;
             return bData;
@@ -87,9 +82,9 @@ public class Utils {
         if (diffInMS > 24 * 60 * 60 * 1000) {
             output += date.toString();
         } else {
-            int seconds = (int) (diffInMS / 1000) % 60 ;
-            int minutes = (int) ((diffInMS / (1000*60)) % 60);
-            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
+            int seconds = (int) (diffInMS / 1000) % 60;
+            int minutes = (int) ((diffInMS / (1000 * 60)) % 60);
+            int hours = (int) ((diffInMS / (1000 * 60 * 60)) % 24);
             if (hours > 0) output += hours + " h ";
             if (minutes > 0) output += minutes + " min ";
             output += seconds + " s ago";
@@ -115,8 +110,6 @@ public class Utils {
 
     private static int getDefaultBackground(int number) {
         switch (number) {
-            case 0:
-                return R.drawable.bg1;
             case 1:
                 return R.drawable.bg2;
             case 2:

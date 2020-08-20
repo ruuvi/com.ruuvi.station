@@ -3,10 +3,10 @@ package com.ruuvi.station.tagdetails.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ruuvi.station.alarm.AlarmChecker
-import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.alarm.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
+import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +15,7 @@ import kotlin.concurrent.scheduleAtFixedRate
 
 @ExperimentalCoroutinesApi
 class TagDetailsViewModel(
-    private val tagDetailsInteractor: TagDetailsInteractor,
-    val preferences: Preferences
+    private val interactor: TagInteractor
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -31,10 +30,10 @@ class TagDetailsViewModel(
     //FIXME change livedata to coroutines
     val tags = MutableLiveData<List<RuuviTagEntity>>()
 
-    private val alarmStatus = MutableStateFlow<Int>(-1)
+    private val alarmStatus = MutableStateFlow(-1)
     val alarmStatusFlow: StateFlow<Int> = alarmStatus
 
-    var dashboardEnabled = preferences.dashboardEnabled
+    var dashboardEnabled = isDashboardEnabled()
     var tag: RuuviTagEntity? = null
 
     init {
@@ -59,16 +58,31 @@ class TagDetailsViewModel(
     }
 
     fun refreshTags() {
-        tags.value = tagDetailsInteractor.getAllTags()
+        tags.value = interactor.getTagEntities()
     }
+
+    fun getBackgroundScanMode(): BackgroundScanModes =
+        interactor.getBackgroundScanMode()
+
+    fun setBackgroundScanMode(mode: BackgroundScanModes) =
+        interactor.setBackgroundScanMode(mode)
+
+    fun isFirstGraphVisit(): Boolean =
+        interactor.isFirstGraphVisit()
+
+    fun setIsFirstGraphVisit(isFirst: Boolean) =
+        interactor.setIsFirstGraphVisit(isFirst)
+
+    private fun isDashboardEnabled(): Boolean =
+        interactor.isDashboardEnabled()
 
     private fun checkForAlarm() {
         ioScope.launch {
             selectedTag.value?.id?.let { tagId ->
-                val tagEntry = tagDetailsInteractor.getTag(tagId)
+                val tagEntry = interactor.getTagEntityById(tagId)
                 tagEntry?.let {
                     withContext(Dispatchers.Main) {
-                        alarmStatus.value = AlarmChecker.getStatus(it)
+                        alarmStatus.value = AlarmCheckInteractor.getStatus(it)
                     }
                 }
             }

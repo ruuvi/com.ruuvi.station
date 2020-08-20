@@ -1,38 +1,50 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.addtag.ui
 
 import android.Manifest
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import com.google.android.material.snackbar.Snackbar
 import androidx.core.app.ActivityCompat
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
-import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.adapters.AddTagAdapter
-import com.ruuvi.station.database.RuuviTagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.util.Starter
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_add_tag.toolbar
-import kotlinx.android.synthetic.main.content_add_tag.no_tags
+import kotlinx.android.synthetic.main.content_add_tag.noTagsFoundTextView
+import kotlinx.android.synthetic.main.content_add_tag.tagListView
 import kotlinx.android.synthetic.main.content_add_tag.tag_layout
-import kotlinx.android.synthetic.main.content_add_tag.tag_listView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 import java.util.ArrayList
 import java.util.Calendar
 
-class AddTagActivity : AppCompatActivity() {
-    private var adapter: AddTagAdapter? = null
+@ExperimentalCoroutinesApi
+class AddTagActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein: Kodein by closestKodein()
+
+    private val viewModel: AddTagActivityViewModel by viewModel()
+
+    private lateinit var adapter: AddTagAdapter
     private var tags: MutableList<RuuviTagEntity>? = null
-    lateinit var starter: Starter
+    private lateinit var permissionsHelper: PermissionsHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,33 +53,34 @@ class AddTagActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        starter = Starter(this)
+        permissionsHelper = PermissionsHelper(this)
 
         tags = ArrayList()
         adapter = AddTagAdapter(this, tags)
-        tag_listView.adapter = adapter
+        tagListView.adapter = adapter
 
-        tag_listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            val tag = tag_listView.getItemAtPosition(i) as RuuviTagEntity
-            if (RuuviTagRepository.get(tag.id)?.favorite == true) {
+        tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
+            if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
                 Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
                     .show()
                 return@OnItemClickListener
             }
             tag.defaultBackground = getKindaRandomBackground()
             tag.update()
-            val settingsIntent = Intent(this, TagSettings::class.java)
-            settingsIntent.putExtra(TagSettings.TAG_ID, tag.id)
+            val settingsIntent = Intent(this, TagSettingsActivity::class.java)
+            settingsIntent.putExtra(TagSettingsActivity.TAG_ID, tag.id)
             startActivityForResult(settingsIntent, 1)
         }
 
-        adapter!!.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
 
-        val handler = Handler()
-        handler.post(object : Runnable {
-            override fun run() {
+        lifecycleScope.launchWhenCreated {
+            viewModel.tagsFlow.collect {
                 tags?.clear()
-                tags?.addAll(ArrayList(RuuviTagRepository.getAll(false)))
+                it?.let {
+                    tags?.addAll(it)
+                }
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.SECOND, -5)
                 var i = 0
@@ -83,32 +96,23 @@ class AddTagActivity : AppCompatActivity() {
                     }
                     if (tags.size > 0) {
                         Utils.sortTagsByRssi(tags)
-                        no_tags.visibility = View.INVISIBLE
+                        noTagsFoundTextView.isInvisible = true
                     } else
-                        no_tags.visibility = View.VISIBLE
-                    if (adapter != null) adapter?.notifyDataSetChanged()
+                        noTagsFoundTextView.isVisible = true
+
+                    adapter.notifyDataSetChanged()
 
                 }
-
-                handler.postDelayed(this, 1000)
             }
-        })
+        }
 
-        starter.getThingsStarted()
+        //FIXME delete as repeated call?
+        permissionsHelper.requestPermissions()
     }
 
     override fun onResume() {
         super.onResume()
-        checkBluetooth()
-    }
-
-    private fun checkBluetooth(): Boolean {
-        if (starter.isBluetoothEnabled()) {
-            return true
-        }
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        startActivity(enableBtIntent)
-        return false
+        permissionsHelper.requestBluetoothPermissions()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -126,7 +130,7 @@ class AddTagActivity : AppCompatActivity() {
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        starter.requestPermissions()
+                        permissionsHelper.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
                     }
@@ -161,14 +165,14 @@ class AddTagActivity : AppCompatActivity() {
     }
 
     private fun getKindaRandomBackground(): Int {
-        val tags = RuuviTagRepository.getAll(true)
-        var bg = (Math.random() * 9.0).toInt()
+        val tags = viewModel.getAllTags(true)
+        var background = (Math.random() * 9.0).toInt()
         for (i in 0..99) {
-            if (!isBackgroundInUse(tags, bg)) {
-                return bg
+            if (!isBackgroundInUse(tags, background)) {
+                return background
             }
-            bg = (Math.random() * 9.0).toInt()
+            background = (Math.random() * 9.0).toInt()
         }
-        return bg
+        return background
     }
 }

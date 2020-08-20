@@ -2,8 +2,10 @@ package com.ruuvi.station.util;
 
 import android.annotation.SuppressLint;
 import android.os.Environment;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -14,6 +16,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;

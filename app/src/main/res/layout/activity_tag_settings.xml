@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context="com.ruuvi.station.feature.TagSettings">
+    tools:context="com.ruuvi.station.tagsettings.ui.TagSettingsActivity">
 
     <RelativeLayout
         android:background="@drawable/header"
@@ -45,7 +45,7 @@
                 android:paddingBottom="32dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/tag_image"
+                    android:id="@+id/tagImageView"
                     android:adjustViewBounds="true"
                     android:layout_height="200dp"
                     android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/tag_image_select_button"
+                    android:id="@+id/tagImageSelectButton"
                     android:alpha="0.7"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -71,11 +71,11 @@
                     android:scaleType="fitCenter"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tag_image"
+                    app:layout_constraintTop_toTopOf="@id/tagImageView"
                     app:srcCompat="@drawable/icon_bg_refresh" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/tag_image_camera_button"
+                    android:id="@+id/tagImageCameraButton"
                     android:alpha="0.7"
                     android:layout_height="32dp"
                     android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
                     android:scaleType="fitCenter"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tag_image"
+                    app:layout_constraintTop_toTopOf="@id/tagImageView"
                     app:srcCompat="@drawable/icon_bg_camera_01" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="16sp"
-                    app:layout_constraintTop_toBottomOf="@id/tag_image_select_button" />
+                    app:layout_constraintTop_toBottomOf="@id/tagImageSelectButton" />
 
                 <TextView
                     android:id="@+id/name_header"
@@ -112,10 +112,10 @@
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tag_image" />
+                    app:layout_constraintTop_toBottomOf="@id/tagImageView" />
 
                 <TextView
-                    android:id="@+id/name_title"
+                    android:id="@+id/tagNameTitleTextView"
                     android:fontFamily="@font/roboto_medium"
                     android:layout_below="@id/name_header"
                     android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                     app:layout_constraintTop_toBottomOf="@id/name_header" />
 
                 <TextView
-                    android:id="@+id/input_name"
+                    android:id="@+id/tagNameInputTextView"
                     android:gravity="end"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -136,7 +136,7 @@
                     android:textSize="16sp"
                     android:clickable="true"
                     android:focusable="true"
-                    app:layout_constraintStart_toEndOf="@id/name_title"
+                    app:layout_constraintStart_toEndOf="@id/tagNameTitleTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/name_header"
                     tools:text="00:00:00:00:00:00" />
@@ -154,10 +154,10 @@
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/input_name" />
+                    app:layout_constraintTop_toBottomOf="@id/tagNameInputTextView" />
 
                 <LinearLayout
-                    android:id="@+id/alerts_container"
+                    android:id="@+id/alertsContainerLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:orientation="vertical"
@@ -178,7 +178,7 @@
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alerts_container" />
+                    app:layout_constraintTop_toBottomOf="@id/alertsContainerLayout" />
 
                 <TextView
                     android:id="@+id/title_mac"
@@ -193,7 +193,7 @@
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
                 <TextView
-                    android:id="@+id/input_mac"
+                    android:id="@+id/inputMacTextView"
                     android:gravity="end"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -206,7 +206,7 @@
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/raw_values"
+                    android:id="@+id/rawValuesLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     app:layout_constraintTop_toBottomOf="@id/title_mac">
@@ -224,7 +224,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/input_voltage"
+                        android:id="@+id/inputVoltageTextView"
                         android:gravity="end"
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
@@ -247,7 +247,7 @@
                         app:layout_constraintTop_toBottomOf="@id/title_voltage" />
 
                     <TextView
-                        android:id="@+id/input_x"
+                        android:id="@+id/xInputTextView"
                         android:gravity="end"
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
@@ -270,7 +270,7 @@
                         app:layout_constraintTop_toBottomOf="@id/title_x" />
 
                     <TextView
-                        android:id="@+id/input_y"
+                        android:id="@+id/yInputTextView"
                         android:gravity="end"
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
@@ -293,7 +293,7 @@
                         app:layout_constraintTop_toBottomOf="@id/title_y" />
 
                     <TextView
-                        android:id="@+id/input_z"
+                        android:id="@+id/zInputTextView"
                         android:gravity="end"
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
@@ -306,7 +306,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <Button
-                    android:id="@+id/calibrate_humidity"
+                    android:id="@+id/calibrateHumidityButton"
                     android:background="@drawable/button_rounded_corners"
                     android:fontFamily="@font/montserrat_bold"
                     android:layout_height="wrap_content"
@@ -319,10 +319,10 @@
                     android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/raw_values" />
+                    app:layout_constraintTop_toBottomOf="@+id/rawValuesLayout" />
 
                 <Button
-                    android:id="@+id/remove_tag"
+                    android:id="@+id/removeTagButton"
                     android:background="@drawable/button_rounded_corners"
                     android:fontFamily="@font/montserrat_bold"
                     android:layout_height="wrap_content"
@@ -335,7 +335,7 @@
                     android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/calibrate_humidity" />
+                    app:layout_constraintTop_toBottomOf="@id/calibrateHumidityButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

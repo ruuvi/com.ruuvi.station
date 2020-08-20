@@ -6,10 +6,13 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import com.google.android.material.snackbar.Snackbar
@@ -33,12 +36,12 @@ import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.feature.AboutActivity
-import com.ruuvi.station.feature.AddTagActivity
-import com.ruuvi.station.feature.TagSettings
+import com.ruuvi.station.about.ui.AboutActivity
+import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.Starter
+import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_tag_details.*
@@ -51,6 +54,7 @@ import java.util.*
 
 @ExperimentalCoroutinesApi
 class TagDetailsActivity : AppCompatActivity(), KodeinAware {
+
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: TagDetailsViewModel by viewModel()
@@ -62,7 +66,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private var isEmptyList = true
     private var alarmStatus: Int? = null
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private lateinit var starter: Starter
+    private lateinit var permissionsHelper: PermissionsHelper
     private var openAddView = false
     private var desiredTag: String? = null
     private var tagPagerScrolling = false
@@ -70,10 +74,10 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag_details)
+
         desiredTag = intent.getStringExtra("id")
         openAddView = intent.getBooleanExtra(FROM_WELCOME, false)
-
-        starter = Starter(this)
+        permissionsHelper = PermissionsHelper(this)
         setupViewModel()
         setupUI()
 
@@ -83,7 +87,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             startActivity(addIntent)
             return
         }
-        starter.getThingsStarted()
+        //FIXME delete as repeated call?
+        permissionsHelper.requestPermissions()
     }
 
     private fun setupUI() {
@@ -92,29 +97,29 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
-        noTags_textView.setDebouncedOnClickListener {
+        noTagsTextView.setDebouncedOnClickListener {
             startActivity(Intent(this, AddTagActivity::class.java))
         }
 
         imageSwitcher.setFactory {
-            val im = AppCompatImageView(applicationContext)
-            im.scaleType = ImageView.ScaleType.CENTER_CROP
-            im.layoutParams = FrameLayout.LayoutParams(
+            val imageView = AppCompatImageView(applicationContext)
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT)
-            im
+            imageView
         }
 
         if (viewModel.dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            main_drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
             setupDrawer()
         }
 
-        tag_pager.adapter = adapter
-        tag_pager.offscreenPageLimit = 1
-        tag_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        tagPager.adapter = adapter
+        tagPager.offscreenPageLimit = 1
+        tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {}
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
@@ -139,41 +144,45 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun observeTags() {
         viewModel.tags.observe(this, androidx.lifecycle.Observer { tags ->
-            val previousTagsSize = adapter.count
-            isEmptyList = tags.isNullOrEmpty()
-            tags?.let {
-                adapter.setTags(tags)
+            setupTags(tags)
+        })
+    }
 
-                tags.forEach { tag ->
-                    tag.id?.let { tagId ->
-                        Utils.getBackground(applicationContext, tag).let { bitmap ->
-                            backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
-                        }
-                    }
-                }
+    private fun setupTags(tags: List<RuuviTagEntity>?) {
+        val previousTagsSize = adapter.count
+        isEmptyList = tags.isNullOrEmpty()
+        tags?.let {
+            adapter.setTags(tags)
 
-                val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
-                setupVisibility(isEmptyList)
-
-                if (tags.isNotEmpty()) {
-                    if (!desiredTag.isNullOrEmpty()) {
-                        val index = tags.indexOfFirst { t -> t.id == desiredTag }
-                        desiredTag = null
-                        intent.putExtra("id", null as String?)
-                        index.let {
-                            if (tag_pager.currentItem == it) viewModel.pageSelected(tag_pager.currentItem)
-                            else tag_pager.setCurrentItem(it, false)
-                        }
-                    } else {
-                        if (isSizeChanged) {
-                            tag_pager.setCurrentItem(tags.size - 1, false)
-                        } else {
-                            viewModel.pageSelected(tag_pager.currentItem)
-                        }
+            tags.forEach { tag ->
+                tag.id?.let { tagId ->
+                    Utils.getBackground(applicationContext, tag).let { bitmap ->
+                        backgrounds[tagId] = BitmapDrawable(applicationContext.resources, bitmap)
                     }
                 }
             }
-        })
+
+            val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
+            setupVisibility(isEmptyList)
+
+            if (tags.isNotEmpty()) {
+                if (!desiredTag.isNullOrEmpty()) {
+                    val index = tags.indexOfFirst { t -> t.id == desiredTag }
+                    desiredTag = null
+                    intent.putExtra("id", null as String?)
+                    index.let {
+                        if (tagPager.currentItem == it) viewModel.pageSelected(tagPager.currentItem)
+                        else tagPager.setCurrentItem(it, false)
+                    }
+                } else {
+                    if (isSizeChanged) {
+                        tagPager.setCurrentItem(tags.size - 1, false)
+                    } else {
+                        viewModel.pageSelected(tagPager.currentItem)
+                    }
+                }
+            }
+        }
     }
 
     private fun observeAlarmStatus() {
@@ -188,17 +197,21 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private fun observeSelectedTag() {
         lifecycleScope.launchWhenResumed {
             viewModel.selectedTagFlow.collect { selectedTag ->
-                val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
-                if (previousBitmapDrawable != null) {
-                    tag_background_view.setImageDrawable(previousBitmapDrawable)
-                }
+                setupSelectedTag(selectedTag)
+            }
+        }
+    }
 
-                viewModel.tag = selectedTag
-                backgrounds[selectedTag?.id].let { bitmapDrawable ->
-                    if (bitmapDrawable != null) {
-                        imageSwitcher.setImageDrawable(bitmapDrawable)
-                    }
-                }
+    private fun setupSelectedTag(selectedTag: RuuviTagEntity?) {
+        val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
+        if (previousBitmapDrawable != null) {
+            tag_background_view.setImageDrawable(previousBitmapDrawable)
+        }
+
+        viewModel.tag = selectedTag
+        backgrounds[selectedTag?.id].let { bitmapDrawable ->
+            if (bitmapDrawable != null) {
+                imageSwitcher.setImageDrawable(bitmapDrawable)
             }
         }
     }
@@ -207,22 +220,22 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         lifecycleScope.launch {
             viewModel.isShowGraphFlow.collect { isShowGraph ->
                 if (isShowGraph) {
-                    tag_pager.isSwipeEnabled = false
-                    pager_title_strip.isTabSwitchEnabled = false
-                    if (pager_title_strip.textSpacing != 1000) {
+                    tagPager.isSwipeEnabled = false
+                    pagerTitleStrip.isTabSwitchEnabled = false
+                    if (pagerTitleStrip.textSpacing != 1000) {
                         val animator = ValueAnimator.ofInt(0, 1000)
                         animator.addUpdateListener {
-                            pager_title_strip.textSpacing = animator.animatedValue as Int
+                            pagerTitleStrip.textSpacing = animator.animatedValue as Int
                         }
                         animator.start()
                     }
                 } else {
-                    tag_pager.isSwipeEnabled = true
-                    pager_title_strip.isTabSwitchEnabled = true
-                    if (pager_title_strip.textSpacing != 0) {
+                    tagPager.isSwipeEnabled = true
+                    pagerTitleStrip.isTabSwitchEnabled = true
+                    if (pagerTitleStrip.textSpacing != 0) {
                         val animator = ValueAnimator.ofInt(1000, 0)
                         animator.addUpdateListener {
-                            pager_title_strip.textSpacing = animator.animatedValue as Int
+                            pagerTitleStrip.textSpacing = animator.animatedValue as Int
                         }
                         animator.start()
                     }
@@ -233,18 +246,18 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun setupDrawer() {
         val drawerToggle = ActionBarDrawerToggle(
-            this, main_drawerLayout, toolbar,
+            this, mainDrawerLayout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
 
-        main_drawerLayout.addDrawerListener(drawerToggle)
+        mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawer_listView)
+        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
 
         drawerListView.adapter = ArrayAdapter(
             this,
@@ -253,7 +266,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         )
 
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            main_drawerLayout.closeDrawers()
+            mainDrawerLayout.closeDrawers()
             when (i) {
                 0 -> {
                     val addIntent = Intent(this, AddTagActivity::class.java)
@@ -277,6 +290,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (!isEmptyList) {
             menuInflater.inflate(R.menu.menu_details, menu)
@@ -305,9 +319,17 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             anim.setEvaluator(IntEvaluator())
                             anim.addUpdateListener {
                                 if (it.animatedFraction > 0.9) {
-                                    drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                                    } else {
+                                        drawable.colorFilter = BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP)
+                                    }
                                 } else if (it.animatedFraction < 0.1) {
-                                    drawable.setColorFilter(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                        drawable.setColorFilter(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                                    } else {
+                                        drawable.colorFilter = BlendModeColorFilter(Color.TRANSPARENT, BlendMode.CLEAR)
+                                    }
                                 }
                             }
 
@@ -343,12 +365,12 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
-                                viewModel.preferences.backgroundScanMode = BackgroundScanModes.BACKGROUND
+                                viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
                             }
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
                             simpleAlert.setOnDismissListener {
-                                viewModel.preferences.isFirstGraphVisit = false
+                                viewModel.setIsFirstGraphVisit(false)
                             }
                             simpleAlert.show()
                         }
@@ -380,11 +402,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             10 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // party
-                    if (openAddView) noTags_textView.callOnClick()
+                    if (openAddView) noTagsTextView.callOnClick()
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        starter.requestPermissions()
+                        permissionsHelper.requestPermissions()
                     } else {
                         showPermissionSnackbar(this)
                     }
@@ -395,7 +417,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun showPermissionSnackbar(activity: Activity) {
-        val snackbar = Snackbar.make(main_drawerLayout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
+        val snackbar = Snackbar.make(mainDrawerLayout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
         snackbar.setAction(getString(R.string.settings)) {
             val intent = Intent()
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -406,15 +428,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         snackbar.show()
     }
 
-    private fun setupVisibility(emptyList: Boolean) {
-        if (emptyList) {
-            pager_title_strip.isInvisible = true
-            tag_pager.isInvisible = true
-            noTags_textView.isVisible = true
+    private fun setupVisibility(isEmptyList: Boolean) {
+        if (isEmptyList) {
+            pagerTitleStrip.isInvisible = true
+            tagPager.isInvisible = true
+            noTagsTextView.isVisible = true
         } else {
-            pager_title_strip.isVisible = true
-            tag_pager.isVisible = true
-            noTags_textView.isInvisible = true
+            pagerTitleStrip.isVisible = true
+            tagPager.isVisible = true
+            noTagsTextView.isInvisible = true
         }
         invalidateOptionsMenu()
     }

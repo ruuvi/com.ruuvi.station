@@ -3,10 +3,12 @@ package com.ruuvi.station.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.ImageViewCompat;
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruuvi.station.R;
-import com.ruuvi.station.database.RuuviTagRepository;
-import com.ruuvi.station.database.tables.RuuviTagEntity;
-import com.ruuvi.station.alarm.AlarmChecker;
+import com.ruuvi.station.alarm.AlarmCheckInteractor;
+import com.ruuvi.station.tag.domain.RuuviTag;
 import com.ruuvi.station.util.Utils;
 
 import java.util.List;
@@ -26,16 +27,16 @@ import java.util.List;
  * Created by berg on 13/09/17.
  */
 
-public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
+public class RuuviTagAdapter extends ArrayAdapter<RuuviTag> {
 
-    public RuuviTagAdapter(@NonNull Context context, List<RuuviTagEntity> tags) {
+    public RuuviTagAdapter(@NonNull Context context, List<RuuviTag> tags) {
         super(context, 0, tags);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final RuuviTagEntity tag = getItem(position);
+        final RuuviTag tag = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_main, parent, false);
@@ -52,8 +53,8 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
 
         int ballColorRes = (position % 2 == 0) ? R.color.main : R.color.mainLight;
 
-        ((ImageView)convertView.findViewById(R.id.row_main_letter))
-                .setImageBitmap(Utils.createBall((int)getContext().getResources().getDimension(R.dimen.letter_ball_radius),
+        ((ImageView) convertView.findViewById(R.id.row_main_letter))
+                .setImageBitmap(Utils.createBall((int) getContext().getResources().getDimension(R.dimen.letter_ball_radius),
                         getContext().getResources().getColor(ballColorRes),
                         Color.WHITE,
                         txtId.getText().charAt(0) + ""));
@@ -61,11 +62,11 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
         convertView.findViewById(R.id.row_main_root).setTag(tag);
         //convertView.findViewById(R.id.row_main_letter).setOnClickListener(tagMenuClickListener);
 
-        String updatedAt = String.format(getContext().getString(R.string.updated), Utils.strDescribingTimeSince(tag.getUpdateAt()));
+        String updatedAt = String.format(getContext().getString(R.string.updated), Utils.strDescribingTimeSince(tag.getUpdatedAt()));
 
         lastSeen.setText(updatedAt);
         AppCompatImageView bell = convertView.findViewById(R.id.bell);
-        int status = AlarmChecker.getStatus(tag);
+        int status = AlarmCheckInteractor.getStatus(tag);
         switch (status) {
             case -1:
                 bell.setVisibility(View.VISIBLE);
@@ -82,8 +83,8 @@ public class RuuviTagAdapter extends ArrayAdapter<RuuviTagEntity> {
         }
         ImageViewCompat.setImageTintList(bell, ColorStateList.valueOf(getContext().getResources().getColor(R.color.main)));
 
-        temp.setText(RuuviTagRepository.getTemperatureString(getContext(), tag));
-        humid.setText(RuuviTagRepository.getHumidityString(getContext(), tag));
+        temp.setText(tag.getTemperatureString());
+        humid.setText(tag.getHumidityString());
         pres.setText(String.format(getContext().getString(R.string.pressure_reading), tag.getPressure() / 100.0));
         signal.setText(String.format(getContext().getString(R.string.signal_reading), tag.getRssi()));
 

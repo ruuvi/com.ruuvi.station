@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -66,18 +65,18 @@ class TagViewModel(
         Timber.d("getTagEntryData for tagId = $tagId")
         ioScope.launch {
             tagDetailsInteractor
-                .getTag(tagId)
+                .getTagById(tagId)
                 ?.let {
                     tagEntry.value = it
                 }
         }
     }
 
-    fun getTemperatureString(context: Context, tag: RuuviTagEntity): String =
-        tagDetailsInteractor.getTemperatureString(context, tag)
+    fun getTemperatureString(tag: RuuviTagEntity): String =
+        tagDetailsInteractor.getTemperatureString(tag)
 
-    fun getHumidityString(context: Context, tag: RuuviTagEntity): String =
-        tagDetailsInteractor.getHumidityString(context, tag)
+    fun getHumidityString(tag: RuuviTagEntity): String =
+        tagDetailsInteractor.getHumidityString(tag)
 
     override fun onCleared() {
         super.onCleared()

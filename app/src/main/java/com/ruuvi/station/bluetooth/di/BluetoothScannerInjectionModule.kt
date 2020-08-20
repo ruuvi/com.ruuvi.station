@@ -24,13 +24,17 @@ object BluetoothScannerInjectionModule {
 
     val module = Kodein.Module(BluetoothScannerInjectionModule.javaClass.name) {
 
-        bind<BluetoothInteractor>() with singleton { BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance()) }
+        bind<BluetoothInteractor>() with singleton {
+            BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance())
+        }
 
         bind<BluetoothStateWatcher>() with singleton { BluetoothStateWatcher(instance()) }
 
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
-        bind<DefaultOnTagFoundListener>() with singleton { DefaultOnTagFoundListener(instance(), instance(), instance()) }
+        bind<DefaultOnTagFoundListener>() with singleton {
+            DefaultOnTagFoundListener(instance(), instance(), instance(), instance())
+        }
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
 

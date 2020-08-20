@@ -12,7 +12,9 @@ import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

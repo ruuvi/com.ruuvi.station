@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,7 +10,7 @@
     tools:showIn="@layout/activity_tag_details">
 
     <com.ruuvi.station.app.ui.MultiTouchViewPager
-        android:id="@+id/tag_pager"
+        android:id="@+id/tagPager"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,7 +19,7 @@
         >
 
         <com.ruuvi.station.app.ui.AdvancedPagerTabStrip
-            android:id="@+id/pager_title_strip"
+            android:id="@+id/pagerTitleStrip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/PagerTabStripText"
@@ -48,7 +49,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/noTags_textView"
+        android:id="@+id/noTagsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/press_to_add"

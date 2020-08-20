@@ -22,8 +22,8 @@ import java.util.List;
 
 @Table(
         database = LocalDatabase.class,
-        indexGroups = { @IndexGroup(number = 1, name = "TagId")}
-        )
+        indexGroups = {@IndexGroup(number = 1, name = "TagId")}
+)
 public class TagSensorReading extends BaseModel {
     @PrimaryKey(autoincrement = true)
     @Column

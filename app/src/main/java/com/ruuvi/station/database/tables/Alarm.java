@@ -37,6 +37,7 @@ public class Alarm extends BaseModel {
     public boolean enabled;
     @Column
     public Date mutedTill;
+
     public Alarm() {
     }
 

@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
 
-class MultiTouchViewPager(context: Context, attributeSet: AttributeSet): ViewPager(context, attributeSet) {
+class MultiTouchViewPager(context: Context, attributeSet: AttributeSet) : ViewPager(context, attributeSet) {
     var isSwipeEnabled = true
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {

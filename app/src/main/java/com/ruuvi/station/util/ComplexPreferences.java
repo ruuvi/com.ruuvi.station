@@ -30,8 +30,11 @@ public class ComplexPreferences {
         editor = preferences.edit();
     }
 
-    public static ComplexPreferences getComplexPreferences(Context context,
-                                                            String namePreferences, int mode) {
+    public static ComplexPreferences getComplexPreferences(
+            Context context,
+            String namePreferences,
+            int mode
+    ) {
 
         if (complexPreferences == null) {
             complexPreferences = new ComplexPreferences(context,
@@ -41,11 +44,11 @@ public class ComplexPreferences {
     }
 
     public void putObject(String key, Object object) {
-        if(object == null){
+        if (object == null) {
             throw new IllegalArgumentException("object is null");
         }
 
-        if(key.equals("") || key == null){
+        if (key.equals("") || key == null) {
             throw new IllegalArgumentException("key is empty or null");
         }
 
@@ -61,7 +64,7 @@ public class ComplexPreferences {
         if (gson == null) {
             return null;
         } else {
-            try{
+            try {
                 return GSON.fromJson(gson, a);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Object storaged with key " + key + " is instanceof other class");

@@ -18,7 +18,7 @@ public class DeviceIdentifier {
         uniqueID = prefs.getDeviceId();
         if (uniqueID.isEmpty()) {
             String result = Long.toString(UUID.randomUUID().getMostSignificantBits(), 36) +
-                     Long.toString(UUID.randomUUID().getLeastSignificantBits(), 36);
+                    Long.toString(UUID.randomUUID().getLeastSignificantBits(), 36);
             uniqueID = result.substring(1);
             prefs.setDeviceId(uniqueID);
         }

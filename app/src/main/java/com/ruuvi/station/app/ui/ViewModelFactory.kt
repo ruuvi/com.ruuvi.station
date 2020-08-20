@@ -8,6 +8,6 @@ import org.kodein.di.generic.instanceOrNull
 class ViewModelFactory(private val injector: DKodein) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return injector.instanceOrNull<ViewModel>(tag = modelClass.simpleName) as T?
-                ?: modelClass.newInstance()
+            ?: modelClass.newInstance()
     }
 }

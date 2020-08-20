@@ -18,7 +18,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
-import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.util.Utils
 import timber.log.Timber
@@ -36,7 +36,7 @@ class GraphView {
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
 
-    fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
+    fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context, repository: TagRepository) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
         val tempChart: LineChart = view.findViewById(R.id.tempChart)
         tempChart.isVisible = true
@@ -44,7 +44,7 @@ class GraphView {
         humidChart.isVisible = true
         val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
         pressureChart.isVisible = true
-        val temperatureUnit: String = RuuviTagRepository.getTemperatureUnit(context)
+        val temperatureUnit: String = repository.getTemperatureUnit()
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
