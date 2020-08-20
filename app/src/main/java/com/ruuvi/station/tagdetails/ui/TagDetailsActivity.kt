@@ -357,9 +357,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 if (!tagPagerScrolling) {
                     invalidateOptionsMenu()
                     viewModel.switchShowGraphChannel()
-                    val bgScanEnabled = viewModel.preferences.backgroundScanMode
+                    val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
-                        if (viewModel.preferences.isFirstGraphVisit) {
+                        if (viewModel.isFirstGraphVisit()) {
                             val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
                             simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
                             simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
@@ -380,8 +380,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             }
             R.id.action_settings -> {
                 if (!tagPagerScrolling) {
-                    val intent = Intent(this, TagSettings::class.java)
-                    intent.putExtra(TagSettings.TAG_ID, viewModel.tag?.id)
+                    val intent = Intent(this, TagSettingsActivity::class.java)
+                    intent.putExtra(TagSettingsActivity.TAG_ID, viewModel.tag?.id)
                     this.startActivity(intent)
                 }
             }

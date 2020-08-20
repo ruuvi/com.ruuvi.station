@@ -143,11 +143,11 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                 wakelockSwitch.setOnCheckedChangeListener { _, checked ->
                     viewModel.setIsServiceWakeLock(checked)
                 }
-                gateway_tester_layout.isVisible = true
-                gateway_test_button.setDebouncedOnClickListener {
-                    gateway_test_result.visibility = View.VISIBLE
-                    gateway_test_result.text = "Testing.."
-                    gateway_test_result.setTextColor(Color.DKGRAY)
+                gatewayTesterLayout.isVisible = true
+                gatewayTestButton.setDebouncedOnClickListener {
+                    gatewayTestResultTextView.visibility = View.VISIBLE
+                    gatewayTestResultTextView.text = "Testing.."
+                    gatewayTestResultTextView.setTextColor(Color.DKGRAY)
 
                     val scanEvent = ScanEvent(context)
                     scanEvent.deviceId = deviceIdentifierInput.text.toString()
