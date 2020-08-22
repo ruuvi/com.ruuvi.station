@@ -1,22 +1,27 @@
 package com.ruuvi.station.util
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.ruuvi.station.R
 import timber.log.Timber
-import java.util.*
 
 class PermissionsHelper(private val activity: AppCompatActivity) {
+    private val requiredPermissions = listOf(
+        ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 
     fun checkIsLocationEnabled() {
         if (!isLocationEnabled()) {
@@ -33,10 +38,10 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
     }
 
     fun arePermissionsGranted(): Boolean =
-        getNeededPermissions().isEmpty()
+        getRequiredPermissions().isEmpty()
 
     fun requestPermissions() {
-        val neededPermissions = getNeededPermissions()
+        val neededPermissions = getRequiredPermissions()
         if (neededPermissions.isNotEmpty()) {
             if (neededPermissions.size == 1 && neededPermissions.first() == Manifest.permission.ACCESS_FINE_LOCATION) {
                 showPermissionDialog(activity)
@@ -59,48 +64,31 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
             return true
         }
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        activity.startActivityForResult(enableBtIntent, 87)
+        activity.startActivityForResult(enableBtIntent, REQUEST_CODE_BLUETOOTH)
         return false
     }
 
-    private fun getNeededPermissions(): List<String> {
-        val permissionCoarseLocation = ContextCompat.checkSelfPermission(activity,
-            Manifest.permission.ACCESS_COARSE_LOCATION)
+    private fun getRequiredPermissions(): List<String> {
+        return requiredPermissions.mapNotNull { permission ->
+            val isPermissionGranted = ContextCompat.checkSelfPermission(activity, permission) == PERMISSION_GRANTED
 
-        val listPermissionsNeeded = ArrayList<String>()
-
-        if (permissionCoarseLocation != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-            Timber.d("ACCESS_COARSE_LOCATION needed")
+            if (!isPermissionGranted) {
+                Timber.d("$permission required")
+                permission
+            } else {
+                null
+            }
         }
-
-        val permissionWriteStorage = ContextCompat.checkSelfPermission(activity,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            Timber.d("WRITE_EXTERNAL_STORAGE needed")
-        }
-
-        val permissionFineLocation = ContextCompat.checkSelfPermission(activity,
-            Manifest.permission.ACCESS_FINE_LOCATION)
-
-        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            Timber.d("ACCESS_FINE_LOCATION needed")
-        }
-
-        return listPermissionsNeeded
     }
 
     private fun showPermissionDialog(activity: AppCompatActivity): Boolean {
-        val listPermissionsNeeded = getNeededPermissions()
+        val requiredPermissions = getRequiredPermissions()
 
-        if (listPermissionsNeeded.isNotEmpty()) {
-            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toTypedArray(), 10)
+        if (requiredPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(activity, requiredPermissions.toTypedArray(), REQUEST_CODE_PERMISSIONS)
         }
 
-        return listPermissionsNeeded.isNotEmpty()
+        return requiredPermissions.isNotEmpty()
     }
 
     private fun isBluetoothEnabled(): Boolean {
@@ -121,4 +109,9 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
                 false
             }
         }
+
+    companion object {
+        const val REQUEST_CODE_PERMISSIONS = 10
+        const val REQUEST_CODE_BLUETOOTH = 87
+    }
 }

@@ -5,45 +5,44 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.Constants
 
 class Preferences(val context: Context) {
     private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     var backgroundScanInterval: Int
-        get() = sharedPreferences.getInt("pref_background_scan_interval", Constants.DEFAULT_SCAN_INTERVAL)
+        get() = sharedPreferences.getInt(PREF_BACKGROUND_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         set(interval) {
-            sharedPreferences.edit().putInt("pref_background_scan_interval", interval).apply()
+            sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_INTERVAL, interval).apply()
         }
 
     var backgroundScanMode: BackgroundScanModes
         get() = BackgroundScanModes.fromInt(sharedPreferences.getInt("pref_background_scan_mode", BackgroundScanModes.DISABLED.value))
                 ?: BackgroundScanModes.DISABLED
         set(mode) {
-            sharedPreferences.edit().putInt("pref_background_scan_mode", mode.value).apply()
+            sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
         }
 
     var isFirstStart: Boolean
-        get() = sharedPreferences.getBoolean("FIRST_START_PREF", true)
+        get() = sharedPreferences.getBoolean(PREF_FIRST_START, true)
         set(enabled) {
-            sharedPreferences.edit().putBoolean("FIRST_START_PREF", enabled).apply()
+            sharedPreferences.edit().putBoolean(PREF_FIRST_START, enabled).apply()
         }
 
     var isFirstGraphVisit: Boolean
-        get() = sharedPreferences.getBoolean("first_graph_visit", true)
+        get() = sharedPreferences.getBoolean(PREF_FIRST_GRAPH, true)
         set(enabled) {
-            sharedPreferences.edit().putBoolean("first_graph_visit", enabled).apply()
+            sharedPreferences.edit().putBoolean(PREF_FIRST_GRAPH, enabled).apply()
         }
 
     var temperatureUnit: String
-        get() = sharedPreferences.getString("pref_temperature_unit", DEFAULT_TEMPERATURE_UNIT) ?: DEFAULT_TEMPERATURE_UNIT
+        get() = sharedPreferences.getString(PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT) ?: DEFAULT_TEMPERATURE_UNIT
         set(unit) {
-            sharedPreferences.edit().putString("pref_temperature_unit", unit).apply()
+            sharedPreferences.edit().putString(PREF_TEMPERATURE_UNIT, unit).apply()
         }
 
     var humidityUnit: HumidityUnit
         get() {
-            return when (sharedPreferences.getInt("pref_humidity_unit", 0)) {
+            return when (sharedPreferences.getInt(PREF_HUMIDITY_UNIT, 0)) {
                 0 -> HumidityUnit.PERCENT
                 1 -> HumidityUnit.GM3
                 2 -> HumidityUnit.DEW
@@ -51,65 +50,81 @@ class Preferences(val context: Context) {
             }
         }
         set(value) {
-            sharedPreferences.edit().putInt("pref_humidity_unit", value.code).apply()
+            sharedPreferences.edit().putInt(PREF_HUMIDITY_UNIT, value.code).apply()
         }
 
     var gatewayUrl: String
-        get() = sharedPreferences.getString("pref_backend", DEFAULT_GATEWAY_URL) ?: DEFAULT_GATEWAY_URL
+        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL) ?: DEFAULT_GATEWAY_URL
         set(url) {
-            sharedPreferences.edit().putString("pref_backend", url).apply()
+            sharedPreferences.edit().putString(PREF_BACKEND, url).apply()
         }
 
     var deviceId: String
-        get() = sharedPreferences.getString("pref_device_id", DEFAULT_DEVICE_ID) ?: DEFAULT_DEVICE_ID
+        get() = sharedPreferences.getString(PREF_DEVICE_ID, DEFAULT_DEVICE_ID) ?: DEFAULT_DEVICE_ID
         set(id) {
-            sharedPreferences.edit().putString("pref_device_id", id).apply()
+            sharedPreferences.edit().putString(PREF_DEVICE_ID, id).apply()
         }
 
     var serviceWakelock: Boolean
-        get() = sharedPreferences.getBoolean("pref_wakelock", false)
+        get() = sharedPreferences.getBoolean(PREF_WAKELOCK, false)
         set(enabled) {
-            sharedPreferences.edit().putBoolean("pref_wakelock", enabled).apply()
+            sharedPreferences.edit().putBoolean(PREF_WAKELOCK, enabled).apply()
         }
 
     var dashboardEnabled: Boolean
-        get() = sharedPreferences.getBoolean("DASHBOARD_ENABLED_PREF", false)
+        get() = sharedPreferences.getBoolean(PREF_DASHBOARD_ENABLED, false)
         set(enabled) {
-            sharedPreferences.edit().putBoolean("DASHBOARD_ENABLED_PREF", enabled).apply()
+            sharedPreferences.edit().putBoolean(PREF_DASHBOARD_ENABLED, enabled).apply()
         }
 
     var batterySaverEnabled: Boolean
-        get() = sharedPreferences.getBoolean("pref_bgscan_battery_saving", false)
+        get() = sharedPreferences.getBoolean(PREF_BGSCAN_BATTERY_SAVING, false)
         set(enabled) {
-            sharedPreferences.edit().putBoolean("pref_bgscan_battery_saving", enabled).apply()
+            sharedPreferences.edit().putBoolean(PREF_BGSCAN_BATTERY_SAVING, enabled).apply()
         }
 
     // chart interval between data points (in minutes)
     var graphPointInterval: Int
-        get() = sharedPreferences.getInt("pref_graph_point_interval", DEFAULT_GRAPH_POINT_INTERVAL)
+        get() = sharedPreferences.getInt(PREF_GRAPH_POINT_INTERVAL, DEFAULT_GRAPH_POINT_INTERVAL)
         set(interval) {
-            sharedPreferences.edit().putInt("pref_graph_point_interval", interval).apply()
+            sharedPreferences.edit().putInt(PREF_GRAPH_POINT_INTERVAL, interval).apply()
         }
 
     // chart view period (in hours)
     var graphViewPeriod: Int
-        get() = sharedPreferences.getInt("pref_graph_view_period", DEFAULT_GRAPH_VIEW_PERIOD)
+        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, DEFAULT_GRAPH_VIEW_PERIOD)
         set(period) {
-            sharedPreferences.edit().putInt("pref_graph_view_period", period).apply()
+            sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
 
     var graphShowAllPoint: Boolean
-        get() = sharedPreferences.getBoolean("pref_graph_show_all_points", DEFAULT_GRAPH_SHOW_ALL_POINTS)
+        get() = sharedPreferences.getBoolean(PREF_GRAPH_SHOW_ALL_POINTS, DEFAULT_GRAPH_SHOW_ALL_POINTS)
         set(period) {
-            sharedPreferences.edit().putBoolean("pref_graph_show_all_points", period).apply()
+            sharedPreferences.edit().putBoolean(PREF_GRAPH_SHOW_ALL_POINTS, period).apply()
         }
 
     companion object {
-        const val DEFAULT_TEMPERATURE_UNIT = "C"
-        const val DEFAULT_GATEWAY_URL = ""
-        const val DEFAULT_DEVICE_ID = ""
-        const val DEFAULT_GRAPH_POINT_INTERVAL = 1
-        const val DEFAULT_GRAPH_VIEW_PERIOD = 24
-        const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
+        private const val DEFAULT_SCAN_INTERVAL = 15 * 60
+        private const val PREF_BACKGROUND_SCAN_INTERVAL = "PREF_BACKGROUND_SCAN_INTERVAL"
+        private const val PREF_BACKGROUND_SCAN_MODE = "PREF_BACKGROUND_SCAN_MODE"
+        private const val PREF_FIRST_START = "PREF_FIRST_START"
+        private const val PREF_FIRST_GRAPH = "PREF_FIRST_GRAPH"
+        private const val PREF_TEMPERATURE_UNIT = "PREF_TEMPERATURE_UNIT"
+        private const val PREF_HUMIDITY_UNIT = "PREF_HUMIDITY_UNIT"
+        private const val PREF_BACKEND = "PREF_BACKEND"
+        private const val PREF_DEVICE_ID = "PREF_DEVICE_ID"
+        private const val PREF_WAKELOCK = "PREF_WAKELOCK"
+        private const val PREF_DASHBOARD_ENABLED = "PREF_DASHBOARD_ENABLED"
+        private const val PREF_BGSCAN_BATTERY_SAVING = "PREF_BGSCAN_BATTERY_SAVING"
+        private const val PREF_GRAPH_POINT_INTERVAL = "PREF_GRAPH_POINT_INTERVAL"
+        private const val PREF_GRAPH_VIEW_PERIOD = "PREF_GRAPH_VIEW_PERIOD"
+        private const val PREF_GRAPH_SHOW_ALL_POINTS = "PREF_GRAPH_SHOW_ALL_POINTS"
+
+        private const val DEFAULT_TEMPERATURE_UNIT = "C"
+        private const val DEFAULT_GATEWAY_URL = ""
+        private const val DEFAULT_DEVICE_ID = ""
+        private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
+        private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
+        private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
     }
 }

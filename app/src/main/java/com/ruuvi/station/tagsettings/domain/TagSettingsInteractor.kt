@@ -9,9 +9,6 @@ class TagSettingsInteractor(
     private val preferencesRepository: PreferencesRepository
 ) {
 
-    fun getRepositoryInstance(): TagRepository =
-        tagRepository
-
     fun getTagById(tagId: String): RuuviTagEntity? =
         tagRepository
             .getTagById(tagId)

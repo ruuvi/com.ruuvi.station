@@ -1,15 +1,23 @@
 package com.ruuvi.station.alarm.receiver
 
-import android.content.Intent
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.alarm.AlarmCheckInteractor
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.generic.instance
 
-class CancelAlarmReceiver : BroadcastReceiver() {
+class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
+
+    override lateinit var kodein: Kodein
+    private val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
+
     override fun onReceive(context: Context, intent: Intent) {
-        val alarmId = intent.getIntExtra("alarmId", -1)
-        val notificationId = intent.getIntExtra("notificationId", -1)
+        val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)
+        val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
         if (alarmId != -1) {
             val alarm = Alarm.get(alarmId)
             if (alarm != null) {
@@ -17,6 +25,17 @@ class CancelAlarmReceiver : BroadcastReceiver() {
                 alarm.update()
             }
         }
-        AlarmCheckInteractor.dismissNotification(notificationId, context)
+        alarmCheckInteractor.removeNotificationById(notificationId)
+    }
+
+    companion object {
+        private const val DEFAULT_ID = -1
+        fun createPendingIntent(context: Context, alarmId: Int): PendingIntent? {
+
+            val cancelIntent = Intent(context, CancelAlarmReceiver::class.java)
+            cancelIntent.putExtra("alarmId", alarmId)
+            cancelIntent.putExtra("notificationId", alarmId)
+            return PendingIntent.getBroadcast(context, alarmId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 }

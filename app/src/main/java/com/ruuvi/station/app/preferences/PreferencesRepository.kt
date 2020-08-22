@@ -3,9 +3,7 @@ package com.ruuvi.station.app.preferences
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 
-class PreferencesRepository(
-    private val preferences: Preferences
-) {
+class PreferencesRepository(private val preferences: Preferences) {
 
     fun getTemperatureUnit(): String =
         preferences.temperatureUnit
@@ -26,6 +24,10 @@ class PreferencesRepository(
 
     fun getDeviceId(): String =
         preferences.deviceId
+
+    fun setDeviceId(deviceId: String) {
+        preferences.deviceId = deviceId
+    }
 
     fun saveUrlAndDeviceId(url: String, deviceId: String) {
         preferences.gatewayUrl = url
@@ -90,4 +92,8 @@ class PreferencesRepository(
 
     fun isFirstStart(): Boolean =
         preferences.isFirstStart
+
+    fun setFirstStart(isFirstStart: Boolean){
+        preferences.isFirstStart = isFirstStart
+    }
 }

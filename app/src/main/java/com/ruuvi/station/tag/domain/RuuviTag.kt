@@ -1,5 +1,6 @@
 package com.ruuvi.station.tag.domain
 
+import com.ruuvi.station.alarm.domain.AlarmStatus
 import java.util.Date
 
 data class RuuviTag(
@@ -10,7 +11,11 @@ data class RuuviTag(
     val temperature: Double,
     val humidity: Double,
     val pressure: Double,
-    val updatedAt: Date?,
     val temperatureString: String,
-    val humidityString: String
+    val humidityString: String,
+    val defaultBackground: Int,
+    val dataFormat: Int,
+    val updatedAt: Date?,
+    val userBackground: String?,
+    val status: AlarmStatus = AlarmStatus.NO_ALARM
 )

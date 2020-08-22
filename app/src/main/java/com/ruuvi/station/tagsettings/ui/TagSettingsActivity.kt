@@ -46,7 +46,6 @@ import com.flexsentlabs.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.AlarmCheckInteractor
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -384,7 +383,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         with(viewModel.alarmItems) {
             add(AlarmItem(getString(R.string.temperature), Alarm.TEMPERATURE, false, -40, 85))
             add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
-            add(AlarmItem(getString(R.string.pressure), Alarm.PERSSURE, false, 300, 1100))
+            add(AlarmItem(getString(R.string.pressure), Alarm.PRESSURE, false, 300, 1100))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
             add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
         }
@@ -435,7 +434,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 alarmItem.alarm?.update()
             }
             if (!alarmItem.isChecked) {
-                AlarmCheckInteractor.dismissNotification(if (alarmItem.alarm != null) alarmItem.alarm?.id else -1, this)
+                val notificationId = alarmItem.alarm?.id ?: -1
+                viewModel.removeNotificationById(notificationId)
             }
         }
     }
@@ -461,9 +461,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
             for (alarm: AlarmItem in viewModel.alarmItems) {
-                alarm.alarm?.let {
-                    AlarmCheckInteractor.dismissNotification(it.id, this)
-                }
+                alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
             viewModel.tagFlow.value?.let { viewModel.deleteTag(it) }
             finish()
@@ -666,7 +664,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
 
         fun updateView() {
-            view?.let {view ->
+            view?.let { view ->
                 val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
 
                 var setSeekbarColor = R.color.inactive
@@ -758,11 +756,23 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     companion object {
-        const val TAG_ID = "TAG_ID"
+        private const val TAG_ID = "TAG_ID"
 
-        const val REQUEST_TAKE_PHOTO = 1
+        private const val REQUEST_TAKE_PHOTO = 1
 
-        const val REQUEST_GALLERY_PHOTO = 2
+        private const val REQUEST_GALLERY_PHOTO = 2
+
+        fun start(context: Context, tagId: String?) {
+            val intent = Intent(context, TagSettingsActivity::class.java)
+            intent.putExtra(TAG_ID, tagId)
+            context.startActivity(intent)
+        }
+
+        fun startForResult(context: Activity, requestCode: Int, tagId: String?) {
+            val settingsIntent = Intent(context, TagSettingsActivity::class.java)
+            settingsIntent.putExtra(TAG_ID, tagId)
+            context.startActivityForResult(settingsIntent, requestCode)
+        }
 
         fun rotate(bitmap: Bitmap, degrees: Float): Bitmap {
             val matrix = Matrix()

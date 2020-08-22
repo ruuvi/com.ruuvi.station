@@ -38,10 +38,7 @@ class DashboardActivityViewModel(
     private fun getTagsFlow() {
         ioScope.launch {
             flowTimer.scheduleAtFixedRate(0, 500) {
-                tagInteractor.getTags()
-                    .let {
-                        tags.value = it
-                    }
+                tags.value = tagInteractor.getTags()
             }
         }
     }

@@ -41,10 +41,11 @@
         <service android:name=".bluetooth.BluetoothForegroundService"
             android:enabled="true"
             android:foregroundServiceType="location"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <activity
-            android:name=".feature.WelcomeActivity"
+            android:name=".feature.ui.WelcomeActivity"
             android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />

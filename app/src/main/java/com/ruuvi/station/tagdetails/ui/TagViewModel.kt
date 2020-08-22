@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +20,8 @@ class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
     val tagId: String
 ) : ViewModel() {
-    private val tagEntry = MutableStateFlow<RuuviTagEntity?>(null)
-    val tagEntryFlow: StateFlow<RuuviTagEntity?> = tagEntry
+    private val tagEntry = MutableStateFlow<RuuviTag?>(null)
+    val tagEntryFlow: StateFlow<RuuviTag?> = tagEntry
 
     private val tagReadings = MutableStateFlow<List<TagSensorReading>?>(null)
     val tagReadingsFlow: StateFlow<List<TagSensorReading>?> = tagReadings
@@ -66,16 +67,14 @@ class TagViewModel(
         ioScope.launch {
             tagDetailsInteractor
                 .getTagById(tagId)
-                ?.let {
-                    tagEntry.value = it
-                }
+                ?.let { tagEntry.value = it }
         }
     }
 
-    fun getTemperatureString(tag: RuuviTagEntity): String =
+    fun getTemperatureString(tag: RuuviTag): String =
         tagDetailsInteractor.getTemperatureString(tag)
 
-    fun getHumidityString(tag: RuuviTagEntity): String =
+    fun getHumidityString(tag: RuuviTag): String =
         tagDetailsInteractor.getHumidityString(tag)
 
     override fun onCleared() {

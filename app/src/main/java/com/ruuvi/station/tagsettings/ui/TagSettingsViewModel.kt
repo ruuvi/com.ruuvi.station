@@ -2,6 +2,7 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -15,8 +16,9 @@ import java.util.ArrayList
 
 @ExperimentalCoroutinesApi
 class TagSettingsViewModel(
+    val tagId: String,
     private val interactor: TagSettingsInteractor,
-    val tagId: String
+    private val alarmCheckInteractor: AlarmCheckInteractor
 ) : ViewModel() {
 
     var tempUnit = "C"
@@ -47,4 +49,8 @@ class TagSettingsViewModel(
 
     fun deleteTag(tag: RuuviTagEntity) =
         interactor.deleteTagsAndRelatives(tag)
+
+    fun removeNotificationById(notificationId: Int) {
+        alarmCheckInteractor.removeNotificationById(notificationId)
+    }
 }

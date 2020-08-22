@@ -8,7 +8,7 @@ import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.util.Foreground
 import timber.log.Timber
 
-class BluetoothStateWatcher(private val interactor: BluetoothInteractor) : BroadcastReceiver() {
+class BluetoothStateReceiver(private val interactor: BluetoothInteractor) : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
             when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {

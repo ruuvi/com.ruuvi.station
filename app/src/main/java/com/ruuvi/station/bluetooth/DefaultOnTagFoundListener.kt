@@ -7,14 +7,13 @@ import android.location.Location
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.ruuvi.station.model.HumidityCalibration
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.alarm.AlarmCheckInteractor
+import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.gateway.GatewaySender
-import com.ruuvi.station.util.Constants
+import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.util.extensions.logData
 import timber.log.Timber
 import java.util.Calendar
@@ -26,7 +25,8 @@ class DefaultOnTagFoundListener(
     private val context: Context,
     private val preferences: Preferences,
     private val gatewaySender: GatewaySender,
-    private val repository: TagRepository
+    private val repository: TagRepository,
+    private val alarmCheckInteractor: AlarmCheckInteractor
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
@@ -68,7 +68,7 @@ class DefaultOnTagFoundListener(
 
     private fun saveFavouriteReading(ruuviTag: RuuviTagEntity) {
         val interval = if (isForeground) {
-            Constants.DATA_LOG_INTERVAL
+            DATA_LOG_INTERVAL
         } else {
             preferences.backgroundScanInterval
         }
@@ -88,7 +88,7 @@ class DefaultOnTagFoundListener(
         } else {
             Timber.d("saveFavouriteReading SKIPPED [${ruuviTag.name}] (${ruuviTag.id}) lastLogged = ${Date(lastLoggedDate)}")
         }
-        AlarmCheckInteractor.check(ruuviTag, context, repository)
+        alarmCheckInteractor.check(ruuviTag)
     }
 
     private fun updateLocation() {
@@ -102,6 +102,8 @@ class DefaultOnTagFoundListener(
     }
 
     companion object {
+        private const val DATA_LOG_INTERVAL = 0
+
         var tagLocation: Location? = null
     }
 }

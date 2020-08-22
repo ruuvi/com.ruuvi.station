@@ -12,7 +12,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
 import com.ruuvi.station.model.HumidityUnit
-import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.util.Humidity
 import com.ruuvi.station.util.Utils
 
@@ -58,7 +58,7 @@ class TagRepository(
         }
     }
 
-    fun getHumidityString(tag: RuuviTagEntity): String {
+    fun getHumidityString(tag: RuuviTag): String {
         val humidityUnit = getHumidityUnit()
         val calculation = Humidity(tag.temperature, tag.humidity / 100)
 
@@ -75,7 +75,7 @@ class TagRepository(
         }
     }
 
-    fun getTemperatureString(tag: RuuviTagEntity): String =
+    fun getTemperatureString(tag: RuuviTag): String =
         when (getTemperatureUnit()) {
             "C" -> context.getString(R.string.temperature_reading, tag.temperature) + "°" + getTemperatureUnit()
             "K" -> context.getString(R.string.temperature_reading, getKelvin(tag)) + getTemperatureUnit()
@@ -97,9 +97,9 @@ class TagRepository(
         tag.save()
     }
 
-    private fun getFahrenheit(tag: RuuviTagEntity): Double =
+    private fun getFahrenheit(tag: RuuviTag): Double =
         Utils.celciusToFahrenheit(tag.temperature)
 
-    private fun getKelvin(tag: RuuviTagEntity): Double =
+    private fun getKelvin(tag: RuuviTag): Double =
         Utils.celsiusToKelvin(tag.temperature)
 }

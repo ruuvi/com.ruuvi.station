@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.tag.domain.RuuviTag;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 
@@ -62,18 +64,6 @@ public class Utils {
         Collections.sort(tags, (o1, o2) -> o2.getRssi() - o1.getRssi());
     }
 
-    public static byte[] parseByteDataFromB64(String data) {
-        try {
-            byte[] bData = base64.decode(data);
-            int[] pData = new int[8];
-            for (int i = 0; i < bData.length; i++)
-                pData[i] = bData[i] & 0xFF;
-            return bData;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public static String strDescribingTimeSince(Date date) {
         String output = "";
         Date dateNow = new Date();
@@ -103,9 +93,20 @@ public class Utils {
         return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
     }
 
+    public static Bitmap getBackground(Context context, RuuviTag tag) {
+        try {
+            Uri uri = Uri.parse(tag.getUserBackground());
+            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        } catch (Exception e) {
+            Timber.e("Could not set user background");
+        }
+
+        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
+    }
+
 
     public static Drawable getDefaultBackground(int number, Context context) {
-        return context.getResources().getDrawable(getDefaultBackground(number));
+        return ContextCompat.getDrawable(context, getDefaultBackground(number));
     }
 
     private static int getDefaultBackground(int number) {

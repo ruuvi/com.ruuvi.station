@@ -48,7 +48,7 @@ class GraphView {
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
-            to = calendar.time.time;
+            to = calendar.time.time
             calendar.add(Calendar.HOUR, -24)
             from = calendar.time.time
             storedReadings = inputReadings.toMutableList()

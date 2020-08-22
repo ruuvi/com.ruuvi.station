@@ -24,7 +24,10 @@ class TagConverter(
             pressure = entity.pressure,
             updatedAt = entity.updateAt,
             temperatureString = getTemperatureString(entity),
-            humidityString = getHumidityString(entity)
+            humidityString = getHumidityString(entity),
+            defaultBackground = entity.defaultBackground,
+            userBackground = entity.userBackground,
+            dataFormat = entity.dataFormat
         )
 
     private fun getHumidityString(tag: RuuviTagEntity): String {

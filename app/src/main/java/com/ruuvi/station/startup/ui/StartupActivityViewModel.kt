@@ -14,9 +14,7 @@ class StartupActivityViewModel(
             bluetoothInteractor.startForegroundScanning()
     }
 
-    fun isFirstStart(): Boolean =
-        startupInteractor.isFirstStart()
+    fun isFirstStart(): Boolean = startupInteractor.isFirstStart()
 
-    fun isDashboardEnabled(): Boolean =
-        startupInteractor.isDashboardEnabled()
+    fun isDashboardEnabled(): Boolean = startupInteractor.isDashboardEnabled()
 }

@@ -1,21 +1,22 @@
 package com.ruuvi.station.dashboard.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.adapters.RuuviTagAdapter
-import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.about.ui.AboutActivity
+import com.ruuvi.station.adapters.RuuviTagAdapter
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.PermissionsHelper
@@ -76,10 +77,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupDrawer() {
-        val drawerToggle = ActionBarDrawerToggle(
-            this, mainDrawerLayout, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
+        val drawerToggle =
+            ActionBarDrawerToggle(
+                this, mainDrawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            )
 
         mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -98,18 +100,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             mainDrawerLayout.closeDrawers()
             when (position) {
-                0 -> {
-                    val addIntent = Intent(this, AddTagActivity::class.java)
-                    startActivity(addIntent)
-                }
-                1 -> {
-                    val settingsIntent = Intent(this, AppSettingsActivity::class.java)
-                    startActivity(settingsIntent)
-                }
-                2 -> {
-                    val aboutIntent = Intent(this, AboutActivity::class.java)
-                    startActivity(aboutIntent)
-                }
+                0 -> AddTagActivity.start(this)
+                1 -> AppSettingsActivity.start(this)
+                2 -> AboutActivity.start(this)
                 3 -> {
                     val url = "https://ruuvi.com"
                     val webIntent = Intent(Intent.ACTION_VIEW)
@@ -142,8 +135,13 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
         val tag = view.tag as RuuviTag
-        val intent = Intent(applicationContext, TagDetailsActivity::class.java)
-        intent.putExtra("id", tag.id)
-        startActivity(intent)
+        TagDetailsActivity.start(this, tag.id)
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, DashboardActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }

@@ -30,29 +30,29 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
         super.onViewCreated(view, savedInstanceState)
 
         scanLayout.setDebouncedOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.pref_bgscan)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.pref_bgscan)
         }
 
         scanIntervalLayout.setDebouncedOnClickListener {
             if (viewModel.getBackgroundScanMode() != BackgroundScanModes.DISABLED) {
-                (activity as AppSettingsActivity).openFragment(R.string.background_scan_interval)
+                (activity as? AppSettingsDelegate)?.openFragment(R.string.background_scan_interval)
             }
         }
 
         gatewaySettingsLayout.setDebouncedOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.gateway_url)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.gateway_url)
         }
 
         graphSettingsLayout.setDebouncedOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.preferences_graph_settings)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.preferences_graph_settings)
         }
 
         temperatureUnitLayout.setDebouncedOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.temperature_unit)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.temperature_unit)
         }
 
         humidityUnitLayout.setDebouncedOnClickListener {
-            (activity as AppSettingsActivity).openFragment(R.string.humidity_unit)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.humidity_unit)
         }
 
         debugToolsLayout.isVisible = BuildConfig.DEBUG

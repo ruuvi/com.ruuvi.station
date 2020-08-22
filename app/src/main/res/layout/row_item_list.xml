@@ -8,7 +8,7 @@
 
     <TextView
         android:fontFamily="sans-serif"
-        android:id="@+id/id"
+        android:id="@+id/deviceId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -33,7 +33,7 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id"
+        app:layout_constraintTop_toBottomOf="@+id/deviceId"
         tools:text="https://ruu.vi/#fFOtRKqa9" />
 
     <TextView

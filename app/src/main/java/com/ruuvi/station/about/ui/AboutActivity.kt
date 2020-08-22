@@ -1,17 +1,23 @@
 package com.ruuvi.station.about.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.LocalDatabase
 import com.ruuvi.station.database.tables.TagSensorReading
-import kotlinx.android.synthetic.main.activity_about.*
-import kotlinx.android.synthetic.main.content_about.*
+import kotlinx.android.synthetic.main.activity_about.toolbar
+import kotlinx.android.synthetic.main.content_about.debugInfo
+import kotlinx.android.synthetic.main.content_about.moreText
+import kotlinx.android.synthetic.main.content_about.openText
+import kotlinx.android.synthetic.main.content_about.operationsText
+import kotlinx.android.synthetic.main.content_about.troubleshootingText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -70,5 +76,12 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
             finish()
         }
         return true
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val aboutIntent = Intent(context, AboutActivity::class.java)
+            context.startActivity(aboutIntent)
+        }
     }
 }

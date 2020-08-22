@@ -1,21 +1,30 @@
-package com.ruuvi.station.feature
+package com.ruuvi.station.feature.ui
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.viewpager.widget.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.PagerAdapter
 import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.startup.ui.StartupActivity
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.android.synthetic.main.activity_welcome.start_button
+import kotlinx.android.synthetic.main.activity_welcome.tab_layout
+import kotlinx.android.synthetic.main.activity_welcome.welcome_pager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 @ExperimentalCoroutinesApi
-class WelcomeActivity : AppCompatActivity() {
+class WelcomeActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein by closestKodein()
+
+    private val preferencesRepository : PreferencesRepository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +37,17 @@ class WelcomeActivity : AppCompatActivity() {
         tab_layout.setupWithViewPager(welcome_pager)
 
         start_button.setDebouncedOnClickListener {
-            Preferences(this).isFirstStart = false
-            val intent = Intent(this, StartupActivity::class.java)
-            intent.putExtra(TagDetailsActivity.FROM_WELCOME, true)
-            startActivity(intent)
+            preferencesRepository.setFirstStart(false)
+            StartupActivity.start(this, true)
+        }
+    }
+
+    companion object{
+        const val ARGUMENT_FROM_WELCOME = "ARGUMENT_FROM_WELCOME"
+
+        fun start(context: Context){
+            val intent = Intent(context, WelcomeActivity::class.java)
+            context.startActivity(intent)
         }
     }
 }
