@@ -48,7 +48,7 @@ object BluetoothScannerInjectionModule {
                     return prefs.backgroundScanMode != BackgroundScanModes.DISABLED
                 }
 
-                override fun getBackgroundScanInterval(): Long {
+                override fun getBackgroundScanIntervalMilliseconds(): Long {
                     return prefs.backgroundScanInterval * 1000L
                 }
 
