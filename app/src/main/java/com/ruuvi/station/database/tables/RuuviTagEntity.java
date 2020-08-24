@@ -60,6 +60,10 @@ public class RuuviTagEntity extends BaseModel {
     private int measurementSequenceNumber;
     @Column
     public Date createDate;
+    @Column
+    private double humidityOffset;
+    @Column
+    private Date humidityOffsetDate;
 
     public RuuviTagEntity() {
     }
@@ -90,6 +94,8 @@ public class RuuviTagEntity extends BaseModel {
         tag.setDefaultBackground(this.getDefaultBackground());
         tag.setUserBackground(this.getUserBackground());
         tag.setUpdateAt(new Date());
+        tag.setHumidityOffset(this.getHumidityOffset());
+        tag.setHumidityOffsetDate(this.getHumidityOffsetDate());
         return tag;
     }
 
@@ -327,5 +333,22 @@ public class RuuviTagEntity extends BaseModel {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Double getHumidityOffset() {
+        return humidityOffset;
+    }
+
+    public void setHumidityOffset(Double humidityOffset) {
+        this.humidityOffset = humidityOffset;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public Date getHumidityOffsetDate() {
+        return humidityOffsetDate;
+    }
+
+    public void setHumidityOffsetDate(Date humidityOffsetDate) {
+        this.humidityOffsetDate = humidityOffsetDate;
     }
 }

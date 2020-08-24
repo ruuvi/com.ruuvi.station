@@ -2,14 +2,16 @@ package com.ruuvi.station.util.test
 
 import com.ruuvi.station.bluetooth.FoundRuuviTag
 import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import timber.log.Timber
 import java.util.*
 
 class StressTestGenerator {
     companion object {
+        private val humidityCalibrationInteractor = HumidityCalibrationInteractor()
+
         fun generateData(tagsCount: Int, sensorReadingsPerTag: Int) {
             Timber.d("Generate $tagsCount fake tags and add $sensorReadingsPerTag readings for each")
             var sensorReadingsPerTag = sensorReadingsPerTag
@@ -37,9 +39,10 @@ class StressTestGenerator {
                 temperature = 25.71
                 voltage = 2.995
             }
-            val tag = HumidityCalibration.apply(RuuviTagEntity(newTag))
+            val tag = RuuviTagEntity(newTag)
             val dbtag = RuuviTagRepository.get(tag.id)
             if (dbtag == null) {
+                humidityCalibrationInteractor.apply(tag)
                 tag.favorite = true
                 tag.updateAt = Date()
                 RuuviTagRepository.save(tag)
