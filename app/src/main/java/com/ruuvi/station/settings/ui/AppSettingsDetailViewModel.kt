@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 
-class AppSettingsDetailViewModel(
-    private val interactor: AppSettingsInteractor
-) : ViewModel() {
+class AppSettingsDetailViewModel(private val interactor: AppSettingsInteractor) : ViewModel() {
 
     var gatewayUrl = ""
     var deviceId = ""
@@ -41,6 +39,6 @@ class AppSettingsDetailViewModel(
     private fun getUrl(): String =
         interactor.getGatewayUrl()
 
-    private fun getId(): String =
+    fun getId(): String =
         interactor.getDeviceId()
 }

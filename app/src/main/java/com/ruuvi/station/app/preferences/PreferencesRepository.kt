@@ -2,6 +2,7 @@ package com.ruuvi.station.app.preferences
 
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.DeviceIdGenerator
 
 class PreferencesRepository(private val preferences: Preferences) {
 
@@ -22,8 +23,14 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun getGatewayUrl(): String =
         preferences.gatewayUrl
 
-    fun getDeviceId(): String =
-        preferences.deviceId
+    fun getDeviceId(): String {
+        var deviceId = preferences.deviceId
+        if(deviceId.isEmpty()){
+            deviceId = DeviceIdGenerator.generateId()
+            setDeviceId(deviceId)
+        }
+        return deviceId
+    }
 
     fun setDeviceId(deviceId: String) {
         preferences.deviceId = deviceId

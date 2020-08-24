@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class ScanEvent extends Event {
     public ArrayList<RuuviTagEntity> tags = new ArrayList<>();
 
-    public ScanEvent(Context context) {
-        super(context);
+    public ScanEvent(Context context, String deviceId) {
+        super(context, deviceId);
     }
 }
 

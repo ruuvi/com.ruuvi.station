@@ -29,7 +29,7 @@ object BluetoothScannerInjectionModule {
             BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance())
         }
 
-        bind<BluetoothStateReceiver>() with singleton { BluetoothStateReceiver(instance()) }
+        bind<BluetoothStateReceiver>() with singleton { BluetoothStateReceiver(instance(), instance()) }
 
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
@@ -42,7 +42,7 @@ object BluetoothScannerInjectionModule {
         bind<ScannerSettings>() with singleton {
             object : ScannerSettings {
                 var context = instance<Context>()
-                var prefs = Preferences(context)
+                var prefs = instance<Preferences>()
 
                 override fun allowBackgroundScan(): Boolean {
                     return prefs.backgroundScanMode != BackgroundScanModes.DISABLED
@@ -55,9 +55,9 @@ object BluetoothScannerInjectionModule {
                 override fun getNotificationIconId() = R.drawable.ic_ruuvi_bgscan_icon
 
                 override fun getNotificationTitle(): String {
-                    val seconds = prefs.backgroundScanInterval
+                    val scanInterval = prefs.backgroundScanInterval
                     val stringMessage = context.getString(R.string.scanner_notification_scanning_every)
-                    return "$stringMessage ${TimeUtils.convertSecondsToText(context, seconds)}"
+                    return "$stringMessage ${TimeUtils.convertSecondsToText(context, scanInterval)}"
                 }
 
                 override fun getNotificationText() = context.getString(R.string.scanner_notification_message)

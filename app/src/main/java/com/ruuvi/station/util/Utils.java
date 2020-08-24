@@ -29,19 +29,6 @@ import timber.log.Timber;
 
 public class Utils {
 
-    private static final String TAG = "Utils";
-
-    public static final java.lang.String DB_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
-
-    public static boolean tryParse(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     public static Bitmap createBall(int radius, int ballColor, int letterColor, String letter) {
         letter = letter.toUpperCase();
         Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
@@ -58,10 +45,6 @@ public class Utils {
         paint.getTextBounds(letter, 0, letter.length(), textBounds);
         canvas.drawText(letter, radius - textBounds.exactCenterX(), radius - textBounds.exactCenterY(), paint);
         return bitmap;
-    }
-
-    public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
-        Collections.sort(tags, (o1, o2) -> o2.getRssi() - o1.getRssi());
     }
 
     public static String strDescribingTimeSince(Date date) {
@@ -146,10 +129,5 @@ public class Utils {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
-    }
-
-    public static boolean removeStateFile(Context context) {
-        String path = context.getFilesDir().getPath() + "/android-beacon-library-scan-state";
-        return new File(path).delete();
     }
 }

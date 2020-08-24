@@ -12,7 +12,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity;
 public class ScanEventSingle extends Event {
     public RuuviTagEntity tag;
 
-    public ScanEventSingle(Context context) {
-        super(context);
+    public ScanEventSingle(Context context, String deviceId) {
+        super(context, deviceId);
     }
 }

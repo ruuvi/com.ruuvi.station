@@ -10,7 +10,6 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.feature.ui.WelcomeActivity
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.util.DeviceIdentifier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -25,10 +24,9 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
-        DeviceIdentifier.id(applicationContext)
 
-        viewModel
-            .startForegroundScanning()
+        viewModel.generateDeviceId()
+        viewModel.startForegroundScanning()
 
         when {
             viewModel.isFirstStart() -> WelcomeActivity.start(this)

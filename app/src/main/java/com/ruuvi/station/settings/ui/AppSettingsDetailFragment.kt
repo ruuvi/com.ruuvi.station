@@ -2,20 +2,20 @@ package com.ruuvi.station.settings.ui
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.RadioButton
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.flexsentlabs.extensions.viewModel
 import com.koushikdutta.ion.Ion
 import com.ruuvi.station.R
-import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.gateway.data.ScanEvent
-import com.ruuvi.station.util.DeviceIdentifier
+import com.ruuvi.station.model.HumidityUnit
+import com.ruuvi.station.util.DeviceIdGenerator
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.deviceIdentifierInput
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.deviceIdentifierLayout
 import kotlinx.android.synthetic.main.fragment_app_settings_detail.gatewayTestButton
@@ -126,7 +126,7 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                 //settingsInfoTextView.text = getString(R.string.settings_gateway_details)
                 settingsInfoTextView.movementMethod = LinkMovementMethod.getInstance()
                 deviceIdentifierLayout.isVisible = true
-                deviceIdentifierInput.setText(viewModel.deviceId)
+                deviceIdentifierInput.setText(viewModel.getId())
                 deviceIdentifierInput.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     }
@@ -148,8 +148,8 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     gatewayTestResultTextView.visibility = View.VISIBLE
                     gatewayTestResultTextView.text = "Testing.."
                     gatewayTestResultTextView.setTextColor(Color.DKGRAY)
-
-                    val scanEvent = ScanEvent(context)
+                    val deviceId = viewModel.getId()
+                    val scanEvent = ScanEvent(context, deviceId)
                     scanEvent.deviceId = deviceIdentifierInput.text.toString()
                     Ion.with(context)
                         .load(inputSettingEditText.text.toString())
@@ -177,7 +177,7 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
             R.string.device_identifier -> {
                 inputLayout.isVisible = true
                 res?.let { inputSettingTitleTextView.text = getString(it) }
-                inputSettingEditText.setText(viewModel.deviceId)
+                inputSettingEditText.setText(viewModel.getId())
                 inputSettingEditText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     }
@@ -185,7 +185,7 @@ class AppSettingsDetailFragment : Fragment(R.layout.fragment_app_settings_detail
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         viewModel.deviceId = p0.toString()
                         if (p0.toString().isEmpty()) {
-                            viewModel.deviceId = DeviceIdentifier.generateId()
+                            viewModel.deviceId = DeviceIdGenerator.generateId()
                         }
                     }
 

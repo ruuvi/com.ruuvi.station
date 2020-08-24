@@ -6,7 +6,8 @@ import androidx.preference.PreferenceManager
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 
-class Preferences(val context: Context) {
+class Preferences constructor(val context: Context) {
+
     private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     var backgroundScanInterval: Int
@@ -16,7 +17,7 @@ class Preferences(val context: Context) {
         }
 
     var backgroundScanMode: BackgroundScanModes
-        get() = BackgroundScanModes.fromInt(sharedPreferences.getInt("pref_background_scan_mode", BackgroundScanModes.DISABLED.value))
+        get() = BackgroundScanModes.fromInt(sharedPreferences.getInt(PREF_BACKGROUND_SCAN_MODE, BackgroundScanModes.DISABLED.value))
                 ?: BackgroundScanModes.DISABLED
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()

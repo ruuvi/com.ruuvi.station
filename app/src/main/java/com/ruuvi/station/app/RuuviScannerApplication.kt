@@ -12,6 +12,7 @@ import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
 import com.ruuvi.station.util.Foreground
+import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.test.FakeScanResultsSender
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,22 +31,20 @@ class RuuviScannerApplication : Application(), KodeinAware {
     val defaultOnTagFoundListener: DefaultOnTagFoundListener by instance()
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
+    private val foreground: Foreground by instance()
 
-    private var isInForeground: Boolean = true.also {
-        val listener: Foreground.Listener = object : Foreground.Listener {
-            override fun onBecameForeground() {
-                isInForeground = true
-                defaultOnTagFoundListener.isForeground = true
-            }
+    private var isInForeground: Boolean = true
 
-            override fun onBecameBackground() {
-                isInForeground = false
-                defaultOnTagFoundListener.isForeground = false
-            }
+    private val listener: ForegroundListener = object : ForegroundListener {
+        override fun onBecameForeground() {
+            isInForeground = true
+            defaultOnTagFoundListener.isForeground = true
         }
 
-        Foreground.init(this)
-        Foreground.get().addListener(listener)
+        override fun onBecameBackground() {
+            isInForeground = false
+            defaultOnTagFoundListener.isForeground = false
+        }
     }
 
     override fun onCreate() {
@@ -70,6 +69,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
         defaultOnTagFoundListener.isForeground = isInForeground
+        foreground.addListener(listener)
     }
 
     private fun setupDependencyInjection() {

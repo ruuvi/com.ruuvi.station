@@ -5,7 +5,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 
 import com.ruuvi.station.gateway.data.ScanLocation;
-import com.ruuvi.station.util.DeviceIdentifier;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -22,8 +21,8 @@ public class Event {
     public ScanLocation location;
     public int batteryLevel;
 
-    public Event(Context context) {
-        this.deviceId = DeviceIdentifier.id(context);
+    public Event(Context context, String deviceId) {
+        this.deviceId = deviceId;
         this.time = new GregorianCalendar().getTime();
         this.eventId = UUID.randomUUID().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

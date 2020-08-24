@@ -11,7 +11,7 @@ import org.kodein.di.generic.singleton
 object StartupActivityInjectionModule {
     val module = Kodein.Module(StartupActivityInjectionModule.javaClass.name) {
         bind<StartupActivityViewModel>() with provider {
-            StartupActivityViewModel(instance(), instance())
+            StartupActivityViewModel(instance(), instance(), instance())
         }
 
         bind<StartupActivityInteractor>() with singleton {
