@@ -1,4 +1,4 @@
-package com.ruuvi.station.adapters
+package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.res.ColorStateList

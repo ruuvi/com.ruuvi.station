@@ -150,12 +150,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.let {
                 try {
-                    val path = data.data
+                    val path = data.data ?: return
                     if (!isImage(path)) {
                         Toast.makeText(this, "File type not supported", Toast.LENGTH_SHORT).show()
                         return
                     }
-                    val inputStream = applicationContext.contentResolver.openInputStream(path!!)
+                    val inputStream = applicationContext.contentResolver.openInputStream(path)
                     var photoFile: File? = null
                     try {
                         photoFile = createImageFile()
@@ -503,11 +503,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun createImageFile(): File {
         val imageFileName = "background_" + viewModel.tagId
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val image = File.createTempFile(
-            imageFileName,
-            ".jpg",
-            storageDir
-        )
+        val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         currentPhotoPath = image.absolutePath
         return image
     }
@@ -612,11 +608,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             val file = currentPhotoPath?.let { File(it) }
 
-            out.compress(Bitmap.CompressFormat.JPEG, 60, file?.let { FileOutputStream(it) })
+            val outputStream = FileOutputStream(file)
 
-            file?.let { FileOutputStream(it) }?.flush()
+            out.compress(Bitmap.CompressFormat.JPEG, 60, outputStream)
 
-            file?.let { FileOutputStream(it) }?.close()
+            outputStream.flush()
+
+            outputStream.close()
 
             bitmap.recycle()
 

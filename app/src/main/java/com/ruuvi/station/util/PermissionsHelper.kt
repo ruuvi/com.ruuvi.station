@@ -37,8 +37,7 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
         }
     }
 
-    fun arePermissionsGranted(): Boolean =
-        getRequiredPermissions().isEmpty()
+    fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
 
     fun requestPermissions() {
         val neededPermissions = getRequiredPermissions()
@@ -59,7 +58,7 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
         }
     }
 
-    fun requestBluetoothPermissions(): Boolean {
+    private fun requestBluetoothPermissions(): Boolean {
         if (isBluetoothEnabled()) {
             return true
         }

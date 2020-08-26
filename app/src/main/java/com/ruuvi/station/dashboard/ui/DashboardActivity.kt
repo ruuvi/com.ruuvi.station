@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
-import com.ruuvi.station.adapters.RuuviTagAdapter
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag

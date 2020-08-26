@@ -1,12 +1,10 @@
 package com.ruuvi.station.addtag.ui
 
-import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.os.Bundle
@@ -83,14 +81,13 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
                 adapter?.notifyDataSetChanged()
             }
         }
-
-        //FIXME delete as repeated call?
-        permissionsHelper.requestPermissions()
     }
 
     override fun onResume() {
         super.onResume()
-        permissionsHelper.requestBluetoothPermissions()
+
+        //FIXME delete as repeated call?
+        permissionsHelper.requestPermissions()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -132,7 +129,10 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        finish()
+
+        if (requestCode == PermissionsHelper.REQUEST_CODE_BLUETOOTH && resultCode == Activity.RESULT_CANCELED) {
+            finish()
+        }
     }
 
     private fun getKindaRandomBackground(): Int {
