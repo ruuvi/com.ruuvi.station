@@ -21,9 +21,34 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 12;
+    public static final int VERSION = 13;
+
+    @Migration(version = 13, database = LocalDatabase.class)
+    public static class Migration13 extends AlterTableMigration<TagSensorReading> {
+        public Migration13 (Class<TagSensorReading> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            addColumn(SQLiteType.REAL, "humidityOffset");
+        }
+    }
 
     @Migration(version = 12, database = LocalDatabase.class)
+    public static class Migration12 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration12(Class<RuuviTagEntity> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            addColumn(SQLiteType.REAL, "humidityOffset");
+            addColumn(SQLiteType.INTEGER, "humidityOffsetDate");
+        }
+    }
+
+    @Migration(version = 11, database = LocalDatabase.class)
     public static class Migration11 extends AlterTableMigration<Alarm> {
         public Migration11(Class<Alarm> table) {
             super(table);

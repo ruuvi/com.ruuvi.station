@@ -2,11 +2,7 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
@@ -17,21 +13,9 @@ import android.text.InputFilter
 import android.text.InputType
 import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.webkit.MimeTypeMap
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
@@ -49,25 +33,11 @@ import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.model.HumidityCalibration
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
-import kotlinx.android.synthetic.main.activity_tag_settings.alertsContainerLayout
-import kotlinx.android.synthetic.main.activity_tag_settings.calibrateHumidityButton
-import kotlinx.android.synthetic.main.activity_tag_settings.inputMacTextView
-import kotlinx.android.synthetic.main.activity_tag_settings.inputVoltageTextView
-import kotlinx.android.synthetic.main.activity_tag_settings.rawValuesLayout
-import kotlinx.android.synthetic.main.activity_tag_settings.removeTagButton
-import kotlinx.android.synthetic.main.activity_tag_settings.tagImageCameraButton
-import kotlinx.android.synthetic.main.activity_tag_settings.tagImageSelectButton
-import kotlinx.android.synthetic.main.activity_tag_settings.tagImageView
-import kotlinx.android.synthetic.main.activity_tag_settings.tagNameInputTextView
-import kotlinx.android.synthetic.main.activity_tag_settings.toolbar
-import kotlinx.android.synthetic.main.activity_tag_settings.xInputTextView
-import kotlinx.android.synthetic.main.activity_tag_settings.yInputTextView
-import kotlinx.android.synthetic.main.activity_tag_settings.zInputTextView
-import kotlinx.android.synthetic.main.dialog_humidity_calibration.timestamp
+import kotlinx.android.synthetic.main.activity_tag_settings.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
@@ -79,7 +49,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.util.Date
+import java.util.*
 
 @ExperimentalCoroutinesApi
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
@@ -93,6 +63,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val repository: TagRepository by instance()
+    private val humidityCalibrationInteractor: HumidityCalibrationInteractor by instance()
 
     private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
         val item = viewModel.alarmItems[buttonView.tag as Int]
@@ -332,41 +303,33 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity))
 
-            val calibration = HumidityCalibration.get(tag)
-
             builder.setPositiveButton("Calibrate") { _, _ ->
 
                 var latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
 
-                HumidityCalibration.calibrate(latestTag)
-
-                if (calibration != null) latestTag?.humidity = latestTag?.humidity?.minus(calibration.humidityOffset)
-
-                latestTag = HumidityCalibration.apply(latestTag)
-
-                viewModel.updateTag(latestTag)
-
-                // so the ui will show calibrated humidity if the user presses the calibration button again
-
-                tag.humidity = latestTag.humidity
-
-                Toast.makeText(this@TagSettingsActivity, "Calibration done!", Toast.LENGTH_SHORT).show()
-            }
-            if (calibration != null) {
-                builder.setNegativeButton("Clear calibration") { _, _ ->
-                    HumidityCalibration.clear(tag)
-
-                    // so the ui will show the new uncalibrated value
-                    tag.humidity = tag.humidity - calibration.humidityOffset
-
-                    // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
-                    val latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
-
-                    latestTag?.humidity = latestTag?.humidity?.minus(calibration.humidityOffset)
-
-                    latestTag?.update()
+                latestTag?.let {
+                    humidityCalibrationInteractor.calibrate(it);
+                    tag.humidity = it.humidity;
+                    tag.humidityOffset = it.humidityOffset;
+                    tag.humidityOffsetDate  = it.humidityOffsetDate;
+                    viewModel.updateTag(it)
+                    Toast.makeText(this@TagSettingsActivity, "Calibration done!", Toast.LENGTH_SHORT).show()
                 }
-                timestamp.text = this.getString(R.string.calibrated, calibration.timestamp)
+            }
+            if (tag.humidityOffset != 0.0) {
+                builder.setNegativeButton("Clear calibration") { _, _ ->
+                    val latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
+                    latestTag?.let {
+                        humidityCalibrationInteractor.clear(it);
+                        tag.humidity = it.humidity;
+                        tag.humidityOffset = it.humidityOffset;
+                        tag.humidityOffsetDate  = it.humidityOffsetDate;
+                        it.update()
+                    }
+                }
+                (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
+
+                //timestamp.text = this.getString(R.string.calibrated)
             }
 
             builder.setNeutralButton("Cancel", null)

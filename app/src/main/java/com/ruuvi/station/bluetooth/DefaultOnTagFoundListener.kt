@@ -13,7 +13,7 @@ import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.gateway.GatewaySender
-import com.ruuvi.station.model.HumidityCalibration
+import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.util.extensions.logData
 import timber.log.Timber
 import java.util.Calendar
@@ -26,22 +26,21 @@ class DefaultOnTagFoundListener(
     private val preferences: Preferences,
     private val gatewaySender: GatewaySender,
     private val repository: TagRepository,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val humidityCalibrationInteractor: HumidityCalibrationInteractor
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
 
     private val fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(context)
-
+            LocationServices.getFusedLocationProviderClient(context)
     private var lastLogged: MutableMap<String, Long> = HashMap()
     private var lastCleanedDate: Long = Date().time
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
         updateLocation()
-        val tag = HumidityCalibration.apply(RuuviTagEntity(tag))
-        saveReading(tag)
+        saveReading(RuuviTagEntity(tag))
 
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.MINUTE, -10)
@@ -58,6 +57,7 @@ class DefaultOnTagFoundListener(
         val dbTag = ruuviTag.id?.let { repository.getTagById(it) }
         if (dbTag != null) {
             val ruuviTag = dbTag.preserveData(ruuviTag)
+            humidityCalibrationInteractor.apply(ruuviTag)
             repository.updateTag(ruuviTag)
             if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
         } else {

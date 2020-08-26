@@ -58,6 +58,8 @@ public class TagSensorReading extends BaseModel {
     public int movementCounter;
     @Column
     public int measurementSequenceNumber;
+    @Column
+    public double humidityOffset;
 
     public TagSensorReading() {
     }
@@ -66,6 +68,7 @@ public class TagSensorReading extends BaseModel {
         this.ruuviTagId = tag.getId();
         this.temperature = tag.getTemperature();
         this.humidity = tag.getHumidity();
+        this.humidityOffset = tag.getHumidityOffset();
         this.pressure = tag.getPressure();
         this.rssi = tag.getRssi();
         this.accelX = tag.getAccelX();
@@ -153,6 +156,7 @@ public class TagSensorReading extends BaseModel {
                 ", createdAt=" + createdAt +
                 ", temperature=" + temperature +
                 ", humidity=" + humidity +
+                ", humidityOffset=" + humidityOffset +
                 ", pressure=" + pressure +
                 ", rssi=" + rssi +
                 ", accelX=" + accelX +
