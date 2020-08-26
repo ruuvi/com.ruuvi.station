@@ -53,11 +53,11 @@ import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.ruuvi.station.R;
-import com.ruuvi.station.model.HumidityCalibration;
 import com.ruuvi.station.database.RuuviTagRepository;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.alarm.AlarmChecker;
+import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor;
 import com.ruuvi.station.util.CsvExporter;
 import com.ruuvi.station.util.Utils;
 
@@ -78,6 +78,7 @@ public class TagSettings extends AppCompatActivity {
     public static final String TAG_ID = "TAG_ID";
 
     private RuuviTagEntity tag;
+    private HumidityCalibrationInteractor humidityCalibrationInteractor = new HumidityCalibrationInteractor();
     List<Alarm> tagAlarms = new ArrayList<>();
     List<AlarmItem> alarmItems = new ArrayList<>();
     private Uri file;
@@ -201,32 +202,28 @@ public class TagSettings extends AppCompatActivity {
             content.setLayoutParams(params);
             ((TextView) content.findViewById(R.id.info)).setMovementMethod(LinkMovementMethod.getInstance());
             ((TextView) content.findViewById(R.id.calibration)).setText(Math.round(tag.getHumidity()) + "% -> 75%");
-            final HumidityCalibration calibration = HumidityCalibration.get(tag);
             builder.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
-                    HumidityCalibration.calibrate(latestTag);
-                    if (calibration != null)
-                        latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
-                    latestTag = HumidityCalibration.apply(latestTag);
-                    RuuviTagRepository.update(latestTag);
+                    humidityCalibrationInteractor.calibrate(latestTag);
                     // so the ui will show calibrated humidity if the user presses the calibration button again
                     tag.setHumidity(latestTag.getHumidity());
+                    tag.setHumidityOffset(latestTag.getHumidityOffset());
+                    tag.setHumidityOffsetDate(latestTag.getHumidityOffsetDate());
                     Toast.makeText(TagSettings.this, "Calibration done!", Toast.LENGTH_SHORT).show();
                 }
             });
-            if (calibration != null) {
+            if (tag.getHumidityOffset() != 0.0) {
                 builder.setNegativeButton("Clear calibration", (dialog, which) -> {
-                    HumidityCalibration.clear(tag);
-                    // so the ui will show the new uncalibrated value
-                    tag.setHumidity(tag.getHumidity() - calibration.humidityOffset);
-                    // revert calibration for the latest tag to not mess with calibration if it is done before the tag has updated
                     RuuviTagEntity latestTag = RuuviTagRepository.get(tag.getId());
-                    latestTag.setHumidity(latestTag.getHumidity() - calibration.humidityOffset);
-                    latestTag.update();
+                    humidityCalibrationInteractor.clear(latestTag);
+                    // so the ui will show the new uncalibrated value
+                    tag.setHumidity(latestTag.getHumidity());
+                    tag.setHumidityOffset(latestTag.getHumidityOffset());
+                    tag.setHumidityOffsetDate(latestTag.getHumidityOffsetDate());
                 });
-                ((TextView) content.findViewById(R.id.timestamp)).setText("Calibrated: " + calibration.timestamp.toString());
+                ((TextView) content.findViewById(R.id.timestamp)).setText("Calibrated: " + tag.getHumidityOffsetDate().toString());
             }
             builder.setNeutralButton("Cancel", null);
             container.addView(content);

@@ -7,19 +7,17 @@ import android.location.Location
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.model.HumidityCalibration
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.alarm.AlarmChecker
 import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.util.Constants
 import com.ruuvi.station.util.extensions.logData
 import timber.log.Timber
-import java.util.Calendar
-import java.util.Date
-import java.util.HashMap
+import java.util.*
 
 class DefaultOnTagFoundListener(
         private val context: Context,
@@ -31,15 +29,14 @@ class DefaultOnTagFoundListener(
 
     private val fusedLocationClient: FusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(context)
-
+    private val humidityCalibrationInteractor = HumidityCalibrationInteractor()
     private var lastLogged: MutableMap<String, Long> = HashMap()
     private var lastCleanedDate: Long = Date().time
 
     override fun onTagFound(foundTag: FoundRuuviTag) {
         Timber.d("onTagFound: ${foundTag.logData()}")
         updateLocation()
-        val tag = HumidityCalibration.apply(RuuviTagEntity(foundTag))
-        saveReading(tag)
+        saveReading(RuuviTagEntity(foundTag))
 
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.MINUTE, -10)
@@ -57,6 +54,7 @@ class DefaultOnTagFoundListener(
         val dbTag = RuuviTagRepository.get(ruuviTag.id)
         if (dbTag != null) {
             ruuviTag = dbTag.preserveData(ruuviTag)
+            humidityCalibrationInteractor.apply(ruuviTag)
             RuuviTagRepository.update(ruuviTag)
             if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
         } else {
