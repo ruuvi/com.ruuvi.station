@@ -23,6 +23,10 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun getGatewayUrl(): String =
         preferences.gatewayUrl
 
+    fun setGatewayUrl(gatewayUrl: String) {
+        preferences.gatewayUrl = gatewayUrl
+    }
+
     fun getDeviceId(): String {
         var deviceId = preferences.deviceId
         if(deviceId.isEmpty()){

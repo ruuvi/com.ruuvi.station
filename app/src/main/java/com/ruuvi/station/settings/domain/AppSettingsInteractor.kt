@@ -1,11 +1,16 @@
 package com.ruuvi.station.settings.domain
 
+import com.google.gson.JsonObject
+import com.koushikdutta.async.future.FutureCallback
+import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 
 class AppSettingsInteractor(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val gatewaySender: GatewaySender
 ) {
 
     fun getTemperatureUnit(): String =
@@ -23,8 +28,16 @@ class AppSettingsInteractor(
     fun getGatewayUrl(): String =
         preferencesRepository.getGatewayUrl()
 
+    fun setGatewayUrl(gatewayUrl: String) {
+        preferencesRepository.setGatewayUrl(gatewayUrl)
+    }
+
     fun getDeviceId(): String =
         preferencesRepository.getDeviceId()
+
+    fun setDeviceId(deviceId: String) {
+        preferencesRepository.setDeviceId(deviceId)
+    }
 
     fun isServiceWakeLock(): Boolean =
         preferencesRepository.isServiceWakelock()
@@ -70,4 +83,10 @@ class AppSettingsInteractor(
 
     fun setGraphViewPeriod(newPeriod: Int) =
         preferencesRepository.setGraphViewPeriod(newPeriod)
+
+    fun testGateway(
+            gatewayUrl: String,
+            deviceId: String,
+            callback: FutureCallback<Response<JsonObject>>
+    ) = gatewaySender.test(gatewayUrl, deviceId, callback)
 }

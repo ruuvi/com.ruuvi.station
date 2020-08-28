@@ -450,7 +450,7 @@
                     android:paddingBottom="12dp"
                     android:paddingTop="12dp">
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/gatewayTestResultTextView"
+                        android:id="@+id/gatewayTestButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/test_gateway"
@@ -458,7 +458,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/gatewayTestButton"
+                        android:id="@+id/gatewayTestResultTextView"
                         style="@style/PrefTitleText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -466,7 +466,7 @@
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/gatewayTestResultTextView"/>
+                        app:layout_constraintTop_toBottomOf="@id/gatewayTestButton"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
