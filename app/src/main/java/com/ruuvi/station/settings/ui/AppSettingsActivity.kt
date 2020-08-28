@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,6 +18,8 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
 
     override val kodein by closestKodein()
 
+    private val viewModel: AppSettingsViewModel by viewModel()
+
     private var showingFragmentTitle = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +27,11 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
         setContentView(R.layout.activity_app_settings)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        openFragment(-1)
+        openFragment(viewModel.resourceId)
     }
 
     override fun openFragment(resourceId: Int) {
+        viewModel.resourceId = resourceId
         showingFragmentTitle = resourceId
         val transaction = supportFragmentManager.beginTransaction()
         val fragment: Fragment?
@@ -42,6 +46,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
             fragment = when (resourceId) {
                 R.string.pref_bgscan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.preferences_graph_settings -> AppSettingsGraphFragment.newInstance()
+                R.string.gateway_url -> AppSettingsGatewayFragment.newInstance()
                 else -> AppSettingsDetailFragment.newInstance(resourceId)
             }
         }

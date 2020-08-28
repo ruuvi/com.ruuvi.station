@@ -221,6 +221,7 @@
     <string name="tag_name">Tag name</string>
     <string name="gateway">Gateway</string>
     <string name="gateway_url">Gateway URL</string>
+    <string name="gateway_url_hint">https://your.gateway/...</string>
     <string name="gateway_url_disabled">Disabled</string>
     <string name="no_gateway_url">No gateway URL</string>
     <string name="alert_subtitle_off">Off</string>

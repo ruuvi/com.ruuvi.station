@@ -4,7 +4,10 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
+import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.gateway.data.ScanEvent
@@ -47,5 +50,15 @@ class GatewaySender(
                     }
                 }
         }
+    }
+
+    fun test(gatewayUrl: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
+        val scanEvent = ScanEvent(context, deviceId)
+        Ion.with(context)
+                .load(gatewayUrl)
+                .setJsonPojoBody(scanEvent)
+                .asJsonObject()
+                .withResponse()
+                .setCallback(callback)
     }
 }
