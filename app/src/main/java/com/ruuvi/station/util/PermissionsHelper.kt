@@ -3,38 +3,22 @@ package com.ruuvi.station.util
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.location.LocationManager
-import android.os.Build
-import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import timber.log.Timber
 
 class PermissionsHelper(private val activity: AppCompatActivity) {
-    private val requiredPermissions = listOf(
+    private val requiredPermissions = mutableListOf(
         ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-
-    fun checkIsLocationEnabled() {
-        if (!isLocationEnabled()) {
-            val builder = AlertDialog.Builder(activity)
-            builder.setTitle(activity.getString(R.string.locationServices))
-            builder.setMessage(activity.getString(R.string.enableLocationServices))
-            builder.setPositiveButton(android.R.string.ok) { _, _ ->
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity.startActivity(intent)
-            }
-            builder.setNegativeButton(android.R.string.cancel) { _, _ -> }
-            builder.show()
-        }
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ).also {
+        if (BuildConfig.FILE_LOGS_ENABLED) it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
@@ -54,11 +38,11 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
                 alertDialog.show()
             }
         } else {
-            requestBluetoothPermissions()
+            enableBluetooth()
         }
     }
 
-    private fun requestBluetoothPermissions(): Boolean {
+    private fun enableBluetooth(): Boolean {
         if (isBluetoothEnabled()) {
             return true
         }
@@ -94,20 +78,6 @@ class PermissionsHelper(private val activity: AppCompatActivity) {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled
     }
-
-    private fun isLocationEnabled(): Boolean =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationManager.isLocationEnabled
-        } else {
-            try {
-                val locationMode = Settings.Secure.getInt(activity.contentResolver, Settings.Secure.LOCATION_MODE)
-                locationMode != Settings.Secure.LOCATION_MODE_OFF
-            } catch (e: Settings.SettingNotFoundException) {
-                Timber.e(e, "Could not get LOCATION_MODE")
-                false
-            }
-        }
 
     companion object {
         const val REQUEST_CODE_PERMISSIONS = 10
