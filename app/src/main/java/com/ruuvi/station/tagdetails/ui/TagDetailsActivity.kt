@@ -165,9 +165,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun setupTags(tags: List<RuuviTag>) {
         val previousTagsSize = adapter.count
-        if (adapter.count != tags.size) {
-            adapter.setTags(tags)
-        }
+        adapter.setTags(tags)
 
         val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
         setupVisibility(tags.isNullOrEmpty())
@@ -212,9 +210,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             tag_background_view.setImageDrawable(previousBitmapDrawable)
         }
         val bitmap = Utils.getBackground(applicationContext, selectedTag)
-        val bitmapDrawable =
-            backgrounds[selectedTag.id] ?: BitmapDrawable(applicationContext.resources, bitmap)
-
+        val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
         backgrounds[selectedTag.id] = bitmapDrawable
         viewModel.tag = selectedTag
         imageSwitcher.setImageDrawable(bitmapDrawable)
@@ -472,7 +468,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         fun createPendingIntent(context: Context, tagId: String, alarmId: Int): PendingIntent? {
             val intent = Intent(context, TagDetailsActivity::class.java)
-            intent.putExtra("id", tagId)
+            intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
             return TaskStackBuilder.create(context)
                 .addNextIntent(intent)
