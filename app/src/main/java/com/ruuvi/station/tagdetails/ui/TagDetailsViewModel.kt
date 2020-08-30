@@ -68,8 +68,9 @@ class TagDetailsViewModel(
 
     fun refreshTags() {
         ioScope.launch {
-            timer.scheduleAtFixedRate(0, 1000) {
-                tags.value = interactor.getTags()
+            val list = interactor.getTags()
+            withContext(Dispatchers.Main) {
+                    tags.value = list
             }
         }
     }
