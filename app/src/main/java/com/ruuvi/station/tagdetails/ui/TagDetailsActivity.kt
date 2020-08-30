@@ -468,7 +468,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         fun createPendingIntent(context: Context, tagId: String, alarmId: Int): PendingIntent? {
             val intent = Intent(context, TagDetailsActivity::class.java)
-            intent.putExtra("id", tagId)
+            intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
             return TaskStackBuilder.create(context)
                 .addNextIntent(intent)

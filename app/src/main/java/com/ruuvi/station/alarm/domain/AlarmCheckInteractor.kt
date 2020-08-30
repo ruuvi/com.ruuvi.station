@@ -197,8 +197,7 @@ class AlarmCheckInteractor(
 
     fun removeNotificationById(notificationId: Int) {
         Timber.d("dismissNotification with id = $notificationId")
-        if (notificationId != -1) return
-        notificationManager.cancel(notificationId)
+        if (notificationId != -1) notificationManager.cancel(notificationId)
     }
 
     companion object {
