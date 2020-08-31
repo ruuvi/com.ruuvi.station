@@ -106,7 +106,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.openAddView = false
             return
         }
-        //FIXME delete as repeated call?
         permissionsHelper.requestPermissions()
     }
 
@@ -160,7 +159,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        CoroutineScope(Dispatchers.Main).launch { viewModel.tagsFlow.collect { setupTags(it) } }
+        lifecycleScope.launch { viewModel.tagsFlow.collect { setupTags(it) } }
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
@@ -370,7 +369,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     adapter.showGraph = !adapter.showGraph
                 }
             }
-            R.id.action_settings -> TagSettingsActivity.start(this, viewModel.tag?.id)
+            R.id.action_settings -> {
+                if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.tag?.id)
+            }
             android.R.id.home -> finish()
         }
         return true
