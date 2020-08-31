@@ -169,7 +169,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
         setupVisibility(tags.isNullOrEmpty())
         if (tags.isNotEmpty()) {
-            if (!viewModel.desiredTag.isNullOrEmpty()) {
+            if (!viewModel.desiredTag.isNullOrEmpty() && !isSizeChanged) {
                 val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
                 scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
             } else {

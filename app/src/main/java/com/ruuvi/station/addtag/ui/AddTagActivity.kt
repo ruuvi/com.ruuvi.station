@@ -50,27 +50,11 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
         setContentView(R.layout.activity_add_tag)
         setSupportActionBar(toolbar)
 
-        adapter = AddTagAdapter(this, tags)
+        setupViewmodel()
+        setupUI()
+    }
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        tagListView.adapter = adapter
-
-        tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
-            if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
-                Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
-                    .show()
-                return@OnItemClickListener
-            }
-            tag.defaultBackground = getKindaRandomBackground()
-            // FIXME: Database interaction in the main thread?
-            tag.update()
-            TagSettingsActivity.startForResult(this, 1, tag.id)
-        }
-
-        adapter?.notifyDataSetChanged()
-
+    private fun setupViewmodel() {
         lifecycleScope.launchWhenCreated {
             viewModel.tagsFlow.collect { ruuviTags ->
 
@@ -81,6 +65,29 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
                 adapter?.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun setupUI() {
+        adapter = AddTagAdapter(this, tags)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        tagListView.adapter = adapter
+
+        tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
+            if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
+                Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
+                        .show()
+                return@OnItemClickListener
+            }
+            tag.defaultBackground = getKindaRandomBackground()
+            // FIXME: Database interaction in the main thread?
+            tag.update()
+            TagSettingsActivity.startForResult(this, 1, tag.id)
+        }
+
+        adapter?.notifyDataSetChanged()
     }
 
     override fun onResume() {
@@ -129,8 +136,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PermissionsHelper.REQUEST_CODE_BLUETOOTH && resultCode == Activity.RESULT_CANCELED) {
+        if (requestCode != PermissionsHelper.REQUEST_CODE_BLUETOOTH) {
             finish()
         }
     }
