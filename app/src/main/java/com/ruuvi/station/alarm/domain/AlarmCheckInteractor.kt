@@ -46,7 +46,7 @@ class AlarmCheckInteractor(
             .forEach { alarm ->
                 val resourceId = getResourceId(alarm, ruuviTag, true)
                 if (resourceId != NOTIFICATION_RESOURCE_ID && canNotify(alarm)) {
-                    sendAlert(alarm.id, ruuviTag.displayName, ruuviTag.id, resourceId)
+                    sendAlert(alarm.id, ruuviTag.id, ruuviTag.displayName, resourceId)
                 }
             }
     }
