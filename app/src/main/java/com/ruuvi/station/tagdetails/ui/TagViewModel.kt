@@ -42,9 +42,9 @@ class TagViewModel(
     }
 
     private fun getTagInfo(tagId: String) {
-        Timber.d("getTagInfo $tagId")
         ioScope.launch {
             timer.scheduleAtFixedRate(0, 1000) {
+                Timber.d("getTagInfo $tagId")
                 getTagEntryData(tagId)
                 if (showGraph) getGraphData(tagId)
             }

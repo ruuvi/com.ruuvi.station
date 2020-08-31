@@ -73,7 +73,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagEntry() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             viewModel.tagEntryFlow.collect {
                 it?.let { updateTagData(it) }
             }

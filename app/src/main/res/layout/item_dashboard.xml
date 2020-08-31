@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/letter_ball_radius"
         android:fontFamily="@font/montserrat_bold"
-        android:paddingStart="34dp"
+        android:paddingLeft="48dp"
         android:paddingTop="8dp"
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
