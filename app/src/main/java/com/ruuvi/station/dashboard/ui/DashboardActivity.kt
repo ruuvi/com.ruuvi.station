@@ -23,8 +23,6 @@ import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_dashboard.dashboardListView
 import kotlinx.android.synthetic.main.content_dashboard.noTagsTextView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -116,9 +114,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         super.onResume()
         viewModel.startForegroundScanning()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             if (permissionsHelper.arePermissionsGranted()) {
-                timer.scheduleAtFixedRate(1000, 500) {
+                timer.scheduleAtFixedRate(0, 1200) {
                     lifecycleScope.launchWhenResumed {
                         viewModel.tagsFlow.collect {
                             tags.clear()
