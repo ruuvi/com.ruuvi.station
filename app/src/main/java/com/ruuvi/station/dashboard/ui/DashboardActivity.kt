@@ -2,7 +2,6 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -19,18 +18,18 @@ import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.PermissionsHelper
-import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
-import kotlinx.android.synthetic.main.activity_tag_details.toolbar
-import kotlinx.android.synthetic.main.content_dashboard.dashboardListView
-import kotlinx.android.synthetic.main.content_dashboard.noTagsTextView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.ruuvi.station.util.extensions.OpenUrl
+import com.ruuvi.station.util.extensions.SendFeedback
+import kotlinx.android.synthetic.main.activity_tag_details.*
+import kotlinx.android.synthetic.main.content_dashboard.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import java.util.Timer
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.MutableList
 import kotlin.concurrent.scheduleAtFixedRate
 
 @ExperimentalCoroutinesApi
@@ -102,12 +101,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 0 -> AddTagActivity.start(this)
                 1 -> AppSettingsActivity.start(this)
                 2 -> AboutActivity.start(this)
-                3 -> {
-                    val url = "https://ruuvi.com"
-                    val webIntent = Intent(Intent.ACTION_VIEW)
-                    webIntent.data = Uri.parse(url)
-                    startActivity(webIntent)
-                }
+                3 -> SendFeedback()
+                4 -> OpenUrl(WEB_URL)
             }
         }
     }
@@ -116,9 +111,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         super.onResume()
         viewModel.startForegroundScanning()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             if (permissionsHelper.arePermissionsGranted()) {
-                timer.scheduleAtFixedRate(1000, 500) {
+                timer.scheduleAtFixedRate(0, 1200) {
                     lifecycleScope.launchWhenResumed {
                         viewModel.tagsFlow.collect {
                             tags.clear()
@@ -138,6 +133,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     companion object {
+        private const val WEB_URL = "https://ruuvi.com"
+
         fun start(context: Context) {
             val intent = Intent(context, DashboardActivity::class.java)
             context.startActivity(intent)

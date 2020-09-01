@@ -55,6 +55,8 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.OpenUrl
+import com.ruuvi.station.util.extensions.SendFeedback
 import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
 import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
@@ -62,8 +64,6 @@ import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
 import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
 import kotlinx.android.synthetic.main.content_tag_details.tagPager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -266,15 +266,10 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 0 -> AddTagActivity.start(this)
                 1 -> AppSettingsActivity.start(this)
                 2 -> AboutActivity.start(this)
-                3 -> openUrl()
+                3 -> SendFeedback()
+                4 -> OpenUrl(WEB_URL)
             }
         }
-    }
-
-    private fun openUrl() {
-        val webIntent = Intent(Intent.ACTION_VIEW)
-        webIntent.data = Uri.parse(WEB_URL)
-        startActivity(webIntent)
     }
 
     @Suppress("DEPRECATION")
