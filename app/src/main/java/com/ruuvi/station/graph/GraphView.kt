@@ -35,8 +35,16 @@ class GraphView {
     private val HUMIDITY = "Humidity"
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
+    private var drawDots = false
 
-    fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context, repository: TagRepository) {
+    fun drawChart(
+            inputReadings: List<TagSensorReading>,
+            view: View,
+            context: Context,
+            repository: TagRepository,
+            drawDots: Boolean
+    ) {
+        this.drawDots = drawDots
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
         val tempChart: LineChart = view.findViewById(R.id.tempChart)
         tempChart.isVisible = true
@@ -107,11 +115,11 @@ class GraphView {
 
     private fun addDataToChart(context: Context, data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
-        set.setDrawCircles(false)
+        set.setDrawCircles(drawDots)
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.main)
-        set.circleRadius = 2f
+        set.circleRadius = 1f
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE

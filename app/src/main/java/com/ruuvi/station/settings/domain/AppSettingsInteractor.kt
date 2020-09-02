@@ -72,6 +72,12 @@ class AppSettingsInteractor(
     fun setIsShowAllGraphPoint(isShow: Boolean) =
         preferencesRepository.setIsShowAllGraphPoint(isShow)
 
+    fun isDrawDots(): Boolean =
+            preferencesRepository.isDrawDots()
+
+    fun setIsDrawDots(isDrawDots: Boolean) =
+            preferencesRepository.setIsDrawDots(isDrawDots)
+
     fun getGraphPointInterval(): Int =
         preferencesRepository.getGraphPointInterval()
 

@@ -80,6 +80,12 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.graphShowAllPoint = isShow
     }
 
+    fun isDrawDots(): Boolean = preferences.graphDrawDots
+
+    fun setIsDrawDots(drawDots: Boolean) {
+        preferences.graphDrawDots = drawDots
+    }
+
     fun getGraphPointInterval(): Int =
         preferences.graphPointInterval
 

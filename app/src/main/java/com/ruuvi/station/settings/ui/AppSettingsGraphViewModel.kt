@@ -19,6 +19,9 @@ class AppSettingsGraphViewModel(
     private val showAllPoints = MutableStateFlow(interactor.isShowAllGraphPoint())
     val showAllPointsFlow: StateFlow<Boolean> = showAllPoints
 
+    private val drawDots = MutableStateFlow(interactor.isDrawDots())
+    val drawDotsFlow: StateFlow<Boolean> = drawDots
+
     init {
         viewModelScope.launch {
             pointInterval.send(interactor.getGraphPointInterval())
@@ -39,5 +42,10 @@ class AppSettingsGraphViewModel(
     fun setShowAllPoints(isChecked: Boolean) {
         interactor.setIsShowAllGraphPoint(isChecked)
         showAllPoints.value = isChecked
+    }
+
+    fun setDrawDots(isChecked: Boolean) {
+        interactor.setIsDrawDots(isChecked)
+        drawDots.value = isChecked
     }
 }
