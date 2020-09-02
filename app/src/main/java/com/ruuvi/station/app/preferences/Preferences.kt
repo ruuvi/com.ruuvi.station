@@ -100,8 +100,14 @@ class Preferences constructor(val context: Context) {
 
     var graphShowAllPoint: Boolean
         get() = sharedPreferences.getBoolean(PREF_GRAPH_SHOW_ALL_POINTS, DEFAULT_GRAPH_SHOW_ALL_POINTS)
-        set(period) {
-            sharedPreferences.edit().putBoolean(PREF_GRAPH_SHOW_ALL_POINTS, period).apply()
+        set(showAllPoints) {
+            sharedPreferences.edit().putBoolean(PREF_GRAPH_SHOW_ALL_POINTS, showAllPoints).apply()
+        }
+
+    var graphDrawDots: Boolean
+        get() = sharedPreferences.getBoolean(PREF_GRAPH_DRAW_DOTS, DEFAULT_GRAPH_DRAW_DOTS)
+        set(drawDots) {
+            sharedPreferences.edit().putBoolean(PREF_GRAPH_DRAW_DOTS, drawDots).apply()
         }
 
     companion object {
@@ -120,6 +126,8 @@ class Preferences constructor(val context: Context) {
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
+        private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
+
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""
@@ -127,5 +135,6 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
+        private const val DEFAULT_GRAPH_DRAW_DOTS = false
     }
 }

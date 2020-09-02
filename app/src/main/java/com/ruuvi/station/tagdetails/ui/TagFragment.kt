@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.sharedViewModel
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.view_tag_detail.tagTemperatureTextView
 import kotlinx.android.synthetic.main.view_tag_detail.tagUpdatedTextView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
@@ -46,6 +45,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private val activityViewModel: TagDetailsViewModel by sharedViewModel()
 
     private val repository: TagRepository by instance()
+
+    private val preferencesRepository: PreferencesRepository by instance()
 
     private val graphView = GraphView()
 
@@ -85,7 +86,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             viewModel.tagReadingsFlow.collect { readings ->
                 readings?.let {
                     view?.let { view ->
-                        graphView.drawChart(readings, view, requireContext(), repository)
+                        graphView.drawChart(
+                                readings,
+                                view,
+                                requireContext(),
+                                repository,
+                                preferencesRepository.isDrawDots()
+                        )
                     }
                 }
             }
