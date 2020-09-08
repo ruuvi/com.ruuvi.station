@@ -25,6 +25,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
         observeInterval()
         observePeriod()
         observeShowAllPoints()
+        observeDrawDots()
     }
 
     private fun setupViews() {
@@ -43,6 +44,10 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
         graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setShowAllPoints(isChecked)
+        }
+
+        graphDrawDotsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setDrawDots(isChecked)
         }
     }
 
@@ -67,6 +72,14 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
             viewModel.showAllPointsFlow.collect {
                 graphAllPointsSwitch.isChecked = it
                 graphIntervalNumberPicker.isEnabled = !graphAllPointsSwitch.isChecked
+            }
+        }
+    }
+
+    private fun observeDrawDots() {
+        lifecycleScope.launch {
+            viewModel.drawDotsFlow.collect {
+                graphDrawDotsSwitch.isChecked = it
             }
         }
     }
