@@ -2,7 +2,7 @@
 
 [![License][license-image]][license-url]
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![build](https://app.bitrise.io/app/a7f684ca2d0f738a/status.svg?token=sPVrXFHozxVirUGR2eYV-w&branch=dev)
+[build](https://app.bitrise.io/app/a7f684ca2d0f738a/status.svg?token=sPVrXFHozxVirUGR2eYV-w&branch=dev)
 
 Ruuvi Station is an open-source Android app [available](https://play.google.com/store/apps/details?id=com.ruuvi.station) on the Google Play. You can observe the weather parameters, such as temperature, humidity, air pressure (and more) right on your Android device. Ruuvi Station is a companion app for open-source IoT BLE devices made by [Ruuvi](https://ruuvi.com).
 
