@@ -1,4 +1,4 @@
-package com.ruuvi.station.util
+package com.ruuvi.station.units.domain
 
 import kotlin.math.E
 import kotlin.math.log10
@@ -7,7 +7,7 @@ import kotlin.math.pow
 /***
  * @see https://doi.org/10.1063/1.1461829
  */
-data class Humidity(val c: Double, val rh: Double) {
+data class HumidityConverter(val c: Double, val rh: Double) {
 
     val k: Double = c + 273.15 // kelvin K
     val f: Double = (c * 9.0 / 5.0) + 32.0 // fahrenheit °F

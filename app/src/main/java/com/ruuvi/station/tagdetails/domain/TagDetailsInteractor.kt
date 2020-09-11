@@ -1,14 +1,16 @@
 package com.ruuvi.station.tagdetails.domain
 
 import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
+import com.ruuvi.station.units.domain.UnitsConverter
 
 class TagDetailsInteractor(
     private val tagRepository: TagRepository,
-    private val tagConverter: TagConverter
+    private val tagConverter: TagConverter,
+    private val unitsConverter: UnitsConverter
+
 ) {
 
     fun getTagById(tagId: String): RuuviTag? =
@@ -18,7 +20,13 @@ class TagDetailsInteractor(
         tagRepository.getTagReadings(tagId)
 
     fun getTemperatureString(tag: RuuviTag): String =
-        tagRepository.getTemperatureString(tag)
+        unitsConverter.getTemperatureString(tag.temperature)
+
+    fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
+        unitsConverter.getTemperatureStringWithoutUnit(tag.temperature)
+
+    fun getTemperatureUnit(): String =
+        unitsConverter.getTemperatureUnitString()
 
     fun getHumidityString(tag: RuuviTag): String =
         tagRepository.getHumidityString(tag)

@@ -10,8 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.flexsentlabs.extensions.sharedViewModel
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.di.TagViewModelArgs
@@ -44,11 +42,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private val activityViewModel: TagDetailsViewModel by sharedViewModel()
 
-    private val repository: TagRepository by instance()
-
-    private val preferencesRepository: PreferencesRepository by instance()
-
-    private val graphView = GraphView()
+    private val graphView: GraphView by instance()
 
     init {
         Timber.d("new TagFragment")
@@ -86,13 +80,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             viewModel.tagReadingsFlow.collect { readings ->
                 readings?.let {
                     view?.let { view ->
-                        graphView.drawChart(
-                                readings,
-                                view,
-                                requireContext(),
-                                repository,
-                                preferencesRepository.isDrawDots()
-                        )
+                        graphView.drawChart(readings, view)
                     }
                 }
             }
@@ -101,17 +89,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private fun updateTagData(tag: RuuviTag) {
         Timber.d("updateTagData for ${tag.id}")
-        var temperature = viewModel.getTemperatureString(tag)
-        val offset = if (temperature.endsWith("K")) 1 else 2
-        val unit = temperature.substring(temperature.length - offset, temperature.length)
-        temperature = temperature.substring(0, temperature.length - offset)
-        tagTemperatureTextView.text = temperature
-
+        tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
         tagHumidityTextView.text = viewModel.getHumidityString(tag)
         tagPressureTextView.text = getString(R.string.pressure_reading, tag.pressure / 100.0)
         tagSignalTextView.text = getString(R.string.signal_reading, tag.rssi)
         tagUpdatedTextView.text = getString(R.string.updated, Utils.strDescribingTimeSince(tag.updatedAt))
 
+        val unit = viewModel.getTemperatureUnit()
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
         tagTempUnitTextView.text = unitSpan

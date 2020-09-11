@@ -21,7 +21,6 @@ class TagSettingsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor
 ) : ViewModel() {
 
-    var tempUnit = "C"
     var tagAlarms: List<Alarm> = ArrayList()
     var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
     var file: Uri? = null
@@ -33,8 +32,6 @@ class TagSettingsViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             tagState.value = getTagById(tagId)
         }
-
-        tempUnit = interactor.getTemperatureUnit()
     }
 
     fun getTagById(tagId: String): RuuviTagEntity? =

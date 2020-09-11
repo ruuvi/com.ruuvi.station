@@ -162,7 +162,7 @@
     <string name="tag_not_found">Tag not found</string>
     <string name="tag_delete_title">Remove RuuviTag</string>
     <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
-    <string name="temperature">Temperature</string>
+    <string name="temperature" formatted="false">Temperature %1$s</string>
     <string name="humidity">Relative Air Humidity</string>
     <string name="pressure">Air Pressure</string>
     <string name="rssi">Signal Strength (RSSI)</string>
@@ -216,6 +216,10 @@
     <string name="humidity_dew_reading" formatted="false">%1$,.2f</string>
     <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
+
+    <string name="temperature_unit_c">°C</string>
+    <string name="temperature_unit_k">K</string>
+    <string name="temperature_unit_f">°F</string>
 
     <string name="save">Save</string>
     <string name="name">Name</string>

@@ -13,8 +13,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
 import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.util.Humidity
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.units.domain.HumidityConverter
 
 class TagRepository(
     private val preferences: Preferences,
@@ -60,7 +59,7 @@ class TagRepository(
 
     fun getHumidityString(tag: RuuviTag): String {
         val humidityUnit = getHumidityUnit()
-        val calculation = Humidity(tag.temperature, tag.humidity / 100)
+        val calculation = HumidityConverter(tag.temperature, tag.humidity / 100)
 
         return when (humidityUnit) {
             HumidityUnit.PERCENT -> context.getString(R.string.humidity_reading, tag.humidity)
@@ -75,14 +74,7 @@ class TagRepository(
         }
     }
 
-    fun getTemperatureString(tag: RuuviTag): String =
-        when (getTemperatureUnit()) {
-            "C" -> context.getString(R.string.temperature_reading, tag.temperature) + "°" + getTemperatureUnit()
-            "K" -> context.getString(R.string.temperature_reading, getKelvin(tag)) + getTemperatureUnit()
-            "F" -> context.getString(R.string.temperature_reading, getFahrenheit(tag)) + "°" + getTemperatureUnit()
-            else -> "Error"
-        }
-
+    //TODO REMOVE IT
     fun getTemperatureUnit(): String =
         preferences.temperatureUnit
 
@@ -96,10 +88,4 @@ class TagRepository(
     fun saveTag(@NonNull tag: RuuviTagEntity) {
         tag.save()
     }
-
-    private fun getFahrenheit(tag: RuuviTag): Double =
-        Utils.celciusToFahrenheit(tag.temperature)
-
-    private fun getKelvin(tag: RuuviTag): Double =
-        Utils.celsiusToKelvin(tag.temperature)
 }

@@ -74,6 +74,12 @@ class TagViewModel(
     fun getTemperatureString(tag: RuuviTag): String =
         tagDetailsInteractor.getTemperatureString(tag)
 
+    fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
+        tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
+
+    fun getTemperatureUnit(): String =
+        tagDetailsInteractor.getTemperatureUnit()
+
     fun getHumidityString(tag: RuuviTag): String =
         tagDetailsInteractor.getHumidityString(tag)
 

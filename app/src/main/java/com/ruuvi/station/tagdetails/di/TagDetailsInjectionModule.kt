@@ -17,7 +17,7 @@ object TagDetailsInjectionModule {
     val module = Kodein.Module(TagDetailsInjectionModule.javaClass.name) {
 
         bind<TagDetailsInteractor>() with singleton {
-            TagDetailsInteractor(instance(), instance())
+            TagDetailsInteractor(instance(), instance(), instance())
         }
 
         bind<TagDetailsViewModel>() with factory { args: TagDetailsArguments ->
