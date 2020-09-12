@@ -65,7 +65,7 @@ class Preferences constructor(val context: Context) {
 
     var pressureUnit: PressureUnit
         get() {
-            return when (sharedPreferences.getInt(PREF_PRESSURE_UNIT, 0)) {
+            return when (sharedPreferences.getInt(PREF_PRESSURE_UNIT, 1)) {
                 0 -> PressureUnit.PA
                 1 -> PressureUnit.HPA
                 2 -> PressureUnit.MMHG
