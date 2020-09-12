@@ -37,7 +37,7 @@ class RuuviTagAdapter(
         view.deviceId.text = item?.displayName
         view.temperature.text = item?.temperatureString
         view.humidity.text = item?.humidityString
-        view.pressure.text = context.getString(R.string.pressure_reading, item?.pressure?.div(100))
+        view.pressure.text = item?.pressureString
         view.signal.text = context.getString(R.string.signal_reading, item?.rssi)
 
         val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight

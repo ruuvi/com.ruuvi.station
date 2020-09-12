@@ -6,11 +6,13 @@ import com.ruuvi.station.alarm.di.AlarmModule
 import com.ruuvi.station.bluetooth.di.BluetoothScannerInjectionModule
 import com.ruuvi.station.dashboard.di.DashboardActivityInjectionModule
 import com.ruuvi.station.gateway.di.GatewayInjectionModule
+import com.ruuvi.station.graph.di.GraphInjectionModule
 import com.ruuvi.station.settings.di.SettingsInjectionModule
 import com.ruuvi.station.startup.di.StartupActivityInjectionModule
 import com.ruuvi.station.tag.di.RuuviTagInjectionModule
 import com.ruuvi.station.tagdetails.di.TagDetailsInjectionModule
 import com.ruuvi.station.tagsettings.di.TagSettingsInjectionModule
+import com.ruuvi.station.units.di.UnitsInjectionModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 
@@ -30,5 +32,7 @@ object AppInjectionModules {
         import(TagSettingsInjectionModule.module)
         import(RuuviTagInjectionModule.module)
         import(AlarmModule.module)
+        import(UnitsInjectionModule.module)
+        import(GraphInjectionModule.module)
     }
 }

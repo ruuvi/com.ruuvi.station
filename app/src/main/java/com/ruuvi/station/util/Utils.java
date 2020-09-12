@@ -10,19 +10,12 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.tag.domain.RuuviTag;
-
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-
 import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
@@ -113,14 +106,6 @@ public class Utils {
             default:
                 return R.drawable.bg1;
         }
-    }
-
-    public static double celciusToFahrenheit(double celcius) {
-        return round(celcius * 1.8 + 32.0, 2);
-    }
-
-    public static double celsiusToKelvin(double celsius) {
-        return celsius + 273.15;
     }
 
     public static double round(double value, int places) {

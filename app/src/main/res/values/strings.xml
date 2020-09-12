@@ -162,9 +162,9 @@
     <string name="tag_not_found">Tag not found</string>
     <string name="tag_delete_title">Remove RuuviTag</string>
     <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
-    <string name="temperature">Temperature</string>
+    <string name="temperature" formatted="false">Temperature (%1$s)</string>
     <string name="humidity">Relative Air Humidity</string>
-    <string name="pressure">Air Pressure</string>
+    <string name="pressure">Air Pressure (%1$s)</string>
     <string name="rssi">Signal Strength (RSSI)</string>
     <string name="movement">Movement</string>
     <string name="tag_already_added">Tag is already added</string>
@@ -211,11 +211,39 @@
     <string name="no">No</string>
 
     <string name="temperature_reading" formatted="false">%1$,.2f</string>
-    <string name="humidity_reading" formatted="false">%1$,.2f %%</string>
+    <string name="pressure_reading" formatted="false">%1$,.2f %2$s</string>
+    <string name="pressure_reading_pa" formatted="false">%1$,.0f %2$s</string>
+    <string name="humidity_reading" formatted="false">%1$,.2f</string>
+
     <string name="humidity_absolute_reading" formatted="false">%1$,.2f g/m³</string>
     <string name="humidity_dew_reading" formatted="false">%1$,.2f</string>
-    <string name="pressure_reading" formatted="false">%1$,.2f hPa</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
+
+    <string name="temperature_celsius_name">Celsius</string>
+    <string name="temperature_fahrenheit_name">Fahrenheit</string>
+    <string name="temperature_kelvin_name">Kelvin</string>
+
+    <string name="temperature_celsius_unit">°C</string>
+    <string name="temperature_kelvin_unit">K</string>
+    <string name="temperature_fahrenheit_unit">°F</string>
+
+    <string name="pressure_pa_name">Pascal</string>
+    <string name="pressure_hpa_name">Hectopascal</string>
+    <string name="pressure_mmhg_name">Millimetre of mercury</string>
+    <string name="pressure_inhg_name">Inch of mercury</string>
+
+    <string name="pressure_pa_unit">Pa</string>
+    <string name="pressure_hpa_unit">hPa</string>
+    <string name="pressure_mmhg_unit">mmHg</string>
+    <string name="pressure_inhg_unit">inHg</string>
+
+    <string name="humidity_relative_name">Relative</string>
+    <string name="humidity_absolute_name">Absolute</string>
+    <string name="humidity_dew_point_name">Dew Point</string>
+
+    <string name="humidity_relative_unit">%</string>
+    <string name="humidity_absolute_unit">g/m³</string>
+    <string name="humidity_dew_point_unit">°</string>
 
     <string name="save">Save</string>
     <string name="name">Name</string>
@@ -275,17 +303,13 @@
     <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
     <string name="temperature_unit">Change temperature units</string>
     <string name="humidity_unit">Change humidity units</string>
-    <string name="temperature_unit_sum">Celsius / Fahrenheit</string>
+    <string name="pressure_unit">Change pressure units</string>
+    <string name="temperature_unit_sum">Celsius / Fahrenheit / Kelvin</string>
     <string name="humidity_unit_sum">Relative / Absolute / Dew Point</string>
-    <string name="celsius">Celsius</string>
-    <string name="fahrenheit">Fahrenheit</string>
-    <string name="kelvin">Kelvin</string>
+    <string name="pressure_unit_sum">Pascal / Hectopascal / Millimetre of mercury</string>
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
     <string name="hours">Hours</string>
-    <string name="relative_humidity_unit">Relative (%)</string>
-    <string name="absolute_humidity_unit">Absolute (g/m³)</string>
-    <string name="dew_point_humidity_unit">Dew Point (°)</string>
     <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
     <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
     <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using Android\'s job scheduler. It will use less battery than continuous background scanning mode, but will scan less frequently and less reliably.</string>
@@ -295,6 +319,7 @@
     <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
+    <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
     <string name="version" formatted="false">Version: %1$s</string>
     <string name="db_reading_rows">Db reading rows: %1$,d</string>
     <string name="db_data_points">Stored data points: %1$,d</string>

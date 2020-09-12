@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.di
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
+import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.tagdetails.ui.TagDetailsViewModel
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ object TagDetailsInjectionModule {
     val module = Kodein.Module(TagDetailsInjectionModule.javaClass.name) {
 
         bind<TagDetailsInteractor>() with singleton {
-            TagDetailsInteractor(instance(), instance())
+            TagDetailsInteractor(instance(), instance(), instance())
         }
 
         bind<TagDetailsViewModel>() with factory { args: TagDetailsArguments ->

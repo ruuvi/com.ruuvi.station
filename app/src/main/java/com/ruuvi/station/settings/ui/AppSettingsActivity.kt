@@ -47,7 +47,10 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
                 R.string.pref_bgscan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.preferences_graph_settings -> AppSettingsGraphFragment.newInstance()
                 R.string.gateway_url -> AppSettingsGatewayFragment.newInstance()
-                else -> AppSettingsDetailFragment.newInstance(resourceId)
+                R.string.pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
+                R.string.temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
+                R.string.humidity_unit -> AppSettingsHumidityFragment.newInstance()
+                else -> throw IllegalArgumentException()
             }
         }
         transaction.replace(R.id.settings_frame, fragment)

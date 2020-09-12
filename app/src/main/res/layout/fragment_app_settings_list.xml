@@ -151,6 +151,40 @@
             android:background="@color/divider" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pressureUnitLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/pressureUnitTitleTextView"
+                style="@style/PrefTitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/pressure_unit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/pressureUnitSubTextView"
+                style="@style/PrefSecondaryText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/pressure_unit_sum"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pressureUnitTitleTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"

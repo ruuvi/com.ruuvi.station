@@ -3,7 +3,9 @@ package com.ruuvi.station.app.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.ruuvi.station.model.HumidityUnit
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 
 class Preferences constructor(val context: Context) {
@@ -35,10 +37,17 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_FIRST_GRAPH, enabled).apply()
         }
 
-    var temperatureUnit: String
-        get() = sharedPreferences.getString(PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT) ?: DEFAULT_TEMPERATURE_UNIT
+    var temperatureUnit: TemperatureUnit
+        get() {
+            return when (sharedPreferences.getString(PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)) {
+                "C" -> TemperatureUnit.CELSIUS
+                "F" -> TemperatureUnit.FAHRENHEIT
+                "K" -> TemperatureUnit.KELVIN
+                else -> TemperatureUnit.CELSIUS
+            }
+        }
         set(unit) {
-            sharedPreferences.edit().putString(PREF_TEMPERATURE_UNIT, unit).apply()
+            sharedPreferences.edit().putString(PREF_TEMPERATURE_UNIT, unit.code).apply()
         }
 
     var humidityUnit: HumidityUnit
@@ -52,6 +61,20 @@ class Preferences constructor(val context: Context) {
         }
         set(value) {
             sharedPreferences.edit().putInt(PREF_HUMIDITY_UNIT, value.code).apply()
+        }
+
+    var pressureUnit: PressureUnit
+        get() {
+            return when (sharedPreferences.getInt(PREF_PRESSURE_UNIT, 1)) {
+                0 -> PressureUnit.PA
+                1 -> PressureUnit.HPA
+                2 -> PressureUnit.MMHG
+                3 -> PressureUnit.INHG
+                else -> PressureUnit.HPA
+            }
+        }
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
         }
 
     var gatewayUrl: String
@@ -118,6 +141,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_FIRST_GRAPH = "first_graph_visit"
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
+        private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
         private const val PREF_BACKEND = "pref_backend"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"

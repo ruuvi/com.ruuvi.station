@@ -9,7 +9,6 @@ import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.model.HumidityUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.test.StressTestGenerator
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
@@ -55,6 +54,10 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             (activity as? AppSettingsDelegate)?.openFragment(R.string.humidity_unit)
         }
 
+        pressureUnitLayout.setDebouncedOnClickListener {
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.pressure_unit)
+        }
+
         debugToolsLayout.isVisible = BuildConfig.DEBUG
         debugToolsLayout.setDebouncedOnClickListener {
             StressTestGenerator.generateData(8, 15000, repository)
@@ -86,21 +89,11 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
         gatewayUrlSubTextView.text = viewModel.getGatewayUrl()
         if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.gateway_url_disabled)
-        when (viewModel.getTemperatureUnit()) {
-            "K" -> {
-                temperatureUnitSubTextView.text = getString(R.string.kelvin)
-            }
-            "F" -> {
-                temperatureUnitSubTextView.text = getString(R.string.fahrenheit)
-            }
-            else -> {
-                temperatureUnitSubTextView.text = getString(R.string.celsius)
-            }
-        }
-        when (viewModel.getHumidityUnit()) {
-            HumidityUnit.PERCENT -> humidityUnitSubTextView.text = getString(R.string.relative_humidity_unit)
-            HumidityUnit.GM3 -> humidityUnitSubTextView.text = getString(R.string.absolute_humidity_unit)
-            HumidityUnit.DEW -> humidityUnitSubTextView.text = getString(R.string.dew_point_humidity_unit)
-        }
+        val temperature = viewModel.getTemperatureUnit()
+        temperatureUnitSubTextView.text ="${getString(temperature.title)} (${getString(temperature.unit)})"
+        val humidity = viewModel.getHumidityUnit()
+        humidityUnitSubTextView.text = "${getString(humidity.title)} (${getString(humidity.unit)})"
+        val pressure = viewModel.getPressureUnit()
+        pressureUnitSubTextView.text = "${getString(pressure.title)} (${getString(pressure.unit)})"
     }
 }
