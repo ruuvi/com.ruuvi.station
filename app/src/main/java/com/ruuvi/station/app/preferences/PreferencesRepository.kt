@@ -1,15 +1,17 @@
 package com.ruuvi.station.app.preferences
 
-import com.ruuvi.station.model.HumidityUnit
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdGenerator
 
 class PreferencesRepository(private val preferences: Preferences) {
 
-    fun getTemperatureUnit(): String =
+    fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
 
-    fun setTemperatureUnit(unit: String) {
+    fun setTemperatureUnit(unit: TemperatureUnit) {
         preferences.temperatureUnit = unit
     }
 
@@ -18,6 +20,13 @@ class PreferencesRepository(private val preferences: Preferences) {
 
     fun setHumidityUnit(unit: HumidityUnit) {
         preferences.humidityUnit = unit
+    }
+
+    fun getPressureUnit(): PressureUnit =
+        preferences.pressureUnit
+
+    fun setPressureUnit(unit: PressureUnit) {
+        preferences.pressureUnit = unit
     }
 
     fun getGatewayUrl(): String =
@@ -80,9 +89,9 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.graphShowAllPoint = isShow
     }
 
-    fun isDrawDots(): Boolean = preferences.graphDrawDots
+    fun graphDrawDots(): Boolean = preferences.graphDrawDots
 
-    fun setIsDrawDots(drawDots: Boolean) {
+    fun setGraphDrawDots(drawDots: Boolean) {
         preferences.graphDrawDots = drawDots
     }
 

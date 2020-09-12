@@ -5,18 +5,22 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.gateway.GatewaySender
-import com.ruuvi.station.model.HumidityUnit
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 
 class AppSettingsInteractor(
     private val preferencesRepository: PreferencesRepository,
-    private val gatewaySender: GatewaySender
+    private val gatewaySender: GatewaySender,
+    private val unitsConverter: UnitsConverter
 ) {
 
-    fun getTemperatureUnit(): String =
+    fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun setTemperatureUnit(unit: String) =
+    fun setTemperatureUnit(unit: TemperatureUnit) =
         preferencesRepository.setTemperatureUnit(unit)
 
     fun getHumidityUnit(): HumidityUnit =
@@ -72,11 +76,11 @@ class AppSettingsInteractor(
     fun setIsShowAllGraphPoint(isShow: Boolean) =
         preferencesRepository.setIsShowAllGraphPoint(isShow)
 
-    fun isDrawDots(): Boolean =
-            preferencesRepository.isDrawDots()
+    fun graphDrawDots(): Boolean =
+            preferencesRepository.graphDrawDots()
 
-    fun setIsDrawDots(isDrawDots: Boolean) =
-            preferencesRepository.setIsDrawDots(isDrawDots)
+    fun setGraphDrawDots(isDrawDots: Boolean) =
+            preferencesRepository.setGraphDrawDots(isDrawDots)
 
     fun getGraphPointInterval(): Int =
         preferencesRepository.getGraphPointInterval()
@@ -95,4 +99,16 @@ class AppSettingsInteractor(
             deviceId: String,
             callback: FutureCallback<Response<JsonObject>>
     ) = gatewaySender.test(gatewayUrl, deviceId, callback)
+
+    fun getAllPressureUnits(): Array<PressureUnit> = unitsConverter.getAllPressureUnits()
+
+    fun getPressureUnit(): PressureUnit = unitsConverter.getPressureUnit()
+
+    fun setPressureUnit(unit: PressureUnit) {
+        preferencesRepository.setPressureUnit(unit)
+    }
+
+    fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
+
+    fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 }

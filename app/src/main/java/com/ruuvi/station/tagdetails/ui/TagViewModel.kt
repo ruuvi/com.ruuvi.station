@@ -1,7 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
@@ -77,11 +76,14 @@ class TagViewModel(
     fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
         tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
 
-    fun getTemperatureUnit(): String =
-        tagDetailsInteractor.getTemperatureUnit()
+    fun getTemperatureUnitString(): String =
+        tagDetailsInteractor.getTemperatureUnitString()
 
     fun getHumidityString(tag: RuuviTag): String =
         tagDetailsInteractor.getHumidityString(tag)
+
+    fun getPressureString(tag: RuuviTag): String =
+        tagDetailsInteractor.getPressureString(tag)
 
     override fun onCleared() {
         super.onCleared()

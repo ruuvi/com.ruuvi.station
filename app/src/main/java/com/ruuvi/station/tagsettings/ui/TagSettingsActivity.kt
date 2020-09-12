@@ -355,7 +355,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     85
             ))
             add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
-            add(AlarmItem(getString(R.string.pressure), Alarm.PRESSURE, false, 300, 1100))
+            add(AlarmItem(
+                getString(R.string.pressure, unitsConverter.getPressureUnitString()),
+                Alarm.PRESSURE,
+                false,
+                30000,
+                110000
+            ))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
             add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
         }
@@ -637,18 +643,27 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             view?.let { view ->
                 val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
 
+                var lowDisplay = low
+                var highDisplay = high
+
                 var setSeekbarColor = R.color.inactive
-                val lowTemperature = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
-                val highTemperature = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()
+                when (type){
+                    Alarm.TEMPERATURE -> {
+                        lowDisplay = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
+                        highDisplay = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()
+                    }
+                    Alarm.PRESSURE -> {
+                        lowDisplay = round(unitsConverter.getPressureValue(low.toDouble())).toInt()
+                        highDisplay = round(unitsConverter.getPressureValue(high.toDouble())).toInt()
+                    }
+                }
 
                 if (isChecked) {
                     setSeekbarColor = R.color.main
                     subtitle = getString(R.string.alert_substring_movement)
                     subtitle = when (type) {
                         Alarm.MOVEMENT -> getString(R.string.alert_substring_movement)
-                        Alarm.TEMPERATURE ->
-                            String.format(getString(R.string.alert_subtitle_on), lowTemperature, highTemperature)
-                        else -> String.format(getString(R.string.alert_subtitle_on), low, high)
+                        else -> String.format(getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
                     }
                 } else {
                     subtitle = getString(R.string.alert_subtitle_off)
@@ -672,13 +687,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
 
-                if (type == Alarm.TEMPERATURE) {
-                    (view.findViewById<View>(R.id.alertMinValueTextView) as TextView).text = lowTemperature.toString()
-                    (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView).text = highTemperature.toString()
-                } else {
-                    (view.findViewById<View>(R.id.alertMinValueTextView) as TextView).text = low.toString()
-                    (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView).text = high.toString()
-                }
+                (view.findViewById<View>(R.id.alertMinValueTextView) as TextView).text = lowDisplay.toString()
+                (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView).text = highDisplay.toString()
             }
         }
 

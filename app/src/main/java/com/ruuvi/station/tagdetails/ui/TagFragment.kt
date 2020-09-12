@@ -12,7 +12,7 @@ import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.tagdetails.di.TagViewModelArgs
+import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.view_tag_detail.tagContainer
 import kotlinx.android.synthetic.main.view_tag_detail.tagHumidityTextView
@@ -91,11 +91,11 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         Timber.d("updateTagData for ${tag.id}")
         tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
         tagHumidityTextView.text = viewModel.getHumidityString(tag)
-        tagPressureTextView.text = getString(R.string.pressure_reading, tag.pressure / 100.0)
+        tagPressureTextView.text = viewModel.getPressureString(tag)
         tagSignalTextView.text = getString(R.string.signal_reading, tag.rssi)
         tagUpdatedTextView.text = getString(R.string.updated, Utils.strDescribingTimeSince(tag.updatedAt))
 
-        val unit = viewModel.getTemperatureUnit()
+        val unit = viewModel.getTemperatureUnitString()
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
         tagTempUnitTextView.text = unitSpan

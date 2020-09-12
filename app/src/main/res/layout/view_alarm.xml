@@ -53,8 +53,8 @@
     <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
         android:id="@+id/alertSeekBar"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:layout_width="0dp"
         app:bar_color="@color/ap_gray"
         app:bar_highlight_color="@color/main"

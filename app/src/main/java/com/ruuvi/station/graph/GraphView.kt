@@ -76,8 +76,8 @@ class GraphView (
                     GraphEntry(
                         timestamp = (it.createdAt.time - from).toFloat(),
                         temperature = unitsConverter.getTemperatureValue(it.temperature).toFloat(),
-                        humidity = it.humidity.toFloat(),
-                        pressure = it.pressure.toFloat() / 100.0f
+                        humidity = unitsConverter.getHumidityValue(it.humidity, it.temperature).toFloat(),
+                        pressure = unitsConverter.getPressureValue(it.pressure).toFloat()
                     )
                 }
 
@@ -93,8 +93,8 @@ class GraphView (
                 pressureData.add(Entry(timestamp, 0f))
             }
             addDataToChart(tempData, tempChart, "$TEMP ${unitsConverter.getTemperatureUnitString()}")
-            addDataToChart(humidData, humidChart, HUMIDITY)
-            addDataToChart(pressureData, pressureChart, PRESSURE)
+            addDataToChart(humidData, humidChart, "$HUMIDITY ${unitsConverter.getHumidityUnitString()}")
+            addDataToChart(pressureData, pressureChart, "$PRESSURE ${unitsConverter.getPressureUnitString()}")
 
             normalizeOffsets(tempChart, humidChart, pressureChart)
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
@@ -103,7 +103,7 @@ class GraphView (
 
     private fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
-        set.setDrawCircles(preferencesRepository.isDrawDots())
+        set.setDrawCircles(preferencesRepository.graphDrawDots())
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.main)

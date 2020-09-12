@@ -2,41 +2,91 @@ package com.ruuvi.station.units.domain
 
 import android.content.Context
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.TemperatureUnit
 
 class UnitsConverter (
         private val context: Context,
-        private val preferences: Preferences
+        private val preferences: PreferencesRepository
 ) {
-    fun getTemperatureUnit() = preferences.temperatureUnit
 
-    fun getTemperatureUnitString(): String {
-        return when (getTemperatureUnit()) {
-            "C" -> context.getString(R.string.temperature_unit_c)
-            "K" -> context.getString(R.string.temperature_unit_k)
-            "F" -> context.getString(R.string.temperature_unit_f)
-            else -> throw IllegalArgumentException()
-        }
-    }
+    // Temperature
+
+    fun getTemperatureUnit(): TemperatureUnit = preferences.getTemperatureUnit()
+
+    fun getAllTemperatureUnits(): Array<TemperatureUnit> = TemperatureUnit.values()
+
+    fun getTemperatureUnitString(): String = context.getString(getTemperatureUnit().unit)
 
     fun getTemperatureValue(temperatureCelsius: Double): Double {
         return when (getTemperatureUnit()) {
-            "C" -> temperatureCelsius
-            "K" -> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
-            "F" -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
-            else -> throw IllegalArgumentException()
+            TemperatureUnit.CELSIUS -> temperatureCelsius
+            TemperatureUnit.KELVIN-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
+            TemperatureUnit.FAHRENHEIT -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
         }
     }
-
-    fun getTemperatureValue(tag: RuuviTagEntity): Double = getTemperatureValue(tag.temperature)
-
-    fun getTemperatureString(tag: RuuviTagEntity): String =
-            getTemperatureString(tag.temperature)
 
     fun getTemperatureString(temperature: Double): String =
             context.getString(R.string.temperature_reading, getTemperatureValue(temperature)) + getTemperatureUnitString()
 
     fun getTemperatureStringWithoutUnit(temperature: Double): String =
         context.getString(R.string.temperature_reading, getTemperatureValue(temperature))
+
+    // Pressure
+
+    fun getPressureUnit(): PressureUnit = preferences.getPressureUnit()
+
+    fun getAllPressureUnits(): Array<PressureUnit> = PressureUnit.values()
+
+    fun getPressureUnitString(): String = context.getString(getPressureUnit().unit)
+
+    fun getPressureValue(pressurePascal: Double): Double {
+        return when (getPressureUnit()) {
+            PressureUnit.PA -> pressurePascal
+            PressureUnit.HPA-> PressureConverter.pascalToHectopascal(pressurePascal)
+            PressureUnit.MMHG -> PressureConverter.pascalToMmMercury(pressurePascal)
+            PressureUnit.INHG -> PressureConverter.pascalToInchMercury(pressurePascal)
+        }
+    }
+
+    fun getPressureString(pressure: Double): String {
+        if (getPressureUnit() == PressureUnit.PA) {
+            return context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+        } else {
+            return context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+        }
+    }
+
+    // Humidity
+
+    fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
+
+    fun getAllHumidityUnits(): Array<HumidityUnit> = HumidityUnit.values()
+
+    fun getHumidityUnitString(): String = context.getString(getHumidityUnit().unit)
+
+    fun getHumidityValue(humidity: Double, temperature: Double): Double {
+        val converter = HumidityConverter(temperature, humidity/100)
+
+        return when (getHumidityUnit()) {
+            HumidityUnit.PERCENT -> humidity
+            HumidityUnit.GM3-> converter.ah
+            HumidityUnit.DEW -> {
+                when (getTemperatureUnit()) {
+                    TemperatureUnit.CELSIUS -> converter.Td
+                    TemperatureUnit.KELVIN-> converter.TdK
+                    TemperatureUnit.FAHRENHEIT -> converter.TdF
+                }
+            }
+        } ?: 0.0
+    }
+
+    fun getHumidityString(humidity: Double, temperature: Double): String {
+        if (getHumidityUnit() == HumidityUnit.DEW)
+            return context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getTemperatureUnitString()
+        else
+            return context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getHumidityUnitString()
+    }
 }

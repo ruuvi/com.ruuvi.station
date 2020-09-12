@@ -13,6 +13,7 @@ data class RuuviTag(
     val pressure: Double,
     val temperatureString: String,
     val humidityString: String,
+    val pressureString: String,
     val defaultBackground: Int,
     val dataFormat: Int,
     val updatedAt: Date?,

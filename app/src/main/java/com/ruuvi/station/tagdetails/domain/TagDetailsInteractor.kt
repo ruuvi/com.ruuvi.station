@@ -25,9 +25,12 @@ class TagDetailsInteractor(
     fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
         unitsConverter.getTemperatureStringWithoutUnit(tag.temperature)
 
-    fun getTemperatureUnit(): String =
+    fun getTemperatureUnitString(): String =
         unitsConverter.getTemperatureUnitString()
 
     fun getHumidityString(tag: RuuviTag): String =
-        tagRepository.getHumidityString(tag)
+        unitsConverter.getHumidityString(tag.humidity, tag.temperature)
+
+    fun getPressureString(tag: RuuviTag): String =
+        unitsConverter.getPressureString(tag.pressure)
 }

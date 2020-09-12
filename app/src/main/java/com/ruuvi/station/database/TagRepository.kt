@@ -3,7 +3,6 @@ package com.ruuvi.station.database
 import android.content.Context
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.Alarm_Table
@@ -11,9 +10,8 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
-import com.ruuvi.station.model.HumidityUnit
-import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.units.domain.HumidityConverter
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.TemperatureUnit
 
 class TagRepository(
     private val preferences: Preferences,
@@ -56,30 +54,6 @@ class TagRepository(
             )
         }
     }
-
-    fun getHumidityString(tag: RuuviTag): String {
-        val humidityUnit = getHumidityUnit()
-        val calculation = HumidityConverter(tag.temperature, tag.humidity / 100)
-
-        return when (humidityUnit) {
-            HumidityUnit.PERCENT -> context.getString(R.string.humidity_reading, tag.humidity)
-            HumidityUnit.GM3 -> context.getString(R.string.humidity_absolute_reading, calculation.ah)
-            HumidityUnit.DEW -> {
-                when (getTemperatureUnit()) {
-                    "K" -> context.getString(R.string.humidity_dew_reading, calculation.TdK) + " " + getTemperatureUnit()
-                    "F" -> context.getString(R.string.humidity_dew_reading, calculation.TdF) + " °" + getTemperatureUnit()
-                    else -> context.getString(R.string.humidity_dew_reading, calculation.Td) + " °" + getTemperatureUnit()
-                }
-            }
-        }
-    }
-
-    //TODO REMOVE IT
-    fun getTemperatureUnit(): String =
-        preferences.temperatureUnit
-
-    private fun getHumidityUnit(): HumidityUnit =
-        preferences.humidityUnit
 
     fun updateTag(tag: RuuviTagEntity) {
         tag.update()
