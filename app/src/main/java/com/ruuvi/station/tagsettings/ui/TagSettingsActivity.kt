@@ -169,7 +169,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, repository)
+            val exporter = CsvExporter(this, repository, unitsConverter)
             viewModel.tagFlow.value?.id?.let {
                 exporter.toCsv(it)
             }
