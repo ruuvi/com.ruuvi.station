@@ -19,8 +19,7 @@
         android:id="@+id/imageSwitcher"
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ImageSwitcher>
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/background_fader"
@@ -57,16 +56,7 @@
 
     </LinearLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@android:color/white" >
-
-        <include
-            layout="@layout/navigation_drawer" />
-
-    </com.google.android.material.navigation.NavigationView>
+    <include
+        layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

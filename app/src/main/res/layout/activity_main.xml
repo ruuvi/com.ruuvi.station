@@ -11,8 +11,7 @@
         android:fitsSystemWindows="true"
         android:background="@drawable/header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent" >
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
@@ -39,17 +38,8 @@
 
     </RelativeLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@android:color/white" >
-
-        <include
-            layout="@layout/navigation_drawer" />
-
-    </com.google.android.material.navigation.NavigationView>
+    <include
+        layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
 

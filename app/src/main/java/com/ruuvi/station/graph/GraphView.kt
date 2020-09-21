@@ -39,18 +39,18 @@ class GraphView (
     private val HUMIDITY = "Humidity"
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
+    private var graphSetuped = false
+
+    private lateinit var tempChart: LineChart
+    private lateinit var humidChart: LineChart
+    private lateinit var pressureChart: LineChart
 
     fun drawChart(
             inputReadings: List<TagSensorReading>,
             view: View
     ) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
-        val tempChart: LineChart = view.findViewById(R.id.tempChart)
-        tempChart.isVisible = true
-        val humidChart: LineChart = view.findViewById(R.id.humidChart)
-        humidChart.isVisible = true
-        val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
-        pressureChart.isVisible = true
+        setupCharts(view)
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
@@ -59,10 +59,6 @@ class GraphView (
             from = calendar.time.time
             storedReadings = inputReadings.toMutableList()
         }
-
-        tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-        humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-        pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
@@ -92,12 +88,36 @@ class GraphView (
                 humidData.add(Entry(timestamp, 0f))
                 pressureData.add(Entry(timestamp, 0f))
             }
+
             addDataToChart(tempData, tempChart, "$TEMP ${unitsConverter.getTemperatureUnitString()}")
             addDataToChart(humidData, humidChart, "$HUMIDITY ${unitsConverter.getHumidityUnitString()}")
             addDataToChart(pressureData, pressureChart, "$PRESSURE ${unitsConverter.getPressureUnitString()}")
 
             normalizeOffsets(tempChart, humidChart, pressureChart)
+        }
+    }
+
+    private fun setupCharts(view: View) {
+        if (!graphSetuped) {
+            tempChart = view.findViewById(R.id.tempChart)
+            humidChart = view.findViewById(R.id.humidChart)
+            pressureChart = view.findViewById(R.id.pressureChart)
+
+            tempChart.isVisible = true
+            humidChart.isVisible = true
+            pressureChart.isVisible = true
+
+            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
+
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
+
+            graphSetuped = true
+        } else {
+            tempChart.clear()
+            humidChart.clear()
+            pressureChart.clear()
         }
     }
 
