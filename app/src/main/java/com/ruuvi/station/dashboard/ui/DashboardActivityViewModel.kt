@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.units.domain.UnitsConverter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,8 @@ import kotlin.concurrent.scheduleAtFixedRate
 @ExperimentalCoroutinesApi
 class DashboardActivityViewModel(
     private val bluetoothInteractor: BluetoothInteractor,
-    private val tagInteractor: TagInteractor
+    private val tagInteractor: TagInteractor,
+    val converter: UnitsConverter
 ) : ViewModel() {
 
     private val tags = MutableStateFlow<List<RuuviTag>>(arrayListOf())

@@ -85,6 +85,9 @@ class TagViewModel(
     fun getPressureString(tag: RuuviTag): String =
         tagDetailsInteractor.getPressureString(tag)
 
+    fun getSignalString(tag: RuuviTag): String =
+        tagDetailsInteractor.getSignalString(tag)
+
     override fun onCleared() {
         super.onCleared()
 

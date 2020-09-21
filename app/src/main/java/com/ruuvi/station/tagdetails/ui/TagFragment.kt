@@ -92,7 +92,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
         tagHumidityTextView.text = viewModel.getHumidityString(tag)
         tagPressureTextView.text = viewModel.getPressureString(tag)
-        tagSignalTextView.text = getString(R.string.signal_reading, tag.rssi)
+        tagSignalTextView.text = viewModel.getSignalString(tag)
         tagUpdatedTextView.text = getString(R.string.updated, Utils.strDescribingTimeSince(tag.updatedAt))
 
         val unit = viewModel.getTemperatureUnitString()

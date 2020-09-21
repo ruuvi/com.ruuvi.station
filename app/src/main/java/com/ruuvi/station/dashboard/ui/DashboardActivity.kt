@@ -66,7 +66,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         lifecycleScope.launchWhenCreated {
             viewModel.tagsFlow.value.let {
                 tags = ArrayList(it)
-                adapter = RuuviTagAdapter(applicationContext, tags)
+                adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
                 dashboardListView.adapter = adapter
             }
         }

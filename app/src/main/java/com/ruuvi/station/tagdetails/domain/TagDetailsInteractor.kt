@@ -33,4 +33,7 @@ class TagDetailsInteractor(
 
     fun getPressureString(tag: RuuviTag): String =
         unitsConverter.getPressureString(tag.pressure)
+
+    fun getSignalString(tag: RuuviTag): String =
+        unitsConverter.getSignalString(tag.rssi)
 }

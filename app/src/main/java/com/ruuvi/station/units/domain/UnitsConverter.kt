@@ -52,10 +52,16 @@ class UnitsConverter (
     }
 
     fun getPressureString(pressure: Double): String {
-        if (getPressureUnit() == PressureUnit.PA) {
-            return context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+        val pressureString = if (getPressureUnit() == PressureUnit.PA) {
+            context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
         } else {
-            return context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+            context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+        }
+
+        return if (pressureString.contains("0,00")) {
+            pressureString.replace("0,00", "-")
+        } else {
+            pressureString
         }
     }
 
@@ -84,9 +90,23 @@ class UnitsConverter (
     }
 
     fun getHumidityString(humidity: Double, temperature: Double): String {
-        if (getHumidityUnit() == HumidityUnit.DEW)
-            return context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getTemperatureUnitString()
-        else
-            return context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getHumidityUnitString()
+        val humidityString: String = if (getHumidityUnit() == HumidityUnit.DEW) {
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getTemperatureUnitString()
+        } else {
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getHumidityUnitString()
+        }
+
+        return if (humidityString.contains("0,00")) {
+            humidityString.replace("0,00", "-")
+        } else {
+            humidityString
+        }
     }
+
+    fun getSignalString(rssi: Int): String =
+        if (rssi != 0) {
+            context.getString(R.string.signal_reading, rssi)
+        } else {
+            context.getString(R.string.signal_reading_zero)
+        }
 }

@@ -14,6 +14,7 @@ import com.ruuvi.station.database.LocalDatabase
 import com.ruuvi.station.database.tables.TagSensorReading
 import kotlinx.android.synthetic.main.activity_about.toolbar
 import kotlinx.android.synthetic.main.content_about.debugInfo
+import kotlinx.android.synthetic.main.content_about.infoText
 import kotlinx.android.synthetic.main.content_about.moreText
 import kotlinx.android.synthetic.main.content_about.openText
 import kotlinx.android.synthetic.main.content_about.operationsText
@@ -42,6 +43,7 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_white)
 
+        infoText.movementMethod = LinkMovementMethod.getInstance()
         operationsText.movementMethod = LinkMovementMethod.getInstance()
         troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
         openText.movementMethod = LinkMovementMethod.getInstance()

@@ -213,11 +213,12 @@
     <string name="temperature_reading" formatted="false">%1$,.2f</string>
     <string name="pressure_reading" formatted="false">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa" formatted="false">%1$,.0f %2$s</string>
-    <string name="humidity_reading" formatted="false">%1$,.2f</string>
+    <string name="humidity_reading" formatted="false">%1$,.2f&#160;</string>
 
     <string name="humidity_absolute_reading" formatted="false">%1$,.2f g/m³</string>
     <string name="humidity_dew_reading" formatted="false">%1$,.2f</string>
     <string name="signal_reading" formatted="false">%1$,d dBm</string>
+    <string name="signal_reading_zero">- dBm</string>
 
     <string name="temperature_celsius_name">Celsius</string>
     <string name="temperature_fahrenheit_name">Fahrenheit</string>
@@ -258,7 +259,7 @@
     <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
     <string name="info_title">About / Help</string>
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.\n<a href="https://ruuvi.com/terms">ruuvi.com/terms</a>
     </string>
     <string name="operations_title">OPERATIONS MANUAL</string>
     <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.

@@ -1,18 +1,20 @@
 package com.ruuvi.station.dashboard.ui
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.item_dashboard.view.bell
 import kotlinx.android.synthetic.main.item_dashboard.view.dashboardContainer
@@ -25,26 +27,35 @@ import kotlinx.android.synthetic.main.item_dashboard.view.signal
 import kotlinx.android.synthetic.main.item_dashboard.view.temperature
 
 class RuuviTagAdapter(
-    context: Context,
-    items: List<RuuviTag>
-) : ArrayAdapter<RuuviTag>(context, 0, items) {
+    private val activity: AppCompatActivity,
+    items: List<RuuviTag>,
+    private val converter: UnitsConverter
+) : ArrayAdapter<RuuviTag>(activity, 0, items) {
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val item = getItem(position)
         val view =
             convertView ?: LayoutInflater.from(context).inflate(R.layout.item_dashboard, parent, false)
 
         view.dashboardContainer.tag = item
-        view.deviceId.text = item?.displayName
-        view.temperature.text = item?.temperatureString
-        view.humidity.text = item?.humidityString
-        view.pressure.text = item?.pressureString
-        view.signal.text = context.getString(R.string.signal_reading, item?.rssi)
+
+        item?.let {
+            view.deviceId.text = it.displayName
+            view.temperature.text = it.temperatureString
+            view.humidity.text = converter.getHumidityString(it.humidity, it.temperature)
+            view.pressure.text = converter.getPressureString(it.pressure)
+            view.signal.text = converter.getSignalString(it.rssi)
+        }
 
         val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight
         val ballRadius = context.resources.getDimension(R.dimen.letter_ball_radius).toInt()
         val ballColor = ContextCompat.getColor(context, ballColorRes)
-        val firsLetter = view.deviceId.text[0].toString() + ""
-        val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, firsLetter)
+
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val letterSize = 33 * displayMetrics.scaledDensity
+
+        val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, view.deviceId.text.toString(), letterSize)
         view.letterImage.setImageBitmap(ballBitmap)
 
         val updatedAt =
