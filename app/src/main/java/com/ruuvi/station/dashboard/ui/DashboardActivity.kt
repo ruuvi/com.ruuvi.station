@@ -9,7 +9,7 @@ import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -22,17 +22,10 @@ import com.ruuvi.station.util.extensions.OpenUrl
 import com.ruuvi.station.util.extensions.SendFeedback
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_dashboard.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.MutableList
-import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
 class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -40,10 +33,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private val viewModel: DashboardActivityViewModel by viewModel()
 
     private lateinit var permissionsHelper: PermissionsHelper
-    private lateinit var tags: MutableList<RuuviTag>
+    private var tags: MutableList<RuuviTag> = arrayListOf()
     private lateinit var adapter: RuuviTagAdapter
-
-    private val timer = Timer("DashboardActivityTimer", false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,24 +44,26 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo)
 
+        setupViewModel()
         setupDrawer()
         setupListView()
-
-        dashboardListView.onItemClickListener = tagClick
 
         permissionsHelper = PermissionsHelper(this)
         permissionsHelper.requestPermissions()
     }
 
-    private fun setupListView() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagsFlow.value.let {
-                tags = ArrayList(it)
-                adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
-                dashboardListView.adapter = adapter
-            }
-        }
+    private fun setupViewModel() {
+        viewModel.observeTags.observe( this, Observer {
+            tags.clear()
+            tags.addAll(it)
+            noTagsTextView.isVisible = tags.isEmpty()
+            adapter.notifyDataSetChanged()
+        })
+    }
 
+    private fun setupListView() {
+        adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
+        dashboardListView.adapter = adapter
         dashboardListView.onItemClickListener = tagClick
     }
 
@@ -103,26 +96,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 2 -> AboutActivity.start(this)
                 3 -> SendFeedback()
                 4 -> OpenUrl(WEB_URL)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.startForegroundScanning()
-
-        lifecycleScope.launch {
-            if (permissionsHelper.arePermissionsGranted()) {
-                timer.scheduleAtFixedRate(0, 1200) {
-                    lifecycleScope.launchWhenResumed {
-                        viewModel.tagsFlow.collect {
-                            tags.clear()
-                            tags.addAll(it)
-                            noTagsTextView.isVisible = tags.isEmpty()
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                }
             }
         }
     }
