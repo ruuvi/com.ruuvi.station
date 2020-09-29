@@ -34,7 +34,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
@@ -64,16 +64,12 @@ import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
 import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
 import kotlinx.android.synthetic.main.content_tag_details.tagPager
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import java.util.HashMap
 import java.util.Locale
 
-@ExperimentalCoroutinesApi
 class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -159,7 +155,28 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        lifecycleScope.launch { viewModel.tagsFlow.collect { setupTags(it) } }
+        viewModel.tagsObserve.observe(this, Observer {
+            setupTags(it)
+        })
+    }
+
+    private fun observeAlarmStatus() {
+        viewModel.alarmStatusObserve.observe(this, Observer {
+            alarmStatus = it
+            invalidateOptionsMenu()
+        })
+    }
+
+    private fun observeSelectedTag() {
+        viewModel.selectedTagObserve.observe(this, Observer {
+            it?.let { setupSelectedTag(it) }
+        })
+    }
+
+    private fun listenToShowGraph() {
+        viewModel.isShowGraphObserve.observe(this, Observer {
+            animateGraphTransition(it)
+        })
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
@@ -186,23 +203,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private fun observeAlarmStatus() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.alarmStatusFlow.collect {
-                alarmStatus = it
-                invalidateOptionsMenu()
-            }
-        }
-    }
-
-    private fun observeSelectedTag() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.selectedTagFlow.collect { selectedTag ->
-                selectedTag?.let { setupSelectedTag(it) }
-            }
-        }
-    }
-
     private fun setupSelectedTag(selectedTag: RuuviTag) {
         val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
         if (previousBitmapDrawable != null) {
@@ -213,14 +213,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         backgrounds[selectedTag.id] = bitmapDrawable
         viewModel.tag = selectedTag
         imageSwitcher.setImageDrawable(bitmapDrawable)
-    }
-
-    private fun listenToShowGraph() {
-        lifecycleScope.launch {
-            viewModel.isShowGraphFlow.collect { isShowGraph ->
-                animateGraphTransition(isShowGraph)
-            }
-        }
     }
 
     private fun animateGraphTransition(isShowGraph: Boolean) {
