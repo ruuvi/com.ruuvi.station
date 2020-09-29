@@ -2,6 +2,7 @@ package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.network.data.UserRegisterRequest
 import com.ruuvi.station.network.data.UserRegisterResponse
+import com.ruuvi.station.network.data.UserVerifyRequest
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,6 +25,22 @@ class RuuviNetworkRepository {
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         retrofitService.registerUser(user).enqueue(
+            object : Callback<UserRegisterResponse> {
+                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+                    println(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                    val registeredUser = response.body()
+                    onResult(registeredUser)
+                }
+            }
+        )
+    }
+
+    fun verifyUser(token: UserVerifyRequest, onResult: (UserRegisterResponse?) -> Unit) {
+        retrofitService.verifyUser(token).enqueue(
             object : Callback<UserRegisterResponse> {
                 override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
                     println(t)
