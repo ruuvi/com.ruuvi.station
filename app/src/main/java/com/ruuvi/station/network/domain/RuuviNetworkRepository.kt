@@ -23,7 +23,7 @@ class RuuviNetworkRepository {
     }
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
-        retrofitService.registerUser(user.reset, user.email).enqueue(
+        retrofitService.registerUser(user).enqueue(
             object : Callback<UserRegisterResponse> {
                 override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
                     println(t)
@@ -39,6 +39,6 @@ class RuuviNetworkRepository {
     }
 
     companion object {
-        private const val BASE_URL = "https://dhv743unoc.execute-api.eu-central-1.amazonaws.com/"
+        private const val BASE_URL = "https://5a9supxcrb.execute-api.eu-central-1.amazonaws.com/dev/"
     }
 }

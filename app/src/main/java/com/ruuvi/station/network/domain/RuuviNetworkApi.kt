@@ -8,7 +8,5 @@ import retrofit2.http.*
 interface RuuviNetworkApi{
     @Headers("Content-Type: application/json")
     @POST("register")
-    @FormUrlEncoded
-    fun registerUser(@Field("reset") reset: Int = 0,
-                     @Field("email") email: String): Call<UserRegisterResponse>
+    fun registerUser(@Body request: UserRegisterRequest): Call<UserRegisterResponse>
 }
