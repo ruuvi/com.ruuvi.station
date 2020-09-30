@@ -28,6 +28,8 @@ class TagViewModel(
 
     private var showGraph = false
 
+    private var selected = false
+
     private val timer = Timer("tagViewModelTimer", true)
 
     init {
@@ -39,12 +41,16 @@ class TagViewModel(
         showGraph = isShow
     }
 
+    fun tagSelected(selectedTag: RuuviTag?) {
+        selected = tagId == selectedTag?.id
+    }
+
     private fun getTagInfo(tagId: String) {
         ioScope.launch {
             timer.scheduleAtFixedRate(0, 1000) {
                 Timber.d("getTagInfo $tagId")
                 getTagEntryData(tagId)
-                if (showGraph) getGraphData(tagId)
+                if (showGraph && selected) getGraphData(tagId)
             }
         }
     }
