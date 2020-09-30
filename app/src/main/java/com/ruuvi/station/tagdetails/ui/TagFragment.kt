@@ -51,6 +51,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeShowGraph()
         observeTagEntry()
         observeTagReadings()
+        observeSelectedTag()
+    }
+
+    private fun observeSelectedTag() {
+        activityViewModel.selectedTagObserve.observe(viewLifecycleOwner, Observer {
+            viewModel.tagSelected(it)
+        })
     }
 
     private fun observeShowGraph() {
@@ -69,8 +76,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagReadings() {
-        viewModel.tagReadingsObserve.observe(viewLifecycleOwner, Observer {
-            readings ->
+        viewModel.tagReadingsObserve.observe(viewLifecycleOwner, Observer { readings ->
             readings?.let {
                 view?.let { view ->
                     graphView.drawChart(readings, view)

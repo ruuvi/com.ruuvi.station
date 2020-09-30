@@ -74,22 +74,26 @@ public class Utils {
     }
 
     public static Bitmap getBackground(Context context, RuuviTagEntity tag) {
-        try {
-            Uri uri = Uri.parse(tag.getUserBackground());
-            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-        } catch (Exception e) {
-            Timber.e("Could not set user background");
+        if (tag.getUserBackground() != null) {
+            try {
+                Uri uri = Uri.parse(tag.getUserBackground());
+                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            } catch (Exception e) {
+                Timber.e("Could not set user background");
+            }
         }
 
         return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
     }
 
     public static Bitmap getBackground(Context context, RuuviTag tag) {
-        try {
-            Uri uri = Uri.parse(tag.getUserBackground());
-            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-        } catch (Exception e) {
-            Timber.e("Could not set user background");
+        if (tag.getUserBackground() != null) {
+            try {
+                Uri uri = Uri.parse(tag.getUserBackground());
+                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            } catch (Exception e) {
+                Timber.e("Could not set user background");
+            }
         }
 
         return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
