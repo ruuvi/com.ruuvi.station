@@ -1,33 +1,34 @@
 package com.ruuvi.station.tagdetails.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
     val tagId: String
 ) : ViewModel() {
-    private val tagEntry = MutableStateFlow<RuuviTag?>(null)
-    val tagEntryFlow: StateFlow<RuuviTag?> = tagEntry
+    private val tagEntry = MutableLiveData<RuuviTag?>(null)
+    val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
 
-    private val tagReadings = MutableStateFlow<List<TagSensorReading>?>(null)
-    val tagReadingsFlow: StateFlow<List<TagSensorReading>?> = tagReadings
+    private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
+    val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private var showGraph = false
+
+    private var selected = false
 
     private val timer = Timer("tagViewModelTimer", true)
 
@@ -40,12 +41,16 @@ class TagViewModel(
         showGraph = isShow
     }
 
+    fun tagSelected(selectedTag: RuuviTag?) {
+        selected = tagId == selectedTag?.id
+    }
+
     private fun getTagInfo(tagId: String) {
         ioScope.launch {
             timer.scheduleAtFixedRate(0, 1000) {
                 Timber.d("getTagInfo $tagId")
                 getTagEntryData(tagId)
-                if (showGraph) getGraphData(tagId)
+                if (showGraph && selected) getGraphData(tagId)
             }
         }
     }
@@ -56,7 +61,9 @@ class TagViewModel(
             tagDetailsInteractor
                 .getTagReadings(tagId)
                 ?.let {
-                    tagReadings.value = it
+                    withContext(Dispatchers.Main){
+                        tagReadings.value = it
+                    }
                 }
         }
     }
@@ -66,7 +73,11 @@ class TagViewModel(
         ioScope.launch {
             tagDetailsInteractor
                 .getTagById(tagId)
-                ?.let { tagEntry.value = it }
+                ?.let {
+                    withContext(Dispatchers.Main){
+                        tagEntry.value = it
+                    }
+                }
         }
     }
 

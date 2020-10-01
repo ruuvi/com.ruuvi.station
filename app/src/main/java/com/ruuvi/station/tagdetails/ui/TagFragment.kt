@@ -6,7 +6,7 @@ import android.text.style.SuperscriptSpan
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.flexsentlabs.extensions.sharedViewModel
 import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.R
@@ -21,15 +21,12 @@ import kotlinx.android.synthetic.main.view_tag_detail.tagSignalTextView
 import kotlinx.android.synthetic.main.view_tag_detail.tagTempUnitTextView
 import kotlinx.android.synthetic.main.view_tag_detail.tagTemperatureTextView
 import kotlinx.android.synthetic.main.view_tag_detail.tagUpdatedTextView
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -54,37 +51,38 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeShowGraph()
         observeTagEntry()
         observeTagReadings()
+        observeSelectedTag()
+    }
+
+    private fun observeSelectedTag() {
+        activityViewModel.selectedTagObserve.observe(viewLifecycleOwner, Observer {
+            viewModel.tagSelected(it)
+        })
     }
 
     private fun observeShowGraph() {
-        lifecycleScope.launchWhenResumed {
-            activityViewModel.isShowGraphFlow.collect { isShowGraph ->
-                view?.let {
-                    setupViewVisibility(it, isShowGraph)
-                    viewModel.isShowGraph(isShowGraph)
-                }
+        activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer {isShowGraph ->
+            view?.let {
+                setupViewVisibility(it, isShowGraph)
+                viewModel.isShowGraph(isShowGraph)
             }
-        }
+        })
     }
 
     private fun observeTagEntry() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.tagEntryFlow.collect {
-                it?.let { updateTagData(it) }
-            }
-        }
+        viewModel.tagEntryObserve.observe(viewLifecycleOwner, Observer {
+            it?.let { updateTagData(it) }
+        })
     }
 
     private fun observeTagReadings() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.tagReadingsFlow.collect { readings ->
-                readings?.let {
-                    view?.let { view ->
-                        graphView.drawChart(readings, view)
-                    }
+        viewModel.tagReadingsObserve.observe(viewLifecycleOwner, Observer { readings ->
+            readings?.let {
+                view?.let { view ->
+                    graphView.drawChart(readings, view)
                 }
             }
-        }
+        })
     }
 
     private fun updateTagData(tag: RuuviTag) {

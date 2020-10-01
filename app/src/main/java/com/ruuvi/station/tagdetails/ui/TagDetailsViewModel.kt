@@ -1,5 +1,7 @@
 package com.ruuvi.station.tagdetails.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
@@ -10,15 +12,11 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
     private val interactor: TagInteractor,
@@ -28,17 +26,17 @@ class TagDetailsViewModel(
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var timer = Timer("timer", true)
 
-    private val isShowGraph = MutableStateFlow<Boolean>(false)
-    val isShowGraphFlow: StateFlow<Boolean> = isShowGraph
+    private val isShowGraph = MutableLiveData<Boolean>(false)
+    val isShowGraphObserve: LiveData<Boolean> = isShowGraph
 
-    private val selectedTag = MutableStateFlow<RuuviTag?>(null)
-    val selectedTagFlow: StateFlow<RuuviTag?> = selectedTag
+    private val selectedTag = MutableLiveData<RuuviTag?>(null)
+    val selectedTagObserve: LiveData<RuuviTag?> = selectedTag
 
-    private val tags = MutableStateFlow<List<RuuviTag>>(arrayListOf())
-    val tagsFlow: StateFlow<List<RuuviTag>> = tags
+    private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
+    val tagsObserve: LiveData<List<RuuviTag>> = tags
 
-    private val alarmStatus = MutableStateFlow(AlarmStatus.NO_ALARM)
-    val alarmStatusFlow: StateFlow<AlarmStatus> = alarmStatus
+    private val alarmStatus = MutableLiveData(AlarmStatus.NO_ALARM)
+    val alarmStatusObserve: LiveData<AlarmStatus> = alarmStatus
 
     var dashboardEnabled = isDashboardEnabled()
     var tag: RuuviTag? = null
@@ -56,14 +54,14 @@ class TagDetailsViewModel(
 
     fun pageSelected(pageIndex: Int) {
         viewModelScope.launch {
-            selectedTag.value = tags.value[pageIndex]
-            desiredTag = tags.value[pageIndex].id
+            selectedTag.value = tags.value?.get(pageIndex)
+            desiredTag = tags.value?.get(pageIndex)?.id
             checkForAlarm()
         }
     }
 
     fun switchShowGraphChannel() {
-        isShowGraph.value = !isShowGraph.value
+        isShowGraph.value = !(isShowGraph.value ?: true)
     }
 
     fun refreshTags() {
