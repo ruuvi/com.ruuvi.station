@@ -2,8 +2,8 @@ package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.network.data.UserRegisterRequest
 import com.ruuvi.station.network.data.UserRegisterResponse
-import com.ruuvi.station.network.data.UserVerifyRequest
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,7 +11,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RuuviNetworkRepository {
-    private val client = OkHttpClient.Builder().build()
+
+    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().also {
+        it.level = HttpLoggingInterceptor.Level.BODY;
+    }
+
+    private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -39,7 +44,7 @@ class RuuviNetworkRepository {
         )
     }
 
-    fun verifyUser(token: UserVerifyRequest, onResult: (UserRegisterResponse?) -> Unit) {
+    fun verifyUser(token: String, onResult: (UserRegisterResponse?) -> Unit) {
         retrofitService.verifyUser(token).enqueue(
             object : Callback<UserRegisterResponse> {
                 override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
@@ -55,7 +60,23 @@ class RuuviNetworkRepository {
         )
     }
 
+    fun getUserInfo(token: String, onResult: (UserRegisterResponse?) -> Unit) {
+        retrofitService.getUserInfo("Bearer " + token).enqueue(
+            object : Callback<UserRegisterResponse> {
+                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+                    println(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                    val registeredUser = response.body()
+                    onResult(registeredUser)
+                }
+            }
+        )
+    }
+
     companion object {
-        private const val BASE_URL = "https://5a9supxcrb.execute-api.eu-central-1.amazonaws.com/dev/"
+        private const val BASE_URL = "https://dhv743unoc.execute-api.eu-central-1.amazonaws.com/"
     }
 }

@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -119,7 +120,20 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun isFirstStart(): Boolean =
         preferences.isFirstStart
 
-    fun setFirstStart(isFirstStart: Boolean){
+    fun setFirstStart(isFirstStart: Boolean) {
         preferences.isFirstStart = isFirstStart
+    }
+
+    fun getNetworkTokenInfo(): NetworkTokenInfo? {
+        if (preferences.networkEmail.isEmpty() || preferences.networkToken.isEmpty()) {
+            return null
+        } else {
+            return  NetworkTokenInfo(preferences.networkEmail, preferences.networkToken)
+        }
+    }
+
+    fun setNetworkTokenInfo(tokenInfo: NetworkTokenInfo) {
+        preferences.networkEmail = tokenInfo.email
+        preferences.networkToken = tokenInfo.token
     }
 }

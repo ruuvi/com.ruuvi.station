@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_in_navigation"
+    app:startDestination="@id/emailEnterFragment">
+
+    <fragment
+        android:id="@+id/emailEnterFragment"
+        android:name="com.ruuvi.station.network.ui.EmailEnterFragment"
+        android:label="fragment_email_enter"
+        tools:layout="@layout/fragment_email_enter" >
+        <action
+            android:id="@+id/action_emailEnterFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment" />
+        <action
+            android:id="@+id/action_emailEnterFragment_to_emailSentFragment"
+            app:destination="@id/emailSentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterCodeFragment"
+        android:name="com.ruuvi.station.network.ui.EnterCodeFragment"
+        android:label="fragment_enter_code"
+        tools:layout="@layout/fragment_enter_code" >
+        <action
+            android:id="@+id/action_enterCodeFragment_to_signedInFragment"
+            app:destination="@id/signedInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emailSentFragment"
+        android:name="com.ruuvi.station.network.ui.EmailSentFragment"
+        android:label="fragment_email_sent"
+        tools:layout="@layout/fragment_email_sent" >
+        <action
+            android:id="@+id/action_emailSentFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signedInFragment"
+        android:name="com.ruuvi.station.network.ui.SignedInFragment"
+        android:label="fragment_signed_in"
+        tools:layout="@layout/fragment_signed_in" >
+        <action
+            android:id="@+id/action_signedInFragment_to_signOutFragment"
+            app:destination="@id/signOutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signOutFragment"
+        android:name="com.ruuvi.station.network.ui.SignOutFragment"
+        android:label="fragment_sign_out"
+        tools:layout="@layout/fragment_sign_out" />
+</navigation>

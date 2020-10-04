@@ -11,7 +11,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-feature android:name="android.hardware.bluetooth"/>
+
+    <uses-feature android:name="android.hardware.bluetooth" />
 
     <application
         android:name=".app.RuuviScannerApplication"
@@ -22,6 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <activity
+            android:name=".network.ui.SignInActivity"
+            android:label="@string/title_activity_sign_in"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".tagdetails.ui.TagDetailsActivity"
             android:launchMode="singleTop"
@@ -34,20 +39,20 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
+            android:name=".bluetooth.ScanForDevicesService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service android:name=".bluetooth.BluetoothForegroundService"
+        <service
+            android:name=".bluetooth.BluetoothForegroundService"
             android:enabled="true"
-            android:foregroundServiceType="location"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:foregroundServiceType="location"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".feature.ui.WelcomeActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <meta-data
@@ -62,20 +67,21 @@
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
+            android:name=".settings.ui.AppSettingsActivity"
             android:label="@string/title_activity_app_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".startup.ui.StartupActivity"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".dashboard.ui.DashboardActivity"
+        <activity
+            android:name=".dashboard.ui.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <provider
@@ -96,11 +102,11 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
     </application>

@@ -48,6 +48,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
@@ -260,6 +261,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 2 -> AboutActivity.start(this)
                 3 -> SendFeedback()
                 4 -> OpenUrl(WEB_URL)
+                5 -> SignInActivity.start(this)
             }
         }
     }

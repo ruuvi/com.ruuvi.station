@@ -133,6 +133,18 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_GRAPH_DRAW_DOTS, drawDots).apply()
         }
 
+    var networkEmail: String
+        get() = sharedPreferences.getString(PREF_NETWORK_EMAIL, "") ?: ""
+        set(email) {
+            sharedPreferences.edit().putString(PREF_NETWORK_EMAIL, email).apply()
+        }
+
+    var networkToken: String
+        get() = sharedPreferences.getString(PREF_NETWORK_TOKEN, "") ?: ""
+        set(token) {
+            sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
+        }
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -151,7 +163,8 @@ class Preferences constructor(val context: Context) {
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
-
+        private const val PREF_NETWORK_EMAIL = "pref_network_email"
+        private const val PREF_NETWORK_TOKEN = "pref_network_token"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""

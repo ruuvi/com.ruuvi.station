@@ -174,22 +174,23 @@
     <string-array name="navigation_items">
         <item>Add a New RuuviTag</item>
         <item>Show Dashboard</item>
-        <item>App Settings</item>
+        <item>Settings</item>
         <item>About / Help</item>
     </string-array>
 
     <string-array name="navigation_items_card_view">
         <item>Add a New RuuviTag</item>
-        <item>App Settings</item>
+        <item>Settings</item>
         <item>About / Help</item>
         <item>Send Feedback</item>
         <item>Get More Sensors</item>
+        <item>Sign in</item>
     </string-array>
 
     <string-array name="navigation_items_titles">
         <item>Nearby Tags</item>
         <item></item>
-        <item>App Settings</item>
+        <item>Settings</item>
         <item></item>
     </string-array>
 
@@ -297,7 +298,8 @@
     <string name="unsaved_changes">Unsave changes</string>
     <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
     <string name="title_activity_add_tag">Nearby Tags</string>
-    <string name="title_activity_app_settings">App Settings</string>
+    <string name="title_activity_app_settings">Settings</string>
+    <string name="title_activity_sign_in">Sign in</string>
     <string name="background_scan_interval">Background Scan Interval</string>
     <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
     <string name="device_identifier">Device identifier</string>
@@ -380,4 +382,16 @@
     <string name="app_settings_debug">Debug</string>
     <string name="app_settings_add_fake_tags">Add fake tags and readings</string>
     <string name="notification_channel_name">Alert notifications</string>
+    <string name="sign_in_benefits" formatted="true">Sign in benefits, the information is saved in the cloud,\n
+- ruuvitag data\n
+- sensor name\n
+- sensor data\n
+- bg images\n\n\n
+Register or request new sign in link:</string>
+    <string name="email_sent_description">Email sent.\n\n
+Please check your email inbox for further instructions. </string>
+    <string name="email_sent_note">NOTE: If account already exists  email has notification about merging data</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="signed_in_title">Congratulations!\n
+You\'ve logged to Ruuvi Network as:</string>
 </resources>

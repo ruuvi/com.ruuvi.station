@@ -14,5 +14,9 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @GET("verify")
-    fun verifyUser(@Query("token") request: UserVerifyRequest): Call<UserRegisterResponse>
+    fun verifyUser(@Query("token") token: String): Call<UserRegisterResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("user")
+    fun getUserInfo(@Header("Authorization") auth: String): Call<UserRegisterResponse>
 }
