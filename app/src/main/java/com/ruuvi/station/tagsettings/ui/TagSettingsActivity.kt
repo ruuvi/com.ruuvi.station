@@ -6,8 +6,7 @@ import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.text.InputFilter
 import android.text.InputType
@@ -21,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.lifecycleScope
@@ -30,9 +30,13 @@ import com.flexsentlabs.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.app.RuuviScannerApplication
+import com.ruuvi.station.bluetooth.IRuuviGattListener
+import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -173,6 +177,87 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             viewModel.tagFlow.value?.id?.let {
                 exporter.toCsv(it)
             }
+        } else if (item.itemId == R.id.action_sync) {
+            val builder = AlertDialog.Builder(this)
+            var text = "${getString(R.string.connecting)}.."
+            builder.setMessage(text)
+            builder.setPositiveButton(getText(R.string.ok)) { p0, _ -> p0.dismiss() }
+            val ad = builder.show()
+            ad.setCanceledOnTouchOutside(false)
+            ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
+            var completed = false
+            viewModel.tagFlow.value?.let {
+                val found = (applicationContext as RuuviScannerApplication).readLogs(it.id!!, it.lastSync, object : IRuuviGattListener {
+                    override fun connected(state: Boolean) {
+                        if (state) {
+                            runOnUiThread {
+                                text += "\n${getString(R.string.connected_reading_info)}"
+                                ad.setMessage(text)
+                            }
+                        } else {
+                            if (completed) {
+                                if (!text.contains(getString(R.string.sync_complete))) {
+                                    text += "\n${getString(R.string.sync_complete)}"
+                                }
+                            } else {
+                                text += "\n${getString(R.string.disconnected)}"
+                            }
+                            runOnUiThread {
+                                ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                                ad.setMessage(text)
+                            }
+                        }
+                    }
+
+                    override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
+                        if (canReadLogs) {
+                            runOnUiThread {
+                                text += "\n$model, $fw\n${getString(R.string.reading_history)}.."
+                                ad.setMessage(text)
+                            }
+                        }
+                    }
+
+                    override fun dataReady(data: List<LogReading>) {
+                        runOnUiThread {
+                            text += if (data.isNotEmpty()) {
+                                "\n${getString(R.string.data_points_read, data.size*3)}"
+                            } else {
+                                "\n${getString(R.string.no_new_data_points)}"
+                            }
+                            ad.setMessage(text)
+                        }
+                        val tagReadingList = mutableListOf<TagSensorReading>()
+                        data.forEach { logReading ->
+                            val reading = TagSensorReading()
+                            reading.ruuviTagId = it.id
+                            reading.temperature = logReading.temperature
+                            reading.humidity = logReading.humidity
+                            reading.pressure = logReading.pressure
+                            reading.createdAt = logReading.date
+                            tagReadingList.add(reading)
+                        }
+                        TagSensorReading.saveList(tagReadingList)
+                        viewModel.tagFlow.value?.lastSync = Date()
+                        viewModel.tagFlow.value?.update()
+                        completed = true
+                    }
+
+                    override fun heartbeat(raw: String) {
+                    }
+                })
+                if (!found) {
+                    runOnUiThread {
+                        ad.setMessage(getString(R.string.tag_not_in_range))
+                        ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                    }
+                }
+            } ?: kotlin.run {
+                runOnUiThread {
+                    ad.setMessage(getString(R.string.something_went_wrong))
+                    ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                }
+            }
         } else {
             finish()
         }
@@ -183,6 +268,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         viewModel.tagFlow.value?.let {
             if (it.isFavorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
+                if (it.connectable) {
+                    menu.findItem(R.id.action_sync).isVisible = true
+                }
             }
         }
         return true
@@ -216,7 +304,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             val container = FrameLayout(applicationContext)
 
             val params =
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
             params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
 
@@ -314,7 +402,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     humidityCalibrationInteractor.calibrate(it);
                     tag.humidity = it.humidity;
                     tag.humidityOffset = it.humidityOffset;
-                    tag.humidityOffsetDate  = it.humidityOffsetDate;
+                    tag.humidityOffsetDate = it.humidityOffsetDate;
                     viewModel.updateTag(it)
                     Toast.makeText(this@TagSettingsActivity, "Calibration done!", Toast.LENGTH_SHORT).show()
                 }
@@ -326,7 +414,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         humidityCalibrationInteractor.clear(it);
                         tag.humidity = it.humidity;
                         tag.humidityOffset = it.humidityOffset;
-                        tag.humidityOffsetDate  = it.humidityOffsetDate;
+                        tag.humidityOffsetDate = it.humidityOffsetDate;
                         it.update()
                     }
                 }
@@ -356,11 +444,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             ))
             add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
             add(AlarmItem(
-                getString(R.string.pressure, unitsConverter.getPressureUnitString()),
-                Alarm.PRESSURE,
-                false,
-                30000,
-                110000
+                    getString(R.string.pressure, unitsConverter.getPressureUnitString()),
+                    Alarm.PRESSURE,
+                    false,
+                    30000,
+                    110000
             ))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
             add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
@@ -456,8 +544,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         val listView = ListView(this)
 
         val menu = arrayOf(
-            resources.getString(R.string.camera),
-            resources.getString(R.string.gallery)
+                resources.getString(R.string.camera),
+                resources.getString(R.string.gallery)
         )
 
         listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
@@ -506,9 +594,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     return
                 }
                 viewModel.file = FileProvider.getUriForFile(
-                    this,
-                    "com.ruuvi.station.fileprovider",
-                    photoFile
+                        this,
+                        "com.ruuvi.station.fileprovider",
+                        photoFile
                 )
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, viewModel.file)
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
@@ -647,7 +735,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 var highDisplay = high
 
                 var setSeekbarColor = R.color.inactive
-                when (type){
+                when (type) {
                     Alarm.TEMPERATURE -> {
                         lowDisplay = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
                         highDisplay = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()
