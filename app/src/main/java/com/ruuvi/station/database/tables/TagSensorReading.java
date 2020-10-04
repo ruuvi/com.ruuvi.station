@@ -7,9 +7,12 @@ import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Calendar;
@@ -142,6 +145,13 @@ public class TagSensorReading extends BaseModel {
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .async()
                 .execute();
+    }
+
+    public static void saveList(List<TagSensorReading> readings) {
+        //FlowManager.getModelAdapter(TagSensorReading.class).saveAll(readings);
+        FastStoreModelTransaction
+                .insertBuilder(FlowManager.getModelAdapter(TagSensorReading.class))
+                .addAll(readings).build().execute(FlowManager.getWritableDatabase(LocalDatabase.class));
     }
 
     public static long countAll() {

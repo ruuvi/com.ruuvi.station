@@ -10,6 +10,7 @@ import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
+import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
@@ -23,6 +24,7 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
+import java.util.*
 
 @ExperimentalCoroutinesApi
 class RuuviScannerApplication : Application(), KodeinAware {
@@ -45,6 +47,10 @@ class RuuviScannerApplication : Application(), KodeinAware {
             isInForeground = false
             defaultOnTagFoundListener.isForeground = false
         }
+    }
+
+    fun readLogs(id: String, from: Date?, listener: IRuuviGattListener): Boolean {
+        return bluetoothReceiver.readLogs(id, from, listener)
     }
 
     override fun onCreate() {

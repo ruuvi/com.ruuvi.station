@@ -11,8 +11,10 @@ import com.raizlabs.android.dbflow.sql.migration.IndexMigration;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.database.tables.RuuviTagEntity_Table;
 import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.database.tables.TagSensorReading_Table;
+import com.ruuvi.station.tag.domain.RuuviTag;
 
 /**
  * Created by berg on 10/09/17.
@@ -21,7 +23,21 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 14;
+    public static final int VERSION = 15;
+
+    @Migration(version = 15, database = LocalDatabase.class)
+    public static class Migration15 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration15(Class<RuuviTagEntity> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.INTEGER, "connectable");
+            addColumn(SQLiteType.INTEGER, "lastSync");
+        }
+    }
 
     @Migration(version = 14, database = LocalDatabase.class)
     public static class Migration14Data extends BaseMigration {
