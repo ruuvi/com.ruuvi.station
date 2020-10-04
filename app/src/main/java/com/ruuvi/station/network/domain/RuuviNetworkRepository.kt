@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.network.data.ClaimTagRequest
 import com.ruuvi.station.network.data.UserRegisterRequest
 import com.ruuvi.station.network.data.UserRegisterResponse
 import okhttp3.OkHttpClient
@@ -62,6 +63,22 @@ class RuuviNetworkRepository {
 
     fun getUserInfo(token: String, onResult: (UserRegisterResponse?) -> Unit) {
         retrofitService.getUserInfo("Bearer " + token).enqueue(
+            object : Callback<UserRegisterResponse> {
+                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+                    println(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                    val registeredUser = response.body()
+                    onResult(registeredUser)
+                }
+            }
+        )
+    }
+
+    fun claimTag(tag: String, token: String, onResult: (UserRegisterResponse?) -> Unit) {
+        retrofitService.claimTag("Bearer " + token, ClaimTagRequest(tag)).enqueue(
             object : Callback<UserRegisterResponse> {
                 override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
                     println(t)

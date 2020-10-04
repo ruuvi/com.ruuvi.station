@@ -60,4 +60,22 @@ class UserApiTests {
         }
         synchronized(lock1) { lock1.wait() }
     }
+
+    @Test
+    fun TestClaimTag() {
+        val lock1 = Object()
+        val networkRepository = RuuviNetworkRepository()
+
+        val token = "rKJI8hFZqO9AdI2YX9mbGXnOJrs6jDldUAcLf2AWK59LAYQCXvhQOqxkroEvUIIP"
+        networkRepository.claimTag("E5:F1:98:34:C0:0F", token) {
+            if (it != null) {
+                println("response: ")
+                println(it)
+            } else {
+                println("empty response")
+            }
+            synchronized(lock1) { lock1.notify() }
+        }
+        synchronized(lock1) { lock1.wait() }
+    }
 }
