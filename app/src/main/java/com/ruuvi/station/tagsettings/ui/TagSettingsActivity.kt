@@ -187,11 +187,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
             var completed = false
             viewModel.tagFlow.value?.let {
+                Timber.d("sync logs from: " +it.lastSync)
                 val found = (applicationContext as RuuviScannerApplication).readLogs(it.id!!, it.lastSync, object : IRuuviGattListener {
                     override fun connected(state: Boolean) {
                         if (state) {
                             runOnUiThread {
-                                text += "\n${getString(R.string.connected_reading_info)}"
+                                text += "\n${getString(R.string.connected_reading_info)}.."
                                 ad.setMessage(text)
                             }
                         } else {
