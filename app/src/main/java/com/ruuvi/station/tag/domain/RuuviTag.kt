@@ -18,5 +18,7 @@ data class RuuviTag(
     val dataFormat: Int,
     val updatedAt: Date?,
     val userBackground: String?,
-    val status: AlarmStatus = AlarmStatus.NO_ALARM
+    val status: AlarmStatus = AlarmStatus.NO_ALARM,
+    val connectable: Boolean?,
+    val lastSync: Date?
 )

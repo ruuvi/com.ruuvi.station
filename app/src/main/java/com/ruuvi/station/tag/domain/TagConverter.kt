@@ -26,6 +26,8 @@ class TagConverter(
             pressureString = unitsConverter.getPressureString(entity.pressure),
             defaultBackground = entity.defaultBackground,
             userBackground = entity.userBackground,
-            dataFormat = entity.dataFormat
+            dataFormat = entity.dataFormat,
+            connectable = entity.connectable,
+            lastSync = entity.lastSync
         )
 }

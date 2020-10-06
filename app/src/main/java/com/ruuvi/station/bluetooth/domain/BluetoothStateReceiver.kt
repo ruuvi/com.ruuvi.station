@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ruuvi.station.bluetooth.BluetoothInteractor
+import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.util.Foreground
 import timber.log.Timber
+import java.util.*
 
 class BluetoothStateReceiver(
     private val interactor: BluetoothInteractor,
@@ -25,5 +27,9 @@ class BluetoothStateReceiver(
                 }
             }
         }
+    }
+
+    fun readLogs(id: String, from: Date?, listener: IRuuviGattListener): Boolean {
+        return interactor.readLogs(id, from, listener)
     }
 }
