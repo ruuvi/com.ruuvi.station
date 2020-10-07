@@ -216,6 +216,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 text += "\n$model, $fw\n${getString(R.string.reading_history)}.."
                                 ad.setMessage(text)
                             }
+                        } else {
+                            runOnUiThread {
+                                text += "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
+                                ad.setMessage(text)
+                            }
                         }
                     }
 
