@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.view.isVisible
-import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.test.StressTestGenerator
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
 import org.kodein.di.Kodein

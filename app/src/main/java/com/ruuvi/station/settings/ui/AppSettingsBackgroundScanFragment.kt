@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.RadioButton
 import androidx.lifecycle.lifecycleScope
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*

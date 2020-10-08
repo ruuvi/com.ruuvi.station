@@ -7,7 +7,6 @@ import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flexsentlabs.extensions.viewModel
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.LocalDatabase
@@ -19,6 +18,7 @@ import kotlinx.android.synthetic.main.content_about.moreText
 import kotlinx.android.synthetic.main.content_about.openText
 import kotlinx.android.synthetic.main.content_about.operationsText
 import kotlinx.android.synthetic.main.content_about.troubleshootingText
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
