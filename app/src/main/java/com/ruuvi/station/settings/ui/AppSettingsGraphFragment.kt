@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.fragment_app_settings_graph.*
 import kotlinx.coroutines.*

@@ -25,8 +25,7 @@ import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.Observer
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
@@ -39,6 +38,7 @@ import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.activity_tag_settings.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware

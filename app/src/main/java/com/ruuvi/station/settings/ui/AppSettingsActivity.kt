@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi

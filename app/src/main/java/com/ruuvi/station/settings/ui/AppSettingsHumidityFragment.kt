@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.RadioButton
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.fragment_app_settings_humidity.*
 import org.kodein.di.Kodein

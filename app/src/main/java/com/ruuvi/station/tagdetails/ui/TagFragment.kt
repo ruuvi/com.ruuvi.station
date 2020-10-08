@@ -7,8 +7,8 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.flexsentlabs.extensions.sharedViewModel
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.sharedViewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
