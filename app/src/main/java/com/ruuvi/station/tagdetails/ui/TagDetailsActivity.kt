@@ -37,8 +37,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -57,6 +56,7 @@ import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.OpenUrl
 import com.ruuvi.station.util.extensions.SendFeedback
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
 import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view

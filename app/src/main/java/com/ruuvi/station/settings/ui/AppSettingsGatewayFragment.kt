@@ -7,9 +7,9 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.fragment_app_settings_gateway.*
 import kotlinx.android.synthetic.main.fragment_app_settings_gateway.settingsInfoTextView
 import kotlinx.coroutines.flow.collect

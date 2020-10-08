@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
-import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.startup.ui.StartupActivity
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.activity_welcome.start_button
 import kotlinx.android.synthetic.main.activity_welcome.tab_layout
 import kotlinx.android.synthetic.main.activity_welcome.welcome_pager
