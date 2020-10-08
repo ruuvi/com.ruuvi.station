@@ -23,11 +23,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
 import com.flexsentlabs.androidcommons.app.ui.setDebouncedOnClickListener
 import com.flexsentlabs.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
@@ -39,8 +40,6 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
 import kotlinx.android.synthetic.main.activity_tag_settings.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -53,7 +52,6 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.math.round
 
-@ExperimentalCoroutinesApi
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -83,25 +81,79 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagFlow.collect { tag ->
-                tag?.let {
-                    isTagFavorite(it)
-                    setupTagName(it)
-                    setupInputMac(it)
-                    setupTagImage(it)
-                    calibrateHumidity(it)
-                    updateReadings(it)
-                }
-            }
-        }
+        setupViewModel()
 
-        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+        setupUI()
+    }
 
+    private fun setupUI() {
         setupAlarmItems()
 
         removeTagButton.setDebouncedOnClickListener { delete() }
+
+        claimTagButton.setDebouncedOnClickListener {
+            viewModel.claimSensor()
+        }
+
+        shareTagButton.setDebouncedOnClickListener {
+            val alert = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
+            alert.setMessage(getString(R.string.enter_email_share_tag))
+            val email = EditText(this)
+            email.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            email.hint = getString(R.string.email)
+            alert.setView(email)
+            alert.setPositiveButton(getString(R.string.ok)) { _,_ ->
+                viewModel.shareSensor(email.text.toString())
+            }
+
+            alert.setNegativeButton(getString(R.string.cancel), null)
+            alert.show()
+        }
     }
+
+    private fun setupViewModel() {
+
+        viewModel.tagObserve.observe(this, Observer {  tag ->
+            tag?.let {
+                isTagFavorite(it)
+                setupTagName(it)
+                setupInputMac(it)
+                setupTagImage(it)
+                calibrateHumidity(it)
+                updateReadings(it)
+            }
+        })
+
+        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+
+        viewModel.userLoggedInObserve.observe(this, Observer {
+            if (it == true) {
+                claimTagButton.visibility = View.VISIBLE
+                shareTagButton.visibility = View.VISIBLE
+            } else {
+                claimTagButton.visibility = View.GONE
+                shareTagButton.visibility = View.GONE
+            }
+        })
+
+        viewModel.tagClaimedObserve.observe(this, Observer {
+            if (it == true) {
+                claimTagButton.isEnabled = false
+                shareTagButton.isEnabled = true
+            } else {
+                claimTagButton.isEnabled = true
+                shareTagButton.isEnabled = false
+            }
+        })
+
+        viewModel.operationStatusObserve.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.statusProcessed()
+            }
+        })
+    }
+
 
     override fun onPause() {
         super.onPause()
@@ -117,8 +169,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.file != null) {
                 val rotation = getCameraPhotoOrientation(viewModel.file)
                 resize(viewModel.file, rotation)
-                viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
-                val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                viewModel.tagObserve.value?.userBackground = viewModel.file.toString()
+                val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                 tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -155,8 +207,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val uri = Uri.fromFile(photoFile)
                         val rotation = getCameraPhotoOrientation(uri)
                         resize(uri, rotation)
-                        viewModel.tagFlow.value?.userBackground = uri.toString()
-                        val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                        viewModel.tagObserve.value?.userBackground = uri.toString()
+                        val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                         tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
@@ -170,7 +222,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, unitsConverter)
-            viewModel.tagFlow.value?.id?.let {
+            viewModel.tagObserve.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -180,7 +232,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        viewModel.tagFlow.value?.let {
+        viewModel.tagObserve.value?.let {
             if (it.isFavorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
             }
@@ -441,7 +493,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             for (alarm: AlarmItem in viewModel.alarmItems) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
-            viewModel.tagFlow.value?.let { viewModel.deleteTag(it) }
+            viewModel.tagObserve.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 

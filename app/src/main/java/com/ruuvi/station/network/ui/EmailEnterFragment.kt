@@ -42,7 +42,7 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
 
         viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEmailSentFragment()
+                val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment()
                 this.findNavController().navigate(action)
             }
         })

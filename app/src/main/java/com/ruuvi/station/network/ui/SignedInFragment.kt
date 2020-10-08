@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.flexsentlabs.extensions.viewModel
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
+import kotlinx.android.synthetic.main.activity_tag_settings.*
 import kotlinx.android.synthetic.main.fragment_signed_in.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -33,11 +35,26 @@ class SignedInFragment : Fragment(R.layout.fragment_signed_in) , KodeinAware {
         okButton.setOnClickListener {
             activity?.finish()
         }
+
+        addTagsButton.setOnClickListener {
+            viewModel.addMissingTags()
+        }
     }
 
     private fun setupViewModel() {
         viewModel.emailObserve.observe(viewLifecycleOwner, Observer {
             emailTextView.text = it
+        })
+
+        viewModel.tagsObserve.observe(viewLifecycleOwner, Observer {
+            sensorsTextView.text = it
+        })
+
+        viewModel.operationStatusObserve.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                Snackbar.make(rootLayout, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.statusProcessed()
+            }
         })
     }
 

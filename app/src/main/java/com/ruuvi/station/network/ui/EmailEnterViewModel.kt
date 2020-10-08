@@ -3,13 +3,11 @@ package com.ruuvi.station.network.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.network.data.UserRegisterRequest
-import com.ruuvi.station.network.domain.NetworkTokenInteractor
-import com.ruuvi.station.network.domain.RuuviNetworkRepository
+import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 
 class EmailEnterViewModel (
-    val networkRepository: RuuviNetworkRepository,
-    val tokenInteractor: NetworkTokenInteractor
+    val networkInteractor: RuuviNetworkInteractor
 ) : ViewModel() {
 
     private val errorText = MutableLiveData<String>("")
@@ -18,11 +16,11 @@ class EmailEnterViewModel (
     private val successfullyRegistered = MutableLiveData<Boolean>(false)
     val successfullyRegisteredObserve: LiveData<Boolean> = successfullyRegistered
 
-    private val alreadyLoggedIn = MutableLiveData<Boolean>(tokenInteractor.getTokenInfo() !=null)
+    private val alreadyLoggedIn = MutableLiveData<Boolean>(networkInteractor.signedIn)
     val alreadyLoggedInObserve: LiveData<Boolean> = alreadyLoggedIn
 
     fun submitEmail(email: String) {
-        networkRepository.registerUser(UserRegisterRequest(email = email)) {
+        networkInteractor.registerUser(UserRegisterRequest(email = email)) {
             if (it == null) {
                 errorText.value = "Unknown error"
             } else {

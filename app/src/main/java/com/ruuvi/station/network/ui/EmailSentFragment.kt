@@ -24,8 +24,8 @@ class EmailSentFragment : Fragment(R.layout.fragment_email_sent), KodeinAware {
 
     private fun setupUI() {
         okButton.setOnClickListener {
-            val action = EmailSentFragmentDirections.actionEmailSentFragmentToEnterCodeFragment()
-            findNavController().navigate(action)
+//            val action = EmailSentFragmentDirections.actionEmailSentFragmentToEnterCodeFragment()
+//            findNavController().navigate(action)
         }
     }
 

@@ -42,7 +42,7 @@
                 android:id="@+id/tag_settings_item_layout"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:paddingBottom="32dp">
+                android:paddingBottom="24dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tagImageView"
@@ -307,35 +307,51 @@
 
                 <Button
                     android:id="@+id/calibrateHumidityButton"
-                    android:background="@drawable/button_rounded_corners"
-                    android:fontFamily="@font/montserrat_bold"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    style="@style/roundButton"
                     android:text="@string/calibration_humidity_button"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rawValuesLayout" />
 
                 <Button
+                    android:id="@+id/claimTagButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    style="@style/roundButton"
+                    android:text="@string/claim_tag_button"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="@+id/shareTagButton"
+                    app:layout_constraintTop_toBottomOf="@+id/calibrateHumidityButton" />
+
+                <Button
+                    android:id="@+id/shareTagButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    style="@style/roundButton"
+                    android:text="@string/share_tag_button"
+                    app:layout_constraintLeft_toLeftOf="@+id/claimTagButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/calibrateHumidityButton" />
+
+                <Button
                     android:id="@+id/removeTagButton"
-                    android:background="@drawable/button_rounded_corners"
-                    android:fontFamily="@font/montserrat_bold"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
                     android:text="@string/remove_this_ruuvitag"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
+                    style="@style/roundButton"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/calibrateHumidityButton" />
+                    app:layout_constraintTop_toBottomOf="@id/claimTagButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

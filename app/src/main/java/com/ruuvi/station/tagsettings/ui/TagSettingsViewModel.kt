@@ -1,38 +1,38 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-@ExperimentalCoroutinesApi
 class TagSettingsViewModel(
     val tagId: String,
     private val interactor: TagSettingsInteractor,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkInteractor: RuuviNetworkInteractor
 ) : ViewModel() {
 
     var tagAlarms: List<Alarm> = ArrayList()
     var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
     var file: Uri? = null
 
-    private val tagState = MutableStateFlow<RuuviTagEntity?>(null)
-    val tagFlow: StateFlow<RuuviTagEntity?> = tagState
+    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
+    val tagObserve: LiveData<RuuviTagEntity?> = tagState
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            tagState.value = getTagById(tagId)
-        }
-    }
+    private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
+    val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
+
+    private val tagClaimed = MutableLiveData<Boolean> (networkInteractor.tagIsClaimed(tagId))
+    val tagClaimedObserve: LiveData<Boolean> = tagClaimed
+
+    private val operationStatus = MutableLiveData<String> ("")
+    val operationStatusObserve: LiveData<String> = operationStatus
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
@@ -50,4 +50,32 @@ class TagSettingsViewModel(
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
+
+    fun claimSensor() {
+        val tag = tagState.value
+        if (tag != null) {
+            networkInteractor.claimSensor(tag) {
+                tagClaimed.value = networkInteractor.tagIsClaimed(tagId)
+                if (it == null || it.error.isNullOrEmpty() == false) {
+                    operationStatus.value = "Failed to claim tag"
+                } else {
+                    operationStatus.value = "Tag successfully claimed"
+                }
+            }
+        }
+    }
+
+    fun shareSensor(recipientEmail: String) {
+        if (recipientEmail.isNotEmpty()) {
+            networkInteractor.shareSensor(recipientEmail, tagId) {
+                if (it == null || it.error.isNullOrEmpty() == false) {
+                    operationStatus.value = "Failed to share tag to $recipientEmail"
+                } else {
+                    operationStatus.value = "Tag shared with $recipientEmail"
+                }
+            }
+        }
+    }
+
+    fun statusProcessed() { operationStatus.value = "" }
 }

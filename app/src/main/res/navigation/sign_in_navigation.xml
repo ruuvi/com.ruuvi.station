@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_emailEnterFragment_to_enterCodeFragment"
             app:destination="@id/enterCodeFragment" />
-        <action
-            android:id="@+id/action_emailEnterFragment_to_emailSentFragment"
-            app:destination="@id/emailSentFragment" />
     </fragment>
     <fragment
         android:id="@+id/enterCodeFragment"
@@ -25,15 +22,6 @@
         <action
             android:id="@+id/action_enterCodeFragment_to_signedInFragment"
             app:destination="@id/signedInFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/emailSentFragment"
-        android:name="com.ruuvi.station.network.ui.EmailSentFragment"
-        android:label="fragment_email_sent"
-        tools:layout="@layout/fragment_email_sent" >
-        <action
-            android:id="@+id/action_emailSentFragment_to_enterCodeFragment"
-            app:destination="@id/enterCodeFragment" />
     </fragment>
     <fragment
         android:id="@+id/signedInFragment"

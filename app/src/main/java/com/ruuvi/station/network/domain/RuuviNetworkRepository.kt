@@ -1,8 +1,9 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.network.data.ClaimTagRequest
-import com.ruuvi.station.network.data.UserRegisterRequest
-import com.ruuvi.station.network.data.UserRegisterResponse
+import com.ruuvi.station.network.data.request.ClaimSensorRequest
+import com.ruuvi.station.network.data.request.ShareSensorRequest
+import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -45,15 +46,15 @@ class RuuviNetworkRepository {
         )
     }
 
-    fun verifyUser(token: String, onResult: (UserRegisterResponse?) -> Unit) {
+    fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         retrofitService.verifyUser(token).enqueue(
-            object : Callback<UserRegisterResponse> {
-                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+            object : Callback<UserVerifyResponse> {
+                override fun onFailure(call: Call<UserVerifyResponse>, t: Throwable) {
                     println(t)
                     onResult(null)
                 }
 
-                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                override fun onResponse(call: Call<UserVerifyResponse>, response: Response<UserVerifyResponse>) {
                     val registeredUser = response.body()
                     onResult(registeredUser)
                 }
@@ -61,15 +62,15 @@ class RuuviNetworkRepository {
         )
     }
 
-    fun getUserInfo(token: String, onResult: (UserRegisterResponse?) -> Unit) {
+    fun getUserInfo(token: String, onResult: (UserInfoResponse?) -> Unit) {
         retrofitService.getUserInfo("Bearer " + token).enqueue(
-            object : Callback<UserRegisterResponse> {
-                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+            object : Callback<UserInfoResponse> {
+                override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
                     println(t)
                     onResult(null)
                 }
 
-                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
                     val registeredUser = response.body()
                     onResult(registeredUser)
                 }
@@ -77,15 +78,31 @@ class RuuviNetworkRepository {
         )
     }
 
-    fun claimTag(tag: String, token: String, onResult: (UserRegisterResponse?) -> Unit) {
-        retrofitService.claimTag("Bearer " + token, ClaimTagRequest(tag)).enqueue(
-            object : Callback<UserRegisterResponse> {
-                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
+    fun claimSensor(request: ClaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
+        retrofitService.claimSensor("Bearer " + token, request).enqueue(
+            object : Callback<ClaimSensorResponse> {
+                override fun onFailure(call: Call<ClaimSensorResponse>, t: Throwable) {
                     println(t)
                     onResult(null)
                 }
 
-                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
+                override fun onResponse(call: Call<ClaimSensorResponse>, response: Response<ClaimSensorResponse>) {
+                    val registeredUser = response.body()
+                    onResult(registeredUser)
+                }
+            }
+        )
+    }
+
+    fun shareSensor(request: ShareSensorRequest, token: String, onResult: (ShareSensorResponse?) -> Unit) {
+        retrofitService.shareSensor("Bearer " + token, request).enqueue(
+            object : Callback<ShareSensorResponse> {
+                override fun onFailure(call: Call<ShareSensorResponse>, t: Throwable) {
+                    println(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<ShareSensorResponse>, response: Response<ShareSensorResponse>) {
                     val registeredUser = response.body()
                     onResult(registeredUser)
                 }
@@ -94,6 +111,6 @@ class RuuviNetworkRepository {
     }
 
     companion object {
-        private const val BASE_URL = "https://dhv743unoc.execute-api.eu-central-1.amazonaws.com/"
+        private const val BASE_URL = "https://network.ruuvi.com/"
     }
 }

@@ -1,13 +1,13 @@
 package com.ruuvi.station.network.ui
 
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.network.domain.NetworkTokenInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 
 class SignOutViewModel (
-    val tokenInteractor: NetworkTokenInteractor
+    val tokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 
     fun signOut() {
-        tokenInteractor.signOut()
+        tokenRepository.signOut()
     }
 }

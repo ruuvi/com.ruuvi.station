@@ -1,8 +1,9 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.network.data.ClaimTagRequest
-import com.ruuvi.station.network.data.UserRegisterRequest
-import com.ruuvi.station.network.data.UserRegisterResponse
+import com.ruuvi.station.network.data.request.ClaimSensorRequest
+import com.ruuvi.station.network.data.request.ShareSensorRequest
+import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.response.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -13,13 +14,17 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @GET("verify")
-    fun verifyUser(@Query("token") token: String): Call<UserRegisterResponse>
+    fun verifyUser(@Query("token") token: String): Call<UserVerifyResponse>
 
     @Headers("Content-Type: application/json")
     @GET("user")
-    fun getUserInfo(@Header("Authorization") auth: String): Call<UserRegisterResponse>
+    fun getUserInfo(@Header("Authorization") auth: String): Call<UserInfoResponse>
 
     @Headers("Content-Type: application/json")
     @POST("claim")
-    fun claimTag(@Header("Authorization") auth: String, @Body tag: ClaimTagRequest): Call<UserRegisterResponse>
+    fun claimSensor(@Header("Authorization") auth: String, @Body sensor: ClaimSensorRequest): Call<ClaimSensorResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("share")
+    fun shareSensor(@Header("Authorization")auth: String, @Body request: ShareSensorRequest): Call<ShareSensorResponse>
 }

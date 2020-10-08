@@ -67,4 +67,13 @@
         <item name="colorAccent">@color/main</item>
         <item name="android:textColorSecondary">@color/inactive</item>
     </style>
+
+    <style name="roundButton">
+        <item name="android:background">@drawable/button_rounded_corners</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

@@ -210,6 +210,7 @@
         Do you wish to disable optimization for the app?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="email">Email</string>
 
     <string name="temperature_reading" formatted="false">%1$,.2f</string>
     <string name="pressure_reading" formatted="false">%1$,.2f %2$s</string>
@@ -293,6 +294,7 @@
     <string name="permission_dialog_title">Permission needed</string>
     <string name="permission_dialog_request_message">Android operating system requires the app to access your location in order to scan nearby Bluetooth devices. Don\'t worry. Ruuvi Station won\'t track your movements.</string>
     <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
     <string name="unsaved_changes">Unsave changes</string>
@@ -349,6 +351,8 @@
     <string name="continuous_background_scanning">Continuous background scanning</string>
     <string name="background_scanning_disabled">Background scanning is disabled</string>
     <string name="disable_this_alarm">Disable this alarm</string>
+    <string name="claim_tag_button">Claim</string>
+    <string name="share_tag_button">Share</string>
     <string name="calibration_humidity_button">Calibrate hygrometer</string>
     <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See <a href="https://www.youtube.com/results?search_query=hygrometer+salt+calibration">video tutorials</a> on how to easily do it at home.</string>
     <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall &amp; install, you may need to recalibrate</string>
@@ -388,10 +392,12 @@
 - sensor data\n
 - bg images\n\n\n
 Register or request new sign in link:</string>
-    <string name="email_sent_description">Email sent.\n\n
+    <string name="email_sent_description">Email sent.\n
+\n
 Please check your email inbox for further instructions. </string>
     <string name="email_sent_note">NOTE: If account already exists  email has notification about merging data</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="signed_in_title">Congratulations!\n
 You\'ve logged to Ruuvi Network as:</string>
+    <string name="enter_email_share_tag">Enter email of user to share tag:</string>
 </resources>

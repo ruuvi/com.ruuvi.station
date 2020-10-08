@@ -1,7 +1,8 @@
 package com.ruuvi.station.network.di
 
 import com.ruuvi.station.network.domain.RuuviNetworkRepository
-import com.ruuvi.station.network.domain.NetworkTokenInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.network.ui.EmailEnterViewModel
 import com.ruuvi.station.network.ui.EnterCodeViewModel
 import com.ruuvi.station.network.ui.SignOutViewModel
@@ -16,18 +17,20 @@ object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
         bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository() }
 
-        bind<NetworkTokenInteractor>() with singleton { NetworkTokenInteractor(instance()) }
+        bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance()) }
+
+        bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance()) }
 
         bind<EmailEnterViewModel>() with provider {
-            EmailEnterViewModel(instance(), instance())
+            EmailEnterViewModel(instance())
         }
 
         bind<EnterCodeViewModel>() with provider {
-            EnterCodeViewModel(instance(), instance())
+            EnterCodeViewModel(instance())
         }
 
         bind<SignedInViewModel>() with provider {
-            SignedInViewModel(instance())
+            SignedInViewModel(instance(), instance())
         }
 
         bind<SignOutViewModel>() with provider {
