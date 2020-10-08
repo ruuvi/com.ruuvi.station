@@ -9,7 +9,7 @@ import com.ruuvi.station.R
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.fragment_enter_code.*
 
 class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
