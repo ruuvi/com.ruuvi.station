@@ -1,16 +1,19 @@
 package com.ruuvi.station.network.domain
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ShareSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.data.response.*
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
+import java.lang.Exception
+
 
 class RuuviNetworkRepository {
 
@@ -39,8 +42,13 @@ class RuuviNetworkRepository {
                 }
 
                 override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
-                    val registeredUser = response.body()
-                    onResult(registeredUser)
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<UserRegisterResponse>() {}.type
+                        var errorResponse: UserRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
                 }
             }
         )
@@ -50,29 +58,41 @@ class RuuviNetworkRepository {
         retrofitService.verifyUser(token).enqueue(
             object : Callback<UserVerifyResponse> {
                 override fun onFailure(call: Call<UserVerifyResponse>, t: Throwable) {
-                    println(t)
+                    Timber.e(t)
                     onResult(null)
                 }
 
                 override fun onResponse(call: Call<UserVerifyResponse>, response: Response<UserVerifyResponse>) {
-                    val registeredUser = response.body()
-                    onResult(registeredUser)
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<UserVerifyResponse>() {}.type
+                        var errorResponse: UserVerifyResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
                 }
             }
         )
     }
 
+
+
     fun getUserInfo(token: String, onResult: (UserInfoResponse?) -> Unit) {
         retrofitService.getUserInfo("Bearer " + token).enqueue(
             object : Callback<UserInfoResponse> {
                 override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
-                    println(t)
+                    Timber.e(t)
                     onResult(null)
                 }
 
                 override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
-                    val registeredUser = response.body()
-                    onResult(registeredUser)
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<UserInfoResponse>() {}.type
+                        var errorResponse: UserInfoResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
                 }
             }
         )
@@ -82,13 +102,18 @@ class RuuviNetworkRepository {
         retrofitService.claimSensor("Bearer " + token, request).enqueue(
             object : Callback<ClaimSensorResponse> {
                 override fun onFailure(call: Call<ClaimSensorResponse>, t: Throwable) {
-                    println(t)
+                    Timber.e(t)
                     onResult(null)
                 }
 
                 override fun onResponse(call: Call<ClaimSensorResponse>, response: Response<ClaimSensorResponse>) {
-                    val registeredUser = response.body()
-                    onResult(registeredUser)
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<ClaimSensorResponse>() {}.type
+                        var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
                 }
             }
         )
@@ -98,16 +123,32 @@ class RuuviNetworkRepository {
         retrofitService.shareSensor("Bearer " + token, request).enqueue(
             object : Callback<ShareSensorResponse> {
                 override fun onFailure(call: Call<ShareSensorResponse>, t: Throwable) {
-                    println(t)
+                    Timber.e(t)
                     onResult(null)
                 }
 
                 override fun onResponse(call: Call<ShareSensorResponse>, response: Response<ShareSensorResponse>) {
-                    val registeredUser = response.body()
-                    onResult(registeredUser)
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<ShareSensorResponse>() {}.type
+                        var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
                 }
             }
         )
+    }
+
+    fun <T>parseError(errorBody: ResponseBody?): T? {
+        try {
+            val type = object : TypeToken<T>() {}.type
+            var errorResponse: T? = Gson().fromJson(errorBody?.charStream(), type)
+            return errorResponse
+        } catch (e: Exception) {
+            Timber.e(e)
+            return null
+        }
     }
 
     companion object {

@@ -33,7 +33,7 @@ class RuuviNetworkInteractor (
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         networkRepository.verifyUser(token) { response ->
             response?.let {
-                if (response.error.isNullOrEmpty()) {
+                if (response.error.isNullOrEmpty() && response.data != null) {
                     tokenRepository.saveTokenInfo(
                         NetworkTokenInfo(response.data.email, response.data.accessToken))
                     getUserInfo() {}
@@ -58,7 +58,9 @@ class RuuviNetworkInteractor (
     fun tagIsClaimed(mac: String): Boolean {
         val userInfo = userInfo
         userInfo?.let {
-            return userInfo.data.sensors.any { it.sensor == mac }
+            if (userInfo.data != null) {
+                return userInfo.data.sensors.any { it.sensor == mac }
+            }
         }
         return false
     }

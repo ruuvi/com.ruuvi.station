@@ -26,7 +26,9 @@ class SignedInViewModel (
         networkInteractor.getUserInfo {
             it?.let {
                 val sb = StringBuilder()
-                it.data.sensors.forEach { sb.appendln("${it.sensor} (${it.name})") }
+                if (it.data!= null) {
+                    it.data.sensors.forEach { sb.appendln("${it.sensor} (${it.name})") }
+                }
                 tagsList.value = sb.toString()
             }
         }
@@ -36,8 +38,8 @@ class SignedInViewModel (
 
     fun addMissingTags() {
         networkInteractor.getUserInfo {
-            it?.let {
-                it.data.sensors.forEach {sensor->
+            it?.data?.let {
+                it.sensors.forEach {sensor->
                     var tagDb = tagRepository.getTagById(sensor.sensor)
                     if (tagDb == null) {
                         tagDb = RuuviTagEntity()

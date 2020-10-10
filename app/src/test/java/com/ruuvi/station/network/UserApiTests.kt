@@ -4,41 +4,48 @@ import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ShareSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.domain.RuuviNetworkRepository
+import org.junit.Assert
 import org.junit.Test
 
 class UserApiTests {
-
     @Test
     fun TestRegisterUser() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
 
-        val user = UserRegisterRequest("andreev.denis@gmail.com")
-        networkRepository.registerUser(user) {
-            if (it != null) {
-                println("response: ")
-                println(it)
-            } else {
-                println("empty response")
-            }
+        networkRepository.registerUser(UserRegisterRequest(sacrificialEmail)) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
+            Assert.assertEquals(sacrificialEmail, it?.data?.email)
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }
     }
 
     @Test
-    fun TestVerifyUser() {
+    fun TestRegisterUserError() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
 
-        val token = "UF7K2U"
-        networkRepository.verifyUser(token) {
-            if (it != null) {
-                println("response: ")
-                println(it)
-            } else {
-                println("empty response")
-            }
+        networkRepository.registerUser(UserRegisterRequest("11111")) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data == null)
+            Assert.assertEquals(errorResult, it?.result)
+            synchronized(lock1) { lock1.notify() }
+        }
+        synchronized(lock1) { lock1.wait() }
+    }
+
+    @Test
+    fun TestVerifyUserError() {
+        val lock1 = Object()
+        val networkRepository = RuuviNetworkRepository()
+
+        networkRepository.verifyUser(fakeCode) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data == null)
+            Assert.assertEquals(errorResult, it?.result)
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }
@@ -49,14 +56,12 @@ class UserApiTests {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
 
-        val token = "7531/L6gN2uwABFfsJI8R0tc6BPHCjnscxlxx7sjed2pEO4csHj8RPoLdsWZo9CrGtyHJ"
-        networkRepository.getUserInfo(token) {
-            if (it != null) {
-                println("response: ")
-                println(it)
-            } else {
-                println("empty response")
-            }
+        networkRepository.getUserInfo(accessToken) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
+            Assert.assertEquals(sacrificialEmail, it?.data?.email)
+            //todo add data.sensors test here
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }
@@ -67,14 +72,11 @@ class UserApiTests {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
 
-        val token = "7531/L6gN2uwABFfsJI8R0tc6BPHCjnscxlxx7sjed2pEO4csHj8RPoLdsWZo9CrGtyHJ"
-        networkRepository.claimSensor(ClaimSensorRequest("some tag2", "D0:FA:46:09:9E:7A"), token) {
-            if (it != null) {
-                println("response: ")
-                println(it)
-            } else {
-                println("empty response")
-            }
+        //todo add unclaim
+        networkRepository.claimSensor(ClaimSensorRequest("some tag2", "D0:D0:D0:D0:D0:D0"), accessToken) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }
@@ -84,17 +86,22 @@ class UserApiTests {
     fun TestShareTag() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
-        val token = "7531/L6gN2uwABFfsJI8R0tc6BPHCjnscxlxx7sjed2pEO4csHj8RPoLdsWZo9CrGtyHJ"
 
-        networkRepository.shareSensor(ShareSensorRequest("denis@ruuvi.com", "D0:FA:46:09:9E:7A"), token) {
-            if (it != null) {
-                println("response: ")
-                println(it)
-            } else {
-                println("empty response")
-            }
+        //todo add claim, share, unshare, unclaim
+        networkRepository.shareSensor(ShareSensorRequest("denis@ruuvi.com", "D0:D0:D0:D0:D0:D0"), accessToken) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }
+    }
+
+    companion object {
+        val sacrificialEmail = "mzad1203@gmail.com"
+        val fakeCode = "XXXXXX"
+        val accessToken = "753131/Sp5D6Geb8w0oZBtkMZcVfjH56i0AuzCvEGkMAPjifZeuDMKwnU1xWxXh9jVZ9tYl"
+        val errorResult = "error"
+        val successResult = "success"
     }
 }
