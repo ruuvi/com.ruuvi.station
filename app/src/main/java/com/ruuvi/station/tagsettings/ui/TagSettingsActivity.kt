@@ -109,6 +109,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             alert.setNegativeButton(getString(R.string.cancel), null)
             alert.show()
         }
+
+        getTagDataButton.setDebouncedOnClickListener {
+            viewModel.getSensorData()
+        }
     }
 
     private fun setupViewModel() {
@@ -140,9 +144,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (it == true) {
                 claimTagButton.isEnabled = false
                 shareTagButton.isEnabled = true
+                getTagDataButton.isEnabled = true
             } else {
                 claimTagButton.isEnabled = true
                 shareTagButton.isEnabled = false
+                getTagDataButton.isEnabled = false
             }
         })
 

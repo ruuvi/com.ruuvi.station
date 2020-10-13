@@ -86,4 +86,13 @@ class RuuviNetworkInteractor (
             }
         }
     }
+
+    fun getSensorData(sensor: String, onResult: (GetSensorDataResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            networkRepository.getSensorData(token, sensor) { response ->
+                onResult(response)
+            }
+        }
+    }
 }

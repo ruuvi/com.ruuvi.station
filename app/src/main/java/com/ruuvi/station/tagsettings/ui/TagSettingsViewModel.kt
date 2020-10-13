@@ -78,4 +78,17 @@ class TagSettingsViewModel(
     }
 
     fun statusProcessed() { operationStatus.value = "" }
+
+    fun getSensorData() {
+        val tag = tagState.value?.id
+        if (tag != null) {
+            networkInteractor.getSensorData(tag) {
+                if (it == null || it.error.isNullOrEmpty() == false) {
+                    operationStatus.value = "Failed to get tag data"
+                } else {
+
+                }
+            }
+        }
+    }
 }

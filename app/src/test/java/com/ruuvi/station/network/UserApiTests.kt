@@ -1,7 +1,9 @@
 package com.ruuvi.station.network
 
+import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ShareSensorRequest
+import com.ruuvi.station.network.data.request.UnclaimSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.domain.RuuviNetworkRepository
 import org.junit.Assert
@@ -83,6 +85,21 @@ class UserApiTests {
     }
 
     @Test
+    fun TestUnclaimTag() {
+        val lock1 = Object()
+        val networkRepository = RuuviNetworkRepository()
+
+        //todo add unclaim
+        networkRepository.unclaimSensor(UnclaimSensorRequest("D6:78:01:D8:86:99"), accessToken) {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
+            synchronized(lock1) { lock1.notify() }
+        }
+        synchronized(lock1) { lock1.wait() }
+    }
+
+    @Test
     fun TestShareTag() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository()
@@ -92,6 +109,23 @@ class UserApiTests {
             Assert.assertTrue(it != null)
             Assert.assertTrue(it?.data != null)
             Assert.assertEquals(successResult, it?.result)
+            synchronized(lock1) { lock1.notify() }
+        }
+        synchronized(lock1) { lock1.wait() }
+    }
+
+    @Test
+    fun TestGetSensorData() {
+        val lock1 = Object()
+        val networkRepository = RuuviNetworkRepository()
+
+        networkRepository.getSensorData(accessToken, "ea:ec:a6:1c:fc:9d") {
+            Assert.assertTrue(it != null)
+            Assert.assertTrue(it?.data != null)
+            Assert.assertEquals(successResult, it?.result)
+            val sens = it?.data?.measurements?.first()
+            val tag = BluetoothLibrary.decode(sens!!.sensor, sens!!.data, sens!!.rssi)
+            println(it.toString())
             synchronized(lock1) { lock1.notify() }
         }
         synchronized(lock1) { lock1.wait() }

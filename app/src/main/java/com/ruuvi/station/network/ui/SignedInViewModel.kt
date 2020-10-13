@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.network.domain.NetworkTokenRepository
+import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
-import java.lang.StringBuilder
 import java.util.*
 
 class SignedInViewModel (
@@ -16,8 +15,8 @@ class SignedInViewModel (
 ) : ViewModel() {
     val emailObserve: LiveData<String> = MutableLiveData(networkInteractor.getEmail())
 
-    val tagsList = MutableLiveData("")
-    val tagsObserve: LiveData<String> = tagsList
+    val tagsList = MutableLiveData(listOf<SensorDataResponse>())
+    val tagsObserve: LiveData<List<SensorDataResponse>> = tagsList
 
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
@@ -25,11 +24,7 @@ class SignedInViewModel (
     init {
         networkInteractor.getUserInfo {
             it?.let {
-                val sb = StringBuilder()
-                if (it.data!= null) {
-                    it.data.sensors.forEach { sb.appendln("${it.sensor} (${it.name})") }
-                }
-                tagsList.value = sb.toString()
+                tagsList.value = it.data?.sensors
             }
         }
     }

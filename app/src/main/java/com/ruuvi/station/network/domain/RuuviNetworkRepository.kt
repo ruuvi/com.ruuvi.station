@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ShareSensorRequest
+import com.ruuvi.station.network.data.request.UnclaimSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.data.response.*
 import okhttp3.OkHttpClient
@@ -119,6 +120,27 @@ class RuuviNetworkRepository {
         )
     }
 
+    fun unclaimSensor(request: UnclaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
+        retrofitService.unclaimSensor("Bearer " + token, request).enqueue(
+            object : Callback<ClaimSensorResponse> {
+                override fun onFailure(call: Call<ClaimSensorResponse>, t: Throwable) {
+                    Timber.e(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<ClaimSensorResponse>, response: Response<ClaimSensorResponse>) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<ClaimSensorResponse>() {}.type
+                        var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
+                }
+            }
+        )
+    }
+
     fun shareSensor(request: ShareSensorRequest, token: String, onResult: (ShareSensorResponse?) -> Unit) {
         retrofitService.shareSensor("Bearer " + token, request).enqueue(
             object : Callback<ShareSensorResponse> {
@@ -133,6 +155,27 @@ class RuuviNetworkRepository {
                     } else {
                         val type = object : TypeToken<ShareSensorResponse>() {}.type
                         var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                        onResult(errorResponse)
+                    }
+                }
+            }
+        )
+    }
+
+    fun getSensorData(token: String, sensor: String, onResult: (GetSensorDataResponse?) -> Unit) {
+        retrofitService.getSensorData("Bearer " + token, sensor).enqueue(
+            object : Callback<GetSensorDataResponse> {
+                override fun onFailure(call: Call<GetSensorDataResponse>, t: Throwable) {
+                    Timber.e(t)
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<GetSensorDataResponse>, response: Response<GetSensorDataResponse>) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        val type = object : TypeToken<GetSensorDataResponse>() {}.type
+                        var errorResponse: GetSensorDataResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
                         onResult(errorResponse)
                     }
                 }

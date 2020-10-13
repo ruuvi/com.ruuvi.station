@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_signed_in.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
+import java.lang.StringBuilder
 
 class SignedInFragment : Fragment(R.layout.fragment_signed_in) , KodeinAware {
 
@@ -45,8 +46,17 @@ class SignedInFragment : Fragment(R.layout.fragment_signed_in) , KodeinAware {
             emailTextView.text = it
         })
 
-        viewModel.tagsObserve.observe(viewLifecycleOwner, Observer {
-            sensorsTextView.text = it
+        viewModel.tagsObserve.observe(viewLifecycleOwner, Observer { sensors ->
+            val owned = sensors.filter { it.owner }
+            val shared = sensors.filter { !it.owner }
+
+            val sb = StringBuilder()
+            owned.forEach { sb.appendln("${it.sensor} (${it.name})") }
+            if (shared.isNotEmpty()) {
+                sb.appendln("Tags shared with you: ")
+                shared.forEach { sb.appendln("${it.sensor} (${it.name})") }
+            }
+            sensorsTextView.text = sb.toString()
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {
