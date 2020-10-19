@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.domain.NetworkDataRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import java.util.*
 
 class SignedInViewModel (
     val networkInteractor: RuuviNetworkInteractor,
-    val tagRepository: TagRepository
+    val tagRepository: TagRepository,
+    val networkDataRepository: NetworkDataRepository
 ) : ViewModel() {
     val emailObserve: LiveData<String> = MutableLiveData(networkInteractor.getEmail())
 
@@ -33,24 +35,25 @@ class SignedInViewModel (
 
     fun addMissingTags() {
         networkInteractor.getUserInfo {
-            it?.data?.let {
-                it.sensors.forEach {sensor->
+            it?.data?.let { body->
+                body.sensors.forEach {sensor->
                     var tagDb = tagRepository.getTagById(sensor.sensor)
                     if (tagDb == null) {
                         tagDb = RuuviTagEntity()
                         tagDb.id = sensor.sensor
-                        tagDb.name = sensor.name
+                        tagDb.name = if (sensor.name.isEmpty()) sensor.sensor else sensor.name
                         tagDb.favorite = true
                         tagDb.updateAt = Date()
                         tagDb.insert()
                     } else {
                         tagDb.favorite = true
                         tagDb.updateAt = Date()
-                        tagDb.name = sensor.name
+                        if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
                         tagDb.update()
                     }
                 }
                 operationStatus.value = "done"
+                networkDataRepository.updateSensorsData(body)
             }
         }
     }

@@ -5,35 +5,51 @@ import com.ruuvi.station.network.data.request.ShareSensorRequest
 import com.ruuvi.station.network.data.request.UnclaimSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.data.response.*
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface RuuviNetworkApi{
     @Headers("Content-Type: application/json")
     @POST("register")
-    fun registerUser(@Body request: UserRegisterRequest): Call<UserRegisterResponse>
+    suspend fun registerUser(@Body request: UserRegisterRequest): Response<UserRegisterResponse>
 
     @Headers("Content-Type: application/json")
     @GET("verify")
-    fun verifyUser(@Query("token") token: String): Call<UserVerifyResponse>
+    suspend fun verifyUser(@Query("token") token: String): Response<UserVerifyResponse>
 
     @Headers("Content-Type: application/json")
     @GET("user")
-    fun getUserInfo(@Header("Authorization") auth: String): Call<UserInfoResponse>
+    suspend fun getUserInfo(@Header("Authorization") auth: String): Response<UserInfoResponse>
 
     @Headers("Content-Type: application/json")
     @POST("claim")
-    fun claimSensor(@Header("Authorization") auth: String, @Body sensor: ClaimSensorRequest): Call<ClaimSensorResponse>
+    suspend fun claimSensor(
+        @Header("Authorization") auth: String,
+        @Body sensor: ClaimSensorRequest
+    ): Response<ClaimSensorResponse>
 
     @Headers("Content-Type: application/json")
     @POST("unclaim")
-    fun unclaimSensor(@Header("Authorization") auth: String, @Body sensor: UnclaimSensorRequest): Call<ClaimSensorResponse>
+    suspend fun unclaimSensor(
+        @Header("Authorization") auth: String,
+        @Body sensor: UnclaimSensorRequest
+    ): Response<ClaimSensorResponse>
 
     @Headers("Content-Type: application/json")
     @POST("share")
-    fun shareSensor(@Header("Authorization")auth: String, @Body request: ShareSensorRequest): Call<ShareSensorResponse>
+    suspend fun shareSensor(
+        @Header("Authorization")auth: String,
+        @Body request: ShareSensorRequest
+    ): Response<ShareSensorResponse>
 
     @Headers("Content-Type: application/json")
     @GET("get")
-    fun getSensorData(@Header("Authorization") auth: String, @Query("sensor") sensor: String): Call<GetSensorDataResponse>
+    suspend fun getSensorData(
+        @Header("Authorization") auth: String,
+        @Query("sensor") sensor: String,
+        @Query("since") since: Long?,
+        @Query("until") until: Long?,
+        @Query("sort") sort: String?,
+        @Query("limit") limit: Int?
+    ): Response<GetSensorDataResponse>
 }

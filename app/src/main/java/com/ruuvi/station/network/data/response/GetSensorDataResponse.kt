@@ -1,8 +1,8 @@
 package com.ruuvi.station.network.data.response
 
-typealias GetSensorDataResponse = RuuviNetworkResponse<GetSensorDataDataResponse>
+typealias GetSensorDataResponse = RuuviNetworkResponse<GetSensorDataResponseBody>
 
-data class GetSensorDataDataResponse (
+data class GetSensorDataResponseBody (
     val sensor: String,
     val total: Int,
     val measurements: List<SensorDataMeasurementResponse>

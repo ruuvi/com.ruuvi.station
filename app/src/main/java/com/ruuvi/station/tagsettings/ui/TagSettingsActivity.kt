@@ -112,6 +112,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         getTagDataButton.setDebouncedOnClickListener {
             viewModel.getSensorData()
+            getTagDataButton.isEnabled = false
         }
     }
 
@@ -164,7 +165,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     override fun onPause() {
         super.onPause()
 
-        viewModel.updateTag()
+        //viewModel.updateTag()
         saveOrUpdateAlarmItems()
     }
 
@@ -175,7 +176,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.file != null) {
                 val rotation = getCameraPhotoOrientation(viewModel.file)
                 resize(viewModel.file, rotation)
-                viewModel.tagObserve.value?.userBackground = viewModel.file.toString()
+                viewModel.setUserBackground(viewModel.file.toString())
                 val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                 tagImageView.setImageBitmap(background)
             }
@@ -213,7 +214,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val uri = Uri.fromFile(photoFile)
                         val rotation = getCameraPhotoOrientation(uri)
                         resize(uri, rotation)
-                        viewModel.tagObserve.value?.userBackground = uri.toString()
+                        viewModel.setUserBackground(uri.toString())
                         val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                         tagImageView.setImageBitmap(background)
                     }
@@ -287,9 +288,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             builder.setView(container)
 
             builder.setPositiveButton("Ok") { _: DialogInterface?, _: Int ->
-                tag.name = input.text.toString()
-
-                tagNameInputTextView.text = tag.name
+                viewModel.setName(input.text.toString())
             }
 
             builder.setNegativeButton("Cancel", null)

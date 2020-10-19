@@ -1,19 +1,25 @@
 package com.ruuvi.station.network
 
-import com.ruuvi.station.bluetooth.BluetoothLibrary
-import com.ruuvi.station.network.data.request.ClaimSensorRequest
-import com.ruuvi.station.network.data.request.ShareSensorRequest
-import com.ruuvi.station.network.data.request.UnclaimSensorRequest
-import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.domain.RuuviNetworkRepository
+import com.ruuvi.station.rules.CoroutineTestRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
+import org.junit.Rule
 import org.junit.Test
+import java.util.*
 
+@ExperimentalCoroutinesApi
 class UserApiTests {
+    @get:Rule
+    val coroutineTestRule = CoroutineTestRule()
+
     @Test
     fun TestRegisterUser() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         networkRepository.registerUser(UserRegisterRequest(sacrificialEmail)) {
             Assert.assertTrue(it != null)
@@ -28,7 +34,7 @@ class UserApiTests {
     @Test
     fun TestRegisterUserError() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         networkRepository.registerUser(UserRegisterRequest("11111")) {
             Assert.assertTrue(it != null)
@@ -42,7 +48,7 @@ class UserApiTests {
     @Test
     fun TestVerifyUserError() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         networkRepository.verifyUser(fakeCode) {
             Assert.assertTrue(it != null)
@@ -56,7 +62,7 @@ class UserApiTests {
     @Test
     fun TestGetUserData() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         networkRepository.getUserInfo(accessToken) {
             Assert.assertTrue(it != null)
@@ -72,7 +78,7 @@ class UserApiTests {
     @Test
     fun TestClaimTag() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         //todo add unclaim
         networkRepository.claimSensor(ClaimSensorRequest("some tag2", "D0:D0:D0:D0:D0:D0"), accessToken) {
@@ -87,7 +93,7 @@ class UserApiTests {
     @Test
     fun TestUnclaimTag() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         //todo add unclaim
         networkRepository.unclaimSensor(UnclaimSensorRequest("D6:78:01:D8:86:99"), accessToken) {
@@ -102,7 +108,7 @@ class UserApiTests {
     @Test
     fun TestShareTag() {
         val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
 
         //todo add claim, share, unshare, unclaim
         networkRepository.shareSensor(ShareSensorRequest("denis@ruuvi.com", "D0:D0:D0:D0:D0:D0"), accessToken) {
@@ -114,21 +120,24 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
-    fun TestGetSensorData() {
-        val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository()
+    fun TestGetSensorData() = runBlocking{
+        val networkRepository = RuuviNetworkRepository(coroutineTestRule.dispatcher)
 
-        networkRepository.getSensorData(accessToken, "ea:ec:a6:1c:fc:9d") {
-            Assert.assertTrue(it != null)
-            Assert.assertTrue(it?.data != null)
-            Assert.assertEquals(successResult, it?.result)
-            val sens = it?.data?.measurements?.first()
-            val tag = BluetoothLibrary.decode(sens!!.sensor, sens!!.data, sens!!.rssi)
-            println(it.toString())
-            synchronized(lock1) { lock1.notify() }
-        }
-        synchronized(lock1) { lock1.wait() }
+        val request = GetSensorDataRequest(
+            sensor = "C6:02:66:2B:09:C8",
+            since = Date(),
+            sort = "asc",
+            limit = 100
+        )
+
+        val result = networkRepository.getSensorData(accessToken, request)
+
+        Assert.assertTrue(result != null)
+        Assert.assertTrue(result?.data != null)
+        Assert.assertEquals(successResult, result?.result)
+
     }
 
     companion object {

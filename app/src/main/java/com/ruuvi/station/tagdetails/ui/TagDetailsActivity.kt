@@ -176,6 +176,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun listenToShowGraph() {
         viewModel.isShowGraphObserve.observe(this, Observer {
+            adapter.showGraph = it
             animateGraphTransition(it)
         })
     }
@@ -355,7 +356,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             simpleAlert.show()
                         }
                     }
-                    adapter.showGraph = !adapter.showGraph
                 }
             }
             R.id.action_settings -> {

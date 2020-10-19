@@ -1,12 +1,12 @@
 package com.ruuvi.station.network.domain
 
+import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.ruuvi.station.network.data.request.ClaimSensorRequest
-import com.ruuvi.station.network.data.request.ShareSensorRequest
-import com.ruuvi.station.network.data.request.UnclaimSensorRequest
-import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
+import com.ruuvi.station.util.extensions.getEpochSecond
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -16,7 +16,12 @@ import timber.log.Timber
 import java.lang.Exception
 
 
-class RuuviNetworkRepository {
+class RuuviNetworkRepository
+    @VisibleForTesting internal constructor(
+        val dispatcher: CoroutineDispatcher
+    )
+{
+    val ioScope = CoroutineScope(Dispatchers.IO)
 
     private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().also {
         it.level = HttpLoggingInterceptor.Level.BODY;
@@ -35,153 +40,129 @@ class RuuviNetworkRepository {
     }
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
-        retrofitService.registerUser(user).enqueue(
-            object : Callback<UserRegisterResponse> {
-                override fun onFailure(call: Call<UserRegisterResponse>, t: Throwable) {
-                    println(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<UserRegisterResponse>, response: Response<UserRegisterResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<UserRegisterResponse>() {}.type
-                        var errorResponse: UserRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.registerUser(user)
+            var result: UserRegisterResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<UserRegisterResponse>() {}.type
+                var errorResponse: UserRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
-        retrofitService.verifyUser(token).enqueue(
-            object : Callback<UserVerifyResponse> {
-                override fun onFailure(call: Call<UserVerifyResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<UserVerifyResponse>, response: Response<UserVerifyResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<UserVerifyResponse>() {}.type
-                        var errorResponse: UserVerifyResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.verifyUser(token)
+            var result: UserVerifyResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<UserVerifyResponse>() {}.type
+                var errorResponse: UserVerifyResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
 
 
     fun getUserInfo(token: String, onResult: (UserInfoResponse?) -> Unit) {
-        retrofitService.getUserInfo("Bearer " + token).enqueue(
-            object : Callback<UserInfoResponse> {
-                override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<UserInfoResponse>() {}.type
-                        var errorResponse: UserInfoResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.getUserInfo("Bearer " + token)
+            var result: UserInfoResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<UserInfoResponse>() {}.type
+                var errorResponse: UserInfoResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
     fun claimSensor(request: ClaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
-        retrofitService.claimSensor("Bearer " + token, request).enqueue(
-            object : Callback<ClaimSensorResponse> {
-                override fun onFailure(call: Call<ClaimSensorResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<ClaimSensorResponse>, response: Response<ClaimSensorResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<ClaimSensorResponse>() {}.type
-                        var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.claimSensor("Bearer " + token, request)
+            var result: ClaimSensorResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<ClaimSensorResponse>() {}.type
+                var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
     fun unclaimSensor(request: UnclaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
-        retrofitService.unclaimSensor("Bearer " + token, request).enqueue(
-            object : Callback<ClaimSensorResponse> {
-                override fun onFailure(call: Call<ClaimSensorResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<ClaimSensorResponse>, response: Response<ClaimSensorResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<ClaimSensorResponse>() {}.type
-                        var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.unclaimSensor("Bearer " + token, request)
+            var result: ClaimSensorResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<ClaimSensorResponse>() {}.type
+                var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
     fun shareSensor(request: ShareSensorRequest, token: String, onResult: (ShareSensorResponse?) -> Unit) {
-        retrofitService.shareSensor("Bearer " + token, request).enqueue(
-            object : Callback<ShareSensorResponse> {
-                override fun onFailure(call: Call<ShareSensorResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<ShareSensorResponse>, response: Response<ShareSensorResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<ShareSensorResponse>() {}.type
-                        var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
+        ioScope.launch {
+            val response = retrofitService.shareSensor("Bearer " + token, request)
+            var result: ShareSensorResponse? = null
+            if (response.isSuccessful) {
+                result = response.body()
+            } else {
+                val type = object : TypeToken<ShareSensorResponse>() {}.type
+                var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                result = errorResponse
             }
-        )
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
     }
 
-    fun getSensorData(token: String, sensor: String, onResult: (GetSensorDataResponse?) -> Unit) {
-        retrofitService.getSensorData("Bearer " + token, sensor).enqueue(
-            object : Callback<GetSensorDataResponse> {
-                override fun onFailure(call: Call<GetSensorDataResponse>, t: Throwable) {
-                    Timber.e(t)
-                    onResult(null)
-                }
-
-                override fun onResponse(call: Call<GetSensorDataResponse>, response: Response<GetSensorDataResponse>) {
-                    if (response.isSuccessful) {
-                        onResult(response.body())
-                    } else {
-                        val type = object : TypeToken<GetSensorDataResponse>() {}.type
-                        var errorResponse: GetSensorDataResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                        onResult(errorResponse)
-                    }
-                }
-            }
+    suspend fun getSensorData(token: String, request: GetSensorDataRequest): GetSensorDataResponse? = withContext(dispatcher) {
+        val response = retrofitService.getSensorData(
+            "Bearer " + token,
+            request.sensor,
+            request.since?.getEpochSecond(),
+            request.until?.getEpochSecond(),
+            request.sort,
+            request.limit
         )
+        var result: GetSensorDataResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetSensorDataResponse>() {}.type
+            var errorResponse: GetSensorDataResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
     }
+
 
     fun <T>parseError(errorBody: ResponseBody?): T? {
         try {

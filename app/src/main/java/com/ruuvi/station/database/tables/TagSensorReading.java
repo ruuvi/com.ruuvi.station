@@ -7,9 +7,12 @@ import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction;
+import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Calendar;
@@ -82,6 +85,24 @@ public class TagSensorReading extends BaseModel {
         this.createdAt = new Date();
     }
 
+    public TagSensorReading(FoundRuuviTag tag, RuuviTagEntity tagEntry, long timestamp) {
+        this.ruuviTagId = tag.getId();
+        this.temperature = tag.getTemperature() != null ? tag.getTemperature() : 0.0;
+        this.humidity = tag.getHumidity() != null ? tag.getHumidity() : 0.0;
+        this.humidityOffset = tagEntry.getHumidityOffset();
+        this.pressure = tag.getPressure() != null ? tag.getPressure() : 0.0;
+        this.rssi = tag.getRssi() != null ? tag.getRssi() : 0;
+        this.accelX = tag.getAccelX() != null ? tag.getAccelX() : 0.0;
+        this.accelY = tag.getAccelY() != null ? tag.getAccelY() : 0.0;
+        this.accelZ = tag.getAccelZ() != null ? tag.getAccelZ() : 0.0;
+        this.voltage = tag.getVoltage() != null ? tag.getVoltage() : 0.0;
+        this.dataFormat = tag.getDataFormat() != null ? tag.getDataFormat() : 0;
+        this.txPower = tag.getTxPower() != null ? tag.getTxPower() : 0;
+        this.movementCounter = tag.getMovementCounter() != null ? tag.getMovementCounter() : 0;
+        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber() != null ? tag.getMeasurementSequenceNumber() : 0;
+        this.createdAt = new Date(timestamp * 1000);
+    }
+
     public static List<TagSensorReading> getForTag(String id) {
         return getForTag(id, 24);
     }
@@ -142,6 +163,12 @@ public class TagSensorReading extends BaseModel {
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .async()
                 .execute();
+    }
+
+    public static void saveList(List<TagSensorReading> readings) {
+        FastStoreModelTransaction
+                .insertBuilder(FlowManager.getModelAdapter(TagSensorReading.class))
+                .addAll(readings).build().execute(FlowManager.getWritableDatabase(LocalDatabase.class));
     }
 
     public static long countAll() {

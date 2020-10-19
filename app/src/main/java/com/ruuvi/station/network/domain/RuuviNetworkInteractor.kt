@@ -3,9 +3,14 @@ package com.ruuvi.station.network.domain
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
+import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.ShareSensorRequest
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.data.response.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
@@ -19,6 +24,8 @@ class RuuviNetworkInteractor (
     private fun getToken() = tokenRepository.getTokenInfo()
 
     private var userInfo: UserInfoResponse? = null
+
+    val mainScope = CoroutineScope(Dispatchers.Main)
 
     init {
         getUserInfo {}
@@ -87,12 +94,20 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun getSensorData(sensor: String, onResult: (GetSensorDataResponse?) -> Unit) {
+    fun getSensorData(request: GetSensorDataRequest, onResult: (GetSensorDataResponse?) -> Unit) {
+        val token = getToken()?.token
+        mainScope.launch {
+            token?.let {
+                val result = networkRepository.getSensorData(token, request )
+                onResult(result)
+            }
+        }
+    }
+
+    suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {
         val token = getToken()?.token
         token?.let {
-            networkRepository.getSensorData(token, sensor) { response ->
-                onResult(response)
-            }
+            return@withContext networkRepository.getSensorData(token, request)
         }
     }
 }

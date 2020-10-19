@@ -1,6 +1,5 @@
 package com.ruuvi.station.database
 
-import android.content.Context
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.app.preferences.Preferences
@@ -10,14 +9,10 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.TemperatureUnit
 
 class TagRepository(
-    private val preferences: Preferences,
-    private val context: Context
+    private val preferences: Preferences
 ) {
-
     fun getAllTags(isFavorite: Boolean): List<RuuviTagEntity> =
         SQLite.select()
             .from(RuuviTagEntity::class.java)
@@ -61,5 +56,14 @@ class TagRepository(
 
     fun saveTag(@NonNull tag: RuuviTagEntity) {
         tag.save()
+    }
+
+    fun getLatestForTag(id: String, limit: Int): List<TagSensorReading> {
+        return SQLite.select()
+            .from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.ruuviTagId.eq(id))
+            .orderBy(TagSensorReading_Table.createdAt, false)
+            .limit(limit)
+            .queryList()
     }
 }

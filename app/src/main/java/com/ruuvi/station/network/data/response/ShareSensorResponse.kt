@@ -1,7 +1,7 @@
 package com.ruuvi.station.network.data.response
 
-typealias ShareSensorResponse = RuuviNetworkResponse<ShareSensorDataResponse>
+typealias ShareSensorResponse = RuuviNetworkResponse<ShareSensorResponseBody>
 
-data class ShareSensorDataResponse (
+data class ShareSensorResponseBody (
     val sensor: String
 )

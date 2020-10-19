@@ -30,7 +30,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagRepository>() with singleton {
-            TagRepository(instance(), instance())
+            TagRepository(instance())
         }
     }
 }

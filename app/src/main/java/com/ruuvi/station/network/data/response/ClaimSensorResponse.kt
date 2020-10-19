@@ -1,7 +1,7 @@
 package com.ruuvi.station.network.data.response
 
-typealias ClaimSensorResponse = RuuviNetworkResponse<ClaimSensorDataResponse>
+typealias ClaimSensorResponse = RuuviNetworkResponse<ClaimSensorResponseBody>
 
-data class ClaimSensorDataResponse (
+data class ClaimSensorResponseBody (
     val sensor: String
 )

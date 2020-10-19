@@ -86,6 +86,22 @@ public class RuuviTagEntity extends BaseModel {
                 ? tag.getMeasurementSequenceNumber() : 0;
     }
 
+    public void updateData(TagSensorReading reading) {
+        this.rssi = reading.rssi;
+        this.temperature = reading.temperature;
+        this.humidity = reading.humidity;
+        this.pressure = reading.pressure;
+        this.accelX = reading.accelX;
+        this.accelY = reading.accelY;
+        this.accelZ = reading.accelZ;
+        this.voltage = reading.voltage;
+        this.dataFormat = reading.dataFormat;
+        this.txPower = reading.txPower;
+        this.movementCounter = reading.movementCounter;
+        this.measurementSequenceNumber = reading.measurementSequenceNumber;
+        this.updateAt = reading.createdAt;
+    }
+
     public RuuviTagEntity preserveData(RuuviTagEntity tag) {
         tag.setName(this.getName());
         tag.setCreateDate(this.getCreateDate());

@@ -11,6 +11,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.network.domain.NetworkDataRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
@@ -34,6 +35,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
     private val networkInteractor: RuuviNetworkInteractor by instance()
+    private val networkDataRepository: NetworkDataRepository by instance()
 
     private var isInForeground: Boolean = true
 
@@ -62,7 +64,9 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         FlowManager.init(this)
 
-        networkInteractor.getUserInfo {  }
+        networkInteractor.getUserInfo {
+            networkDataRepository.updateSensorsData(it?.data)
+        }
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)

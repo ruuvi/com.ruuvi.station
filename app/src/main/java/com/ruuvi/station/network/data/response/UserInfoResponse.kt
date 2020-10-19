@@ -1,8 +1,8 @@
 package com.ruuvi.station.network.data.response
 
-typealias UserInfoResponse = RuuviNetworkResponse<UserInfoDataResponse>
+typealias UserInfoResponse = RuuviNetworkResponse<UserInfoResponseBody>
 
-data class UserInfoDataResponse (
+data class UserInfoResponseBody (
     val email: String,
     val sensors: List<SensorDataResponse>
 )

@@ -7,15 +7,17 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.domain.NetworkDataRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import java.util.ArrayList
+import java.util.*
 
 class TagSettingsViewModel(
     val tagId: String,
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
-    private val networkInteractor: RuuviNetworkInteractor
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val networkDataRepository: NetworkDataRepository
 ) : ViewModel() {
 
     var tagAlarms: List<Alarm> = ArrayList()
@@ -38,7 +40,11 @@ class TagSettingsViewModel(
         interactor.getTagById(tagId)
 
     fun updateTag() {
-        tagState.value?.update()
+        val tag = tagState.value
+        tag?.let {
+            interactor.updateTag(tag)
+        }
+        tagState.value = getTagById(tagId)
     }
 
     fun updateTag(tag: RuuviTagEntity) =
@@ -82,13 +88,19 @@ class TagSettingsViewModel(
     fun getSensorData() {
         val tag = tagState.value?.id
         if (tag != null) {
-            networkInteractor.getSensorData(tag) {
-                if (it == null || it.error.isNullOrEmpty() == false) {
-                    operationStatus.value = "Failed to get tag data"
-                } else {
-
-                }
+            networkDataRepository.getSensorDataForPeriod(tag, 24) {
+                operationStatus.value = it
             }
         }
+    }
+
+    fun setUserBackground(path: String) {
+        tagObserve.value?.userBackground = path
+        updateTag()
+    }
+
+    fun setName(name: String) {
+        tagObserve.value?.name = name
+        updateTag()
     }
 }
