@@ -5,6 +5,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import java.util.*
 
 class TagDetailsInteractor(
     private val tagRepository: TagRepository,
@@ -15,6 +16,13 @@ class TagDetailsInteractor(
 
     fun getTagById(tagId: String): RuuviTag? =
         tagRepository.getTagById(tagId)?.let { tagConverter.fromDatabase(it) }
+
+    fun updateLastSync(tagId: String, date: Date?): RuuviTag? =
+            tagRepository.getTagById(tagId)?.let {
+                it.lastSync = date
+                it.update()
+                return tagConverter.fromDatabase(it)
+            }
 
     fun getTagReadings(tagId: String): List<TagSensorReading>? =
         tagRepository.getTagReadings(tagId)

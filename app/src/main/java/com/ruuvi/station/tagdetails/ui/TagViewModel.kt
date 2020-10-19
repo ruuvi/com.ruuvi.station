@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Timer
+import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
 @ExperimentalCoroutinesApi
@@ -38,6 +38,15 @@ class TagViewModel(
 
     fun isShowGraph(isShow: Boolean) {
         showGraph = isShow
+    }
+
+    fun removeTagData() {
+        TagSensorReading.removeForTag(tagId)
+        updateLastSync(null)
+    }
+
+    fun updateLastSync(date: Date?) {
+        tagDetailsInteractor.updateLastSync(tagId, date)
     }
 
     private fun getTagInfo(tagId: String) {

@@ -382,6 +382,9 @@
     <string name="notification_channel_name">Alert notifications</string>
 
     <string name="sync">Sync</string>
+    <string name="sync_confirm">Download history data from the sensor?</string>
+    <string name="clear">Clear</string>
+    <string name="clear_confirm">Clear the historical data from the app?</string>
     <string name="sync_complete">Sync complete</string>
     <string name="connecting">Connecting</string>
     <string name="connected_reading_info">Connected, reading tag info</string>

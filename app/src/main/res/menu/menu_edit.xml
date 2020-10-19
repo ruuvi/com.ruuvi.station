@@ -3,14 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_sync"
-        android:orderInCategory="100"
-        android:title="@string/sync"
-        android:visible="false"
-        android:icon="@android:drawable/ic_popup_sync"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/action_export"
         android:orderInCategory="100"
         android:title="@string/export"

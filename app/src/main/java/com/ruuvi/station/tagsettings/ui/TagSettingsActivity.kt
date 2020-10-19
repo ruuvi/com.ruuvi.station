@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.lifecycleScope
@@ -30,13 +29,9 @@ import com.flexsentlabs.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.app.RuuviScannerApplication
-import com.ruuvi.station.bluetooth.IRuuviGattListener
-import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -177,93 +172,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             viewModel.tagFlow.value?.id?.let {
                 exporter.toCsv(it)
             }
-        } else if (item.itemId == R.id.action_sync) {
-            val builder = AlertDialog.Builder(this)
-            var text = "${getString(R.string.connecting)}.."
-            builder.setMessage(text)
-            builder.setPositiveButton(getText(R.string.ok)) { p0, _ -> p0.dismiss() }
-            val ad = builder.show()
-            ad.setCanceledOnTouchOutside(false)
-            ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
-            var completed = false
-            viewModel.tagFlow.value?.let {
-                Timber.d("sync logs from: " +it.lastSync)
-                val found = (applicationContext as RuuviScannerApplication).readLogs(it.id!!, it.lastSync, object : IRuuviGattListener {
-                    override fun connected(state: Boolean) {
-                        if (state) {
-                            runOnUiThread {
-                                text += "\n${getString(R.string.connected_reading_info)}.."
-                                ad.setMessage(text)
-                            }
-                        } else {
-                            if (completed) {
-                                if (!text.contains(getString(R.string.sync_complete))) {
-                                    text += "\n${getString(R.string.sync_complete)}"
-                                }
-                            } else {
-                                text += "\n${getString(R.string.disconnected)}"
-                            }
-                            runOnUiThread {
-                                ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                                ad.setMessage(text)
-                            }
-                        }
-                    }
-
-                    override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                        if (canReadLogs) {
-                            runOnUiThread {
-                                text += "\n$model, $fw\n${getString(R.string.reading_history)}.."
-                                ad.setMessage(text)
-                            }
-                        } else {
-                            runOnUiThread {
-                                text += "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
-                                ad.setMessage(text)
-                            }
-                        }
-                    }
-
-                    override fun dataReady(data: List<LogReading>) {
-                        runOnUiThread {
-                            text += if (data.isNotEmpty()) {
-                                "\n${getString(R.string.data_points_read, data.size*3)}"
-                            } else {
-                                "\n${getString(R.string.no_new_data_points)}"
-                            }
-                            ad.setMessage(text)
-                        }
-                        val tagReadingList = mutableListOf<TagSensorReading>()
-                        data.forEach { logReading ->
-                            val reading = TagSensorReading()
-                            reading.ruuviTagId = it.id
-                            reading.temperature = logReading.temperature
-                            reading.humidity = logReading.humidity
-                            reading.pressure = logReading.pressure
-                            reading.createdAt = logReading.date
-                            tagReadingList.add(reading)
-                        }
-                        TagSensorReading.saveList(tagReadingList)
-                        viewModel.tagFlow.value?.lastSync = Date()
-                        viewModel.tagFlow.value?.update()
-                        completed = true
-                    }
-
-                    override fun heartbeat(raw: String) {
-                    }
-                })
-                if (!found) {
-                    runOnUiThread {
-                        ad.setMessage(getString(R.string.tag_not_in_range))
-                        ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                    }
-                }
-            } ?: kotlin.run {
-                runOnUiThread {
-                    ad.setMessage(getString(R.string.something_went_wrong))
-                    ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                }
-            }
         } else {
             finish()
         }
@@ -274,9 +182,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         viewModel.tagFlow.value?.let {
             if (it.isFavorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
-                if (it.connectable) {
-                    menu.findItem(R.id.action_sync).isVisible = true
-                }
             }
         }
         return true
