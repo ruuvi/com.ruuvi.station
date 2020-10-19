@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
@@ -35,6 +37,15 @@ class TagViewModel(
 
     fun isShowGraph(isShow: Boolean) {
         showGraph = isShow
+    }
+
+    fun removeTagData() {
+        TagSensorReading.removeForTag(tagId)
+        updateLastSync(null)
+    }
+
+    fun updateLastSync(date: Date?) {
+        tagDetailsInteractor.updateLastSync(tagId, date)
     }
 
     fun tagSelected(selectedTag: RuuviTag?) {

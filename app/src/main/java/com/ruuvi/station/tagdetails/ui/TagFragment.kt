@@ -1,19 +1,28 @@
 package com.ruuvi.station.tagdetails.ui
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.RuuviScannerApplication
+import com.ruuvi.station.bluetooth.IRuuviGattListener
+import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.Utils
+import kotlinx.android.synthetic.main.view_graphs.*
 import kotlinx.android.synthetic.main.view_tag_detail.tagContainer
 import kotlinx.android.synthetic.main.view_tag_detail.tagHumidityTextView
 import kotlinx.android.synthetic.main.view_tag_detail.tagPressureTextView
@@ -55,6 +64,19 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagEntry()
         observeTagReadings()
         observeSelectedTag()
+
+
+        syncButton.setOnClickListener {
+            confirm(getString(R.string.sync_confirm), DialogInterface.OnClickListener { _, _ ->
+                sync()
+            })
+        }
+        clearDataButton.setOnClickListener {
+            confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
+                TagSensorReading.removeForTag(viewModel.tagId)
+                viewModel.removeTagData()
+            })
+        }
     }
 
     override fun onResume() {
@@ -75,6 +97,108 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             viewModel.tagSelected(it)
         })
     }
+
+    private fun confirm(message: String, positiveButtonClick: DialogInterface.OnClickListener){
+        val builder = AlertDialog.Builder(requireContext())
+        with(builder)
+        {
+            setMessage(message)
+            setPositiveButton(getString(R.string.yes), positiveButtonClick)
+            setNegativeButton(android.R.string.no, DialogInterface.OnClickListener { dialogInterface, i ->
+                dialogInterface.dismiss()
+            })
+            show()
+        }
+    }
+
+    private fun sync() {
+        val builder = AlertDialog.Builder(requireContext())
+        var text = "${getString(R.string.connecting)}.."
+        builder.setMessage(text)
+        builder.setPositiveButton(getText(R.string.ok)) { p0, _ -> p0.dismiss() }
+        val ad = builder.show()
+        ad.setCanceledOnTouchOutside(false)
+        ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
+        var completed = false
+        viewModel.tagEntryObserve.value?.let {
+            Timber.d("sync logs from: " +it.lastSync)
+            val found = (activity?.applicationContext as RuuviScannerApplication).readLogs(it.id, it.lastSync, object : IRuuviGattListener {
+                override fun connected(state: Boolean) {
+                    if (state) {
+                        activity?.runOnUiThread {
+                            text += "\n${getString(R.string.connected_reading_info)}.."
+                            ad.setMessage(text)
+                        }
+                    } else {
+                        if (completed) {
+                            if (!text.contains(getString(R.string.sync_complete))) {
+                                text += "\n${getString(R.string.sync_complete)}"
+                            }
+                        } else {
+                            text += "\n${getString(R.string.disconnected)}"
+                        }
+                        activity?.runOnUiThread {
+                            ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                            ad.setMessage(text)
+                        }
+                    }
+                }
+
+                override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
+                    if (canReadLogs) {
+                        activity?.runOnUiThread {
+                            text += "\n$model, $fw\n${getString(R.string.reading_history)}.."
+                            ad.setMessage(text)
+                        }
+                    } else {
+                        activity?.runOnUiThread {
+                            text += "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
+                            ad.setMessage(text)
+                        }
+                    }
+                }
+
+                override fun dataReady(data: List<LogReading>) {
+                    activity?.runOnUiThread {
+                        text += if (data.isNotEmpty()) {
+                            "\n${getString(R.string.data_points_read, data.size*3)}"
+                        } else {
+                            "\n${getString(R.string.no_new_data_points)}"
+                        }
+                        ad.setMessage(text)
+                    }
+                    val tagReadingList = mutableListOf<TagSensorReading>()
+                    data.forEach { logReading ->
+                        val reading = TagSensorReading()
+                        reading.ruuviTagId = it.id
+                        reading.temperature = logReading.temperature
+                        reading.humidity = logReading.humidity
+                        reading.pressure = logReading.pressure
+                        reading.createdAt = logReading.date
+                        tagReadingList.add(reading)
+                    }
+                    TagSensorReading.saveList(tagReadingList)
+                    viewModel.updateLastSync(Date())
+                    completed = true
+                }
+
+                override fun heartbeat(raw: String) {
+                }
+            })
+            if (!found) {
+                activity?.runOnUiThread {
+                    ad.setMessage(getString(R.string.tag_not_in_range))
+                    ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                }
+            }
+        } ?: kotlin.run {
+            activity?.runOnUiThread {
+                ad.setMessage(getString(R.string.something_went_wrong))
+                ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+            }
+        }
+    }
+
 
     private fun observeShowGraph() {
         activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer {isShowGraph ->
@@ -113,6 +237,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
         tagTempUnitTextView.text = unitSpan
+        tag.connectable?.let {
+            if (it) {
+                syncView.visibility = View.VISIBLE
+            } else {
+                syncView.visibility = View.GONE
+            }
+        }
     }
 
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
