@@ -16,7 +16,7 @@ class UserApiTests {
     @get:Rule
     val coroutineTestRule = CoroutineTestRule()
 
-    @Test
+    //@Test
     fun TestRegisterUser() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -31,7 +31,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestRegisterUserError() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -45,7 +45,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestVerifyUserError() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -59,7 +59,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestGetUserData() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -75,7 +75,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestClaimTag() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -90,7 +90,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestUnclaimTag() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -105,7 +105,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-    @Test
+    //@Test
     fun TestShareTag() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -121,7 +121,7 @@ class UserApiTests {
     }
 
     @ExperimentalCoroutinesApi
-    @Test
+    //@Test
     fun TestGetSensorData() = runBlocking{
         val networkRepository = RuuviNetworkRepository(coroutineTestRule.dispatcher)
 
