@@ -70,8 +70,8 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
-//    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:48cf870335'
-    implementation project(':default_bluetooth_library')
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:de2014c466'
+    //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.6'
