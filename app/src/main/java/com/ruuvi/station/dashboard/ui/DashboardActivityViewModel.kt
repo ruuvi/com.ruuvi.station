@@ -10,8 +10,6 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Timer
-import kotlin.concurrent.scheduleAtFixedRate
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
@@ -21,19 +19,15 @@ class DashboardActivityViewModel(
     private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
     val observeTags: LiveData<List<RuuviTag>> = tags
 
-    private val getTagsTimer = Timer("DashboardActivityViewModelTimer", false)
-
     init {
-        getTagsFlow()
+        updateTags()
     }
 
-    private fun getTagsFlow() {
-        getTagsTimer.scheduleAtFixedRate(0, 1000) {
-            viewModelScope.launch {
-                val getTags = tagInteractor.getTags()
-                withContext(Dispatchers.Main) {
-                    tags.value = getTags
-                }
+    fun updateTags() {
+        viewModelScope.launch {
+            val getTags = tagInteractor.getTags()
+            withContext(Dispatchers.Main) {
+                tags.value = getTags
             }
         }
     }

@@ -14,8 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Timer
-import kotlin.concurrent.scheduleAtFixedRate
+import timber.log.Timber
 
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
@@ -24,7 +23,6 @@ class TagDetailsViewModel(
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
-    private var timer = Timer("timer", true)
 
     private val isShowGraph = MutableLiveData<Boolean>(false)
     val isShowGraphObserve: LiveData<Boolean> = isShowGraph
@@ -43,14 +41,6 @@ class TagDetailsViewModel(
 
     var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView
     var desiredTag: String? = tagDetailsArguments.desiredTag
-
-    init {
-        ioScope.launch {
-            timer.scheduleAtFixedRate(0, 1000) {
-                checkForAlarm()
-            }
-        }
-    }
 
     fun pageSelected(pageIndex: Int) {
         viewModelScope.launch {
@@ -88,8 +78,9 @@ class TagDetailsViewModel(
     private fun isDashboardEnabled(): Boolean =
         interactor.isDashboardEnabled()
 
-    private fun checkForAlarm() {
+    fun checkForAlarm() {
         ioScope.launch {
+            Timber.d("checkForAlarm")
             selectedTag.value?.id?.let { tagId ->
                 val tagEntry = interactor.getTagByID(tagId)
                 tagEntry?.let {
@@ -99,10 +90,5 @@ class TagDetailsViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        timer.cancel()
-        super.onCleared()
     }
 }

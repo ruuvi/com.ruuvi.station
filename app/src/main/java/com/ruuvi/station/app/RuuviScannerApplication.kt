@@ -63,7 +63,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
             //turn on for debug if you don't have real ruuvi tag
-            fakesSender.startSendFakes()
+            //fakesSender.startSendFakes()
         }
 
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))

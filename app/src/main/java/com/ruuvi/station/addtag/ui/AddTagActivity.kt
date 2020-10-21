@@ -32,7 +32,8 @@ import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import java.util.ArrayList
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 @ExperimentalCoroutinesApi
 class AddTagActivity : AppCompatActivity(), KodeinAware {
@@ -44,6 +45,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     private val tags: ArrayList<RuuviTagEntity> = arrayListOf()
     private var adapter: AddTagAdapter? = null
     private val permissionsHelper = PermissionsHelper(this)
+    private var timer :Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,8 +95,17 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     override fun onResume() {
         super.onResume()
 
+        timer = Timer("AddTagActivityTimer", true)
+        timer?.scheduleAtFixedRate(0, 1000) {
+            viewModel.updateTags()
+        }
         //FIXME delete as repeated call?
         permissionsHelper.requestPermissions()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timer?.cancel()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
