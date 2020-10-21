@@ -68,8 +68,8 @@ import kotlinx.android.synthetic.main.content_tag_details.tagPager
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import java.util.HashMap
-import java.util.Locale
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
@@ -90,6 +90,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private val backgrounds = HashMap<String, BitmapDrawable>()
     private val permissionsHelper = PermissionsHelper(this)
     private var tagPagerScrolling = false
+    private var timer: Timer? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -369,6 +371,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onResume() {
         super.onResume()
         viewModel.refreshTags()
+        timer = Timer("TagDetailsActivityTimer", true)
+        timer?.scheduleAtFixedRate(0, 1000) {
+            viewModel.checkForAlarm()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timer?.cancel()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -31,10 +31,12 @@ class DefaultOnTagFoundListener(
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
     private var lastCleanedDate: Long = Date().time
+    private var locationUpdateDate: Long = Long.MIN_VALUE
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
+        UpdateLocation()
         saveReading(RuuviTagEntity(tag))
         cleanUpOldData()
     }
@@ -91,8 +93,14 @@ class DefaultOnTagFoundListener(
         }
     }
 
-    init {
-        locationInteractor.startLocationUpdate(10000)
+    private fun UpdateLocation() {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, -1)
+        val cleaningThreshold = calendar.time.time
+        if (locationUpdateDate < cleaningThreshold) {
+            locationInteractor.updateLocation()
+            locationUpdateDate = Date().time
+        }
     }
 
     companion object {

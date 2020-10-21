@@ -26,10 +26,13 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
+    private var timer: Timer? = null
 
     private val viewModel: TagViewModel by viewModel {
         arguments?.let {
@@ -52,6 +55,19 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagEntry()
         observeTagReadings()
         observeSelectedTag()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        timer = Timer("TagFragmentTimer", true)
+        timer?.scheduleAtFixedRate(0, 1000) {
+            viewModel.getTagInfo()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timer?.cancel()
     }
 
     private fun observeSelectedTag() {
