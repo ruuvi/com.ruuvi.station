@@ -24,7 +24,9 @@ import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_dashboard.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import java.util.*
 import kotlin.collections.MutableList
+import kotlin.concurrent.scheduleAtFixedRate
 
 class DashboardActivity : AppCompatActivity(), KodeinAware {
 
@@ -35,6 +37,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private lateinit var permissionsHelper: PermissionsHelper
     private var tags: MutableList<RuuviTag> = arrayListOf()
     private lateinit var adapter: RuuviTagAdapter
+    private var getTagsTimer :Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,19 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
         permissionsHelper = PermissionsHelper(this)
         permissionsHelper.requestPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getTagsTimer = Timer("DashboardActivityTimer", false)
+        getTagsTimer?.scheduleAtFixedRate(0, 1000) {
+            viewModel.updateTags()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        getTagsTimer?.cancel()
     }
 
     private fun setupViewModel() {

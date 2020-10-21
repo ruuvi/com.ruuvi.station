@@ -5,6 +5,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.util.BackgroundScanModes
+import timber.log.Timber
 
 class TagInteractor constructor(
     private val tagRepository: TagRepository,
@@ -21,9 +22,11 @@ class TagInteractor constructor(
                 val status = alarmCheckInteractor.getStatus(ruuviTag)
                 ruuviTag.copy(status = status)
             }
+            .also { Timber.d("TagInteractor - getTags") }
 
     fun getTagEntities(isFavorite: Boolean = true): List<RuuviTagEntity> =
         tagRepository.getAllTags(isFavorite)
+            .also {Timber.d("TagInteractor - getTagEntities")}
 
     fun getTagEntityById(tagId: String): RuuviTagEntity? =
         tagRepository.getTagById(tagId)

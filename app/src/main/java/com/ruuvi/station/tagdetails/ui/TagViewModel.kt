@@ -11,8 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.Timer
-import kotlin.concurrent.scheduleAtFixedRate
 
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
@@ -30,11 +28,9 @@ class TagViewModel(
 
     private var selected = false
 
-    private val timer = Timer("tagViewModelTimer", true)
-
     init {
         Timber.d("TagViewModel initialized")
-        getTagInfo(tagId)
+        getTagInfo()
     }
 
     fun isShowGraph(isShow: Boolean) {
@@ -45,13 +41,11 @@ class TagViewModel(
         selected = tagId == selectedTag?.id
     }
 
-    private fun getTagInfo(tagId: String) {
+    fun getTagInfo() {
         ioScope.launch {
-            timer.scheduleAtFixedRate(0, 1000) {
                 Timber.d("getTagInfo $tagId")
                 getTagEntryData(tagId)
                 if (showGraph && selected) getGraphData(tagId)
-            }
         }
     }
 
@@ -101,12 +95,6 @@ class TagViewModel(
 
     override fun onCleared() {
         super.onCleared()
-
-        cancelTimerAndChannels()
         Timber.d("TagViewModel cleared!")
-    }
-
-    private fun cancelTimerAndChannels() {
-        timer.cancel()
     }
 }
