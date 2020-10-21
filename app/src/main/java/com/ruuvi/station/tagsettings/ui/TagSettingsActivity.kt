@@ -135,9 +135,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (it == true) {
                 claimTagButton.visibility = View.VISIBLE
                 shareTagButton.visibility = View.VISIBLE
+                getTagDataButton.visibility = View.VISIBLE
             } else {
                 claimTagButton.visibility = View.GONE
                 shareTagButton.visibility = View.GONE
+                getTagDataButton.visibility = View.GONE
             }
         })
 
