@@ -16,8 +16,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.RuuviScannerApplication
 import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
@@ -35,7 +33,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
-import java.util.*
 
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
@@ -70,7 +67,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         }
         clearDataButton.setOnClickListener {
             confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
-                TagSensorReading.removeForTag(viewModel.tagId)
                 viewModel.removeTagData()
             })
         }
@@ -98,9 +94,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         ad.setCanceledOnTouchOutside(false)
         ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
         var completed = false
-        viewModel.tagEntryObserve.value?.let {
-            Timber.d("sync logs from: " +it.lastSync)
-            val found = (activity?.applicationContext as RuuviScannerApplication).readLogs(it.id, it.lastSync, object : IRuuviGattListener {
+        viewModel.tagEntryObserve.value?.let { tag ->
+            Timber.d("sync logs from: " +tag.lastSync)
+            val found = (activity?.applicationContext as RuuviScannerApplication).readLogs(tag.id, tag.lastSync, object : IRuuviGattListener {
                 override fun connected(state: Boolean) {
                     if (state) {
                         activity?.runOnUiThread {
@@ -123,16 +119,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 }
 
                 override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                    if (canReadLogs) {
-                        activity?.runOnUiThread {
-                            text += "\n$model, $fw\n${getString(R.string.reading_history)}.."
-                            ad.setMessage(text)
+                    activity?.runOnUiThread {
+                        text += if (canReadLogs) {
+                            "\n$model, $fw\n${getString(R.string.reading_history)}.."
+                        } else {
+                            "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
                         }
-                    } else {
-                        activity?.runOnUiThread {
-                            text += "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
-                            ad.setMessage(text)
-                        }
+                        ad.setMessage(text)
                     }
                 }
 
@@ -145,18 +138,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                         }
                         ad.setMessage(text)
                     }
-                    val tagReadingList = mutableListOf<TagSensorReading>()
-                    data.forEach { logReading ->
-                        val reading = TagSensorReading()
-                        reading.ruuviTagId = it.id
-                        reading.temperature = logReading.temperature
-                        reading.humidity = logReading.humidity
-                        reading.pressure = logReading.pressure
-                        reading.createdAt = logReading.date
-                        tagReadingList.add(reading)
-                    }
-                    TagSensorReading.saveList(tagReadingList)
-                    viewModel.updateLastSync(Date())
+                    viewModel.saveGattReadings(tag, data)
                     completed = true
                 }
 

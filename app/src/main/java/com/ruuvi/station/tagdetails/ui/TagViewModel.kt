@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import com.ruuvi.station.bluetooth.LogReading
 
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
@@ -44,6 +45,21 @@ class TagViewModel(
     fun removeTagData() {
         TagSensorReading.removeForTag(tagId)
         updateLastSync(null)
+    }
+
+    fun saveGattReadings(tag: RuuviTag, data: List<LogReading>) {
+        val tagReadingList = mutableListOf<TagSensorReading>()
+        data.forEach { logReading ->
+            val reading = TagSensorReading()
+            reading.ruuviTagId = tag.id
+            reading.temperature = logReading.temperature
+            reading.humidity = logReading.humidity
+            reading.pressure = logReading.pressure
+            reading.createdAt = logReading.date
+            tagReadingList.add(reading)
+        }
+        TagSensorReading.saveList(tagReadingList)
+        updateLastSync(Date())
     }
 
     fun updateLastSync(date: Date?) {
