@@ -30,7 +30,7 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
         }
 
         manualCodeButton.setOnClickListener {
-            val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment()
+            val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
             this.findNavController().navigate(action)
         }
     }
@@ -42,7 +42,7 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
 
         viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment()
+                val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
                 this.findNavController().navigate(action)
             }
         })

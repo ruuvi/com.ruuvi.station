@@ -33,7 +33,7 @@ class SignedInFragment : Fragment(R.layout.fragment_signed_in) , KodeinAware {
         }
 
         okButton.setOnClickListener {
-            activity?.finish()
+            activity?.onBackPressed()
         }
 
         addTagsButton.setOnClickListener {

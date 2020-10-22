@@ -26,7 +26,10 @@
         <activity
             android:name=".network.ui.SignInActivity"
             android:label="@string/title_activity_sign_in"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+            android:parentActivityName=".tagdetails.ui.TagDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" >
+            <nav-graph android:value="@navigation/sign_in_navigation" />
+        </activity>
         <activity
             android:name=".tagdetails.ui.TagDetailsActivity"
             android:launchMode="singleTop"

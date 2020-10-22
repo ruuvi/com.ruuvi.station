@@ -18,10 +18,18 @@
         android:id="@+id/enterCodeFragment"
         android:name="com.ruuvi.station.network.ui.EnterCodeFragment"
         android:label="fragment_enter_code"
-        tools:layout="@layout/fragment_enter_code" >
+        tools:layout="@layout/fragment_enter_code">
         <action
             android:id="@+id/action_enterCodeFragment_to_signedInFragment"
             app:destination="@id/signedInFragment" />
+        <argument
+            android:name="token"
+            app:argType="string"
+            app:nullable="true" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:action="ACTION_VIEW"
+            app:uri="https://network.ruuvi.com/verify?token={token}" />
     </fragment>
     <fragment
         android:id="@+id/signedInFragment"
