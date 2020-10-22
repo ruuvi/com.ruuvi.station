@@ -124,7 +124,6 @@ class NetworkDataRepository (
             for (tagInfo in userInfo.sensors) {
                 CoroutineScope(Dispatchers.Main).launch {
                     getSensorDataForPeriod(tagInfo.sensor, 72) {}
-                    delay(10000)
                 }
             }
         }

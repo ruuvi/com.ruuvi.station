@@ -109,21 +109,17 @@ class RuuviNetworkRepository
         }
     }
 
-    fun unclaimSensor(request: UnclaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
-        ioScope.launch {
-            val response = retrofitService.unclaimSensor("Bearer " + token, request)
-            var result: ClaimSensorResponse? = null
-            if (response.isSuccessful) {
-                result = response.body()
-            } else {
-                val type = object : TypeToken<ClaimSensorResponse>() {}.type
-                var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                result = errorResponse
-            }
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
+    suspend fun unclaimSensor(request: UnclaimSensorRequest, token: String): ClaimSensorResponse? = withContext(dispatcher) {
+        val response = retrofitService.unclaimSensor("Bearer " + token, request)
+        var result: ClaimSensorResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ClaimSensorResponse>() {}.type
+            var errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
         }
+        result
     }
 
     fun shareSensor(request: ShareSensorRequest, token: String, onResult: (ShareSensorResponse?) -> Unit) {

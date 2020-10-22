@@ -2,10 +2,7 @@ package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.NetworkTokenInfo
-import com.ruuvi.station.network.data.request.ClaimSensorRequest
-import com.ruuvi.station.network.data.request.GetSensorDataRequest
-import com.ruuvi.station.network.data.request.ShareSensorRequest
-import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +23,7 @@ class RuuviNetworkInteractor (
     private var userInfo: UserInfoResponse? = null
 
     val mainScope = CoroutineScope(Dispatchers.Main)
+    val ioScope = CoroutineScope(Dispatchers.IO)
 
     init {
         getUserInfo {}
@@ -62,14 +60,8 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun tagIsClaimed(mac: String): Boolean {
-        val userInfo = userInfo
-        userInfo?.let {
-            if (userInfo.data != null) {
-                return userInfo.data.sensors.any { it.sensor == mac }
-            }
-        }
-        return false
+    fun getSensorNetworkStatus(mac: String): SensorDataResponse? {
+        return userInfo?.data?.sensors?.firstOrNull {it.sensor == mac}
     }
 
     fun claimSensor(tag: RuuviTagEntity, onResult: (ClaimSensorResponse?) -> Unit) {
@@ -80,6 +72,15 @@ class RuuviNetworkInteractor (
                 getUserInfo {
                     onResult(claimResponse)
                 }
+            }
+        }
+    }
+
+    fun unclaimSensor(tagId: String) {
+        val token = getToken()?.token
+        token?.let {
+            ioScope.launch {
+                networkRepository.unclaimSensor(UnclaimSensorRequest(tagId), token)
             }
         }
     }

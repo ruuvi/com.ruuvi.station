@@ -3,10 +3,12 @@ package com.ruuvi.station.tagsettings.ui
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -24,20 +26,31 @@ class TagSettingsViewModel(
     var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
     var file: Uri? = null
 
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
+
     private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
     val tagObserve: LiveData<RuuviTagEntity?> = tagState
 
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
-    private val tagClaimed = MutableLiveData<Boolean> (networkInteractor.tagIsClaimed(tagId))
-    val tagClaimedObserve: LiveData<Boolean> = tagClaimed
+    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it?.owner == true
+    }
+
+    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it != null
+    }
 
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
+
+    fun updateNetworkStatus() {
+        networkStatus.value = networkInteractor.getSensorNetworkStatus(tagId)
+    }
 
     fun updateTag() {
         val tag = tagState.value
@@ -50,8 +63,12 @@ class TagSettingsViewModel(
     fun updateTag(tag: RuuviTagEntity) =
         interactor.updateTag(tag)
 
-    fun deleteTag(tag: RuuviTagEntity) =
+    fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
+        if (networkStatus.value?.owner == true) {
+            networkInteractor.unclaimSensor(tagId)
+        }
+    }
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
@@ -61,9 +78,9 @@ class TagSettingsViewModel(
         val tag = tagState.value
         if (tag != null) {
             networkInteractor.claimSensor(tag) {
-                tagClaimed.value = networkInteractor.tagIsClaimed(tagId)
+                updateNetworkStatus()
                 if (it == null || it.error.isNullOrEmpty() == false) {
-                    operationStatus.value = "Failed to claim tag"
+                    operationStatus.value = "Failed to claim tag: ${it?.error}"
                 } else {
                     operationStatus.value = "Tag successfully claimed"
                 }

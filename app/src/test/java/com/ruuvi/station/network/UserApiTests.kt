@@ -91,18 +91,12 @@ class UserApiTests {
     }
 
     //@Test
-    fun TestUnclaimTag() {
-        val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
+    fun TestUnclaimTag() = runBlocking {
+        val networkRepository = RuuviNetworkRepository(coroutineTestRule.dispatcher)
 
-        //todo add unclaim
-        networkRepository.unclaimSensor(UnclaimSensorRequest("D6:78:01:D8:86:99"), accessToken) {
-            Assert.assertTrue(it != null)
-            Assert.assertTrue(it?.data != null)
-            Assert.assertEquals(successResult, it?.result)
-            synchronized(lock1) { lock1.notify() }
-        }
-        synchronized(lock1) { lock1.wait() }
+        val response = networkRepository.unclaimSensor(UnclaimSensorRequest("F9:A4:9F:1A:D9:10"), accessToken)
+        Assert.assertTrue(response != null)
+        Assert.assertEquals(successResult, response?.result)
     }
 
     //@Test

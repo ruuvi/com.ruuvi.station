@@ -143,16 +143,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         })
 
-        viewModel.tagClaimedObserve.observe(this, Observer {
-            if (it == true) {
-                claimTagButton.isEnabled = false
-                shareTagButton.isEnabled = true
-                getTagDataButton.isEnabled = true
-            } else {
-                claimTagButton.isEnabled = true
-                shareTagButton.isEnabled = false
-                getTagDataButton.isEnabled = false
-            }
+        viewModel.sensorOwnedByUserObserve.observe(this, Observer {
+            shareTagButton.isEnabled = it
+        })
+
+        viewModel.isNetworkTagObserve.observe(this, Observer {
+            claimTagButton.isEnabled = !it
+            getTagDataButton.isEnabled = it
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {
