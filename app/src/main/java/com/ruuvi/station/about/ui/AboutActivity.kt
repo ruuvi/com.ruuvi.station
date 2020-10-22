@@ -64,7 +64,7 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
             val addedTags = it.first
             debugText += getString(R.string.seen_tags, addedTags + it.second) + "\n"
             debugText += getString(R.string.added_tags, addedTags) + "\n"
-            debugText += getString(R.string.db_data_points, readingCount * 9) + "\n"
+            debugText += getString(R.string.db_data_points, readingCount) + "\n"
         }
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
