@@ -61,18 +61,18 @@ class UserApiTests {
 
     //@Test
     fun TestGetUserData() {
-        val lock1 = Object()
-        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
-
-        networkRepository.getUserInfo(accessToken) {
-            Assert.assertTrue(it != null)
-            Assert.assertTrue(it?.data != null)
-            Assert.assertEquals(successResult, it?.result)
-            Assert.assertEquals(sacrificialEmail, it?.data?.email)
-            //todo add data.sensors test here
-            synchronized(lock1) { lock1.notify() }
-        }
-        synchronized(lock1) { lock1.wait() }
+//        val lock1 = Object()
+//        val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
+//
+//        networkRepository.getUserInfo(accessToken) {
+//            Assert.assertTrue(it != null)
+//            Assert.assertTrue(it?.data != null)
+//            Assert.assertEquals(successResult, it?.result)
+//            Assert.assertEquals(sacrificialEmail, it?.data?.email)
+//            //todo add data.sensors test here
+//            synchronized(lock1) { lock1.notify() }
+//        }
+//        synchronized(lock1) { lock1.wait() }
     }
 
     //@Test
