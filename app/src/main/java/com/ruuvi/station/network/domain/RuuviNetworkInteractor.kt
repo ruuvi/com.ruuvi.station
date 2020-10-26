@@ -49,14 +49,21 @@ class RuuviNetworkInteractor (
     }
 
     fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
+        ioScope.launch {
+            val result = getUserInfo()
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
+    }
+
+    suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
-            networkRepository.getUserInfo(token.token) {
-                userInfo = it
-                onResult(it)
-            }
+            userInfo = networkRepository.getUserInfo(token.token)
+            return userInfo
         } else {
-            onResult(null)
+            return null
         }
     }
 

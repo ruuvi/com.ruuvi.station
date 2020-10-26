@@ -42,8 +42,14 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
             viewModel.verifyCode(enterCodeManuallyEditText.text.toString())
         }
 
-        arguments?.getString("token")?.let {
-            enterCodeManuallyEditText.setText(it)
+        val token = arguments?.getString("token")
+        if (token.isNullOrEmpty() == false) {
+            if (viewModel.signedIn) {
+                activity?.onBackPressed()
+            } else {
+                enterCodeManuallyEditText.setText(token)
+                submitCodeButton.performClick()
+            }
         }
     }
 

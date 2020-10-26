@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.response.SensorDataResponse
-import com.ruuvi.station.network.domain.NetworkDataRepository
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import java.util.*
 
 class SignedInViewModel (
     val networkInteractor: RuuviNetworkInteractor,
     val tagRepository: TagRepository,
-    val networkDataRepository: NetworkDataRepository
+    val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
     val emailObserve: LiveData<String> = MutableLiveData(networkInteractor.getEmail())
 
@@ -53,7 +53,7 @@ class SignedInViewModel (
                     }
                 }
                 operationStatus.value = "done"
-                networkDataRepository.updateSensorsData(body)
+                networkDataSyncInteractor.syncNetworkData()
             }
         }
     }

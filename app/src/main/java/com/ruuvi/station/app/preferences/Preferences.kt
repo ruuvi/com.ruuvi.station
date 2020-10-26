@@ -145,6 +145,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
         }
 
+    var lastSyncDate: Long
+        get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+        set(syncDate) {
+            sharedPreferences.edit().putLong(PREF_LAST_SYNC_DATE, syncDate).apply()
+        }
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -165,6 +171,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
         private const val PREF_NETWORK_EMAIL = "pref_network_email"
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
+        private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""

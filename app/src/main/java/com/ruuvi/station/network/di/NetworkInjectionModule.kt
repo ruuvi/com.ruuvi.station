@@ -1,6 +1,6 @@
 package com.ruuvi.station.network.di
 
-import com.ruuvi.station.network.domain.NetworkDataRepository
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkRepository
 import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
@@ -23,7 +23,9 @@ object NetworkInjectionModule {
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance()) }
 
-        bind<NetworkDataRepository>() with singleton { NetworkDataRepository(instance(), instance()) }
+        bind<NetworkDataSyncInteractor>() with singleton {
+            NetworkDataSyncInteractor(instance(), instance(), instance())
+        }
 
         bind<EmailEnterViewModel>() with provider {
             EmailEnterViewModel(instance())

@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -19,7 +21,8 @@ import timber.log.Timber
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
     private val interactor: TagInteractor,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -41,6 +44,25 @@ class TagDetailsViewModel(
 
     var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView
     var desiredTag: String? = tagDetailsArguments.desiredTag
+
+    private val syncStatus = MutableLiveData<String>("")
+    val syncStatusObserve: LiveData<String> = syncStatus
+
+    private val syncInProgress = MutableLiveData<Boolean>(false)
+    val syncInProgressObserve: LiveData<Boolean> = syncInProgress
+
+    init {
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncStatusFlow.collect {
+                syncStatus.value = it
+            }
+        }
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncInProgressFlow.collect{
+                syncInProgress.value = it
+            }
+        }
+    }
 
     fun pageSelected(pageIndex: Int) {
         viewModelScope.launch {
@@ -90,5 +112,9 @@ class TagDetailsViewModel(
                 }
             }
         }
+    }
+
+    fun networkDataSync() {
+        networkDataSyncInteractor.syncNetworkData()
     }
 }

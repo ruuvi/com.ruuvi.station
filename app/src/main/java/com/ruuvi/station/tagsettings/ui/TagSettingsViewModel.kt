@@ -1,17 +1,15 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.response.SensorDataResponse
-import com.ruuvi.station.network.domain.NetworkDataRepository
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import kotlinx.coroutines.launch
 import java.util.*
 
 class TagSettingsViewModel(
@@ -19,7 +17,7 @@ class TagSettingsViewModel(
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val networkDataRepository: NetworkDataRepository
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
 
     var tagAlarms: List<Alarm> = ArrayList()
@@ -105,8 +103,8 @@ class TagSettingsViewModel(
     fun getSensorData() {
         val tag = tagState.value?.id
         if (tag != null) {
-            networkDataRepository.getSensorDataForPeriod(tag, 24) {
-                operationStatus.value = it
+            viewModelScope.launch {
+                networkDataSyncInteractor.syncSensorDataForPeriod(tag, 72)
             }
         }
     }

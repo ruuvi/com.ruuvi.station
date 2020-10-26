@@ -3,6 +3,7 @@ package com.ruuvi.station.dashboard.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -23,8 +24,10 @@ import com.ruuvi.station.util.extensions.OpenUrl
 import com.ruuvi.station.util.extensions.SendFeedback
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_dashboard.*
+import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 import java.util.*
 import kotlin.collections.MutableList
 import kotlin.concurrent.scheduleAtFixedRate
@@ -116,6 +119,26 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 5 -> SignInActivity.start(this)
             }
         }
+
+        syncLayout.setOnClickListener {
+            viewModel.networkDataSync()
+        }
+
+        viewModel.syncStatusObserve.observe(this, Observer {
+            syncStatusTextView.text = it
+
+        })
+
+        viewModel.syncInProgressObserve.observe(this, Observer {
+            if (it) {
+                Timber.d("Sync in progress")
+                syncButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
+            } else {
+                Timber.d("Sync not in progress")
+
+                syncButton.clearAnimation()
+            }
+        })
     }
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->

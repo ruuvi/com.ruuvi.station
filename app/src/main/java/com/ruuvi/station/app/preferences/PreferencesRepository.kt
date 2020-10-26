@@ -136,4 +136,11 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.networkEmail = tokenInfo.email
         preferences.networkToken = tokenInfo.token
     }
+
+    fun getLastSyncDate(): Long =
+        preferences.lastSyncDate
+
+    fun setLastSyncDate(lastSyncDate: Long) {
+        preferences.lastSyncDate = lastSyncDate
+    }
 }

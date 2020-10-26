@@ -73,23 +73,17 @@ class RuuviNetworkRepository
         }
     }
 
-
-
-    fun getUserInfo(token: String, onResult: (UserInfoResponse?) -> Unit) {
-        ioScope.launch {
-            val response = retrofitService.getUserInfo("Bearer " + token)
-            var result: UserInfoResponse? = null
-            if (response.isSuccessful) {
-                result = response.body()
-            } else {
-                val type = object : TypeToken<UserInfoResponse>() {}.type
-                var errorResponse: UserInfoResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                result = errorResponse
-            }
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
+    suspend fun getUserInfo(token: String): UserInfoResponse? = withContext(dispatcher){
+        val response = retrofitService.getUserInfo("Bearer " + token)
+        var result: UserInfoResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<UserInfoResponse>() {}.type
+            var errorResponse: UserInfoResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
         }
+        result
     }
 
     fun claimSensor(request: ClaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {

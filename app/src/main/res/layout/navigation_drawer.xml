@@ -2,6 +2,7 @@
 <com.google.android.material.navigation.NavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigationView"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
@@ -36,10 +37,31 @@
             android:id="@+id/navigationDrawerListView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/syncLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/syncLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="InvalidId">
+            <ImageView
+                android:id="@+id/syncButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_sync_24"
+                android:layout_margin="16dp"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/syncStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center|left"
+                tools:text="Syncronized 1 day ago"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

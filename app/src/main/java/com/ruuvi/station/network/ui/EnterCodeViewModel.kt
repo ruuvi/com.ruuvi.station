@@ -15,6 +15,8 @@ class EnterCodeViewModel (
     private val successfullyVerified = MutableLiveData<Boolean>(false)
     val successfullyVerifiedObserve: LiveData<Boolean> = successfullyVerified
 
+    val signedIn = networkInteractor.signedIn
+
     fun verifyCode(token: String) {
         networkInteractor.verifyUser(token) {response->
             if (response == null) {

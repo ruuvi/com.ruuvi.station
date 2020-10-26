@@ -18,6 +18,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
+import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
@@ -65,9 +66,11 @@ import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
 import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
 import kotlinx.android.synthetic.main.content_tag_details.tagPager
+import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -267,6 +270,26 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 5 -> SignInActivity.start(this)
             }
         }
+
+        syncLayout.setOnClickListener {
+            viewModel.networkDataSync()
+        }
+
+        viewModel.syncStatusObserve.observe(this, Observer {
+            syncStatusTextView.text = it
+
+        })
+
+        viewModel.syncInProgressObserve.observe(this, Observer {
+            if (it) {
+                Timber.d("Sync in progress")
+                syncButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
+            } else {
+                Timber.d("Sync not in progress")
+
+                syncButton.clearAnimation()
+            }
+        })
     }
 
     @Suppress("DEPRECATION")
