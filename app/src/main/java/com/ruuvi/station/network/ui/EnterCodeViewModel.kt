@@ -3,10 +3,12 @@ package com.ruuvi.station.network.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 
 class EnterCodeViewModel (
-    val networkInteractor: RuuviNetworkInteractor
+    val networkInteractor: RuuviNetworkInteractor,
+    val networkSignInInteractor: NetworkSignInInteractor
 ) : ViewModel() {
 
     private val errorText = MutableLiveData<String>("")
@@ -18,15 +20,11 @@ class EnterCodeViewModel (
     val signedIn = networkInteractor.signedIn
 
     fun verifyCode(token: String) {
-        networkInteractor.verifyUser(token) {response->
-            if (response == null) {
-                errorText.value = "Unknown error"
+        networkSignInInteractor.signIn(token) { response->
+            if (response.isNullOrEmpty()) {
+                successfullyVerified.value = true
             } else {
-                if (response.error.isNullOrEmpty()) {
-                    successfullyVerified.value = true
-                } else {
-                    errorText.value = response.error
-                }
+                errorText.value = response
             }
         }
     }

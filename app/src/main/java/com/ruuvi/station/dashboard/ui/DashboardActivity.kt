@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -22,7 +23,7 @@ import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.extensions.OpenUrl
 import com.ruuvi.station.util.extensions.SendFeedback
-import kotlinx.android.synthetic.main.activity_tag_details.*
+import kotlinx.android.synthetic.main.activity_dashboard.*
 import kotlinx.android.synthetic.main.content_dashboard.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.KodeinAware
@@ -42,6 +43,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private var tags: MutableList<RuuviTag> = arrayListOf()
     private lateinit var adapter: RuuviTagAdapter
     private var getTagsTimer :Timer? = null
+    private var signedIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         getTagsTimer = Timer("DashboardActivityTimer", false)
         getTagsTimer?.scheduleAtFixedRate(0, 1000) {
             viewModel.updateTags()
+            viewModel.updateNetworkStatus()
         }
     }
 
@@ -124,9 +127,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncStatusObserve.observe(this, Observer {
-            syncStatusTextView.text = it
-
+        viewModel.syncResultObserve.observe(this, Observer {
+            if (it.isNotEmpty()) {
+                Snackbar.make(dashboardListView, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.syncResultShowed()
+            }
         })
 
         viewModel.syncInProgressObserve.observe(this, Observer {
@@ -135,10 +140,34 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 syncButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
             } else {
                 Timber.d("Sync not in progress")
-
                 syncButton.clearAnimation()
             }
         })
+
+        viewModel.userEmail.observe(this, Observer {
+            var user = it
+            if (user.isNullOrEmpty()) {
+                user = "none"
+                signedIn = false
+            } else {
+                signedIn = true
+            }
+            updateMenu(signedIn)
+            loggedUserTextView.text = "User: $user"
+        })
+
+        viewModel.syncStatus.observe(this, Observer {
+            syncStatusTextView.text = it
+        })
+    }
+
+    private fun updateMenu(signed: Boolean) {
+        val menuList = if (signed) R.array.navigation_items_card_view_signed else R.array.navigation_items_card_view
+        navigationDrawerListView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            resources.getStringArray(menuList)
+        )
     }
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->

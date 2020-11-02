@@ -143,4 +143,8 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun setLastSyncDate(lastSyncDate: Long) {
         preferences.lastSyncDate = lastSyncDate
     }
+
+    fun getUserEmailLiveData() = preferences.getUserEmailLiveData()
+
+    fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
 }

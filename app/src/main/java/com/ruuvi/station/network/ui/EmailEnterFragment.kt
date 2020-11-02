@@ -48,7 +48,7 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
         })
 
         viewModel.alreadyLoggedInObserve.observe(viewLifecycleOwner, Observer {
-            if (it) findNavController().navigate(R.id.signedInFragment)
+            if (it) findNavController().navigate(R.id.signOutFragment)
         })
     }
 

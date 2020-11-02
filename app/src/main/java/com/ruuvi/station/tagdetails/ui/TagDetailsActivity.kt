@@ -94,7 +94,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private val permissionsHelper = PermissionsHelper(this)
     private var tagPagerScrolling = false
     private var timer: Timer? = null
-
+    private var signedIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -275,9 +275,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncStatusObserve.observe(this, Observer {
-            syncStatusTextView.text = it
-
+        viewModel.syncResultObserve.observe(this, Observer {
+            if (it.isNotEmpty()) {
+                Snackbar.make(mainDrawerLayout, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.syncResultShowed()
+            }
         })
 
         viewModel.syncInProgressObserve.observe(this, Observer {
@@ -286,10 +288,34 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 syncButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
             } else {
                 Timber.d("Sync not in progress")
-
                 syncButton.clearAnimation()
             }
         })
+
+        viewModel.userEmail.observe(this, Observer {
+            var user = it
+            if (user.isNullOrEmpty()) {
+                user = "none"
+                signedIn = false
+            } else {
+                signedIn = true
+            }
+            updateMenu(signedIn)
+            loggedUserTextView.text = "User: $user"
+        })
+
+        viewModel.syncStatus.observe(this, Observer {
+            syncStatusTextView.text = it
+        })
+    }
+
+    private fun updateMenu(signed: Boolean) {
+        val menuList = if (signed) R.array.navigation_items_card_view_signed else R.array.navigation_items_card_view
+        navigationDrawerListView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            resources.getStringArray(menuList)
+        )
     }
 
     @Suppress("DEPRECATION")
@@ -397,6 +423,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         timer = Timer("TagDetailsActivityTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.checkForAlarm()
+            viewModel.updateNetworkStatus()
         }
     }
 

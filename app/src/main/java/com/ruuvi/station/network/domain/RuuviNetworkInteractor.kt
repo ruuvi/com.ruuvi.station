@@ -41,7 +41,6 @@ class RuuviNetworkInteractor (
                 if (response.error.isNullOrEmpty() && response.data != null) {
                     tokenRepository.saveTokenInfo(
                         NetworkTokenInfo(response.data.email, response.data.accessToken))
-                    getUserInfo() {}
                 }
             }
             onResult(response)

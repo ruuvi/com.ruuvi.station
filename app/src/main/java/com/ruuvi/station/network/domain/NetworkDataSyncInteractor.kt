@@ -7,7 +7,6 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.response.*
-import com.ruuvi.station.util.Utils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +24,7 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var syncJob: Job? = null
 
-    private val syncStatus = MutableStateFlow<String> (getLastSyncDate())
+    private val syncStatus = MutableStateFlow<String> ("")
     val syncStatusFlow: StateFlow<String> = syncStatus
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
@@ -39,7 +38,6 @@ class NetworkDataSyncInteractor (
 
         syncJob = ioScope.launch {
             try {
-                setSyncStatus("Synchronizing...")
                 setSyncInProgress(true)
                 syncForPeriod(72)
             } catch (exception: Exception) {
@@ -179,12 +177,7 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    fun getLastSyncDate(): String {
-        val lastSync = preferencesRepository.getLastSyncDate()
-        if (lastSync == Long.MIN_VALUE) {
-            return "Synchronized: never"
-        } else {
-            return "Synchronized: ${Utils.strDescribingTimeSince(Date(lastSync))}"
-        }
+    fun syncStatusShowed() {
+        syncStatus.value = ""
     }
 }

@@ -26,6 +26,14 @@ class SignInActivity() : AppCompatActivity(), KodeinAware{
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    fun updateTitle(title: String) {
+        toolbar.title = title
+    }
+
+    fun goBackEnabled(enabled: Boolean) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(enabled)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
             super.onBackPressed()

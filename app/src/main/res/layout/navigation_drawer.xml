@@ -37,23 +37,42 @@
             android:id="@+id/navigationDrawerListView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/syncLayout"
+            app:layout_constraintBottom_toTopOf="@+id/networkLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/networkLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/networkStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:textStyle="bold"
+                android:text="Ruuvi Network status"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/loggedUserTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="User: "/>
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/syncLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="InvalidId">
+            android:orientation="horizontal">
             <ImageView
                 android:id="@+id/syncButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_baseline_sync_24"
-                android:layout_margin="16dp"
-                />
+                android:layout_margin="8dp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/syncStatusTextView"
                 android:layout_width="match_parent"
@@ -62,7 +81,7 @@
                 android:gravity="center|left"
                 tools:text="Syncronized 1 day ago"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
-
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.navigation.NavigationView>

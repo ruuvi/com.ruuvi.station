@@ -3,7 +3,6 @@ package com.ruuvi.station.network.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.fragment_sign_out.*
@@ -24,13 +23,16 @@ class SignOutFragment : Fragment(R.layout.fragment_sign_out), KodeinAware {
 
     private fun setupUI() {
         cancelButton.setOnClickListener {
-            findNavController().popBackStack()
+            activity?.finish()
         }
 
         okButton.setOnClickListener {
             viewModel.signOut()
             activity?.finish()
         }
+
+        (activity as SignInActivity).updateTitle("Sign out")
+        (activity as SignInActivity).goBackEnabled(false)
     }
 
     companion object {

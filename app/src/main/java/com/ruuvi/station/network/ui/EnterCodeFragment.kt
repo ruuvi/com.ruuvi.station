@@ -32,7 +32,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
         viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
             if (it) {
-                findNavController().navigate(EnterCodeFragmentDirections.actionEnterCodeFragmentToSignedInFragment())
+                activity?.finish()
             }
         })
     }
@@ -49,6 +49,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
             } else {
                 enterCodeManuallyEditText.setText(token)
                 submitCodeButton.performClick()
+                submitCodeButton.isEnabled = false
             }
         }
     }

@@ -187,6 +187,15 @@
         <item>Sign in</item>
     </string-array>
 
+    <string-array name="navigation_items_card_view_signed">
+        <item>Add a New RuuviTag</item>
+        <item>Settings</item>
+        <item>About / Help</item>
+        <item>Send Feedback</item>
+        <item>Get More Sensors</item>
+        <item>Sign out</item>
+    </string-array>
+
     <string-array name="navigation_items_titles">
         <item>Nearby Tags</item>
         <item></item>
@@ -396,7 +405,7 @@ Register or request new sign in link:</string>
 \n
 Please check your email inbox for further instructions. </string>
     <string name="email_sent_note">NOTE: If account already exists  email has notification about merging data</string>
-    <string name="are_you_sure">Are you sure?</string>
+    <string name="are_you_sure">Are you sure want to sign out?</string>
     <string name="signed_in_title">Congratulations!\n
 You\'ve logged to Ruuvi Network as:</string>
     <string name="enter_email_share_tag">Enter email of user to share tag:</string>

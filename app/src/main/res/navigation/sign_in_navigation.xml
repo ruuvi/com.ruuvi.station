@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/enterCodeFragment"
         android:name="com.ruuvi.station.network.ui.EnterCodeFragment"
-        android:label="fragment_enter_code"
+        android:label="Enter code"
         tools:layout="@layout/fragment_enter_code">
         <action
             android:id="@+id/action_enterCodeFragment_to_signedInFragment"

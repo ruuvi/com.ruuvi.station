@@ -151,6 +151,10 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putLong(PREF_LAST_SYNC_DATE, syncDate).apply()
         }
 
+    fun getUserEmailLiveData() = SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
+
+    fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"

@@ -1,9 +1,6 @@
 package com.ruuvi.station.network.di
 
-import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.RuuviNetworkRepository
-import com.ruuvi.station.network.domain.NetworkTokenRepository
-import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.network.domain.*
 import com.ruuvi.station.network.ui.EmailEnterViewModel
 import com.ruuvi.station.network.ui.EnterCodeViewModel
 import com.ruuvi.station.network.ui.SignOutViewModel
@@ -23,6 +20,8 @@ object NetworkInjectionModule {
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance()) }
 
+        bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance()) }
+
         bind<NetworkDataSyncInteractor>() with singleton {
             NetworkDataSyncInteractor(instance(), instance(), instance())
         }
@@ -32,7 +31,7 @@ object NetworkInjectionModule {
         }
 
         bind<EnterCodeViewModel>() with provider {
-            EnterCodeViewModel(instance())
+            EnterCodeViewModel(instance(), instance())
         }
 
         bind<SignedInViewModel>() with provider {
