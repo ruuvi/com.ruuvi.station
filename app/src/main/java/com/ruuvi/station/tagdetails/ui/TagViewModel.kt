@@ -59,8 +59,15 @@ class TagViewModel(
         ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
         var completed = false
         tagEntryObserve.value?.let { tag ->
-            Timber.d("sync logs from: %s", tag.lastSync)
-            val found = gattInteractor.readLogs(tag.id, tag.lastSync, object : IRuuviGattListener {
+            var syncFrom = tag.lastSync
+            val threeDaysAgo = Date(Date().time - 1000*60*60*24*3)
+            if (syncFrom == null) {
+                syncFrom = threeDaysAgo
+            } else if (syncFrom.before(threeDaysAgo)) {
+                syncFrom = threeDaysAgo
+            }
+            Timber.d("sync logs from: %s", syncFrom)
+            val found = gattInteractor.readLogs(tag.id, syncFrom, object : IRuuviGattListener {
                 override fun connected(state: Boolean) {
                     if (state) {
                         Handler(Looper.getMainLooper()).post {
