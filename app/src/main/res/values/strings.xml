@@ -391,7 +391,7 @@
     <string name="disconnected">Disconnected</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
-    <string name="data_points_read">%1$,d data points read, saving..</string>
+    <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="no_new_data_points">No new data points available</string>
     <string name="tag_not_in_range">Tag not found, is it in range?</string>
     <string name="something_went_wrong">Something went wrong</string>

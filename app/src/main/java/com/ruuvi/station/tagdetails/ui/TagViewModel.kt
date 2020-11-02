@@ -59,14 +59,14 @@ class TagViewModel(
         ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
         var completed = false
         tagEntryObserve.value?.let { tag ->
-            Timber.d("sync logs from: " + tag.lastSync)
+            Timber.d("sync logs from: %s", tag.lastSync)
             val found = gattInteractor.readLogs(tag.id, tag.lastSync, object : IRuuviGattListener {
                 override fun connected(state: Boolean) {
                     if (state) {
-                        Handler(Looper.getMainLooper()).post(Runnable {
+                        Handler(Looper.getMainLooper()).post {
                             text += "\n${context.getString(R.string.connected_reading_info)}.."
                             ad.setMessage(text)
-                        })
+                        }
                     } else {
                         if (completed) {
                             if (!text.contains(context.getString(R.string.sync_complete))) {
@@ -75,33 +75,33 @@ class TagViewModel(
                         } else {
                             text += "\n${context.getString(R.string.disconnected)}"
                         }
-                        Handler(Looper.getMainLooper()).post(Runnable {
+                        Handler(Looper.getMainLooper()).post {
                             ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
                             ad.setMessage(text)
-                        })
+                        }
                     }
                 }
 
                 override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                    Handler(Looper.getMainLooper()).post(Runnable {
+                    Handler(Looper.getMainLooper()).post {
                         text += if (canReadLogs) {
                             "\n$model, $fw\n${context.getString(R.string.reading_history)}.."
                         } else {
                             "\n$model, $fw\n${context.getString(R.string.reading_history_not_supported)}"
                         }
                         ad.setMessage(text)
-                    })
+                    }
                 }
 
                 override fun dataReady(data: List<LogReading>) {
-                    Handler(Looper.getMainLooper()).post(Runnable {
+                    Handler(Looper.getMainLooper()).post {
                         text += if (data.isNotEmpty()) {
-                            "\n${context.getString(R.string.data_points_read, data.size * 3)}"
+                            "\n${context.getString(R.string.data_points_read, data.size)}"
                         } else {
                             "\n${context.getString(R.string.no_new_data_points)}"
                         }
                         ad.setMessage(text)
-                    })
+                    }
                     saveGattReadings(tag, data)
                     completed = true
                 }
@@ -110,16 +110,16 @@ class TagViewModel(
                 }
             })
             if (!found) {
-                Handler(Looper.getMainLooper()).post(Runnable {
+                Handler(Looper.getMainLooper()).post {
                     ad.setMessage(context.getString(R.string.tag_not_in_range))
                     ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                })
+                }
             }
         } ?: kotlin.run {
-            Handler(Looper.getMainLooper()).post(Runnable {
+            Handler(Looper.getMainLooper()).post {
                 ad.setMessage(context.getString(R.string.something_went_wrong))
                 ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-            })
+            }
         }
     }
 
