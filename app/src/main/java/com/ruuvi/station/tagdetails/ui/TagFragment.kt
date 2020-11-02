@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -13,9 +12,6 @@ import androidx.lifecycle.Observer
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.app.RuuviScannerApplication
-import com.ruuvi.station.bluetooth.IRuuviGattListener
-import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
@@ -66,7 +62,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
         syncButton.setOnClickListener {
             confirm(getString(R.string.sync_confirm), DialogInterface.OnClickListener { _, _ ->
-                sync()
+                context?.let {
+                    viewModel.syncGatt(it)
+                }
             })
         }
         clearDataButton.setOnClickListener {
@@ -107,81 +105,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             show()
         }
     }
-
-    private fun sync() {
-        val builder = AlertDialog.Builder(requireContext())
-        var text = "${getString(R.string.connecting)}.."
-        builder.setMessage(text)
-        builder.setPositiveButton(getText(R.string.ok)) { p0, _ -> p0.dismiss() }
-        val ad = builder.show()
-        ad.setCanceledOnTouchOutside(false)
-        ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
-        var completed = false
-        viewModel.tagEntryObserve.value?.let { tag ->
-            Timber.d("sync logs from: " +tag.lastSync)
-            val found = (activity?.applicationContext as RuuviScannerApplication).readLogs(tag.id, tag.lastSync, object : IRuuviGattListener {
-                override fun connected(state: Boolean) {
-                    if (state) {
-                        activity?.runOnUiThread {
-                            text += "\n${getString(R.string.connected_reading_info)}.."
-                            ad.setMessage(text)
-                        }
-                    } else {
-                        if (completed) {
-                            if (!text.contains(getString(R.string.sync_complete))) {
-                                text += "\n${getString(R.string.sync_complete)}"
-                            }
-                        } else {
-                            text += "\n${getString(R.string.disconnected)}"
-                        }
-                        activity?.runOnUiThread {
-                            ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                            ad.setMessage(text)
-                        }
-                    }
-                }
-
-                override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                    activity?.runOnUiThread {
-                        text += if (canReadLogs) {
-                            "\n$model, $fw\n${getString(R.string.reading_history)}.."
-                        } else {
-                            "\n$model, $fw\n${getString(R.string.reading_history_not_supported)}"
-                        }
-                        ad.setMessage(text)
-                    }
-                }
-
-                override fun dataReady(data: List<LogReading>) {
-                    activity?.runOnUiThread {
-                        text += if (data.isNotEmpty()) {
-                            "\n${getString(R.string.data_points_read, data.size*3)}"
-                        } else {
-                            "\n${getString(R.string.no_new_data_points)}"
-                        }
-                        ad.setMessage(text)
-                    }
-                    viewModel.saveGattReadings(tag, data)
-                    completed = true
-                }
-
-                override fun heartbeat(raw: String) {
-                }
-            })
-            if (!found) {
-                activity?.runOnUiThread {
-                    ad.setMessage(getString(R.string.tag_not_in_range))
-                    ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                }
-            }
-        } ?: kotlin.run {
-            activity?.runOnUiThread {
-                ad.setMessage(getString(R.string.something_went_wrong))
-                ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-            }
-        }
-    }
-
 
     private fun observeShowGraph() {
         activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer {isShowGraph ->

@@ -26,7 +26,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagViewModel>() with factory { args: TagViewModelArgs ->
-            TagViewModel(instance(), tagId = args.tagId)
+            TagViewModel(instance(), instance(), tagId = args.tagId)
         }
 
         bind<TagRepository>() with singleton {
