@@ -8,6 +8,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
@@ -20,7 +21,6 @@ class NetworkDataSyncInteractor (
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor
 ) {
-    private val ioScope = CoroutineScope(Dispatchers.IO)
     @Volatile
     private var syncJob: Job? = null
 
@@ -36,7 +36,7 @@ class NetworkDataSyncInteractor (
             return
         }
 
-        syncJob = ioScope.launch {
+        syncJob = CoroutineScope(IO).launch() {
             try {
                 setSyncInProgress(true)
                 syncForPeriod(72)
@@ -67,10 +67,12 @@ class NetworkDataSyncInteractor (
 
         val tagJobs = mutableListOf<Job>()
         for (tagInfo in userInfo.data.sensors) {
-            val job = ioScope.launch {
-                syncSensorDataForPeriod(tagInfo.sensor, 72)
+            withContext(IO) {
+                val job = launch {
+                    syncSensorDataForPeriod(tagInfo.sensor, 72)
+                }
+                tagJobs.add(job)
             }
-            tagJobs.add(job)
         }
 
         for (job in tagJobs) {
