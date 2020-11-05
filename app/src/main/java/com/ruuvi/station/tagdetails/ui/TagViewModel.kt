@@ -1,14 +1,10 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Dialog
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -34,6 +30,19 @@ class TagViewModel(
     private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
     val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
+    enum class SyncProgress {
+        STILL, CONNECTING, CONNECTED, DISCONNECTED, READING_INFO, READING_DATA, SAVING_DATA, NOT_SUPPORTED, NOT_FOUND, ERROR, DONE
+    }
+    class SyncStatus {
+        var syncProgress = SyncProgress.STILL
+        var deviceInfoModel = ""
+        var deviceInfoFw = ""
+        var readDataSize = 0
+    }
+
+    private val syncStatusObj = MutableLiveData<SyncStatus>()
+    val syncStatusObserve: LiveData<SyncStatus> = syncStatusObj
+
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private var showGraph = false
@@ -49,15 +58,10 @@ class TagViewModel(
         showGraph = isShow
     }
 
-    fun syncGatt(context: Context) {
-        val builder = AlertDialog.Builder(context)
-        var text = "${context.getString(R.string.connecting)}.."
-        builder.setMessage(text)
-        builder.setPositiveButton(context.getText(R.string.ok)) { p0, _ -> p0.dismiss() }
-        val ad = builder.show()
-        ad.setCanceledOnTouchOutside(false)
-        ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
-        var completed = false
+    fun syncGatt() {
+        syncStatusObj.value = SyncStatus()
+        syncStatusObj.value?.syncProgress = SyncProgress.CONNECTING
+        syncStatusObj.postValue(syncStatusObj.value)
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
             val threeDaysAgo = Date(Date().time - 1000*60*60*24*3)
@@ -70,62 +74,47 @@ class TagViewModel(
             val found = gattInteractor.readLogs(tag.id, syncFrom, object : IRuuviGattListener {
                 override fun connected(state: Boolean) {
                     if (state) {
-                        Handler(Looper.getMainLooper()).post {
-                            text += "\n${context.getString(R.string.connected_reading_info)}.."
-                            ad.setMessage(text)
-                        }
+                        syncStatusObj.value?.syncProgress = SyncProgress.CONNECTED
+                        syncStatusObj.value?.syncProgress = SyncProgress.READING_INFO
                     } else {
-                        if (completed) {
-                            if (!text.contains(context.getString(R.string.sync_complete))) {
-                                text += "\n${context.getString(R.string.sync_complete)}"
-                            }
+                        if (syncStatusObj.value?.syncProgress == SyncProgress.SAVING_DATA) {
+                            syncStatusObj.value?.syncProgress = SyncProgress.DONE
                         } else {
-                            text += "\n${context.getString(R.string.disconnected)}"
-                        }
-                        Handler(Looper.getMainLooper()).post {
-                            ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                            ad.setMessage(text)
+                            syncStatusObj.value?.syncProgress = SyncProgress.DISCONNECTED
                         }
                     }
+                    syncStatusObj.postValue(syncStatusObj.value)
                 }
 
                 override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                    Handler(Looper.getMainLooper()).post {
-                        text += if (canReadLogs) {
-                            "\n$model, $fw\n${context.getString(R.string.reading_history)}.."
-                        } else {
-                            "\n$model, $fw\n${context.getString(R.string.reading_history_not_supported)}"
-                        }
-                        ad.setMessage(text)
+                    syncStatusObj.value?.deviceInfoModel = model
+                    syncStatusObj.value?.deviceInfoFw = fw
+                    if (canReadLogs) {
+                        syncStatusObj.value?.syncProgress = SyncProgress.READING_DATA
+                    } else {
+                        syncStatusObj.value?.syncProgress = SyncProgress.NOT_SUPPORTED
                     }
+                    syncStatusObj.postValue(syncStatusObj.value)
                 }
 
                 override fun dataReady(data: List<LogReading>) {
-                    Handler(Looper.getMainLooper()).post {
-                        text += if (data.isNotEmpty()) {
-                            "\n${context.getString(R.string.data_points_read, data.size)}"
-                        } else {
-                            "\n${context.getString(R.string.no_new_data_points)}"
-                        }
-                        ad.setMessage(text)
-                    }
+                    syncStatusObj.value?.readDataSize = data.size
+                    syncStatusObj.value?.syncProgress = SyncProgress.SAVING_DATA
+                    syncStatusObj.postValue(syncStatusObj.value)
                     saveGattReadings(tag, data)
-                    completed = true
                 }
 
                 override fun heartbeat(raw: String) {
                 }
             })
             if (!found) {
-                Handler(Looper.getMainLooper()).post {
-                    ad.setMessage(context.getString(R.string.tag_not_in_range))
-                    ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
-                }
+                syncStatusObj.value?.syncProgress = SyncProgress.NOT_FOUND
+                syncStatusObj.postValue(syncStatusObj.value)
             }
         } ?: kotlin.run {
             Handler(Looper.getMainLooper()).post {
-                ad.setMessage(context.getString(R.string.something_went_wrong))
-                ad.getButton(Dialog.BUTTON_POSITIVE).isEnabled = true
+                syncStatusObj.value?.syncProgress = SyncProgress.ERROR
+                syncStatusObj.postValue(syncStatusObj.value)
             }
         }
     }
