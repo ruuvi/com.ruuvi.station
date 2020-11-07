@@ -1,16 +1,10 @@
 package com.ruuvi.station.network.di
 
 import com.ruuvi.station.network.domain.*
-import com.ruuvi.station.network.ui.EmailEnterViewModel
-import com.ruuvi.station.network.ui.EnterCodeViewModel
-import com.ruuvi.station.network.ui.SignOutViewModel
-import com.ruuvi.station.network.ui.SignedInViewModel
+import com.ruuvi.station.network.ui.*
 import kotlinx.coroutines.Dispatchers
 import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
-import org.kodein.di.generic.singleton
+import org.kodein.di.generic.*
 
 object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
@@ -40,6 +34,10 @@ object NetworkInjectionModule {
 
         bind<SignOutViewModel>() with provider {
             SignOutViewModel(instance())
+        }
+
+        bind<ShareSensorViewModel>() with factory { tagId: String ->
+            ShareSensorViewModel(tagId)
         }
     }
 }

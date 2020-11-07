@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RuuviNetworkInteractor (
+class  RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository
 ) {
@@ -95,8 +95,17 @@ class RuuviNetworkInteractor (
         val token = getToken()?.token
         token?.let {
             val request = ShareSensorRequest(recipientEmail, tagId)
-            networkRepository.shareSensor(request, token) { shareResponse ->
-                onResult(shareResponse)
+//            networkRepository.shareSensor(request, token) { shareResponse ->
+//                onResult(shareResponse)
+//            }
+        }
+    }
+
+    fun getShаredInfo(tagId: String) {
+        val token = getToken()?.token
+        CoroutineScope(Dispatchers.IO).launch {
+            token?.let {
+                val response = networkRepository.getSharedSensors(it)
             }
         }
     }

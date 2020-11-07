@@ -87,6 +87,11 @@
             android:name=".dashboard.ui.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
+        <activity
+            android:name=".network.ui.ShareSensorActivity"
+            android:label="Share Ruuvi sensor"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ruuvi.station.fileprovider"

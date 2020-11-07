@@ -116,21 +116,43 @@ class RuuviNetworkRepository
         result
     }
 
-    fun shareSensor(request: ShareSensorRequest, token: String, onResult: (ShareSensorResponse?) -> Unit) {
-        ioScope.launch {
-            val response = retrofitService.shareSensor("Bearer " + token, request)
-            var result: ShareSensorResponse? = null
-            if (response.isSuccessful) {
-                result = response.body()
-            } else {
-                val type = object : TypeToken<ShareSensorResponse>() {}.type
-                var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                result = errorResponse
-            }
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
+    suspend fun shareSensor(request: ShareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
+        val response = retrofitService.shareSensor("Bearer " + token, request)
+        var result: ShareSensorResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
         }
+        result
+    }
+
+    suspend fun unshareSensor(request: UnshareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
+        val response = retrofitService.unshareSensor("Bearer " + token, request)
+        var result: ShareSensorResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            var errorResponse: ShareSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun getSharedSensors(token: String): SharedSensorsResponse? = withContext(dispatcher){
+        val response = retrofitService.getSharedSensors("Bearer " + token)
+        var result: SharedSensorsResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<SharedSensorsResponse>() {}.type
+            var errorResponse: SharedSensorsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
     }
 
     suspend fun getSensorData(token: String, request: GetSensorDataRequest): GetSensorDataResponse? = withContext(dispatcher) {

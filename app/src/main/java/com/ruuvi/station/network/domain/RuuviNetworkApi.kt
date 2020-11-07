@@ -1,9 +1,6 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.network.data.request.ClaimSensorRequest
-import com.ruuvi.station.network.data.request.ShareSensorRequest
-import com.ruuvi.station.network.data.request.UnclaimSensorRequest
-import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -41,6 +38,17 @@ interface RuuviNetworkApi{
         @Header("Authorization")auth: String,
         @Body request: ShareSensorRequest
     ): Response<ShareSensorResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("unshare")
+    suspend fun unshareSensor(
+        @Header("Authorization")auth: String,
+        @Body request: UnshareSensorRequest
+    ): Response<ShareSensorResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("shared")
+    suspend fun getSharedSensors(@Header("Authorization") auth: String): Response<SharedSensorsResponse>
 
     @Headers("Content-Type: application/json")
     @GET("get")

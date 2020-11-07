@@ -33,6 +33,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -96,18 +97,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
 
         shareTagButton.setDebouncedOnClickListener {
-            val alert = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-            alert.setMessage(getString(R.string.enter_email_share_tag))
-            val email = EditText(this)
-            email.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            email.hint = getString(R.string.email)
-            alert.setView(email)
-            alert.setPositiveButton(getString(R.string.ok)) { _,_ ->
-                viewModel.shareSensor(email.text.toString())
-            }
-
-            alert.setNegativeButton(getString(R.string.cancel), null)
-            alert.show()
+            val intent = Intent(this, ShareSensorActivity::class.java)
+            startActivity(intent)
         }
 
         getTagDataButton.setDebouncedOnClickListener {
