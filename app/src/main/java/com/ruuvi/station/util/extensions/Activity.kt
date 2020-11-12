@@ -1,8 +1,10 @@
 package com.ruuvi.station.util.extensions
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.BuildConfig
 
@@ -25,4 +27,9 @@ fun AppCompatActivity.OpenUrl(url: String){
     val webIntent = Intent(Intent.ACTION_VIEW)
     webIntent.data = Uri.parse(url)
     startActivity(webIntent)
+}
+
+fun AppCompatActivity.hideKeyboard() {
+    val imm: InputMethodManager = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
 }

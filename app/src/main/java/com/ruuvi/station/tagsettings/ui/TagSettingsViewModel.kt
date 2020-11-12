@@ -86,18 +86,6 @@ class TagSettingsViewModel(
         }
     }
 
-    fun shareSensor(recipientEmail: String) {
-        if (recipientEmail.isNotEmpty()) {
-            networkInteractor.shareSensor(recipientEmail, tagId) {
-                if (it == null || it.error.isNullOrEmpty() == false) {
-                    operationStatus.value = "Failed to share tag to $recipientEmail"
-                } else {
-                    operationStatus.value = "Tag shared with $recipientEmail"
-                }
-            }
-        }
-    }
-
     fun statusProcessed() { operationStatus.value = "" }
 
     fun getSensorData() {

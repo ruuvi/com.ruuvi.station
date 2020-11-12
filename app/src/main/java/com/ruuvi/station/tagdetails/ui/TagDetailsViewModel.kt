@@ -69,6 +69,7 @@ class TagDetailsViewModel(
         viewModelScope.launch {
             networkDataSyncInteractor.syncInProgressFlow.collect{
                 syncInProgress.value = it
+                if (it == false) refreshTags()
             }
         }
 

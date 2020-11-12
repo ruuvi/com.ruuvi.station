@@ -25,7 +25,7 @@ object NetworkInjectionModule {
         }
 
         bind<EnterCodeViewModel>() with provider {
-            EnterCodeViewModel(instance(), instance())
+            EnterCodeViewModel(instance(), instance(), instance())
         }
 
         bind<SignedInViewModel>() with provider {
@@ -37,7 +37,7 @@ object NetworkInjectionModule {
         }
 
         bind<ShareSensorViewModel>() with factory { tagId: String ->
-            ShareSensorViewModel(tagId)
+            ShareSensorViewModel(tagId, instance())
         }
     }
 }

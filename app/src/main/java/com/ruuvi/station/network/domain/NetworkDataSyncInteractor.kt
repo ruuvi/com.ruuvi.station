@@ -7,6 +7,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.response.*
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +40,23 @@ class NetworkDataSyncInteractor (
         syncJob = CoroutineScope(IO).launch() {
             try {
                 setSyncInProgress(true)
-                syncForPeriod(72)
+
+                val userInfo = networkInteractor.getUserInfo()
+
+                if (userInfo?.data?.sensors == null) {
+                    setSyncFailedStatus("can't get user info")
+                    return@launch
+                }
+
+                val benchUpdate1 = Date()
+                updateTags(userInfo.data)
+                val benchUpdate2 = Date()
+                Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
+                Timber.d("benchmark-syncForPeriod-start")
+                val benchSync1 = Date()
+                syncForPeriod(userInfo.data, 72)
+                val benchSync2 = Date()
+                Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
             } catch (exception: Exception) {
                 val message = exception.message
                 message?.let {
@@ -52,31 +69,28 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun syncForPeriod(hours: Int) {
+    private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
         if (networkInteractor.signedIn == false) {
             setSyncFailedStatus("can't sync if user not signed in")
             return
         }
 
-        val userInfo = networkInteractor.getUserInfo()
+        withContext(IO) {
+            val tagJobs = mutableListOf<Job>()
+            for (tagInfo in userInfoData.sensors) {
 
-        if (userInfo?.data?.sensors == null) {
-            setSyncFailedStatus("can't get user info")
-            return
-        }
-
-        val tagJobs = mutableListOf<Job>()
-        for (tagInfo in userInfo.data.sensors) {
-            withContext(IO) {
                 val job = launch {
+                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
+                    val benchUpdate1 = Date()
                     syncSensorDataForPeriod(tagInfo.sensor, 72)
+                    val benchUpdate2 = Date()
+                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 }
                 tagJobs.add(job)
             }
-        }
-
-        for (job in tagJobs) {
-            job.join()
+            for (job in tagJobs) {
+                job.join()
+            }
         }
 
         setSyncStatus("Synchronized successfully!")
@@ -85,6 +99,7 @@ class NetworkDataSyncInteractor (
 
     suspend fun syncSensorDataForPeriod(tagId: String, period: Long) {
         Timber.d("Synchronizing... $tagId")
+
 
         val last = tagRepository.getLatestForTag(tagId, 1)
         val tag = tagRepository.getTagById(tagId)
@@ -98,27 +113,40 @@ class NetworkDataSyncInteractor (
 
             if (last.isNotEmpty() && last[0].createdAt > since) since = last[0].createdAt
 
-            var result = getSince(tagId, since, 1000)
+            // if we have data for recent minute - skipping update
+            if (!since.diffGreaterThan(60*1000)) return
+
+            val benchRequest1 = Date()
+
+            var result = getSince(tagId, since, 5000)
             val measurements = mutableListOf<SensorDataMeasurementResponse>()
 
-            while (result != null && result?.data?.total ?: 0 > 0) {
+            var count = 1
+            while (result != null && result.data?.total ?: 0 > 0) {
                 val data = result.data?.measurements
+                result = null
                 if (data != null && data.size > 0) {
                     measurements.addAll(data)
                     var maxTimestamp = data.maxBy { it.timestamp }?.timestamp
                     if (maxTimestamp != null) {
                         maxTimestamp++
                         since = Date(maxTimestamp * 1000)
-                        result = getSince(tagId, since, 1000)
-                    } else {
-                        result = null
+                        if (since.diffGreaterThan(60*1000)) {
+                            result = getSince(tagId, since, 5000)
+                            count++
+                        }
                     }
                 }
             }
+            val benchRequest2 = Date()
+            Timber.d("benchmark-getSensorData($count)-finish ${tagId} - ${benchRequest2.time - benchRequest1.time} ms")
+
 
             if (measurements.size > 0) {
-                Timber.d("Bulk save for tag: $tagId. Data points count ${measurements.size}")
+                val benchUpdate1 = Date()
                 saveSensorData(tag, measurements)
+                val benchUpdate2 = Date()
+                Timber.d("benchmark-saveSensorData-finish ${tagId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
         }
     }
@@ -159,6 +187,26 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
+    private fun updateTags(userInfoData: UserInfoResponseBody) {
+        userInfoData.sensors.forEach { sensor ->
+            var tagDb = tagRepository.getTagById(sensor.sensor)
+            if (tagDb == null) {
+                tagDb = RuuviTagEntity()
+                tagDb.id = sensor.sensor
+                tagDb.name = if (sensor.name.isEmpty()) sensor.sensor else sensor.name
+                tagDb.favorite = true
+                tagDb.defaultBackground = (Math.random() * 9.0).toInt()
+                tagDb.updateAt = Date()
+                tagDb.insert()
+            } else {
+                tagDb.favorite = true
+                tagDb.updateAt = Date()
+                if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
+                tagDb.update()
+            }
+        }
+    }
+
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
         val request = GetSensorDataRequest(
             tagId,
@@ -167,16 +215,6 @@ class NetworkDataSyncInteractor (
             limit = limit
         )
         return networkInteractor.getSensorData(request)
-    }
-
-    private fun updateSensorsData(userInfo: UserInfoResponseBody?) {
-        userInfo?.let { userInfo ->
-            for (tagInfo in userInfo.sensors) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    syncSensorDataForPeriod(tagInfo.sensor, 72)
-                }
-            }
-        }
     }
 
     fun syncStatusShowed() {

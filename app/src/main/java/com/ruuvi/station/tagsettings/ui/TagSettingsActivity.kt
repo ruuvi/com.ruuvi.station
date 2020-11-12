@@ -97,8 +97,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
 
         shareTagButton.setDebouncedOnClickListener {
-            val intent = Intent(this, ShareSensorActivity::class.java)
-            startActivity(intent)
+            ShareSensorActivity.start(this, viewModel.tagId )
         }
 
         getTagDataButton.setDebouncedOnClickListener {
@@ -328,6 +327,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             tag.defaultBackground = if (tag.defaultBackground == 8) 0 else tag.defaultBackground + 1
 
             tag.userBackground = null
+            tag.update()
 
             tagImageView.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, applicationContext))
         }

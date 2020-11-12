@@ -1,6 +1,6 @@
 package com.ruuvi.station.network.data.response
 
-typealias SharedSensorsResponse = RuuviNetworkResponse<ShareSensorResponseBody>
+typealias SharedSensorsResponse = RuuviNetworkResponse<SharedSensorsResponseBody>
 
 data class SharedSensorsResponseBody (
     val sensors: List<SharedSensorDataResponse>

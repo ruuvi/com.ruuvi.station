@@ -49,6 +49,7 @@ class DashboardActivityViewModel(
         viewModelScope.launch {
             networkDataSyncInteractor.syncInProgressFlow.collect{
                 syncInProgress.value = it
+                updateTags()
             }
         }
 

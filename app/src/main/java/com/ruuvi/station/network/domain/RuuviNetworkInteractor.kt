@@ -4,10 +4,9 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import timber.log.Timber
+import java.util.*
 
 class  RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
@@ -59,7 +58,10 @@ class  RuuviNetworkInteractor (
     suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
+            val benchUpdate1 = Date()
             userInfo = networkRepository.getUserInfo(token.token)
+            val benchUpdate2 = Date()
+            Timber.d("benchmark-getUserInfo-finish ${benchUpdate2.time - benchUpdate1.time} ms")
             return userInfo
         } else {
             return null
@@ -91,21 +93,63 @@ class  RuuviNetworkInteractor (
         }
     }
 
-    fun shareSensor(recipientEmail: String, tagId: String, onResult: (ShareSensorResponse?) -> Unit) {
+    fun shareSensor(recipientEmail: String, tagId: String, handler: CoroutineExceptionHandler, onResult: (ShareSensorResponse?) -> Unit) {
         val token = getToken()?.token
-        token?.let {
-            val request = ShareSensorRequest(recipientEmail, tagId)
-//            networkRepository.shareSensor(request, token) { shareResponse ->
-//                onResult(shareResponse)
-//            }
+        CoroutineScope(Dispatchers.IO).launch(handler) {
+            token?.let {
+                val request = ShareSensorRequest(recipientEmail, tagId)
+                val response = networkRepository.shareSensor(request, token)
+                withContext(Dispatchers.Main) {
+                    onResult(response)
+                }
+            }
         }
     }
 
-    fun getShаredInfo(tagId: String) {
+    fun unshareSensor(recipientEmail: String, tagId: String, handler: CoroutineExceptionHandler, onResult: (ShareSensorResponse?) -> Unit) {
         val token = getToken()?.token
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch(handler) {
+            token?.let {
+                val request = UnshareSensorRequest(recipientEmail, tagId)
+                val response = networkRepository.unshareSensor(request, token)
+                withContext(Dispatchers.Main) {
+                    onResult(response)
+                }
+            }
+        }
+    }
+
+    fun unshareAll(tagId: String, handler: CoroutineExceptionHandler, onResult: (Boolean) -> Unit) {
+        val token = getToken()?.token
+        CoroutineScope(Dispatchers.IO).launch(handler) {
+            token?.let {
+                val sharedInfo = networkRepository.getSharedSensors(it)
+                if (sharedInfo?.data?.sensors?.isEmpty() == false) {
+                    val emails = sharedInfo.data.sensors.filter { it.sensor == tagId }.map { it.sharedTo }
+                    if (emails.isEmpty() == false) {
+                        for (email in emails) {
+                            val request = UnshareSensorRequest(email, tagId)
+                            networkRepository.unshareSensor(request, token)
+                        }
+                        onResult(true)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getShаredInfo(tagId: String, handler: CoroutineExceptionHandler, onResult: (List<SharedSensorDataResponse>?) -> Unit) {
+        val token = getToken()?.token
+        CoroutineScope(Dispatchers.IO).launch(handler) {
             token?.let {
                 val response = networkRepository.getSharedSensors(it)
+                Timber.d("getShаredInfo ${response.toString()}")
+                if (response?.data != null) {
+                    val result = response.data.sensors.filter { it.sensor == tagId }
+                    withContext(Dispatchers.Main) {
+                        onResult(result)
+                    }
+                }
             }
         }
     }

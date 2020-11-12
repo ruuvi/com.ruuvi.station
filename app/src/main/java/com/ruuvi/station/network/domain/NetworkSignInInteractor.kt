@@ -17,27 +17,6 @@ class NetworkSignInInteractor (
             } else if (!response.error.isNullOrEmpty()) {
                 errorText = response.error
             }
-            networkInteractor.getUserInfo {
-                it?.data?.let { body->
-                    body.sensors.forEach {sensor->
-                        var tagDb = tagRepository.getTagById(sensor.sensor)
-                        if (tagDb == null) {
-                            tagDb = RuuviTagEntity()
-                            tagDb.id = sensor.sensor
-                            tagDb.name = if (sensor.name.isEmpty()) sensor.sensor else sensor.name
-                            tagDb.favorite = true
-                            tagDb.updateAt = Date()
-                            tagDb.insert()
-                        } else {
-                            tagDb.favorite = true
-                            tagDb.updateAt = Date()
-                            if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
-                            tagDb.update()
-                        }
-                    }
-                    networkDataSyncInteractor.syncNetworkData()
-                }
-            }
             response(errorText)
         }
     }

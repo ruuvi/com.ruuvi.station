@@ -9,6 +9,7 @@
     tools:context="com.ruuvi.station.network.ui.ShareSensorActivity">
 
   <RelativeLayout
+      android:background="@drawable/header"
       android:fitsSystemWindows="true"
       android:id="@+id/toolbarContainer"
       android:layout_height="match_parent"
@@ -32,6 +33,7 @@
 
       <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/tag_settings_item_layout"
+          android:background="@color/white"
           android:layout_below="@id/appBarLayout"
           android:layout_height="match_parent"
           android:layout_width="match_parent">
@@ -114,7 +116,8 @@
               app:layout_constraintLeft_toLeftOf="parent"
               />
 
-          <androidx.recyclerview.widget.RecyclerView
+          <ListView
+              android:id="@+id/sensorRecipientsListView"
               android:layout_width="match_parent"
               android:layout_height="0dp"
               app:layout_constraintTop_toBottomOf="@+id/sharedTextView"
