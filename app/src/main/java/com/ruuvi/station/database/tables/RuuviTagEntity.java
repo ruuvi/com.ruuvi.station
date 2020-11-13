@@ -64,6 +64,10 @@ public class RuuviTagEntity extends BaseModel {
     private double humidityOffset;
     @Column
     private Date humidityOffsetDate;
+    @Column
+    public boolean connectable;
+    @Column
+    private Date lastSync;
 
     public RuuviTagEntity() {
     }
@@ -84,6 +88,7 @@ public class RuuviTagEntity extends BaseModel {
         this.movementCounter = tag.getMovementCounter() != null ? tag.getMovementCounter() : 0;
         this.measurementSequenceNumber = tag.getMeasurementSequenceNumber() != null
                 ? tag.getMeasurementSequenceNumber() : 0;
+        this.connectable = tag.getConnectable() != null ? tag.getConnectable() : false;
     }
 
     public void updateData(TagSensorReading reading) {
@@ -112,6 +117,7 @@ public class RuuviTagEntity extends BaseModel {
         tag.setUpdateAt(new Date());
         tag.setHumidityOffset(this.getHumidityOffset());
         tag.setHumidityOffsetDate(this.getHumidityOffsetDate());
+        tag.setLastSync(this.getLastSync());
         return tag;
     }
 
@@ -366,5 +372,24 @@ public class RuuviTagEntity extends BaseModel {
 
     public void setHumidityOffsetDate(Date humidityOffsetDate) {
         this.humidityOffsetDate = humidityOffsetDate;
+    }
+
+    //@Override
+    public Boolean getConnectable() {
+        return connectable;
+    }
+
+    //@Override
+    public void setConnectable(Boolean connectable) {
+        this.connectable = connectable;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public Date getLastSync() {
+        return lastSync;
+    }
+
+    public void setLastSync(Date lastSync) {
+        this.lastSync = lastSync;
     }
 }

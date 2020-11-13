@@ -69,8 +69,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:69b830145a'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:gatt-SNAPSHOT'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:gatt-SNAPSHOT'
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
@@ -82,7 +82,6 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
 
     // Lifecycle
