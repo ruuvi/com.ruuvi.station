@@ -68,7 +68,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:gatt-SNAPSHOT'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:gatt-SNAPSHOT'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:9292795e27f'
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
