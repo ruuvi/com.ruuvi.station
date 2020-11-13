@@ -33,6 +33,7 @@ class TagViewModel(
     enum class SyncProgress {
         STILL, CONNECTING, CONNECTED, DISCONNECTED, READING_INFO, READING_DATA, SAVING_DATA, NOT_SUPPORTED, NOT_FOUND, ERROR, DONE
     }
+
     class SyncStatus {
         var syncProgress = SyncProgress.STILL
         var deviceInfoModel = ""
@@ -64,7 +65,7 @@ class TagViewModel(
         syncStatusObj.postValue(syncStatusObj.value)
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val threeDaysAgo = Date(Date().time - 1000*60*60*24*3)
+            val threeDaysAgo = Date(Date().time - 1000 * 60 * 60 * 24 * 3)
             if (syncFrom == null) {
                 syncFrom = threeDaysAgo
             } else if (syncFrom.before(threeDaysAgo)) {
@@ -159,12 +160,12 @@ class TagViewModel(
         Timber.d("Get graph data for tagId = $tagId")
         ioScope.launch {
             tagDetailsInteractor
-                    .getTagReadings(tagId)
-                    ?.let {
-                        withContext(Dispatchers.Main) {
-                            tagReadings.value = it
-                        }
+                .getTagReadings(tagId)
+                ?.let {
+                    withContext(Dispatchers.Main) {
+                        tagReadings.value = it
                     }
+                }
         }
     }
 
@@ -172,32 +173,32 @@ class TagViewModel(
         Timber.d("getTagEntryData for tagId = $tagId")
         ioScope.launch {
             tagDetailsInteractor
-                    .getTagById(tagId)
-                    ?.let {
-                        withContext(Dispatchers.Main) {
-                            tagEntry.value = it
-                        }
+                .getTagById(tagId)
+                ?.let {
+                    withContext(Dispatchers.Main) {
+                        tagEntry.value = it
                     }
+                }
         }
     }
 
     fun getTemperatureString(tag: RuuviTag): String =
-            tagDetailsInteractor.getTemperatureString(tag)
+        tagDetailsInteractor.getTemperatureString(tag)
 
     fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
-            tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
+        tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
 
     fun getTemperatureUnitString(): String =
-            tagDetailsInteractor.getTemperatureUnitString()
+        tagDetailsInteractor.getTemperatureUnitString()
 
     fun getHumidityString(tag: RuuviTag): String =
-            tagDetailsInteractor.getHumidityString(tag)
+        tagDetailsInteractor.getHumidityString(tag)
 
     fun getPressureString(tag: RuuviTag): String =
-            tagDetailsInteractor.getPressureString(tag)
+        tagDetailsInteractor.getPressureString(tag)
 
     fun getSignalString(tag: RuuviTag): String =
-            tagDetailsInteractor.getSignalString(tag)
+        tagDetailsInteractor.getSignalString(tag)
 
     override fun onCleared() {
         super.onCleared()

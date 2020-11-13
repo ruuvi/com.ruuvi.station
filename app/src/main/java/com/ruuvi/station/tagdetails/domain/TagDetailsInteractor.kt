@@ -18,11 +18,11 @@ class TagDetailsInteractor(
         tagRepository.getTagById(tagId)?.let { tagConverter.fromDatabase(it) }
 
     fun updateLastSync(tagId: String, date: Date?): RuuviTag? =
-            tagRepository.getTagById(tagId)?.let {
-                it.lastSync = date
-                it.update()
-                return tagConverter.fromDatabase(it)
-            }
+        tagRepository.getTagById(tagId)?.let {
+            it.lastSync = date
+            it.update()
+            return tagConverter.fromDatabase(it)
+        }
 
     fun getTagReadings(tagId: String): List<TagSensorReading>? =
         tagRepository.getTagReadings(tagId)

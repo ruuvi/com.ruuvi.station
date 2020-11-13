@@ -215,7 +215,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             val container = FrameLayout(applicationContext)
 
             val params =
-                    FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
             params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
 
@@ -347,19 +347,19 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun setupAlarmItems() {
         with(viewModel.alarmItems) {
             add(AlarmItem(
-                    getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
-                    Alarm.TEMPERATURE,
-                    false,
-                    -40,
-                    85
+                getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
+                Alarm.TEMPERATURE,
+                false,
+                -40,
+                85
             ))
             add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
             add(AlarmItem(
-                    getString(R.string.pressure, unitsConverter.getPressureUnitString()),
-                    Alarm.PRESSURE,
-                    false,
-                    30000,
-                    110000
+                getString(R.string.pressure, unitsConverter.getPressureUnitString()),
+                Alarm.PRESSURE,
+                false,
+                30000,
+                110000
             ))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
             add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
@@ -455,8 +455,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         val listView = ListView(this)
 
         val menu = arrayOf(
-                resources.getString(R.string.camera),
-                resources.getString(R.string.gallery)
+            resources.getString(R.string.camera),
+            resources.getString(R.string.gallery)
         )
 
         listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
@@ -505,9 +505,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     return
                 }
                 viewModel.file = FileProvider.getUriForFile(
-                        this,
-                        "com.ruuvi.station.fileprovider",
-                        photoFile
+                    this,
+                    "com.ruuvi.station.fileprovider",
+                    photoFile
                 )
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, viewModel.file)
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)

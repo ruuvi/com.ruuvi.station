@@ -69,7 +69,6 @@ dependencies {
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:gatt-SNAPSHOT'
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:gatt-SNAPSHOT'
-    //implementation project(':bluetooth_library')
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
