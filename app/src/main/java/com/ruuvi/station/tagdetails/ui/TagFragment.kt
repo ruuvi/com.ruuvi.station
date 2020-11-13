@@ -1,26 +1,24 @@
 package com.ruuvi.station.tagdetails.ui
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.ruuvi.station.util.extensions.sharedViewModel
-import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.Utils
-import kotlinx.android.synthetic.main.view_tag_detail.tagContainer
-import kotlinx.android.synthetic.main.view_tag_detail.tagHumidityTextView
-import kotlinx.android.synthetic.main.view_tag_detail.tagPressureTextView
-import kotlinx.android.synthetic.main.view_tag_detail.tagSignalTextView
-import kotlinx.android.synthetic.main.view_tag_detail.tagTempUnitTextView
-import kotlinx.android.synthetic.main.view_tag_detail.tagTemperatureTextView
-import kotlinx.android.synthetic.main.view_tag_detail.tagUpdatedTextView
+import com.ruuvi.station.util.extensions.sharedViewModel
+import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.android.synthetic.main.view_graphs.*
+import kotlinx.android.synthetic.main.view_tag_detail.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
@@ -28,6 +26,7 @@ import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+
 
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
@@ -55,6 +54,18 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagEntry()
         observeTagReadings()
         observeSelectedTag()
+        observeSync()
+
+        syncButton.setOnClickListener {
+            confirm(getString(R.string.sync_confirm), DialogInterface.OnClickListener { _, _ ->
+                viewModel.syncGatt()
+            })
+        }
+        clearDataButton.setOnClickListener {
+            confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
+                viewModel.removeTagData()
+            })
+        }
     }
 
     override fun onResume() {
@@ -76,8 +87,21 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         })
     }
 
+    private fun confirm(message: String, positiveButtonClick: DialogInterface.OnClickListener) {
+        val builder = AlertDialog.Builder(requireContext())
+        with(builder)
+        {
+            setMessage(message)
+            setPositiveButton(getString(R.string.yes), positiveButtonClick)
+            setNegativeButton(android.R.string.no, DialogInterface.OnClickListener { dialogInterface, i ->
+                dialogInterface.dismiss()
+            })
+            show()
+        }
+    }
+
     private fun observeShowGraph() {
-        activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer {isShowGraph ->
+        activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer { isShowGraph ->
             view?.let {
                 setupViewVisibility(it, isShowGraph)
                 viewModel.isShowGraph(isShowGraph)
@@ -88,6 +112,69 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun observeTagEntry() {
         viewModel.tagEntryObserve.observe(viewLifecycleOwner, Observer {
             it?.let { updateTagData(it) }
+        })
+    }
+
+
+    private var syncDialog: AlertDialog? = null
+    var syncDialogText = ""
+
+    private fun createSyncDialog(dismissButtonEnabled: Boolean) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(syncDialogText)
+        builder.setPositiveButton(context?.getText(R.string.ok)) { p0, _ -> p0.dismiss() }
+        syncDialog = builder.show()
+        syncDialog?.setCanceledOnTouchOutside(false)
+        syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = dismissButtonEnabled
+    }
+
+    private fun observeSync() {
+        viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
+            when (it.syncProgress) {
+                TagViewModel.SyncProgress.STILL -> {
+                    // nothing is happening
+                }
+                TagViewModel.SyncProgress.CONNECTING -> {
+                    syncDialogText = "${context?.getString(R.string.connecting)}.."
+                    createSyncDialog(false)
+                }
+                TagViewModel.SyncProgress.CONNECTED -> {
+                    syncDialogText += "\n${context?.getString(R.string.connected_reading_info)}.."
+                }
+                TagViewModel.SyncProgress.DISCONNECTED -> {
+                    syncDialogText += "\n${context?.getString(R.string.disconnected)}"
+                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                }
+                TagViewModel.SyncProgress.READING_INFO -> {
+                    syncDialogText += "\n${context?.getString(R.string.connected_reading_info)}.."
+                }
+                TagViewModel.SyncProgress.NOT_SUPPORTED -> {
+                    syncDialogText += "\n${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}.."
+                }
+                TagViewModel.SyncProgress.READING_DATA -> {
+                    syncDialogText += "\n${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history)}.."
+                }
+                TagViewModel.SyncProgress.SAVING_DATA -> {
+                    syncDialogText += if (it.readDataSize > 0) {
+                        "\n${context?.getString(R.string.data_points_read, it.readDataSize)}"
+                    } else {
+                        "\n${context?.getString(R.string.no_new_data_points)}"
+                    }
+                }
+                TagViewModel.SyncProgress.NOT_FOUND -> {
+                    syncDialogText = "${context?.getString(R.string.tag_not_in_range)}"
+                    createSyncDialog(true)
+                }
+                TagViewModel.SyncProgress.ERROR -> {
+                    syncDialogText = context?.getString(R.string.something_went_wrong).toString()
+                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                }
+                TagViewModel.SyncProgress.DONE -> {
+                    syncDialogText += "\n${context?.getString(R.string.sync_complete)}"
+                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                }
+            }
+            syncDialog?.setMessage(syncDialogText)
         })
     }
 
@@ -113,6 +200,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         val unitSpan = SpannableString(unit)
         unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
         tagTempUnitTextView.text = unitSpan
+        tag.connectable?.let {
+            if (it) {
+                syncView.visibility = View.VISIBLE
+            } else {
+                syncView.visibility = View.GONE
+            }
+        }
     }
 
     private fun setupViewVisibility(view: View, showGraph: Boolean) {

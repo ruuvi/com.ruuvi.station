@@ -6,8 +6,7 @@ import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.text.InputFilter
 import android.text.InputType
@@ -314,7 +313,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     humidityCalibrationInteractor.calibrate(it);
                     tag.humidity = it.humidity;
                     tag.humidityOffset = it.humidityOffset;
-                    tag.humidityOffsetDate  = it.humidityOffsetDate;
+                    tag.humidityOffsetDate = it.humidityOffsetDate;
                     viewModel.updateTag(it)
                     Toast.makeText(this@TagSettingsActivity, "Calibration done!", Toast.LENGTH_SHORT).show()
                 }
@@ -326,7 +325,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         humidityCalibrationInteractor.clear(it);
                         tag.humidity = it.humidity;
                         tag.humidityOffset = it.humidityOffset;
-                        tag.humidityOffsetDate  = it.humidityOffsetDate;
+                        tag.humidityOffsetDate = it.humidityOffsetDate;
                         it.update()
                     }
                 }
@@ -348,11 +347,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun setupAlarmItems() {
         with(viewModel.alarmItems) {
             add(AlarmItem(
-                    getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
-                    Alarm.TEMPERATURE,
-                    false,
-                    -40,
-                    85
+                getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
+                Alarm.TEMPERATURE,
+                false,
+                -40,
+                85
             ))
             add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
             add(AlarmItem(
@@ -647,7 +646,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 var highDisplay = high
 
                 var setSeekbarColor = R.color.inactive
-                when (type){
+                when (type) {
                     Alarm.TEMPERATURE -> {
                         lowDisplay = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
                         highDisplay = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()

@@ -8,6 +8,7 @@ import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.IRuuviTagScanner
+import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.bluetooth.util.ScannerSettings
@@ -29,6 +30,8 @@ object BluetoothScannerInjectionModule {
         bind<BluetoothInteractor>() with singleton {
             BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance())
         }
+
+        bind<BluetoothGattInteractor>() with singleton { BluetoothGattInteractor(instance()) }
 
         bind<BluetoothStateReceiver>() with singleton { BluetoothStateReceiver(instance(), instance()) }
 

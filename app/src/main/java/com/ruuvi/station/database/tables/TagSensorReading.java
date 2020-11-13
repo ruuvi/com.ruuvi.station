@@ -7,11 +7,13 @@ import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.database.LocalDatabase;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -142,6 +144,40 @@ public class TagSensorReading extends BaseModel {
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .async()
                 .execute();
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static void saveList(List<TagSensorReading> readings) {
+        /*
+        FastStoreModelTransaction
+                .insertBuilder(FlowManager.getModelAdapter(TagSensorReading.class))
+                .addAll(readings).build().execute(FlowManager.getWritableDatabase(LocalDatabase.class));
+         */
+
+        String insertQ = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`) values ";
+        String valueQ = " (\"%s\",       %d,          %f,            %f,         %f,         %d,     %f,       %f,       %f,       %f,        %d,           %f,        %d,                %d,                          %f),";
+        List<String> queries = new ArrayList<>();
+        for (int i = 0; i < readings.size(); i++) {
+            TagSensorReading r = readings.get(i);
+            queries.add(String.format(valueQ, r.ruuviTagId, r.createdAt.getTime(), r.temperature, r.humidity, r.pressure, r.rssi, r.accelX, r.accelY, r.accelZ, r.voltage, r.dataFormat, r.txPower, r.movementCounter, r.measurementSequenceNumber, r.humidityOffset));
+        }
+
+        int BATCH_SIZE = 100;
+        for (int i = 0; i < queries.size(); ) {
+            StringBuilder q = new StringBuilder(insertQ);
+            for (int j = 0; j < BATCH_SIZE; j++) {
+                if (i + j >= queries.size()) {
+                    i = i + j;
+                    break;
+                }
+                q.append(queries.get(i + j));
+                if (j >= BATCH_SIZE - 1) {
+                    i = i + j;
+                }
+            }
+            q.replace(q.length() - 1, q.length(), ";");
+            FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(q.toString());
+        }
     }
 
     public static long countAll() {

@@ -380,4 +380,19 @@
     <string name="app_settings_debug">Debug</string>
     <string name="app_settings_add_fake_tags">Add fake tags and readings</string>
     <string name="notification_channel_name">Alert notifications</string>
+
+    <string name="sync">Sync</string>
+    <string name="sync_confirm">Download history data from the sensor?</string>
+    <string name="clear">Clear</string>
+    <string name="clear_confirm">Clear the historical data from the app?</string>
+    <string name="sync_complete">Sync complete</string>
+    <string name="connecting">Connecting</string>
+    <string name="connected_reading_info">Connected, reading tag info</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="reading_history">Reading history</string>
+    <string name="reading_history_not_supported">Firmware not supported</string>
+    <string name="data_points_read">%1$,d measurements read, saving..</string>
+    <string name="no_new_data_points">No new data points available</string>
+    <string name="tag_not_in_range">Tag not found, is it in range?</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

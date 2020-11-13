@@ -14,8 +14,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 12012
-        versionName "1.2.12"
+        versionCode 14001
+        versionName "1.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -67,8 +67,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:2cedd919b2'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:31e717bcb7'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:gatt-SNAPSHOT'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:gatt-SNAPSHOT'
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
