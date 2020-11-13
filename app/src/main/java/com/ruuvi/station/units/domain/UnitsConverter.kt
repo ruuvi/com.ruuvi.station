@@ -58,11 +58,7 @@ class UnitsConverter (
             context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
         }
 
-        return if (pressureString.contains("0,00")) {
-            pressureString.replace("0,00", "-")
-        } else {
-            pressureString
-        }
+        return pressureString
     }
 
     // Humidity
@@ -96,11 +92,7 @@ class UnitsConverter (
             context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getHumidityUnitString()
         }
 
-        return if (humidityString.contains("0,00")) {
-            humidityString.replace("0,00", "-")
-        } else {
-            humidityString
-        }
+        return humidityString
     }
 
     fun getSignalString(rssi: Int): String =
