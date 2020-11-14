@@ -68,6 +68,8 @@ public class RuuviTagEntity extends BaseModel {
     public boolean connectable;
     @Column
     private Date lastSync;
+    @Column
+    private Date networkLastSync;
 
     public RuuviTagEntity() {
     }
@@ -105,6 +107,7 @@ public class RuuviTagEntity extends BaseModel {
         this.movementCounter = reading.movementCounter;
         this.measurementSequenceNumber = reading.measurementSequenceNumber;
         this.updateAt = reading.createdAt;
+        this.networkLastSync = reading.createdAt;
     }
 
     public RuuviTagEntity preserveData(RuuviTagEntity tag) {
@@ -118,6 +121,7 @@ public class RuuviTagEntity extends BaseModel {
         tag.setHumidityOffset(this.getHumidityOffset());
         tag.setHumidityOffsetDate(this.getHumidityOffsetDate());
         tag.setLastSync(this.getLastSync());
+        tag.setNetworkLastSync(this.getNetworkLastSync());
         return tag;
     }
 
@@ -391,5 +395,14 @@ public class RuuviTagEntity extends BaseModel {
 
     public void setLastSync(Date lastSync) {
         this.lastSync = lastSync;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public Date getNetworkLastSync() {
+        return networkLastSync;
+    }
+
+    public void setNetworkLastSync(Date networkLastSync) {
+        this.networkLastSync = networkLastSync;
     }
 }

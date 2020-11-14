@@ -85,7 +85,7 @@ public class TagSensorReading extends BaseModel {
         this.createdAt = new Date();
     }
 
-    public TagSensorReading(FoundRuuviTag tag, RuuviTagEntity tagEntry, long timestamp) {
+    public TagSensorReading(FoundRuuviTag tag, RuuviTagEntity tagEntry, Date timestamp) {
         this.ruuviTagId = tag.getId();
         this.temperature = tag.getTemperature() != null ? tag.getTemperature() : 0.0;
         this.humidity = tag.getHumidity() != null ? tag.getHumidity() : 0.0;
@@ -100,7 +100,7 @@ public class TagSensorReading extends BaseModel {
         this.txPower = tag.getTxPower() != null ? tag.getTxPower() : 0;
         this.movementCounter = tag.getMovementCounter() != null ? tag.getMovementCounter() : 0;
         this.measurementSequenceNumber = tag.getMeasurementSequenceNumber() != null ? tag.getMeasurementSequenceNumber() : 0;
-        this.createdAt = new Date(timestamp * 1000);
+        this.createdAt = timestamp;
     }
 
     public static List<TagSensorReading> getForTag(String id) {

@@ -9,6 +9,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
+import java.util.*
 
 class TagRepository(
     private val preferences: Preferences
@@ -64,6 +65,13 @@ class TagRepository(
             .where(TagSensorReading_Table.ruuviTagId.eq(id))
             .orderBy(TagSensorReading_Table.createdAt, false)
             .limit(limit)
+            .queryList()
+    }
+
+    fun getTagReadingsDate(tagId: String, since: Date): List<TagSensorReading>? {
+        return SQLite.select()
+            .from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
             .queryList()
     }
 }

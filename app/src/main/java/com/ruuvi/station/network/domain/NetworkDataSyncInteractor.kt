@@ -6,14 +6,15 @@ import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
-import com.ruuvi.station.network.data.response.*
+import com.ruuvi.station.network.data.response.GetSensorDataResponse
+import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
+import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
-import java.lang.Exception
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -100,8 +101,6 @@ class NetworkDataSyncInteractor (
     suspend fun syncSensorDataForPeriod(tagId: String, period: Long) {
         Timber.d("Synchronizing... $tagId")
 
-
-        val last = tagRepository.getLatestForTag(tagId, 1)
         val tag = tagRepository.getTagById(tagId)
 
         if (tag != null && tag.isFavorite) {
@@ -110,8 +109,8 @@ class NetworkDataSyncInteractor (
             cal.add(Calendar.HOUR, -period.toInt())
 
             var since = cal.time
-
-            if (last.isNotEmpty() && last[0].createdAt > since) since = last[0].createdAt
+            if (tag.networkLastSync ?: Date(Long.MIN_VALUE) > since) since = tag.networkLastSync
+            val originalSince = since
 
             // if we have data for recent minute - skipping update
             if (!since.diffGreaterThan(60*1000)) return
@@ -144,7 +143,8 @@ class NetworkDataSyncInteractor (
 
             if (measurements.size > 0) {
                 val benchUpdate1 = Date()
-                saveSensorData(tag, measurements)
+                val existData = tagRepository.getTagReadingsDate(tagId, originalSince)?.map { it.createdAt }
+                saveSensorData(tag, measurements, existData ?: listOf())
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-saveSensorData-finish ${tagId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
@@ -166,23 +166,22 @@ class NetworkDataSyncInteractor (
         syncInProgress.value = status
     }
 
-    fun saveSensorData(tag: RuuviTagEntity, measurements: List<SensorDataMeasurementResponse>): Int {
-        if (tag != null && tag.isFavorite) {
-            val list = mutableListOf<TagSensorReading>()
-            measurements.forEach {measurement ->
-                if (measurement.data != null && measurement.rssi != null && measurement.timestamp != null) {
-                    val reading = BluetoothLibrary.decode(tag.id!!, measurement.data, measurement.rssi)
-                    list.add(TagSensorReading(reading, tag, measurement.timestamp))
-                }
+    private fun saveSensorData(tag: RuuviTagEntity, measurements: List<SensorDataMeasurementResponse>, existsData: List<Date>): Int {
+        val list = mutableListOf<TagSensorReading>()
+        measurements.forEach { measurement ->
+            val createdAt = Date(measurement.timestamp * 1000)
+            if (!existsData.contains(createdAt)) {
+                val reading = BluetoothLibrary.decode(tag.id!!, measurement.data, measurement.rssi)
+                list.add(TagSensorReading(reading, tag, createdAt))
             }
+        }
 
-            if (list.size > 0) {
-                val newestPoint = list.sortedByDescending { it.createdAt }.first()
-                tag.updateData(newestPoint)
-                tagRepository.updateTag(tag)
-                TagSensorReading.saveList(list)
-                return list.size
-            }
+        if (list.size > 0) {
+            val newestPoint = list.sortedByDescending { it.createdAt }.first()
+            tag.updateData(newestPoint)
+            tagRepository.updateTag(tag)
+            TagSensorReading.saveList(list)
+            return list.size
         }
         return 0
     }

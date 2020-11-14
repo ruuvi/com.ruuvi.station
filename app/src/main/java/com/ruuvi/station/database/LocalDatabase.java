@@ -23,7 +23,20 @@ import com.ruuvi.station.tag.domain.RuuviTag;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 15;
+    public static final int VERSION = 16;
+
+    @Migration(version = 16, database = LocalDatabase.class)
+    public static class Migration16 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration16(Class<RuuviTagEntity> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.INTEGER, "networkLastSync");
+        }
+    }
 
     @Migration(version = 15, database = LocalDatabase.class)
     public static class Migration15 extends AlterTableMigration<RuuviTagEntity> {
