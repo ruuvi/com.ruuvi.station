@@ -71,7 +71,8 @@ class TagRepository(
     fun getTagReadingsDate(tagId: String, since: Date): List<TagSensorReading>? {
         return SQLite.select()
             .from(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
+            .where(TagSensorReading_Table.ruuviTagId.eq(tagId))
+            .and(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
             .queryList()
     }
 }

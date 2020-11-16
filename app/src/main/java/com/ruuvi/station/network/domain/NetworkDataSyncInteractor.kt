@@ -207,6 +207,7 @@ class NetworkDataSyncInteractor (
     }
 
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
+        Timber.d("benchmark-getSince-$tagId since $since")
         val request = GetSensorDataRequest(
             tagId,
             since = since,
