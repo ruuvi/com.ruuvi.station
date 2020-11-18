@@ -137,10 +137,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         viewModel.syncInProgressObserve.observe(this, Observer {
             if (it) {
                 Timber.d("Sync in progress")
-                syncButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
+                syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
             } else {
                 Timber.d("Sync not in progress")
-                syncButton.clearAnimation()
+                syncNetworkButton.clearAnimation()
             }
         })
 

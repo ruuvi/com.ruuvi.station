@@ -21,12 +21,6 @@ class ShareSensorViewModel (
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    private val sharingEnabled = MutableLiveData<Boolean> (false)
-    val sharingEnabledObserve: LiveData<Boolean> = sharingEnabled
-
-    private val unshareAllConfirm = MutableLiveData<Boolean> (false)
-    val unshareAllConfirmObserve: LiveData<Boolean> = unshareAllConfirm
-
     private val handler = CoroutineExceptionHandler() { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
             operationStatus.value = exception.message
@@ -42,7 +36,6 @@ class ShareSensorViewModel (
             Timber.d("getSensorSharedEmails ${response.toString()}")
             if (response?.isNotEmpty() == true) {
                 emails.value = response.map { it.sharedTo }
-                sharingEnabled.value = true
             } else {
                 emails.value = listOf<String>()
             }
@@ -67,21 +60,5 @@ class ShareSensorViewModel (
             }
             getSensorSharedEmails()
         }
-    }
-
-    fun sharingEnabled(checked: Boolean) {
-        sharingEnabled.value = checked
-        val sharedCount = emails.value?.size ?: 0
-        if (!checked && sharedCount > 0) unshareAllConfirm.value = true
-    }
-
-    fun unshareAll() {
-        ruuviNetworkInteractor.unshareAll(tagId, handler) {
-            getSensorSharedEmails()
-        }
-    }
-
-    fun unshareAllConfirmDismiss() {
-        unshareAllConfirm.value = false
     }
 }
