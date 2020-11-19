@@ -18,7 +18,11 @@ class GatewaySender(
     private val context: Context,
     private val preferences: PreferencesRepository
 ) {
-    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create()
+    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create()
+
+    init {
+        Ion.getDefault(context).configure().gson = gson
+    }
 
     fun sendData(tag: RuuviTagEntity, location: Location?) {
         val backendUrl = preferences.getGatewayUrl()
@@ -34,7 +38,6 @@ class GatewaySender(
                 )
             }
 
-            Ion.getDefault(context).configure().gson = gson
             val deviceId = preferences.getDeviceId()
             val eventBatch = ScanEvent(context, deviceId)
             eventBatch.location = scanLocation
