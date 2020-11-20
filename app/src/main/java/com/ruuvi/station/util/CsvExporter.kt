@@ -2,8 +2,8 @@ package com.ruuvi.station.util
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.FileProvider
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -23,16 +23,21 @@ class CsvExporter(
         val readings = TagSensorReading.getForTag(tagId)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
-        val csvFile = File.createTempFile(
-            tag?.id + "_" + Date().time + "_",
-            ".csv",
-            cacheDir
-        )
-        val fileWriter: FileWriter?
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        val filenameDateFormat = SimpleDateFormat("yyMMdd-hhmm")
+        val filenameDate = filenameDateFormat.format(Date())
+
+        val filename = if (tag?.name.isNullOrEmpty()) {
+            "$cacheDir/${tag?.id}_${filenameDate}.csv"
+        } else {
+            "$cacheDir/${tag?.name}_${filenameDate}.csv"
+        }
+
+        val csvFile = File(filename)
+        if (!csvFile.exists()) csvFile.createNewFile()
+
         try {
-            fileWriter = FileWriter(csvFile.absolutePath)
+            var fileWriter = FileWriter(csvFile.absolutePath)
 
             fileWriter.append("timestamp,temperature (${unitsConverter.getTemperatureUnitString()})," +
                 "humidity (${unitsConverter.getHumidityUnitString()})," +
@@ -41,6 +46,7 @@ class CsvExporter(
             if (tag?.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
             fileWriter.append('\n')
 
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
 
             readings.forEach {
                 fileWriter.append(dateFormat.format(it.createdAt))
