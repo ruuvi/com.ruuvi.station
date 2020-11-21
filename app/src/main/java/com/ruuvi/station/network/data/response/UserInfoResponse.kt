@@ -10,7 +10,7 @@ data class UserInfoResponseBody (
 data class SensorDataResponse(
     val sensor: String,
     val name: String,
-    val owner: Boolean,
+    val owner: String,
     val picture: String,
     val public: Boolean
 )

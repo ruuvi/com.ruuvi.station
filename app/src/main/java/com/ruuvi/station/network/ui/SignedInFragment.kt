@@ -47,16 +47,16 @@ class SignedInFragment : Fragment(R.layout.fragment_signed_in) , KodeinAware {
         })
 
         viewModel.tagsObserve.observe(viewLifecycleOwner, Observer { sensors ->
-            val owned = sensors.filter { it.owner }
-            val shared = sensors.filter { !it.owner }
-
-            val sb = StringBuilder()
-            owned.forEach { sb.appendln("${it.sensor} (${it.name})") }
-            if (shared.isNotEmpty()) {
-                sb.appendln("Tags shared with you: ")
-                shared.forEach { sb.appendln("${it.sensor} (${it.name})") }
-            }
-            sensorsTextView.text = sb.toString()
+//            val owned = sensors.filter { it.owner }
+//            val shared = sensors.filter { !it.owner }
+//
+//            val sb = StringBuilder()
+//            owned.forEach { sb.appendln("${it.sensor} (${it.name})") }
+//            if (shared.isNotEmpty()) {
+//                sb.appendln("Tags shared with you: ")
+//                shared.forEach { sb.appendln("${it.sensor} (${it.name})") }
+//            }
+//            sensorsTextView.text = sb.toString()
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {

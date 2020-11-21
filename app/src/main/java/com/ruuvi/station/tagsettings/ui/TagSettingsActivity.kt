@@ -125,10 +125,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 claimTagButton.visibility = View.VISIBLE
                 shareTagButton.visibility = View.VISIBLE
                 getTagDataButton.visibility = View.VISIBLE
+                networkLayout.visibility = View.VISIBLE
             } else {
                 claimTagButton.visibility = View.GONE
                 shareTagButton.visibility = View.GONE
                 getTagDataButton.visibility = View.GONE
+                networkLayout.visibility = View.GONE
             }
         })
 
@@ -146,6 +148,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
+        })
+
+        viewModel.sensorOwnerObserve.observe(this, Observer {
+            ownerValueTextView.text = it ?: "None"
         })
     }
 

@@ -33,11 +33,15 @@ class TagSettingsViewModel(
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
-        it?.owner == true
+        it?.owner == networkInteractor.getEmail()
     }
 
     val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
         it != null
+    }
+
+    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
+        it?.owner
     }
 
     private val operationStatus = MutableLiveData<String> ("")
@@ -63,7 +67,7 @@ class TagSettingsViewModel(
 
     fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
-        if (networkStatus.value?.owner == true) {
+        if (networkStatus.value?.owner == networkInteractor.getEmail()) {
             networkInteractor.unclaimSensor(tagId)
         }
     }

@@ -44,7 +44,7 @@ class UserApiTests {
         synchronized(lock1) { lock1.wait() }
     }
 
-//    @Test
+    //@Test
     fun TestVerifyUserError() {
         val lock1 = Object()
         val networkRepository = RuuviNetworkRepository(Dispatchers.Unconfined)
@@ -121,9 +121,9 @@ class UserApiTests {
 
     companion object {
         //val sacrificialEmail = "mzad1203@gmail.com"
-        val sacrificialEmail = "coc.acc.top@gmail.com"
+        val sacrificialEmail = "denis@ruuvi.com"
 
-        val fakeCode = "5PB8TL"
+        val fakeCode = "PD6X"
         //val accessToken = "753131/Sp5D6Geb8w0oZBtkMZcVfjH56i0AuzCvEGkMAPjifZeuDMKwnU1xWxXh9jVZ9tYl"
         val accessToken = "7538/3p3UvFh3pcbXZ4qTJ7BzBLjFA9oLMAtw11v6ND4jIUYaKnuNgJKo3bGDxj3oTtZ1"
         val errorResult = "error"
