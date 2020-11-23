@@ -10,7 +10,7 @@
     android:paddingBottom="@dimen/tag_settings_text_padding">
 
     <TextView
-        android:id="@+id/alert_title"
+        android:id="@+id/alertTitleTextView"
         android:fontFamily="@font/roboto_medium"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/alert_subtitle"
+        android:id="@+id/alertSubtitleTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
@@ -29,10 +29,10 @@
         android:text="@string/alert_subtitle_off"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/alert_title" />
+        app:layout_constraintTop_toBottomOf="@id/alertTitleTextView" />
 
     <CheckBox
-        android:id="@+id/alert_checkbox"
+        android:id="@+id/alertCheckbox"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:theme="@style/checkBoxStyle"
@@ -40,39 +40,39 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/alert_min_value"
+        android:id="@+id/alertMinValueTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:text="-"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
+        app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView"
         tools:text="100" />
 
     <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-        android:id="@+id/alert_seekBar"
+        android:id="@+id/alertSeekBar"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:layout_width="0dp"
         app:bar_color="@color/ap_gray"
         app:bar_highlight_color="@color/main"
         app:data_type="_integer"
         app:gap="1"
-        app:layout_constraintStart_toStartOf="@id/alert_min_value"
-        app:layout_constraintEnd_toEndOf="@id/alert_max_value"
-        app:layout_constraintTop_toBottomOf="@id/alert_subtitle" />
+        app:layout_constraintStart_toStartOf="@id/alertMinValueTextView"
+        app:layout_constraintEnd_toEndOf="@id/alertMaxValueTextView"
+        app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView" />
 
     <TextView
-        android:id="@+id/alert_max_value"
+        android:id="@+id/alertMaxValueTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:text="-"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/alert_subtitle"
+        app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView"
         tools:text="1000" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

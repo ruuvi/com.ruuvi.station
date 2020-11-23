@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.google.android.material.navigation.NavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigationView"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:layout_gravity="start"
+    android:background="@android:color/white" >
 
-    <RelativeLayout
-        android:id="@+id/navigation_header_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:orientation="vertical">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/backgroundImageView"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
             android:scaleType="matrix"
             android:scrollY="150dp"
             android:src="@drawable/gradient_background"
-            tools:ignore="ContentDescription" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:layout_width="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/logo" />
 
-    </RelativeLayout>
+        <ListView
+            android:id="@+id/navigationDrawerListView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
 
-    <ListView
-        android:id="@+id/navigationDrawer_listView"
-        android:layout_below="@id/navigation_header_view"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ListView>
-
-</RelativeLayout>
+</com.google.android.material.navigation.NavigationView>

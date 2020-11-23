@@ -1,14 +1,34 @@
 package com.ruuvi.station.dashboard.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.bluetooth.BluetoothInteractor
+import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.units.domain.UnitsConverter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DashboardActivityViewModel(
-    private val bluetoothInteractor: BluetoothInteractor
+    private val tagInteractor: TagInteractor,
+    val converter: UnitsConverter
 ) : ViewModel() {
 
-    fun startForegroundScanning() {
-        if (bluetoothInteractor.canScan())
-            bluetoothInteractor.startForegroundScanning()
+    private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
+    val observeTags: LiveData<List<RuuviTag>> = tags
+
+    init {
+        updateTags()
+    }
+
+    fun updateTags() {
+        viewModelScope.launch {
+            val getTags = tagInteractor.getTags()
+            withContext(Dispatchers.Main) {
+                tags.value = getTags
+            }
+        }
     }
 }

@@ -1,37 +1,39 @@
 package com.ruuvi.station.settings.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.os.Build
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class AppSettingsBackgroundScanViewModel (private val preferences: Preferences): ViewModel() {
-    private val scanMode = MutableLiveData<BackgroundScanModes>()
-    private val interval = MutableLiveData<Int>()
+@ExperimentalCoroutinesApi
+class AppSettingsBackgroundScanViewModel(
+    private val interactor: AppSettingsInteractor
+) : ViewModel() {
+
+    private val scanMode = MutableStateFlow<BackgroundScanModes?>(null)
+    val scanModeFlow: StateFlow<BackgroundScanModes?> = scanMode
+
+    private val interval = MutableStateFlow(0)
+    val intervalFlow: StateFlow<Int?> = interval
 
     init {
-        scanMode.value = preferences.backgroundScanMode
-        interval.value = preferences.backgroundScanInterval
+        scanMode.value = interactor.getBackgroundScanMode()
+        interval.value = interactor.getBackgroundScanInterval()
     }
 
-    fun observeScanMode(): LiveData<BackgroundScanModes> = scanMode
+    fun setBackgroundMode(mode: BackgroundScanModes) =
+        interactor.setBackgroundScanMode(mode)
 
-    fun observeInterval(): LiveData<Int> = interval
-
-    fun setBackgroundMode(mode: BackgroundScanModes){
-        preferences.backgroundScanMode = mode
-    }
-
-    fun setBackgroundScanInterval(newInterval: Int) {
-        preferences.backgroundScanInterval = newInterval
-    }
+    fun setBackgroundScanInterval(newInterval: Int) =
+        interactor.setBackgroundScanInterval(newInterval)
 
     fun getPossibleScanModes() = listOf(
-            BackgroundScanModes.DISABLED,
-            BackgroundScanModes.BACKGROUND
+        BackgroundScanModes.DISABLED,
+        BackgroundScanModes.BACKGROUND
     )
 
     fun getBatteryOptimizationMessageId(): Int {

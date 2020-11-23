@@ -21,7 +21,7 @@ enum class BackgroundScanModes(val value: Int) {
     abstract val description: Int
 
     companion object {
-        private val map = BackgroundScanModes.values().associateBy(BackgroundScanModes::value)
+        private val map = values().associateBy(BackgroundScanModes::value)
         fun fromInt(type: Int) = map[type]
     }
 }

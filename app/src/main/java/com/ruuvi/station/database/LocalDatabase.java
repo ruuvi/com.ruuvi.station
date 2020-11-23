@@ -21,7 +21,15 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 13;
+    public static final int VERSION = 14;
+
+    @Migration(version = 14, database = LocalDatabase.class)
+    public static class Migration14Data extends BaseMigration {
+        @Override
+        public void migrate(@NonNull DatabaseWrapper database) {
+            database.execSQL("UPDATE Alarm SET low = low * 100, high = high * 100 WHERE type = 2 and (low < 2000 or high < 2000)");
+        }
+    }
 
     @Migration(version = 13, database = LocalDatabase.class)
     public static class Migration13 extends AlterTableMigration<TagSensorReading> {
@@ -97,7 +105,8 @@ public class LocalDatabase {
 
         @Override
         public void onPreMigrate() {
-            addColumn(SQLiteType.INTEGER, "createDate"); }
+            addColumn(SQLiteType.INTEGER, "createDate");
+        }
     }
 
     @Migration(version = 6, database = LocalDatabase.class)

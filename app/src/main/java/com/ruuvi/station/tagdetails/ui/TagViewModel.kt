@@ -1,53 +1,51 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.Timer
-import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
 class TagViewModel(
     private val tagDetailsInteractor: TagDetailsInteractor,
     val tagId: String
 ) : ViewModel() {
-    private val tagEntry = MutableStateFlow<RuuviTagEntity?>(null)
-    val tagEntryFlow: StateFlow<RuuviTagEntity?> = tagEntry
+    private val tagEntry = MutableLiveData<RuuviTag?>(null)
+    val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
 
-    private val tagReadings = MutableStateFlow<List<TagSensorReading>?>(null)
-    val tagReadingsFlow: StateFlow<List<TagSensorReading>?> = tagReadings
+    private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
+    val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private var showGraph = false
 
-    private val timer = Timer("tagViewModelTimer", true)
+    private var selected = false
 
     init {
         Timber.d("TagViewModel initialized")
-        getTagInfo(tagId)
+        getTagInfo()
     }
 
     fun isShowGraph(isShow: Boolean) {
         showGraph = isShow
     }
 
-    private fun getTagInfo(tagId: String) {
-        Timber.d("getTagInfo $tagId")
+    fun tagSelected(selectedTag: RuuviTag?) {
+        selected = tagId == selectedTag?.id
+    }
+
+    fun getTagInfo() {
         ioScope.launch {
-            timer.scheduleAtFixedRate(0, 1000) {
+                Timber.d("getTagInfo $tagId")
                 getTagEntryData(tagId)
-                if (showGraph) getGraphData(tagId)
-            }
+                if (showGraph && selected) getGraphData(tagId)
         }
     }
 
@@ -57,7 +55,9 @@ class TagViewModel(
             tagDetailsInteractor
                 .getTagReadings(tagId)
                 ?.let {
-                    tagReadings.value = it
+                    withContext(Dispatchers.Main){
+                        tagReadings.value = it
+                    }
                 }
         }
     }
@@ -66,27 +66,35 @@ class TagViewModel(
         Timber.d("getTagEntryData for tagId = $tagId")
         ioScope.launch {
             tagDetailsInteractor
-                .getTag(tagId)
+                .getTagById(tagId)
                 ?.let {
-                    tagEntry.value = it
+                    withContext(Dispatchers.Main){
+                        tagEntry.value = it
+                    }
                 }
         }
     }
 
-    fun getTemperatureString(context: Context, tag: RuuviTagEntity): String =
-        tagDetailsInteractor.getTemperatureString(context, tag)
+    fun getTemperatureString(tag: RuuviTag): String =
+        tagDetailsInteractor.getTemperatureString(tag)
 
-    fun getHumidityString(context: Context, tag: RuuviTagEntity): String =
-        tagDetailsInteractor.getHumidityString(context, tag)
+    fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
+        tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
+
+    fun getTemperatureUnitString(): String =
+        tagDetailsInteractor.getTemperatureUnitString()
+
+    fun getHumidityString(tag: RuuviTag): String =
+        tagDetailsInteractor.getHumidityString(tag)
+
+    fun getPressureString(tag: RuuviTag): String =
+        tagDetailsInteractor.getPressureString(tag)
+
+    fun getSignalString(tag: RuuviTag): String =
+        tagDetailsInteractor.getSignalString(tag)
 
     override fun onCleared() {
         super.onCleared()
-
-        cancelTimerAndChannels()
         Timber.d("TagViewModel cleared!")
-    }
-
-    private fun cancelTimerAndChannels() {
-        timer.cancel()
     }
 }

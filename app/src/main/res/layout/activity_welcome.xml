@@ -6,7 +6,7 @@
     android:background="@drawable/gradient_background"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context="com.ruuvi.station.feature.WelcomeActivity">
+    tools:context="com.ruuvi.station.feature.ui.WelcomeActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:fitsSystemWindows="true"

@@ -1,7 +1,7 @@
 package com.ruuvi.station.util.test
 
 import com.ruuvi.station.bluetooth.FoundRuuviTag
-import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
@@ -10,22 +10,23 @@ import java.util.*
 
 class StressTestGenerator {
     companion object {
-        private val humidityCalibrationInteractor = HumidityCalibrationInteractor()
+        lateinit var humidityCalibrationInteractor: HumidityCalibrationInteractor
 
-        fun generateData(tagsCount: Int, sensorReadingsPerTag: Int) {
+        fun generateData(tagsCount: Int, sensorReadingsPerTag: Int, repository: TagRepository) {
             Timber.d("Generate $tagsCount fake tags and add $sensorReadingsPerTag readings for each")
+            humidityCalibrationInteractor = HumidityCalibrationInteractor(repository)
             var sensorReadingsPerTag = sensorReadingsPerTag
             if (sensorReadingsPerTag > 20000)
                 sensorReadingsPerTag = 20000
 
-            for (tagNum in 1..tagsCount){
-                generateTag(tagNum, sensorReadingsPerTag)
+            for (tagNum in 1..tagsCount) {
+                generateTag(tagNum, sensorReadingsPerTag, repository)
             }
             Timber.d("Generating done")
         }
 
-        fun generateTag(tagNum: Int, sensorReadingsPerTag: Int) {
-            val tagId ="FAKE:GEN:${tagNum.toString().padStart(4, '0')}"
+        private fun generateTag(tagNum: Int, sensorReadingsPerTag: Int, repository: TagRepository) {
+            val tagId = "FAKE:GEN:${tagNum.toString().padStart(4, '0')}"
             Timber.d("generating for $tagId")
             val newTag = FoundRuuviTag().apply {
                 id = tagId
@@ -40,12 +41,12 @@ class StressTestGenerator {
                 voltage = 2.995
             }
             val tag = RuuviTagEntity(newTag)
-            val dbtag = RuuviTagRepository.get(tag.id)
+            val dbtag = tag.id?.let { repository.getTagById(it) }
             if (dbtag == null) {
                 humidityCalibrationInteractor.apply(tag)
                 tag.favorite = true
                 tag.updateAt = Date()
-                RuuviTagRepository.save(tag)
+                repository.saveTag(tag)
             }
             val calendar = Calendar.getInstance()
             val latest = TagSensorReading.getLatestForTag(tagId, 1)

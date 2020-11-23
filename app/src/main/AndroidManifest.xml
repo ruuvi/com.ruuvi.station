@@ -27,7 +27,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.TagSettings"
+            android:name=".tagsettings.ui.TagSettingsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Tag Settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
@@ -41,10 +41,11 @@
         <service android:name=".bluetooth.BluetoothForegroundService"
             android:enabled="true"
             android:foregroundServiceType="location"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <activity
-            android:name=".feature.WelcomeActivity"
+            android:name=".feature.ui.WelcomeActivity"
             android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
@@ -54,10 +55,10 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".feature.AboutActivity"
+            android:name=".about.ui.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".feature.AddTagActivity"
+            android:name=".addtag.ui.AddTagActivity"
             android:label="@string/title_activity_add_tag"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity

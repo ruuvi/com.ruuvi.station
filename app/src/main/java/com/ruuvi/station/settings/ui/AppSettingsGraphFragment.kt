@@ -2,11 +2,9 @@ package com.ruuvi.station.settings.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.flexsentlabs.extensions.viewModel
+import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import kotlinx.android.synthetic.main.fragment_app_settings_graph.*
 import kotlinx.coroutines.*
@@ -15,15 +13,11 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 
-class AppSettingsGraphFragment : Fragment(), KodeinAware {
+class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph), KodeinAware {
+
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AppSettingsGraphViewModel by viewModel()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_app_settings_graph, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,6 +25,7 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
         observeInterval()
         observePeriod()
         observeShowAllPoints()
+        observeDrawDots()
     }
 
     private fun setupViews() {
@@ -49,6 +44,10 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
 
         graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setShowAllPoints(isChecked)
+        }
+
+        graphDrawDotsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setDrawDots(isChecked)
         }
     }
 
@@ -70,9 +69,17 @@ class AppSettingsGraphFragment : Fragment(), KodeinAware {
 
     private fun observeShowAllPoints() {
         lifecycleScope.launch {
-            viewModel.showAllPointsFlow.collect{
+            viewModel.showAllPointsFlow.collect {
                 graphAllPointsSwitch.isChecked = it
                 graphIntervalNumberPicker.isEnabled = !graphAllPointsSwitch.isChecked
+            }
+        }
+    }
+
+    private fun observeDrawDots() {
+        lifecycleScope.launch {
+            viewModel.drawDotsFlow.collect {
+                graphDrawDotsSwitch.isChecked = it
             }
         }
     }

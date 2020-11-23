@@ -9,12 +9,12 @@
     tools:background="@color/gray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/tag_container"
+        android:id="@+id/tagContainer"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tag_temp"
+            android:id="@+id/tagTemperatureTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tag_temp_unit"
+            android:id="@+id/tagTempUnitTextView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginTop="76dp"
@@ -35,27 +35,27 @@
             android:fontFamily="@font/oswald_light"
             android:textColor="@color/white"
             android:textSize="40sp"
-            app:layout_constraintBottom_toBottomOf="@id/tag_temp"
-            app:layout_constraintLeft_toRightOf="@id/tag_temp"
+            app:layout_constraintBottom_toBottomOf="@id/tagTemperatureTextView"
+            app:layout_constraintLeft_toRightOf="@id/tagTemperatureTextView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="°U" />
 
         <LinearLayout
-            android:id="@+id/tag_humidity_layout"
+            android:id="@+id/tagHumidityLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toTopOf="@id/tag_pressure_layout">
+            app:layout_constraintBottom_toTopOf="@id/tagPressureLayout">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/tag_humidity_icon"
+                android:id="@+id/tagHumidityIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_measure_humidity" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tag_humidity"
+                android:id="@+id/tagHumidityTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -69,21 +69,21 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/tag_pressure_layout"
+            android:id="@+id/tagPressureLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toTopOf="@id/tag_signal_layout">
+            app:layout_constraintBottom_toTopOf="@id/tagSignalLayout">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/tag_pressure_icon"
+                android:id="@+id/tagPressureIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_measure_pressure" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tag_pressure"
+                android:id="@+id/tagPressureTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -97,7 +97,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/tag_signal_layout"
+            android:id="@+id/tagSignalLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="56dp"
@@ -105,13 +105,13 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/tag_signal_icon"
+                android:id="@+id/tagSignalIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_measure_signal" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tag_signal"
+                android:id="@+id/tagSignalTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -125,7 +125,7 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tag_updated"
+            android:id="@+id/tagUpdatedTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

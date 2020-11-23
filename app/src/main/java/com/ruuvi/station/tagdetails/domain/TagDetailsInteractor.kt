@@ -1,32 +1,39 @@
 package com.ruuvi.station.tagdetails.domain
 
-import android.content.Context
-import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.database.RuuviTagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.TagConverter
+import com.ruuvi.station.units.domain.UnitsConverter
 
-class TagDetailsInteractor(val preferences: Preferences) {
+class TagDetailsInteractor(
+    private val tagRepository: TagRepository,
+    private val tagConverter: TagConverter,
+    private val unitsConverter: UnitsConverter
 
-    fun getAllTags(): List<RuuviTagEntity> = RuuviTagRepository.getAll(true)
+) {
 
-    fun getTag(tagId: String): RuuviTagEntity? = RuuviTagRepository.get(tagId)
+    fun getTagById(tagId: String): RuuviTag? =
+        tagRepository.getTagById(tagId)?.let { tagConverter.fromDatabase(it) }
 
-    fun getTagReadings(tagId: String): List<TagSensorReading>? {
-        return if (preferences.graphShowAllPoint) {
-            TagSensorReading.getForTag(tagId, preferences.graphViewPeriod)
-        } else {
-            TagSensorReading.getForTagPruned(
-                    tagId,
-                    preferences.graphPointInterval,
-                    preferences.graphViewPeriod
-            )
-        }
-    }
+    fun getTagReadings(tagId: String): List<TagSensorReading>? =
+        tagRepository.getTagReadings(tagId)
 
-    fun getTemperatureString(context: Context, tag: RuuviTagEntity): String =
-        RuuviTagRepository.getTemperatureString(context, tag)
+    fun getTemperatureString(tag: RuuviTag): String =
+        unitsConverter.getTemperatureString(tag.temperature)
 
-    fun getHumidityString(context: Context, tag: RuuviTagEntity): String =
-        RuuviTagRepository.getHumidityString(context, tag)
+    fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
+        unitsConverter.getTemperatureStringWithoutUnit(tag.temperature)
+
+    fun getTemperatureUnitString(): String =
+        unitsConverter.getTemperatureUnitString()
+
+    fun getHumidityString(tag: RuuviTag): String =
+        unitsConverter.getHumidityString(tag.humidity, tag.temperature)
+
+    fun getPressureString(tag: RuuviTag): String =
+        unitsConverter.getPressureString(tag.pressure)
+
+    fun getSignalString(tag: RuuviTag): String =
+        unitsConverter.getSignalString(tag.rssi)
 }

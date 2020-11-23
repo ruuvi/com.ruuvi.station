@@ -18,9 +18,9 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
-import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.units.domain.UnitsConverter
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.ArrayList
@@ -28,35 +28,37 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class GraphView {
+class GraphView (
+    private val unitsConverter: UnitsConverter,
+    private val preferencesRepository: PreferencesRepository,
+    private val context: Context
+){
     private var from: Long = 0
     private var to: Long = 0
     private val TEMP = "Temperature"
     private val HUMIDITY = "Humidity"
     private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
+    private var graphSetuped = false
 
-    fun drawChart(inputReadings: List<TagSensorReading>, view: View, context: Context) {
+    private lateinit var tempChart: LineChart
+    private lateinit var humidChart: LineChart
+    private lateinit var pressureChart: LineChart
+
+    fun drawChart(
+            inputReadings: List<TagSensorReading>,
+            view: View
+    ) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
-        val tempChart: LineChart = view.findViewById(R.id.tempChart)
-        tempChart.isVisible = true
-        val humidChart: LineChart = view.findViewById(R.id.humidChart)
-        humidChart.isVisible = true
-        val pressureChart: LineChart = view.findViewById(R.id.pressureChart)
-        pressureChart.isVisible = true
-        val temperatureUnit: String = RuuviTagRepository.getTemperatureUnit(context)
+        setupCharts(view)
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
-            to = calendar.time.time;
+            to = calendar.time.time
             calendar.add(Calendar.HOUR, -24)
             from = calendar.time.time
             storedReadings = inputReadings.toMutableList()
         }
-
-        tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-        humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-        pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
 
         val tempData: MutableList<Entry> = ArrayList()
         val humidData: MutableList<Entry> = ArrayList()
@@ -69,19 +71,9 @@ class GraphView {
                 val entries = tagReadings.map {
                     GraphEntry(
                         timestamp = (it.createdAt.time - from).toFloat(),
-                        temperature = when (temperatureUnit) {
-                            "K" -> {
-                                Utils.celsiusToKelvin(it.temperature).toFloat()
-                            }
-                            "F" -> {
-                                Utils.celciusToFahrenheit(it.temperature).toFloat()
-                            }
-                            else -> {
-                                it.temperature.toFloat()
-                            }
-                        },
-                        humidity = it.humidity.toFloat(),
-                        pressure = it.pressure.toFloat() / 100.0f
+                        temperature = unitsConverter.getTemperatureValue(it.temperature).toFloat(),
+                        humidity = unitsConverter.getHumidityValue(it.humidity, it.temperature).toFloat(),
+                        pressure = unitsConverter.getPressureValue(it.pressure).toFloat()
                     )
                 }
 
@@ -96,22 +88,46 @@ class GraphView {
                 humidData.add(Entry(timestamp, 0f))
                 pressureData.add(Entry(timestamp, 0f))
             }
-            addDataToChart(context, tempData, tempChart, TEMP)
-            addDataToChart(context, humidData, humidChart, HUMIDITY)
-            addDataToChart(context, pressureData, pressureChart, PRESSURE)
+
+            addDataToChart(tempData, tempChart, "$TEMP ${unitsConverter.getTemperatureUnitString()}")
+            addDataToChart(humidData, humidChart, "$HUMIDITY ${unitsConverter.getHumidityUnitString()}")
+            addDataToChart(pressureData, pressureChart, "$PRESSURE ${unitsConverter.getPressureUnitString()}")
 
             normalizeOffsets(tempChart, humidChart, pressureChart)
-            synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
         }
     }
 
-    private fun addDataToChart(context: Context, data: MutableList<Entry>, chart: LineChart, label: String) {
+    private fun setupCharts(view: View) {
+        if (!graphSetuped) {
+            tempChart = view.findViewById(R.id.tempChart)
+            humidChart = view.findViewById(R.id.humidChart)
+            pressureChart = view.findViewById(R.id.pressureChart)
+
+            tempChart.isVisible = true
+            humidChart.isVisible = true
+            pressureChart.isVisible = true
+
+            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
+
+            synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
+
+            graphSetuped = true
+        } else {
+            tempChart.clear()
+            humidChart.clear()
+            pressureChart.clear()
+        }
+    }
+
+    private fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
-        set.setDrawCircles(false)
+        set.setDrawCircles(preferencesRepository.graphDrawDots())
         set.setDrawValues(false)
         set.setDrawFilled(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.main)
-        set.circleRadius = 2f
+        set.circleRadius = 1f
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE

@@ -4,44 +4,52 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import android.widget.Toast
-import com.ruuvi.station.database.RuuviTagRepository
+import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.units.domain.UnitsConverter
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CsvExporter(val context: Context) {
+class CsvExporter(
+    private val context: Context,
+    private val repository: TagRepository,
+    private val unitsConverter: UnitsConverter
+) {
+
     fun toCsv(tagId: String) {
-        val tag = RuuviTagRepository.get(tagId)
+        val tag = repository.getTagById(tagId)
         val readings = TagSensorReading.getForTag(tagId)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
         val csvFile = File.createTempFile(
-                tag?.id + "_" + Date().time + "_",
-                ".csv",
-                cacheDir
+            tag?.id + "_" + Date().time + "_",
+            ".csv",
+            cacheDir
         )
-        var fileWriter: FileWriter?
+        val fileWriter: FileWriter?
 
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
         try {
             fileWriter = FileWriter(csvFile.absolutePath)
 
-            fileWriter.append("timestamp,temperature,humidity,pressure,rssi")
+            fileWriter.append("timestamp,temperature (${unitsConverter.getTemperatureUnitString()})," +
+                "humidity (${unitsConverter.getHumidityUnitString()})," +
+                "pressure (${unitsConverter.getPressureUnitString()}),rssi")
             if (tag?.dataFormat == 3 || tag?.dataFormat == 5) fileWriter.append(",acceleration x,acceleration y,acceleration z,voltage")
             if (tag?.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
             fileWriter.append('\n')
 
 
             readings.forEach {
-                fileWriter.append(df.format(it.createdAt))
+                fileWriter.append(dateFormat.format(it.createdAt))
                 fileWriter.append(',')
-                fileWriter.append(it.temperature.toString())
+                fileWriter.append(unitsConverter.getTemperatureValue(it.temperature).toString())
                 fileWriter.append(',')
-                fileWriter.append(it.humidity.toString())
+                fileWriter.append(unitsConverter.getHumidityValue(it.humidity, it.temperature).toString())
                 fileWriter.append(',')
-                fileWriter.append(it.pressure.toString())
+                fileWriter.append(unitsConverter.getPressureValue(it.pressure).toString())
                 fileWriter.append(',')
                 fileWriter.append(it.rssi.toString())
                 if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
@@ -79,6 +87,6 @@ class CsvExporter(val context: Context) {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity "+ tag?.id +" csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity " + tag?.id + " csv export"))
     }
 }

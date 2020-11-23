@@ -10,73 +10,49 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-
 import com.ruuvi.station.R;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
-
-import java.io.File;
+import com.ruuvi.station.tag.domain.RuuviTag;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-
+import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 
 public class Utils {
 
-    private static final String TAG = "Utils";
 
-    public static final java.lang.String DB_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
+    public static final String emojiRegex =
+            "(?:[\\u2700-\\u27bf]|(?:[\\ud83c\\udde6-\\ud83c\\uddff]){2}|[\\ud800\\udc00-\\uDBFF\\uDFFF]|" +
+            "[\\u2600-\\u26FF])[\\ufe0e\\ufe0f]?(?:[\\u0300-\\u036f\\ufe20-\\ufe23\\u20d0-\\u20f0]|" +
+            "[\\ud83c\\udffb-\\ud83c\\udfff])?(?:\\u200d(?:[^\\ud800-\\udfff]|(?:[\\ud83c\\udde6-\\ud83c\\uddff]){2}|" +
+            "[\\ud800\\udc00-\\uDBFF\\uDFFF]|[\\u2600-\\u26FF])[\\ufe0e\\ufe0f]?(?:" +
+            "[\\u0300-\\u036f\\ufe20-\\ufe23\\u20d0-\\u20f0]|[\\ud83c\\udffb-\\ud83c\\udfff])?)*|" +
+            "[\\u0023-\\u0039]\\ufe0f?\\u20e3|\\u3299|\\u3297|\\u303d|\\u3030|\\u24c2|[\\ud83c\\udd70-\\ud83c\\udd71]|" +
+            "[\\ud83c\\udd7e-\\ud83c\\udd7f]|\\ud83c\\udd8e|[\\ud83c\\udd91-\\ud83c\\udd9a]|" +
+            "[\\ud83c\\udde6-\\ud83c\\uddff]|[\\ud83c\\ude01-\\ud83c\\ude02]|\\ud83c\\ude1a|\\ud83c\\ude2f|" +
+            "[\\ud83c\\ude32-\\ud83c\\ude3a]|[\\ud83c\\ude50-\\ud83c\\ude51]|\\u203c|\\u2049|" +
+            "[\\u25aa-\\u25ab]|\\u25b6|\\u25c0|[\\u25fb-\\u25fe]|\\u00a9|\\u00ae|\\u2122|\\u2139|\\ud83c\\udc04|" +
+            "[\\u2600-\\u26FF]|\\u2b05|\\u2b06|\\u2b07|\\u2b1b|\\u2b1c|\\u2b50|\\u2b55|\\u231a|\\u231b|\\u2328|\\u23cf|" +
+            "[\\u23e9-\\u23f3]|[\\u23f8-\\u23fa]|\\ud83c\\udccf|\\u2934|\\u2935|[\\u2190-\\u21ff]";
 
-    public static boolean tryParse(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    public static Bitmap createBall(int radius, int ballColor, int letterColor, String letter) {
-        letter = letter.toUpperCase();
-        Bitmap bitmap = Bitmap.createBitmap(radius*2, radius*2, Bitmap.Config.ARGB_8888);
+    public static Bitmap createBall(int radius, int ballColor, int letterColor, String deviceId, float letterSize) {
+        String letter = deviceId.matches(emojiRegex) ? deviceId : ("" + deviceId.charAt(0)).toUpperCase();
+        Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint2 = new Paint();
         paint2.setColor(ballColor);
         canvas.drawCircle(radius, radius, (float) radius, paint2);
         Paint paint = new Paint();
         paint.setColor(letterColor);
-        paint.setTextSize(100);
+        paint.setTextSize(letterSize);
         paint.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 
         Rect textBounds = new Rect();
         paint.getTextBounds(letter, 0, letter.length(), textBounds);
         canvas.drawText(letter, radius - textBounds.exactCenterX(), radius - textBounds.exactCenterY(), paint);
         return bitmap;
-    }
-
-    public static void sortTagsByRssi(List<RuuviTagEntity> tags) {
-        Collections.sort(tags, new Comparator<RuuviTagEntity>() {
-            @Override
-            public int compare(RuuviTagEntity o1, RuuviTagEntity o2) {
-                return o2.getRssi() - o1.getRssi();
-            }
-        });
-    }
-
-    public static byte[] parseByteDataFromB64(String data) {
-        try {
-            byte[] bData = base64.decode(data);
-            int pData[] = new int[8];
-            for (int i = 0; i < bData.length; i++)
-                pData[i] = bData[i] & 0xFF;
-            return bData;
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public static String strDescribingTimeSince(Date date) {
@@ -87,9 +63,9 @@ public class Utils {
         if (diffInMS > 24 * 60 * 60 * 1000) {
             output += date.toString();
         } else {
-            int seconds = (int) (diffInMS / 1000) % 60 ;
-            int minutes = (int) ((diffInMS / (1000*60)) % 60);
-            int hours   = (int) ((diffInMS / (1000*60*60)) % 24);
+            int seconds = (int) (diffInMS / 1000) % 60;
+            int minutes = (int) ((diffInMS / (1000 * 60)) % 60);
+            int hours = (int) ((diffInMS / (1000 * 60 * 60)) % 24);
             if (hours > 0) output += hours + " h ";
             if (minutes > 0) output += minutes + " min ";
             output += seconds + " s ago";
@@ -98,11 +74,26 @@ public class Utils {
     }
 
     public static Bitmap getBackground(Context context, RuuviTagEntity tag) {
-        try {
-            Uri uri = Uri.parse(tag.getUserBackground());
-            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-        } catch (Exception e) {
-            Timber.e("Could not set user background");
+        if (tag.getUserBackground() != null) {
+            try {
+                Uri uri = Uri.parse(tag.getUserBackground());
+                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            } catch (Exception e) {
+                Timber.e("Could not set user background");
+            }
+        }
+
+        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
+    }
+
+    public static Bitmap getBackground(Context context, RuuviTag tag) {
+        if (tag.getUserBackground() != null) {
+            try {
+                Uri uri = Uri.parse(tag.getUserBackground());
+                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            } catch (Exception e) {
+                Timber.e("Could not set user background");
+            }
         }
 
         return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
@@ -110,13 +101,11 @@ public class Utils {
 
 
     public static Drawable getDefaultBackground(int number, Context context) {
-        return context.getResources().getDrawable(getDefaultBackground(number));
+        return ContextCompat.getDrawable(context, getDefaultBackground(number));
     }
 
     private static int getDefaultBackground(int number) {
         switch (number) {
-            case 0:
-                return R.drawable.bg1;
             case 1:
                 return R.drawable.bg2;
             case 2:
@@ -138,24 +127,11 @@ public class Utils {
         }
     }
 
-    public static double celciusToFahrenheit(double celcius) {
-        return round(celcius * 1.8 + 32.0, 2);
-    }
-
-    public static double celsiusToKelvin(double celsius) {
-        return celsius + 273.15;
-    }
-
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
-    }
-
-    public static boolean removeStateFile(Context context) {
-        String path = context.getFilesDir().getPath() + "/android-beacon-library-scan-state";
-        return new File(path).delete();
     }
 }

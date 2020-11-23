@@ -18,7 +18,7 @@ import java.util.List;
 public class Alarm extends BaseModel {
     public static final int TEMPERATURE = 0;
     public static final int HUMIDITY = 1;
-    public static final int PERSSURE = 2;
+    public static final int PRESSURE = 2;
     public static final int RSSI = 3;
     public static final int MOVEMENT = 4;
 
@@ -37,6 +37,7 @@ public class Alarm extends BaseModel {
     public boolean enabled;
     @Column
     public Date mutedTill;
+
     public Alarm() {
     }
 
