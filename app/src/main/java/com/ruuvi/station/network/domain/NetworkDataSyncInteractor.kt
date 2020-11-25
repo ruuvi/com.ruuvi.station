@@ -83,7 +83,7 @@ class NetworkDataSyncInteractor (
                 val job = launch {
                     Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
                     val benchUpdate1 = Date()
-                    syncSensorDataForPeriod(tagInfo.sensor, 72)
+                    syncSensorDataForPeriod(tagInfo.sensor, hours)
                     val benchUpdate2 = Date()
                     Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 }
@@ -98,7 +98,7 @@ class NetworkDataSyncInteractor (
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
-    suspend fun syncSensorDataForPeriod(tagId: String, period: Long) {
+    suspend fun syncSensorDataForPeriod(tagId: String, period: Int) {
         Timber.d("Synchronizing... $tagId")
 
         val tag = tagRepository.getTagById(tagId)
@@ -106,7 +106,7 @@ class NetworkDataSyncInteractor (
         if (tag != null && tag.isFavorite) {
             val cal = Calendar.getInstance()
             cal.time = Date()
-            cal.add(Calendar.HOUR, -period.toInt())
+            cal.add(Calendar.HOUR, -period)
 
             var since = cal.time
             if (tag.networkLastSync ?: Date(Long.MIN_VALUE) > since) since = tag.networkLastSync

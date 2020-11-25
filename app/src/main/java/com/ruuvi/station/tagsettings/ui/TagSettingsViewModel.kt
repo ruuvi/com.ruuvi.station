@@ -9,6 +9,9 @@ import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -47,6 +50,12 @@ class TagSettingsViewModel(
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
+    private val handler = CoroutineExceptionHandler() { _, exception ->
+        CoroutineScope(Dispatchers.Main).launch {
+            operationStatus.value = exception.message
+        }
+    }
+
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
@@ -69,6 +78,14 @@ class TagSettingsViewModel(
         interactor.deleteTagsAndRelatives(tag)
         if (networkStatus.value?.owner == networkInteractor.getEmail()) {
             networkInteractor.unclaimSensor(tagId)
+        } else if (!networkStatus.value?.owner.isNullOrEmpty()) {
+            networkInteractor.getEmail()?.let { email ->
+                networkInteractor.unshareSensor(email, tagId, handler) {response->
+                    if (response?.result == "error") {
+                        operationStatus.value = response.error
+                    }
+                }
+            }
         }
     }
 
