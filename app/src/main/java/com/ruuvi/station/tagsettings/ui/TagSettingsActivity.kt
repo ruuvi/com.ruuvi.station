@@ -293,7 +293,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         calibrateHumidityButton.setDebouncedOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
 
-            val content = View.inflate(applicationContext, R.layout.dialog_humidity_calibration, null)
+            val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
 
             val container = FrameLayout(applicationContext)
 
