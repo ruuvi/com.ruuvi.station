@@ -33,7 +33,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
-    private val firebasePropertySaver: FirebasePropertiesSaver by instance()
 
     private var isInForeground: Boolean = true
 
@@ -67,8 +66,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
             //turn on for debug if you don't have real ruuvi tag
             //fakesSender.startSendFakes()
         }
-
-        firebasePropertySaver.saveUserProperties()
 
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
