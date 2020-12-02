@@ -228,8 +228,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             builder.setView(container)
 
             builder.setPositiveButton("Ok") { _: DialogInterface?, _: Int ->
-                tag.name = input.text.toString()
-
+                val newValue = input.text.toString()
+                if (newValue.isNullOrEmpty()) {
+                    tag.name = null
+                } else {
+                    tag.name = input.text.toString()
+                }
                 tagNameInputTextView.text = tag.name
             }
 
