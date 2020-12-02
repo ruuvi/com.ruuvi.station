@@ -33,11 +33,21 @@ class FirebasePropertiesSaver(
                 firebaseAnalytics.setUserProperty("graph_show_all_points", preferences.isShowAllGraphPoint().toString())
                 firebaseAnalytics.setUserProperty("graph_draw_dots", preferences.graphDrawDots().toString())
 
-                val favouriteTagsCount = tagInteractor.getTagEntities(true).size
-                val nonFavouriteTagsCount = tagInteractor.getTagEntities(false).size
+                val addedTags = tagInteractor.getTagEntities(true).size
+                val notAddedTags = tagInteractor.getTagEntities(false).size
+                val seenTags = addedTags + notAddedTags
 
-                firebaseAnalytics.setUserProperty("seen_tags", (favouriteTagsCount + nonFavouriteTagsCount).toString())
-                firebaseAnalytics.setUserProperty("added_tags", favouriteTagsCount.toString())
+                if (seenTags < 10) {
+                    firebaseAnalytics.setUserProperty("seen_tags", (addedTags + notAddedTags).toString())
+                } else {
+                    firebaseAnalytics.setUserProperty("seen_tags", "10+")
+                }
+
+                if (addedTags < 10) {
+                    firebaseAnalytics.setUserProperty("added_tags", addedTags.toString())
+                } else {
+                    firebaseAnalytics.setUserProperty("added_tags", "10+")
+                }
             } catch (e: Exception) {
                 Timber.e(e)
             }
