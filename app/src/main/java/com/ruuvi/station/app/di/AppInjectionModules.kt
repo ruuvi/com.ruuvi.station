@@ -5,6 +5,7 @@ import com.ruuvi.station.addtag.di.AddTagActivityInjectionModule
 import com.ruuvi.station.alarm.di.AlarmModule
 import com.ruuvi.station.bluetooth.di.BluetoothScannerInjectionModule
 import com.ruuvi.station.dashboard.di.DashboardActivityInjectionModule
+import com.ruuvi.station.firebase.di.FirebaseInjectionModule
 import com.ruuvi.station.gateway.di.GatewayInjectionModule
 import com.ruuvi.station.graph.di.GraphInjectionModule
 import com.ruuvi.station.settings.di.SettingsInjectionModule
@@ -20,6 +21,7 @@ import org.kodein.di.Kodein
 object AppInjectionModules {
     val module = Kodein.Module(AppInjectionModules.javaClass.name) {
         import(AppInjectionModule.module)
+        import(FirebaseInjectionModule.module)
         import(PreferencesInjectionModule.module)
         import(BluetoothScannerInjectionModule.module)
         import(SettingsInjectionModule.module)
