@@ -11,6 +11,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
@@ -32,6 +33,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
+    private val firebasePropertySaver: FirebasePropertiesSaver by instance()
 
     private var isInForeground: Boolean = true
 
@@ -65,6 +67,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
             //turn on for debug if you don't have real ruuvi tag
             //fakesSender.startSendFakes()
         }
+
+        firebasePropertySaver.saveUserProperties()
 
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
