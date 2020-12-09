@@ -18,7 +18,7 @@ class GatewaySender(
     private val context: Context,
     private val preferences: PreferencesRepository
 ) {
-    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create()
+    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ").create()
 
     init {
         Ion.getDefault(context).configure().gson = gson
