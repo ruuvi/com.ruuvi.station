@@ -347,6 +347,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+                                permissionsHelper.requestBackgroundPermission()
                             }
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
