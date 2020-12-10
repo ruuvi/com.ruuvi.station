@@ -46,6 +46,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -67,6 +68,7 @@ import kotlinx.android.synthetic.main.content_tag_details.tagPager
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -85,6 +87,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         TagsFragmentPagerAdapter(supportFragmentManager)
     }
 
+    private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
     private val permissionsHelper = PermissionsHelper(this)
@@ -344,6 +347,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+                                permissionsHelper.requestBackgroundPermission()
                             }
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
@@ -382,7 +386,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         when (requestCode) {
             10 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // party
+                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                        permissionsHelper.requestBackgroundPermission()
+                    }
                     if (viewModel.openAddView) noTagsTextView.callOnClick()
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -391,7 +397,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     } else {
                         showPermissionSnackbar()
                     }
-                    Toast.makeText(applicationContext, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }

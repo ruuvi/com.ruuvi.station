@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.PermissionsHelper
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationMinutesPicker
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationSecondsPicker
@@ -25,8 +26,11 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
 
     private val viewModel: AppSettingsBackgroundScanViewModel by viewModel()
 
+    private lateinit var permissionsHelper: PermissionsHelper
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        permissionsHelper = PermissionsHelper(requireActivity())
 
         setupViews()
         observeScanMode()
@@ -51,6 +55,9 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
             selection?.let {
                 viewModel.setBackgroundMode(selection)
                 settingsDescriptionTextView.text = getString(selection.description)
+                if (selection == BackgroundScanModes.BACKGROUND) {
+                    permissionsHelper.requestBackgroundPermission()
+                }
             }
         }
 
