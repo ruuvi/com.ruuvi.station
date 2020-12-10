@@ -291,6 +291,7 @@
 
     <string name="permission_dialog_title">Permission needed</string>
     <string name="permission_dialog_request_message">Android operating system requires the app to access your location in order to scan nearby Bluetooth devices. Don\'t worry. Ruuvi Station won\'t track your movements.</string>
+    <string name="permission_dialog_background_request_message">Starting from Android 11 version it\'s necessary to provide permission for Location access and set it to \'Allow all the time\' to make possible for background bluetooth scan</string>
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
