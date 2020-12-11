@@ -49,14 +49,16 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
             optionsRadioGroup.addView(radioButton)
         }
 
+        var permissionAsked = false
         optionsRadioGroup.setOnCheckedChangeListener { _, i ->
             val selection = BackgroundScanModes.fromInt(i)
 
             selection?.let {
                 viewModel.setBackgroundMode(selection)
                 settingsDescriptionTextView.text = getString(selection.description)
-                if (selection == BackgroundScanModes.BACKGROUND) {
+                if (selection == BackgroundScanModes.BACKGROUND && permissionAsked == false) {
                     permissionsHelper.requestBackgroundPermission()
+                    permissionAsked = true
                 }
             }
         }
