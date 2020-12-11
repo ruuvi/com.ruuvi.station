@@ -323,7 +323,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 }
             }
             if (tag.humidityOffset != 0.0) {
-                builder.setNegativeButton("Clear calibration") { _, _ ->
+                builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
                     val latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
                     latestTag?.let {
                         humidityCalibrationInteractor.clear(it);
@@ -338,7 +338,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 //timestamp.text = this.getString(R.string.calibrated)
             }
 
-            builder.setNeutralButton("Cancel", null)
+            builder.setNeutralButton(getString(R.string.close), null)
 
             container.addView(content)
 
