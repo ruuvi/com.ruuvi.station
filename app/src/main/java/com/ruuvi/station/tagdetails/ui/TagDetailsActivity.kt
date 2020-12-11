@@ -107,7 +107,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.openAddView = false
             return
         }
-        permissionsHelper.requestPermissions()
+        if (permissionsHelper.arePermissionsGranted()) {
+            permissionsHelper.requestBackgroundPermission()
+        } else {
+            permissionsHelper.requestPermissions()
+        }
     }
 
     private fun setupUI() {

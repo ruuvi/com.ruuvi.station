@@ -48,7 +48,7 @@ class PermissionsHelper(private val activity: Activity) {
     fun requestBackgroundPermission() {
         if (arePermissionsGranted() && backgroundLocationNeeded()) {
             val alertDialog = AlertDialog.Builder(activity).create()
-            alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
+            alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.permission_dialog_background_request_message))
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
             ) { dialog, _ -> dialog.dismiss() }

@@ -289,9 +289,10 @@
     <string name="bg_scan_for_graphs">Graphs feature works best with background scanning enabled.</string>
     <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
 
-    <string name="permission_dialog_title">Permission needed</string>
-    <string name="permission_dialog_request_message">Android operating system requires the app to access your location in order to scan nearby Bluetooth devices. Don\'t worry. Ruuvi Station won\'t track your movements.</string>
-    <string name="permission_dialog_background_request_message">Starting from Android 11 version it\'s necessary to provide permission for Location access and set it to \'Allow all the time\' to make possible for background bluetooth scan</string>
+    <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
+    <string name="permission_background_dialog_title">Enable Background Scanning</string>
+    <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
+    <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click allow all the time if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="ok">Ok</string>
     <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
     <string name="settings">Settings</string>
