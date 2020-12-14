@@ -9,10 +9,12 @@ import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.feature.ui.WelcomeActivity
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 @ExperimentalCoroutinesApi
 class StartupActivity : AppCompatActivity(), KodeinAware {
@@ -20,10 +22,13 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
 
     private val viewModel: StartupActivityViewModel by viewModel()
+    private val firebasePropertySaver: FirebasePropertiesSaver by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
+
+        firebasePropertySaver.saveUserProperties()
 
         viewModel.generateDeviceId()
         viewModel.startForegroundScanning()

@@ -7,15 +7,15 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
 
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 12012
-        versionName "1.2.12"
+        targetSdkVersion 30
+        versionCode 14010
+        versionName "1.4.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -67,8 +67,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.0.0'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.0.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.1.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.1.0'
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
@@ -126,10 +126,11 @@ dependencies {
     implementation "androidx.core:core-ktx:1.3.1"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-analytics:17.4.4'
-    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.4'
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.2'
+    implementation 'com.google.firebase:firebase-messaging:21.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 }
 

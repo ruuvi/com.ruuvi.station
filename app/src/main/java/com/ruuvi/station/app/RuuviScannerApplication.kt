@@ -11,6 +11,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree

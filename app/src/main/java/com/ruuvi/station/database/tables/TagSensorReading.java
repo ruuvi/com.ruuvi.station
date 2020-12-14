@@ -7,14 +7,17 @@ import com.raizlabs.android.dbflow.annotation.Index;
 import com.raizlabs.android.dbflow.annotation.IndexGroup;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.database.LocalDatabase;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by elias on 15.9.2017.
@@ -142,6 +145,49 @@ public class TagSensorReading extends BaseModel {
                 .where(TagSensorReading_Table.ruuviTagId.eq(id))
                 .async()
                 .execute();
+    }
+
+    public static void saveList(List<TagSensorReading> readings) {
+        String insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`) values ";
+        String valuesQuery = " (\"%s\",       %d,          %f,            %f,         %f,         %d,     %f,       %f,       %f,       %f,        %d,           %f,        %d,                %d,                          %f),";
+        List<String> queries = new ArrayList<>();
+        for (int i = 0; i < readings.size(); i++) {
+            TagSensorReading reading = readings.get(i);
+            queries.add(String.format(Locale.ENGLISH,
+                    valuesQuery,
+                    reading.ruuviTagId,
+                    reading.createdAt.getTime(),
+                    reading.temperature,
+                    reading.humidity,
+                    reading.pressure,
+                    reading.rssi,
+                    reading.accelX,
+                    reading.accelY,
+                    reading.accelZ,
+                    reading.voltage,
+                    reading.dataFormat,
+                    reading.txPower,
+                    reading.movementCounter,
+                    reading.measurementSequenceNumber,
+                    reading.humidityOffset));
+        }
+
+        int BATCH_SIZE = 100;
+        for (int i = 0; i < queries.size(); ) {
+            StringBuilder query = new StringBuilder(insertQuery);
+            for (int j = 0; j < BATCH_SIZE; j++) {
+                if (i + j >= queries.size()) {
+                    i = i + j;
+                    break;
+                }
+                query.append(queries.get(i + j));
+                if (j >= BATCH_SIZE - 1) {
+                    i = i + j;
+                }
+            }
+            query.replace(query.length() - 1, query.length(), ";");
+            FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(query.toString());
+        }
     }
 
     public static long countAll() {
