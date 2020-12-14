@@ -3,12 +3,12 @@ package com.ruuvi.station.settings.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.fragment_app_settings_gateway.*
 import kotlinx.android.synthetic.main.fragment_app_settings_gateway.settingsInfoTextView
@@ -54,7 +54,7 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        settingsInfoTextView.movementMethod = LinkMovementMethod.getInstance()
+        settingsInfoTextView.makeWebLinks(requireActivity(), Pair(getString(R.string.settings_gateway_details_link), getString(R.string.settings_gateway_details_link_url)))
 
         gatewayTestButton.setDebouncedOnClickListener {
             viewModel.testGateway()
