@@ -98,27 +98,21 @@
     <string name="alert_substring_movement">You will get notified when the tag is moved</string>
 
     <string name="info_title">About / Help</string>
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.\n<a href="https://ruuvi.com/terms">ruuvi.com/terms</a>
-    </string>
+    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.\nruuvi.com/terms</string>
     <string name="operations_title">OPERATIONS MANUAL</string>
-    <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.
-    </string>
+    <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station: ruuvi.com/manuals</string>
     <string name="troubleshooting_title">TROUBLESHOOTING</string>
-    <string name="troubleshooting_text">If you\'re experiencing problems and our manuals didn\'t provide the help you need, check out our many troubleshooting topics, here:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
-    </string>
+    <string name="troubleshooting_text">If you\'re experiencing problems and our manuals didn\'t provide the help you need, check out our many troubleshooting topics, here: ruuvi.com/troubles</string>
     <string name="open_source_title">OPEN-SOURCE</string>
-    <string name="open_source_text">Just like RuuviTag, Ruuvi Station is also open-source:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
-    </string>
+    <string name="open_source_text">Just like RuuviTag, Ruuvi Station is also open-source: github.com/ruuvi</string>
     <string name="more_to_read_title">MORE TO READ</string>
-    <string name="more_to_read_text">Ruuvi\'s website:&#160;<a href="https://ruuvi.com">ruuvi.com</a>\nRuuvi Forum:&#160;<a href="https://f.ruuvi.com">f.ruuvi.com</a>\nRuuvi Blog:&#160;<a href="https://blog.ruuvi.com">blog.ruuvi.com</a>\nRuuvi on Twitter:&#160;<a href="https://twitter.com/ruuvicom">twitter.com/ruuvicom</a>
-    </string>
+    <string name="more_to_read_text">Ruuvi\'s website: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi Blog: blog.ruuvi.com\nRuuvi on Twitter: twitter.com/ruuvicom</string>
 
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you</string>
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
     <string name="welcome_text_2">Access data for each linked RuuviTag in real time and explore history graphs</string>
     <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
-    <!--<string name="welcome_text_4">Export logged data or let the app act as a gateway</string>-->
     <string name="welcome_text_5">Press SCAN to find and add nearby RuuviTags to your Ruuvi Station</string>
 
     <string name="scan">Scan</string>
@@ -150,7 +144,9 @@
     <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
     <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
     <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using Android\'s job scheduler. It will use less battery than continuous background scanning mode, but will scan less frequently and less reliably.</string>
-    <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info,&#160;<a href="https://docs.ruuvi.com/ruuvi-station-app/gateway">check the documentation</a>.</string>
+    <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info, check the documentation.</string>
+    <string name="settings_gateway_details_link">check the documentation</string>
+    <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
@@ -170,7 +166,9 @@
     <string name="continuous_background_scanning">Continuous background scanning</string>
     <string name="disable_this_alarm">Disable this alarm</string>
     <string name="calibration_humidity_button">Calibrate hygrometer</string>
-    <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See <a href="https://www.youtube.com/results?search_query=hygrometer+salt+calibration">video tutorials</a> on how to easily do it at home.</string>
+    <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See video tutorials on how to easily do it at home.</string>
+    <string name="calibration_humidity_link">video tutorials</string>
+    <string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
     <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall &amp; install, you may need to recalibrate</string>
     <string name="calibration_hint">%1$d%% -&gt; 75%%</string>
     <string name="calibrated">Calibrated: %1$s</string>

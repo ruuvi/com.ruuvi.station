@@ -67,4 +67,10 @@
         <item name="colorAccent">@color/main</item>
         <item name="android:textColorSecondary">@color/inactive</item>
     </style>
+
+    <style name="TextViewLink">
+        <item name="android:autoLink">web</item>
+        <item name="android:linksClickable">true</item>
+        <item name="android:textColorLink">@color/href</item>
+    </style>
 </resources>

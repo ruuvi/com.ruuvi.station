@@ -6,11 +6,11 @@ import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputFilter
 import android.text.InputType
-import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.view.*
 import android.webkit.MimeTypeMap
@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.lifecycleScope
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
@@ -36,7 +35,9 @@ import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.activity_tag_settings.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -305,7 +306,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             content.layoutParams = params
 
-            (content.findViewById<View>(R.id.info) as TextView).movementMethod = LinkMovementMethod.getInstance()
+            val infoTextView = content.findViewById<View>(R.id.info) as TextView
+            infoTextView?.let {
+                it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+            }
 
             (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity))
 
