@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by elias on 15.9.2017.
@@ -165,31 +166,46 @@ public class TagSensorReading extends BaseModel {
                 .execute();
     }
 
-    @SuppressLint("DefaultLocale")
     public static void saveList(List<TagSensorReading> readings) {
-        String insertQ = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`) values ";
-        String valueQ = " (\"%s\",       %d,          %f,            %f,         %f,         %d,     %f,       %f,       %f,       %f,        %d,           %f,        %d,                %d,                          %f),";
+        String insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`) values ";
+        String valuesQuery = " (\"%s\",       %d,          %f,            %f,         %f,         %d,     %f,       %f,       %f,       %f,        %d,           %f,        %d,                %d,                          %f),";
         List<String> queries = new ArrayList<>();
         for (int i = 0; i < readings.size(); i++) {
-            TagSensorReading r = readings.get(i);
-            queries.add(String.format(valueQ, r.ruuviTagId, r.createdAt.getTime(), r.temperature, r.humidity, r.pressure, r.rssi, r.accelX, r.accelY, r.accelZ, r.voltage, r.dataFormat, r.txPower, r.movementCounter, r.measurementSequenceNumber, r.humidityOffset));
+            TagSensorReading reading = readings.get(i);
+            queries.add(String.format(Locale.ENGLISH,
+                    valuesQuery,
+                    reading.ruuviTagId,
+                    reading.createdAt.getTime(),
+                    reading.temperature,
+                    reading.humidity,
+                    reading.pressure,
+                    reading.rssi,
+                    reading.accelX,
+                    reading.accelY,
+                    reading.accelZ,
+                    reading.voltage,
+                    reading.dataFormat,
+                    reading.txPower,
+                    reading.movementCounter,
+                    reading.measurementSequenceNumber,
+                    reading.humidityOffset));
         }
 
         int BATCH_SIZE = 100;
         for (int i = 0; i < queries.size(); ) {
-            StringBuilder q = new StringBuilder(insertQ);
+            StringBuilder query = new StringBuilder(insertQuery);
             for (int j = 0; j < BATCH_SIZE; j++) {
                 if (i + j >= queries.size()) {
                     i = i + j;
                     break;
                 }
-                q.append(queries.get(i + j));
+                query.append(queries.get(i + j));
                 if (j >= BATCH_SIZE - 1) {
                     i = i + j;
                 }
             }
-            q.replace(q.length() - 1, q.length(), ";");
-            FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(q.toString());
+            query.replace(query.length() - 1, query.length(), ";");
+            FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(query.toString());
         }
     }
 

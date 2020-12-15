@@ -19,8 +19,10 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.PermissionsHelper.Companion.REQUEST_CODE_PERMISSIONS
 import kotlinx.android.synthetic.main.activity_add_tag.toolbar
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -41,6 +44,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AddTagActivityViewModel by viewModel()
+    private val preferencesRepository: PreferencesRepository by instance()
 
     private val tags: ArrayList<RuuviTagEntity> = arrayListOf()
     private var adapter: AddTagAdapter? = null
@@ -119,7 +123,9 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
         when (requestCode) {
             REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
-                    // party
+                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                        permissionsHelper.requestBackgroundPermission()
+                    }
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_COARSE_LOCATION)
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
@@ -127,7 +133,6 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
                     } else {
                         showPermissionSnackbar(this)
                     }
-                    Toast.makeText(applicationContext, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }

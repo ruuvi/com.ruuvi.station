@@ -123,7 +123,7 @@ class TagSettingsViewModel(
         updateTag()
     }
 
-    fun setName(name: String) {
+    fun setName(name: String?) {
         tagObserve.value?.name = name
         updateTag()
     }

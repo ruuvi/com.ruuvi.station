@@ -6,11 +6,11 @@ import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputFilter
 import android.text.InputType
-import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.view.*
 import android.webkit.MimeTypeMap
@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.Observer
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
@@ -38,7 +37,9 @@ import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.activity_tag_settings.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -154,7 +155,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             ownerValueTextView.text = it ?: "None"
         })
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -282,7 +282,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             builder.setView(container)
 
             builder.setPositiveButton("Ok") { _: DialogInterface?, _: Int ->
-                viewModel.setName(input.text.toString())
+                val newValue = input.text.toString()
+                if (newValue.isNullOrEmpty()) {
+                    viewModel.setName(null)
+                } else {
+                    viewModel.setName(input.text.toString())
+                }
+                tagNameInputTextView.text = tag.name
             }
 
             builder.setNegativeButton("Cancel", null)
@@ -342,7 +348,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         calibrateHumidityButton.setDebouncedOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
 
-            val content = View.inflate(applicationContext, R.layout.dialog_humidity_calibration, null)
+            val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
 
             val container = FrameLayout(applicationContext)
 
@@ -354,7 +360,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             content.layoutParams = params
 
-            (content.findViewById<View>(R.id.info) as TextView).movementMethod = LinkMovementMethod.getInstance()
+            val infoTextView = content.findViewById<View>(R.id.info) as TextView
+            infoTextView?.let {
+                it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+            }
 
             (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity))
 
@@ -372,7 +381,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 }
             }
             if (tag.humidityOffset != 0.0) {
-                builder.setNegativeButton("Clear calibration") { _, _ ->
+                builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
                     val latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
                     latestTag?.let {
                         humidityCalibrationInteractor.clear(it);
@@ -387,7 +396,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 //timestamp.text = this.getString(R.string.calibrated)
             }
 
-            builder.setNeutralButton("Cancel", null)
+            builder.setNeutralButton(getString(R.string.close), null)
 
             container.addView(content)
 

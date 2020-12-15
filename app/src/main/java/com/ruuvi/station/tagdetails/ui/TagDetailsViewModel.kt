@@ -41,7 +41,9 @@ class TagDetailsViewModel(
     val alarmStatusObserve: LiveData<AlarmStatus> = alarmStatus
 
     var dashboardEnabled = isDashboardEnabled()
-    var tag: RuuviTag? = null
+
+    private var prevTag: RuuviTag? = null
+    fun getPrevTag() = prevTag
 
     var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView
     var desiredTag: String? = tagDetailsArguments.desiredTag
@@ -95,8 +97,11 @@ class TagDetailsViewModel(
 
     fun pageSelected(pageIndex: Int) {
         viewModelScope.launch {
-            selectedTag.value = tags.value?.get(pageIndex)
-            desiredTag = tags.value?.get(pageIndex)?.id
+            Timber.d("pageSelected $pageIndex")
+            prevTag = selectedTag.value
+            val tag = tags.value?.get(pageIndex)
+            selectedTag.value = tag
+            desiredTag = tag?.id
             checkForAlarm()
         }
     }
@@ -109,7 +114,7 @@ class TagDetailsViewModel(
         ioScope.launch {
             val list = interactor.getTags()
             withContext(Dispatchers.Main) {
-                    tags.value = list
+                tags.value = list
             }
         }
     }

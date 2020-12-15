@@ -47,6 +47,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
@@ -71,6 +72,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import timber.log.Timber
+import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -89,6 +91,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         TagsFragmentPagerAdapter(supportFragmentManager)
     }
 
+    private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
     private val permissionsHelper = PermissionsHelper(this)
@@ -108,7 +111,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.openAddView = false
             return
         }
-        permissionsHelper.requestPermissions()
+        if (permissionsHelper.arePermissionsGranted()) {
+            permissionsHelper.requestBackgroundPermission()
+        } else {
+            permissionsHelper.requestPermissions()
+        }
     }
 
     private fun setupUI() {
@@ -181,7 +188,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun listenToShowGraph() {
         viewModel.isShowGraphObserve.observe(this, Observer {
-            adapter.showGraph = it
             animateGraphTransition(it)
         })
     }
@@ -205,20 +211,18 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private fun scrollOrCacheCurrentPosition(shouldScroll: Boolean, scrollToPosition: Int) {
         if (shouldScroll) {
             tagPager.setCurrentItem(scrollToPosition, false)
-        } else {
-            viewModel.pageSelected(tagPager.currentItem)
         }
+        viewModel.pageSelected(tagPager.currentItem)
     }
 
     private fun setupSelectedTag(selectedTag: RuuviTag) {
-        val previousBitmapDrawable = backgrounds[viewModel.tag?.id]
+        val previousBitmapDrawable = backgrounds[viewModel.getPrevTag()?.id]
         if (previousBitmapDrawable != null) {
             tag_background_view.setImageDrawable(previousBitmapDrawable)
         }
         val bitmap = Utils.getBackground(applicationContext, selectedTag)
         val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
         backgrounds[selectedTag.id] = bitmapDrawable
-        viewModel.tag = selectedTag
         imageSwitcher.setImageDrawable(bitmapDrawable)
     }
 
@@ -323,7 +327,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         if (adapter.count > 0) {
             menuInflater.inflate(R.menu.menu_details, menu)
             val item = menu.findItem(R.id.action_alarm)
-            if (viewModel.tag != null) {
+            if (viewModel.selectedTagObserve.value != null) {
                 setupAlarmIcon(item)
                 val graphItem = menu.findItem(R.id.action_graph)
                 if (adapter.showGraph) {
@@ -398,6 +402,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+                                permissionsHelper.requestBackgroundPermission()
                             }
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
@@ -407,10 +412,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             simpleAlert.show()
                         }
                     }
+                    adapter.showGraph = !adapter.showGraph
                 }
             }
             R.id.action_settings -> {
-                if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.tag?.id)
+                if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.selectedTagObserve.value?.id)
             }
             android.R.id.home -> finish()
         }
@@ -436,7 +442,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         when (requestCode) {
             10 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // party
+                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
+                        permissionsHelper.requestBackgroundPermission()
+                    }
                     if (viewModel.openAddView) noTagsTextView.callOnClick()
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -445,7 +453,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     } else {
                         showPermissionSnackbar()
                     }
-                    Toast.makeText(applicationContext, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -468,6 +475,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         tagPager.isVisible = !isEmptyTags
         noTagsTextView.isVisible = isEmptyTags
         invalidateOptionsMenu()
+
+        if (isEmptyTags) {
+            val bitmap = Utils.getDefaultBackground(8, applicationContext)
+            imageSwitcher.setImageDrawable(bitmap)
+        }
     }
 
     class TagsFragmentPagerAdapter(manager: FragmentManager)
