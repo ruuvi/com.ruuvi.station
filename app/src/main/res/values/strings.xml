@@ -191,7 +191,7 @@
     <string name="background_scan_xiaomi_instructions">On Xiaomi devices go to Android Settings -> Apps -> Manage apps -> Ruuvi Station. Enable Autostart and set Battery Saver to \'No restrictions\'.</string>
     <string name="background_scan_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable Manage Automatically and enable options: Auto-Launch, Secondary Launch and Run in background.</string>
     <string name="preferences_graph_all_points_title">Display all data in chart</string>
-    <string name="preferences_graph_all_points_secondary">Enabling it may cause slow chart work</string>
+    <string name="preferences_graph_all_points_secondary">Enabling it may cause charts to update slowly</string>
     <string name="preferences_graph_show_dots_title">Draw dots in chart</string>
     <string name="preferences_graph_show_dots_secondary">Small dots will help to understand when measurements were collected</string>
 
