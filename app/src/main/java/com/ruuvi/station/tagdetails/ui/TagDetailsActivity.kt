@@ -330,7 +330,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.selectedTagObserve.value != null) {
                 setupAlarmIcon(item)
                 val graphItem = menu.findItem(R.id.action_graph)
-                if (adapter.showGraph) {
+                if (viewModel.isShowingGraph()) {
                     graphItem.setIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
                 } else {
                     graphItem.setIcon(R.drawable.ic_ruuvi_graphs_icon)
@@ -412,7 +412,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             simpleAlert.show()
                         }
                     }
-                    adapter.showGraph = !adapter.showGraph
                 }
             }
             R.id.action_settings -> {
@@ -485,7 +484,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     class TagsFragmentPagerAdapter(manager: FragmentManager)
         : FragmentStatePagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         private var tags = listOf<RuuviTag>()
-        var showGraph: Boolean = false
 
         override fun getItem(position: Int): Fragment {
             return TagFragment.newInstance(tags[position])
