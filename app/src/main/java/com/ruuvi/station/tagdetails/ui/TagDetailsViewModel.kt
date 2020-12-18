@@ -80,6 +80,8 @@ class TagDetailsViewModel(
     fun setIsFirstGraphVisit(isFirst: Boolean) =
         interactor.setIsFirstGraphVisit(isFirst)
 
+    fun isShowingGraph() = isShowGraph.value == true
+
     private fun isDashboardEnabled(): Boolean =
         interactor.isDashboardEnabled()
 
