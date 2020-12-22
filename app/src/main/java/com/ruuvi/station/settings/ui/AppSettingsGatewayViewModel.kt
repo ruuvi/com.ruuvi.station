@@ -32,6 +32,7 @@ class AppSettingsGatewayViewModel(
 
     fun testGateway() {
         testGatewayColor.value = Color.DKGRAY
+        //TODO FIX HARDCODED STRINGS HERE
         testGatewayText.value = "Testing.."
         interactor.testGateway(
                 interactor.getGatewayUrl(),

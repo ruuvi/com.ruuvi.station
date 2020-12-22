@@ -14,7 +14,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.view_graphs.*
@@ -194,7 +194,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         tagHumidityTextView.text = viewModel.getHumidityString(tag)
         tagPressureTextView.text = viewModel.getPressureString(tag)
         tagSignalTextView.text = viewModel.getSignalString(tag)
-        tagUpdatedTextView.text = getString(R.string.updated, Utils.strDescribingTimeSince(tag.updatedAt))
+        tagUpdatedTextView.text = getString(R.string.updated, tag.updatedAt?.describingTimeSince(requireContext()))
 
         val unit = viewModel.getTemperatureUnitString()
         val unitSpan = SpannableString(unit)

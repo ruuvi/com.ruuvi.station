@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.BuildConfig
+import com.ruuvi.station.R
 
 fun AppCompatActivity.SendFeedback(){
     val intent = Intent(Intent.ACTION_SENDTO)
@@ -18,7 +19,7 @@ Android version: ${Build.VERSION.RELEASE}
 App: ${applicationInfo.loadLabel(packageManager)} ${BuildConfig.VERSION_NAME}"""
     intent.putExtra(Intent.EXTRA_TEXT, body)
 
-    startActivity(Intent.createChooser(intent, "Send Email"))
+    startActivity(Intent.createChooser(intent, getString(R.string.send_email)))
 }
 
 fun AppCompatActivity.OpenUrl(url: String){

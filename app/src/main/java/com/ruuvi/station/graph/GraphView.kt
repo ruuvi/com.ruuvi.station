@@ -35,9 +35,6 @@ class GraphView (
 ){
     private var from: Long = 0
     private var to: Long = 0
-    private val TEMP = "Temperature"
-    private val HUMIDITY = "Humidity"
-    private val PRESSURE = "Pressure"
     private var storedReadings: MutableList<TagSensorReading>? = null
     private var graphSetuped = false
 
@@ -89,9 +86,9 @@ class GraphView (
                 pressureData.add(Entry(timestamp, 0f))
             }
 
-            addDataToChart(tempData, tempChart, "$TEMP ${unitsConverter.getTemperatureUnitString()}")
-            addDataToChart(humidData, humidChart, "$HUMIDITY ${unitsConverter.getHumidityUnitString()}")
-            addDataToChart(pressureData, pressureChart, "$PRESSURE ${unitsConverter.getPressureUnitString()}")
+            addDataToChart(tempData, tempChart, context.getString(R.string.temperature, unitsConverter.getTemperatureUnitString()))
+            addDataToChart(humidData, humidChart, "${context.getString(R.string.humidity)} ${unitsConverter.getHumidityUnitString()}")
+            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure, unitsConverter.getPressureUnitString()))
 
             normalizeOffsets(tempChart, humidChart, pressureChart)
         }

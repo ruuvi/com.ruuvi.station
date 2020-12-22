@@ -125,6 +125,7 @@
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click allow all the time if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
     <string name="location_permission_needed">Please enable location permission in settings to see sensors.</string>
     <string name="settings">Settings</string>
     <string name="title_activity_add_tag">Nearby Ruuvi Sensors</string>
@@ -214,4 +215,16 @@
     <string name="no_new_data_points">No new data points available</string>
     <string name="tag_not_in_range">Sensor not found, is it in range?</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="send_email">Send Email</string>
+    <string name="testing">Testing..</string>
+    <string name="mac_copied">Mac address copied to clipboard</string>
+    <string name="file_not_supported">File type not supported</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="calibration_done">Calibration done!</string>
+    <string name="camera_fail">Could not start camera</string>
+    <string name="select_picture">Select Picture</string>
+    <string name="h">h</string>
+    <string name="min">min</string>
+    <string name="s">s</string>
+    <string name="ago">ago</string>
 </resources>
