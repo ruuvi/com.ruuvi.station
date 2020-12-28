@@ -27,3 +27,12 @@ fun AppCompatActivity.OpenUrl(url: String){
     webIntent.data = Uri.parse(url)
     startActivity(webIntent)
 }
+
+fun AppCompatActivity.getMainMenuItems() =
+    arrayOf(
+        getString(R.string.menu_add_new_sensor),
+        getString(R.string.menu_app_settings),
+        getString(R.string.menu_about_help),
+        getString(R.string.menu_send_feedback),
+        getString(R.string.menu_get_more_sensors)
+    )

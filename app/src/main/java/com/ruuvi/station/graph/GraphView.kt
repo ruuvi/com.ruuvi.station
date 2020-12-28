@@ -87,7 +87,7 @@ class GraphView (
             }
 
             addDataToChart(tempData, tempChart, context.getString(R.string.temperature, unitsConverter.getTemperatureUnitString()))
-            addDataToChart(humidData, humidChart, "${context.getString(R.string.humidity)} ${unitsConverter.getHumidityUnitString()}")
+            addDataToChart(humidData, humidChart, context.getString(R.string.humidity, unitsConverter.getHumidityUnitString()))
             addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure, unitsConverter.getPressureUnitString()))
 
             normalizeOffsets(tempChart, humidChart, pressureChart)

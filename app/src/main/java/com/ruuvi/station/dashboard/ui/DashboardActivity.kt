@@ -20,6 +20,7 @@ import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.extensions.OpenUrl
 import com.ruuvi.station.util.extensions.SendFeedback
+import com.ruuvi.station.util.extensions.getMainMenuItems
 import kotlinx.android.synthetic.main.activity_tag_details.*
 import kotlinx.android.synthetic.main.content_dashboard.*
 import org.kodein.di.KodeinAware
@@ -101,7 +102,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         drawerListView.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_list_item_1,
-            resources.getStringArray(R.array.navigation_items_card_view)
+            getMainMenuItems()
         )
 
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->

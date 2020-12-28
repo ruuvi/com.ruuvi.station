@@ -361,7 +361,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 -40,
                 85
             ))
-            add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
+            add(AlarmItem(
+                getString(R.string.humidity, unitsConverter.getHumidityUnitString()),
+                Alarm.HUMIDITY,
+                false,
+                0,
+                100
+            ))
             add(AlarmItem(
                 getString(R.string.pressure, unitsConverter.getPressureUnitString()),
                 Alarm.PRESSURE,
@@ -370,7 +376,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 110000
             ))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
-            add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
+            add(AlarmItem(getString(R.string.alert_movement), Alarm.MOVEMENT, false, 0, 0))
         }
 
         for (alarm in viewModel.tagAlarms) {
@@ -428,7 +434,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun updateReadings(tag: RuuviTagEntity) {
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             rawValuesLayout.isVisible = true
-            inputVoltageTextView.text = this.getString(R.string.voltage_format, tag.voltage.toString())
+            inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
             xInputTextView.text = tag.accelX.toString()
             yInputTextView.text = tag.accelY.toString()
             zInputTextView.text = tag.accelZ.toString()
@@ -440,9 +446,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun delete() {
         val builder = AlertDialog.Builder(this)
 
-        builder.setTitle(this.getString(R.string.tag_delete_title))
+        builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
-        builder.setMessage(this.getString(R.string.tag_delete_message))
+        builder.setMessage(this.getString(R.string.tagsettings_sensor_remove_confirm))
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
             for (alarm: AlarmItem in viewModel.alarmItems) {
@@ -667,9 +673,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 if (isChecked) {
                     setSeekbarColor = R.color.main
-                    subtitle = getString(R.string.alert_substring_movement)
+                    subtitle = getString(R.string.alert_movement_description)
                     subtitle = when (type) {
-                        Alarm.MOVEMENT -> getString(R.string.alert_substring_movement)
+                        Alarm.MOVEMENT -> getString(R.string.alert_movement_description)
                         else -> String.format(getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
                     }
                 } else {

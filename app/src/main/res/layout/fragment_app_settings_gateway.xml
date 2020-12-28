@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/device_identifier" />
+                    android:text="@string/settings_gateway_device_identifier" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/deviceIdEditText"
@@ -50,7 +50,7 @@
                     android:id="@+id/gatewayTestButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/test_gateway"
+                    android:text="@string/settings_gateway_test"
                     android:layout_marginTop="8dp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView

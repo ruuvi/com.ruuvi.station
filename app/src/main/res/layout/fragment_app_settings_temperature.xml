@@ -11,7 +11,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/radioSettingTitleTextView"
-        android:text="@string/temperature_unit"
+        android:text="@string/settings_temperature_unit"
         style="@style/PrefTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -165,7 +165,7 @@ class AlarmCheckInteractor(
         val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarmId)
         val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarmId)
         val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarmId)
-        val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.disable_this_alarm), cancelPendingIntent)
+        val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
 
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         return NotificationCompat
@@ -188,9 +188,8 @@ class AlarmCheckInteractor(
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.notification_channel_name)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance)
+            val channel = NotificationChannel(CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, importance)
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -203,6 +202,7 @@ class AlarmCheckInteractor(
     companion object {
         private const val NOTIFICATION_RESOURCE_ID = -9001
         private const val CHANNEL_ID = "notify_001"
+        private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
 
         //Fixme correct name
         private const val SOME_DATA_FORMAT_VALUE = 5

@@ -43,13 +43,13 @@ class AppSettingsBackgroundScanViewModel(
         return when (deviceManufacturer) {
             SAMSUNG_MANUFACTURER ->
                 if (deviceApi <= Build.VERSION_CODES.M) {
-                    R.string.background_scan_samsung23_instructions
+                    R.string.settings_background_battery_optimization_samsung23_instructions
                 } else {
-                    R.string.background_scan_samsung_instructions
+                    R.string.settings_background_battery_optimization_samsung_instructions
                 }
-            XIAOMI_MANUFACTURER -> R.string.background_scan_xiaomi_instructions
-            HUAWEI_MANUFACTURER -> R.string.background_scan_huawei_instructions
-            else -> R.string.background_scan_common_instructions
+            XIAOMI_MANUFACTURER -> R.string.settings_background_battery_optimization_xiaomi_instructions
+            HUAWEI_MANUFACTURER -> R.string.settings_background_battery_optimization_huawei_instructions
+            else -> R.string.settings_background_battery_optimization_common_instructions
         }
     }
 
