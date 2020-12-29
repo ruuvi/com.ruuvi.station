@@ -3,6 +3,7 @@ package com.ruuvi.station.settings.domain
 import com.google.gson.JsonObject
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
+import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -77,10 +78,10 @@ class AppSettingsInteractor(
         preferencesRepository.setIsShowAllGraphPoint(isShow)
 
     fun graphDrawDots(): Boolean =
-            preferencesRepository.graphDrawDots()
+        preferencesRepository.graphDrawDots()
 
     fun setGraphDrawDots(isDrawDots: Boolean) =
-            preferencesRepository.setGraphDrawDots(isDrawDots)
+        preferencesRepository.setGraphDrawDots(isDrawDots)
 
     fun getGraphPointInterval(): Int =
         preferencesRepository.getGraphPointInterval()
@@ -95,9 +96,9 @@ class AppSettingsInteractor(
         preferencesRepository.setGraphViewPeriod(newPeriod)
 
     fun testGateway(
-            gatewayUrl: String,
-            deviceId: String,
-            callback: FutureCallback<Response<JsonObject>>
+        gatewayUrl: String,
+        deviceId: String,
+        callback: FutureCallback<Response<JsonObject>>
     ) = gatewaySender.test(gatewayUrl, deviceId, callback)
 
     fun getAllPressureUnits(): Array<PressureUnit> = unitsConverter.getAllPressureUnits()
@@ -111,4 +112,6 @@ class AppSettingsInteractor(
     fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
 
     fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
+
+    fun getAllLocales(): Array<LocaleType> = LocaleType.values()
 }

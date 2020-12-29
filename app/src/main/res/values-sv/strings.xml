@@ -51,6 +51,10 @@
 <string name="humidity_reading">%1$,.2f %2$s</string>
 <string name="humidity_relative_name">Relativ (%)</string>
 <string name="humidity_relative_unit">%</string>
+<string name="language_english">English</string>
+<string name="language_finnish">Suomi</string>
+<string name="language_russian">Русский</string>
+<string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC Adress</string>
 <string name="menu_about_help">Om / Hjälp</string>
 <string name="menu_add_new_sensor">Lägg till en ny Sensor</string>
@@ -80,6 +84,7 @@
 <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
 <string name="settings_humidity_unit">Luftfuktighetsenhet</string>
 <string name="settings_humidity_unit_details">Välj den fuktighetsenhet som du vill ska visas</string>
+<string name="settings_language">Språk</string>
 <string name="settings_pressure_unit">Tryckenhet</string>
 <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas</string>
 <string name="settings_temperature_unit">Temperaturenhet</string>

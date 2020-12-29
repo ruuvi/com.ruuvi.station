@@ -82,6 +82,10 @@
 <string name="humidity_reading">%1$,.2f %2$s</string>
 <string name="humidity_relative_name">Relative (%)</string>
 <string name="humidity_relative_unit">%</string>
+<string name="language_english">English</string>
+<string name="language_finnish">Suomi</string>
+<string name="language_russian">Русский</string>
+<string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC Address</string>
 <string name="mac_copied">MAC address copied to clipboard</string>
 <string name="menu_about_help">About / Help</string>
@@ -160,6 +164,7 @@
 <string name="settings_gateway_test">Test gateway</string>
 <string name="settings_humidity_unit">Humidity Unit</string>
 <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed</string>
+<string name="settings_language">Language</string>
 <string name="settings_pressure_unit">Pressure Unit</string>
 <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed</string>
 <string name="settings_temperature_unit">Temperature Unit</string>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ruuvi.station.tagdetails.ui.TagDetailsActivity"
+    tools:context=".tagdetails.ui.TagDetailsActivity"
     tools:showIn="@layout/activity_tag_details">
 
     <com.ruuvi.station.app.ui.MultiTouchViewPager

@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 @ExperimentalCoroutinesApi
 class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
@@ -50,6 +52,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
                 R.string.settings_pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
                 R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
                 R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()
+                R.string.settings_language -> AppSettingsLocaleFragment.newInstance()
                 else -> throw IllegalArgumentException()
             }
         }
