@@ -51,9 +51,16 @@
 <string name="data_points_read">%1$,d measurements read, saving..</string>
 <string name="disconnected">Disconnected</string>
 <string name="export">EXPORT</string>
+<string name="export_csv_chooser_title">Sensor %1$s csv export</string>
+<string name="export_csv_created">.csv created, opening share menu</string>
+<string name="export_csv_failed">Failed to create CSV file</string>
 <string name="file_not_supported">File type not supported</string>
 <string name="gallery">Gallery</string>
 <string name="gateway_disabled">Disabled</string>
+<string name="gateway_test_exception">Nope, did not work. Is the URL correct?</string>
+<string name="gateway_test_fail">Nope, did not work. Response code: %1$d</string>
+<string name="gateway_test_success">Gateway works! Response code: %1$d</string>
+<string name="gateway_testing">Testing...</string>
 <string name="gateway_url">Gateway URL</string>
 <string name="gateway_url_hint">https://your.gateway/...</string>
 <string name="h">h</string>
@@ -129,6 +136,7 @@
 <string name="select_picture">Select Picture</string>
 <string name="send_email">Send Email</string>
 <string name="sensor_already_added">Sensor is already added</string>
+<string name="sensor_settings">Sensor Settings</string>
 <string name="settings">Settings</string>
 <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimization for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
 <string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimization and select Don\'t Optimize for Ruuvi Station</string>

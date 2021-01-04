@@ -30,7 +30,7 @@
         <activity
             android:name=".tagsettings.ui.TagSettingsActivity"
             android:configChanges="orientation|screenSize"
-            android:label="Sensor Settings"
+            android:label="@string/sensor_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -80,12 +81,12 @@ class CsvExporter(
             fileWriter.flush()
             fileWriter.close()
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed to create CSV file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
             e.printStackTrace()
             return
         }
 
-        Toast.makeText(context, ".csv created, opening share menu", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.export_csv_created), Toast.LENGTH_SHORT).show()
         val uri = FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
 
         val sendIntent = Intent()
@@ -93,6 +94,6 @@ class CsvExporter(
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity " + tag?.id + " csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, tag?.id)))
     }
 }
