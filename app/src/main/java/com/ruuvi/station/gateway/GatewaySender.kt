@@ -13,6 +13,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.gateway.data.ScanEvent
 import com.ruuvi.station.gateway.data.ScanLocation
 import timber.log.Timber
+import java.lang.Exception
 
 class GatewaySender(
     private val context: Context,
@@ -42,26 +43,34 @@ class GatewaySender(
             val eventBatch = ScanEvent(context, deviceId)
             eventBatch.location = scanLocation
             eventBatch.tags.add(tag)
-            Ion.with(context)
-                .load(backendUrl)
-                .setLogging("HTTP_LOGS", Log.DEBUG)
-                .setJsonPojoBody(eventBatch)
-                .asJsonObject()
-                .setCallback { e, _ ->
-                    if (e != null) {
-                        Timber.e(e, "Batch sending failed to $backendUrl")
+            try {
+                Ion.with(context)
+                    .load(backendUrl)
+                    .setLogging("HTTP_LOGS", Log.DEBUG)
+                    .setJsonPojoBody(eventBatch)
+                    .asJsonObject()
+                    .setCallback { e, _ ->
+                        if (e != null) {
+                            Timber.e(e, "Batch sending failed to $backendUrl")
+                        }
                     }
-                }
+            } catch (e: Exception) {
+                Timber.e(e, "Batch sending failed to $backendUrl")
+            }
         }
     }
 
     fun test(gatewayUrl: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
-        val scanEvent = ScanEvent(context, deviceId)
-        Ion.with(context)
+        try {
+            val scanEvent = ScanEvent(context, deviceId)
+            Ion.with(context)
                 .load(gatewayUrl)
                 .setJsonPojoBody(scanEvent)
                 .asJsonObject()
                 .withResponse()
                 .setCallback(callback)
+        } catch (e: Exception) {
+            callback.onCompleted(e, null)
+        }
     }
 }
