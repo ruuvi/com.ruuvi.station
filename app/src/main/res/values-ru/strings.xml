@@ -35,7 +35,7 @@
 <string name="camera">Камера</string>
 <string name="camera_fail">Не удалось запустить камеру</string>
 <string name="cancel">Отмена</string>
-<string name="charts_background_dialog_title">Графики работают лучше всего с включенным фоновым сканированием</string>
+<string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
 <string name="charts_background_dialog_title_question">Включить фоновое сканирование?</string>
 <string name="clear">Очистить</string>
 <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>

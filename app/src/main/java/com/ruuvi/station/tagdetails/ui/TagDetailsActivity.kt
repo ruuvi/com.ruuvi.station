@@ -342,8 +342,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
                             val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
-                            simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title))
-                            simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_title_question))
+                            simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
+                            simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)

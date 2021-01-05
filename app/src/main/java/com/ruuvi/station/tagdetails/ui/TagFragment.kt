@@ -93,7 +93,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         {
             setMessage(message)
             setPositiveButton(getString(R.string.yes), positiveButtonClick)
-            setNegativeButton(android.R.string.no, DialogInterface.OnClickListener { dialogInterface, i ->
+            setNegativeButton(getString(R.string.no), DialogInterface.OnClickListener { dialogInterface, i ->
                 dialogInterface.dismiss()
             })
             show()

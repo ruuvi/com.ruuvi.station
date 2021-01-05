@@ -37,7 +37,7 @@
 <string name="camera">Kamera</string>
 <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
 <string name="cancel">Peruuta</string>
-<string name="charts_background_dialog_title">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
+<string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
 <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
 <string name="clear">Pyyhi</string>
 <string name="clear_confirm">Tyhjennetäänkö sovellukseen tallennetut historiatiedot?</string>
