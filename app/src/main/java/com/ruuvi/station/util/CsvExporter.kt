@@ -40,13 +40,30 @@ class CsvExporter(
         try {
             var fileWriter = FileWriter(csvFile.absolutePath)
 
-            fileWriter.append("timestamp,temperature (${unitsConverter.getTemperatureUnitString()})," +
-                "humidity (${unitsConverter.getHumidityUnitString()})," +
-                "pressure (${unitsConverter.getPressureUnitString()}),rssi")
-            if (tag?.dataFormat == 3 || tag?.dataFormat == 5) fileWriter.append(",acceleration x,acceleration y,acceleration z,voltage")
-            if (tag?.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
+            when (tag?.dataFormat) {
+                3 -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format3,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+                5 -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format5,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+                else -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format2_4,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+            }
             fileWriter.append('\n')
-
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
 
             readings.forEach {

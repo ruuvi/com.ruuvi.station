@@ -54,6 +54,9 @@
 <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
 <string name="export_csv_created">.csv created, opening share menu</string>
 <string name="export_csv_failed">Failed to create CSV file</string>
+<string name="export_csv_header_format2_4">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI</string>
+<string name="export_csv_header_format3">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage</string>
+<string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number</string>
 <string name="file_not_supported">File type not supported</string>
 <string name="gallery">Gallery</string>
 <string name="gateway_disabled">Disabled</string>
