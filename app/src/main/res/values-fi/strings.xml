@@ -53,6 +53,9 @@
 <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
 <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjako-ikkuna</string>
 <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
+<string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho</string>
+<string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite</string>
+<string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite,Liikelaskuri,Mittajärjestysnumero</string>
 <string name="file_not_supported">Tiedostoa ei tueta</string>
 <string name="gallery">Galleria</string>
 <string name="gateway_disabled">Pois käytöstä</string>
