@@ -1,9 +1,10 @@
 package com.ruuvi.station.settings.ui
 
-import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.koushikdutta.async.future.FutureCallback
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
+import com.ruuvi.station.settings.domain.GatewayTestResult
+import com.ruuvi.station.settings.domain.GatewayTestResultType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,11 +17,8 @@ class AppSettingsGatewayViewModel(
     private val deviceId = MutableStateFlow(interactor.getDeviceId())
     val observeDeviceId: StateFlow<String> = deviceId
 
-    private val testGatewayText = MutableStateFlow("")
-    val observeTestGatewayText: StateFlow<String> = testGatewayText
-
-    private val testGatewayColor = MutableStateFlow(Color.DKGRAY)
-    val observeTestGatewayColor: StateFlow<Int> = testGatewayColor
+    private val testGatewayResult = MutableStateFlow(GatewayTestResult(GatewayTestResultType.NONE))
+    val observeTestGatewayResult: StateFlow<GatewayTestResult> = testGatewayResult
 
     fun setGatewayUrl(newGatewayUrl: String) {
         interactor.setGatewayUrl(newGatewayUrl)
@@ -31,24 +29,20 @@ class AppSettingsGatewayViewModel(
     }
 
     fun testGateway() {
-        testGatewayColor.value = Color.DKGRAY
-        testGatewayText.value = "Testing.."
+        testGatewayResult.value = GatewayTestResult(GatewayTestResultType.TESTING)
         interactor.testGateway(
                 interactor.getGatewayUrl(),
                 interactor.getDeviceId(),
                 FutureCallback { e, result ->
                     when {
                         e != null -> {
-                            testGatewayColor.value = Color.RED
-                            testGatewayText.value = "Nope, did not work. Is the URL correct?"
+                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.EXCEPTION)
                         }
                         result.headers.code() != 200 -> {
-                            testGatewayColor.value = Color.RED
-                            testGatewayText.value = "Nope, did not work. Response code: " + result.headers.code()
+                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.FAIL, result.headers.code())
                         }
                         else -> {
-                            testGatewayColor.value = Color.GREEN
-                            testGatewayText.value = "Gateway works! Response code: " + result.headers.code()
+                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.SUCCESS, result.headers.code())
                         }
                     }
                 }

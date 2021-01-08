@@ -126,7 +126,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 try {
                     val path = data.data ?: return
                     if (!isImage(path)) {
-                        Toast.makeText(this, "File type not supported", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.file_not_supported), Toast.LENGTH_SHORT).show()
                         return
                     }
                     val inputStream = applicationContext.contentResolver.openInputStream(path)
@@ -228,7 +228,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             builder.setView(container)
 
-            builder.setPositiveButton("Ok") { _: DialogInterface?, _: Int ->
+            builder.setPositiveButton(getString(R.string.ok)) { _: DialogInterface?, _: Int ->
                 val newValue = input.text.toString()
                 if (newValue.isNullOrEmpty()) {
                     tag.name = null
@@ -238,7 +238,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 tagNameInputTextView.text = tag.name
             }
 
-            builder.setNegativeButton("Cancel", null)
+            builder.setNegativeButton(getString(R.string.cancel), null)
 
             val dialog: Dialog = builder.create()
 
@@ -259,7 +259,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         inputMacTextView.setOnLongClickListener {
             val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-            val clip = ClipData.newPlainText("Mac address", tag.id)
+            val clip = ClipData.newPlainText(getString(R.string.mac_address), tag.id)
 
             try {
                 if (BuildConfig.DEBUG && clipboard == null) {
@@ -268,7 +268,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 clipboard?.setPrimaryClip(clip)
 
-                Toast.makeText(this@TagSettingsActivity, "Mac address copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@TagSettingsActivity, getString(R.string.mac_copied), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Timber.e(e, "Could not copy mac to clipboard")
             }
@@ -313,7 +313,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity))
 
-            builder.setPositiveButton("Calibrate") { _, _ ->
+            builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
 
                 var latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
 
@@ -323,7 +323,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     tag.humidityOffset = it.humidityOffset;
                     tag.humidityOffsetDate = it.humidityOffsetDate;
                     viewModel.updateTag(it)
-                    Toast.makeText(this@TagSettingsActivity, "Calibration done!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@TagSettingsActivity, getString(R.string.calibration_done), Toast.LENGTH_SHORT).show()
                 }
             }
             if (tag.humidityOffset != 0.0) {
@@ -361,7 +361,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 -40,
                 85
             ))
-            add(AlarmItem(getString(R.string.humidity), Alarm.HUMIDITY, false, 0, 100))
+            add(AlarmItem(
+                getString(R.string.humidity, unitsConverter.getHumidityUnitString()),
+                Alarm.HUMIDITY,
+                false,
+                0,
+                100
+            ))
             add(AlarmItem(
                 getString(R.string.pressure, unitsConverter.getPressureUnitString()),
                 Alarm.PRESSURE,
@@ -370,7 +376,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 110000
             ))
             add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
-            add(AlarmItem(getString(R.string.movement), Alarm.MOVEMENT, false, 0, 0))
+            add(AlarmItem(getString(R.string.alert_movement), Alarm.MOVEMENT, false, 0, 0))
         }
 
         for (alarm in viewModel.tagAlarms) {
@@ -428,7 +434,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun updateReadings(tag: RuuviTagEntity) {
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             rawValuesLayout.isVisible = true
-            inputVoltageTextView.text = this.getString(R.string.voltage_format, tag.voltage.toString())
+            inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
             xInputTextView.text = tag.accelX.toString()
             yInputTextView.text = tag.accelY.toString()
             zInputTextView.text = tag.accelZ.toString()
@@ -440,9 +446,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun delete() {
         val builder = AlertDialog.Builder(this)
 
-        builder.setTitle(this.getString(R.string.tag_delete_title))
+        builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
-        builder.setMessage(this.getString(R.string.tag_delete_message))
+        builder.setMessage(this.getString(R.string.tagsettings_sensor_remove_confirm))
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
             for (alarm: AlarmItem in viewModel.alarmItems) {
@@ -509,7 +515,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 try {
                     photoFile.createNewFile()
                 } catch (ioEx: IOException) {
-                    Toast.makeText(this, "Could not start camera", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.camera_fail), Toast.LENGTH_SHORT).show()
                     return
                 }
                 viewModel.file = FileProvider.getUriForFile(
@@ -528,7 +534,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GALLERY_PHOTO)
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture)), REQUEST_GALLERY_PHOTO)
         }
 
     private fun isImage(uri: Uri?): Boolean {
@@ -667,9 +673,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 if (isChecked) {
                     setSeekbarColor = R.color.main
-                    subtitle = getString(R.string.alert_substring_movement)
+                    subtitle = getString(R.string.alert_movement_description)
                     subtitle = when (type) {
-                        Alarm.MOVEMENT -> getString(R.string.alert_substring_movement)
+                        Alarm.MOVEMENT -> getString(R.string.alert_movement_description)
                         else -> String.format(getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
                     }
                 } else {

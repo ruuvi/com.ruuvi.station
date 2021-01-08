@@ -15,7 +15,6 @@ import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.tag.domain.RuuviTag;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
 import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
@@ -53,24 +52,6 @@ public class Utils {
         paint.getTextBounds(letter, 0, letter.length(), textBounds);
         canvas.drawText(letter, radius - textBounds.exactCenterX(), radius - textBounds.exactCenterY(), paint);
         return bitmap;
-    }
-
-    public static String strDescribingTimeSince(Date date) {
-        String output = "";
-        Date dateNow = new Date();
-        long diffInMS = dateNow.getTime() - date.getTime();
-        // show date if the tag has not been seen for 24h
-        if (diffInMS > 24 * 60 * 60 * 1000) {
-            output += date.toString();
-        } else {
-            int seconds = (int) (diffInMS / 1000) % 60;
-            int minutes = (int) ((diffInMS / (1000 * 60)) % 60);
-            int hours = (int) ((diffInMS / (1000 * 60 * 60)) % 24);
-            if (hours > 0) output += hours + " h ";
-            if (minutes > 0) output += minutes + " min ";
-            output += seconds + " s ago";
-        }
-        return output;
     }
 
     public static Bitmap getBackground(Context context, RuuviTagEntity tag) {

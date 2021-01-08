@@ -14,8 +14,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 14011
-        versionName "1.4.11"
+        versionCode 14015
+        versionName "1.4.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -56,6 +56,11 @@ android {
             buildConfigField 'boolean', 'FILE_LOGS_ENABLED', 'false'
         }
     }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
@@ -68,7 +73,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.1.0'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.1.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.1.1'
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
@@ -97,6 +102,8 @@ dependencies {
 //    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
+
+    implementation "com.github.YarikSOffice:lingver:1.3.0"
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
 

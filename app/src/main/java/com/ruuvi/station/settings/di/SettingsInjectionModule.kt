@@ -23,6 +23,8 @@ object SettingsInjectionModule {
 
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
 
+        bind<AppSettingsLocaleViewModel>() with provider { AppSettingsLocaleViewModel(instance(), instance()) }
+
         bind<AppSettingsInteractor>() with singleton {
             AppSettingsInteractor(instance(), instance(), instance())
         }

@@ -6,13 +6,13 @@ enum class BackgroundScanModes(val value: Int) {
 
     DISABLED(0) {
         override val label: Int
-            get() = R.string.no_background_scanning
+            get() = R.string.settings_background_disabled
         override val description: Int
             get() = R.string.settings_background_scan_details
     },
     BACKGROUND(1) {
         override val label: Int
-            get() = R.string.continuous_background_scanning
+            get() = R.string.settings_background_continuous
         override val description: Int
             get() = R.string.settings_background_scan_details_continuous
     };

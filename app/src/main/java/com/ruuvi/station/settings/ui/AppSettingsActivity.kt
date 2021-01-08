@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 @ExperimentalCoroutinesApi
 class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
@@ -35,21 +37,22 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
         showingFragmentTitle = resourceId
         val transaction = supportFragmentManager.beginTransaction()
         val fragment: Fragment?
-        if (resourceId == -1 || resourceId == R.string.title_activity_app_settings) {
+        if (resourceId == -1 || resourceId == R.string.menu_app_settings) {
             fragment = AppSettingsListFragment()
-            showingFragmentTitle = R.string.title_activity_app_settings
-            if (resourceId == R.string.title_activity_app_settings) {
+            showingFragmentTitle = R.string.menu_app_settings
+            if (resourceId == R.string.menu_app_settings) {
                 transaction.setCustomAnimations(R.anim.enter_left, R.anim.exit_right)
             }
         } else {
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
             fragment = when (resourceId) {
-                R.string.pref_bgscan -> AppSettingsBackgroundScanFragment.newInstance()
-                R.string.preferences_graph_settings -> AppSettingsGraphFragment.newInstance()
+                R.string.settings_background_scan -> AppSettingsBackgroundScanFragment.newInstance()
+                R.string.settings_chart -> AppSettingsGraphFragment.newInstance()
                 R.string.gateway_url -> AppSettingsGatewayFragment.newInstance()
-                R.string.pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
-                R.string.temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
-                R.string.humidity_unit -> AppSettingsHumidityFragment.newInstance()
+                R.string.settings_pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
+                R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
+                R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()
+                R.string.settings_language -> AppSettingsLocaleFragment.newInstance()
                 else -> throw IllegalArgumentException()
             }
         }
@@ -59,8 +62,8 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
     }
 
     override fun onBackPressed() {
-        if (showingFragmentTitle != R.string.title_activity_app_settings) {
-            openFragment(R.string.title_activity_app_settings)
+        if (showingFragmentTitle != R.string.menu_app_settings) {
+            openFragment(R.string.menu_app_settings)
         } else {
             finish()
         }

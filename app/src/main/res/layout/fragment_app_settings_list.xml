@@ -33,14 +33,14 @@
                     style="@style/PrefTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_bgscan" />
+                    android:text="@string/settings_background_scan" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/bgScanDescriptionTextView"
                     style="@style/PrefSecondaryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_bgscan_summ" />
+                    tools:text="Allows for scanning when the app is running in the background and define how often the background scanning will run" />
 
             </LinearLayout>
 
@@ -60,7 +60,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/background_scan_interval"
+                android:text="@string/settings_background_scan_interval"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -70,7 +70,7 @@
                 style="@style/PrefSecondaryText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/background_scan_interval_sum"
+                android:text="@string/settings_background_scan_interval_description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bgScanIntervalTitleTextView" />
@@ -94,7 +94,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/temperature_unit"
+                android:text="@string/settings_temperature_unit"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -104,7 +104,7 @@
                 style="@style/PrefSecondaryText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/temperature_unit_sum"
+                tools:text="Celsius / Fahrenheit / Kelvin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/temperatureUnitTitleTextView" />
@@ -128,7 +128,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/humidity_unit"
+                android:text="@string/settings_humidity_unit"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -138,7 +138,7 @@
                 style="@style/PrefSecondaryText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/humidity_unit_sum"
+                tools:text="Relative / Absolute / Dew Point"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/humidityUnitTitleTextView" />
@@ -162,7 +162,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/pressure_unit"
+                android:text="@string/settings_pressure_unit"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -172,7 +172,7 @@
                 style="@style/PrefSecondaryText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/pressure_unit_sum"
+                tools:text="Pascal / Hectopascal / Millimetre of mercury"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pressureUnitTitleTextView" />
@@ -204,13 +204,13 @@
                     style="@style/PrefTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dashboard_pref" />
+                    android:text="@string/dashboard" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/PrefSecondaryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dashboard_pref_sub" />
+                    android:text="@string/dashboard_description" />
 
             </LinearLayout>
 
@@ -241,7 +241,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/gateway_settings"
+                android:text="@string/settings_gateway"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -278,7 +278,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/preferences_graph_settings"
+                android:text="@string/settings_chart"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -289,46 +289,47 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:ellipsize="end"
-                android:maxLength="64"
-                android:maxLines="1"
-                android:text="@string/preferences_graph_settings_description"
+                android:maxLines="2"
+                android:text="@string/settings_chart_description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/graphSettingsTitleTextView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/debugToolsLayout"
+            android:id="@+id/localeSettingsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"
-            android:paddingTop="12dp"
-            android:visibility="gone"
-            tools:visibility="visible" >
+            android:paddingTop="12dp">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/debugToolsTitleTextView"
+                android:id="@+id/localeSettingsTitleTextView"
                 style="@style/PrefTitleText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/app_settings_debug"
+                android:text="@string/settings_language"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/debugToolsSubTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/localeSettingsDescriptionTextView"
                 style="@style/PrefSecondaryText"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
                 android:ellipsize="end"
                 android:maxLength="64"
                 android:maxLines="1"
-                android:text="@string/app_settings_add_fake_tags"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/debugToolsTitleTextView" />
+                app:layout_constraintTop_toBottomOf="@id/localeSettingsTitleTextView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

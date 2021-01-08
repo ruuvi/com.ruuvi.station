@@ -122,4 +122,11 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun setFirstStart(isFirstStart: Boolean){
         preferences.isFirstStart = isFirstStart
     }
+
+    fun getLocale(): String =
+        preferences.locale
+
+    fun setLocale(locale: String) {
+        preferences.locale = locale
+    }
 }
