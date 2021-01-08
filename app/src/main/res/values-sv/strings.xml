@@ -139,8 +139,12 @@
 <string name="sensor_settings">Sensorinställningar</string>
 <string name="settings">Inställningar</string>
 <string name="settings_background_battery_optimization">Om du har problem med bakgrundsskanningen så kan det hjälpa att stänga av batterioptimering. Denna inställning hittas på olika ställen beroende på telefonens tillverkare, modell och Android version.</string>
-<string name="settings_background_battery_optimization_common_instructions">Gå till operativsystemets Inställningar ->  Appar -> Batteri -> Batterioptimering och välj Optimera inte för Ruuvi Station</string>
+<string name="settings_background_battery_optimization_common_instructions">Gå till operativsystemets Inställningar -> Appar -> Batteri -> Batterioptimering och välj Optimera inte för Ruuvi Station</string>
+<string name="settings_background_battery_optimization_huawei_instructions">Gå till operativsystemets Inställningar -> Appar -> Appar -> Ruuvi Station -> Information om energiförbrukning -> Appstart. Avaktivera Hantera automatiskt och aktivera Autostart, Sekundär start och Kör i bakgrunden.</string>
+<string name="settings_background_battery_optimization_samsung23_instructions">Gå till operativsystemets Inställningar -> Batteri -> Information (under Programenergisparläge) -> Ruuvi Station. Välj Inaktiv.</string>
+<string name="settings_background_battery_optimization_samsung_instructions">Gå till operativsystemets Inställningar -> Appar -> Tryck på menyn i högra övre hörnet -> Särskild åtkomst -> Optimera batterianvändning. Välj Allt, sök efter Ruuvi Station och välj bort appen från optimerade appar.</string>
 <string name="settings_background_battery_optimization_title">Läs mer om bakgrundsskanning</string>
+<string name="settings_background_battery_optimization_xiaomi_instructions">Gå till operativsystemets Inställningar -> Appar -> Hantera Appar -> Ruuvi Station. Aktivera Starta automatiskt, gå sedan till Batterisparare och välj Inga restriktioner.</string>
 <string name="settings_background_continuous">Kontinuerlig bakgrundsskanning</string>
 <string name="settings_background_continuous_description">Kontinuerlig bakgrundsskanning är aktiverad\nDataloggningsintervall: %1$s</string>
 <string name="settings_background_disabled">Ingen bakgrundsskanning</string>

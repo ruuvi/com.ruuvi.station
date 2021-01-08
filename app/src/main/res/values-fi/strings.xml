@@ -141,12 +141,12 @@
 <string name="sensor_settings">Asetukset</string>
 <string name="settings">Asetukset</string>
 <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
-<string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Paristo -> Virransäästö ja valitse Älä käytä</string>
-<string name="settings_background_battery_optimization_huawei_instructions">Huawei-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Virrankäyttötiedot -> Sovellusten käynnistys. </string>
-<string name="settings_background_battery_optimization_samsung23_instructions">Samsung-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Laitteen ylläpito -> Akku -> Virrankäytön optimoinnin asetukset ja valitse Pois käytöstä.</string>
+<string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Akku -> Virransäästö ja valitse \'Älä käytä\'</string>
+<string name="settings_background_battery_optimization_huawei_instructions">Huawei-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Virrankulutustiedot -> Sovelluksen käynnistys -> poista käytöstä \'Hallitse automaattisesti\' ja varmista, että kaikki manuaalisen hallinnan alla olevat vaihtoehdot ovat käytössä.</string>
+<string name="settings_background_battery_optimization_samsung23_instructions">Samsung-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Akku -> Sovelluksen virransäästö -> Ruuvi Station ja valitse \'Ei käytössä\'.</string>
 <string name="settings_background_battery_optimization_samsung_instructions">Samsung-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Laitteen ylläpito -> Akku. Poista käyttämättömien sovellusten lepotila käytöstä. Poista Ruuvi Station lepotilaa käyttävien sovellusten listalta. Poista sovelluksen tausta-ajoon mahdollisesti vaikuttavat muut rajoitukset.</string>
 <string name="settings_background_battery_optimization_title">Lisätietoja taustaskannauksesta</string>
-<string name="settings_background_battery_optimization_xiaomi_instructions">Xiaomi-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Sovelluksen käynnistys -> Ruuvi Station -> Hallitse manuaalisesti.</string>
+<string name="settings_background_battery_optimization_xiaomi_instructions">Xiaomi-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Hallitse sovelluksia -> Ruuvi Station -> ota käyttöön Automaattinen käynnistys ja valitse \'Ei rajoituksia\' kohdasta Virransäästö.</string>
 <string name="settings_background_continuous">Jatkuva skannaus</string>
 <string name="settings_background_continuous_description">Jatkuva skannaus on käytössä.\nHistorian tallennusväli: %1$s </string>
 <string name="settings_background_disabled">Ei skannausta</string>

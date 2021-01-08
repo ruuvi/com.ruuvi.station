@@ -138,8 +138,13 @@
 <string name="sensor_already_added">Датчик уже добавлен</string>
 <string name="sensor_settings">Настройки датчика\'</string>
 <string name="settings">Настройки</string>
-<string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканировани, то следует отключить оптимизацию батареии для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
+<string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
+<string name="settings_background_battery_optimization_common_instructions">Перейдите в настройки Android -> Приложения -> Ruuvi Station -> Батарея -> укажите, что не нужно экономить заряд</string>
+<string name="settings_background_battery_optimization_huawei_instructions">Для устройств Huawei перейдите в настройки Android -> Приложения -> Ruuvi Station -> Сведения энергопотребления -> Запуск приложений -> отключите Автоматическое Управление и включите Автозапуск, Косвенный запуск и Работу в фоновом режиме</string>
+<string name="settings_background_battery_optimization_samsung23_instructions">Для телефонов Самсунг перейдите в настройки Android -> Батарея -> Энергопотребление приложений -> кнопка Подробно -> отключите оптимизацию для Ruuvi Station</string>
+<string name="settings_background_battery_optimization_samsung_instructions">Для телефонов Самсунг перейдите в Настройки Android -> Обслуживание устройства -> Батарея -> Мониторинг энергопотребления приложений -> Отключите \'Перевод в режим сна\'. Исключите Ruuvi Station из приложений в спящем режиме. Отключите оптимизацию расхода батареи для Ruuvi Station.</string>
 <string name="settings_background_battery_optimization_title">Важное замечание по поводу фонового сканирования</string>
+<string name="settings_background_battery_optimization_xiaomi_instructions">На телефонах Xiaomi откройте настройки Android -> Приложения -> Все приложения -> найдите Ruuvi Station -> включите Автозапуск и установите \'Контроль Активности\' без ограничений</string>
 <string name="settings_background_continuous">Фоновое сканирование</string>
 <string name="settings_background_continuous_description">Фоновое сканироваение включено.\nИнтервал сканирования: %1$s</string>
 <string name="settings_background_disabled">Без фонового сканирования</string>
