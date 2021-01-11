@@ -32,6 +32,7 @@
 <string name="calibration_humidity_button">Калибровать гигрометр</string>
 <string name="calibration_humidity_disclaimer">Данные для калибровки будут сохранены локально. Если вы переустановите приложение будет нужно произвести калибровку заново.</string>
 <string name="calibration_humidity_link">обучающие видео</string>
+<string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
 <string name="camera">Камера</string>
 <string name="camera_fail">Не удалось запустить камеру</string>
 <string name="cancel">Отмена</string>

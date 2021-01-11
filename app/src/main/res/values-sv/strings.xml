@@ -31,7 +31,8 @@
 <string name="calibration_humidity">För att mäta relativ luftfuktighet så exakt som möjligt rekommenderar vi att kalibrera sensorn med natriumklorid (salt). Se videor om hur du enkelt gör det hemma.</string>
 <string name="calibration_humidity_button">Kalibrera luftfuktighetssensorn</string>
 <string name="calibration_humidity_disclaimer">Observera att kalibreringsdata lagras lokalt i din mobila enhet. Om du tar bort Ruuvi Station appen och installerar den igen behöver du kalibrera på nytt.</string>
-<string name="calibration_humidity_link">Videohandledning</string>
+<string name="calibration_humidity_link">Se videor</string>
+<string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
 <string name="camera">Kamera</string>
 <string name="camera_fail">Kunde inte öppna kameran</string>
 <string name="cancel">Avbryt</string>
@@ -77,7 +78,7 @@
 <string name="help_operations_title">BRUKSANVISNING</string>
 <string name="help_privacy_policy_text">Användning av applikationen kräver godkännande av användarvillkoren\nruuvi.com/terms</string>
 <string name="help_privacy_policy_title">INTEGRITETSPOLICY</string>
-<string name="help_seen_tags">Upptäckta sensorer</string>
+<string name="help_seen_tags">Upptäckta sensorer: %1$,d</string>
 <string name="help_troubleshooting_text">Om du stöter på problem och våra manualer inte hjälper så kan det hjälpa att ta en titt på våra många felsökningsämnen: ruuvi.com/troubles</string>
 <string name="help_troubleshooting_title">FELSÖKNING</string>
 <string name="hours">Timmar</string>
