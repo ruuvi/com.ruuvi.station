@@ -62,14 +62,14 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
 
         sizes?.let {
             val addedTags = it.first
-            debugText += getString(R.string.seen_tags, addedTags + it.second) + "\n"
-            debugText += getString(R.string.added_tags, addedTags) + "\n"
-            debugText += getString(R.string.db_data_points, readingCount) + "\n"
+            debugText += getString(R.string.help_seen_tags, addedTags + it.second) + "\n"
+            debugText += getString(R.string.help_added_tags, addedTags) + "\n"
+            debugText += getString(R.string.help_db_data_points, readingCount) + "\n"
         }
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
         val dbFile = File(dbPath)
-        debugText += getString(R.string.db_size, dbFile.length() / 1024)
+        debugText += getString(R.string.help_db_size, dbFile.length() / 1024)
         debugInfo.text = debugText
     }
 

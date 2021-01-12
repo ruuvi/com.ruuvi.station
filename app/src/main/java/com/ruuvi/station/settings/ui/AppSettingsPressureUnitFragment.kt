@@ -29,7 +29,7 @@ class AppSettingsPressureUnitFragment : Fragment(R.layout.fragment_app_settings_
         items.forEachIndexed { index, option ->
             val radioButton = RadioButton(activity)
             radioButton.id = index
-            radioButton.text = "${getString(option.title)} (${getString(option.unit)})"
+            radioButton.text = getString(option.title)
             radioButton.isChecked = option == current
             radioGroup.addView(radioButton)
         }

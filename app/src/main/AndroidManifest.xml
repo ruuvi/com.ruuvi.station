@@ -12,8 +12,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-feature android:name="android.hardware.bluetooth" />
+    <uses-feature android:name="android.hardware.bluetooth"/>
 
     <application
         android:name=".app.RuuviScannerApplication"
@@ -38,7 +37,7 @@
         <activity
             android:name=".tagsettings.ui.TagSettingsActivity"
             android:configChanges="orientation|screenSize"
-            android:label="Sensor Settings"
+            android:label="@string/sensor_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
 
@@ -68,11 +67,11 @@
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".addtag.ui.AddTagActivity"
-            android:label="@string/title_activity_add_tag"
+            android:label="@string/add_tag_title"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
-            android:name=".settings.ui.AppSettingsActivity"
-            android:label="@string/title_activity_app_settings"
+            android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
+            android:label="@string/menu_app_settings"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".startup.ui.StartupActivity"

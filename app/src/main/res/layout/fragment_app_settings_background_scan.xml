@@ -15,7 +15,7 @@
         style="@style/PrefTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pref_bgscan"
+        android:text="@string/settings_background_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/optionsRadioGroup"
-        tools:text="@string/settings_background_scan_details_lazy" />
+        tools:text="@string/settings_background_scan_details_continuous" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/duration_picker"
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/background_scan_interval" />
+                android:text="@string/settings_background_scan_interval" />
 
         </LinearLayout>
 
@@ -90,7 +90,7 @@
                     android:id="@+id/durationMinutesPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/seconds"
+                    android:text="@string/minutes"
                     android:tooltipText="Minutes" />
             </LinearLayout>
 
@@ -110,7 +110,7 @@
                     android:id="@+id/durationSecondsPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:tooltipText="Seconds" />
+                    android:tooltipText="@string/seconds" />
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -120,7 +120,7 @@
         style="@style/PrefTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/background_scan_important_note"
+        android:text="@string/settings_background_battery_optimization_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/duration_picker" />
@@ -129,7 +129,7 @@
         android:id="@+id/batteryOptimizationAlertTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/disable_battery_optimization"
+        android:text="@string/settings_background_battery_optimization"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
@@ -139,7 +139,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="@string/background_scan_common_instructions"
+        android:text="@string/settings_background_battery_optimization_common_instructions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/batteryOptimizationAlertTextView" />

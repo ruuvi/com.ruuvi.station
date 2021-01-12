@@ -83,7 +83,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
         tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
             if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
-                Toast.makeText(this, getString(R.string.tag_already_added), Toast.LENGTH_SHORT)
+                Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
                         .show()
                 return@OnItemClickListener
             }
@@ -139,7 +139,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun showPermissionSnackbar(activity: Activity) {
-        val snackbar = Snackbar.make(tag_layout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
+        val snackbar = Snackbar.make(tag_layout, getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
         snackbar.setAction(getString(R.string.settings)) {
             val intent = Intent()
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS

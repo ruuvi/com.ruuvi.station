@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -39,13 +40,30 @@ class CsvExporter(
         try {
             var fileWriter = FileWriter(csvFile.absolutePath)
 
-            fileWriter.append("timestamp,temperature (${unitsConverter.getTemperatureUnitString()})," +
-                "humidity (${unitsConverter.getHumidityUnitString()})," +
-                "pressure (${unitsConverter.getPressureUnitString()}),rssi")
-            if (tag?.dataFormat == 3 || tag?.dataFormat == 5) fileWriter.append(",acceleration x,acceleration y,acceleration z,voltage")
-            if (tag?.dataFormat == 5) fileWriter.append(",movement counter,measurement sequence number")
+            when (tag?.dataFormat) {
+                3 -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format3,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+                5 -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format5,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+                else -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_format2_4,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
+            }
             fileWriter.append('\n')
-
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
 
             readings.forEach {
@@ -80,12 +98,12 @@ class CsvExporter(
             fileWriter.flush()
             fileWriter.close()
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed to create CSV file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
             e.printStackTrace()
             return
         }
 
-        Toast.makeText(context, ".csv created, opening share menu", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.export_csv_created), Toast.LENGTH_SHORT).show()
         val uri = FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
 
         val sendIntent = Intent()
@@ -93,6 +111,6 @@ class CsvExporter(
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, "RuuviTagEntity " + tag?.id + " csv export"))
+        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, tag?.id)))
     }
 }

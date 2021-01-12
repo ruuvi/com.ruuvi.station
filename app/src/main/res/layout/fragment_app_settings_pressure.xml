@@ -11,7 +11,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/radioSettingTitleTextView"
-        android:text="@string/pressure_unit"
+        android:text="@string/settings_pressure_unit"
         style="@style/PrefTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

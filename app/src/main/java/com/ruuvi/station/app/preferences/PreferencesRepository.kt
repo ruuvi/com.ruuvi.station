@@ -147,4 +147,11 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun getUserEmailLiveData() = preferences.getUserEmailLiveData()
 
     fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
+
+    fun getLocale(): String =
+        preferences.locale
+
+    fun setLocale(locale: String) {
+        preferences.locale = locale
+    }
 }

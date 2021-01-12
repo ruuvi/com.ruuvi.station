@@ -7,6 +7,7 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
+import java.util.*
 
 class Preferences constructor(val context: Context) {
 
@@ -20,7 +21,7 @@ class Preferences constructor(val context: Context) {
 
     var backgroundScanMode: BackgroundScanModes
         get() = BackgroundScanModes.fromInt(sharedPreferences.getInt(PREF_BACKGROUND_SCAN_MODE, BackgroundScanModes.DISABLED.value))
-                ?: BackgroundScanModes.DISABLED
+            ?: BackgroundScanModes.DISABLED
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
         }
@@ -78,7 +79,8 @@ class Preferences constructor(val context: Context) {
         }
 
     var gatewayUrl: String
-        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL) ?: DEFAULT_GATEWAY_URL
+        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL)
+            ?: DEFAULT_GATEWAY_URL
         set(url) {
             sharedPreferences.edit().putString(PREF_BACKEND, url).apply()
         }
@@ -133,6 +135,26 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_GRAPH_DRAW_DOTS, drawDots).apply()
         }
 
+    var locale: String
+        get() {
+            var preferenceLocale = sharedPreferences.getString(PREF_LOCALE, null)
+            if (preferenceLocale == null) {
+                val defaultLanguage = Locale.getDefault().language
+                if (SUPPORTED_LOCALES.contains(defaultLanguage)) {
+                    preferenceLocale = defaultLanguage
+                } else {
+                    preferenceLocale = DEFAULT_LOCALE
+                }
+                preferenceLocale?.let{
+                    locale = preferenceLocale
+                }
+            }
+            return preferenceLocale ?: DEFAULT_LOCALE
+        }
+        set(locale) {
+            sharedPreferences.edit().putString(PREF_LOCALE, locale).apply()
+        }
+
     var networkEmail: String
         get() = sharedPreferences.getString(PREF_NETWORK_EMAIL, "") ?: ""
         set(email) {
@@ -173,6 +195,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
+        private const val PREF_LOCALE = "pref_locale"
         private const val PREF_NETWORK_EMAIL = "pref_network_email"
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
@@ -184,5 +207,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
+        private const val DEFAULT_LOCALE = "en"
+        private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
     }
 }
