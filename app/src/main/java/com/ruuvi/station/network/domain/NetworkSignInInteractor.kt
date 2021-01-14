@@ -1,8 +1,6 @@
 package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import java.util.*
 
 class NetworkSignInInteractor (
     private val tagRepository: TagRepository,
@@ -12,6 +10,7 @@ class NetworkSignInInteractor (
     fun signIn(token: String, response: (String) -> Unit) {
         networkInteractor.verifyUser(token) {response->
             var  errorText = ""
+            // TODO LOCALIZE
             if (response == null) {
                 errorText = "Unknown error"
             } else if (!response.error.isNullOrEmpty()) {

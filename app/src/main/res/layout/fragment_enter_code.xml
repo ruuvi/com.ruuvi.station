@@ -14,14 +14,14 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/email_sent_description"
+        android:text="@string/sign_in_email_sent"
         />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/enterCodeManuallyTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter code manually:"
+        android:text="@string/sign_in_check_email"
         android:layout_margin="8dp"
         app:layout_constraintTop_toBottomOf="@+id/emailSentTitleTextView"
         />
@@ -38,14 +38,14 @@
             android:id="@+id/enterCodeManuallyEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Sign in code"/>
+            android:hint="@string/sign_in_code_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/submitCodeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/sign_in_submit_button"
         style="@style/roundButton"
         android:layout_marginTop="16dp"
         android:layout_marginStart="8dp"

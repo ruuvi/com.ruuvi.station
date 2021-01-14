@@ -31,6 +31,7 @@ class SignOutFragment : Fragment(R.layout.fragment_sign_out), KodeinAware {
             activity?.finish()
         }
 
+        //TODO Localize
         (activity as SignInActivity).updateTitle("Sign out")
         (activity as SignInActivity).goBackEnabled(false)
     }

@@ -28,10 +28,6 @@ object NetworkInjectionModule {
             EnterCodeViewModel(instance(), instance(), instance())
         }
 
-        bind<SignedInViewModel>() with provider {
-            SignedInViewModel(instance(), instance(), instance())
-        }
-
         bind<SignOutViewModel>() with provider {
             SignOutViewModel(instance())
         }

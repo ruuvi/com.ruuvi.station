@@ -75,7 +75,7 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
 
     private fun confirmUnshareSensor(email: String) {
         val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
-        simpleAlert.setTitle("Unshare sensor for $email?")
+        simpleAlert.setTitle(getString(R.string.share_sensor_unshare_confirm, email))
         simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
             viewModel.unshareTag(email)
         }

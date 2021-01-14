@@ -54,14 +54,14 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:textStyle="bold"
-                android:text="Ruuvi Network status"/>
+                android:text="@string/network_status_title"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/loggedUserTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:text="User: "/>
+                tools:text="@string/network_user"/>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/syncLayout"
             android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:gravity="center|left"
+                android:gravity="center|start"
                 tools:text="Syncronized 1 day ago"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>

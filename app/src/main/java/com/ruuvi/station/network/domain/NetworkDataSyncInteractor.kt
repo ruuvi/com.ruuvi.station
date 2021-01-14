@@ -5,6 +5,8 @@ import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.network.data.NetworkSyncResult
+import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
@@ -26,8 +28,8 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var syncJob: Job? = null
 
-    private val syncStatus = MutableStateFlow<String> ("")
-    val syncStatusFlow: StateFlow<String> = syncStatus
+    private val syncResult = MutableStateFlow<NetworkSyncResult> (NetworkSyncResult(NetworkSyncResultType.NONE))
+    val syncResultFlow: StateFlow<NetworkSyncResult> = syncResult
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
@@ -45,7 +47,7 @@ class NetworkDataSyncInteractor (
                 val userInfo = networkInteractor.getUserInfo()
 
                 if (userInfo?.data?.sensors == null) {
-                    setSyncFailedStatus("can't get user info")
+                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
                     return@launch
                 }
 
@@ -61,7 +63,7 @@ class NetworkDataSyncInteractor (
             } catch (exception: Exception) {
                 val message = exception.message
                 message?.let {
-                    setSyncFailedStatus(it)
+                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.EXCEPTION, it))
                 }
             } finally {
                 setSyncInProgress(false)
@@ -72,7 +74,7 @@ class NetworkDataSyncInteractor (
 
     private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
         if (networkInteractor.signedIn == false) {
-            setSyncFailedStatus("can't sync if user not signed in")
+            setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
             return
         }
 
@@ -94,7 +96,7 @@ class NetworkDataSyncInteractor (
             }
         }
 
-        setSyncStatus("Synchronized successfully!")
+        setSyncResult(NetworkSyncResult(NetworkSyncResultType.SUCCESS))
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
@@ -151,14 +153,9 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun setSyncFailedStatus(status: String) = withContext(Dispatchers.Main) {
+    private suspend fun setSyncResult(status: NetworkSyncResult) = withContext(Dispatchers.Main) {
         Timber.d("SyncStatus = $status")
-        syncStatus.value = "Synchronization failed: $status"
-    }
-
-    private suspend fun setSyncStatus(status: String) = withContext(Dispatchers.Main) {
-        Timber.d("SyncStatus = $status")
-        syncStatus.value = status
+        syncResult.value = status
     }
 
     private suspend fun setSyncInProgress(status: Boolean) = withContext(Dispatchers.Main) {
@@ -218,6 +215,6 @@ class NetworkDataSyncInteractor (
     }
 
     fun syncStatusShowed() {
-        syncStatus.value = ""
+        syncResult.value = NetworkSyncResult(NetworkSyncResultType.NONE)
     }
 }

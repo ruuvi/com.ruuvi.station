@@ -23,7 +23,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
@@ -47,6 +46,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -251,15 +251,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
+        updateMenu(signedIn)
 
-        drawerListView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            getMainMenuItems()
-        )
-
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+        navigationDrawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             mainDrawerLayout.closeDrawers()
             when (i) {
                 0 -> AddTagActivity.start(this)
@@ -275,9 +269,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncResultObserve.observe(this, Observer {
-            if (it.isNotEmpty()) {
-                Snackbar.make(mainDrawerLayout, it, Snackbar.LENGTH_SHORT).show()
+        viewModel.syncResultObserve.observe(this, Observer {syncResult ->
+            val message = when (syncResult.type) {
+                NetworkSyncResultType.NONE -> ""
+                NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
+                NetworkSyncResultType.EXCEPTION -> getString(R.string.network_sync_result_exception, syncResult.errorMessage)
+                NetworkSyncResultType.NOT_LOGGED -> getString(R.string.network_sync_result_not_logged)
+            }
+            if (message.isNotEmpty()) {
+                Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
                 viewModel.syncResultShowed()
             }
         })
@@ -295,30 +295,38 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         viewModel.userEmail.observe(this, Observer {
             var user = it
             if (user.isNullOrEmpty()) {
-                user = "none"
+                user = getString(R.string.none)
                 signedIn = false
             } else {
                 signedIn = true
             }
             updateMenu(signedIn)
-            loggedUserTextView.text = "User: $user"
+            loggedUserTextView.text = getString(R.string.network_user, user)
         })
 
-        viewModel.syncStatus.observe(this, Observer {
-            syncStatusTextView.text = it
+        viewModel.syncStatus.observe(this, Observer {syncStatus ->
+            if (syncStatus.syncInProgress) {
+                syncStatusTextView.text = getString(R.string.connected_reading_info)
+            } else {
+                val lastSyncString =
+                if (syncStatus.lastSync == Long.MIN_VALUE) {
+                    getString(R.string.never)
+                } else {
+                    Date(syncStatus.lastSync).describingTimeSince(this)
+                }
+                syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
+            }
         })
     }
 
     private fun updateMenu(signed: Boolean) {
-        val menuList = if (signed) R.array.navigation_items_card_view_signed else R.array.navigation_items_card_view
         navigationDrawerListView.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_list_item_1,
-            resources.getStringArray(menuList)
+            getMainMenuItems(signed)
         )
     }
 
-    @Suppress("DEPRECATION")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (adapter.count > 0) {
             menuInflater.inflate(R.menu.menu_details, menu)

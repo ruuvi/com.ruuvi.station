@@ -318,7 +318,7 @@
                         android:background="@color/backgroundLight"
                         android:fontFamily="@font/montserrat_bold"
                         android:padding="@dimen/tag_settings_text_padding"
-                        android:text="Network Info"
+                        android:text="@string/tagsettings_network_info"
                         android:textAllCaps="true"
                         android:textColor="@color/mainDark"
                         android:textSize="16sp"
@@ -332,7 +332,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
                         android:padding="@dimen/tag_settings_text_padding"
-                        android:text="Owner"
+                        android:text="@string/tagsettings_owner"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -369,7 +369,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     style="@style/roundButton"
-                    android:text="@string/claim_tag_button"
+                    android:text="@string/tagsettings_claim_button"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/shareTagButton"
                     app:layout_constraintTop_toBottomOf="@+id/calibrateHumidityButton" />
@@ -382,21 +382,8 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     style="@style/roundButton"
-                    android:text="@string/share_tag_button"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/calibrateHumidityButton" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/getTagDataButton"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    style="@style/roundButton"
-                    android:text="Get data"
-                    app:layout_constraintLeft_toRightOf="@+id/shareTagButton"
+                    android:text="@string/tagsettings_share_button"
+                    app:layout_constraintLeft_toRightOf="@id/claimTagButton"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/calibrateHumidityButton" />
 

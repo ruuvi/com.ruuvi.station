@@ -25,7 +25,7 @@
         tools:replace="android:allowBackup">
         <activity
             android:name=".network.ui.SignInActivity"
-            android:label="@string/title_activity_sign_in"
+            android:label="@string/sign_in"
             android:parentActivityName=".tagdetails.ui.TagDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" >
             <nav-graph android:value="@navigation/sign_in_navigation" />
@@ -89,7 +89,7 @@
 
         <activity
             android:name=".network.ui.ShareSensorActivity"
-            android:label="Share Ruuvi sensor"
+            android:label="@string/share_sensor_title"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
         <provider

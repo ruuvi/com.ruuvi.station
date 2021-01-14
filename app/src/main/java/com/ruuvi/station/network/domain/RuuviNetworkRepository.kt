@@ -74,6 +74,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun getUserInfo(token: String): UserInfoResponse? = withContext(dispatcher){
+        // TODO extract Bearer to const
         val response = retrofitService.getUserInfo("Bearer " + token)
         var result: UserInfoResponse? = null
         if (response.isSuccessful) {

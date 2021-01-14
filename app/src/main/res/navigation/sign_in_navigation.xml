@@ -19,9 +19,6 @@
         android:name="com.ruuvi.station.network.ui.EnterCodeFragment"
         android:label="Enter code"
         tools:layout="@layout/fragment_enter_code">
-        <action
-            android:id="@+id/action_enterCodeFragment_to_signedInFragment"
-            app:destination="@id/signedInFragment" />
         <argument
             android:name="token"
             app:argType="string"
@@ -30,15 +27,6 @@
             android:id="@+id/deepLink"
             app:action="ACTION_VIEW"
             app:uri="https://network.ruuvi.com/verify?token={token}" />
-    </fragment>
-    <fragment
-        android:id="@+id/signedInFragment"
-        android:name="com.ruuvi.station.network.ui.SignedInFragment"
-        android:label="fragment_signed_in"
-        tools:layout="@layout/fragment_signed_in" >
-        <action
-            android:id="@+id/action_signedInFragment_to_signOutFragment"
-            app:destination="@id/signOutFragment" />
     </fragment>
     <fragment
         android:id="@+id/signOutFragment"

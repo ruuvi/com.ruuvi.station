@@ -99,11 +99,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         shareTagButton.setDebouncedOnClickListener {
             ShareSensorActivity.start(this, viewModel.tagId )
         }
-
-        getTagDataButton.setDebouncedOnClickListener {
-            viewModel.getSensorData()
-            getTagDataButton.isEnabled = false
-        }
     }
 
     private fun setupViewModel() {
@@ -125,12 +120,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (it == true) {
                 claimTagButton.visibility = View.VISIBLE
                 shareTagButton.visibility = View.VISIBLE
-                getTagDataButton.visibility = View.VISIBLE
                 networkLayout.visibility = View.VISIBLE
             } else {
                 claimTagButton.visibility = View.GONE
                 shareTagButton.visibility = View.GONE
-                getTagDataButton.visibility = View.GONE
                 networkLayout.visibility = View.GONE
             }
         })
@@ -141,7 +134,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         viewModel.isNetworkTagObserve.observe(this, Observer {
             claimTagButton.isEnabled = !it
-            getTagDataButton.isEnabled = it
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {

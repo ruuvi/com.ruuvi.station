@@ -2,15 +2,16 @@ package com.ruuvi.station.dashboard.ui
 
 import androidx.lifecycle.*
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.network.data.NetworkSyncResult
+import com.ruuvi.station.network.data.NetworkSyncResultType
+import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.Utils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
-import java.util.*
 
 @ExperimentalCoroutinesApi
 class DashboardActivityViewModel(
@@ -23,8 +24,8 @@ class DashboardActivityViewModel(
     private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
     val observeTags: LiveData<List<RuuviTag>> = tags
 
-    private val syncResult = MutableLiveData<String>("")
-    val syncResultObserve: LiveData<String> = syncResult
+    private val syncResult = MutableLiveData<NetworkSyncResult>(NetworkSyncResult(NetworkSyncResultType.NONE))
+    val syncResultObserve: LiveData<NetworkSyncResult> = syncResult
 
     private val syncInProgress = MutableLiveData<Boolean>(false)
     val syncInProgressObserve: LiveData<Boolean> = syncInProgress
@@ -33,7 +34,7 @@ class DashboardActivityViewModel(
 
     val lastSync = preferencesRepository.getLastSyncDateLiveData()
 
-    val syncStatus: MediatorLiveData<String> = MediatorLiveData<String>()
+    val syncStatus: MediatorLiveData<NetworkSyncStatus> = MediatorLiveData<NetworkSyncStatus>()
 
     private val trigger = MutableLiveData<Int>(1)
 
@@ -42,7 +43,7 @@ class DashboardActivityViewModel(
         Timber.d("DashboardActivityViewModel-syncStatusFlow")
 
         viewModelScope.launch {
-            networkDataSyncInteractor.syncStatusFlow.collect {
+            networkDataSyncInteractor.syncResultFlow.collect {
                 syncResult.value = it
             }
         }
@@ -53,25 +54,15 @@ class DashboardActivityViewModel(
             }
         }
 
-        syncStatus.addSource(syncInProgress) { syncStatus.value = updateSyncStatus() }
-        syncStatus.addSource(lastSync) { syncStatus.value = updateSyncStatus() }
-        syncStatus.addSource(trigger) { syncStatus.value = updateSyncStatus() }
+        syncStatus.addSource(syncInProgress) { syncStatus.value = getSyncStatus() }
+        syncStatus.addSource(lastSync) { syncStatus.value = getSyncStatus() }
+        syncStatus.addSource(trigger) { syncStatus.value = getSyncStatus() }
     }
 
-    private fun updateSyncStatus(): String {
-        val syncInProgress = syncInProgress.value ?: false
-        val lastSync = lastSync.value ?: Long.MIN_VALUE
-
-        if (syncInProgress) {
-            return "Synchronizing..."
-        } else {
-            return if (lastSync == Long.MIN_VALUE) {
-                "Synchronized: never"
-            } else {
-                "Synchronized: ${Utils.strDescribingTimeSince(Date(lastSync))}"
-            }
-        }
-    }
+    private fun getSyncStatus(): NetworkSyncStatus = NetworkSyncStatus(
+        syncInProgress.value ?: false,
+        lastSync.value ?: Long.MIN_VALUE
+    )
 
     fun updateTags() {
         viewModelScope.launch {
