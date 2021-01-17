@@ -164,6 +164,19 @@ class  RuuviNetworkInteractor (
         }
     }
 
+    fun updateSensor(tagId: String, newName: String, handler: CoroutineExceptionHandler, onResult: (UpdateSensorResponse?) -> Unit) {
+        val token = getToken()?.token
+        CoroutineScope(Dispatchers.IO).launch(handler) {
+            token?.let {
+                val request = UpdateSensorRequest(tagId, newName)
+                val response = networkRepository.updateSensor(request, token)
+                withContext(Dispatchers.Main) {
+                    onResult(response)
+                }
+            }
+        }
+    }
+
     suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {
         val token = getToken()?.token
         token?.let {

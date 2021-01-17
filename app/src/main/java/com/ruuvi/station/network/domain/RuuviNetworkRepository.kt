@@ -74,8 +74,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun getUserInfo(token: String): UserInfoResponse? = withContext(dispatcher){
-        // TODO extract Bearer to const
-        val response = retrofitService.getUserInfo("Bearer " + token)
+        val response = retrofitService.getUserInfo(getAuth(token))
         var result: UserInfoResponse? = null
         if (response.isSuccessful) {
             result = response.body()
@@ -89,7 +88,7 @@ class RuuviNetworkRepository
 
     fun claimSensor(request: ClaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
         ioScope.launch {
-            val response = retrofitService.claimSensor("Bearer " + token, request)
+            val response = retrofitService.claimSensor(getAuth(token), request)
             var result: ClaimSensorResponse? = null
             if (response.isSuccessful) {
                 result = response.body()
@@ -105,7 +104,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun unclaimSensor(request: UnclaimSensorRequest, token: String): ClaimSensorResponse? = withContext(dispatcher) {
-        val response = retrofitService.unclaimSensor("Bearer " + token, request)
+        val response = retrofitService.unclaimSensor(getAuth(token), request)
         var result: ClaimSensorResponse? = null
         if (response.isSuccessful) {
             result = response.body()
@@ -118,7 +117,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun shareSensor(request: ShareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
-        val response = retrofitService.shareSensor("Bearer " + token, request)
+        val response = retrofitService.shareSensor(getAuth(token), request)
         var result: ShareSensorResponse? = null
         if (response.isSuccessful) {
             result = response.body()
@@ -131,7 +130,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun unshareSensor(request: UnshareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
-        val response = retrofitService.unshareSensor("Bearer " + token, request)
+        val response = retrofitService.unshareSensor(getAuth(token), request)
         var result: ShareSensorResponse? = null
         if (response.isSuccessful) {
             result = response.body()
@@ -144,7 +143,7 @@ class RuuviNetworkRepository
     }
 
     suspend fun getSharedSensors(token: String): SharedSensorsResponse? = withContext(dispatcher){
-        val response = retrofitService.getSharedSensors("Bearer " + token)
+        val response = retrofitService.getSharedSensors(getAuth(token))
         var result: SharedSensorsResponse? = null
         if (response.isSuccessful) {
             result = response.body()
@@ -158,7 +157,7 @@ class RuuviNetworkRepository
 
     suspend fun getSensorData(token: String, request: GetSensorDataRequest): GetSensorDataResponse? = withContext(dispatcher) {
         val response = retrofitService.getSensorData(
-            "Bearer " + token,
+            getAuth(token),
             request.sensor,
             request.since?.getEpochSecond(),
             request.until?.getEpochSecond(),
@@ -176,6 +175,18 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun updateSensor(request: UpdateSensorRequest, token: String): UpdateSensorResponse? = withContext(dispatcher) {
+        val response = retrofitService.updateSensor(getAuth(token), request)
+        var result: UpdateSensorResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            var errorResponse: UpdateSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
 
     fun <T>parseError(errorBody: ResponseBody?): T? {
         try {
@@ -190,5 +201,7 @@ class RuuviNetworkRepository
 
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/"
+
+        fun getAuth(token: String) = "Bearer $token"
     }
 }

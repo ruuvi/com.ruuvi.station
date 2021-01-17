@@ -126,5 +126,12 @@ class TagSettingsViewModel(
     fun setName(name: String?) {
         tagObserve.value?.name = name
         updateTag()
+        networkStatus.value?.let {
+            networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
+                if (response?.result == "error") {
+                    operationStatus.value = response.error
+                }
+            }
+        }
     }
 }

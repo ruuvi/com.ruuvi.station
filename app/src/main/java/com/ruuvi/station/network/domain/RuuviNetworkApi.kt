@@ -60,4 +60,11 @@ interface RuuviNetworkApi{
         @Query("sort") sort: String?,
         @Query("limit") limit: Int?
     ): Response<GetSensorDataResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("update")
+    suspend fun updateSensor(
+        @Header("Authorization") auth: String,
+        @Body request: UpdateSensorRequest
+    ): Response<UpdateSensorResponse>
 }
