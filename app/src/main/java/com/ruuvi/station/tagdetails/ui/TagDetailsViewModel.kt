@@ -8,6 +8,7 @@ import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
@@ -24,7 +25,8 @@ class TagDetailsViewModel(
     private val interactor: TagInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val tokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -153,5 +155,9 @@ class TagDetailsViewModel(
         CoroutineScope(Dispatchers.Main).launch {
             trigger.value = -1
         }
+    }
+
+    fun signOut() {
+        tokenRepository.signOut()
     }
 }

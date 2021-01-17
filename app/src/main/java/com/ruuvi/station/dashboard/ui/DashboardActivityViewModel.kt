@@ -6,6 +6,7 @@ import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -18,7 +19,8 @@ class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
     val converter: UnitsConverter,
     val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val tokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 
     private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
@@ -85,5 +87,9 @@ class DashboardActivityViewModel(
         CoroutineScope(Dispatchers.Main).launch {
             trigger.value = -1
         }
+    }
+
+    fun signOut() {
+        tokenRepository.signOut()
     }
 }

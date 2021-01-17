@@ -28,9 +28,4 @@
             app:action="ACTION_VIEW"
             app:uri="https://network.ruuvi.com/verify?token={token}" />
     </fragment>
-    <fragment
-        android:id="@+id/signOutFragment"
-        android:name="com.ruuvi.station.network.ui.SignOutFragment"
-        android:label="fragment_sign_out"
-        tools:layout="@layout/fragment_sign_out" />
 </navigation>

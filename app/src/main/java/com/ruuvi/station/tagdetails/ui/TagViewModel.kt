@@ -122,7 +122,7 @@ class TagViewModel(
 
     fun removeTagData() {
         TagSensorReading.removeForTag(tagId)
-        updateLastSync(null)
+        tagDetailsInteractor.clearLastSync(tagId)
     }
 
     fun saveGattReadings(tag: RuuviTag, data: List<LogReading>) {

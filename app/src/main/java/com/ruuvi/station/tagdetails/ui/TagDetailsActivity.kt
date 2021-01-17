@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
@@ -261,7 +262,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 2 -> AboutActivity.start(this)
                 3 -> SendFeedback()
                 4 -> OpenUrl(WEB_URL)
-                5 -> SignInActivity.start(this)
+                5 -> login()
             }
         }
 
@@ -317,6 +318,25 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
             }
         })
+    }
+
+    private fun login() {
+        if (signedIn == false) {
+            SignInActivity.start(this)
+        } else {
+            val builder = AlertDialog.Builder(this)
+            with(builder)
+            {
+                setMessage(getString(R.string.sign_out_confirm))
+                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                    viewModel.signOut()
+                }
+                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                show()
+            }
+        }
     }
 
     private fun updateMenu(signed: Boolean) {

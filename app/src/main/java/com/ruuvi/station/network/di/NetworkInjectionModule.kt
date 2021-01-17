@@ -28,10 +28,6 @@ object NetworkInjectionModule {
             EnterCodeViewModel(instance(), instance(), instance())
         }
 
-        bind<SignOutViewModel>() with provider {
-            SignOutViewModel(instance())
-        }
-
         bind<ShareSensorViewModel>() with factory { tagId: String ->
             ShareSensorViewModel(tagId, instance())
         }

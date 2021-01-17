@@ -16,12 +16,10 @@ class EmailEnterViewModel (
     private val successfullyRegistered = MutableLiveData<Boolean>(false)
     val successfullyRegisteredObserve: LiveData<Boolean> = successfullyRegistered
 
-    private val alreadyLoggedIn = MutableLiveData<Boolean>(networkInteractor.signedIn)
-    val alreadyLoggedInObserve: LiveData<Boolean> = alreadyLoggedIn
-
     fun submitEmail(email: String) {
         networkInteractor.registerUser(UserRegisterRequest(email = email)) {
             if (it == null) {
+                //todo localize
                 errorText.value = "Unknown error"
             } else {
                 if (it.error.isNullOrEmpty() == false) {
@@ -31,5 +29,9 @@ class EmailEnterViewModel (
                 }
             }
         }
+    }
+
+    fun successfullyRegisteredFinished() {
+        successfullyRegistered.value = false
     }
 }

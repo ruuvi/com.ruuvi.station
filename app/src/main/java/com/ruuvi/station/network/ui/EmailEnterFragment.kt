@@ -42,13 +42,10 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
 
         viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                viewModel.successfullyRegisteredFinished()
                 val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
                 this.findNavController().navigate(action)
             }
-        })
-
-        viewModel.alreadyLoggedInObserve.observe(viewLifecycleOwner, Observer {
-            if (it) findNavController().navigate(R.id.signOutFragment)
         })
     }
 

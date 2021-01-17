@@ -115,7 +115,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         })
     }
 
-
     private var syncDialog: AlertDialog? = null
     var syncDialogText = ""
 

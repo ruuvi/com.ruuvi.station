@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.ruuvi.station.R
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -28,6 +27,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
     private fun setupViewModel() {
         viewModel.errorTextObserve.observe(viewLifecycleOwner, Observer {
             errorTextView.text = it
+            submitCodeButton.isEnabled = true
         })
 
         viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
@@ -39,6 +39,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
     private fun setupUI() {
         submitCodeButton.setOnClickListener {
+            submitCodeButton.isEnabled = false
             viewModel.verifyCode(enterCodeManuallyEditText.text.toString())
         }
 
@@ -49,7 +50,6 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
             } else {
                 enterCodeManuallyEditText.setText(token)
                 submitCodeButton.performClick()
-                submitCodeButton.isEnabled = false
             }
         }
     }
