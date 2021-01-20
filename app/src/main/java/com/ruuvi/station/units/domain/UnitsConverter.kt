@@ -29,10 +29,10 @@ class UnitsConverter (
     }
 
     fun getTemperatureString(temperature: Double): String =
-            context.getString(R.string.temperature_reading, getTemperatureValue(temperature)) + getTemperatureUnitString()
+        context.getString(R.string.temperature_reading, getTemperatureValue(temperature), getTemperatureUnitString())
 
     fun getTemperatureStringWithoutUnit(temperature: Double): String =
-        context.getString(R.string.temperature_reading, getTemperatureValue(temperature))
+        context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "")
 
     // Pressure
 
@@ -53,9 +53,9 @@ class UnitsConverter (
 
     fun getPressureString(pressure: Double): String {
         val pressureString = if (getPressureUnit() == PressureUnit.PA) {
-            context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+            context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())
         } else {
-            context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())// + getPressureUnitString()
+            context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())
         }
 
         return pressureString
@@ -87,9 +87,9 @@ class UnitsConverter (
 
     fun getHumidityString(humidity: Double, temperature: Double): String {
         val humidityString: String = if (getHumidityUnit() == HumidityUnit.DEW) {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getTemperatureUnitString()
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getTemperatureUnitString())
         } else {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature)) + getHumidityUnitString()
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getHumidityUnitString())
         }
 
         return humidityString
@@ -97,8 +97,8 @@ class UnitsConverter (
 
     fun getSignalString(rssi: Int): String =
         if (rssi != 0) {
-            context.getString(R.string.signal_reading, rssi)
+            context.getString(R.string.signal_reading, rssi, context.getString(R.string.signal_unit))
         } else {
-            context.getString(R.string.signal_reading_zero)
+            context.getString(R.string.signal_reading_zero, context.getString(R.string.signal_unit))
         }
 }

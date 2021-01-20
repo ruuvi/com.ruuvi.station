@@ -62,11 +62,11 @@ object BluetoothScannerInjectionModule {
 
                 override fun getNotificationTitle(): String {
                     val scanInterval = prefs.backgroundScanInterval
-                    val stringMessage = context.getString(R.string.scanner_notification_scanning_every)
-                    return "$stringMessage ${TimeUtils.convertSecondsToText(context, scanInterval)}"
+                    val stringMessage = context.getString(R.string.background_notification_scanning_every)
+                    return "$stringMessage ${TimeUtils.convertSecondsToTextTemp(context, scanInterval)}"
                 }
 
-                override fun getNotificationText() = context.getString(R.string.scanner_notification_message)
+                override fun getNotificationText() = context.getString(R.string.background_notification_message)
 
                 override fun getNotificationPendingIntent(): PendingIntent? {
                     val resultIntent = StartupActivity.createIntentForNotification(context)

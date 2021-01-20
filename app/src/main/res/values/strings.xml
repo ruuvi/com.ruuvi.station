@@ -1,400 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="n_a">N/A</string>
-    <string name="app_name">Ruuvi Station</string>
-    <string name="title_activity_main">Ruuvi Station</string>
-    <string name="title_activity_list">Nearby Tags</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-    <string name="pref_bgscan">Background Scanning Settings</string>
-    <string name="pref_bgscan_summ">Allows for scanning when the app is running in the background and define how often the background scanning will run</string>
-
-    <string name="pref_bgscan_battery_saving">Enable battery saving mode</string>
-    <string name="pref_bgscan_battery_saving_summ">Allows the operating system to decide when to scan for data.</string>
-
-    <string name="pref_scaninterval">Set scanning interval</string>
-    <string name="pref_scaninterval_summ">Set time between background scans</string>
-
-    <string name="pref_title_scaninterval">Set scanning interval</string>
-
-    <string name="preferences_graph_settings">Graph Settings</string>
-    <string name="preferences_graph_interval">Graph interval</string>
-    <string name="preferences_graph_interval_description">Set interval between points for graph from 1 to 60 minutes. Less value means more accurate chart, but higher requirements to performance of your device</string>
-    <string name="preferences_graph_view_period">Graph history view period</string>
-    <string name="preferences_graph_view_period_description">Configure history diapason to be shown on graph from 1 to 72 hours</string>
-    <string name="preferences_graph_settings_description">Configure interval between points shown on graph</string>
-
-    <string-array name="pref_scaninterval_titles">
-        <item>15 seconds</item>
-        <item>30 seconds</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-    </string-array>
-    <string-array name="pref_scaninterval_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>300</item>
-        <item>600</item>
-        <item>1800</item>
-        <item>3600</item>
-    </string-array>
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>5 seconds</item>
-        <item>10 seconds</item>
-        <item>20 seconds</item>
-        <item>30 seconds</item>
-        <item>45 seconds</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>5</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>45</item>
-        <item>60</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string-array name="list_preference_temperature_unit_titles">
-        <item>Celsius</item>
-        <item>Fahrenheit</item>
-        <item>Kelvin</item>
-    </string-array>
-
-    <string-array name="list_preference_humidity_unit_titles">
-        <item>Relative (%)</item>
-        <item>Absolute (g/m³)</item>
-        <item>Dew Point (°)</item>
-    </string-array>
-
-    <integer-array name="list_preference_humidity_unit_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </integer-array>
-
-    <string-array name="list_preference_temperature_unit_values">
-        <item>C</item>
-        <item>F</item>
-        <item>K</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="scanner_notification_title">Scanning..</string>
-    <string name="scanner_notification_message">You can disable background scanning in settings</string>
-    <string name="scanner_notification_ticker">Scanner started</string>
-    <string name="scanner_notification_scanning_every">Scanning every</string>
-    <string name="scanner_notification_minute">minute</string>
-    <string name="scanner_notification_minutes">minutes</string>
-    <string name="scanner_notification_seconds">seconds</string>
-    <string name="scanner_notification_second">second</string>
-
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_graph">Graph</string>
-
-    <string name="alert_notification_temperature_low">Temperature too low!</string>
-    <string name="alert_notification_temperature_high">Temperature too high!</string>
-    <string name="alert_notification_humidity_low">Humidity too low!</string>
-    <string name="alert_notification_humidity_high">Humidity too high!</string>
-    <string name="alert_notification_pressure_low">Pressure too low!</string>
-    <string name="alert_notification_pressure_high">Pressure too high!</string>
-    <string name="alert_notification_rssi_low">RSSI too low!</string>
-    <string name="alert_notification_rssi_high">RSSI too high!</string>
-    <string name="alert_notification_movement">Movement detected!</string>
-
-    <string name="no_tags_press_to_add">No tags found</string>
-    <string name="no_tags_added">Your dashboard \nis empty</string>
-    <string name="press_to_add">No tags added,\npress here to add tags</string>
-    <string name="tag_not_found">Tag not found</string>
-    <string name="tag_delete_title">Remove RuuviTag</string>
-    <string name="tag_delete_message">Are you sure you want to remove this RuuviTag?</string>
-    <string name="temperature" formatted="false">Temperature (%1$s)</string>
-    <string name="humidity">Relative Air Humidity</string>
-    <string name="pressure">Air Pressure (%1$s)</string>
-    <string name="rssi">Signal Strength (RSSI)</string>
-    <string name="movement">Movement</string>
-    <string name="tag_already_added">Tag is already added</string>
-    <string name="navigation_drawer_open">Open the navigation drawer</string>
-    <string name="navigation_drawer_close">Close the navigation drawer</string>
-
-    <string-array name="navigation_items">
-        <item>Add a New RuuviTag</item>
-        <item>Show Dashboard</item>
-        <item>App Settings</item>
-        <item>About / Help</item>
-    </string-array>
-
-    <string-array name="navigation_items_card_view">
-        <item>Add a New RuuviTag</item>
-        <item>App Settings</item>
-        <item>About / Help</item>
-        <item>Send Feedback</item>
-        <item>Get More Sensors</item>
-    </string-array>
-
-    <string-array name="navigation_items_titles">
-        <item>Nearby Tags</item>
-        <item></item>
-        <item>App Settings</item>
-        <item></item>
-    </string-array>
-
-    <string-array name="station_tag_menu">
-        <item>Graphs</item>
-        <item>Tag Settings and Alerts</item>
-        <item>Remove Tag</item>
-    </string-array>
-
-    <string name="updated">Updated %1$s</string>
-    <string name="alerts">Alerts</string>
-    <string name="signal">Signal</string>
-    <string name="share">Share</string>
-
-    <string name="battery_optimization_request">Make sure battery optimization is not on for the application.
-        If it is on background scanning interval can be very unreliable.
-        Do you wish to disable optimization for the app?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-
-    <string name="temperature_reading" formatted="false">%1$,.2f</string>
-    <string name="pressure_reading" formatted="false">%1$,.2f %2$s</string>
-    <string name="pressure_reading_pa" formatted="false">%1$,.0f %2$s</string>
-    <string name="humidity_reading" formatted="false">%1$,.2f&#160;</string>
-
-    <string name="humidity_absolute_reading" formatted="false">%1$,.2f g/m³</string>
-    <string name="humidity_dew_reading" formatted="false">%1$,.2f</string>
-    <string name="signal_reading" formatted="false">%1$,d dBm</string>
-    <string name="signal_reading_zero">- dBm</string>
-
-    <string name="temperature_celsius_name">Celsius</string>
-    <string name="temperature_fahrenheit_name">Fahrenheit</string>
-    <string name="temperature_kelvin_name">Kelvin</string>
-
-    <string name="temperature_celsius_unit">°C</string>
-    <string name="temperature_kelvin_unit">K</string>
-    <string name="temperature_fahrenheit_unit">°F</string>
-
-    <string name="pressure_pa_name">Pascal</string>
-    <string name="pressure_hpa_name">Hectopascal</string>
-    <string name="pressure_mmhg_name">Millimetre of mercury</string>
-    <string name="pressure_inhg_name">Inch of mercury</string>
-
-    <string name="pressure_pa_unit">Pa</string>
-    <string name="pressure_hpa_unit">hPa</string>
-    <string name="pressure_mmhg_unit">mmHg</string>
-    <string name="pressure_inhg_unit">inHg</string>
-
-    <string name="humidity_relative_name">Relative</string>
-    <string name="humidity_absolute_name">Absolute</string>
-    <string name="humidity_dew_point_name">Dew Point</string>
-
-    <string name="humidity_relative_unit">%</string>
-    <string name="humidity_absolute_unit">g/m³</string>
-    <string name="humidity_dew_point_unit">°</string>
-
-    <string name="save">Save</string>
-    <string name="name">Name</string>
-    <string name="tag_name">Tag name</string>
-    <string name="gateway">Gateway</string>
-    <string name="gateway_url">Gateway URL</string>
-    <string name="gateway_url_hint">https://your.gateway/...</string>
-    <string name="gateway_url_disabled">Disabled</string>
-    <string name="no_gateway_url">No gateway URL</string>
-    <string name="alert_subtitle_off">Off</string>
-    <string name="alert_subtitle_on" formatted="false">Alert when less than %1$,d or more than %2$,d</string>
-    <string name="alert_substring_movement">You will get notified when the tag is moved</string>
-
-    <string name="info_title">About / Help</string>
-    <string name="info_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your RuuviTag sensor nodes. Just add some sensors and you\'re ready to go.\n<a href="https://ruuvi.com/terms">ruuvi.com/terms</a>
-    </string>
-    <string name="operations_title">OPERATIONS MANUAL</string>
-    <string name="operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both RuuviTag and Ruuvi Station:&#160;<a href="https://ruuvi.com/manuals">ruuvi.com/manuals</a>.
-    </string>
-    <string name="troubleshooting_title">TROUBLESHOOTING</string>
-    <string name="troubleshooting_text">If you\'re experiencing problems and our manuals didn\'t provide the help you need, check out our many troubleshooting topics, here:&#160;<a href="https://ruuvi.com/troubles">ruuvi.com/troubles</a>
-    </string>
-    <string name="open_source_title">OPEN-SOURCE</string>
-    <string name="open_source_text">Just like RuuviTag, Ruuvi Station is also open-source:&#160;<a href="https://github.com/ruuvi">github.com/ruuvi</a>
-    </string>
-    <string name="more_to_read_title">MORE TO READ</string>
-    <string name="more_to_read_text">Ruuvi\'s website:&#160;<a href="https://ruuvi.com">ruuvi.com</a>\nRuuvi Forum:&#160;<a href="https://f.ruuvi.com">f.ruuvi.com</a>\nRuuvi Blog:&#160;<a href="https://blog.ruuvi.com">blog.ruuvi.com</a>\nRuuvi on Twitter:&#160;<a href="https://twitter.com/ruuvicom">twitter.com/ruuvicom</a>
-    </string>
-    <string name="bluetooth_not_enabled">Bluetooth is needed to see RuuviTags, and it is currently not enabled. Do you want to enable it?</string>
-    <string name="title_activity_tag_details">TagDetails</string>
-
-    <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you</string>
-    <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
-    <string name="welcome_text_2">Access data for each linked RuuviTag in real time and explore history graphs</string>
-    <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
-    <string name="welcome_text_4">Let the app act as a gateway</string>
-    <!--<string name="welcome_text_4">Export logged data or let the app act as a gateway</string>-->
-    <string name="welcome_text_5">Press SCAN to find and add nearby RuuviTags to your Ruuvi Station</string>
-
-    <string name="scan">Scan</string>
-    <string name="background_image">Background\nimage</string>
-    <string name="bg_scan_for_graphs">Graphs feature works best with background scanning enabled.</string>
-    <string name="enable_background_scanning_question">Would you like to enable background scanning?</string>
-
-    <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
-    <string name="permission_background_dialog_title">Enable Background Scanning</string>
-    <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
-    <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click allow all the time if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
-    <string name="ok">Ok</string>
-    <string name="location_permission_needed">Please enable location permission in settings to see tags.</string>
-    <string name="settings">Settings</string>
-    <string name="unsaved_changes">Unsave changes</string>
-    <string name="unsaved_changes_question">You appear to have unsaved changes. Do you want discard the changes?</string>
-    <string name="title_activity_add_tag">Nearby Tags</string>
-    <string name="title_activity_app_settings">App Settings</string>
-    <string name="background_scan_interval">Background Scan Interval</string>
-    <string name="background_scan_interval_sum">Define how often the background scanning will run</string>
-    <string name="device_identifier">Device identifier</string>
-    <string name="device_identifier_sum">This identifier will be added to the gateway request</string>
-    <string name="temperature_unit">Change temperature units</string>
-    <string name="humidity_unit">Change humidity units</string>
-    <string name="pressure_unit">Change pressure units</string>
-    <string name="temperature_unit_sum">Celsius / Fahrenheit / Kelvin</string>
-    <string name="humidity_unit_sum">Relative / Absolute / Dew Point</string>
-    <string name="pressure_unit_sum">Pascal / Hectopascal / Millimetre of mercury</string>
-    <string name="seconds">Seconds</string>
-    <string name="minutes">Minutes</string>
-    <string name="hours">Hours</string>
-    <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
-    <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
-    <string name="settings_background_scan_details_lazy">The app will periodically search for beacons in the background using Android\'s job scheduler. It will use less battery than continuous background scanning mode, but will scan less frequently and less reliably.</string>
-    <string name="settings_background_scan_battery_save_details">Enabling this feature will let the operating system choose when to do background scanning. It will result in longer battery life but scanning intervals will be very irregular.</string>
-    <string name="settings_background_scan_interval_details">Here you can choose at what time interval you want the background scanning to run. For example, by setting it to 1 minute, the background scan will run once every minute. \n\n(N.B. Scanning intervals may not always be 100% accurate, depending on your device and the operating system.) \n\nScanning results are logged every 5 seconds while the application is active (in the foreground), regardless of the background scanning interval.</string>
-    <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked tags when it does background scanning. \n\nFor more info,&#160;<a href="https://docs.ruuvi.com/ruuvi-station-app/gateway">check the documentation</a>.</string>
-    <string name="settings_device_identifier_details">This is a identifier that you can use to identify where the data came from if you are using the gateway feature.</string>
-    <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
-    <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
-    <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
-    <string name="version" formatted="false">Version: %1$s</string>
-    <string name="db_reading_rows">Db reading rows: %1$,d</string>
-    <string name="db_data_points">Stored measurements: %1$,d</string>
-    <string name="added_tags">Added tags: %1$,d</string>
-    <string name="seen_tags">Seen tags: %1$,d</string>
-    <string name="db_size">Database size: %1$,d kB</string>
-    <string name="locationServices">Location services</string>
-    <string name="enableLocationServices">Location services needs to be enabled for scanning to work. Press OK to enable it.</string>
-    <string name="gateway_settings">Gateway Settings</string>
-    <string name="mac_address">MAC Address</string>
-    <string name="mac">Mac</string>
-    <string name="dashboard_pref">Dashboard</string>
-    <string name="dashboard_pref_sub">Use dashboard view to see multiple sensors at a glance. Restart the app after enabled.</string>
-    <string name="camera">Camera</string>
-    <string name="gallery">Gallery</string>
-    <string name="test_gateway">Test gateway</string>
-    <string name="ignore_battery_title">Ignore battery optimisation</string>
-    <string name="ignore_battery_description">Press here to exclude Ruuvi Station from battery optimisations. This can help background scanning to run more reliably on Android 6.0+.</string>
-    <string name="wakelock_title">Keep the device awake while scanning</string>
-    <string name="wakelock_description">This will make the device stay awake while background scanning is enabled. It will improve background scanning reliability but will make the app use more battery.</string>
-    <string name="use_foreground_service">Use foreground service</string>
-    <string name="use_foreground_service_description">Background scanning will be running as a foreground service with notification showing.</string>
-    <string name="no_background_scanning">No background scanning</string>
-    <string name="continuous_background_scanning">Continuous background scanning</string>
-    <string name="background_scanning_disabled">Background scanning is disabled</string>
-    <string name="disable_this_alarm">Disable this alarm</string>
-    <string name="calibration_humidity_button">Calibrate hygrometer</string>
-    <string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See <a href="https://www.youtube.com/results?search_query=hygrometer+salt+calibration">video tutorials</a> on how to easily do it at home.</string>
-    <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall &amp; install, you may need to recalibrate</string>
-    <string name="calibration_hint">%1$d%% -&gt; 75%%</string>
-    <string name="calibrated">Calibrated: %1$s</string>
-    <string name="remove_this_ruuvitag">Remove this RuuviTag</string>
-    <string name="continuous_background_scanning_enabled">Continuous background scanning mode is enabled.\nBackground scan interval: %1$s</string>
-    <string name="lazy_background_scanning_enabled">Lazy background scanning mode is enabled.</string>
-    <string name="no_background_scanning_enabled">No background scanning mode is enabled.</string>
-    <string name="more_info">More info</string>
-    <string name="voltage">Voltage</string>
-    <string name="voltage_format">%1$s V</string>
-    <string name="acc_x">Acceleration X</string>
-    <string name="acc_y">Acceleration Y</string>
-    <string name="acc_z">Acceleration Z</string>
-
-    <string name="export">Export</string>
-    <string name="disable_battery_optimization">If you experience any issues with background scanning you should disable battery optimization for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
-    <string name="go_to_settings">Go to settings</string>
-    <string name="background_scan_important_note">Background scan important note</string>
-    <string name="background_scan_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimization and select Don\'t Optimize for Ruuvi Station</string>
-    <string name="background_scan_samsung_instructions">On Samsung devices go to Android Settings -> Device Maintenance (or Device Care) -> Battery. Disable Put unused apps to sleep. Disable Auto-disable unused apps. Remove Ruuvi Station from the list of sleeping apps. Disable background restrictions for Ruuvi Station.</string>
-    <string name="background_scan_samsung23_instructions">On Samsung devices go to Android Settings -> Battery -> App power saving detail and set option \'Turned off\' for Ruuvi Station.</string>
-    <string name="background_scan_xiaomi_instructions">On Xiaomi devices go to Android Settings -> Apps -> Manage apps -> Ruuvi Station. Enable Autostart and set Battery Saver to \'No restrictions\'.</string>
-    <string name="background_scan_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable Manage Automatically and enable options: Auto-Launch, Secondary Launch and Run in background.</string>
-    <string name="preferences_graph_all_points_title">Display all data in graph</string>
-    <string name="preferences_graph_all_points_secondary">Enabling it may cause slow graph work</string>
-    <string name="preferences_graph_show_dots_title">Draw dots in graph</string>
-    <string name="preferences_graph_show_dots_secondary">Small dots will help to understand when measurements were collected</string>
-
-    <string name="app_settings_debug">Debug</string>
-    <string name="app_settings_add_fake_tags">Add fake tags and readings</string>
-    <string name="notification_channel_name">Alert notifications</string>
-
-    <string name="sync">Sync</string>
-    <string name="sync_confirm">Download history data from the sensor?</string>
-    <string name="clear">Clear</string>
-    <string name="clear_confirm">Clear the historical data from the app?</string>
-    <string name="sync_complete">Sync complete</string>
-    <string name="connecting">Connecting</string>
-    <string name="connected_reading_info">Connected, reading tag info</string>
-    <string name="disconnected">Disconnected</string>
-    <string name="reading_history">Reading history</string>
-    <string name="reading_history_not_supported">Firmware not supported</string>
-    <string name="data_points_read">%1$,d measurements read, saving..</string>
-    <string name="no_new_data_points">No new data points available</string>
-    <string name="tag_not_in_range">Tag not found, is it in range?</string>
-    <string name="something_went_wrong">Something went wrong</string>
+<string name="acceleration_x">Acceleration X</string>
+<string name="acceleration_y">Acceleration Y</string>
+<string name="acceleration_z">Acceleration Z</string>
+<string name="add_tag_not_found">No sensors found</string>
+<string name="add_tag_title">Nearby Ruuvi sensors</string>
+<string name="ago">ago</string>
+<string name="alarm_notification_disable">Disable this alarm</string>
+<string name="alert_movement">Movement</string>
+<string name="alert_movement_description">Alert when sensor is moved</string>
+<string name="alert_notification_humidity_high">Air Humidity too high!</string>
+<string name="alert_notification_humidity_low">Air Humidity too low!</string>
+<string name="alert_notification_movement">Movement detected!</string>
+<string name="alert_notification_pressure_high">Air Pressure is too high!</string>
+<string name="alert_notification_pressure_low">Air Pressure is too low!</string>
+<string name="alert_notification_rssi_high">Signal strength too high!</string>
+<string name="alert_notification_rssi_low">Signal strength too low!</string>
+<string name="alert_notification_temperature_high">Temperature too high!</string>
+<string name="alert_notification_temperature_low">Temperature too low!</string>
+<string name="alert_subtitle_off">Off</string>
+<string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
+<string name="alerts">ALERTS</string>
+<string name="app_name">Ruuvi Station</string>
+<string name="background_image">BACKGROUND\nIMAGE</string>
+<string name="background_notification_message">You can disable background scanning in settings</string>
+<string name="background_notification_scanning_every">Scanning every</string>
+<string name="battery_voltage">Battery Voltage</string>
+<string name="calibrate">Calibrate</string>
+<string name="calibrated">Calibrated: %1$s</string>
+<string name="calibration_done">Calibration done!</string>
+<string name="calibration_hint">%1$d%% -> 75%%</string>
+<string name="calibration_humidity">In order to measure relative humidity as accurately as possible, a sodium chloride (salt) calibration is recommended. See video tutorials on how to easily do it at home.</string>
+<string name="calibration_humidity_button">Calibrate hygrometer</string>
+<string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall \u0026 install, you may need to recalibrate.</string>
+<string name="calibration_humidity_link">video tutorials</string>
+<string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
+<string name="camera">Camera</string>
+<string name="camera_fail">Could not start camera</string>
+<string name="cancel">Cancel</string>
+<string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
+<string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
+<string name="clear">Clear</string>
+<string name="clear_confirm">Clear the historical data from the app?</string>
+<string name="close">Close</string>
+<string name="connected_reading_info">Syncing...</string>
+<string name="connecting">Connecting...</string>
+<string name="dashboard">Dashboard</string>
+<string name="dashboard_description">Use dashboard view to see multiple sensors at a glance. Restart the app after enabled.</string>
+<string name="dashboard_empty">Your dashboard \nis empty</string>
+<string name="data_points_read">%1$,d measurements read, saving..</string>
+<string name="disconnected">Disconnected</string>
+<string name="export">EXPORT</string>
+<string name="export_csv_chooser_title">Sensor %1$s csv export</string>
+<string name="export_csv_created">.csv created, opening share menu</string>
+<string name="export_csv_failed">Failed to create CSV file</string>
+<string name="export_csv_header_format2_4">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI</string>
+<string name="export_csv_header_format3">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage</string>
+<string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number</string>
+<string name="file_not_supported">File type not supported</string>
+<string name="gallery">Gallery</string>
+<string name="gateway_disabled">Disabled</string>
+<string name="gateway_test_exception">Nope, did not work. Is the URL correct?</string>
+<string name="gateway_test_fail">Nope, did not work. Response code: %1$d</string>
+<string name="gateway_test_success">Gateway works! Response code: %1$d</string>
+<string name="gateway_testing">Testing...</string>
+<string name="gateway_url">Gateway URL</string>
+<string name="gateway_url_hint">https://your.gateway/...</string>
+<string name="h">h</string>
+<string name="help_about_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your Ruuvi sensors. Just add some sensors and you\'re ready to go.</string>
+<string name="help_about_title">ABOUT / HELP</string>
+<string name="help_added_tags">Added sensors: %1$,d</string>
+<string name="help_db_data_points">Stored measurements: %1$,d</string>
+<string name="help_db_size">Database size: %1$,d kB</string>
+<string name="help_more_to_read_text">Ruuvi\'s website: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi Blog: blog.ruuvi.com\nRuuvi on Twitter: twitter.com/ruuvicom</string>
+<string name="help_more_to_read_title">MORE TO READ</string>
+<string name="help_opensource_text">Just like RuuviTag, Ruuvi Station is also open-source: github.com/ruuvi</string>
+<string name="help_opensource_title">OPEN-SOURCE</string>
+<string name="help_operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both Ruuvi sensors and Ruuvi Station: ruuvi.com/manuals</string>
+<string name="help_operations_title">OPERATIONS MANUAL</string>
+<string name="help_privacy_policy_text">By using the application, you accept Ruuvi\'s standard terms and conditions\nruuvi.com/terms</string>
+<string name="help_privacy_policy_title">PRIVACY POLICY</string>
+<string name="help_seen_tags">Seen sensors: %1$,d</string>
+<string name="help_troubleshooting_text">If you’re experiencing problems and our manuals didn’t provide the help you need, check out our many troubleshooting topics, here: ruuvi.com/troubles</string>
+<string name="help_troubleshooting_title">TROUBLESHOOTING</string>
+<string name="hours">Hours</string>
+<string name="humidity">Air Humidity (%1$s)</string>
+<string name="humidity_absolute_name">Absolute (gr/m³)</string>
+<string name="humidity_absolute_unit">g/m³</string>
+<string name="humidity_dew_point_name">Dew point (°)</string>
+<string name="humidity_dew_point_unit">°</string>
+<string name="humidity_reading">%1$,.2f %2$s</string>
+<string name="humidity_relative_name">Relative (%)</string>
+<string name="humidity_relative_unit">%</string>
+<string name="language_english">English</string>
+<string name="language_finnish">Suomi</string>
+<string name="language_russian">Русский</string>
+<string name="language_swedish">Svenska</string>
+<string name="mac_address">MAC Address</string>
+<string name="mac_copied">MAC address copied to clipboard</string>
+<string name="menu_about_help">About / Help</string>
+<string name="menu_add_new_sensor">Add a New Sensor</string>
+<string name="menu_app_settings">App Settings</string>
+<string name="menu_get_more_sensors">Get More Sensors</string>
+<string name="menu_send_feedback">Send Feedback</string>
+<string name="min">min</string>
+<string name="minutes">Minutes</string>
+<string name="more_info">MORE INFO</string>
+<string name="name">NAME</string>
+<string name="navigation_drawer_close">Close the navigation drawer</string>
+<string name="navigation_drawer_open">Open the navigation drawer</string>
+<string name="no">No</string>
+<string name="no_new_data_points">No new data points available</string>
+<string name="ok">OK</string>
+<string name="permission_background_dialog_title">Enable Background Scanning</string>
+<string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click allow all the time if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
+<string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
+<string name="permission_dialog_title">Enable Bluetooth Scanning</string>
+<string name="permission_location_needed">Please enable location permission in settings to see sensors.</string>
+<string name="press_to_add">No sensors added,\npress here to add sensors</string>
+<string name="pressure">Air Pressure (%1$s)</string>
+<string name="pressure_hpa_name">Hectopascal (hPa)</string>
+<string name="pressure_hpa_unit">hPa</string>
+<string name="pressure_inhg_name">Inch of mercury (inHg)</string>
+<string name="pressure_inhg_unit">inHg</string>
+<string name="pressure_mmhg_name">Millimetre of mercury (mmHg)</string>
+<string name="pressure_mmhg_unit">mmHg</string>
+<string name="pressure_pa_name">Pascal (Pa)</string>
+<string name="pressure_pa_unit">Pa</string>
+<string name="pressure_reading">%1$,.2f %2$s</string>
+<string name="pressure_reading_pa">%1$,.0f %2$s</string>
+<string name="reading_history">Reading history</string>
+<string name="reading_history_not_supported">Firmware not supported</string>
+<string name="rssi">Signal strength (RSSI)</string>
+<string name="s">s</string>
+<string name="scan">SCAN</string>
+<string name="sec">sec</string>
+<string name="seconds">Seconds</string>
+<string name="select_picture">Select Picture</string>
+<string name="send_email">Send Email</string>
+<string name="sensor_already_added">Sensor is already added</string>
+<string name="sensor_settings">Sensor Settings</string>
+<string name="settings">Settings</string>
+<string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimization for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
+<string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimization and select Don\'t Optimize for Ruuvi Station</string>
+<string name="settings_background_battery_optimization_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable Manage Automatically and enable options: Auto-Launch, Secondary Launch and Run in background.</string>
+<string name="settings_background_battery_optimization_samsung23_instructions">On Samsung devices go to Android Settings -> Battery -> App power saving detail and set option \'Turned off\' for Ruuvi Station.</string>
+<string name="settings_background_battery_optimization_samsung_instructions">On Samsung devices go to Android Settings -> Device Maintenance (or Device Care) -> Battery. Disable Put unused apps to sleep. Disable Auto-disable unused apps. Remove Ruuvi Station from the list of sleeping apps. Disable background restrictions for Ruuvi Station.</string>
+<string name="settings_background_battery_optimization_title">Background scan important note</string>
+<string name="settings_background_battery_optimization_xiaomi_instructions">On Xiaomi devices go to Android Settings -> Apps -> Manage apps -> Ruuvi Station. Enable Autostart and set Battery Saver to \'No restrictions\'.</string>
+<string name="settings_background_continuous">Continuous background scanning</string>
+<string name="settings_background_continuous_description">Continuous background scanning mode is enabled.\nData logging interval: %1$s</string>
+<string name="settings_background_disabled">No background scanning</string>
+<string name="settings_background_disabled_description">No background scanning mode is enabled</string>
+<string name="settings_background_scan">Background Scanning Settings</string>
+<string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
+<string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
+<string name="settings_background_scan_interval">Data logging interval</string>
+<string name="settings_background_scan_interval_description">Define how often the background scanning will run</string>
+<string name="settings_chart">Chart Settings</string>
+<string name="settings_chart_all_points">Display all data in chart</string>
+<string name="settings_chart_all_points_description">Enabling it may cause charts to update slowly</string>
+<string name="settings_chart_description">Configure interval between points shown on chart and history diapason</string>
+<string name="settings_chart_draw_dots">Draw dots in chart</string>
+<string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected</string>
+<string name="settings_chart_interval">Chart Interval</string>
+<string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Less value means more accurate chart, but higher requirements to performance of your device</string>
+<string name="settings_chart_view_period">Chart history view period</string>
+<string name="settings_chart_view_period_description">Configure history diapason to be shown on chart from 1 to 72 hours</string>
+<string name="settings_gateway">Gateway Settings</string>
+<string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
+<string name="settings_gateway_details_link">check the documentation.</string>
+<string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
+<string name="settings_gateway_device_identifier">Device identifier</string>
+<string name="settings_gateway_test">Test gateway</string>
+<string name="settings_humidity_unit">Humidity Unit</string>
+<string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed</string>
+<string name="settings_language">Language</string>
+<string name="settings_pressure_unit">Pressure Unit</string>
+<string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed</string>
+<string name="settings_temperature_unit">Temperature Unit</string>
+<string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed</string>
+<string name="signal_reading">%1$,d %2$s</string>
+<string name="signal_reading_zero">- %1$s</string>
+<string name="signal_unit">dBm</string>
+<string name="something_went_wrong">Something went wrong</string>
+<string name="sync">SYNC</string>
+<string name="sync_complete">Sync complete</string>
+<string name="sync_confirm">Download history data from the sensor?</string>
+<string name="tag_name">Sensor Name</string>
+<string name="tag_not_in_range">Sensor not found, is it in range?</string>
+<string name="tagsettings_sensor_remove">Remove sensor</string>
+<string name="tagsettings_sensor_remove_confirm">Are you sure you want to remove this sensor?</string>
+<string name="temperature">Temperature (%1$s)</string>
+<string name="temperature_celsius_name">Celsius (℃)</string>
+<string name="temperature_celsius_unit">°C</string>
+<string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
+<string name="temperature_fahrenheit_unit">°F</string>
+<string name="temperature_kelvin_name">Kelvin (K)</string>
+<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_reading">%1$,.2f%2$s</string>
+<string name="updated">Updated %1$s</string>
+<string name="version">Version: %1$s</string>
+<string name="voltage_reading">%1$s %2$s</string>
+<string name="voltage_unit">V</string>
+<string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you</string>
+<string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
+<string name="welcome_text_2">Access data for each linked sensor in real time and explore history graphs</string>
+<string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
+<string name="welcome_text_4">Let the app act as a gateway</string>
+<string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
+<string name="yes">Yes</string>
 </resources>

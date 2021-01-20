@@ -23,7 +23,6 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
@@ -37,7 +36,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.ruuvi.station.util.extensions.viewModel
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -55,9 +53,7 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.PermissionsHelper
 import com.ruuvi.station.util.Utils
-import com.ruuvi.station.util.extensions.OpenUrl
-import com.ruuvi.station.util.extensions.SendFeedback
-import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
+import com.ruuvi.station.util.extensions.*
 import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
 import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
@@ -256,7 +252,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         drawerListView.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_list_item_1,
-            resources.getStringArray(R.array.navigation_items_card_view)
+            getMainMenuItems()
         )
 
         drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
@@ -279,7 +275,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.selectedTagObserve.value != null) {
                 setupAlarmIcon(item)
                 val graphItem = menu.findItem(R.id.action_graph)
-                if (adapter.showGraph) {
+                if (viewModel.isShowingGraph()) {
                     graphItem.setIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
                 } else {
                     graphItem.setIcon(R.drawable.ic_ruuvi_graphs_icon)
@@ -346,8 +342,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
                             val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
-                            simpleAlert.setTitle(resources.getText(R.string.bg_scan_for_graphs))
-                            simpleAlert.setMessage(resources.getText(R.string.enable_background_scanning_question))
+                            simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
+                            simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
@@ -361,7 +357,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                             simpleAlert.show()
                         }
                     }
-                    adapter.showGraph = !adapter.showGraph
                 }
             }
             R.id.action_settings -> {
@@ -407,7 +402,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun showPermissionSnackbar() {
-        val snackbar = Snackbar.make(mainDrawerLayout, getString(R.string.location_permission_needed), Snackbar.LENGTH_LONG)
+        val snackbar = Snackbar.make(mainDrawerLayout, getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
         snackbar.setAction(getString(R.string.settings)) {
             val intent = Intent()
             val uri = Uri.fromParts("package", packageName, null)
@@ -433,7 +428,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     class TagsFragmentPagerAdapter(manager: FragmentManager)
         : FragmentStatePagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         private var tags = listOf<RuuviTag>()
-        var showGraph: Boolean = false
 
         override fun getItem(position: Int): Fragment {
             return TagFragment.newInstance(tags[position])

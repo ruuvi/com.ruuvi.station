@@ -16,6 +16,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.describingTimeSince
 import kotlinx.android.synthetic.main.item_dashboard.view.bell
 import kotlinx.android.synthetic.main.item_dashboard.view.dashboardContainer
 import kotlinx.android.synthetic.main.item_dashboard.view.deviceId
@@ -59,7 +60,7 @@ class RuuviTagAdapter(
         view.letterImage.setImageBitmap(ballBitmap)
 
         val updatedAt =
-            context.getString(R.string.updated, Utils.strDescribingTimeSince(item?.updatedAt))
+            context.getString(R.string.updated, item?.updatedAt?.describingTimeSince(activity))
         view.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM

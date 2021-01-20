@@ -9,13 +9,14 @@ import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
-import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.test.FakeScanResultsSender
+import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -24,6 +25,7 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
+import java.util.*
 
 @ExperimentalCoroutinesApi
 class RuuviScannerApplication : Application(), KodeinAware {
@@ -33,6 +35,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
+    private val preferencesRepository: PreferencesRepository by instance()
 
     private var isInForeground: Boolean = true
 
@@ -58,6 +61,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
         }
 
         setupDependencyInjection()
+
+        Lingver.init(this, Locale(preferencesRepository.getLocale()))
 
         FlowManager.init(this)
 
