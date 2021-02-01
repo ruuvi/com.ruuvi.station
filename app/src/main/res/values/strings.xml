@@ -196,8 +196,8 @@
 <string name="temperature_celsius_unit">°C</string>
 <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
 <string name="temperature_fahrenheit_unit">°F</string>
-<string name="temperature_kelvin_name">Kelvin (K)</string>
-<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_kelvin_name">Kelvin (K)</string>
+<string name="temperature_kelvin_unit">K</string>
 <string name="temperature_reading">%1$,.2f%2$s</string>
 <string name="updated">Updated %1$s</string>
 <string name="version">Version: %1$s</string>
