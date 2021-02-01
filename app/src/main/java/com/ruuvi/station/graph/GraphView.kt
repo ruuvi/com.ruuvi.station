@@ -22,6 +22,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.PressureUnit
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -107,11 +108,17 @@ class GraphView (
             pressureChart.isVisible = true
 
             tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            tempChart.axisLeft.granularity = 0.01f
             humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-            pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
-
+            humidChart.axisLeft.granularity = 0.01f
+            if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.0f")
+                pressureChart.axisLeft.granularity = 1f
+            } else {
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+                pressureChart.axisLeft.granularity = 0.01f
+            }
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
-
             graphSetuped = true
         }
     }
@@ -136,6 +143,7 @@ class GraphView (
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
+        chart.axisLeft.isGranularityEnabled = true
         chart.description.text = label
         chart.description.textColor = Color.WHITE
         chart.description.textSize = context.resources.getDimension(R.dimen.graph_description_size)
@@ -147,6 +155,9 @@ class GraphView (
             chart.description.typeface = ResourcesCompat.getFont(context, R.font.montserrat)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */
         }
+        chart.axisLeft.axisMinimum = set.yMin - 0.5f
+        chart.axisLeft.axisMaximum = set.yMax + 0.5f
+
         chart.legend.isEnabled = false
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
