@@ -103,7 +103,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.openAddView = false
             return
         }
-        if (permissionsHelper.arePermissionsGranted()) {
+        if (permissionsHelper.arePermissionsGranted() && preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
             permissionsHelper.requestBackgroundPermission()
         } else {
             permissionsHelper.requestPermissions()
