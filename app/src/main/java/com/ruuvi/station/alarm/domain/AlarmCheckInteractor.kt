@@ -164,7 +164,6 @@ class AlarmCheckInteractor(
     private fun createNotification(context: Context, alarmId: Int, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
         val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarmId)
         val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarmId)
-        val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarmId)
         val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
 
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
@@ -179,7 +178,6 @@ class AlarmCheckInteractor(
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(tagDetailsPendingIntent)
-            .setDeleteIntent(mutePendingIntent)
             .setLargeIcon(bitmap)
             .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
             .addAction(action)
