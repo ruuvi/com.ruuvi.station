@@ -152,7 +152,7 @@ class GraphView (
         chart.data.isHighlightEnabled = false
 
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            private val mFormat = SimpleDateFormat("HH:mm\ndd.MM", Locale.getDefault())
+            private val mFormat = SimpleDateFormat("HH:mm\ndd/MM", Locale.getDefault())
             override fun getFormattedValue(value: Float, p1: AxisBase?): String {
                 return mFormat.format(Date(value.toLong() + from))
             }
@@ -221,32 +221,34 @@ class GraphView (
     }
 
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
-        val leftOffset =
+        val offsetLeft =
             if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
-                pressureChart.viewPortHandler.offsetLeft()
+                pressureChart.viewPortHandler.offsetLeft() * 1.1f
             } else {
-                tempChart.viewPortHandler.offsetLeft()
+                tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2f
+        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
+        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 
         tempChart.setViewPortOffsets(
-            leftOffset,
-            tempChart.viewPortHandler.offsetTop() /2f,
-            tempChart.viewPortHandler.offsetRight(),
+            offsetLeft,
+            offsetTop,
+            offsetRight,
             offsetBottom
         )
 
         humidChart.setViewPortOffsets(
-            leftOffset,
-            humidChart.viewPortHandler.offsetTop() /2f,
-            humidChart.viewPortHandler.offsetRight(),
+            offsetLeft,
+            offsetTop,
+            offsetRight,
             offsetBottom
         )
 
         pressureChart.setViewPortOffsets(
-            leftOffset,
-            pressureChart.viewPortHandler.offsetTop() /2f,
-            pressureChart.viewPortHandler.offsetRight(),
+            offsetLeft,
+            offsetTop,
+            offsetRight,
             offsetBottom
         )
     }
