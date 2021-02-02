@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.lifecycleScope
@@ -291,6 +292,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun calibrateHumidity(tag: RuuviTagEntity) {
+        calibrateHumidityButton.isGone = tag.humidity == null
         calibrateHumidityButton.setDebouncedOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
 
@@ -311,7 +313,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
             }
 
-            (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity))
+            (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
 
             builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
 
@@ -338,8 +340,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     }
                 }
                 (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
-
-                //timestamp.text = this.getString(R.string.calibrated)
             }
 
             builder.setNeutralButton(getString(R.string.close), null)

@@ -89,19 +89,28 @@ class AlarmCheckInteractor(
                         R.string.alert_notification_temperature_high
                 )
             Alarm.HUMIDITY ->
-                getComparisonResourceId(
-                    tag.humidity,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_humidity_low to
-                        R.string.alert_notification_humidity_high
-                )
+                if (tag.humidity != null) {
+                    getComparisonResourceId(
+                        tag.humidity,
+                        alarm.low to alarm.high,
+                        R.string.alert_notification_humidity_low to
+                            R.string.alert_notification_humidity_high
+                    )
+                } else {
+                    NOTIFICATION_RESOURCE_ID
+                }
             Alarm.PRESSURE ->
-                getComparisonResourceId(
-                    tag.pressure,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_pressure_low to
-                        R.string.alert_notification_pressure_high
-                )
+                if (tag.pressure != null) {
+                    getComparisonResourceId(
+                        tag.pressure,
+                        alarm.low to alarm.high,
+                        R.string.alert_notification_pressure_low to
+                            R.string.alert_notification_pressure_high
+                    )
+                } else {
+                    NOTIFICATION_RESOURCE_ID
+                }
+
             Alarm.RSSI ->
                 getComparisonResourceId(
                     tag.rssi,
