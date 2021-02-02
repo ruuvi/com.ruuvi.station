@@ -65,19 +65,27 @@ class GraphView (
             if (tagReadings.size > 0) {
                 from = tagReadings[0].createdAt.time
 
-                val entries = tagReadings.map {
+                val entries = tagReadings.map { entry->
                     GraphEntry(
-                        timestamp = (it.createdAt.time - from).toFloat(),
-                        temperature = unitsConverter.getTemperatureValue(it.temperature).toFloat(),
-                        humidity = unitsConverter.getHumidityValue(it.humidity, it.temperature).toFloat(),
-                        pressure = unitsConverter.getPressureValue(it.pressure).toFloat()
+                        timestamp = (entry.createdAt.time - from).toFloat(),
+                        temperature = unitsConverter.getTemperatureValue(entry.temperature).toFloat(),
+                        humidity = entry.humidity?.let {
+                            unitsConverter.getHumidityValue(it, entry.temperature).toFloat()
+                        },
+                        pressure = entry.pressure?.let {
+                            unitsConverter.getPressureValue(it).toFloat()
+                        }
                     )
                 }
 
-                entries.forEach {
-                    tempData.add(Entry(it.timestamp, it.temperature))
-                    humidData.add(Entry(it.timestamp, it.humidity))
-                    pressureData.add(Entry(it.timestamp, it.pressure))
+                entries.forEach {entry ->
+                    tempData.add(Entry(entry.timestamp, entry.temperature))
+                    entry.humidity?.let {
+                        humidData.add(Entry(entry.timestamp, it))
+                    }
+                    entry.pressure?.let {
+                        pressureData.add(Entry(entry.timestamp, it))
+                    }
                 }
             } else {
                 val timestamp = to.toFloat()

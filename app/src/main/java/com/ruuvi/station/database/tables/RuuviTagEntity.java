@@ -1,7 +1,5 @@
 package com.ruuvi.station.database.tables;
 
-import androidx.annotation.Nullable;
-
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -10,6 +8,8 @@ import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 
 import java.util.Date;
+
+import javax.annotation.Nullable;
 
 
 // FIXME: change to the same database table name as was before the refactoring
@@ -27,11 +27,13 @@ public class RuuviTagEntity extends BaseModel {
     @Column
     private String name;
     @Column
-    private double temperature;
+    private Double temperature;
     @Column
-    private double humidity;
+    @Nullable
+    private Double humidity;
     @Column
-    private double pressure;
+    @Nullable
+    private Double pressure;
     @Column
     private boolean favorite;
     @Column
@@ -77,8 +79,8 @@ public class RuuviTagEntity extends BaseModel {
         this.url = tag.getUrl();
         this.rssi = tag.getRssi() != null ? tag.getRssi() : 0;
         this.temperature = tag.getTemperature() != null ? tag.getTemperature() : 0.0;
-        this.humidity = tag.getHumidity() != null ? tag.getHumidity() : 0.0;
-        this.pressure = tag.getPressure() != null ? tag.getPressure() : 0.0;
+        this.humidity = tag.getHumidity();
+        this.pressure = tag.getPressure();
         this.accelX = tag.getAccelX() != null ? tag.getAccelX() : 0.0;
         this.accelY = tag.getAccelY() != null ? tag.getAccelY() : 0.0;
         this.accelZ = tag.getAccelZ() != null ? tag.getAccelZ() : 0.0;
