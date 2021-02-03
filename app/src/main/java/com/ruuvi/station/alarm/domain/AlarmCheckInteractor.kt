@@ -9,7 +9,6 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
-import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -46,7 +45,7 @@ class AlarmCheckInteractor(
             .forEach { alarm ->
                 val resourceId = getResourceId(alarm, ruuviTag, true)
                 if (resourceId != NOTIFICATION_RESOURCE_ID && canNotify(alarm)) {
-                    sendAlert(alarm.id, ruuviTag.id, ruuviTag.displayName, resourceId)
+                    sendAlert(alarm, ruuviTag.id, ruuviTag.displayName, resourceId)
                 }
             }
     }
@@ -162,26 +161,32 @@ class AlarmCheckInteractor(
         }
     }
 
-    private fun sendAlert(alarmId: Int, tagId: String, tagName: String, notificationResourceId: Int) {
-        Timber.d("sendAlert tag.tagName = $tagName; alarm.id = $alarmId; notificationResourceId = $notificationResourceId")
+    private fun sendAlert(alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int) {
+        Timber.d("sendAlert tag.tagName = $tagName; alarm.id = ${alarm.id}; notificationResourceId = $notificationResourceId")
         createNotificationChannel()
         val notification =
-            createNotification(context, alarmId, tagId, tagName, notificationResourceId)
-        notificationManager.notify(alarmId, notification)
+            createNotification(context, alarm, tagId, tagName, notificationResourceId)
+        notificationManager.notify(alarm.id, notification)
     }
 
-    private fun createNotification(context: Context, alarmId: Int, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
-        val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarmId)
-        val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarmId)
+    private fun createNotification(context: Context, alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
+        val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarm.id)
+        val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarm.id)
         val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
 
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         return NotificationCompat
             .Builder(context, CHANNEL_ID)
-            .setContentTitle(tagName)
-            .setTicker(tagName + " " + context.getString(notificationResourceId))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(notificationResourceId)))
-            .setContentText(context.getString(notificationResourceId))
+            .setContentTitle(context.getString(notificationResourceId))
+            .setTicker("$tagName ${context.getString(notificationResourceId)}")
+            .setStyle(
+                NotificationCompat
+                    .BigTextStyle()
+                    .setBigContentTitle(context.getString(notificationResourceId))
+                    .setSummaryText(tagName).
+                    bigText(alarm.customDescription)
+            )
+            .setContentText(alarm.customDescription)
             .setDefaults(Notification.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
