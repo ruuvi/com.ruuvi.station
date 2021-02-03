@@ -18,10 +18,12 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.lifecycleScope
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
@@ -384,6 +386,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             item.high = alarm.high
             item.low = alarm.low
             item.isChecked = alarm.enabled
+            item.customDescription = alarm.customDescription ?: ""
             item.alarm = alarm
             item.normalizeValues()
         }
@@ -395,11 +398,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
             item.view?.id = View.generateViewId()
 
-            val checkBox = item.view?.findViewById<CheckBox>(R.id.alertCheckbox)
+            val switch = item.view?.findViewById<SwitchCompat>(R.id.alertSwitch)
 
-            checkBox?.tag = i
+            switch?.tag = i
 
-            checkBox?.setOnCheckedChangeListener(alarmCheckboxListener)
+            switch?.setOnCheckedChangeListener(alarmCheckboxListener)
 
             item.createView()
 
@@ -411,13 +414,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         for (alarmItem in viewModel.alarmItems) {
             if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, viewModel.tagId)
+                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, viewModel.tagId, alarmItem.customDescription)
                     alarmItem.alarm?.enabled = alarmItem.isChecked
                     alarmItem.alarm?.save()
                 } else {
                     alarmItem.alarm?.enabled = alarmItem.isChecked
                     alarmItem.alarm?.low = alarmItem.low
                     alarmItem.alarm?.high = alarmItem.high
+                    alarmItem.alarm?.customDescription = alarmItem.customDescription
                     alarmItem.alarm?.update()
                 }
             } else if (alarmItem.alarm != null) {
@@ -615,7 +619,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    inner class AlarmItem(var name: String, var type: Int, var isChecked: Boolean, var min: Int, var max: Int) {
+    inner class AlarmItem(
+        var name: String,
+        var type: Int,
+        var isChecked: Boolean,
+        var min: Int,
+        var max: Int,
+        var customDescription: String = ""
+    ) {
         private var subtitle: String? = null
         var low: Int
         var high: Int
@@ -642,6 +653,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     updateView()
                 }
 
+                val customDescriptionEditText = view.findViewById(R.id.customDescriptionEditText) as EditText
+                customDescriptionEditText.setText(customDescription)
+                customDescriptionEditText.addTextChangedListener {
+                    customDescription = it.toString()
+                }
+
                 if (min == 0 && max == 0) {
                     seekBar.isVisible = false
                     view.findViewById<View>(R.id.alertMinValueTextView).visibility = View.GONE
@@ -655,6 +672,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         fun updateView() {
             view?.let { view ->
                 val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
+                val minTextView = (view.findViewById<View>(R.id.alertMinValueTextView) as TextView)
+                val maxTextView = (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView)
+                val customDescriptionEditView = (view.findViewById<View>(R.id.customDescriptionEditText) as TextView)
 
                 var lowDisplay = low
                 var highDisplay = high
@@ -682,6 +702,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     subtitle = getString(R.string.alert_subtitle_off)
                 }
 
+                seekBar.isGone = !isChecked || type == Alarm.MOVEMENT
+                maxTextView.isGone = !isChecked || type == Alarm.MOVEMENT
+                minTextView.isGone = !isChecked || type == Alarm.MOVEMENT
+                customDescriptionEditView.isGone = !isChecked
+
                 seekBar.setRightThumbColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
 
                 seekBar.setRightThumbHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
@@ -694,14 +719,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 seekBar.isEnabled = isChecked
 
-                (view.findViewById<View>(R.id.alertCheckbox) as CheckBox).isChecked = isChecked
-
-                (view.findViewById<View>(R.id.alertTitleTextView) as TextView).text = name
+                val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
+                alertSwitch.isChecked = isChecked
+                alertSwitch.text = name
 
                 (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
 
-                (view.findViewById<View>(R.id.alertMinValueTextView) as TextView).text = lowDisplay.toString()
-                (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView).text = highDisplay.toString()
+                minTextView.text = lowDisplay.toString()
+                maxTextView.text = highDisplay.toString()
             }
         }
 

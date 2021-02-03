@@ -37,16 +37,19 @@ public class Alarm extends BaseModel {
     public boolean enabled;
     @Column
     public Date mutedTill;
+    @Column
+    public String customDescription;
 
     public Alarm() {
     }
 
-    public Alarm(int low, int high, int type, String tagId) {
+    public Alarm(int low, int high, int type, String tagId, String customDescription) {
         this.enabled = true;
         this.low = low;
         this.high = high;
         this.type = type;
         this.ruuviTagId = tagId;
+        this.customDescription = customDescription;
     }
 
     public static List<Alarm> getAll() {
