@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
+import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -172,7 +173,9 @@ class AlarmCheckInteractor(
     private fun createNotification(context: Context, alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
         val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarm.id)
         val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarm.id)
+        val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarm.id)
         val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
+        val actionMute = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_mute_for_hour), mutePendingIntent)
 
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         return NotificationCompat
@@ -195,6 +198,7 @@ class AlarmCheckInteractor(
             .setLargeIcon(bitmap)
             .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
             .addAction(action)
+            .addAction(actionMute)
             .build()
     }
 
