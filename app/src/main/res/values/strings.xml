@@ -8,6 +8,7 @@
 <string name="ago">ago</string>
 <string name="alarm_custom_title_hint">Set custom description...</string>
 <string name="alarm_mute_for_hour">Mute for an hour</string>
+<string name="alarm_muted_till">Mute till %1$s</string>
 <string name="alarm_notification_disable">Disable this alarm</string>
 <string name="alert_movement">Movement</string>
 <string name="alert_movement_description">Alert when sensor is moved</string>

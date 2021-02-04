@@ -53,6 +53,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.text.DateFormat
+import java.text.DateFormat.getTimeInstance
 import java.util.*
 import kotlin.math.round
 
@@ -74,6 +76,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
         val item = viewModel.alarmItems[buttonView.tag as Int]
         item.isChecked = isChecked
+        if (!isChecked) item.mutedTill = null
         item.updateView()
     }
 
@@ -387,6 +390,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             item.low = alarm.low
             item.isChecked = alarm.enabled
             item.customDescription = alarm.customDescription ?: ""
+            item.mutedTill = alarm.mutedTill
             item.alarm = alarm
             item.normalizeValues()
         }
@@ -414,7 +418,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         for (alarmItem in viewModel.alarmItems) {
             if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, viewModel.tagId, alarmItem.customDescription)
+                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, viewModel.tagId, alarmItem.customDescription, alarmItem.mutedTill)
                     alarmItem.alarm?.enabled = alarmItem.isChecked
                     alarmItem.alarm?.save()
                 } else {
@@ -422,10 +426,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     alarmItem.alarm?.low = alarmItem.low
                     alarmItem.alarm?.high = alarmItem.high
                     alarmItem.alarm?.customDescription = alarmItem.customDescription
+                    alarmItem.alarm?.mutedTill = alarmItem.mutedTill
                     alarmItem.alarm?.update()
                 }
             } else if (alarmItem.alarm != null) {
                 alarmItem.alarm?.enabled = false
+                alarmItem.alarm?.mutedTill = alarmItem.mutedTill
                 alarmItem.alarm?.update()
             }
             if (!alarmItem.isChecked) {
@@ -625,7 +631,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         var isChecked: Boolean,
         var min: Int,
         var max: Int,
-        var customDescription: String = ""
+        var customDescription: String = "",
+        var mutedTill: Date? = null
     ) {
         private var subtitle: String? = null
         var low: Int
@@ -719,9 +726,15 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 seekBar.isEnabled = isChecked
 
+                val mutedText = if (mutedTill ?: Date(0) > Date()) {
+                    "\n"+getString(R.string.alarm_muted_till, getTimeInstance(DateFormat.SHORT).format(mutedTill))
+                } else {
+                    ""
+                }
+
                 val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
                 alertSwitch.isChecked = isChecked
-                alertSwitch.text = name
+                alertSwitch.text = name + mutedText
 
                 (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
 

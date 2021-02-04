@@ -8,6 +8,7 @@
 <string name="ago">назад</string>
 <string name="alarm_custom_title_hint">Введите описание...</string>
 <string name="alarm_mute_for_hour">Отключить на час</string>
+<string name="alarm_muted_till">Отключено до %1$s</string>
 <string name="alarm_notification_disable">Отключить это уведомление</string>
 <string name="alert_movement">Движение</string>
 <string name="alert_movement_description">Уведомить при движении</string>
