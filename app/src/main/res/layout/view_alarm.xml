@@ -65,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView"
         tools:text="1000" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/customDescriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,6 +75,7 @@
         android:textSize="14sp"
         android:hint="@string/alarm_custom_title_hint"
         android:maxLength="100"
+        android:inputType="textCapSentences"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
