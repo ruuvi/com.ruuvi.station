@@ -10,13 +10,10 @@ import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.viewModel
-import com.yariksoffice.lingver.Lingver
 import kotlinx.android.synthetic.main.fragment_app_settings_temperature.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
-import java.util.*
-
 
 class AppSettingsLocaleFragment : Fragment(R.layout.fragment_app_settings_locale), KodeinAware {
 
@@ -43,7 +40,7 @@ class AppSettingsLocaleFragment : Fragment(R.layout.fragment_app_settings_locale
 
         radioGroup.setOnCheckedChangeListener { _, i ->
             viewModel.setLocale(items[i].code)
-            Lingver.getInstance().setLocale(requireContext(), Locale(items[i].code))
+            //Lingver.getInstance().setLocale(requireContext(), Locale(items[i].code, items[i].country))
             activity?.finish()
             val intent = Intent(requireContext(), StartupActivity::class.java)
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK)

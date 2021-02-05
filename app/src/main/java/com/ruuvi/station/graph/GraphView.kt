@@ -3,6 +3,7 @@ package com.ruuvi.station.graph
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
+import android.text.format.DateUtils
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -24,7 +25,8 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
 import timber.log.Timber
-import java.text.SimpleDateFormat
+import java.text.DateFormat
+import java.text.DateFormat.getTimeInstance
 import java.util.*
 
 class GraphView (
@@ -126,6 +128,11 @@ class GraphView (
                 pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
                 pressureChart.axisLeft.granularity = 0.01f
             }
+
+            tempChart.axisRight.isEnabled = false
+            humidChart.axisRight.isEnabled = false
+            pressureChart.axisRight.isEnabled = false
+
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
             graphSetuped = true
         }
@@ -149,6 +156,9 @@ class GraphView (
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        chart.xAxis.setLabelCount(5, false)
+        chart.axisLeft.setLabelCount(5, false)
+
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
         chart.axisLeft.isGranularityEnabled = true
@@ -169,11 +179,15 @@ class GraphView (
         chart.legend.isEnabled = false
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
-
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            private val mFormat = SimpleDateFormat("HH:mm\ndd/MM", Locale.getDefault())
             override fun getFormattedValue(value: Float, p1: AxisBase?): String {
-                return mFormat.format(Date(value.toLong() + from))
+                val date = Date(value.toLong() + from)
+                val timeText = getTimeInstance(DateFormat.SHORT).format(date)
+
+                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+                val dateText: String = DateUtils.formatDateTime(context, value.toLong() + from, flags)
+
+                return "$timeText\n$dateText"
             }
         }
         chart.notifyDataSetChanged()
