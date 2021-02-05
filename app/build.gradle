@@ -14,8 +14,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 14019
-        versionName "1.4.19"
+        versionCode 14020
+        versionName "1.4.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -103,7 +103,8 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    implementation "com.github.YarikSOffice:lingver:1.3.0"
+    // for manual locale change
+    //implementation "com.github.YarikSOffice:lingver:1.3.0"
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
 
