@@ -726,15 +726,17 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
                 seekBar.isEnabled = isChecked
 
-                val mutedText = if (mutedTill ?: Date(0) > Date()) {
-                    "\n"+getString(R.string.alarm_muted_till, getTimeInstance(DateFormat.SHORT).format(mutedTill))
+                val mutedTextView = view.findViewById(R.id.mutedTextView) as TextView
+                if (mutedTill ?: Date(0) > Date()) {
+                    mutedTextView.text = getTimeInstance(DateFormat.SHORT).format(mutedTill)
+                    mutedTextView.isGone = false
                 } else {
-                    ""
+                    mutedTextView.isGone = true
                 }
 
                 val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
                 alertSwitch.isChecked = isChecked
-                alertSwitch.text = name + mutedText
+                alertSwitch.text = name
 
                 (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
 
