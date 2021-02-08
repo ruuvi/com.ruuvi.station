@@ -6,6 +6,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.util.Utils
 
 class UnitsConverter (
         private val context: Context,
@@ -75,13 +76,13 @@ class UnitsConverter (
         val converter = HumidityConverter(temperature, humidity/100)
 
         return when (getHumidityUnit()) {
-            HumidityUnit.PERCENT -> humidity
-            HumidityUnit.GM3-> converter.ah
+            HumidityUnit.PERCENT -> Utils.round(humidity, 2)
+            HumidityUnit.GM3-> Utils.round(converter.ah, 2)
             HumidityUnit.DEW -> {
                 when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> converter.Td
-                    TemperatureUnit.KELVIN-> converter.TdK
-                    TemperatureUnit.FAHRENHEIT -> converter.TdF
+                    TemperatureUnit.CELSIUS -> Utils.round(converter.Td ?: 0.0, 2)
+                    TemperatureUnit.KELVIN-> Utils.round(converter.TdK ?: 0.0, 2)
+                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.TdF ?: 0.0, 2)
                 }
             }
         } ?: 0.0
