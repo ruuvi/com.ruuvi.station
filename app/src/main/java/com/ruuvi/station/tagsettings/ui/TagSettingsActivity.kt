@@ -445,9 +445,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             rawValuesLayout.isVisible = true
             inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            xInputTextView.text = tag.accelX.toString()
-            yInputTextView.text = tag.accelY.toString()
-            zInputTextView.text = tag.accelZ.toString()
+            xInputTextView.text = getString(R.string.acceleration_reading, tag.accelX)
+            yInputTextView.text = getString(R.string.acceleration_reading, tag.accelY)
+            zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
+            dataFormatTextView.text = tag.dataFormat.toString()
+            txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
+            movementCounterTextView.text = tag.movementCounter.toString()
+            sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
         } else {
             rawValuesLayout.isVisible = false
         }
