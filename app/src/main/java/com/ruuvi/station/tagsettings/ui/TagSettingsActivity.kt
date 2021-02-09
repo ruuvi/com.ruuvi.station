@@ -637,6 +637,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         var max: Int,
         var customDescription: String = "",
         var mutedTill: Date? = null
+        val gap: Int = 1
     ) {
         private var subtitle: String? = null
         var low: Int
@@ -655,6 +656,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 seekBar.setMinStartValue(low.toFloat())
 
                 seekBar.setMaxStartValue(high.toFloat())
+
+                seekBar.setGap(gap.toFloat())
 
                 seekBar.apply()
 
@@ -751,9 +754,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         fun normalizeValues() {
             if (low < min) low = min
-            if (low >= max) low = max - 1
+            if (low >= max) low = max - gap
             if (high > max) high = max
-            if (high < min) high = min + 1
+            if (high < min) high = min + gap
             if (low > high) {
                 low = high.also { high = low }
             }
