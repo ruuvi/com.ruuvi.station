@@ -8,6 +8,7 @@
 <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
 <string name="ago">sitten</string>
 <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
+<string name="alarm_mute_for_hour">Mykistä tunniksi</string>
 <string name="alarm_notification_disable">Poista tämä hälytys käytöstä</string>
 <string name="alert_movement">Liike</string>
 <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
