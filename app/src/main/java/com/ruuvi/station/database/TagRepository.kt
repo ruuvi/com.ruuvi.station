@@ -10,8 +10,6 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.TemperatureUnit
 
 class TagRepository(
     private val preferences: Preferences,
@@ -61,5 +59,24 @@ class TagRepository(
 
     fun saveTag(@NonNull tag: RuuviTagEntity) {
         tag.save()
+    }
+
+    fun updateTagName(tagId: String, tagName: String?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(RuuviTagEntity_Table.name.eq(tagName))
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
+    }
+
+    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(
+                RuuviTagEntity_Table.userBackground.eq(userBackground),
+                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground)
+            )
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
     }
 }

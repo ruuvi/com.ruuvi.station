@@ -29,6 +29,10 @@ class TagSettingsViewModel(
     val tagFlow: StateFlow<RuuviTagEntity?> = tagState
 
     init {
+        getTagInfo()
+    }
+
+    fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
             tagState.value = getTagById(tagId)
         }
@@ -36,10 +40,6 @@ class TagSettingsViewModel(
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
-
-    fun updateTag() {
-        tagState.value?.update()
-    }
 
     fun updateTag(tag: RuuviTagEntity) =
         interactor.updateTag(tag)
@@ -49,6 +49,14 @@ class TagSettingsViewModel(
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
+    }
+
+    fun updateTagName(name: String?) = CoroutineScope(Dispatchers.IO).launch {
+        interactor.updateTagName(tagId, name)
+    }
+
+    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
+        interactor.updateTagBackground(tagId, userBackground, defaultBackground)
     }
 
     fun saveOrUpdateAlarmItems() {

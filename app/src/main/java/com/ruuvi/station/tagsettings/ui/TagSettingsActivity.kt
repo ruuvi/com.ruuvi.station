@@ -56,6 +56,7 @@ import java.io.OutputStream
 import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
 import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 import kotlin.math.round
 
 @ExperimentalCoroutinesApi
@@ -72,6 +73,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private val repository: TagRepository by instance()
     private val humidityCalibrationInteractor: HumidityCalibrationInteractor by instance()
     private val unitsConverter: UnitsConverter by instance()
+    private var timer: Timer? = null
 
     private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
         val item = viewModel.alarmItems[buttonView.tag as Int]
@@ -109,10 +111,18 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         removeTagButton.setDebouncedOnClickListener { delete() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        timer = Timer("TagSettingsActivityTimer", true)
+        timer?.scheduleAtFixedRate(0, 1000) {
+            viewModel.getTagInfo()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
-        viewModel.updateTag()
         viewModel.saveOrUpdateAlarmItems()
+        timer?.cancel()
     }
 
     @Suppress("NAME_SHADOWING")
@@ -123,6 +133,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 val rotation = getCameraPhotoOrientation(viewModel.file)
                 resize(viewModel.file, rotation)
                 viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
+                viewModel.updateTagBackground(viewModel.file.toString(), null)
                 val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
                 tagImageView.setImageBitmap(background)
             }
@@ -161,6 +172,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val rotation = getCameraPhotoOrientation(uri)
                         resize(uri, rotation)
                         viewModel.tagFlow.value?.userBackground = uri.toString()
+                        viewModel.updateTagBackground(uri.toString(), null)
                         val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
                         tagImageView.setImageBitmap(background)
                     }
@@ -240,6 +252,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 } else {
                     tag.name = input.text.toString()
                 }
+                viewModel.updateTagName(tag.name)
                 tagNameInputTextView.text = tag.name
             }
 
@@ -287,11 +300,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
         tagImageSelectButton.setDebouncedOnClickListener {
-            tag.defaultBackground = if (tag.defaultBackground == 8) 0 else tag.defaultBackground + 1
-
-            tag.userBackground = null
-
-            tagImageView.setImageDrawable(Utils.getDefaultBackground(tag.defaultBackground, applicationContext))
+            val defaultBackground = if (tag.defaultBackground == 8) 0 else tag.defaultBackground + 1
+            viewModel.updateTagBackground(null, defaultBackground)
+            tag.defaultBackground = defaultBackground
+            tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
     }
 
@@ -320,27 +332,16 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
 
             builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
-
-                var latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
-
-                latestTag?.let {
-                    humidityCalibrationInteractor.calibrate(it);
-                    tag.humidity = it.humidity;
-                    tag.humidityOffset = it.humidityOffset;
-                    tag.humidityOffsetDate = it.humidityOffsetDate;
-                    viewModel.updateTag(it)
-                    Toast.makeText(this@TagSettingsActivity, getString(R.string.calibration_done), Toast.LENGTH_SHORT).show()
+                tag.id?.let {
+                    humidityCalibrationInteractor.calibrate(it)
+                    viewModel.getTagInfo()
                 }
             }
             if (tag.humidityOffset != 0.0) {
                 builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
-                    val latestTag = tag.id?.let { it1 -> viewModel.getTagById(it1) }
-                    latestTag?.let {
-                        humidityCalibrationInteractor.clear(it);
-                        tag.humidity = it.humidity;
-                        tag.humidityOffset = it.humidityOffset;
-                        tag.humidityOffsetDate = it.humidityOffsetDate;
-                        it.update()
+                    tag.id?.let {
+                        humidityCalibrationInteractor.clear(it)
+                        viewModel.getTagInfo()
                     }
                 }
                 (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
