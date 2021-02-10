@@ -111,9 +111,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onPause() {
         super.onPause()
-
         viewModel.updateTag()
-        saveOrUpdateAlarmItems()
+        viewModel.saveOrUpdateAlarmItems()
     }
 
     @Suppress("NAME_SHADOWING")
@@ -358,6 +357,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupAlarmItems() {
+        viewModel.alarmItems.clear()
         with(viewModel.alarmItems) {
             add(AlarmItem(
                 getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
@@ -411,33 +411,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             item.createView()
 
             alertsContainerLayout.addView(item.view)
-        }
-    }
-
-    private fun saveOrUpdateAlarmItems() {
-        for (alarmItem in viewModel.alarmItems) {
-            if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
-                if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, viewModel.tagId, alarmItem.customDescription, alarmItem.mutedTill)
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
-                    alarmItem.alarm?.save()
-                } else {
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
-                    alarmItem.alarm?.low = alarmItem.low
-                    alarmItem.alarm?.high = alarmItem.high
-                    alarmItem.alarm?.customDescription = alarmItem.customDescription
-                    alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                    alarmItem.alarm?.update()
-                }
-            } else if (alarmItem.alarm != null) {
-                alarmItem.alarm?.enabled = false
-                alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                alarmItem.alarm?.update()
-            }
-            if (!alarmItem.isChecked) {
-                val notificationId = alarmItem.alarm?.id ?: -1
-                viewModel.removeNotificationById(notificationId)
-            }
         }
     }
 
@@ -636,7 +609,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         var min: Int,
         var max: Int,
         var customDescription: String = "",
-        var mutedTill: Date? = null
+        var mutedTill: Date? = null,
         val gap: Int = 1
     ) {
         private var subtitle: String? = null
@@ -693,6 +666,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 var lowDisplay = low
                 var highDisplay = high
 
+                val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
+                alertSwitch.isChecked = isChecked
+                alertSwitch.text = name
+
                 var setSeekbarColor = R.color.inactive
                 when (type) {
                     Alarm.TEMPERATURE -> {
@@ -740,10 +717,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 } else {
                     mutedTextView.isGone = true
                 }
-
-                val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
-                alertSwitch.isChecked = isChecked
-                alertSwitch.text = name
 
                 (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
 
