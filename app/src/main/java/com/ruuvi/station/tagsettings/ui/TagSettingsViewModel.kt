@@ -9,10 +9,7 @@ import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 class TagSettingsViewModel(
@@ -35,27 +32,29 @@ class TagSettingsViewModel(
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
+    private val operationStatus = MutableLiveData<String> ("")
+    val operationStatusObserve: LiveData<String> = operationStatus
+
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
         it?.owner == networkInteractor.getEmail()
+    }
+
+    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
+        it?.owner
     }
 
     val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
         it != null
     }
 
-    init {
-        getTagInfo()
-    }
-
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
-            tagState.value = getTagById(tagId)
-    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
-        it?.owner
+            val tagInfo = getTagById(tagId)
+            withContext(Dispatchers.Main) {
+                tagState.value = tagInfo
+            }
+        }
     }
-
-    private val operationStatus = MutableLiveData<String> ("")
-    val operationStatusObserve: LiveData<String> = operationStatus
 
     private val handler = CoroutineExceptionHandler() { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {

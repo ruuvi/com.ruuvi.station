@@ -177,9 +177,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.file != null) {
                 val rotation = getCameraPhotoOrientation(viewModel.file)
                 resize(viewModel.file, rotation)
-                viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
+                viewModel.tagObserve.value?.userBackground = viewModel.file.toString()
                 viewModel.updateTagBackground(viewModel.file.toString(), null)
-                val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                 tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -216,9 +216,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val uri = Uri.fromFile(photoFile)
                         val rotation = getCameraPhotoOrientation(uri)
                         resize(uri, rotation)
-                        viewModel.tagFlow.value?.userBackground = uri.toString()
+                        viewModel.tagObserve.value?.userBackground = uri.toString()
                         viewModel.updateTagBackground(uri.toString(), null)
-                        val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                        val background = Utils.getBackground(applicationContext, viewModel.tagObserve.value)
                         tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
