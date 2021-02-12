@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<string name="acceleration_reading">%1$,.3f g</string>
 <string name="acceleration_x">Acceleration X</string>
 <string name="acceleration_y">Acceleration Y</string>
 <string name="acceleration_z">Acceleration Z</string>
 <string name="add_tag_not_found">No sensors found</string>
 <string name="add_tag_title">Nearby Ruuvi sensors</string>
 <string name="ago">ago</string>
+<string name="alarm_custom_title_hint">Set custom description...</string>
+<string name="alarm_mute_for_hour">Mute for an hour</string>
 <string name="alarm_notification_disable">Disable this alarm</string>
 <string name="alert_movement">Movement</string>
 <string name="alert_movement_description">Alert when sensor is moved</string>
@@ -48,6 +51,7 @@
 <string name="dashboard">Dashboard</string>
 <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance. Restart the app after enabled.</string>
 <string name="dashboard_empty">Your dashboard \nis empty</string>
+<string name="data_format">Data Format</string>
 <string name="data_points_read">%1$,d measurements read, saving..</string>
 <string name="disconnected">Disconnected</string>
 <string name="email">Email</string>
@@ -99,6 +103,7 @@
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC Address</string>
 <string name="mac_copied">MAC address copied to clipboard</string>
+<string name="measurement_sequence_number">Measurement Sequence Number</string>
 <string name="menu_about_help">About / Help</string>
 <string name="menu_add_new_sensor">Add a New Sensor</string>
 <string name="menu_app_settings">App Settings</string>
@@ -107,6 +112,7 @@
 <string name="min">min</string>
 <string name="minutes">Minutes</string>
 <string name="more_info">MORE INFO</string>
+<string name="movement_counter">Movement Counter</string>
 <string name="name">NAME</string>
 <string name="navigation_drawer_close">Close the navigation drawer</string>
 <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -226,9 +232,11 @@
 <string name="temperature_celsius_unit">°C</string>
 <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
 <string name="temperature_fahrenheit_unit">°F</string>
-<string name="temperature_kelvin_name">Kelvin (K)</string>
-<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_kelvin_name">Kelvin (K)</string>
+<string name="temperature_kelvin_unit">K</string>
 <string name="temperature_reading">%1$,.2f%2$s</string>
+<string name="tx_power">Tx Power</string>
+<string name="tx_power_reading">%1$,.0f dBm</string>
 <string name="updated">Updated %1$s</string>
 <string name="version">Version: %1$s</string>
 <string name="voltage_reading">%1$s %2$s</string>

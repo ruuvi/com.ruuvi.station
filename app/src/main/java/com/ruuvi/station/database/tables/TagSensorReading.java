@@ -13,7 +13,7 @@ import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
-
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,11 +39,13 @@ public class TagSensorReading extends BaseModel {
     @Column
     public Date createdAt;
     @Column
-    public double temperature;
+    public Double temperature;
     @Column
-    public double humidity;
+    @Nullable
+    public Double humidity;
     @Column
-    public double pressure;
+    @Nullable
+    public Double pressure;
     @Column
     public int rssi;
     @Column

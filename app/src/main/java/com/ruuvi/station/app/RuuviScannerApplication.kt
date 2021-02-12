@@ -18,7 +18,6 @@ import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.test.FakeScanResultsSender
-import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -66,7 +65,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         setupDependencyInjection()
 
-        Lingver.init(this, Locale(preferencesRepository.getLocale()))
+        //Lingver.init(this, Locale(preferencesRepository.getLocale()))
 
         FlowManager.init(this)
 

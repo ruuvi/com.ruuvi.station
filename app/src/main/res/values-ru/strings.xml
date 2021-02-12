@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<string name="acceleration_reading">%1$,.3f g</string>
 <string name="acceleration_x">Ускорение по X</string>
 <string name="acceleration_y">Ускорение по Y</string>
 <string name="acceleration_z">Ускорение по Z</string>
 <string name="add_tag_not_found">Датчиков не обнаружено</string>
 <string name="add_tag_title">Ближайшие Сенсоры</string>
 <string name="ago">назад</string>
+<string name="alarm_custom_title_hint">Введите описание...</string>
+<string name="alarm_mute_for_hour">Отключить на час</string>
 <string name="alarm_notification_disable">Отключить это уведомление</string>
 <string name="alert_movement">Движение</string>
 <string name="alert_movement_description">Уведомить при движении</string>
@@ -46,6 +49,7 @@
 <string name="dashboard">Панель датчиков</string>
 <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно. Перезапустите приложение после включения функции</string>
 <string name="dashboard_empty">Панель датчиков пуста</string>
+<string name="data_format">Формат Данных</string>
 <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
 <string name="disconnected">Отсоединен</string>
 <string name="email">Email</string>
@@ -97,6 +101,7 @@
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC адрес</string>
 <string name="mac_copied">MAC адрес скопирован в буфер обмена</string>
+<string name="measurement_sequence_number">Порядковый Номер Измерения</string>
 <string name="menu_about_help">О Приложении</string>
 <string name="menu_add_new_sensor">Добавить Сенсор</string>
 <string name="menu_app_settings">Настройки</string>
@@ -105,6 +110,7 @@
 <string name="min">мин</string>
 <string name="minutes">Минут</string>
 <string name="more_info">ДОПОЛНИТЕЛЬНО</string>
+<string name="movement_counter">Счетчик Движения</string>
 <string name="name">ИМЯ</string>
 <string name="navigation_drawer_close">Закрыть навигационную панель</string>
 <string name="navigation_drawer_open">Открыть навигационную панель</string>
@@ -224,9 +230,11 @@
 <string name="temperature_celsius_unit">°C</string>
 <string name="temperature_fahrenheit_name">Фаренгейт (℉)</string>
 <string name="temperature_fahrenheit_unit">°F</string>
-<string name="temperature_kelvin_name">Кельвин (K)</string>
-<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_kelvin_name">Кельвин (K)</string>
+<string name="temperature_kelvin_unit">K</string>
 <string name="temperature_reading">%1$,.2f%2$s</string>
+<string name="tx_power">Мощность Передачи</string>
+<string name="tx_power_reading">%1$,.0f дБм</string>
 <string name="updated">Обновлено %1$s</string>
 <string name="version">Версия: %1$s</string>
 <string name="voltage_reading">%1$s %2$s</string>

@@ -3,30 +3,31 @@ package com.ruuvi.station.graph
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
-import androidx.core.content.res.ResourcesCompat
+import android.text.format.DateUtils
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.PressureUnit
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.ArrayList
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.text.DateFormat
+import java.text.DateFormat.getTimeInstance
+import java.util.*
 
 class GraphView (
     private val unitsConverter: UnitsConverter,
@@ -37,6 +38,7 @@ class GraphView (
     private var to: Long = 0
     private var storedReadings: MutableList<TagSensorReading>? = null
     private var graphSetuped = false
+    private var offsetsNormalized = false
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
@@ -65,19 +67,27 @@ class GraphView (
             if (tagReadings.size > 0) {
                 from = tagReadings[0].createdAt.time
 
-                val entries = tagReadings.map {
+                val entries = tagReadings.map { entry->
                     GraphEntry(
-                        timestamp = (it.createdAt.time - from).toFloat(),
-                        temperature = unitsConverter.getTemperatureValue(it.temperature).toFloat(),
-                        humidity = unitsConverter.getHumidityValue(it.humidity, it.temperature).toFloat(),
-                        pressure = unitsConverter.getPressureValue(it.pressure).toFloat()
+                        timestamp = (entry.createdAt.time - from).toFloat(),
+                        temperature = unitsConverter.getTemperatureValue(entry.temperature).toFloat(),
+                        humidity = entry.humidity?.let {
+                            unitsConverter.getHumidityValue(it, entry.temperature).toFloat()
+                        },
+                        pressure = entry.pressure?.let {
+                            unitsConverter.getPressureValue(it).toFloat()
+                        }
                     )
                 }
 
-                entries.forEach {
-                    tempData.add(Entry(it.timestamp, it.temperature))
-                    humidData.add(Entry(it.timestamp, it.humidity))
-                    pressureData.add(Entry(it.timestamp, it.pressure))
+                entries.forEach {entry ->
+                    tempData.add(Entry(entry.timestamp, entry.temperature))
+                    entry.humidity?.let {
+                        humidData.add(Entry(entry.timestamp, it))
+                    }
+                    entry.pressure?.let {
+                        pressureData.add(Entry(entry.timestamp, it))
+                    }
                 }
             } else {
                 val timestamp = to.toFloat()
@@ -90,7 +100,10 @@ class GraphView (
             addDataToChart(humidData, humidChart, context.getString(R.string.humidity, unitsConverter.getHumidityUnitString()))
             addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure, unitsConverter.getPressureUnitString()))
 
-            normalizeOffsets(tempChart, humidChart, pressureChart)
+            if (!offsetsNormalized) {
+                normalizeOffsets(tempChart, humidChart, pressureChart)
+                offsetsNormalized = true
+            }
         }
     }
 
@@ -105,16 +118,23 @@ class GraphView (
             pressureChart.isVisible = true
 
             tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            tempChart.axisLeft.granularity = 0.01f
             humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
-            pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.1f")
+            humidChart.axisLeft.granularity = 0.01f
+            if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.0f")
+                pressureChart.axisLeft.granularity = 1f
+            } else {
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+                pressureChart.axisLeft.granularity = 0.01f
+            }
+
+            tempChart.axisRight.isEnabled = false
+            humidChart.axisRight.isEnabled = false
+            pressureChart.axisRight.isEnabled = false
 
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
-
             graphSetuped = true
-        } else {
-            tempChart.clear()
-            humidChart.clear()
-            pressureChart.clear()
         }
     }
 
@@ -125,12 +145,23 @@ class GraphView (
         set.setDrawFilled(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.main)
         set.circleRadius = 1f
+        chart.setXAxisRenderer(
+            CustomXAxisRenderer(
+                chart.viewPortHandler,
+                chart.xAxis,
+                chart.getTransformer(YAxis.AxisDependency.LEFT)
+            )
+        )
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        chart.xAxis.setLabelCount(5, false)
+        chart.axisLeft.setLabelCount(5, false)
+
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
+        chart.axisLeft.isGranularityEnabled = true
         chart.description.text = label
         chart.description.textColor = Color.WHITE
         chart.description.textSize = context.resources.getDimension(R.dimen.graph_description_size)
@@ -142,14 +173,21 @@ class GraphView (
             chart.description.typeface = ResourcesCompat.getFont(context, R.font.montserrat)
         } catch (e: Exception) { /* ¯\_(ツ)_/¯ */
         }
+        chart.axisLeft.axisMinimum = set.yMin - 0.5f
+        chart.axisLeft.axisMaximum = set.yMax + 0.5f
+
         chart.legend.isEnabled = false
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
+        chart.xAxis.valueFormatter = object : IAxisValueFormatter {
+            override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+                val date = Date(value.toLong() + from)
+                val timeText = getTimeInstance(DateFormat.SHORT).format(date)
 
-        chart.xAxis.valueFormatter = object : ValueFormatter() {
-            private val mFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-            override fun getFormattedValue(value: Float): String {
-                return mFormat.format(Date(value.toLong() + from))
+                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+                val dateText: String = DateUtils.formatDateTime(context, value.toLong() + from, flags)
+
+                return "$timeText\n$dateText"
             }
         }
         chart.notifyDataSetChanged()
@@ -216,37 +254,40 @@ class GraphView (
     }
 
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
-        if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
-            tempChart.setViewPortOffsets(
-                pressureChart.viewPortHandler.offsetLeft(),
-                pressureChart.viewPortHandler.offsetTop(),
-                pressureChart.viewPortHandler.offsetRight(),
-                pressureChart.viewPortHandler.offsetBottom()
-            )
-            humidChart.setViewPortOffsets(
-                pressureChart.viewPortHandler.offsetLeft(),
-                pressureChart.viewPortHandler.offsetTop(),
-                pressureChart.viewPortHandler.offsetRight(),
-                pressureChart.viewPortHandler.offsetBottom()
-            )
-        } else {
-            pressureChart.setViewPortOffsets(
-                tempChart.viewPortHandler.offsetLeft(),
-                tempChart.viewPortHandler.offsetTop(),
-                tempChart.viewPortHandler.offsetRight(),
-                tempChart.viewPortHandler.offsetBottom()
-            )
-            humidChart.setViewPortOffsets(
-                tempChart.viewPortHandler.offsetLeft(),
-                tempChart.viewPortHandler.offsetTop(),
-                tempChart.viewPortHandler.offsetRight(),
-                tempChart.viewPortHandler.offsetBottom()
-            )
-        }
+        val offsetLeft =
+            if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
+                pressureChart.viewPortHandler.offsetLeft() * 1.1f
+            } else {
+                tempChart.viewPortHandler.offsetLeft() * 1.1f
+            }
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2f
+        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
+        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
+
+        tempChart.setViewPortOffsets(
+            offsetLeft,
+            offsetTop,
+            offsetRight,
+            offsetBottom
+        )
+
+        humidChart.setViewPortOffsets(
+            offsetLeft,
+            offsetTop,
+            offsetRight,
+            offsetBottom
+        )
+
+        pressureChart.setViewPortOffsets(
+            offsetLeft,
+            offsetTop,
+            offsetRight,
+            offsetBottom
+        )
     }
 
-    class AxisLeftValueFormatter(private val formatPattern: String) : ValueFormatter() {
-        override fun getFormattedValue(value: Float): String {
+    class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
+        override fun getFormattedValue(value: Float, p1: AxisBase?): String {
             return formatPattern.format(value)
         }
     }

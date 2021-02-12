@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<string name="acceleration_reading">%1$,.3f g</string>
 <string name="acceleration_x">Kiihtyvyys X</string>
 <string name="acceleration_y">Kiihtyvyys Y</string>
 <string name="acceleration_z">Kiihtyvyys Z</string>
 <string name="add_tag_not_found">Antureita ei löydetty</string>
 <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
 <string name="ago">sitten</string>
+<string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
+<string name="alarm_mute_for_hour">Mykistä tunniksi</string>
 <string name="alarm_notification_disable">Poista tämä hälytys käytöstä</string>
 <string name="alert_movement">Liike</string>
 <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
@@ -19,7 +22,7 @@
 <string name="alert_notification_temperature_high">Lämpötila liian korkea!</string>
 <string name="alert_notification_temperature_low">Lämpötila liian alhainen!</string>
 <string name="alert_subtitle_off">Pois käytöstä</string>
-<string name="alert_subtitle_on">Hälytä, mikäli lämpötila alle %1$,d tai yli %2$,d</string>
+<string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
 <string name="alerts">HÄLYTYKSET</string>
 <string name="app_name">Ruuvi Station</string>
 <string name="background_image">TAUSTAKUVA</string>
@@ -47,6 +50,7 @@
 <string name="dashboard">Koontinäyttö</string>
 <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla. Koontinäyttö otetaan käyttöön sovelluksen uudelleenkäynnistyksen yhteydessä.</string>
 <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
+<string name="data_format">Dataformaatti</string>
 <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
 <string name="disconnected">Ei yhteyttä</string>
 <string name="export">VIE</string>
@@ -97,6 +101,7 @@
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC-osoite</string>
 <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
+<string name="measurement_sequence_number">Mittausjärjestysnumero</string>
 <string name="menu_about_help">Tietoa / Apua</string>
 <string name="menu_add_new_sensor">Lisää uusi anturi</string>
 <string name="menu_app_settings">Asetukset</string>
@@ -105,6 +110,7 @@
 <string name="min">min</string>
 <string name="minutes">Minuuttia</string>
 <string name="more_info">LISÄTIETOA</string>
+<string name="movement_counter">Liikelaskuri</string>
 <string name="name">NIMI</string>
 <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
 <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
@@ -195,9 +201,11 @@
 <string name="temperature_celsius_unit">°C</string>
 <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
 <string name="temperature_fahrenheit_unit">°F</string>
-<string name="temperature_kelvin_name">Kelvin (K)</string>
-<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_kelvin_name">Kelvin (K)</string>
+<string name="temperature_kelvin_unit">K</string>
 <string name="temperature_reading">%1$,.2f%2$s</string>
+<string name="tx_power">Lähetysteho</string>
+<string name="tx_power_reading">%1$,.0f dBm</string>
 <string name="updated">Päivitetty %1$s</string>
 <string name="version">Versio: %1$s</string>
 <string name="voltage_reading">%1$s %2$s</string>

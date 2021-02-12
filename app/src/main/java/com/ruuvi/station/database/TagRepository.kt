@@ -75,4 +75,23 @@ class TagRepository(
             .and(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
             .queryList()
     }
+
+    fun updateTagName(tagId: String, tagName: String?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(RuuviTagEntity_Table.name.eq(tagName))
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
+    }
+
+    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(
+                RuuviTagEntity_Table.userBackground.eq(userBackground),
+                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground)
+            )
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
+    }
 }

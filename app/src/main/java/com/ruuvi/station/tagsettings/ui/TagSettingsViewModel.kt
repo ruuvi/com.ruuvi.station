@@ -23,7 +23,7 @@ class TagSettingsViewModel(
     private val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
 
-    var tagAlarms: List<Alarm> = ArrayList()
+    var tagAlarms: List<Alarm> = Alarm.getForTag(tagId)
     var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
     var file: Uri? = null
 
@@ -43,6 +43,13 @@ class TagSettingsViewModel(
         it != null
     }
 
+    init {
+        getTagInfo()
+    }
+
+    fun getTagInfo() {
+        CoroutineScope(Dispatchers.IO).launch {
+            tagState.value = getTagById(tagId)
     val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
         it?.owner
     }
@@ -91,6 +98,41 @@ class TagSettingsViewModel(
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
+    }
+
+    fun updateTagName(name: String?) = CoroutineScope(Dispatchers.IO).launch {
+        interactor.updateTagName(tagId, name)
+    }
+
+    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
+        interactor.updateTagBackground(tagId, userBackground, defaultBackground)
+    }
+
+    fun saveOrUpdateAlarmItems() {
+        for (alarmItem in alarmItems) {
+            if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
+                if (alarmItem.alarm == null) {
+                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tagId, alarmItem.customDescription, alarmItem.mutedTill)
+                    alarmItem.alarm?.enabled = alarmItem.isChecked
+                    alarmItem.alarm?.save()
+                } else {
+                    alarmItem.alarm?.enabled = alarmItem.isChecked
+                    alarmItem.alarm?.low = alarmItem.low
+                    alarmItem.alarm?.high = alarmItem.high
+                    alarmItem.alarm?.customDescription = alarmItem.customDescription
+                    alarmItem.alarm?.mutedTill = alarmItem.mutedTill
+                    alarmItem.alarm?.update()
+                }
+            } else if (alarmItem.alarm != null) {
+                alarmItem.alarm?.enabled = false
+                alarmItem.alarm?.mutedTill = alarmItem.mutedTill
+                alarmItem.alarm?.update()
+            }
+            if (!alarmItem.isChecked) {
+                val notificationId = alarmItem.alarm?.id ?: -1
+                removeNotificationById(notificationId)
+            }
+        }
     }
 
     fun claimSensor() {
