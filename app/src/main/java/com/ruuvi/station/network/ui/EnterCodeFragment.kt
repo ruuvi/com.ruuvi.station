@@ -42,7 +42,8 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
     private fun setupUI() {
         submitCodeButton.setOnClickListener {
             submitCodeButton.isEnabled = false
-            viewModel.verifyCode(enterCodeManuallyEditText.text.toString())
+            val code = enterCodeManuallyEditText.text.toString()
+            viewModel.verifyCode(code.trim())
         }
 
         val token = arguments?.getString("token")

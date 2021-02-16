@@ -2,13 +2,18 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.SuperscriptSpan
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
@@ -105,16 +110,17 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
         updateMenu(signedIn)
 
-        navigationDrawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            mainDrawerLayout.closeDrawers()
-            when (position) {
-                0 -> AddTagActivity.start(this)
-                1 -> AppSettingsActivity.start(this)
-                2 -> AboutActivity.start(this)
-                3 -> SendFeedback()
-                4 -> OpenUrl(WEB_URL)
-                5 -> login()
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
+                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.aboutMenuItem -> AboutActivity.start(this)
+                R.id.sendFeedbackMenuItem -> SendFeedback()
+                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.loginMenuItem -> login()
             }
+            mainDrawerLayout.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
         }
 
         syncLayout.setOnClickListener {
@@ -191,11 +197,19 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
-        navigationDrawerListView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            getMainMenuItems(signed)
-        )
+        val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
+        loginMenuItem?.let {
+            it.title = if (signed) {
+                getString(R.string.sign_out)
+            } else {
+                val signInText = getString(R.string.sign_in)
+                val betaText = getString(R.string.beta)
+                val spannable = SpannableString (signInText+betaText)
+                spannable.setSpan(ForegroundColorSpan(Color.RED), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(SuperscriptSpan(), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable
+            }
+        }
     }
 
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->

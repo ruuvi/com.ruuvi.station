@@ -7,6 +7,9 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    app:headerLayout="@layout/drawer_header"
+    app:menu="@menu/menu_main"
     android:background="@android:color/white" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,33 +17,6 @@
         android:layout_width="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/backgroundImageView"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:scaleType="matrix"
-            android:scrollY="150dp"
-            android:src="@drawable/gradient_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/logo" />
-
-        <ListView
-            android:id="@+id/navigationDrawerListView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/networkLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/networkLayout"
             android:layout_width="match_parent"

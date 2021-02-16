@@ -28,6 +28,7 @@
 <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
 <string name="background_notification_scanning_every">Сканирование каждые</string>
 <string name="battery_voltage">Напряжение Батареи</string>
+<string name="beta">beta</string>
 <string name="calibrate">Калибровать</string>
 <string name="calibrated">Откалибровано: %1$s</string>
 <string name="calibration_done">Калибровка закончена!</string>

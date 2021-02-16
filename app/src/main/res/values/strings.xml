@@ -29,6 +29,7 @@
 <string name="background_notification_message">You can disable background scanning in settings</string>
 <string name="background_notification_scanning_every">Scanning every</string>
 <string name="battery_voltage">Battery Voltage</string>
+<string name="beta">beta</string>
 <string name="calibrate">Calibrate</string>
 <string name="calibrated">Calibrated: %1$s</string>
 <string name="calibration_done">Calibration done!</string>
