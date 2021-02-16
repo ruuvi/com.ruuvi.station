@@ -29,9 +29,8 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
             viewModel.submitEmail(emailEditText.text.toString())
         }
 
-        manualCodeButton.setOnClickListener {
-            val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
-            this.findNavController().navigate(action)
+        skipTextView.setOnClickListener {
+            requireActivity().finish()
         }
     }
 

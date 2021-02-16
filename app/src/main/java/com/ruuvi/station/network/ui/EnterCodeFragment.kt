@@ -10,6 +10,8 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.fragment_enter_code.*
+import kotlinx.android.synthetic.main.fragment_enter_code.errorTextView
+import kotlinx.android.synthetic.main.fragment_enter_code.skipTextView
 
 class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
@@ -32,7 +34,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
         viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
             if (it) {
-                activity?.finish()
+                activity?.onBackPressed()
             }
         })
     }
@@ -51,6 +53,10 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
                 enterCodeManuallyEditText.setText(token)
                 submitCodeButton.performClick()
             }
+        }
+
+        skipTextView.setOnClickListener {
+            requireActivity().finish()
         }
     }
 
