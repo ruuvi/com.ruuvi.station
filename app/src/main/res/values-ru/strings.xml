@@ -76,7 +76,7 @@
 <string name="help_db_size">Размер базы данных: %1$,d кБ</string>
 <string name="help_more_to_read_text">Веб-сайт: ruuvi.com\nФорум: f.ruuvi.com\nБлог: blog.ruuvi.com\nTwitter: twitter.com/ruuvicom</string>
 <string name="help_more_to_read_title">ПОЧИТАТЬ ЕЩЕ</string>
-<string name="help_opensource_text">Как и RuuviTag, Ruuvi Station также доступна в исходных кодах: github.com/ruuvi</string>
+<string name="help_opensource_text">Как и сенсоры Ruuvi, Ruuvi Station также доступна в исходных кодах: github.com/ruuvi</string>
 <string name="help_opensource_title">ОТКРЫТЫЙ ИСХОДНЫЙ КОД</string>
 <string name="help_operations_text">Мы разработали приложение так, чтобы оно было интуитивно понятным. В то же время, руководства доступны здесь: ruuvi.com/manuals</string>
 <string name="help_operations_title">РУКОВОДСТВО</string>
@@ -193,8 +193,8 @@
 <string name="sync_confirm">Вы уверены что хотите синхронизировать данные с устройством?</string>
 <string name="tag_name">Имя</string>
 <string name="tag_not_in_range">Датчик не найден</string>
-<string name="tagsettings_sensor_remove">Удалить RuuviTag</string>
-<string name="tagsettings_sensor_remove_confirm">Вы уверены что хотите удалить этот RuuviTag?</string>
+<string name="tagsettings_sensor_remove">Удалить сенсор</string>
+<string name="tagsettings_sensor_remove_confirm">Вы уверены что хотите удалить этот сенсор?</string>
 <string name="temperature">Температура (%1$s)</string>
 <string name="temperature_celsius_name">Цельсий (℃)</string>
 <string name="temperature_celsius_unit">°C</string>
