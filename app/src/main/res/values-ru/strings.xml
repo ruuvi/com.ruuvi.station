@@ -28,7 +28,7 @@
 <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
 <string name="background_notification_scanning_every">Сканирование каждые</string>
 <string name="battery_voltage">Напряжение Батареи</string>
-<string name="beta">beta</string>
+<string name="beta">бета</string>
 <string name="calibrate">Калибровать</string>
 <string name="calibrated">Откалибровано: %1$s</string>
 <string name="calibration_done">Калибровка закончена!</string>
@@ -202,7 +202,6 @@
 <string name="share_sensor_title">Поделиться датчиком Ruuvi</string>
 <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
 <string name="sign_in">Войти</string>
-<string name="sign_in_benefits">Войдя в сеть вы сможете сохранить свои данные в облаке:\n- список датчиков\n- названия датчиков</string>
 <string name="sign_in_check_email">Пожалуйста проверьте email для получения кода активации</string>
 <string name="sign_in_code_hint">Код</string>
 <string name="sign_in_login_button">Войти</string>

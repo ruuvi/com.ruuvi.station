@@ -206,7 +206,8 @@
 <string name="share_sensor_title">Share Ruuvi sensor</string>
 <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
 <string name="sign_in">Sign in</string>
-<string name="sign_in_benefits">Sign in benefits, the information is saved in the cloud:\n- sensors list\n- sensor name</string>
+<string name="sign_in_benefits_description">After signing in, you will be automatically marked as an owner of your nearby Ruuvi sensors. The claimed sensors will be restored after an app re-install.\n\nWith a Ruuvi Gateway router, you\'ll be able to monitor the claimed sensors remotely and share them with your friends.</string>
+<string name="sign_in_benefits_title">Benefits of Ruuvi Network</string>
 <string name="sign_in_check_email">Check your email for an activation code.</string>
 <string name="sign_in_code_hint">Code</string>
 <string name="sign_in_login_button">Login</string>

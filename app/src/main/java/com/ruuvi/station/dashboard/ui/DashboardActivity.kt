@@ -118,7 +118,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> SendFeedback()
                 R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
-                R.id.loginMenuItem -> login()
+                R.id.loginMenuItem -> login(signedIn)
             }
             mainDrawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
@@ -178,9 +178,17 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         })
     }
 
-    private fun login() {
+    private fun login(signedIn: Boolean) {
         if (signedIn == false) {
-            SignInActivity.start(this)
+            val alertDialog = AlertDialog.Builder(this).create()
+            alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
+            alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+            ) { dialog, _ -> dialog.dismiss() }
+            alertDialog.setOnDismissListener {
+                SignInActivity.start(this)
+            }
+            alertDialog.show()
         } else {
             val builder = AlertDialog.Builder(this)
             with(builder)
