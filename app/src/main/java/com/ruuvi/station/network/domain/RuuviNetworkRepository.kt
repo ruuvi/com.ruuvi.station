@@ -188,6 +188,19 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun uploadImage(request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
+        val response = retrofitService.uploadImage(getAuth(token), request)
+        var result: UploadImageResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            var errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
     fun <T>parseError(errorBody: ResponseBody?): T? {
         try {
             val type = object : TypeToken<T>() {}.type

@@ -180,7 +180,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private fun login(signedIn: Boolean) {
         if (signedIn == false) {
-            val alertDialog = AlertDialog.Builder(this).create()
+            val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
             alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)

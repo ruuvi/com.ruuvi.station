@@ -99,4 +99,8 @@
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/rounded_layout</item>
+    </style>
 </resources>

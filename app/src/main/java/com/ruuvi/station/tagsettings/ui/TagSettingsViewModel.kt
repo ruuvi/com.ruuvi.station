@@ -10,6 +10,7 @@ import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.util.*
 
 class TagSettingsViewModel(
@@ -105,6 +106,13 @@ class TagSettingsViewModel(
 
     fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
         interactor.updateTagBackground(tagId, userBackground, defaultBackground)
+        if (userBackground.isNullOrEmpty() == false) {
+            Timber.d("Upload image filename: $userBackground")
+            networkInteractor.uploadImage(tagId, userBackground, handler) {
+                Timber.d("Upload image response: $it")
+                Timber.d("Upload image URL: ${it?.data?.uploadURL}")
+            }
+        }
     }
 
     fun saveOrUpdateAlarmItems() {

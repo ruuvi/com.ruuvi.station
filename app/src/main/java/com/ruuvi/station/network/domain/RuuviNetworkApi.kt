@@ -2,6 +2,7 @@ package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -63,8 +64,22 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @POST("update")
-    suspend fun updateSensor(
+    fun updateSensor(
         @Header("Authorization") auth: String,
         @Body request: UpdateSensorRequest
     ): Response<UpdateSensorResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("upload")
+    suspend fun uploadImage(
+        @Header("Authorization") auth: String,
+        @Body request: UploadImageRequest
+    ): Response<UploadImageResponse>
+
+    @PUT
+    suspend fun uploadImageData(
+        @Url url: String,
+        @Header("Content-Type") type: String,
+        @Body data: RequestBody
+    )
 }
