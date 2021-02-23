@@ -66,31 +66,31 @@ class CsvExporter(
             fileWriter.append('\n')
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
 
-            readings.forEach {
-                fileWriter.append(dateFormat.format(it.createdAt))
+            readings.forEach { reading->
+                fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
-                fileWriter.append(unitsConverter.getTemperatureValue(it.temperature).toString())
+                fileWriter.append(unitsConverter.getTemperatureValue(reading.temperature).toString())
                 fileWriter.append(',')
-                fileWriter.append(unitsConverter.getHumidityValue(it.humidity, it.temperature).toString())
+                fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() })
                 fileWriter.append(',')
-                fileWriter.append(unitsConverter.getPressureValue(it.pressure).toString())
+                fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() })
                 fileWriter.append(',')
-                fileWriter.append(it.rssi.toString())
+                fileWriter.append(reading.rssi.toString())
                 if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
                     fileWriter.append(',')
-                    fileWriter.append(it.accelX.toString())
+                    fileWriter.append(reading.accelX.toString())
                     fileWriter.append(',')
-                    fileWriter.append(it.accelY.toString())
+                    fileWriter.append(reading.accelY.toString())
                     fileWriter.append(',')
-                    fileWriter.append(it.accelZ.toString())
+                    fileWriter.append(reading.accelZ.toString())
                     fileWriter.append(',')
-                    fileWriter.append(it.voltage.toString())
+                    fileWriter.append(reading.voltage.toString())
                 }
                 if (tag?.dataFormat == 5) {
                     fileWriter.append(',')
-                    fileWriter.append(it.movementCounter.toString())
+                    fileWriter.append(reading.movementCounter.toString())
                     fileWriter.append(',')
-                    fileWriter.append(it.measurementSequenceNumber.toString())
+                    fileWriter.append(reading.measurementSequenceNumber.toString())
                 }
                 fileWriter.append('\n')
             }

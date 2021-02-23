@@ -22,4 +22,10 @@ class TagSettingsInteractor(
 
     fun deleteTagsAndRelatives(tag: RuuviTagEntity) =
         tagRepository.deleteTagsAndRelatives(tag)
+
+    fun updateTagName(tagId: String, tagName: String?) =
+        tagRepository.updateTagName(tagId, tagName)
+
+    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) =
+        tagRepository.updateTagBackground(tagId, userBackground, defaultBackground)
 }

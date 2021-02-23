@@ -46,7 +46,7 @@ class AlarmCheckInteractor(
             .forEach { alarm ->
                 val resourceId = getResourceId(alarm, ruuviTag, true)
                 if (resourceId != NOTIFICATION_RESOURCE_ID && canNotify(alarm)) {
-                    sendAlert(alarm.id, ruuviTag.id, ruuviTag.displayName, resourceId)
+                    sendAlert(alarm, ruuviTag.id, ruuviTag.displayName, resourceId)
                 }
             }
     }
@@ -89,19 +89,28 @@ class AlarmCheckInteractor(
                         R.string.alert_notification_temperature_high
                 )
             Alarm.HUMIDITY ->
-                getComparisonResourceId(
-                    tag.humidity,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_humidity_low to
-                        R.string.alert_notification_humidity_high
-                )
+                if (tag.humidity != null) {
+                    getComparisonResourceId(
+                        tag.humidity,
+                        alarm.low to alarm.high,
+                        R.string.alert_notification_humidity_low to
+                            R.string.alert_notification_humidity_high
+                    )
+                } else {
+                    NOTIFICATION_RESOURCE_ID
+                }
             Alarm.PRESSURE ->
-                getComparisonResourceId(
-                    tag.pressure,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_pressure_low to
-                        R.string.alert_notification_pressure_high
-                )
+                if (tag.pressure != null) {
+                    getComparisonResourceId(
+                        tag.pressure,
+                        alarm.low to alarm.high,
+                        R.string.alert_notification_pressure_low to
+                            R.string.alert_notification_pressure_high
+                    )
+                } else {
+                    NOTIFICATION_RESOURCE_ID
+                }
+
             Alarm.RSSI ->
                 getComparisonResourceId(
                     tag.rssi,
@@ -153,36 +162,43 @@ class AlarmCheckInteractor(
         }
     }
 
-    private fun sendAlert(alarmId: Int, tagId: String, tagName: String, notificationResourceId: Int) {
-        Timber.d("sendAlert tag.tagName = $tagName; alarm.id = $alarmId; notificationResourceId = $notificationResourceId")
+    private fun sendAlert(alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int) {
+        Timber.d("sendAlert tag.tagName = $tagName; alarm.id = ${alarm.id}; notificationResourceId = $notificationResourceId")
         createNotificationChannel()
         val notification =
-            createNotification(context, alarmId, tagId, tagName, notificationResourceId)
-        notificationManager.notify(alarmId, notification)
+            createNotification(context, alarm, tagId, tagName, notificationResourceId)
+        notificationManager.notify(alarm.id, notification)
     }
 
-    private fun createNotification(context: Context, alarmId: Int, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
-        val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarmId)
-        val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarmId)
-        val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarmId)
+    private fun createNotification(context: Context, alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
+        val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarm.id)
+        val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarm.id)
+        val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarm.id)
         val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
+        val actionMute = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_mute_for_hour), mutePendingIntent)
 
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         return NotificationCompat
             .Builder(context, CHANNEL_ID)
-            .setContentTitle(tagName)
-            .setTicker(tagName + " " + context.getString(notificationResourceId))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(notificationResourceId)))
-            .setContentText(context.getString(notificationResourceId))
+            .setContentTitle(context.getString(notificationResourceId))
+            .setTicker("$tagName ${context.getString(notificationResourceId)}")
+            .setStyle(
+                NotificationCompat
+                    .BigTextStyle()
+                    .setBigContentTitle(context.getString(notificationResourceId))
+                    .setSummaryText(tagName).
+                    bigText(alarm.customDescription)
+            )
+            .setContentText(alarm.customDescription)
             .setDefaults(Notification.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(tagDetailsPendingIntent)
-            .setDeleteIntent(mutePendingIntent)
             .setLargeIcon(bitmap)
             .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
             .addAction(action)
+            .addAction(actionMute)
             .build()
     }
 

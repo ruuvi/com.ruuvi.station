@@ -6,6 +6,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.util.Utils
 
 class UnitsConverter (
         private val context: Context,
@@ -51,14 +52,16 @@ class UnitsConverter (
         }
     }
 
-    fun getPressureString(pressure: Double): String {
-        val pressureString = if (getPressureUnit() == PressureUnit.PA) {
-            context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())
+    fun getPressureString(pressure: Double?): String {
+        return if (pressure == null) {
+            NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())
+            if (getPressureUnit() == PressureUnit.PA) {
+                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())
+            } else {
+                context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())
+            }
         }
-
-        return pressureString
     }
 
     // Humidity
@@ -73,26 +76,28 @@ class UnitsConverter (
         val converter = HumidityConverter(temperature, humidity/100)
 
         return when (getHumidityUnit()) {
-            HumidityUnit.PERCENT -> humidity
-            HumidityUnit.GM3-> converter.ah
+            HumidityUnit.PERCENT -> Utils.round(humidity, 2)
+            HumidityUnit.GM3-> Utils.round(converter.ah, 2)
             HumidityUnit.DEW -> {
                 when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> converter.Td
-                    TemperatureUnit.KELVIN-> converter.TdK
-                    TemperatureUnit.FAHRENHEIT -> converter.TdF
+                    TemperatureUnit.CELSIUS -> Utils.round(converter.Td ?: 0.0, 2)
+                    TemperatureUnit.KELVIN-> Utils.round(converter.TdK ?: 0.0, 2)
+                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.TdF ?: 0.0, 2)
                 }
             }
         } ?: 0.0
     }
 
-    fun getHumidityString(humidity: Double, temperature: Double): String {
-        val humidityString: String = if (getHumidityUnit() == HumidityUnit.DEW) {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getTemperatureUnitString())
+    fun getHumidityString(humidity: Double?, temperature: Double): String {
+        return if (humidity == null) {
+            NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getHumidityUnitString())
+            if (getHumidityUnit() == HumidityUnit.DEW) {
+                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getTemperatureUnitString())
+            } else {
+                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getHumidityUnitString())
+            }
         }
-
-        return humidityString
     }
 
     fun getSignalString(rssi: Int): String =
@@ -101,4 +106,8 @@ class UnitsConverter (
         } else {
             context.getString(R.string.signal_reading_zero, context.getString(R.string.signal_unit))
         }
+
+    companion object {
+        const val NO_VALUE_AVAILABLE = "-"
+    }
 }

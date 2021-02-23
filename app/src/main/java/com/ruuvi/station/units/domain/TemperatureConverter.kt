@@ -9,7 +9,7 @@ class TemperatureConverter {
         }
 
         fun celsiusToKelvin(celsius: Double): Double {
-            return celsius + 273.15
+            return Utils.round(celsius + 273.15, 2)
         }
     }
 }

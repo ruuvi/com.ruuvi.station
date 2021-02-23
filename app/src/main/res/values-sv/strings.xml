@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<string name="acceleration_reading">%1$,.3f g</string>
 <string name="acceleration_x">Acceleration X</string>
 <string name="acceleration_y">Acceleration Y</string>
 <string name="acceleration_z">Acceleration Z</string>
 <string name="add_tag_not_found">Inga sensorer hittades</string>
 <string name="add_tag_title">Ruuvi sensorer i närheten</string>
 <string name="ago">sedan</string>
+<string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
+<string name="alarm_mute_for_hour">Pausa alarmet i en timme</string>
 <string name="alarm_notification_disable">Inaktivera alarm</string>
 <string name="alert_movement">Rörelse</string>
 <string name="alert_movement_description">Alarmera om rörelse upptäcks</string>
@@ -46,6 +49,7 @@
 <string name="dashboard">Översikt vy</string>
 <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång. Starta om appen för att ändringen ska träda i kraft.</string>
 <string name="dashboard_empty">Översikt vyn är tom</string>
+<string name="data_format">Dataformat</string>
 <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
 <string name="disconnected">Frånkopplad</string>
 <string name="export">EXPORT</string>
@@ -96,6 +100,7 @@
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC Adress</string>
 <string name="mac_copied">MAC-adressen kopierad till urklippet</string>
+<string name="measurement_sequence_number">Mätningssekvensnummer</string>
 <string name="menu_about_help">Om / Hjälp</string>
 <string name="menu_add_new_sensor">Lägg till en ny Sensor</string>
 <string name="menu_app_settings">App Inställningar</string>
@@ -104,6 +109,7 @@
 <string name="min">min</string>
 <string name="minutes">Minuter</string>
 <string name="more_info">MER INFO</string>
+<string name="movement_counter">Rörelseräknare</string>
 <string name="name">NAMN</string>
 <string name="navigation_drawer_close">Stäng navigationslådan</string>
 <string name="navigation_drawer_open">Öppna navigationslådan</string>
@@ -194,9 +200,11 @@
 <string name="temperature_celsius_unit">°C</string>
 <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
 <string name="temperature_fahrenheit_unit">°F</string>
-<string name="temperature_kelvin_name">Kelvin (K)</string>
-<string name="temperature_kelvin_unit">K</string>
+<string name="temperature_kelvin_name">Kelvin (K)</string>
+<string name="temperature_kelvin_unit">K</string>
 <string name="temperature_reading">%1$,.2f%2$s</string>
+<string name="tx_power">Sändningseffekten</string>
+<string name="tx_power_reading">%1$,.0f dBm</string>
 <string name="updated">Uppdaterad %1$s</string>
 <string name="version">Version: %1$s</string>
 <string name="voltage_reading">%1$s %2$s</string>

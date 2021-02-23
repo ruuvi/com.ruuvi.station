@@ -116,24 +116,14 @@
 
                 <TextView
                     android:id="@+id/tagNameTitleTextView"
-                    android:fontFamily="@font/roboto_medium"
-                    android:layout_below="@id/name_header"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:padding="@dimen/tag_settings_text_padding"
+                    style="@style/sensorSettingInfoTitleStyle"
                     android:text="@string/tag_name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/name_header" />
 
                 <TextView
                     android:id="@+id/tagNameInputTextView"
-                    android:gravity="end"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:textSize="16sp"
+                    style="@style/sensorSettingInfoValueStyle"
                     android:clickable="true"
                     android:focusable="true"
                     app:layout_constraintStart_toEndOf="@id/tagNameTitleTextView"
@@ -210,99 +200,117 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     app:layout_constraintTop_toBottomOf="@id/title_mac">
+                    <TextView
+                        android:id="@+id/dataFormatTitleTextView"
+                        android:text="@string/data_format"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/sensorSettingInfoTitleStyle" />
+
+                    <TextView
+                        android:id="@+id/dataFormatTextView"
+                        app:layout_constraintStart_toEndOf="@id/dataFormatTitleTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/sensorSettingInfoValueStyle" />
 
                     <TextView
                         android:id="@+id/title_voltage"
-                        android:fontFamily="@font/roboto_medium"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/battery_voltage"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoTitleStyle"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
 
                     <TextView
                         android:id="@+id/inputVoltageTextView"
-                        android:gravity="end"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:padding="@dimen/tag_settings_text_padding"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/title_voltage"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
 
                     <TextView
                         android:id="@+id/title_x"
-                        android:fontFamily="@font/roboto_medium"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:padding="@dimen/tag_settings_text_padding"
+                        style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_x"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_voltage" />
 
                     <TextView
                         android:id="@+id/xInputTextView"
-                        android:gravity="end"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:padding="@dimen/tag_settings_text_padding"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/title_x"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_voltage" />
 
                     <TextView
                         android:id="@+id/title_y"
-                        android:fontFamily="@font/roboto_medium"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:padding="@dimen/tag_settings_text_padding"
+                        style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_y"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_x" />
 
                     <TextView
                         android:id="@+id/yInputTextView"
-                        android:gravity="end"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:padding="@dimen/tag_settings_text_padding"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/title_y"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_x" />
 
                     <TextView
                         android:id="@+id/title_z"
-                        android:fontFamily="@font/roboto_medium"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:padding="@dimen/tag_settings_text_padding"
+                        style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_z"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_y" />
 
                     <TextView
                         android:id="@+id/zInputTextView"
-                        android:gravity="end"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:padding="@dimen/tag_settings_text_padding"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/title_z"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title_y" />
 
+                    <TextView
+                        android:id="@+id/txPowerTitleTextView"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:text="@string/tx_power"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/title_z" />
+
+                    <TextView
+                        android:id="@+id/txPowerTextView"
+                        style="@style/sensorSettingInfoValueStyle"
+                        app:layout_constraintStart_toEndOf="@id/txPowerTitleTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/title_z" />
+
+                    <TextView
+                        android:id="@+id/movementCounterTitleTextView"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:text="@string/movement_counter"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/movementCounterTextView"
+                        style="@style/sensorSettingInfoValueStyle"
+                        app:layout_constraintStart_toEndOf="@id/movementCounterTitleTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/sequenceNumberTitleTextView"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:text="@string/measurement_sequence_number"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/movementCounterTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/sequenceNumberTextView"
+                        style="@style/sensorSettingInfoValueStyle"
+                        app:layout_constraintStart_toEndOf="@id/sequenceNumberTitleTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/movementCounterTitleTextView" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <Button

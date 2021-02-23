@@ -73,4 +73,21 @@
         <item name="android:linksClickable">true</item>
         <item name="android:textColorLink">@color/href</item>
     </style>
+
+    <style name="sensorSettingInfoTitleStyle">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="sensorSettingInfoValueStyle">
+        <item name="android:gravity">end</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
