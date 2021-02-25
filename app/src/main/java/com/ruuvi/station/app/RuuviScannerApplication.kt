@@ -41,7 +41,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val networkDataSyncInteractor: NetworkDataSyncInteractor by instance()
     private val preferencesRepository: PreferencesRepository by instance()
 
-    private var isInForeground: Boolean = true
+    private var isInForeground: Boolean = false
 
     private val listener: ForegroundListener = object : ForegroundListener {
         override fun onBecameForeground() {

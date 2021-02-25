@@ -14,7 +14,7 @@ class Foreground : ActivityLifecycleCallbacks {
     private val handler = Handler()
     private var check: Runnable? = null
 
-    var isForeground = true
+    var isForeground = false
     val isBackground: Boolean
         get() = !isForeground
 
@@ -34,6 +34,7 @@ class Foreground : ActivityLifecycleCallbacks {
         check?.let { handler.removeCallbacks(it) }
 
         if (wasBackground) {
+            Timber.d("went foreground")
             listeners.forEach {
                 try {
                     it.onBecameForeground()
@@ -52,7 +53,7 @@ class Foreground : ActivityLifecycleCallbacks {
         val runnable = Runnable {
             if (isForeground && paused) {
                 isForeground = false
-                Timber.i("went background")
+                Timber.d("went background")
                 listeners
                     .forEach {
                         try {
