@@ -185,6 +185,7 @@ class NetworkDataSyncInteractor (
 
     private fun updateTags(userInfoData: UserInfoResponseBody) {
         userInfoData.sensors.forEach { sensor ->
+            Timber.d("updateTags: $sensor")
             var tagDb = tagRepository.getTagById(sensor.sensor)
             if (tagDb == null) {
                 tagDb = RuuviTagEntity()

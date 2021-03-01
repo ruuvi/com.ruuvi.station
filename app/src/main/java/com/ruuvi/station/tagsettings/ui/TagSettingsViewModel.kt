@@ -60,6 +60,7 @@ class TagSettingsViewModel(
     private val handler = CoroutineExceptionHandler() { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
             operationStatus.value = exception.message
+            Timber.d("CoroutineExceptionHandler: ${exception.message}")
         }
     }
 

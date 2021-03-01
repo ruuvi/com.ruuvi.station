@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -7,12 +8,15 @@ import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.util.extensions.getEpochSecond
 import kotlinx.coroutines.*
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.File
 import java.lang.Exception
 
 
@@ -188,11 +192,18 @@ class RuuviNetworkRepository
         result
     }
 
-    suspend fun uploadImage(request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
+    suspend fun uploadImage(filename: String, request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
         val response = retrofitService.uploadImage(getAuth(token), request)
         var result: UploadImageResponse? = null
         if (response.isSuccessful) {
             result = response.body()
+            Timber.d("upload response: $result")
+            result?.data?.uploadURL?.let { url->
+                val file = File(Uri.parse(filename).path)
+                val mediaType = MediaType.get(request.type)
+                val body = RequestBody.create(mediaType, file)
+                retrofitService.uploadImageData(url, request.type, body)
+            }
         } else {
             val type = object : TypeToken<ShareSensorResponse>() {}.type
             var errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)

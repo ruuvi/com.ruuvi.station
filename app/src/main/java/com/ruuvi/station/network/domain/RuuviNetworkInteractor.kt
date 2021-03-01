@@ -182,7 +182,7 @@ class  RuuviNetworkInteractor (
         CoroutineScope(Dispatchers.IO).launch(handler) {
             token?.let {
                 val request = UploadImageRequest(tagId, "image/jpeg")
-                val response = networkRepository.uploadImage(request, token)
+                val response = networkRepository.uploadImage(filename, request, token)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
