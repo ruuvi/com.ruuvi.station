@@ -76,7 +76,6 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.math.log
 
 class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
@@ -434,8 +433,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_graph -> {
                 if (!tagPagerScrolling) {
                     invalidateOptionsMenu()

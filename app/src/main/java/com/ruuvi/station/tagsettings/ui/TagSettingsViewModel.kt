@@ -71,17 +71,6 @@ class TagSettingsViewModel(
         networkStatus.value = networkInteractor.getSensorNetworkStatus(tagId)
     }
 
-    fun updateTag() {
-        val tag = tagState.value
-        tag?.let {
-            interactor.updateTag(tag)
-        }
-        tagState.value = getTagById(tagId)
-    }
-
-    fun updateTag(tag: RuuviTagEntity) =
-        interactor.updateTag(tag)
-
     fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
         if (networkStatus.value?.owner == networkInteractor.getEmail()) {
@@ -101,17 +90,16 @@ class TagSettingsViewModel(
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagName(name: String?) = CoroutineScope(Dispatchers.IO).launch {
-        interactor.updateTagName(tagId, name)
-    }
-
     fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
         interactor.updateTagBackground(tagId, userBackground, defaultBackground)
-        if (userBackground.isNullOrEmpty() == false) {
-            Timber.d("Upload image filename: $userBackground")
-            networkInteractor.uploadImage(tagId, userBackground, handler) {
-                Timber.d("Upload image response: $it")
-                Timber.d("Upload image URL: ${it?.data?.uploadURL}")
+        networkStatus.value?.let {
+            if (userBackground.isNullOrEmpty() == false) {
+                Timber.d("Upload image filename: $userBackground")
+                networkInteractor.uploadImage(tagId, userBackground, handler) {
+                }
+            } else if (it.picture.isNotEmpty()){
+                networkInteractor.resetImage(tagId, handler) {
+                }
             }
         }
     }
@@ -159,23 +147,9 @@ class TagSettingsViewModel(
 
     fun statusProcessed() { operationStatus.value = "" }
 
-    fun getSensorData() {
-        val tag = tagState.value?.id
-        if (tag != null) {
-            viewModelScope.launch {
-                networkDataSyncInteractor.syncSensorDataForPeriod(tag, 72)
-            }
-        }
-    }
-
-    fun setUserBackground(path: String) {
-        tagObserve.value?.userBackground = path
-        updateTag()
-    }
-
     fun setName(name: String?) {
-        tagObserve.value?.name = name
-        updateTag()
+        interactor.updateTagName(tagId, name)
+        getTagInfo()
         networkStatus.value?.let {
             networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
                 if (response?.result == "error") {

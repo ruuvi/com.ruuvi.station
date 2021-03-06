@@ -2,10 +2,10 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.3.20'
+        kotlin_version = '1.4.0'
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
-        coroutines_version = "1.3.6"
+        coroutines_version = "1.4.0"
         lifecycle_version = "2.2.0"
         retrofit_version = "2.9.0"
         navigation_version = '2.3.0'

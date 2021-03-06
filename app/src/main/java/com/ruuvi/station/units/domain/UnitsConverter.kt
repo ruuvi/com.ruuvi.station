@@ -29,11 +29,19 @@ class UnitsConverter (
         }
     }
 
-    fun getTemperatureString(temperature: Double): String =
-        context.getString(R.string.temperature_reading, getTemperatureValue(temperature), getTemperatureUnitString())
+    fun getTemperatureString(temperature: Double?): String =
+        if (temperature == null) {
+            NO_VALUE_AVAILABLE
+        } else {
+            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), getTemperatureUnitString())
+        }
 
-    fun getTemperatureStringWithoutUnit(temperature: Double): String =
-        context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "")
+    fun getTemperatureStringWithoutUnit(temperature: Double?): String =
+        if (temperature == null) {
+            NO_VALUE_AVAILABLE
+        } else {
+            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "")
+        }
 
     // Pressure
 
@@ -88,8 +96,8 @@ class UnitsConverter (
         } ?: 0.0
     }
 
-    fun getHumidityString(humidity: Double?, temperature: Double): String {
-        return if (humidity == null) {
+    fun getHumidityString(humidity: Double?, temperature: Double?): String {
+        return if (humidity == null || temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
             if (getHumidityUnit() == HumidityUnit.DEW) {

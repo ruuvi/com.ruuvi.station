@@ -190,6 +190,19 @@ class  RuuviNetworkInteractor (
         }
     }
 
+    fun resetImage(tagId: String, handler: CoroutineExceptionHandler, onResult: (UploadImageResponse?) -> Unit) {
+        val token = getToken()?.token
+        CoroutineScope(Dispatchers.IO).launch(handler) {
+            token?.let {
+                val request = UploadImageRequest.getResetImageRequest(tagId)
+                val response = networkRepository.resetImage(request, token)
+                withContext(Dispatchers.Main) {
+                    onResult(response)
+                }
+            }
+        }
+    }
+
     suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {
         val token = getToken()?.token
         token?.let {

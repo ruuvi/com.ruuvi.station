@@ -1,9 +1,11 @@
 package com.ruuvi.station.network.domain
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.util.extensions.getEpochSecond
@@ -16,13 +18,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.io.File
+import java.io.ByteArrayOutputStream
 import java.lang.Exception
 
 
 class RuuviNetworkRepository
     @VisibleForTesting internal constructor(
-        val dispatcher: CoroutineDispatcher
+        val dispatcher: CoroutineDispatcher,
+        val imageInteractor: ImageInteractor
     )
 {
     val ioScope = CoroutineScope(Dispatchers.IO)
@@ -180,12 +183,15 @@ class RuuviNetworkRepository
     }
 
     suspend fun updateSensor(request: UpdateSensorRequest, token: String): UpdateSensorResponse? = withContext(dispatcher) {
+        Timber.d("updateSensor.request: $request")
         val response = retrofitService.updateSensor(getAuth(token), request)
+        Timber.d("updateSensor.response: $response")
         var result: UpdateSensorResponse? = null
         if (response.isSuccessful) {
             result = response.body()
+            Timber.d("updateSensor.result: $result")
         } else {
-            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            val type = object : TypeToken<UpdateSensorResponse>() {}.type
             var errorResponse: UpdateSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
@@ -199,14 +205,34 @@ class RuuviNetworkRepository
             result = response.body()
             Timber.d("upload response: $result")
             result?.data?.uploadURL?.let { url->
-                val file = File(Uri.parse(filename).path)
-                val mediaType = MediaType.get(request.type)
-                val body = RequestBody.create(mediaType, file)
-                retrofitService.uploadImageData(url, request.type, body)
+                val fileUri = Uri.parse(filename)
+                val bitmap = imageInteractor.getImage(fileUri)
+                bitmap?.let {
+                    val stream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    val mediaType = MediaType.get(request.type)
+                    val body = RequestBody.create(mediaType, stream.toByteArray())
+                    retrofitService.uploadImageData(url, request.type, body)
+                    bitmap.recycle()
+                }
             }
         } else {
             val type = object : TypeToken<ShareSensorResponse>() {}.type
-            var errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            val errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun resetImage(request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
+        val response = retrofitService.uploadImage(getAuth(token), request)
+        var result: UploadImageResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+            Timber.d("reset response: $result")
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            val errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result

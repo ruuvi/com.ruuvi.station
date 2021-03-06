@@ -27,6 +27,7 @@ public class RuuviTagEntity extends BaseModel {
     @Column
     private String name;
     @Column
+    @Nullable
     private Double temperature;
     @Column
     @Nullable

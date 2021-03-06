@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.ruuvi.station.R;
-import com.ruuvi.station.database.tables.RuuviTagEntity;
 import com.ruuvi.station.tag.domain.RuuviTag;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,19 +52,6 @@ public class Utils {
         return bitmap;
     }
 
-    public static Bitmap getBackground(Context context, RuuviTagEntity tag) {
-        if (tag.getUserBackground() != null) {
-            try {
-                Uri uri = Uri.parse(tag.getUserBackground());
-                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            } catch (Exception e) {
-                Timber.e("Could not set user background");
-            }
-        }
-
-        return BitmapFactory.decodeResource(context.getResources(), getDefaultBackground(tag.getDefaultBackground()));
-    }
-
     public static Bitmap getBackground(Context context, RuuviTag tag) {
         if (tag.getUserBackground() != null) {
             try {
@@ -84,7 +70,7 @@ public class Utils {
         return ContextCompat.getDrawable(context, getDefaultBackground(number));
     }
 
-    private static int getDefaultBackground(int number) {
+    public static int getDefaultBackground(int number) {
         switch (number) {
             case 1:
                 return R.drawable.bg2;

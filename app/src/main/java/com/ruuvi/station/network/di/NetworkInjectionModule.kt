@@ -8,7 +8,7 @@ import org.kodein.di.generic.*
 
 object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
-        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO) }
+        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance()) }
 
         bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance()) }
 
@@ -17,7 +17,7 @@ object NetworkInjectionModule {
         bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance())
         }
 
         bind<EmailEnterViewModel>() with provider {

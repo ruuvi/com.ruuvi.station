@@ -1,10 +1,12 @@
 package com.ruuvi.station.network.domain
 
+import android.net.Uri
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
@@ -23,7 +25,8 @@ import java.util.*
 class NetworkDataSyncInteractor (
     private val preferencesRepository: PreferencesRepository,
     private val tagRepository: TagRepository,
-    private val networkInteractor: RuuviNetworkInteractor
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val imageInteractor: ImageInteractor
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -183,7 +186,7 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
-    private fun updateTags(userInfoData: UserInfoResponseBody) {
+    private suspend fun updateTags(userInfoData: UserInfoResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             var tagDb = tagRepository.getTagById(sensor.sensor)
@@ -200,6 +203,21 @@ class NetworkDataSyncInteractor (
                 tagDb.updateAt = Date()
                 if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
                 tagDb.update()
+            }
+            if (sensor.picture.isNullOrEmpty() == false) {
+                try {
+                    val imageFile = imageInteractor.downloadImage(
+                        "cloud_${sensor.sensor}",
+                        sensor.picture
+                    )
+                    tagRepository.updateTagBackground(
+                        sensor.sensor,
+                        Uri.fromFile(imageFile).toString(),
+                        null
+                    )
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to load image: ${sensor.picture}")
+                }
             }
         }
     }

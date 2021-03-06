@@ -4,6 +4,5 @@ typealias UpdateSensorResponse = RuuviNetworkResponse<UpdateSensorResponseBody>
 
 class UpdateSensorResponseBody (
     val sensor: String,
-    val name: String,
-    val public: Boolean? = null
+    val name: String
 )

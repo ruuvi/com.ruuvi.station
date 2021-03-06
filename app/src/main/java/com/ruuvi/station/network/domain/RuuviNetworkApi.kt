@@ -64,7 +64,7 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @POST("update")
-    fun updateSensor(
+    suspend fun updateSensor(
         @Header("Authorization") auth: String,
         @Body request: UpdateSensorRequest
     ): Response<UpdateSensorResponse>
