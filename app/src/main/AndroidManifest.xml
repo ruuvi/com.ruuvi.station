@@ -33,6 +33,7 @@
         <activity
             android:name=".tagdetails.ui.TagDetailsActivity"
             android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|locale"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
         <activity
             android:name=".tagsettings.ui.TagSettingsActivity"
