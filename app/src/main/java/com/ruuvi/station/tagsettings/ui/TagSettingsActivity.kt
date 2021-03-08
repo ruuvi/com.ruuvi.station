@@ -3,17 +3,14 @@ package com.ruuvi.station.tagsettings.ui
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
-import android.graphics.Bitmap
-import android.graphics.Matrix
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputFilter
 import android.text.InputType
-import android.util.DisplayMetrics
 import android.view.*
-import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -24,15 +21,17 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.exifinterface.media.ExifInterface
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -42,8 +41,6 @@ import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.activity_tag_settings.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -59,7 +56,6 @@ import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 import kotlin.math.round
 
-@ExperimentalCoroutinesApi
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -73,6 +69,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private val repository: TagRepository by instance()
     private val humidityCalibrationInteractor: HumidityCalibrationInteractor by instance()
     private val unitsConverter: UnitsConverter by instance()
+    private val imageInteractor: ImageInteractor by instance()
     private var timer: Timer? = null
 
     private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
@@ -91,24 +88,70 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagFlow.collect { tag ->
-                tag?.let {
-                    isTagFavorite(it)
-                    setupTagName(it)
-                    setupInputMac(it)
-                    setupTagImage(it)
-                    calibrateHumidity(it)
-                    updateReadings(it)
-                }
-            }
-        }
+        setupViewModel()
 
-        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+        setupUI()
+    }
 
+    private fun setupUI() {
         setupAlarmItems()
 
         removeTagButton.setDebouncedOnClickListener { delete() }
+
+        claimTagButton.setDebouncedOnClickListener {
+            viewModel.claimSensor()
+        }
+
+        shareTagButton.setDebouncedOnClickListener {
+            ShareSensorActivity.start(this, viewModel.tagId )
+        }
+    }
+
+    private fun setupViewModel() {
+
+        viewModel.tagObserve.observe(this, Observer {  tag ->
+            tag?.let {
+                isTagFavorite(it)
+                setupTagName(it)
+                setupInputMac(it)
+                setupTagImage(it)
+                calibrateHumidity(it)
+                updateReadings(it)
+            }
+        })
+
+        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+
+        viewModel.userLoggedInObserve.observe(this, Observer {
+            if (it == true) {
+                claimTagButton.visibility = View.VISIBLE
+                shareTagButton.visibility = View.VISIBLE
+                networkLayout.visibility = View.VISIBLE
+            } else {
+                claimTagButton.visibility = View.GONE
+                shareTagButton.visibility = View.GONE
+                networkLayout.visibility = View.GONE
+            }
+        })
+
+        viewModel.sensorOwnedByUserObserve.observe(this, Observer {
+            shareTagButton.isEnabled = it
+        })
+
+        viewModel.isNetworkTagObserve.observe(this, Observer {
+            claimTagButton.isEnabled = !it
+        })
+
+        viewModel.operationStatusObserve.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.statusProcessed()
+            }
+        })
+
+        viewModel.sensorOwnerObserve.observe(this, Observer {
+            ownerValueTextView.text = it ?: "None"
+        })
     }
 
     override fun onResume() {
@@ -130,18 +173,19 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             if (viewModel.file != null) {
-                val rotation = getCameraPhotoOrientation(viewModel.file)
-                resize(viewModel.file, rotation)
-                viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
+                val rotation = imageInteractor.getCameraPhotoOrientation(viewModel.file)
+                imageInteractor.resize(currentPhotoPath, viewModel.file, rotation)
+                viewModel.tagObserve.value?.userBackground = viewModel.file.toString()
                 viewModel.updateTagBackground(viewModel.file.toString(), null)
-                val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+                val background = imageInteractor.getImage(backgroundUri)
                 tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.let {
                 try {
                     val path = data.data ?: return
-                    if (!isImage(path)) {
+                    if (!imageInteractor.isImage(path)) {
                         Toast.makeText(this, getString(R.string.file_not_supported), Toast.LENGTH_SHORT).show()
                         return
                     }
@@ -169,11 +213,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                             output.flush()
                         }
                         val uri = Uri.fromFile(photoFile)
-                        val rotation = getCameraPhotoOrientation(uri)
-                        resize(uri, rotation)
-                        viewModel.tagFlow.value?.userBackground = uri.toString()
+                        val rotation = imageInteractor.getCameraPhotoOrientation(uri)
+                        imageInteractor.resize(currentPhotoPath, uri, rotation)
+                        viewModel.tagObserve.value?.userBackground = uri.toString()
                         viewModel.updateTagBackground(uri.toString(), null)
-                        val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
+                        val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+                        val background = imageInteractor.getImage(backgroundUri)
                         tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
@@ -187,7 +232,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, unitsConverter)
-            viewModel.tagFlow.value?.id?.let {
+            viewModel.tagObserve.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -197,7 +242,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        viewModel.tagFlow.value?.let {
+        viewModel.tagObserve.value?.let {
             if (it.isFavorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
             }
@@ -248,12 +293,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             builder.setPositiveButton(getString(R.string.ok)) { _: DialogInterface?, _: Int ->
                 val newValue = input.text.toString()
                 if (newValue.isNullOrEmpty()) {
-                    tag.name = null
+                    viewModel.setName(null)
                 } else {
-                    tag.name = input.text.toString()
+                    viewModel.setName(input.text.toString())
                 }
-                viewModel.updateTagName(tag.name)
-                tagNameInputTextView.text = tag.name
             }
 
             builder.setNegativeButton(getString(R.string.cancel), null)
@@ -295,7 +338,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupTagImage(tag: RuuviTagEntity) {
-        tagImageView.setImageBitmap(Utils.getBackground(this, tag))
+        if (viewModel.tagObserve.value?.userBackground.isNullOrEmpty() == false) {
+            val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+            val background = imageInteractor.getImage(backgroundUri)
+            tagImageView.setImageBitmap(background)
+        } else {
+            tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(tag.defaultBackground)))
+        }
 
         tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
@@ -442,7 +491,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             for (alarm: AlarmItem in viewModel.alarmItems) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
-            viewModel.tagFlow.value?.let { viewModel.deleteTag(it) }
+            viewModel.tagObserve.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 
@@ -453,16 +502,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     private fun showImageSourceSheet() {
         val sheetDialog = BottomSheetDialog(this)
-
         val listView = ListView(this)
-
         val menu = arrayOf(
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
-
         listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
-
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
                 0 -> dispatchTakePictureIntent()
@@ -470,15 +515,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
             sheetDialog.dismiss()
         }
-
         sheetDialog.setContentView(listView)
-
         sheetDialog.show()
     }
 
     private var currentPhotoPath: String? = null
 
-    @Throws(IOException::class)
     private fun createImageFile(): File {
         val imageFileName = "background_" + viewModel.tagId
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -524,84 +566,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture)), REQUEST_GALLERY_PHOTO)
         }
-
-    private fun isImage(uri: Uri?): Boolean {
-        val mime = uri?.let { getMimeType(it) }
-        return mime == "jpeg" || mime == "jpg" || mime == "png"
-    }
-
-    private fun getMimeType(uri: Uri): String? {
-        val contentResolver = applicationContext.contentResolver
-        val mime = MimeTypeMap.getSingleton()
-        return mime.getExtensionFromMimeType(contentResolver.getType(uri))
-    }
-
-    private fun getCameraPhotoOrientation(file: Uri?): Int {
-        var rotate = 0
-        file?.let {
-            try {
-                applicationContext.contentResolver.openInputStream(file).use { inputStream ->
-                    val exif = ExifInterface(inputStream!!)
-
-                    when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                        ExifInterface.ORIENTATION_ROTATE_270 -> rotate = 270
-                        ExifInterface.ORIENTATION_ROTATE_180 -> rotate = 180
-                        ExifInterface.ORIENTATION_ROTATE_90 -> rotate = 90
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Could not get orientation of image")
-            }
-        }
-
-        return rotate
-    }
-
-    private fun resize(uri: Uri?, rotation: Int) {
-        try {
-            val displayMetrics = DisplayMetrics()
-
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-            val targetHeight = 1440
-
-            val targetWidth = 960
-
-            var bitmap = MediaStore.Images.Media.getBitmap(applicationContext.contentResolver, uri)
-
-            bitmap = rotate(bitmap, rotation.toFloat())
-
-            var out: Bitmap
-
-            out = if ((targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt() > targetWidth) {
-                Bitmap.createScaledBitmap(bitmap, (targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt(), targetHeight, false)
-            } else {
-                Bitmap.createScaledBitmap(bitmap, targetWidth, (targetWidth.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt(), false)
-            }
-
-            var x = out.width / 2 - targetWidth / 2
-
-            if (x < 0) x = 0
-
-            out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight)
-
-            val file = currentPhotoPath?.let { File(it) }
-
-            val outputStream = FileOutputStream(file)
-
-            out.compress(Bitmap.CompressFormat.JPEG, 60, outputStream)
-
-            outputStream.flush()
-
-            outputStream.close()
-
-            bitmap.recycle()
-
-            out.recycle()
-        } catch (e: Exception) {
-            Timber.e(e, "Could not resize background image")
-        }
-    }
 
     inner class AlarmItem(
         var name: String,
@@ -759,12 +723,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             val settingsIntent = Intent(context, TagSettingsActivity::class.java)
             settingsIntent.putExtra(TAG_ID, tagId)
             context.startActivityForResult(settingsIntent, requestCode)
-        }
-
-        fun rotate(bitmap: Bitmap, degrees: Float): Bitmap {
-            val matrix = Matrix()
-            matrix.postRotate(degrees)
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         }
     }
 }

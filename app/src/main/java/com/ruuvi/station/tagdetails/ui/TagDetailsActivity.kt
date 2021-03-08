@@ -16,18 +16,23 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.SuperscriptSpan
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -46,6 +51,8 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.network.data.NetworkSyncResultType
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
@@ -61,9 +68,11 @@ import kotlinx.android.synthetic.main.activity_tag_details.toolbar
 import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
 import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
 import kotlinx.android.synthetic.main.content_tag_details.tagPager
+import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
@@ -89,7 +98,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private val permissionsHelper = PermissionsHelper(this)
     private var tagPagerScrolling = false
     private var timer: Timer? = null
-
+    private var signedIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -247,27 +256,119 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
+        updateMenu(signedIn)
 
-        drawerListView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            getMainMenuItems()
-        )
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
+                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.aboutMenuItem -> AboutActivity.start(this)
+                R.id.sendFeedbackMenuItem -> SendFeedback()
+                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.loginMenuItem -> login(signedIn)
+            }
+            mainDrawerLayout.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
+        }
 
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            mainDrawerLayout.closeDrawers()
-            when (i) {
-                0 -> AddTagActivity.start(this)
-                1 -> AppSettingsActivity.start(this)
-                2 -> AboutActivity.start(this)
-                3 -> SendFeedback()
-                4 -> OpenUrl(WEB_URL)
+        syncLayout.setOnClickListener {
+            viewModel.networkDataSync()
+        }
+
+        viewModel.syncResultObserve.observe(this, Observer {syncResult ->
+            val message = when (syncResult.type) {
+                NetworkSyncResultType.NONE -> ""
+                NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
+                NetworkSyncResultType.EXCEPTION -> getString(R.string.network_sync_result_exception, syncResult.errorMessage)
+                NetworkSyncResultType.NOT_LOGGED -> getString(R.string.network_sync_result_not_logged)
+            }
+            if (message.isNotEmpty()) {
+                Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
+                viewModel.syncResultShowed()
+            }
+        })
+
+        viewModel.syncInProgressObserve.observe(this, Observer {
+            if (it) {
+                Timber.d("Sync in progress")
+                syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
+            } else {
+                Timber.d("Sync not in progress")
+                syncNetworkButton.clearAnimation()
+            }
+        })
+
+        viewModel.userEmail.observe(this, Observer {
+            var user = it
+            if (user.isNullOrEmpty()) {
+                user = getString(R.string.none)
+                signedIn = false
+            } else {
+                signedIn = true
+            }
+            updateMenu(signedIn)
+            loggedUserTextView.text = getString(R.string.network_user, user)
+        })
+
+        viewModel.syncStatus.observe(this, Observer {syncStatus ->
+            if (syncStatus.syncInProgress) {
+                syncStatusTextView.text = getString(R.string.connected_reading_info)
+            } else {
+                val lastSyncString =
+                if (syncStatus.lastSync == Long.MIN_VALUE) {
+                    getString(R.string.never)
+                } else {
+                    Date(syncStatus.lastSync).describingTimeSince(this)
+                }
+                syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
+            }
+        })
+    }
+
+    private fun login(signedIn: Boolean) {
+        if (signedIn == false) {
+            val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+            alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
+            alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+            ) { dialog, _ -> dialog.dismiss() }
+            alertDialog.setOnDismissListener {
+                SignInActivity.start(this)
+            }
+            alertDialog.show()
+        } else {
+            val builder = AlertDialog.Builder(this)
+            with(builder)
+            {
+                setMessage(getString(R.string.sign_out_confirm))
+                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                    viewModel.signOut()
+                }
+                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                show()
             }
         }
     }
 
-    @Suppress("DEPRECATION")
+    private fun updateMenu(signed: Boolean) {
+        val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
+        loginMenuItem?.let {
+            it.title = if (signed) {
+                getString(R.string.sign_out)
+            } else {
+                val signInText = getString(R.string.sign_in)
+                val betaText = getString(R.string.beta)
+                val spannable = SpannableString (signInText+betaText)
+                spannable.setSpan(ForegroundColorSpan(Color.RED), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(SuperscriptSpan(), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(RelativeSizeSpan(0.75f), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (adapter.count > 0) {
             menuInflater.inflate(R.menu.menu_details, menu)
@@ -332,8 +433,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_graph -> {
                 if (!tagPagerScrolling) {
                     invalidateOptionsMenu()
@@ -373,6 +474,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         timer = Timer("TagDetailsActivityTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.checkForAlarm()
+            viewModel.updateNetworkStatus()
         }
     }
 

@@ -1,62 +1,107 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import java.util.ArrayList
+import kotlinx.coroutines.*
+import timber.log.Timber
+import java.util.*
 
-@ExperimentalCoroutinesApi
 class TagSettingsViewModel(
     val tagId: String,
     private val interactor: TagSettingsInteractor,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
 
     var tagAlarms: List<Alarm> = Alarm.getForTag(tagId)
     var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
     var file: Uri? = null
 
-    private val tagState = MutableStateFlow<RuuviTagEntity?>(null)
-    val tagFlow: StateFlow<RuuviTagEntity?> = tagState
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
 
-    init {
-        getTagInfo()
+    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
+    val tagObserve: LiveData<RuuviTagEntity?> = tagState
+
+    private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
+    val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
+
+    private val operationStatus = MutableLiveData<String> ("")
+    val operationStatusObserve: LiveData<String> = operationStatus
+
+    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it?.owner == networkInteractor.getEmail()
+    }
+
+    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
+        it?.owner
+    }
+
+    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it != null
     }
 
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
-            tagState.value = getTagById(tagId)
+            val tagInfo = getTagById(tagId)
+            withContext(Dispatchers.Main) {
+                tagState.value = tagInfo
+            }
+        }
+    }
+
+    private val handler = CoroutineExceptionHandler() { _, exception ->
+        CoroutineScope(Dispatchers.Main).launch {
+            operationStatus.value = exception.message
+            Timber.d("CoroutineExceptionHandler: ${exception.message}")
         }
     }
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun updateTag(tag: RuuviTagEntity) =
-        interactor.updateTag(tag)
+    fun updateNetworkStatus() {
+        networkStatus.value = networkInteractor.getSensorNetworkStatus(tagId)
+    }
 
-    fun deleteTag(tag: RuuviTagEntity) =
+    fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
+        if (networkStatus.value?.owner == networkInteractor.getEmail()) {
+            networkInteractor.unclaimSensor(tagId)
+        } else if (!networkStatus.value?.owner.isNullOrEmpty()) {
+            networkInteractor.getEmail()?.let { email ->
+                networkInteractor.unshareSensor(email, tagId, handler) {response->
+                    if (response?.result == "error") {
+                        operationStatus.value = response.error
+                    }
+                }
+            }
+        }
+    }
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagName(name: String?) = CoroutineScope(Dispatchers.IO).launch {
-        interactor.updateTagName(tagId, name)
-    }
-
     fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
         interactor.updateTagBackground(tagId, userBackground, defaultBackground)
+        networkStatus.value?.let {
+            if (userBackground.isNullOrEmpty() == false) {
+                Timber.d("Upload image filename: $userBackground")
+                networkInteractor.uploadImage(tagId, userBackground, handler) {
+                }
+            } else if (it.picture.isNotEmpty()){
+                networkInteractor.resetImage(tagId, handler) {
+                }
+            }
+        }
     }
 
     fun saveOrUpdateAlarmItems() {
@@ -82,6 +127,34 @@ class TagSettingsViewModel(
             if (!alarmItem.isChecked) {
                 val notificationId = alarmItem.alarm?.id ?: -1
                 removeNotificationById(notificationId)
+            }
+        }
+    }
+
+    fun claimSensor() {
+        val tag = tagState.value
+        if (tag != null) {
+            networkInteractor.claimSensor(tag) {
+                updateNetworkStatus()
+                if (it == null || it.error.isNullOrEmpty() == false) {
+                    operationStatus.value = "Failed to claim tag: ${it?.error}"
+                } else {
+                    operationStatus.value = "Tag successfully claimed"
+                }
+            }
+        }
+    }
+
+    fun statusProcessed() { operationStatus.value = "" }
+
+    fun setName(name: String?) {
+        interactor.updateTagName(tagId, name)
+        getTagInfo()
+        networkStatus.value?.let {
+            networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
+                if (response?.result == "error") {
+                    operationStatus.value = response.error
+                }
             }
         }
     }

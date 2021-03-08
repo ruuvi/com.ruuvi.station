@@ -8,6 +8,8 @@ import com.ruuvi.station.dashboard.di.DashboardActivityInjectionModule
 import com.ruuvi.station.firebase.di.FirebaseInjectionModule
 import com.ruuvi.station.gateway.di.GatewayInjectionModule
 import com.ruuvi.station.graph.di.GraphInjectionModule
+import com.ruuvi.station.image.di.ImageInjectionModule
+import com.ruuvi.station.network.di.NetworkInjectionModule
 import com.ruuvi.station.settings.di.SettingsInjectionModule
 import com.ruuvi.station.startup.di.StartupActivityInjectionModule
 import com.ruuvi.station.tag.di.RuuviTagInjectionModule
@@ -36,5 +38,7 @@ object AppInjectionModules {
         import(AlarmModule.module)
         import(UnitsInjectionModule.module)
         import(GraphInjectionModule.module)
+        import(NetworkInjectionModule.module)
+        import(ImageInjectionModule.module)
     }
 }

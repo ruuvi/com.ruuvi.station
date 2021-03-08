@@ -11,6 +11,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ruuvi.station.bluetooth.FoundRuuviTag;
 import com.ruuvi.station.database.LocalDatabase;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -85,6 +86,24 @@ public class TagSensorReading extends BaseModel {
         this.movementCounter = tag.getMovementCounter();
         this.measurementSequenceNumber = tag.getMeasurementSequenceNumber();
         this.createdAt = new Date();
+    }
+
+    public TagSensorReading(FoundRuuviTag tag, RuuviTagEntity tagEntry, Date timestamp) {
+        this.ruuviTagId = tag.getId();
+        this.temperature = tag.getTemperature() != null ? tag.getTemperature() : 0.0;
+        this.humidity = tag.getHumidity() != null ? tag.getHumidity() : 0.0;
+        this.humidityOffset = tagEntry.getHumidityOffset();
+        this.pressure = tag.getPressure() != null ? tag.getPressure() : 0.0;
+        this.rssi = tag.getRssi() != null ? tag.getRssi() : 0;
+        this.accelX = tag.getAccelX() != null ? tag.getAccelX() : 0.0;
+        this.accelY = tag.getAccelY() != null ? tag.getAccelY() : 0.0;
+        this.accelZ = tag.getAccelZ() != null ? tag.getAccelZ() : 0.0;
+        this.voltage = tag.getVoltage() != null ? tag.getVoltage() : 0.0;
+        this.dataFormat = tag.getDataFormat() != null ? tag.getDataFormat() : 0;
+        this.txPower = tag.getTxPower() != null ? tag.getTxPower() : 0;
+        this.movementCounter = tag.getMovementCounter() != null ? tag.getMovementCounter() : 0;
+        this.measurementSequenceNumber = tag.getMeasurementSequenceNumber() != null ? tag.getMeasurementSequenceNumber() : 0;
+        this.createdAt = timestamp;
     }
 
     public static List<TagSensorReading> getForTag(String id) {

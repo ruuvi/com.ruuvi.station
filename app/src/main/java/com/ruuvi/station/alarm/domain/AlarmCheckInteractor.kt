@@ -82,12 +82,16 @@ class AlarmCheckInteractor(
     private fun compareWithAlarmRange(alarm: Alarm, tag: RuuviTag): Int {
         return when (alarm.type) {
             Alarm.TEMPERATURE ->
-                getComparisonResourceId(
+                if (tag.temperature != null) {
+                    getComparisonResourceId(
                     tag.temperature,
                     alarm.low to alarm.high,
                     R.string.alert_notification_temperature_low to
                         R.string.alert_notification_temperature_high
-                )
+                    )
+                } else {
+                    NOTIFICATION_RESOURCE_ID
+                }
             Alarm.HUMIDITY ->
                 if (tag.humidity != null) {
                     getComparisonResourceId(

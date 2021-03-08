@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_in_navigation"
+    app:startDestination="@id/emailEnterFragment">
+
+    <fragment
+        android:id="@+id/emailEnterFragment"
+        android:name="com.ruuvi.station.network.ui.EmailEnterFragment"
+        android:label="fragment_email_enter"
+        tools:layout="@layout/fragment_email_enter" >
+        <action
+            android:id="@+id/action_emailEnterFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterCodeFragment"
+        android:name="com.ruuvi.station.network.ui.EnterCodeFragment"
+        android:label="Enter code"
+        tools:layout="@layout/fragment_enter_code">
+        <argument
+            android:name="token"
+            app:argType="string"
+            app:nullable="true" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:action="ACTION_VIEW"
+            app:uri="https://network.ruuvi.com/verify?token={token}" />
+    </fragment>
+</navigation>

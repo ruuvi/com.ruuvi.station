@@ -12,9 +12,12 @@ import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.test.FakeScanResultsSender
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
@@ -34,6 +37,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
+    private val networkInteractor: RuuviNetworkInteractor by instance()
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor by instance()
     private val preferencesRepository: PreferencesRepository by instance()
 
     private var isInForeground: Boolean = false
@@ -42,6 +47,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         override fun onBecameForeground() {
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
+            updateNetwork()
         }
 
         override fun onBecameBackground() {
@@ -75,6 +81,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         defaultOnTagFoundListener.isForeground = isInForeground
         foreground.addListener(listener)
+
+        updateNetwork()
     }
 
     private fun setupDependencyInjection() {
@@ -87,6 +95,12 @@ class RuuviScannerApplication : Application(), KodeinAware {
                     this@RuuviScannerApplication.getSystemService(Context.POWER_SERVICE) as PowerManager
                 }
             })
+        }
+    }
+
+    private fun updateNetwork() {
+        if (networkInteractor.signedIn && Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
+            networkDataSyncInteractor.syncNetworkData()
         }
     }
 
