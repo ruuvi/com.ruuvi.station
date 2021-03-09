@@ -4,6 +4,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.ruuvi.station.R
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.data.FeatureFlag
 import timber.log.Timber
@@ -16,6 +17,18 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider {
             minimumFetchIntervalInSeconds = 3600
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Timber.d("fetch remoteConfig fetch ${task.result}")
+
+                // After config data is successfully fetched, it must be activated before newly fetched values are returned.
+                } else {
+                task.exception
+                Timber.d("fetch remoteConfig failed ${task.exception}")
+            }
+        }
     }
 
     override val priority: Int = MAX_PRIORITY
