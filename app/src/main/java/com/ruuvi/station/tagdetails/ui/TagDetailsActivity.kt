@@ -50,7 +50,9 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
@@ -92,6 +94,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         TagsFragmentPagerAdapter(supportFragmentManager)
     }
 
+    private val runtimeBehavior: RuntimeBehavior by instance()
     private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
@@ -156,6 +159,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 viewModel.pageSelected(position)
             }
         })
+
+        Snackbar.make(window.decorView.rootView, "Network enabled = ${runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)}", Snackbar.LENGTH_LONG).show()
     }
 
     private fun setupViewModel() {

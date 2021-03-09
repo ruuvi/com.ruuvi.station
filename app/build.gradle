@@ -143,6 +143,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.2'
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation 'com.google.firebase:firebase-config-ktx:20.0.4'
 
     // Retrofit2
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

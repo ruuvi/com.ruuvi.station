@@ -5,6 +5,7 @@ import com.ruuvi.station.addtag.di.AddTagActivityInjectionModule
 import com.ruuvi.station.alarm.di.AlarmModule
 import com.ruuvi.station.bluetooth.di.BluetoothScannerInjectionModule
 import com.ruuvi.station.dashboard.di.DashboardActivityInjectionModule
+import com.ruuvi.station.feature.di.FeatureInjectionModule
 import com.ruuvi.station.firebase.di.FirebaseInjectionModule
 import com.ruuvi.station.gateway.di.GatewayInjectionModule
 import com.ruuvi.station.graph.di.GraphInjectionModule
@@ -40,5 +41,6 @@ object AppInjectionModules {
         import(GraphInjectionModule.module)
         import(NetworkInjectionModule.module)
         import(ImageInjectionModule.module)
+        import(FeatureInjectionModule.module)
     }
 }
