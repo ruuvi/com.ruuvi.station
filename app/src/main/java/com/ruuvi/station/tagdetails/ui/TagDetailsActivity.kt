@@ -50,7 +50,9 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
@@ -92,6 +94,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         TagsFragmentPagerAdapter(supportFragmentManager)
     }
 
+    private val runtimeBehavior: RuntimeBehavior by instance()
     private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
@@ -353,8 +356,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
+
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
+            it.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {

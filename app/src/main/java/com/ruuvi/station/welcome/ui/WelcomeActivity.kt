@@ -1,4 +1,4 @@
-package com.ruuvi.station.feature.ui
+package com.ruuvi.station.welcome.ui
 
 import android.content.Context
 import android.content.Intent

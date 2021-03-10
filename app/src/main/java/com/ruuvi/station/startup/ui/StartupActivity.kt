@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.feature.ui.WelcomeActivity
-import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.welcome.ui.WelcomeActivity
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi

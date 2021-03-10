@@ -21,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
@@ -34,6 +36,7 @@ import kotlinx.android.synthetic.main.content_dashboard.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.MutableList
@@ -45,6 +48,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val viewModel: DashboardActivityViewModel by viewModel()
 
+    private val runtimeBehavior: RuntimeBehavior by instance()
     private lateinit var permissionsHelper: PermissionsHelper
     private var tags: MutableList<RuuviTag> = arrayListOf()
     private lateinit var adapter: RuuviTagAdapter
@@ -206,8 +210,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
+
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
+            it.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {

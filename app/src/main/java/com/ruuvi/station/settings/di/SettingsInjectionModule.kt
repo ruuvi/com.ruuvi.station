@@ -13,7 +13,7 @@ object SettingsInjectionModule {
 
         bind<AppSettingsGraphViewModel>() with provider { AppSettingsGraphViewModel(instance()) }
 
-        bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance()) }
+        bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
 
         bind<AppSettingsGatewayViewModel>() with provider { AppSettingsGatewayViewModel(instance()) }
 
@@ -24,6 +24,8 @@ object SettingsInjectionModule {
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
 
         bind<AppSettingsLocaleViewModel>() with provider { AppSettingsLocaleViewModel(instance(), instance()) }
+
+        bind<AppSettingsExperimentalViewModel>() with provider { AppSettingsExperimentalViewModel(instance()) }
 
         bind<AppSettingsInteractor>() with singleton {
             AppSettingsInteractor(instance(), instance(), instance())

@@ -98,6 +98,7 @@
 <string name="humidity_relative_unit">%</string>
 <string name="language_english">English</string>
 <string name="language_finnish">Suomi</string>
+<string name="language_french">Français</string>
 <string name="language_russian">Русский</string>
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC адрес</string>
@@ -182,6 +183,7 @@
 <string name="settings_chart_interval_description">Установите интервал между точками на графиках от 1 до 60 минут. Чем меньше значение, тем выше точность отображения. Но в тоже время повышаются требования к быстродействию вашего телефона.</string>
 <string name="settings_chart_view_period">Диапазон отображения графиков</string>
 <string name="settings_chart_view_period_description">Установите диапазон для отображения на графиках от 1-го до 72-х часов</string>
+<string name="settings_experimental">Экспериментальные функции</string>
 <string name="settings_gateway">Настройки шлюза</string>
 <string name="settings_gateway_details">Если вы укажете URL здесь, приложение будет выполнять HTTP POST запрос для привязанных датчиков.\n\nИзучите документацию</string>
 <string name="settings_gateway_details_link">документацию</string>
@@ -202,10 +204,15 @@
 <string name="share_sensor_title">Поделиться датчиком Ruuvi</string>
 <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
 <string name="sign_in">Войти</string>
-<string name="sign_in_check_email">Пожалуйста проверьте email для получения кода активации</string>
-<string name="sign_in_code_hint">Код</string>
+<string name="sign_in_benefits_description">После входа в систему вы будете автоматически отмечены как владелец ближайших сенсоров Ruuvi. Заявленные сенсоры будут восстановлены после повторной установки приложения.\n\nС помощью Ruuvi Gateway вы сможете удаленно контролировать заявленные сенсоры и делиться ими со своими друзьями.</string>
+<string name="sign_in_benefits_title">Преимущества Ruuvi Network</string>
+<string name="sign_in_check_email">Пожалуйста, проверьте email для дальнейших инструкций</string>
+<string name="sign_in_code_hint">Код для входа</string>
+<string name="sign_in_email_sent">Email отправлен</string>
 <string name="sign_in_login_button">Войти</string>
+<string name="sign_in_manual_code">Ввести код вручную</string>
 <string name="sign_in_request_code">Запросить код</string>
+<string name="sign_in_submit_button">Отправить</string>
 <string name="sign_out">Выйти из сети</string>
 <string name="sign_out_confirm">Хотите выйти их сети?</string>
 <string name="signal_reading">%1$,d %2$s</string>
@@ -218,7 +225,7 @@
 <string name="sync_confirm">Вы уверены что хотите синхронизировать данные с устройством?</string>
 <string name="tag_name">Имя</string>
 <string name="tag_not_in_range">Датчик не найден</string>
-<string name="tagsettings_claim_button">Мой датчик</string>
+<string name="tagsettings_claim_button">Мой сенсор</string>
 <string name="tagsettings_network_info">Данные сети</string>
 <string name="tagsettings_owner">Владелец</string>
 <string name="tagsettings_sensor_remove">Удалить сенсор</string>
