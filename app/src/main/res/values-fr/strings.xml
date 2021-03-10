@@ -97,6 +97,7 @@
 <string name="humidity_relative_unit">%</string>
 <string name="language_english">English</string>
 <string name="language_finnish">Suomi</string>
+<string name="language_french">Français</string>
 <string name="language_russian">Русский</string>
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">Adresse MAC</string>

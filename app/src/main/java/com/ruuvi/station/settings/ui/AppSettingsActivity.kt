@@ -3,8 +3,6 @@ package com.ruuvi.station.settings.ui
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.MenuItem
@@ -13,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.util.ShakeEventListener
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 @ExperimentalCoroutinesApi
 class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
@@ -25,10 +26,25 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
 
     private val viewModel: AppSettingsViewModel by viewModel()
 
+    private val preferencesRepository: PreferencesRepository by instance()
+
     private var showingFragmentTitle = -1
 
-
     private var sensorManager: SensorManager? = null
+    private val sensorListener = ShakeEventListener {
+        if (!preferencesRepository.isExperimentalFeaturesEnabled()) {
+            when (it) {
+                1 -> { }
+                2 -> Toast.makeText(this, "Why are you shaking me?", Toast.LENGTH_SHORT).show()
+                3 -> Toast.makeText(this, "What are you trying to get?", Toast.LENGTH_SHORT).show()
+                4 -> {
+                    preferencesRepository.setIsExperimentalFeaturesEnabled(true)
+                    Toast.makeText(this, "Looks like you want to unlock more settings ;)", Toast.LENGTH_SHORT).show()
+                }
+                else -> Toast.makeText(this, "You already got it!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,29 +54,20 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
         openFragment(viewModel.resourceId)
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    override fun onResume() {
+        super.onResume()
         sensorManager?.let {
             it.registerListener(sensorListener, it.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
 
-    private val sensorListener: SensorEventListener = object : SensorEventListener {
-        private var acceleration = 10f
-        private var currentAcceleration = SensorManager.GRAVITY_EARTH
-        private var lastAcceleration = SensorManager.GRAVITY_EARTH
-
-        override fun onSensorChanged(event: SensorEvent) {
-            val x = event.values[0]
-            val y = event.values[1]
-            val z = event.values[2]
-            lastAcceleration = currentAcceleration
-            currentAcceleration = kotlin.math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
-            val delta: Float = currentAcceleration - lastAcceleration
-            acceleration = acceleration * 0.9f + delta
-            if (acceleration > 15) {
-                Toast.makeText(applicationContext, "Shake event detected", Toast.LENGTH_SHORT).show()
-            }
+    override fun onPause() {
+        super.onPause()
+        sensorManager?.let {
+            it.unregisterListener(sensorListener)
         }
-        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
     }
 
     override fun openFragment(resourceId: Int) {
@@ -84,6 +91,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
                 R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
                 R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()
                 R.string.settings_language -> AppSettingsLocaleFragment.newInstance()
+                R.string.settings_experimental -> AppSettingsExperimentalFragment.newInstance()
                 else -> throw IllegalArgumentException()
             }
         }

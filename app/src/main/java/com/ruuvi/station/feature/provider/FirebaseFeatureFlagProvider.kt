@@ -31,7 +31,7 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider {
         }
     }
 
-    override val priority: Int = MAX_PRIORITY
+    override val priority: Int = MEDIUM_PRIORITY
 
     override fun isFeatureEnabled(feature: Feature): Boolean {
         Timber.d("remoteConfig = ${remoteConfig.getString(feature.key)}")

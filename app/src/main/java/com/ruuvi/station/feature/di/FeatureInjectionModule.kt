@@ -14,8 +14,10 @@ object FeatureInjectionModule {
         bind<RuntimeBehavior>() with singleton {
             RuntimeBehavior().also {
                 it.addProvider(FirebaseFeatureFlagProvider())
-                it.addProvider(RuntimeFeatureFlagProvider(instance()))
+                it.addProvider(instance())
             }
         }
+
+        bind<RuntimeFeatureFlagProvider>() with singleton { RuntimeFeatureFlagProvider(instance()) }
     }
 }

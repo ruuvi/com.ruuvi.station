@@ -100,6 +100,7 @@
 <string name="humidity_relative_unit">%</string>
 <string name="language_english">English</string>
 <string name="language_finnish">Suomi</string>
+<string name="language_french">Français</string>
 <string name="language_russian">Русский</string>
 <string name="language_swedish">Svenska</string>
 <string name="login_description">To enjoy all the features, create an account or login to your existing Ruuvi account by entering your email address.</string>
@@ -186,6 +187,7 @@
 <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Less value means more accurate chart, but higher requirements to performance of your device</string>
 <string name="settings_chart_view_period">Chart history view period</string>
 <string name="settings_chart_view_period_description">Configure history diapason to be shown on chart from 1 to 72 hours</string>
+<string name="settings_experimental">Experimental features</string>
 <string name="settings_gateway">Gateway Settings</string>
 <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
 <string name="settings_gateway_details_link">check the documentation.</string>
@@ -210,8 +212,11 @@
 <string name="sign_in_benefits_title">Benefits of Ruuvi Network</string>
 <string name="sign_in_check_email">Check your email for an activation code.</string>
 <string name="sign_in_code_hint">Code</string>
+<string name="sign_in_email_sent">Email sent</string>
 <string name="sign_in_login_button">Login</string>
+<string name="sign_in_manual_code">Enter code manually</string>
 <string name="sign_in_request_code">Request a Code</string>
+<string name="sign_in_submit_button">Submit</string>
 <string name="sign_out">Sign out</string>
 <string name="sign_out_confirm">Do you want sign out?</string>
 <string name="signal_reading">%1$,d %2$s</string>

@@ -173,9 +173,17 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putLong(PREF_LAST_SYNC_DATE, syncDate).apply()
         }
 
+    var experimentalFeatures: Boolean
+        get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
+        set(experimentalFeatures) {
+            sharedPreferences.edit().putBoolean(PREF_EXPERIMENTAL_FEATURES, experimentalFeatures).apply()
+        }
+
     fun getUserEmailLiveData() = SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
     fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+
+    fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
 
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
@@ -199,6 +207,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_NETWORK_EMAIL = "pref_network_email"
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
+        private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""

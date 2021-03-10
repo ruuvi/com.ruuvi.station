@@ -117,6 +117,13 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.isFirstGraphVisit = isFirst
     }
 
+    fun isExperimentalFeaturesEnabled(): Boolean =
+        preferences.experimentalFeatures
+
+    fun setIsExperimentalFeaturesEnabled(experimentalEnabled: Boolean) {
+        preferences.experimentalFeatures = experimentalEnabled
+    }
+
     fun isFirstStart(): Boolean =
         preferences.isFirstStart
 
@@ -147,6 +154,8 @@ class PreferencesRepository(private val preferences: Preferences) {
     fun getUserEmailLiveData() = preferences.getUserEmailLiveData()
 
     fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
+
+    fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
 
     fun getLocale(): String =
         preferences.locale
