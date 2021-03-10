@@ -159,8 +159,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 viewModel.pageSelected(position)
             }
         })
-
-        Snackbar.make(window.decorView.rootView, "Network enabled = ${runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)}", Snackbar.LENGTH_LONG).show()
     }
 
     private fun setupViewModel() {
@@ -358,8 +356,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
+
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
+            it.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {

@@ -12,6 +12,8 @@ import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.provider.RuntimeFeatureFlagProvider
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
@@ -40,6 +42,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val networkInteractor: RuuviNetworkInteractor by instance()
     private val networkDataSyncInteractor: NetworkDataSyncInteractor by instance()
     private val preferencesRepository: PreferencesRepository by instance()
+    private val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider by instance()
 
     private var isInForeground: Boolean = false
 
@@ -82,6 +85,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
         defaultOnTagFoundListener.isForeground = isInForeground
         foreground.addListener(listener)
 
+        setupExperimentalFeatures()
+
         updateNetwork()
     }
 
@@ -98,17 +103,15 @@ class RuuviScannerApplication : Application(), KodeinAware {
         }
     }
 
+    private fun setupExperimentalFeatures() {
+        if (networkInteractor.signedIn) {
+            runtimeFeatureFlagProvider.setFeatureEnabled(FeatureFlag.RUUVI_NETWORK, true)
+        }
+    }
+
     private fun updateNetwork() {
         if (networkInteractor.signedIn && Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
             networkDataSyncInteractor.syncNetworkData()
         }
-    }
-
-    companion object {
-        private const val isBluetoothFakingEnabledInDebug = false
-
-        val isBluetoothFakingEnabled =
-            if (BuildConfig.DEBUG) isBluetoothFakingEnabledInDebug
-            else /*if release */ false
     }
 }

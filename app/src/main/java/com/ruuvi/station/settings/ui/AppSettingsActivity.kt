@@ -35,13 +35,12 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
         if (!preferencesRepository.isExperimentalFeaturesEnabled()) {
             when (it) {
                 1 -> { }
-                2 -> Toast.makeText(this, "Why are you shaking me?", Toast.LENGTH_SHORT).show()
+                2 -> Toast.makeText(this, "Why do you shake me?", Toast.LENGTH_SHORT).show()
                 3 -> Toast.makeText(this, "What are you trying to get?", Toast.LENGTH_SHORT).show()
-                4 -> {
+                else -> {
                     preferencesRepository.setIsExperimentalFeaturesEnabled(true)
                     Toast.makeText(this, "Looks like you want to unlock more settings ;)", Toast.LENGTH_SHORT).show()
                 }
-                else -> Toast.makeText(this, "You already got it!", Toast.LENGTH_SHORT).show()
             }
         }
     }
