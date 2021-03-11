@@ -22,7 +22,9 @@ class ShakeEventListener(
         currentAcceleration = kotlin.math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
         val delta: Float = currentAcceleration - lastAcceleration
         acceleration = acceleration * 0.9f + delta
-        if (acceleration > 15 && lastShake?.diffGreaterThan(2500) ?: true)  {
+        Timber.d("onSensorChanged $acceleration")
+
+        if (acceleration > 12 && lastShake?.diffGreaterThan(2500) ?: true)  {
             shakeCount++
             lastShake = Date()
             Timber.d("Shake event detected $shakeCount")
