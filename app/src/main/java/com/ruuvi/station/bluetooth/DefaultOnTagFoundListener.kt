@@ -1,6 +1,7 @@
 package com.ruuvi.station.bluetooth
 
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.TagRepository
@@ -88,7 +89,7 @@ class DefaultOnTagFoundListener(
         val cleaningThreshold = calendar.time.time
         if (lastCleanedDate == null || lastCleanedDate < cleaningThreshold) {
             Timber.d("Cleaning DB from old tag readings")
-            TagSensorReading.removeOlderThan(72)
+            TagSensorReading.removeOlderThan(GlobalSettings.historyLengthHours)
             lastCleanedDate = Date().time
         }
     }

@@ -51,6 +51,7 @@
 <string name="dashboard_empty">Översikt vyn är tom</string>
 <string name="data_format">Dataformat</string>
 <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
+<string name="days">Dagar</string>
 <string name="disconnected">Frånkopplad</string>
 <string name="export">EXPORT</string>
 <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
@@ -171,7 +172,7 @@
 <string name="settings_chart_interval">Historikens noggrannhet</string>
 <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser</string>
 <string name="settings_chart_view_period">Historik</string>
-<string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 72 timmar</string>
+<string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 10 dagar</string>
 <string name="settings_gateway">Proxyinställningar</string>
 <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>
 <string name="settings_gateway_details_link">läs dokumentationen</string>

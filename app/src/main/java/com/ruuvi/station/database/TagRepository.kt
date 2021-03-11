@@ -41,12 +41,12 @@ class TagRepository(
 
     fun getTagReadings(tagId: String): List<TagSensorReading>? {
         return if (preferences.graphShowAllPoint) {
-            TagSensorReading.getForTag(tagId, preferences.graphViewPeriod)
+            TagSensorReading.getForTag(tagId, preferences.graphViewPeriodDays)
         } else {
             TagSensorReading.getForTagPruned(
                 tagId,
                 preferences.graphPointInterval,
-                preferences.graphViewPeriod
+                preferences.graphViewPeriodDays
             )
         }
     }

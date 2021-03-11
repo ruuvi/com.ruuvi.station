@@ -123,6 +123,14 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
 
+    // chart view period (in days)
+    var graphViewPeriodDays: Int
+        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, DEFAULT_GRAPH_VIEW_PERIOD_DAYS)
+        set(period) {
+            sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD_DAYS, period).apply()
+        }
+
+
     var graphShowAllPoint: Boolean
         get() = sharedPreferences.getBoolean(PREF_GRAPH_SHOW_ALL_POINTS, DEFAULT_GRAPH_SHOW_ALL_POINTS)
         set(showAllPoints) {
@@ -201,6 +209,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
         private const val PREF_LOCALE = "pref_locale"
@@ -214,6 +223,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
+        private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"

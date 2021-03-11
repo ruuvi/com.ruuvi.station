@@ -158,13 +158,13 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"/>
             <androidx.appcompat.widget.AppCompatTextView
-                android:text="@string/hours"
+                android:text="@string/days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <NumberPicker
                 android:id="@+id/viewPeriodNumberPicker"
-                android:text="@string/hours"
-                android:tooltipText="@string/hours"
+                android:text="@string/days"
+                android:tooltipText="@string/days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

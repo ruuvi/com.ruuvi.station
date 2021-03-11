@@ -54,6 +54,7 @@
 <string name="dashboard_empty">Your dashboard \nis empty</string>
 <string name="data_format">Data Format</string>
 <string name="data_points_read">%1$,d measurements read, saving..</string>
+<string name="days">Days</string>
 <string name="disconnected">Disconnected</string>
 <string name="email">Email</string>
 <string name="export">EXPORT</string>
@@ -186,7 +187,7 @@
 <string name="settings_chart_interval">Chart Interval</string>
 <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Less value means more accurate chart, but higher requirements to performance of your device</string>
 <string name="settings_chart_view_period">Chart history view period</string>
-<string name="settings_chart_view_period_description">Configure history diapason to be shown on chart from 1 to 72 hours</string>
+<string name="settings_chart_view_period_description">Configure history diapason to be shown on chart from 1 to 10 days</string>
 <string name="settings_experimental">Experimental features</string>
 <string name="settings_gateway">Gateway Settings</string>
 <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>

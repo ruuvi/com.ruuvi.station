@@ -90,10 +90,10 @@ class AppSettingsInteractor(
         preferencesRepository.setGraphPointInterval(newInterval)
 
     fun getGraphViewPeriod(): Int =
-        preferencesRepository.getGraphViewPeriod()
+        preferencesRepository.getGraphViewPeriodDays()
 
     fun setGraphViewPeriod(newPeriod: Int) =
-        preferencesRepository.setGraphViewPeriod(newPeriod)
+        preferencesRepository.setGraphViewPeriodDays(newPeriod)
 
     fun testGateway(
         gatewayUrl: String,

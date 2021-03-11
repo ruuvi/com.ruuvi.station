@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.GlobalSettings
 import kotlinx.android.synthetic.main.fragment_app_settings_graph.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -32,7 +33,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
         graphIntervalNumberPicker.minValue = 1
         graphIntervalNumberPicker.maxValue = 60
         viewPeriodNumberPicker.minValue = 1
-        viewPeriodNumberPicker.maxValue = 72
+        viewPeriodNumberPicker.maxValue = GlobalSettings.historyLengthDays
 
         graphIntervalNumberPicker.setOnValueChangedListener { _, _, new ->
             viewModel.setPointInterval(new)

@@ -29,7 +29,7 @@ class FirebasePropertiesSaver(
                 firebaseAnalytics.setUserProperty("pressure_unit", preferences.getPressureUnit().code.toString())
                 firebaseAnalytics.setUserProperty("dashboard_enabled", preferences.isDashboardEnabled().toString())
                 firebaseAnalytics.setUserProperty("graph_point_interval", preferences.getGraphPointInterval().toString())
-                firebaseAnalytics.setUserProperty("graph_view_period", preferences.getGraphViewPeriod().toString())
+                firebaseAnalytics.setUserProperty("graph_view_period", preferences.getGraphViewPeriodDays().toString())
                 firebaseAnalytics.setUserProperty("graph_show_all_points", preferences.isShowAllGraphPoint().toString())
                 firebaseAnalytics.setUserProperty("graph_draw_dots", preferences.graphDrawDots().toString())
 

@@ -52,6 +52,7 @@
 <string name="dashboard_empty">Панель датчиков пуста</string>
 <string name="data_format">Формат Данных</string>
 <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
+<string name="days">Дней</string>
 <string name="disconnected">Отсоединен</string>
 <string name="email">Email</string>
 <string name="export">ЭКСПОРТ</string>
@@ -182,7 +183,7 @@
 <string name="settings_chart_interval">Интервал Графиков</string>
 <string name="settings_chart_interval_description">Установите интервал между точками на графиках от 1 до 60 минут. Чем меньше значение, тем выше точность отображения. Но в тоже время повышаются требования к быстродействию вашего телефона.</string>
 <string name="settings_chart_view_period">Диапазон отображения графиков</string>
-<string name="settings_chart_view_period_description">Установите диапазон для отображения на графиках от 1-го до 72-х часов</string>
+<string name="settings_chart_view_period_description">Установите диапазон для отображения на графиках от 1-го до 10-ти дней</string>
 <string name="settings_experimental">Экспериментальные функции</string>
 <string name="settings_gateway">Настройки шлюза</string>
 <string name="settings_gateway_details">Если вы укажете URL здесь, приложение будет выполнять HTTP POST запрос для привязанных датчиков.\n\nИзучите документацию</string>

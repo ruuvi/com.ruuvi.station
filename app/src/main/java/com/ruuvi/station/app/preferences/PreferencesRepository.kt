@@ -110,6 +110,13 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.graphViewPeriod = newPeriod
     }
 
+    fun getGraphViewPeriodDays(): Int =
+        preferences.graphViewPeriodDays
+
+    fun setGraphViewPeriodDays(newPeriod: Int) {
+        preferences.graphViewPeriodDays = newPeriod
+    }
+
     fun isFirstGraphVisit(): Boolean =
         preferences.isFirstGraphVisit
 
