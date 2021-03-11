@@ -52,6 +52,7 @@
 <string name="dashboard_empty">Votre tableau de bord est vide</string>
 <string name="data_format">Format des données</string>
 <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
+<string name="days">Jours</string>
 <string name="disconnected">Déconnecté</string>
 <string name="export">EXPORTER</string>
 <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
@@ -172,7 +173,7 @@
 <string name="settings_chart_interval">Précision de l\'histogramme</string>
 <string name="settings_chart_interval_description">Définir l\'intervalle de l\'histogramme 1 - 60 minutes. Un intervalle plus faible permet une analyse plus précise mais utilise d\'avantage les ressources de votre appareil.</string>
 <string name="settings_chart_view_period">Période de l\'histogramme</string>
-<string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 72 heures</string>
+<string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 10 jours</string>
 <string name="settings_gateway">Paramètres du routeur</string>
 <string name="settings_gateway_details">L\'application envoi les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
 <string name="settings_gateway_details_link">page de support</string>

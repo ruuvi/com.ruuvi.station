@@ -1,6 +1,7 @@
 package com.ruuvi.station.network.domain
 
 import android.net.Uri
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.TagRepository
@@ -60,7 +61,7 @@ class NetworkDataSyncInteractor (
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")
                 val benchSync1 = Date()
-                syncForPeriod(userInfo.data, 72)
+                syncForPeriod(userInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
             } catch (exception: Exception) {
@@ -196,11 +197,9 @@ class NetworkDataSyncInteractor (
                 tagDb.name = if (sensor.name.isEmpty()) sensor.sensor else sensor.name
                 tagDb.favorite = true
                 tagDb.defaultBackground = (Math.random() * 9.0).toInt()
-                tagDb.updateAt = Date()
                 tagDb.insert()
             } else {
                 tagDb.favorite = true
-                tagDb.updateAt = Date()
                 if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
                 tagDb.update()
             }

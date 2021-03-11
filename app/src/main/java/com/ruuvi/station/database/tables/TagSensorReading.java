@@ -106,14 +106,10 @@ public class TagSensorReading extends BaseModel {
         this.createdAt = timestamp;
     }
 
-    public static List<TagSensorReading> getForTag(String id) {
-        return getForTag(id, 24);
-    }
-
     public static List<TagSensorReading> getForTag(String id, int period) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.HOUR, -period);
+        cal.add(Calendar.DATE, -period);
         return SQLite.select()
                 .from(TagSensorReading.class)
                 .indexedBy(TagSensorReading_Table.index_TagId)
@@ -126,7 +122,7 @@ public class TagSensorReading extends BaseModel {
     public static List<TagSensorReading> getForTagPruned(String id, Integer interval, Integer period) {
         Calendar fromDate = Calendar.getInstance();
         fromDate.setTime(new Date());
-        fromDate.add(Calendar.HOUR, -period);
+        fromDate.add(Calendar.DATE, -period);
         Integer pruningInterval = 1000 * 60 * interval;
 
         // seems like setSelectionArgs not working for StringQuery so we have to use String.Format instead
