@@ -21,7 +21,20 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 17;
+    public static final int VERSION = 18;
+
+    // This duplicates Migration16 for smooth migration from 1.5.2
+    @Migration(version = 18, database = LocalDatabase.class)
+    public static class Migration18 extends AlterTableMigration<Alarm> {
+        public Migration18(Class<Alarm> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            addColumn(SQLiteType.TEXT, "customDescription");
+        }
+    }
 
     @Migration(version = 17, database = LocalDatabase.class)
     public static class Migration17 extends AlterTableMigration<RuuviTagEntity> {
