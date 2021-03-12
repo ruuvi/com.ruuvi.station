@@ -1,12 +1,14 @@
 package com.ruuvi.station.addtag.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.ruuvi.station.R
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.android.synthetic.main.row_item_add.view.address
 import kotlinx.android.synthetic.main.row_item_add.view.rssi
 import kotlinx.android.synthetic.main.row_item_add.view.signalIcon
@@ -26,6 +28,12 @@ class AddTagAdapter(
             item?.rssi?.compareTo(LOW_SIGNAL) == -1 -> view.signalIcon.setImageResource(R.drawable.icon_connection_1)
             item?.rssi?.compareTo(MEDIUM_SIGNAL) == -1 -> view.signalIcon.setImageResource(R.drawable.icon_connection_2)
             else -> view.signalIcon.setImageResource(R.drawable.icon_connection_3)
+        }
+
+        if (item?.updateAt?.diffGreaterThan(10000) == true) {
+            view.address.setTextColor(Color.GRAY)
+        } else {
+            view.address.setTextColor(Color.BLACK)
         }
 
         return view
