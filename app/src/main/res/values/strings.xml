@@ -78,7 +78,7 @@
 <string name="help_db_size">Database size: %1$,d kB</string>
 <string name="help_more_to_read_text">Ruuvi\'s website: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi Blog: blog.ruuvi.com\nRuuvi on Twitter: twitter.com/ruuvicom</string>
 <string name="help_more_to_read_title">MORE TO READ</string>
-<string name="help_opensource_text">Just like RuuviTag, Ruuvi Station is also open-source: github.com/ruuvi</string>
+<string name="help_opensource_text">Just like Ruuvi sensor, Ruuvi Station is also open-source: github.com/ruuvi</string>
 <string name="help_opensource_title">OPEN-SOURCE</string>
 <string name="help_operations_text">We\'ve designed the app to be self-explanatory but also comprehensive manuals are available for both Ruuvi sensors and Ruuvi Station: ruuvi.com/manuals</string>
 <string name="help_operations_title">OPERATIONS MANUAL</string>
