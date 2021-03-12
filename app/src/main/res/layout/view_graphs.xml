@@ -53,25 +53,19 @@
 
         <Button
             android:id="@+id/clearDataButton"
-            android:background="@drawable/button_rounded_corners"
-            android:fontFamily="@font/montserrat_bold"
+            style="@style/roundButton"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="@string/clear"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:text="@string/clear" />
 
         <Button
             android:id="@+id/syncButton"
-            android:background="@drawable/button_rounded_corners"
-            android:fontFamily="@font/montserrat_bold"
+            style="@style/roundButton"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="@string/sync"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:text="@string/sync" />
 
     </LinearLayout>
 
