@@ -57,9 +57,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeSync()
 
         syncButton.setOnClickListener {
-            confirm(getString(R.string.sync_confirm), DialogInterface.OnClickListener { _, _ ->
-                viewModel.syncGatt()
-            })
+            viewModel.syncGatt()
         }
         clearDataButton.setOnClickListener {
             confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
