@@ -65,6 +65,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 viewModel.removeTagData()
             })
         }
+        gattSyncCancel.setOnClickListener {
+            viewModel.disconnectGatt()
+        }
     }
 
     override fun onResume() {
@@ -136,6 +139,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
                     gattSyncViewButtons.visibility = View.GONE
                     gattSyncViewProgress.visibility = View.VISIBLE
+                    gattSyncCancel.visibility = View.GONE
                 }
                 TagViewModel.SyncProgress.CONNECTED -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
@@ -151,6 +155,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 }
                 TagViewModel.SyncProgress.READING_DATA -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.reading_history)}"+"..."
+                    gattSyncCancel.visibility = View.VISIBLE
                 }
                 TagViewModel.SyncProgress.SAVING_DATA -> {
                     gattSyncStatusTextView.text = if (it.readDataSize > 0) {

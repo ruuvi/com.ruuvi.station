@@ -60,6 +60,12 @@ class TagViewModel(
         showGraph = isShow
     }
 
+    fun disconnectGatt() {
+        tagEntryObserve.value?.let { tag ->
+            gattInteractor.disconnect(tag.id)
+        }
+    }
+
     fun syncGatt() {
         syncStatusObj.value = SyncStatus()
         syncStatusObj.value?.syncProgress = SyncProgress.CONNECTING
