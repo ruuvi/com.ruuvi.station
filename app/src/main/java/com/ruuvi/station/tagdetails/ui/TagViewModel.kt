@@ -67,9 +67,7 @@ class TagViewModel(
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
             val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
-            if (syncFrom == null) {
-                syncFrom = historyLength
-            } else if (syncFrom.before(historyLength)) {
+            if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
