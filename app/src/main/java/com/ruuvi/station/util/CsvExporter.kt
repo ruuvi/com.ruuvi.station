@@ -26,7 +26,7 @@ class CsvExporter(
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
 
-        val filenameDateFormat = SimpleDateFormat("yyMMdd-hhmm")
+        val filenameDateFormat = SimpleDateFormat("yyyyMMdd-HHmm")
         val filenameDate = filenameDateFormat.format(Date())
 
         val filename = if (tag?.name.isNullOrEmpty()) {
