@@ -197,9 +197,13 @@ class NetworkDataSyncInteractor (
                 tagDb.name = if (sensor.name.isEmpty()) sensor.sensor else sensor.name
                 tagDb.favorite = true
                 tagDb.defaultBackground = (Math.random() * 9.0).toInt()
+                tagDb.createDate = Date()
                 tagDb.insert()
             } else {
-                tagDb.favorite = true
+                if (tagDb.favorite == false) {
+                    tagDb.favorite = true
+                    tagDb.createDate = Date()
+                }
                 if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
                 tagDb.update()
             }
