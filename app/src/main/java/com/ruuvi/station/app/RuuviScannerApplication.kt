@@ -13,6 +13,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
 import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.feature.provider.RuntimeFeatureFlagProvider
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
@@ -43,6 +44,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val networkDataSyncInteractor: NetworkDataSyncInteractor by instance()
     private val preferencesRepository: PreferencesRepository by instance()
     private val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider by instance()
+    private val runtimeBehavior: RuntimeBehavior by instance()
 
     private var isInForeground: Boolean = false
 
@@ -51,6 +53,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
             updateNetwork()
+            runtimeBehavior.refreshFeatureFlags()
         }
 
         override fun onBecameBackground() {

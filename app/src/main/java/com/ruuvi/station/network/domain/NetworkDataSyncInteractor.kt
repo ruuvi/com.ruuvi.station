@@ -20,6 +20,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
+import java.io.File
+import java.net.URI
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -208,18 +210,23 @@ class NetworkDataSyncInteractor (
                 tagDb.update()
             }
             if (sensor.picture.isNullOrEmpty() == false) {
-                try {
-                    val imageFile = imageInteractor.downloadImage(
-                        "cloud_${sensor.sensor}",
-                        sensor.picture
-                    )
-                    tagRepository.updateTagBackground(
-                        sensor.sensor,
-                        Uri.fromFile(imageFile).toString(),
-                        null
-                    )
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to load image: ${sensor.picture}")
+                val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
+                if (networkImageGuid != tagDb.networkBackground) {
+                    Timber.d("updating image $networkImageGuid")
+                    try {
+                        val imageFile = imageInteractor.downloadImage(
+                            "cloud_${sensor.sensor}",
+                            sensor.picture
+                        )
+                        tagRepository.updateTagBackground(
+                            sensor.sensor,
+                            Uri.fromFile(imageFile).toString(),
+                            null,
+                            networkImageGuid
+                        )
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to load image: ${sensor.picture}")
+                    }
                 }
             }
         }
