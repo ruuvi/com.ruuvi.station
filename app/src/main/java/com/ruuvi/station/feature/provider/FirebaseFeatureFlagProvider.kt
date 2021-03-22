@@ -9,7 +9,7 @@ import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.data.FeatureFlag
 import timber.log.Timber
 
-class FirebaseFeatureFlagProvider() : FeatureFlagProvider {
+class FirebaseFeatureFlagProvider() : FeatureFlagProvider, RemoteFeatureFlagProvider {
     private val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
 
     init {
@@ -18,17 +18,6 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider {
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-
-        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Timber.d("fetch remoteConfig fetch ${task.result}")
-
-                // After config data is successfully fetched, it must be activated before newly fetched values are returned.
-                } else {
-                task.exception
-                Timber.d("fetch remoteConfig failed ${task.exception}")
-            }
-        }
     }
 
     override val priority: Int = MEDIUM_PRIORITY
@@ -39,9 +28,20 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider {
     }
 
     override fun hasFeature(feature: Feature): Boolean {
+        Timber.d("remoteConfig.hasFeature")
         return when (feature) {
             FeatureFlag.RUUVI_NETWORK -> true
             else -> false
+        }
+    }
+
+    override fun refreshFeatureFlags() {
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Timber.d("fetch remoteConfig fetch ${task.result}")
+            } else {
+                Timber.d("fetch remoteConfig failed ${task.exception}")
+            }
         }
     }
 }

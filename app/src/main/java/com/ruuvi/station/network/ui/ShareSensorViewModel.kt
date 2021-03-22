@@ -44,7 +44,7 @@ class ShareSensorViewModel (
 
     fun shareTag(email: String) {
         ruuviNetworkInteractor.shareSensor(email, tagId, handler) { response ->
-            if (response?.result == "error") {
+            if (response?.isError() == true) {
                 operationStatus.value = response.error
             }
             getSensorSharedEmails()
@@ -55,7 +55,7 @@ class ShareSensorViewModel (
 
     fun unshareTag(email: String) {
         ruuviNetworkInteractor.unshareSensor(email, tagId, handler) { response ->
-            if (response?.result == "error") {
+            if (response?.isError() == true) {
                 operationStatus.value = response.error
             }
             getSensorSharedEmails()

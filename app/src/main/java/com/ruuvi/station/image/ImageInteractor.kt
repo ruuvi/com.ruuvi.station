@@ -38,12 +38,12 @@ class ImageInteractor (
                     onSuccess = { result ->
                         val bitmap = (result as BitmapDrawable).bitmap
                         val storageDir = getExternalFilesDir()
-                        val filename = File(storageDir, "$filename.jpg")
-                        val out = FileOutputStream(filename)
+                        val imageFile = File(storageDir, "$filename.jpg")
+                        val out = FileOutputStream(imageFile)
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
                         out.flush()
                         out.close()
-                        continuation.resume(filename)
+                        continuation.resume(imageFile)
                     },
                     onError = {
                         continuation.resumeWithException(Exception("Failed to load image $url"))

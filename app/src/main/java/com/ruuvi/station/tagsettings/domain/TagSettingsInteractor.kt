@@ -9,7 +9,6 @@ class TagSettingsInteractor(
     private val tagRepository: TagRepository,
     private val preferencesRepository: PreferencesRepository
 ) {
-
     fun getTagById(tagId: String): RuuviTagEntity? =
         tagRepository
             .getTagById(tagId)
@@ -27,5 +26,9 @@ class TagSettingsInteractor(
         tagRepository.updateTagName(tagId, tagName)
 
     fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) =
-        tagRepository.updateTagBackground(tagId, userBackground, defaultBackground)
+        tagRepository.updateTagBackground(tagId, userBackground, defaultBackground, null)
+
+    fun updateNetworkBackground(tagId: String, guid: String?) {
+        tagRepository.updateNetworkBackground(tagId, guid)
+    }
 }

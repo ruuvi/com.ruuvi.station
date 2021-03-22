@@ -84,11 +84,22 @@ class TagRepository(
             .execute()
     }
 
-    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) {
+    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
         SQLite.update(RuuviTagEntity::class.java)
             .set(
                 RuuviTagEntity_Table.userBackground.eq(userBackground),
-                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground)
+                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground),
+                RuuviTagEntity_Table.networkBackground.eq(networkBackground)
+            )
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
+    }
+
+    fun updateNetworkBackground(tagId: String, networkBackground: String?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(
+                RuuviTagEntity_Table.networkBackground.eq(networkBackground)
             )
             .where(RuuviTagEntity_Table.id.eq(tagId))
             .async()

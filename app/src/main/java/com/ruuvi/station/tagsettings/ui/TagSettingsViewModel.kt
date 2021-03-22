@@ -78,7 +78,7 @@ class TagSettingsViewModel(
         } else if (!networkStatus.value?.owner.isNullOrEmpty()) {
             networkInteractor.getEmail()?.let { email ->
                 networkInteractor.unshareSensor(email, tagId, handler) {response->
-                    if (response?.result == "error") {
+                    if (response?.isError() == true) {
                         operationStatus.value = response.error
                     }
                 }
@@ -95,7 +95,10 @@ class TagSettingsViewModel(
         networkStatus.value?.let {
             if (userBackground.isNullOrEmpty() == false) {
                 Timber.d("Upload image filename: $userBackground")
-                networkInteractor.uploadImage(tagId, userBackground, handler) {
+                networkInteractor.uploadImage(tagId, userBackground, handler) { response ->
+                    if (response?.isSuccess() == true && !response.data?.guid.isNullOrEmpty()) {
+                        interactor.updateNetworkBackground(tagId, response.data?.guid)
+                    }
                 }
             } else if (it.picture.isNotEmpty()){
                 networkInteractor.resetImage(tagId, handler) {
@@ -152,7 +155,7 @@ class TagSettingsViewModel(
         getTagInfo()
         networkStatus.value?.let {
             networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
-                if (response?.result == "error") {
+                if (response?.isError() == true) {
                     operationStatus.value = response.error
                 }
             }

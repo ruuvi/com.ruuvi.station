@@ -2,6 +2,7 @@ package com.ruuvi.station.feature.domain
 
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.provider.FeatureFlagProvider
+import com.ruuvi.station.feature.provider.RemoteFeatureFlagProvider
 import java.util.concurrent.CopyOnWriteArrayList
 
 class RuntimeBehavior{
@@ -16,4 +17,8 @@ class RuntimeBehavior{
     }
 
     fun addProvider(provider: FeatureFlagProvider) = providers.add(provider)
+
+    fun refreshFeatureFlags() {
+        providers.filter { it is RemoteFeatureFlagProvider }.forEach { (it as RemoteFeatureFlagProvider).refreshFeatureFlags() }
+    }
 }
