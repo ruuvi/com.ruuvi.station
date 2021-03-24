@@ -69,6 +69,7 @@ class NetworkDataSyncInteractor (
             } catch (exception: Exception) {
                 val message = exception.message
                 message?.let {
+                    Timber.e(exception, "NetworkSync Exception")
                     setSyncResult(NetworkSyncResult(NetworkSyncResultType.EXCEPTION, it))
                 }
             } finally {
