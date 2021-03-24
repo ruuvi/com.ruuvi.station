@@ -9,7 +9,6 @@ data class GetSensorDataResponseBody (
 )
 
 data class SensorDataMeasurementResponse (
-    val sensor: String,
     val coordinates: String,
     val gwmac: String,
     val data: String,
