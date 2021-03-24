@@ -175,6 +175,7 @@ class NetworkDataSyncInteractor (
         measurements.forEach { measurement ->
             val createdAt = Date(measurement.timestamp * 1000)
             if (!existsData.contains(createdAt)) {
+                Timber.d("NetworkData: ${tag.id} measurement = $measurement")
                 val reading = BluetoothLibrary.decode(tag.id!!, measurement.data, measurement.rssi)
                 list.add(TagSensorReading(reading, tag, createdAt))
             }
