@@ -172,12 +172,20 @@ class NetworkDataSyncInteractor (
 
     private fun saveSensorData(tag: RuuviTagEntity, measurements: List<SensorDataMeasurementResponse>, existsData: List<Date>): Int {
         val list = mutableListOf<TagSensorReading>()
-        measurements.forEach { measurement ->
-            val createdAt = Date(measurement.timestamp * 1000)
-            if (!existsData.contains(createdAt)) {
-                Timber.d("NetworkData: ${tag.id} measurement = $measurement")
-                val reading = BluetoothLibrary.decode(tag.id!!, measurement.data, measurement.rssi)
-                list.add(TagSensorReading(reading, tag, createdAt))
+        tag.id?.let{ tagId ->
+            measurements.forEach { measurement ->
+                val createdAt = Date(measurement.timestamp * 1000)
+                if (!existsData.contains(createdAt)) {
+                    try {
+                        if (measurement.data.isNotEmpty()) {
+                            val reading = BluetoothLibrary.decode(tagId, measurement.data, measurement.rssi)
+                            list.add(TagSensorReading(reading, tag, createdAt))
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "NetworkData: $tagId measurement = $measurement")
+                    }
+
+                }
             }
         }
 
