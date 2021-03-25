@@ -6,7 +6,7 @@ on:
     branches: [ dev ]
   workflow_dispatch:
     branches: [ master, dev ]
-    
+       
 jobs:
   build:
 
@@ -21,11 +21,37 @@ jobs:
       with:
         java-version: 1.8
         
-    - name: Build all artifacts
+    - name: Build bundle
       run: ./gradlew bundleRelease
       
-    - name: Sign Android release
-      id: sign_app
+    - name: Build APK
+      run: ./gradlew assembleRelease
+      
+    - name: Sign test APK
+      id: sign_test_apk
+      uses: r0adkll/sign-android-release@v1.0.4
+      with:
+        # The directory to find your release to sign
+        releaseDirectory: app/build/outputs/apk/withFileLogs/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+        
+    - name: Sign release APK
+      id: sign_apk
+      uses: r0adkll/sign-android-release@v1.0.4
+      with:
+        # The directory to find your release to sign
+        releaseDirectory: app/build/outputs/apk/withoutFileLogs/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+        
+        
+    - name: Sign bundle
+      id: sign_bundle
       uses: r0adkll/sign-android-release@v1.0.4
       with:
         # The directory to find your release to sign
@@ -35,9 +61,20 @@ jobs:
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-    - name: Upload
+    - name: Upload test APK
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: withFilelogsTestApk
+        path: ${{steps.sign_test_apk.outputs.signedReleaseFile}}
         
+    - name: Upload APK
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: releaseAPK
+        path: ${{steps.sign_apk.outputs.signedReleaseFile}}
+      
+    - name: Upload bundle
       uses: actions/upload-artifact@v2.2.2
       with:
         name: appBundle
-        path: ${{steps.sign_app.outputs.signedReleaseFile}}
+        path: ${{steps.sign_bundle.outputs.signedReleaseFile}}
