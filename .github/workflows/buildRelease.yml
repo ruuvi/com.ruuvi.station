@@ -2,12 +2,8 @@
 name: Android Release Build
 
 on:
-  push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
   workflow_dispatch:
-    branches: [ dev ]
+    branches: [ dev, master ]
     
 jobs:
   build:
@@ -24,10 +20,21 @@ jobs:
         java-version: 1.8
         
     - name: Build all artifacts
-      run: ./gradlew bundleRelease
+      run: ./gradlew assembleRelease
       
+    - name: Sign Android release
+      id: sign_app
+      uses: r0adkll/sign-android-release@v1.0.4
+      with:
+        # The directory to find your release to sign
+        releaseDirectory: app/build/outputs/apk/withFileLogs/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+
     - name: Upload
       uses: actions/upload-artifact@v2.2.2
       with:
-        name: appBundle
-        path: app/build/outputs/bundle/withoutFileLogsRelease/app-withoutFileLogs-release.aab
+        name: testApk
+        path: ${{steps.sign_app.outputs.signedReleaseFile}}
