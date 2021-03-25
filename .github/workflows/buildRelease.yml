@@ -1,11 +1,11 @@
 name: Android Release Build
 on:
   push:
-    branches: [ dev ]
+    branches: [ master, dev ]
   pull_request:
     branches: [ dev ]
   workflow_dispatch:
-    branches: [ dev ]
+    branches: [ master, dev ]
     
 jobs:
   build:
