@@ -3,6 +3,8 @@ package com.ruuvi.station.tagsettings.ui
 import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
+import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.response.SensorDataResponse
@@ -20,9 +22,7 @@ class TagSettingsViewModel(
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor
 ) : ViewModel() {
-
-    var tagAlarms: List<Alarm> = Alarm.getForTag(tagId)
-    var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
+    var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
 
     private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
@@ -108,14 +108,14 @@ class TagSettingsViewModel(
     }
 
     fun saveOrUpdateAlarmItems() {
-        for (alarmItem in alarmItems) {
-            if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
+        for (alarmItem in alarmElements) {
+            if (alarmItem.isEnabled || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tagId, alarmItem.customDescription, alarmItem.mutedTill)
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
+                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type.value, tagId, alarmItem.customDescription, alarmItem.mutedTill)
+                    alarmItem.alarm?.enabled = alarmItem.isEnabled
                     alarmItem.alarm?.save()
                 } else {
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
+                    alarmItem.alarm?.enabled = alarmItem.isEnabled
                     alarmItem.alarm?.low = alarmItem.low
                     alarmItem.alarm?.high = alarmItem.high
                     alarmItem.alarm?.customDescription = alarmItem.customDescription
@@ -127,7 +127,7 @@ class TagSettingsViewModel(
                 alarmItem.alarm?.mutedTill = alarmItem.mutedTill
                 alarmItem.alarm?.update()
             }
-            if (!alarmItem.isChecked) {
+            if (!alarmItem.isEnabled) {
                 val notificationId = alarmItem.alarm?.id ?: -1
                 removeNotificationById(notificationId)
             }
@@ -158,6 +158,57 @@ class TagSettingsViewModel(
                 if (response?.isError() == true) {
                     operationStatus.value = response.error
                 }
+            }
+        }
+    }
+
+    fun setupAlarmElements() {
+        alarmElements.clear()
+
+        with(alarmElements) {
+            add(AlarmElement(
+                AlarmType.TEMPERATURE,
+                false,
+                -40,
+                85
+            ))
+            add(AlarmElement(
+                AlarmType.HUMIDITY,
+                false,
+                0,
+                100
+            ))
+            add(AlarmElement(
+                AlarmType.PRESSURE,
+                false,
+                30000,
+                110000
+            ))
+            add(AlarmElement(
+                AlarmType.RSSI,
+                false,
+                -105,
+                0
+            ))
+            add(AlarmElement(
+                AlarmType.MOVEMENT,
+                false,
+                0,
+                0
+            ))
+        }
+
+        val dbAlarms = Alarm.getForTag(tagId)
+        for (alarm in dbAlarms) {
+            val item = alarmElements.firstOrNull { it.type.value == alarm.type }
+            item?.let {
+                item.high = alarm.high
+                item.low = alarm.low
+                item.isEnabled = alarm.enabled
+                item.customDescription = alarm.customDescription ?: ""
+                item.mutedTill = alarm.mutedTill
+                item.alarm = alarm
+                item.normalizeValues()
             }
         }
     }

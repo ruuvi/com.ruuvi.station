@@ -43,6 +43,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     dexOptions {
         preDexLibraries = false
     }

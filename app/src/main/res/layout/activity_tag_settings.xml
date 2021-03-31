@@ -151,9 +151,36 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:orientation="vertical"
+                    android:padding="8dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alerts_header" />
+                    app:layout_constraintTop_toBottomOf="@id/alerts_header">
+                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                        android:id="@+id/alarmTemperature"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                        android:id="@+id/alarmHumidity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                        android:id="@+id/alarmPressure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                        android:id="@+id/alarmRssi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                        android:id="@+id/alarmMovement"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/mac_header"
