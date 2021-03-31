@@ -103,13 +103,6 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.graphPointInterval = newInterval
     }
 
-    fun getGraphViewPeriod(): Int =
-        preferences.graphViewPeriod
-
-    fun setGraphViewPeriod(newPeriod: Int) {
-        preferences.graphViewPeriod = newPeriod
-    }
-
     fun getGraphViewPeriodDays(): Int =
         preferences.graphViewPeriodDays
 

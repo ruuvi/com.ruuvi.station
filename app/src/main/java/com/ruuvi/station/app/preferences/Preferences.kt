@@ -8,6 +8,8 @@ import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
+import kotlin.math.max
+import kotlin.math.round
 
 class Preferences constructor(val context: Context) {
 
@@ -125,7 +127,7 @@ class Preferences constructor(val context: Context) {
 
     // chart view period (in days)
     var graphViewPeriodDays: Int
-        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, DEFAULT_GRAPH_VIEW_PERIOD_DAYS)
+        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, getDefaultGraphViewPeriodDays())
         set(period) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD_DAYS, period).apply()
         }
@@ -192,6 +194,15 @@ class Preferences constructor(val context: Context) {
     fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
 
     fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
+
+    private fun getDefaultGraphViewPeriodDays(): Int {
+        val periodInHours = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, -1)
+        return if (periodInHours > 0) {
+            return max(round(periodInHours / 24f).toInt(), 1)
+        } else {
+            DEFAULT_GRAPH_VIEW_PERIOD_DAYS
+        }
+    }
 
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
