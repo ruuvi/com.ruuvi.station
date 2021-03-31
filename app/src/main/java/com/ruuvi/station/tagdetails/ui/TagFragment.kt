@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -56,15 +57,16 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeSelectedTag()
         observeSync()
 
-        syncButton.setOnClickListener {
-            confirm(getString(R.string.sync_confirm), DialogInterface.OnClickListener { _, _ ->
-                viewModel.syncGatt()
-            })
+        gattSyncButton.setOnClickListener {
+            viewModel.syncGatt()
         }
         clearDataButton.setOnClickListener {
             confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
                 viewModel.removeTagData()
             })
+        }
+        gattSyncCancel.setOnClickListener {
+            viewModel.disconnectGatt()
         }
     }
 
@@ -100,6 +102,18 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         }
     }
 
+    private fun gattAlertDialog(message: String) {
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).create()
+        alertDialog.setMessage(message)
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+        ) { dialog, _ -> dialog.dismiss() }
+        alertDialog.setOnDismissListener {
+            gattSyncViewButtons.visibility = View.VISIBLE
+            gattSyncViewProgress.visibility = View.GONE
+        }
+        alertDialog.show()
+    }
+
     private fun observeShowGraph() {
         activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer { isShowGraph ->
             view?.let {
@@ -115,18 +129,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         })
     }
 
-    private var syncDialog: AlertDialog? = null
-    var syncDialogText = ""
-
-    private fun createSyncDialog(dismissButtonEnabled: Boolean) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage(syncDialogText)
-        builder.setPositiveButton(context?.getText(R.string.ok)) { p0, _ -> p0.dismiss() }
-        syncDialog = builder.show()
-        syncDialog?.setCanceledOnTouchOutside(false)
-        syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = dismissButtonEnabled
-    }
-
     private fun observeSync() {
         viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
             when (it.syncProgress) {
@@ -134,46 +136,46 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                     // nothing is happening
                 }
                 TagViewModel.SyncProgress.CONNECTING -> {
-                    syncDialogText = "${context?.getString(R.string.connecting)}.."
-                    createSyncDialog(false)
+                    gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
+                    gattSyncViewButtons.visibility = View.GONE
+                    gattSyncViewProgress.visibility = View.VISIBLE
+                    gattSyncCancel.visibility = View.GONE
                 }
                 TagViewModel.SyncProgress.CONNECTED -> {
-                    syncDialogText += "\n${context?.getString(R.string.connected_reading_info)}.."
+                    gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
                 TagViewModel.SyncProgress.DISCONNECTED -> {
-                    syncDialogText += "\n${context?.getString(R.string.disconnected)}"
-                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                    gattAlertDialog(requireContext().getString(R.string.disconnected))
                 }
                 TagViewModel.SyncProgress.READING_INFO -> {
-                    syncDialogText += "\n${context?.getString(R.string.connected_reading_info)}.."
+                    gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
                 TagViewModel.SyncProgress.NOT_SUPPORTED -> {
-                    syncDialogText += "\n${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}.."
+                    gattAlertDialog("${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}")
                 }
                 TagViewModel.SyncProgress.READING_DATA -> {
-                    syncDialogText += "\n${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history)}.."
+                    gattSyncStatusTextView.text = "${context?.getString(R.string.reading_history)}"+"..."
+                    gattSyncCancel.visibility = View.VISIBLE
                 }
                 TagViewModel.SyncProgress.SAVING_DATA -> {
-                    syncDialogText += if (it.readDataSize > 0) {
-                        "\n${context?.getString(R.string.data_points_read, it.readDataSize)}"
+                    gattSyncStatusTextView.text = if (it.readDataSize > 0) {
+                        "${context?.getString(R.string.data_points_read, it.readDataSize)}"
                     } else {
-                        "\n${context?.getString(R.string.no_new_data_points)}"
+                        "${context?.getString(R.string.no_new_data_points)}"
                     }
                 }
                 TagViewModel.SyncProgress.NOT_FOUND -> {
-                    syncDialogText = "${context?.getString(R.string.tag_not_in_range)}"
-                    createSyncDialog(true)
+                    gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
                 }
                 TagViewModel.SyncProgress.ERROR -> {
-                    syncDialogText = context?.getString(R.string.something_went_wrong).toString()
-                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                    gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
                 }
                 TagViewModel.SyncProgress.DONE -> {
-                    syncDialogText += "\n${context?.getString(R.string.sync_complete)}"
-                    syncDialog?.getButton(Dialog.BUTTON_POSITIVE)?.isEnabled = true
+                    //gattAlertDialog(requireContext().getString(R.string.sync_complete))
+                    gattSyncViewButtons.visibility = View.VISIBLE
+                    gattSyncViewProgress.visibility = View.GONE
                 }
             }
-            syncDialog?.setMessage(syncDialogText)
         })
     }
 
@@ -201,9 +203,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         tagTempUnitTextView.text = unitSpan
         tag.connectable?.let {
             if (it) {
-                syncView.visibility = View.VISIBLE
+                gattSyncView.visibility = View.VISIBLE
             } else {
-                syncView.visibility = View.GONE
+                gattSyncView.visibility = View.GONE
             }
         }
     }
