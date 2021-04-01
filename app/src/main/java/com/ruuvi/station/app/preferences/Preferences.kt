@@ -7,6 +7,7 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.isUpdateInstall
 import java.util.*
 import kotlin.math.max
 import kotlin.math.round
@@ -196,9 +197,8 @@ class Preferences constructor(val context: Context) {
     fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
 
     private fun getDefaultGraphViewPeriodDays(): Int {
-        val periodInHours = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, -1)
-        return if (periodInHours > 0) {
-            return max(round(periodInHours / 24f).toInt(), 1)
+        return if (context.isUpdateInstall()) {
+            return max(round(graphViewPeriod / 24f).toInt(), 1)
         } else {
             DEFAULT_GRAPH_VIEW_PERIOD_DAYS
         }
