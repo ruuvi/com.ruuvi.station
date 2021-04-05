@@ -1,4 +1,4 @@
-package com.ruuvi.station.tagsettings.ui
+package com.ruuvi.station.alarm.ui
 
 import android.content.Context
 import android.util.AttributeSet

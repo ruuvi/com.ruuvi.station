@@ -101,18 +101,13 @@
 
                 <TextView
                     android:id="@+id/name_header"
-                    android:background="@color/backgroundLight"
-                    android:fontFamily="@font/montserrat_bold"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/name"
-                    android:textAllCaps="true"
-                    android:textColor="@color/mainDark"
-                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tagImageView" />
+                    app:layout_constraintTop_toBottomOf="@id/tagImageView"
+                    style="@style/sensorSettingGroupHeaderStyle" />
 
                 <TextView
                     android:id="@+id/tagNameTitleTextView"
@@ -133,15 +128,10 @@
 
                 <TextView
                     android:id="@+id/alerts_header"
-                    android:background="@color/backgroundLight"
-                    android:fontFamily="@font/montserrat_bold"
+                    style="@style/sensorSettingGroupHeaderStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/alerts"
-                    android:textAllCaps="true"
-                    android:textColor="@color/mainDark"
-                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tagNameInputTextView" />
@@ -155,27 +145,27 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/alerts_header">
-                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                    <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmTemperature"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         />
-                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                    <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmHumidity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         />
-                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                    <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmPressure"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         />
-                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                    <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmRssi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         />
-                    <com.ruuvi.station.tagsettings.ui.AlarmEditView
+                    <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmMovement"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -183,29 +173,73 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/mac_header"
-                    android:background="@color/backgroundLight"
-                    android:fontFamily="@font/montserrat_bold"
+                    android:id="@+id/calibration_header"
+                    style="@style/sensorSettingGroupHeaderStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:text="@string/more_info"
-                    android:textAllCaps="true"
-                    android:textColor="@color/mainDark"
-                    android:textSize="16sp"
+                    android:text="Offset correction"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/alertsContainerLayout" />
+                <LinearLayout
+                    android:id="@+id/calibrationLayout"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/calibration_header" >
+                    <TextView
+                        android:id="@+id/calibrateTemperature"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Temperature"
+                        android:padding="16dp"
+                        />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/divider" />
+                    <TextView
+                        android:id="@+id/calibrateHumidity"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Humidity"
+                        android:padding="16dp"
+                        />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/divider" />
+                    <TextView
+                        android:id="@+id/calibratePressure"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pressure"
+                        android:padding="16dp"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/mac_header"
+                    style="@style/sensorSettingGroupHeaderStyle"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:text="@string/more_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/calibrationLayout" />
 
                 <TextView
                     android:id="@+id/title_mac"
-                    android:fontFamily="@font/roboto_medium"
+                    style="@style/sensorSettingInfoTitleStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:padding="@dimen/tag_settings_text_padding"
                     android:text="@string/mac_address"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/mac_header" />
 
@@ -348,15 +382,10 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/networkTitleTextView"
+                        style="@style/sensorSettingGroupHeaderStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@color/backgroundLight"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/tagsettings_network_info"
-                        android:textAllCaps="true"
-                        android:textColor="@color/mainDark"
-                        android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -365,11 +394,8 @@
                         android:id="@+id/ownerTitleTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
-                        android:padding="@dimen/tag_settings_text_padding"
                         android:text="@string/tagsettings_owner"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoTitleStyle"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/networkTitleTextView" />
 
@@ -377,9 +403,7 @@
                         android:id="@+id/ownerValueTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:padding="@dimen/tag_settings_text_padding"
-                        android:textSize="16sp"
+                        style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintLeft_toRightOf="@id/ownerTitleTextView"
                         app:layout_constraintTop_toBottomOf="@id/networkTitleTextView" />

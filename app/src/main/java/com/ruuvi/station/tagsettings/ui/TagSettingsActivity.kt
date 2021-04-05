@@ -23,8 +23,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.calibration.model.CalibrationType
+import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -90,6 +91,18 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         shareTagButton.setDebouncedOnClickListener {
             ShareSensorActivity.start(this, viewModel.tagId )
+        }
+
+        calibrateHumidity.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.HUMIDITY)
+        }
+
+        calibrateTemperature.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.TEMPERATURE)
+        }
+
+        calibratePressure.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.PRESSURE)
         }
     }
 
@@ -344,51 +357,57 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun calibrateHumidity(tag: RuuviTagEntity) {
         calibrateHumidityButton.isGone = tag.humidity == null
         calibrateHumidityButton.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-            val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
-
-            val container = FrameLayout(applicationContext)
-
-            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            content.layoutParams = params
-
-            val infoTextView = content.findViewById<View>(R.id.info) as TextView
-            infoTextView?.let {
-                it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+            tag.id?.let {
+                CalibrationActivity.start(this, it, CalibrationType.HUMIDITY)
             }
+        }
+    }
 
-            (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
+    private fun calibrateOld(tag: RuuviTagEntity) {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
 
-            builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
+        val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
+
+        val container = FrameLayout(applicationContext)
+
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+
+        params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+
+        content.layoutParams = params
+
+        val infoTextView = content.findViewById<View>(R.id.info) as TextView
+        infoTextView?.let {
+            it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+        }
+
+        (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
+
+        builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
+            tag.id?.let {
+                humidityCalibrationInteractor.calibrate(it)
+                viewModel.getTagInfo()
+            }
+        }
+        if (tag.humidityOffset != 0.0) {
+            builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
                 tag.id?.let {
-                    humidityCalibrationInteractor.calibrate(it)
+                    humidityCalibrationInteractor.clear(it)
                     viewModel.getTagInfo()
                 }
             }
-            if (tag.humidityOffset != 0.0) {
-                builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
-                    tag.id?.let {
-                        humidityCalibrationInteractor.clear(it)
-                        viewModel.getTagInfo()
-                    }
-                }
-                (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
-            }
-
-            builder.setNeutralButton(getString(R.string.close), null)
-
-            container.addView(content)
-
-            builder.setView(container)
-
-            builder.create().show()
+            (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
         }
+
+        builder.setNeutralButton(getString(R.string.close), null)
+
+        container.addView(content)
+
+        builder.setView(container)
+
+        builder.create().show()
     }
 
     private fun setupAlarmItems() {
