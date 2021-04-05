@@ -22,7 +22,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagDetailsViewModel>() with factory { args: TagDetailsArguments ->
-            TagDetailsViewModel(args, instance(), instance())
+            TagDetailsViewModel(args, instance(), instance(), instance(), instance(), instance())
         }
 
         bind<TagViewModel>() with factory { args: TagViewModelArgs ->
@@ -30,7 +30,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagRepository>() with singleton {
-            TagRepository(instance(), instance())
+            TagRepository(instance())
         }
     }
 }

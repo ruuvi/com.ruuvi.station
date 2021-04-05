@@ -7,7 +7,10 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.isUpdateInstall
 import java.util.*
+import kotlin.math.max
+import kotlin.math.round
 
 class Preferences constructor(val context: Context) {
 
@@ -123,6 +126,14 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
 
+    // chart view period (in days)
+    var graphViewPeriodDays: Int
+        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, getDefaultGraphViewPeriodDays())
+        set(period) {
+            sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD_DAYS, period).apply()
+        }
+
+
     var graphShowAllPoint: Boolean
         get() = sharedPreferences.getBoolean(PREF_GRAPH_SHOW_ALL_POINTS, DEFAULT_GRAPH_SHOW_ALL_POINTS)
         set(showAllPoints) {
@@ -155,6 +166,44 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_LOCALE, locale).apply()
         }
 
+    var networkEmail: String
+        get() = sharedPreferences.getString(PREF_NETWORK_EMAIL, "") ?: ""
+        set(email) {
+            sharedPreferences.edit().putString(PREF_NETWORK_EMAIL, email).apply()
+        }
+
+    var networkToken: String
+        get() = sharedPreferences.getString(PREF_NETWORK_TOKEN, "") ?: ""
+        set(token) {
+            sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
+        }
+
+    var lastSyncDate: Long
+        get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+        set(syncDate) {
+            sharedPreferences.edit().putLong(PREF_LAST_SYNC_DATE, syncDate).apply()
+        }
+
+    var experimentalFeatures: Boolean
+        get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
+        set(experimentalFeatures) {
+            sharedPreferences.edit().putBoolean(PREF_EXPERIMENTAL_FEATURES, experimentalFeatures).apply()
+        }
+
+    fun getUserEmailLiveData() = SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
+
+    fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+
+    fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
+
+    private fun getDefaultGraphViewPeriodDays(): Int {
+        return if (context.isUpdateInstall()) {
+            return max(round(graphViewPeriod / 24f).toInt(), 1)
+        } else {
+            DEFAULT_GRAPH_VIEW_PERIOD_DAYS
+        }
+    }
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -171,15 +220,21 @@ class Preferences constructor(val context: Context) {
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
         private const val PREF_LOCALE = "pref_locale"
+        private const val PREF_NETWORK_EMAIL = "pref_network_email"
+        private const val PREF_NETWORK_TOKEN = "pref_network_token"
+        private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
+        private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
+        private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"

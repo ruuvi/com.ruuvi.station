@@ -3,6 +3,8 @@ package com.ruuvi.station.settings.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.database.TagRepository
@@ -13,6 +15,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), KodeinAware {
 
@@ -25,14 +28,20 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewModel()
+        setupUI()
+    }
+
+    private fun setupViewModel() {
+        viewModel.experimentalFeatures.observe(viewLifecycleOwner, Observer {
+            Timber.d("experimentalSettingsContainer $it")
+            experimentalSettingsContainer.isVisible = it
+        })
+    }
+
+    private fun setupUI() {
         scanLayout.setDebouncedOnClickListener {
             (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_background_scan)
-        }
-
-        scanIntervalLayout.setDebouncedOnClickListener {
-            if (viewModel.getBackgroundScanMode() != BackgroundScanModes.DISABLED) {
-                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_background_scan_interval)
-            }
         }
 
         gatewaySettingsLayout.setDebouncedOnClickListener {
@@ -59,6 +68,10 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_language)
         }
 
+        experimentalSettingsLayout.setDebouncedOnClickListener {
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_experimental)
+        }
+
         dashboardSwitch.isChecked = viewModel.isDashboardEnabled()
         dashboardSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setIsDashboardEnabled(isChecked)
@@ -76,7 +89,6 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             if (min > 0) intervalText += min.toString() + " " + getString(R.string.min) + " "
             if (sec > 0) intervalText += sec.toString() + " " + getString(R.string.sec)
         }
-        backgroundScanIntervalSubTextView.text = intervalText
         if (viewModel.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
             bgScanDescriptionTextView.text = getString(R.string.settings_background_continuous_description, intervalText)
         } else {

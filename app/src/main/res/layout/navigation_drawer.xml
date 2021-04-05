@@ -2,10 +2,15 @@
 <com.google.android.material.navigation.NavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigationView"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    app:headerLayout="@layout/drawer_header"
+    app:menu="@menu/menu_main"
+    app:itemTextAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
     android:background="@android:color/white" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,34 +18,47 @@
         android:layout_width="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/backgroundImageView"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:scaleType="matrix"
-            android:scrollY="150dp"
-            android:src="@drawable/gradient_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/networkLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/logo" />
-
-        <ListView
-            android:id="@+id/navigationDrawerListView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
-
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/networkStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:textStyle="bold"
+                android:text="@string/network_status_title"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/loggedUserTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                tools:text="@string/network_user"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/syncLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/syncNetworkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_sync_24"
+                android:layout_margin="8dp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/syncStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center|start"
+                tools:text="Syncronized 1 day ago"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.navigation.NavigationView>

@@ -52,6 +52,7 @@
 <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
 <string name="data_format">Dataformaatti</string>
 <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
+<string name="days">Päivää</string>
 <string name="disconnected">Ei yhteyttä</string>
 <string name="export">VIE</string>
 <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
@@ -97,6 +98,7 @@
 <string name="humidity_relative_unit">%</string>
 <string name="language_english">English</string>
 <string name="language_finnish">Suomi</string>
+<string name="language_french">Français</string>
 <string name="language_russian">Русский</string>
 <string name="language_swedish">Svenska</string>
 <string name="mac_address">MAC-osoite</string>
@@ -171,7 +173,7 @@
 <string name="settings_chart_interval">Historian tarkkuus</string>
 <string name="settings_chart_interval_description">Aseta historian tallennusväli 1 - 60 minuuttia. Tiheämpi tallennusväli mahdollistaa tarkempien historiatietojen esittämisen, mutta tämä käyttää enemmän laitteen resursseja</string>
 <string name="settings_chart_view_period">Historian tarkastelujakso</string>
-<string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 72 tuntia</string>
+<string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 10 päivää</string>
 <string name="settings_gateway">Välityspalvelimen asetukset</string>
 <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
 <string name="settings_gateway_details_link">ohjesivulta</string>

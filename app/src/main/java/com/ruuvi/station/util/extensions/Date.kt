@@ -3,6 +3,15 @@ package com.ruuvi.station.util.extensions
 import android.content.Context
 import com.ruuvi.station.R
 import java.util.*
+import kotlin.math.abs
+
+fun Date.getEpochSecond(): Long {
+    return this.time / 1000L
+}
+
+fun Date.diffGreaterThan(diff: Long): Boolean {
+    return abs(Date().time - this.time) > diff
+}
 
 fun Date.describingTimeSince(context: Context): String {
     var output = ""

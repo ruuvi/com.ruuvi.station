@@ -1,6 +1,5 @@
 package com.ruuvi.station.database
 
-import android.content.Context
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.app.preferences.Preferences
@@ -10,12 +9,11 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.RuuviTagEntity_Table
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
+import java.util.*
 
 class TagRepository(
-    private val preferences: Preferences,
-    private val context: Context
+    private val preferences: Preferences
 ) {
-
     fun getAllTags(isFavorite: Boolean): List<RuuviTagEntity> =
         SQLite.select()
             .from(RuuviTagEntity::class.java)
@@ -43,12 +41,12 @@ class TagRepository(
 
     fun getTagReadings(tagId: String): List<TagSensorReading>? {
         return if (preferences.graphShowAllPoint) {
-            TagSensorReading.getForTag(tagId, preferences.graphViewPeriod)
+            TagSensorReading.getForTag(tagId, preferences.graphViewPeriodDays)
         } else {
             TagSensorReading.getForTagPruned(
                 tagId,
                 preferences.graphPointInterval,
-                preferences.graphViewPeriod
+                preferences.graphViewPeriodDays
             )
         }
     }
@@ -61,6 +59,23 @@ class TagRepository(
         tag.save()
     }
 
+    fun getLatestForTag(id: String, limit: Int): List<TagSensorReading> {
+        return SQLite.select()
+            .from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.ruuviTagId.eq(id))
+            .orderBy(TagSensorReading_Table.createdAt, false)
+            .limit(limit)
+            .queryList()
+    }
+
+    fun getTagReadingsDate(tagId: String, since: Date): List<TagSensorReading>? {
+        return SQLite.select()
+            .from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.ruuviTagId.eq(tagId))
+            .and(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
+            .queryList()
+    }
+
     fun updateTagName(tagId: String, tagName: String?) {
         SQLite.update(RuuviTagEntity::class.java)
             .set(RuuviTagEntity_Table.name.eq(tagName))
@@ -69,11 +84,22 @@ class TagRepository(
             .execute()
     }
 
-    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) {
+    fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
         SQLite.update(RuuviTagEntity::class.java)
             .set(
                 RuuviTagEntity_Table.userBackground.eq(userBackground),
-                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground)
+                RuuviTagEntity_Table.defaultBackground.eq(defaultBackground),
+                RuuviTagEntity_Table.networkBackground.eq(networkBackground)
+            )
+            .where(RuuviTagEntity_Table.id.eq(tagId))
+            .async()
+            .execute()
+    }
+
+    fun updateNetworkBackground(tagId: String, networkBackground: String?) {
+        SQLite.update(RuuviTagEntity::class.java)
+            .set(
+                RuuviTagEntity_Table.networkBackground.eq(networkBackground)
             )
             .where(RuuviTagEntity_Table.id.eq(tagId))
             .async()

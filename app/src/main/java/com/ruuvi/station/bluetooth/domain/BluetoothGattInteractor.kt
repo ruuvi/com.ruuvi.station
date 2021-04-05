@@ -10,4 +10,7 @@ class BluetoothGattInteractor (
     fun readLogs(id: String, from: Date?, listener: IRuuviGattListener): Boolean {
         return interactor.readLogs(id, from, listener)
     }
+    fun disconnect(id: String): Boolean {
+        return interactor.disconnect(id)
+    }
 }

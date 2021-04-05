@@ -18,7 +18,7 @@ class AddTagActivityViewModel(
     fun updateTags() {
         CoroutineScope(Dispatchers.IO).launch {
             val calendar = Calendar.getInstance()
-            calendar.add(Calendar.SECOND, -5)
+            calendar.add(Calendar.SECOND, -60)
 
             val tagsDb =
                 getAllTags(false)

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -21,11 +22,11 @@ class CsvExporter(
 
     fun toCsv(tagId: String) {
         val tag = repository.getTagById(tagId)
-        val readings = TagSensorReading.getForTag(tagId)
+        val readings = TagSensorReading.getForTag(tagId, GlobalSettings.historyLengthDays)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
 
-        val filenameDateFormat = SimpleDateFormat("yyMMdd-hhmm")
+        val filenameDateFormat = SimpleDateFormat("yyyyMMdd-HHmm")
         val filenameDate = filenameDateFormat.format(Date())
 
         val filename = if (tag?.name.isNullOrEmpty()) {

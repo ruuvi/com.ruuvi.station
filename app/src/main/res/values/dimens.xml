@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="title_font_size">16sp</dimen>
@@ -9,4 +9,6 @@
 
     <dimen name="graph_description_size">4sp</dimen>
     <dimen name="dialog_margin">20dp</dimen>
+
+    <dimen name="design_navigation_separator_vertical_padding" tools:override="true">0dp</dimen>
 </resources>

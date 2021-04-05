@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/mainGroup"
+        android:checkableBehavior="none">
+        <group
+            android:id="@+id/addNewSensorGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/addNewSensorMenuItem"
+                android:title="@string/menu_add_new_sensor" />
+        </group>
+        <group
+            android:id="@+id/appSettingsGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/appSettingsMenuItem"
+                android:title="@string/menu_app_settings" />
+        </group>
+        <group
+            android:id="@+id/aboutGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/aboutMenuItem"
+                android:title="@string/menu_about_help" />
+        </group>
+        <group
+            android:id="@+id/sendFeedbackGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/sendFeedbackMenuItem"
+                android:title="@string/menu_send_feedback" />
+        </group>
+        <group
+            android:id="@+id/getMoreSensorsGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/getMoreSensorsMenuItem"
+                android:title="@string/menu_get_more_sensors" />
+        </group>
+        <group
+            android:id="@+id/loginGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/loginMenuItem"
+                android:title="@string/sign_in" />
+        </group>
+
+    </group>
+</menu>

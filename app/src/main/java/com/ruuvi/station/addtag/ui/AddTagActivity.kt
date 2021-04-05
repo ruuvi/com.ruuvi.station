@@ -100,7 +100,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
         super.onResume()
 
         timer = Timer("AddTagActivityTimer", true)
-        timer?.scheduleAtFixedRate(0, 1000) {
+        timer?.scheduleAtFixedRate(0, 3000) {
             viewModel.updateTags()
         }
         //FIXME delete as repeated call?
@@ -112,8 +112,8 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
         timer?.cancel()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return true

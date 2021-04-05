@@ -12,9 +12,15 @@ import com.ruuvi.station.app.di.AppInjectionModules
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.feature.provider.RuntimeFeatureFlagProvider
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.test.FakeScanResultsSender
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
@@ -34,7 +40,11 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
+    private val networkInteractor: RuuviNetworkInteractor by instance()
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor by instance()
     private val preferencesRepository: PreferencesRepository by instance()
+    private val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider by instance()
+    private val runtimeBehavior: RuntimeBehavior by instance()
 
     private var isInForeground: Boolean = false
 
@@ -42,6 +52,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
         override fun onBecameForeground() {
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
+            updateNetwork()
+            runtimeBehavior.refreshFeatureFlags()
         }
 
         override fun onBecameBackground() {
@@ -75,6 +87,10 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         defaultOnTagFoundListener.isForeground = isInForeground
         foreground.addListener(listener)
+
+        setupExperimentalFeatures()
+
+        updateNetwork()
     }
 
     private fun setupDependencyInjection() {
@@ -90,11 +106,15 @@ class RuuviScannerApplication : Application(), KodeinAware {
         }
     }
 
-    companion object {
-        private const val isBluetoothFakingEnabledInDebug = false
+    private fun setupExperimentalFeatures() {
+        if (networkInteractor.signedIn) {
+            runtimeFeatureFlagProvider.setFeatureEnabled(FeatureFlag.RUUVI_NETWORK, true)
+        }
+    }
 
-        val isBluetoothFakingEnabled =
-            if (BuildConfig.DEBUG) isBluetoothFakingEnabledInDebug
-            else /*if release */ false
+    private fun updateNetwork() {
+        if (networkInteractor.signedIn && Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
+            networkDataSyncInteractor.syncNetworkData()
+        }
     }
 }

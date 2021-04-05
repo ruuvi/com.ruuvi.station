@@ -27,6 +27,7 @@ public class RuuviTagEntity extends BaseModel {
     @Column
     private String name;
     @Column
+    @Nullable
     private Double temperature;
     @Column
     @Nullable
@@ -70,6 +71,10 @@ public class RuuviTagEntity extends BaseModel {
     public boolean connectable;
     @Column
     private Date lastSync;
+    @Column
+    private Date networkLastSync;
+    @Column
+    private String networkBackground;
 
     public RuuviTagEntity() {
     }
@@ -93,6 +98,23 @@ public class RuuviTagEntity extends BaseModel {
         this.connectable = tag.getConnectable() != null ? tag.getConnectable() : false;
     }
 
+    public void updateData(TagSensorReading reading) {
+        this.rssi = reading.rssi;
+        this.temperature = reading.temperature;
+        this.humidity = reading.humidity;
+        this.pressure = reading.pressure;
+        this.accelX = reading.accelX;
+        this.accelY = reading.accelY;
+        this.accelZ = reading.accelZ;
+        this.voltage = reading.voltage;
+        this.dataFormat = reading.dataFormat;
+        this.txPower = reading.txPower;
+        this.movementCounter = reading.movementCounter;
+        this.measurementSequenceNumber = reading.measurementSequenceNumber;
+        this.updateAt = reading.createdAt;
+        this.networkLastSync = reading.createdAt;
+    }
+
     public RuuviTagEntity preserveData(RuuviTagEntity tag) {
         tag.setName(this.getName());
         tag.setCreateDate(this.getCreateDate());
@@ -104,6 +126,8 @@ public class RuuviTagEntity extends BaseModel {
         tag.setHumidityOffset(this.getHumidityOffset());
         tag.setHumidityOffsetDate(this.getHumidityOffsetDate());
         tag.setLastSync(this.getLastSync());
+        tag.setNetworkLastSync(this.getNetworkLastSync());
+        tag.setNetworkBackground(this.getNetworkBackground());
         return tag;
     }
 
@@ -377,5 +401,23 @@ public class RuuviTagEntity extends BaseModel {
 
     public void setLastSync(Date lastSync) {
         this.lastSync = lastSync;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public Date getNetworkLastSync() {
+        return networkLastSync;
+    }
+
+    public void setNetworkLastSync(Date networkLastSync) {
+        this.networkLastSync = networkLastSync;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public String getNetworkBackground() {
+        return networkBackground;
+    }
+
+    public void setNetworkBackground(String networkBackground) {
+        this.networkBackground = networkBackground;
     }
 }

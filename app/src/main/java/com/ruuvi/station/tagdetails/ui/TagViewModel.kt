@@ -5,6 +5,7 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -59,17 +60,21 @@ class TagViewModel(
         showGraph = isShow
     }
 
+    fun disconnectGatt() {
+        tagEntryObserve.value?.let { tag ->
+            gattInteractor.disconnect(tag.id)
+        }
+    }
+
     fun syncGatt() {
         syncStatusObj.value = SyncStatus()
         syncStatusObj.value?.syncProgress = SyncProgress.CONNECTING
         syncStatusObj.postValue(syncStatusObj.value)
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val threeDaysAgo = Date(Date().time - 1000 * 60 * 60 * 24 * 3)
-            if (syncFrom == null) {
-                syncFrom = threeDaysAgo
-            } else if (syncFrom.before(threeDaysAgo)) {
-                syncFrom = threeDaysAgo
+            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
+            if (syncFrom == null || syncFrom.before(historyLength)) {
+                syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
             val found = gattInteractor.readLogs(tag.id, syncFrom, object : IRuuviGattListener {
@@ -122,7 +127,7 @@ class TagViewModel(
 
     fun removeTagData() {
         TagSensorReading.removeForTag(tagId)
-        updateLastSync(null)
+        tagDetailsInteractor.clearLastSync(tagId)
     }
 
     fun saveGattReadings(tag: RuuviTag, data: List<LogReading>) {
