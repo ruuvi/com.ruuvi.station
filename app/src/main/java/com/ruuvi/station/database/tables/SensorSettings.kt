@@ -8,7 +8,11 @@ import com.ruuvi.station.database.LocalDatabase
 import timber.log.Timber
 import java.util.*
 
-@Table (name = "SensorSettings", database = LocalDatabase::class)
+@Table (
+    name = "SensorSettings",
+    database = LocalDatabase::class,
+    useBooleanGetterSetters = false
+)
 data class SensorSettings(
     @Column
     @PrimaryKey
@@ -29,6 +33,7 @@ data class SensorSettings(
     fun calibrateSensor(sensor: RuuviTagEntity) {
         Timber.d("calibration ${sensor.id} before ${sensor.temperature}")
         sensor.temperature += (temperatureOffset ?: 0.0)
+        sensor.temperatureOffset = temperatureOffset ?: 0.0
         Timber.d("calibration ${sensor.id} after ${sensor.temperature}")
     }
 }

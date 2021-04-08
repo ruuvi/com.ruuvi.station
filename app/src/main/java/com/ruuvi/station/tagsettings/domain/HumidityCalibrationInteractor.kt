@@ -10,7 +10,7 @@ class HumidityCalibrationInteractor (private val tagRepository: TagRepository) {
         tag?.let {
             val previousHumidityOffset = tag.humidityOffset ?: 0.0
             tag.humidity?.let {
-                tag.humidity -= previousHumidityOffset
+                tag.humidity = it - previousHumidityOffset
             }
             tag.humidityOffset = 75.0 - (tag.humidity ?: 0.0)
             tag.humidityOffsetDate = Date()
@@ -26,7 +26,7 @@ class HumidityCalibrationInteractor (private val tagRepository: TagRepository) {
             tag.humidityOffset = 0.0
             tag.humidityOffsetDate = null
             tag.humidity?.let {
-                tag.humidity -= previousHumidityOffset
+                tag.humidity = it - previousHumidityOffset
             }
             tagRepository.updateTag(tag)
         }
@@ -34,7 +34,7 @@ class HumidityCalibrationInteractor (private val tagRepository: TagRepository) {
 
     fun apply(tag: RuuviTagEntity) {
         tag.humidity?.let {
-            tag.humidity += (tag.humidityOffset ?: 0.0)
+            tag.humidity = it + (tag.humidityOffset ?: 0.0)
         }
     }
 }

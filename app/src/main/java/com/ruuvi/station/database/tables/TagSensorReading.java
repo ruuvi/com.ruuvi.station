@@ -41,6 +41,8 @@ public class TagSensorReading extends BaseModel {
     @Column
     public Double temperature;
     @Column
+    public Double temperatureOffset;
+    @Column
     @Nullable
     public Double humidity;
     @Column
@@ -75,6 +77,7 @@ public class TagSensorReading extends BaseModel {
         this.temperature = tag.getTemperature();
         this.humidity = tag.getHumidity();
         this.humidityOffset = tag.getHumidityOffset();
+        this.temperatureOffset = tag.getTemperatureOffset();
         this.pressure = tag.getPressure();
         this.rssi = tag.getRssi();
         this.accelX = tag.getAccelX();

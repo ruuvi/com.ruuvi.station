@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isInvisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.observe
 import com.ruuvi.station.R
@@ -30,8 +31,6 @@ class CalibrateTemperatureFragment : Fragment(R.layout.fragment_calibrate_temper
     private lateinit var binding: FragmentCalibrateTemperatureBinding
 
     private var timer: Timer? = null
-
-    private var updateAt: Date? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,24 +68,23 @@ class CalibrateTemperatureFragment : Fragment(R.layout.fragment_calibrate_temper
     }
 
     private fun setupViewModel() {
-        viewModel.sensorDataObserve.observe(viewLifecycleOwner) {sensorData ->
-            sensorData?.let {
-                binding.originalUpdatedTextView.text = "(${it.updateAt?.describingTimeSince(requireContext())})"
-                binding.correctedOffsetTextView.text = "(Offset ${viewModel.getTemperatureOffset()})"
-                if (updateAt != it.updateAt) {
-                    binding.originalValueTextView.text = viewModel.getOriginalTemperature(it.temperature)
-                    binding.correctedlValueTextView.text = viewModel.getTemperatureString(it.temperature)
-                    updateAt = it.updateAt
-                }
+        viewModel.calibrationInfoObserve.observe(viewLifecycleOwner) {info ->
+            binding.originalValueTextView.text = viewModel.getTemperatureString(info.temperatureRaw)
+            binding.originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
+            binding.correctedlValueTextView.text = viewModel.getTemperatureString(info.temperatureCalibrated)
+            binding.correctedOffsetTextView.text = "(Offset ${info.currentTemperatureOffsetString})"
 
-            }
+            binding.correctedTitleTextView.isInvisible = !info.isTemperatureCalibrated
+            binding.correctedlValueTextView.isInvisible = !info.isTemperatureCalibrated
+            binding.correctedOffsetTextView.isInvisible = !info.isTemperatureCalibrated
+            binding.clearButton.isInvisible = !info.isTemperatureCalibrated
         }
     }
 
     override fun onResume() {
         super.onResume()
         timer = Timer("CalibrateTemperatureTimer", false)
-        timer?.scheduleAtFixedRate(0, 1000) {
+        timer?.scheduleAtFixedRate(0, 500) {
             viewModel.refreshSensorData()
         }
     }

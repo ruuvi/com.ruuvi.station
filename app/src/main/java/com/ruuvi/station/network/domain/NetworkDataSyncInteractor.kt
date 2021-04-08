@@ -112,7 +112,7 @@ class NetworkDataSyncInteractor (
 
         val tag = tagRepository.getTagById(tagId)
 
-        if (tag != null && tag.isFavorite) {
+        if (tag != null && tag.favorite) {
             val cal = Calendar.getInstance()
             cal.time = Date()
             cal.add(Calendar.HOUR, -period)

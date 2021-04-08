@@ -24,10 +24,36 @@ public class LocalDatabase {
     public static final int VERSION = 20;
 
     @Migration(version = 20, database = LocalDatabase.class)
-    public static class Migration20 extends BaseMigration {
+    public static class Migration20_1 extends BaseMigration {
         @Override
         public void migrate(@NonNull DatabaseWrapper database) {
             database.execSQL("INSERT INTO SensorSettings (id, humidityOffset, humidityOffsetDate) SELECT id, humidityOffset, humidityOffsetDate FROM RuuviTag WHERE favorite=1");
+        }
+    }
+
+    @Migration(version = 20, database = LocalDatabase.class)
+    public static class Migration20_2 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration20_2(Class<RuuviTagEntity> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.REAL, "temperatureOffset");
+        }
+    }
+
+    @Migration(version = 20, database = LocalDatabase.class)
+    public static class Migration20_3 extends AlterTableMigration<TagSensorReading> {
+        public Migration20_3(Class<TagSensorReading> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.REAL, "temperatureOffset");
         }
     }
 

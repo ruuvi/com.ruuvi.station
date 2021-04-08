@@ -82,7 +82,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
 
         tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
-            if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
+            if (tag.id?.let { viewModel.getTagById(it)?.favorite } == true) {
                 Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
                         .show()
                 return@OnItemClickListener

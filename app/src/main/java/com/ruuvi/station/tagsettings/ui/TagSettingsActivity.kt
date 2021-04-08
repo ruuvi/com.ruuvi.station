@@ -116,6 +116,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 setupInputMac(it)
                 setupTagImage(it)
                 calibrateHumidity(it)
+                setupCalibration(it)
                 updateReadings(it)
             }
         })
@@ -246,7 +247,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         viewModel.tagObserve.value?.let {
-            if (it.isFavorite) {
+            if (it.favorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
             }
         }
@@ -254,8 +255,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun isTagFavorite(tag: RuuviTagEntity) {
-        if (!tag.isFavorite) {
-            tag.isFavorite = true
+        if (!tag.favorite) {
+            tag.favorite = true
             tag.createDate = Date()
             tag.update()
         }
@@ -357,6 +358,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             tag.defaultBackground = defaultBackground
             tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
+    }
+
+    private fun setupCalibration(tag: RuuviTagEntity) {
+        calibrateHumidity.isGone = tag.humidity == null
+        calibratePressure.isGone = tag.pressure == null
+        calibrateHumidityDivider.isGone = tag.humidity == null
+        calibratePressureDivider.isGone = tag.pressure == null
     }
 
     private fun calibrateHumidity(tag: RuuviTagEntity) {
