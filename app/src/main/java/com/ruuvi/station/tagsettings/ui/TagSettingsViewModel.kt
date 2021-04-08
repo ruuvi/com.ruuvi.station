@@ -7,6 +7,7 @@ import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
@@ -30,6 +31,9 @@ class TagSettingsViewModel(
     private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
     val tagObserve: LiveData<RuuviTagEntity?> = tagState
 
+    private val sensorSettings = MutableLiveData<SensorSettings>()
+    val sensorSettingsObserve: LiveData<SensorSettings> = sensorSettings
+
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
@@ -51,8 +55,10 @@ class TagSettingsViewModel(
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
             val tagInfo = getTagById(tagId)
+            val settings = interactor.getSensorSettings(tagId)
             withContext(Dispatchers.Main) {
                 tagState.value = tagInfo
+                sensorSettings.value = settings
             }
         }
     }

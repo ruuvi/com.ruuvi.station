@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -12,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
 import com.ruuvi.station.graph.GraphView
-import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince

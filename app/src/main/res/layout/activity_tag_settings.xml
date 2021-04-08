@@ -189,37 +189,34 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/calibration_header" >
-                    <TextView
+                    <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibrateTemperature"
-                        style="@style/sensorSettingInfoTitleStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Temperature"
-                        android:padding="16dp"
+                        app:itemTitle="Temperature"
+                        app:itemValue="0.0"
                         />
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@color/divider" />
-                    <TextView
+                    <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibrateHumidity"
-                        style="@style/sensorSettingInfoTitleStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Humidity"
-                        android:padding="16dp"
+                        app:itemTitle="Humidity"
+                        app:itemValue="0.0"
                         />
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@color/divider" />
-                    <TextView
+                    <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibratePressure"
-                        style="@style/sensorSettingInfoTitleStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pressure"
-                        android:padding="16dp"
+                        app:itemTitle="Pressure"
+                        app:itemValue="0.0"
                         />
 
                 </LinearLayout>

@@ -120,6 +120,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         })
 
+        viewModel.sensorSettingsObserve.observe(this, Observer {
+            calibrateTemperature.setItemValue(
+                unitsConverter.getTemperatureOffsetString(it?.temperatureOffset ?: 0.0))
+        })
+
         viewModel.userLoggedInObserve.observe(this, Observer {
             if (it == true) {
                 claimTagButton.visibility = View.VISIBLE
@@ -357,9 +362,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun calibrateHumidity(tag: RuuviTagEntity) {
         calibrateHumidityButton.isGone = tag.humidity == null
         calibrateHumidityButton.setDebouncedOnClickListener {
-            tag.id?.let {
-                CalibrationActivity.start(this, it, CalibrationType.HUMIDITY)
-            }
+            calibrateOld(tag)
         }
     }
 

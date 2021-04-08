@@ -1,7 +1,7 @@
 package com.ruuvi.station.calibration.model
 
-enum class CalibrationType {
-    TEMPERATURE,
-    HUMIDITY,
-    PRESSURE
+enum class CalibrationType (val title: String) {
+    TEMPERATURE ("Temperature offset"),
+    HUMIDITY ("Humidity offset"),
+    PRESSURE ("Pressure offset")
 }

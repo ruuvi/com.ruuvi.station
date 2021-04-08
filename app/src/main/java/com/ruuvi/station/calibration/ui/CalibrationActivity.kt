@@ -13,7 +13,7 @@ class CalibrationActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityCalibrationBinding
 
-    lateinit var tagId: String
+    lateinit var sensorId: String
     lateinit var calibrationType: CalibrationType
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +25,8 @@ class CalibrationActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        tagId = intent.getStringExtra(TAG_ID) ?: ""
+        sensorId = intent.getStringExtra(SENSOR_ID) ?: ""
         calibrationType = intent.getSerializableExtra(CALIBRATION_TYPE) as CalibrationType
-        //binding.testTextView.text = tagId
         openFragment()
 
     }
@@ -42,20 +41,21 @@ class CalibrationActivity : AppCompatActivity() {
         transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
         val fragment = when (calibrationType) {
             CalibrationType.HUMIDITY -> CalibrateHumidityFragment.newInstance()
-            CalibrationType.TEMPERATURE -> CalibrateTemperatureFragment.newInstance()
+            CalibrationType.TEMPERATURE -> CalibrateTemperatureFragment.newInstance(sensorId)
             CalibrationType.PRESSURE -> CalibratePressureFragment.newInstance()
         }
         transaction.replace(R.id.calibration_frame, fragment).commit()
+        title = calibrationType.title
     }
 
     companion object {
-        const val TAG_ID = "TAG_ID"
+        const val SENSOR_ID = "SENSOR_ID"
         const val CALIBRATION_TYPE = "CALIBRATION_TYPE"
 
 
         fun start(context: Context, tagId: String, calibrationType: CalibrationType) {
             val intent = Intent(context, CalibrationActivity::class.java)
-            intent.putExtra(TAG_ID, tagId)
+            intent.putExtra(SENSOR_ID, tagId)
             intent.putExtra(CALIBRATION_TYPE, calibrationType)
             context.startActivity(intent)
         }

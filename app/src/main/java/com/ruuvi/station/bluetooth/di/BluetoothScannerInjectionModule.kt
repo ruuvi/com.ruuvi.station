@@ -38,7 +38,7 @@ object BluetoothScannerInjectionModule {
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
         bind<DefaultOnTagFoundListener>() with singleton {
-            DefaultOnTagFoundListener(instance(), instance(), instance(), instance(), instance(), instance())
+            DefaultOnTagFoundListener(instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
