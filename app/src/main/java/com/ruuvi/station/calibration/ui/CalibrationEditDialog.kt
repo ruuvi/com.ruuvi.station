@@ -38,7 +38,7 @@ class CalibrationEditDialog(): DialogFragment() {
         val confirmButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         confirmButton.isEnabled = false
 
-        binding.dialogTitle.text = "Enter temperature value expected from sensor in current conditions: ($unit): "
+        binding.dialogTitle.text = "Enter temperature value expected from sensor in current conditions ($unit): "
 
         binding.calibrationValueEditText.addTextChangedListener {
             try {
