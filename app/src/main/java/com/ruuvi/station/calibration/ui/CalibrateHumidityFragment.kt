@@ -1,30 +1,30 @@
 package com.ruuvi.station.calibration.ui
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.ruuvi.station.R
+import com.ruuvi.station.calibration.domain.CalibrationViewModelArgs
+import com.ruuvi.station.calibration.model.CalibrationType
+import com.ruuvi.station.util.extensions.viewModel
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
 
-class CalibrateHumidityFragment : Fragment() {
+class CalibrateHumidityFragment : CalibrationFragment(R.layout.fragment_calibrate), KodeinAware {
+    override val kodein: Kodein by closestKodein()
+    override val viewModel: CalibrateHumidityViewModel by viewModel {
+        arguments?.let {
+            CalibrationViewModelArgs(it.getString(SENSOR_ID, ""))
+        }
+    }
+    override val calibrationType: CalibrationType = CalibrationType.HUMIDITY
 
     companion object {
-        fun newInstance() = CalibrateHumidityFragment()
+        fun newInstance(sensorId: String): CalibrateHumidityFragment {
+            val fragment = CalibrateHumidityFragment()
+            val arguments = Bundle()
+            arguments.putString(SENSOR_ID, sensorId)
+            fragment.arguments = arguments
+            return fragment
+        }
     }
-
-    private lateinit var viewModel: CalibrateHumidityViewModel
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_calibrate_humidity, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CalibrateHumidityViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

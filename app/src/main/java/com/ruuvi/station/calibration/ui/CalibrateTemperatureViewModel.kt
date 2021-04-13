@@ -13,28 +13,26 @@ import kotlinx.coroutines.withContext
 class CalibrateTemperatureViewModel (
     val sensorId: String,
     val calibrationInteractor: CalibrationInteractor
-) : ViewModel() {
+) : ViewModel(), ICalibrationViewModel {
     private val calibrationInfo = MutableLiveData<CalibrationInfo>()
-    val calibrationInfoObserve: LiveData<CalibrationInfo> = calibrationInfo
+    override val calibrationInfoObserve: LiveData<CalibrationInfo> = calibrationInfo
 
-    fun refreshSensorData() {
+    override fun refreshSensorData() {
         CoroutineScope(Dispatchers.IO).launch {
-            val data = calibrationInteractor.getCalibrationInfo(sensorId)
+            val data = calibrationInteractor.getTemperatureCalibrationInfo(sensorId)
             withContext(Dispatchers.Main) {
                 calibrationInfo.value = data
             }
         }
     }
 
-    fun getTemperatureString(temperature: Double?) = calibrationInteractor.getTemperatureString(temperature)
+    override fun getStringForValue(value: Double): String  = calibrationInteractor.getTemperatureString(value)
 
-    fun calibrateTo(targetValue: Double) {
+    override fun calibrateTo(targetValue: Double) {
         calibrationInteractor.calibrateTemperature(sensorId, targetValue)
     }
 
-    fun getTemperatureUnit(): String = calibrationInteractor.getTemperatureUnit()
+    override fun getUnit(): String = calibrationInteractor.getTemperatureUnit()
 
-    fun clearTemperatureCalibration() {
-        calibrationInteractor.clearTemperatureCalibration(sensorId)
-    }
+    override fun clearCalibration() = calibrationInteractor.clearTemperatureCalibration(sensorId)
 }

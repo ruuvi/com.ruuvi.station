@@ -40,6 +40,45 @@ class SensorSettingsRepository {
             it.temperatureOffsetDate = null
             it.update()
         }
+    }
 
+    fun clearPressureCalibration(sensorId: String) {
+        var settings = getSensorSettings(sensorId)
+        settings?.let {
+            it.pressureOffset = null
+            it.pressureOffsetDate = null
+            it.update()
+        }
+    }
+
+    fun setSensorPressureCalibrationOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettings(sensorId)
+        if (settings == null) {
+            settings = SensorSettings(sensorId)
+            settings.insert()
+        }
+        settings.pressureOffset = offset
+        settings.pressureOffsetDate = Date()
+        settings.update()
+    }
+
+    fun clearHumidityCalibration(sensorId: String) {
+        var settings = getSensorSettings(sensorId)
+        settings?.let {
+            it.humidityOffset = null
+            it.humidityOffsetDate = null
+            it.update()
+        }
+    }
+
+    fun setSensorHumidityOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettings(sensorId)
+        if (settings == null) {
+            settings = SensorSettings(sensorId)
+            settings.insert()
+        }
+        settings.humidityOffset = offset
+        settings.humidityOffsetDate = Date()
+        settings.update()
     }
 }

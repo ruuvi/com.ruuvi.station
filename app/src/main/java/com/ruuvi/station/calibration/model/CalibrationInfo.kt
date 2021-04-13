@@ -5,10 +5,10 @@ import java.util.*
 data class CalibrationInfo(
     val sensorId: String,
     val updateAt: Date?,
-    val temperatureRaw: Double,
-    val temperatureCalibrated: Double,
-    val isTemperatureCalibrated: Boolean,
-    val currentTemperatureOffset: Double? = null,
-    val currentTemperatureOffsetString: String,
-    val lastTemperatureOffset: Double? = null,
+    val rawValue: Double,
+    val calibratedValue: Double,
+    val isCalibrated: Boolean,
+    val currentOffset: Double? = null,
+    val currentOffsetString: String,
+    val lastOffset: Double? = null,
 )

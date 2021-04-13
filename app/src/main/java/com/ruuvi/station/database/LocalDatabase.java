@@ -41,6 +41,7 @@ public class LocalDatabase {
         public void onPreMigrate() {
             super.onPreMigrate();
             addColumn(SQLiteType.REAL, "temperatureOffset");
+            addColumn(SQLiteType.REAL, "pressureOffset");
         }
     }
 
@@ -54,6 +55,7 @@ public class LocalDatabase {
         public void onPreMigrate() {
             super.onPreMigrate();
             addColumn(SQLiteType.REAL, "temperatureOffset");
+            addColumn(SQLiteType.REAL, "pressureOffset");
         }
     }
 

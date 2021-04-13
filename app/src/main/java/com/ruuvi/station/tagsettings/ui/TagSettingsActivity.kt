@@ -32,6 +32,7 @@ import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.makeWebLinks
@@ -115,7 +116,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 setupTagName(it)
                 setupInputMac(it)
                 setupTagImage(it)
-                calibrateHumidity(it)
                 setupCalibration(it)
                 updateReadings(it)
             }
@@ -124,6 +124,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         viewModel.sensorSettingsObserve.observe(this, Observer {
             calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(it?.temperatureOffset ?: 0.0))
+            calibratePressure.setItemValue(
+                unitsConverter.getPressureString(it?.pressureOffset ?: 0.0))
+            calibrateHumidity.setItemValue(
+                unitsConverter.getHumidityString(it.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+            )
         })
 
         viewModel.userLoggedInObserve.observe(this, Observer {
@@ -365,13 +370,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         calibratePressure.isGone = tag.pressure == null
         calibrateHumidityDivider.isGone = tag.humidity == null
         calibratePressureDivider.isGone = tag.pressure == null
-    }
-
-    private fun calibrateHumidity(tag: RuuviTagEntity) {
-        calibrateHumidityButton.isGone = tag.humidity == null
-        calibrateHumidityButton.setDebouncedOnClickListener {
-            calibrateOld(tag)
-        }
     }
 
     private fun calibrateOld(tag: RuuviTagEntity) {

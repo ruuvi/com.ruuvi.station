@@ -51,7 +51,6 @@ class DefaultOnTagFoundListener(
                 val dbTag = repository.getTagById(sensorId)
                 if (dbTag != null) {
                     val ruuviTag = dbTag.preserveData(ruuviTag)
-                    humidityCalibrationInteractor.apply(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
                     sensorSettings?.calibrateSensor(ruuviTag)
                     repository.updateTag(ruuviTag)

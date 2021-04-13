@@ -1,30 +1,33 @@
 package com.ruuvi.station.calibration.ui
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.ruuvi.station.R
+import com.ruuvi.station.calibration.domain.CalibrationViewModelArgs
+import com.ruuvi.station.calibration.model.CalibrationType
+import com.ruuvi.station.util.extensions.viewModel
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
 
-class CalibratePressureFragment : Fragment() {
+class CalibratePressureFragment : CalibrationFragment(R.layout.fragment_calibrate), KodeinAware {
+
+    override val kodein: Kodein by closestKodein()
+    override val viewModel: CalibratePressureViewModel by viewModel {
+        arguments?.let {
+            CalibrationViewModelArgs(it.getString(SENSOR_ID, ""))
+        }
+    }
+
+    override val calibrationType: CalibrationType = CalibrationType.PRESSURE
 
     companion object {
-        fun newInstance() = CalibratePressureFragment()
+        const val SENSOR_ID = "SENSOR_ID"
+        fun newInstance(sensorId: String): CalibratePressureFragment {
+            val fragment = CalibratePressureFragment()
+            val arguments = Bundle()
+            arguments.putString(SENSOR_ID, sensorId)
+            fragment.arguments = arguments
+            return fragment
+        }
     }
-
-    private lateinit var viewModel: CalibratePressureViewModel
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_calibrate_pressure, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CalibratePressureViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

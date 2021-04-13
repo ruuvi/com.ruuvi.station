@@ -80,6 +80,15 @@ class UnitsConverter (
         }
     }
 
+    fun getPressurePascalValue(pressure: Double): Double {
+        return when (getPressureUnit()) {
+            PressureUnit.PA -> pressure
+            PressureUnit.HPA-> PressureConverter.hectopascalToPascal(pressure)
+            PressureUnit.INHG -> PressureConverter.inchMercuryToPascal(pressure)
+            PressureUnit.MMHG -> PressureConverter.mmMercuryToPascal(pressure)
+        }
+    }
+
     fun getPressureString(pressure: Double?): String {
         return if (pressure == null) {
             NO_VALUE_AVAILABLE
@@ -98,12 +107,12 @@ class UnitsConverter (
 
     fun getAllHumidityUnits(): Array<HumidityUnit> = HumidityUnit.values()
 
-    fun getHumidityUnitString(): String = context.getString(getHumidityUnit().unit)
+    fun getHumidityUnitString(humidityUnit: HumidityUnit = getHumidityUnit()): String = context.getString(humidityUnit.unit)
 
-    fun getHumidityValue(humidity: Double, temperature: Double): Double {
+    fun getHumidityValue(humidity: Double, temperature: Double, humidityUnit: HumidityUnit = getHumidityUnit()): Double {
         val converter = HumidityConverter(temperature, humidity/100)
 
-        return when (getHumidityUnit()) {
+        return when (humidityUnit) {
             HumidityUnit.PERCENT -> Utils.round(humidity, 2)
             HumidityUnit.GM3-> Utils.round(converter.ah, 2)
             HumidityUnit.DEW -> {
@@ -116,14 +125,14 @@ class UnitsConverter (
         } ?: 0.0
     }
 
-    fun getHumidityString(humidity: Double?, temperature: Double?): String {
+    fun getHumidityString(humidity: Double?, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): String {
         return if (humidity == null || temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            if (getHumidityUnit() == HumidityUnit.DEW) {
-                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getTemperatureUnitString())
+            if (humidityUnit == HumidityUnit.DEW) {
+                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getTemperatureUnitString())
             } else {
-                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), getHumidityUnitString())
+                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString())
             }
         }
     }

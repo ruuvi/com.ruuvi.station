@@ -30,7 +30,11 @@ data class RuuviTagEntity(
     @Column
     var humidity: Double? = null,
     @Column
+    var humidityOffset: Double = 0.0,
+    @Column
     var pressure: Double? = null,
+    @Column
+    var pressureOffset: Double = 0.0,
     @Column
     var favorite: Boolean = false,
     @Column
@@ -59,8 +63,6 @@ data class RuuviTagEntity(
     var measurementSequenceNumber: Int = 0,
     @Column
     var createDate: Date? = null,
-    @Column
-    var humidityOffset: Double = 0.0,
     @Column
     var humidityOffsetDate: Date? = null,
     @Column

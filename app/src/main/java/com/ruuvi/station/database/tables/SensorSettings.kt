@@ -5,7 +5,6 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.database.LocalDatabase
-import timber.log.Timber
 import java.util.*
 
 @Table (
@@ -31,9 +30,17 @@ data class SensorSettings(
     var pressureOffsetDate: Date? = null
 ): BaseModel() {
     fun calibrateSensor(sensor: RuuviTagEntity) {
-        Timber.d("calibration ${sensor.id} before ${sensor.temperature}")
         sensor.temperature += (temperatureOffset ?: 0.0)
         sensor.temperatureOffset = temperatureOffset ?: 0.0
-        Timber.d("calibration ${sensor.id} after ${sensor.temperature}")
+
+        sensor.pressure?.let { pressure ->
+            sensor.pressure = pressure + (pressureOffset ?: 0.0)
+        }
+        sensor.pressureOffset = pressureOffset ?: 0.0
+
+        sensor.humidity?.let { humidity ->
+            sensor.humidity = humidity + (humidityOffset ?: 0.0)
+        }
+        sensor.humidityOffset = humidityOffset ?: 0.0
     }
 }

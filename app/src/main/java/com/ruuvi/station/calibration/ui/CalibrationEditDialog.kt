@@ -6,11 +6,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.ruuvi.station.R
+import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.DialogCalibrationEditBinding
 import java.lang.Exception
 import java.lang.IllegalStateException
 
-class CalibrationEditDialog(): DialogFragment() {
+class CalibrationEditDialog(val calibrationType: CalibrationType): DialogFragment() {
     private lateinit var binding: DialogCalibrationEditBinding
     private lateinit var alertDialog: AlertDialog
     private var unit: String = ""
@@ -38,7 +39,13 @@ class CalibrationEditDialog(): DialogFragment() {
         val confirmButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         confirmButton.isEnabled = false
 
-        binding.dialogTitle.text = "Enter temperature value expected from sensor in current conditions ($unit): "
+        val unitName = when (calibrationType) {
+            CalibrationType.PRESSURE -> "pressure"
+            CalibrationType.TEMPERATURE -> "temperature"
+            CalibrationType.HUMIDITY -> "humidity"
+        }
+
+        binding.dialogTitle.text = "Enter $unitName value expected from sensor in current conditions ($unit): "
 
         binding.calibrationValueEditText.addTextChangedListener {
             try {
@@ -59,10 +66,11 @@ class CalibrationEditDialog(): DialogFragment() {
 
     companion object {
         fun newInstance(
+            calibrationType: CalibrationType,
             unit: String,
             listener: CalibrationEditListener
         ): CalibrationEditDialog {
-            val dialog =  CalibrationEditDialog()
+            val dialog =  CalibrationEditDialog(calibrationType)
             dialog.unit = unit
             dialog.listener = listener
             return dialog
