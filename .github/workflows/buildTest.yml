@@ -1,6 +1,8 @@
 name: Android Test Build
 
 on:
+  pull_request:
+    branches: [ dev, master ]
   workflow_dispatch:
     branches: [ dev, master ]
     
@@ -20,20 +22,3 @@ jobs:
         
     - name: Build all artifacts
       run: ./gradlew assembleRelease
-      
-    - name: Sign Android release
-      id: sign_app
-      uses: r0adkll/sign-android-release@v1.0.4
-      with:
-        # The directory to find your release to sign
-        releaseDirectory: app/build/outputs/apk/withFileLogs/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-    - name: Upload
-      uses: actions/upload-artifact@v2.2.2
-      with:
-        name: testApk
-        path: ${{steps.sign_app.outputs.signedReleaseFile}}
