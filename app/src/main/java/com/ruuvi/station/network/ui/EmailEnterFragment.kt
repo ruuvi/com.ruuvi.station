@@ -2,41 +2,45 @@ package com.ruuvi.station.network.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import kotlinx.android.synthetic.main.fragment_email_enter.*
+import com.ruuvi.station.databinding.FragmentEmailEnterBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 
-class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAware {
+class EmailEnterFragment: Fragment(R.layout.fragment_email_enter), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: EmailEnterViewModel by viewModel()
 
+    private lateinit var binding: FragmentEmailEnterBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentEmailEnterBinding.bind(view)
 
         setupViewModel()
         setupUI()
     }
 
     private fun setupUI() {
-        submitButton.setOnClickListener {
-            viewModel.submitEmail(emailEditText.text.toString())
+        binding.submitButton.setOnClickListener {
+            viewModel.submitEmail(binding.emailEditText.text.toString())
         }
 
-        skipTextView.setOnClickListener {
+        binding.skipTextView.setOnClickListener {
             requireActivity().finish()
         }
     }
 
     private fun setupViewModel() {
         viewModel.errorTextObserve.observe(viewLifecycleOwner, Observer {
-            errorTextView.text = it
+            binding.errorTextView.text = it
         })
 
         viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner, Observer {
@@ -45,6 +49,11 @@ class EmailEnterFragment() : Fragment(R.layout.fragment_email_enter), KodeinAwar
                 val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
                 this.findNavController().navigate(action)
             }
+        })
+
+        viewModel.requestInProcessObserve.observe(viewLifecycleOwner, Observer {inProcess ->
+            binding.submitButton.isEnabled = !inProcess
+            binding.progressIndicator.isVisible = inProcess
         })
     }
 

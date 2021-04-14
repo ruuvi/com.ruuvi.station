@@ -112,4 +112,8 @@
         <item name="android:textColor">@color/mainDark</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="progressStyle">
+        <item name="colorAccent">@color/main</item>
+    </style>
 </resources>
