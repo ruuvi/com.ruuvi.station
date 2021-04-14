@@ -20,6 +20,8 @@ class CalibrateTemperatureFragment : CalibrationFragment(R.layout.fragment_calib
 
     override val calibrationType: CalibrationType = CalibrationType.TEMPERATURE
 
+    override fun setupCalibrationMessage() { }
+
     companion object {
         fun newInstance(sensorId: String): CalibrateTemperatureFragment {
             val fragment = CalibrateTemperatureFragment()

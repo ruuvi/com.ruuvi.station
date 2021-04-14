@@ -121,13 +121,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         })
 
-        viewModel.sensorSettingsObserve.observe(this, Observer {
+        viewModel.sensorSettingsObserve.observe(this, Observer {sensorSettings ->
             calibrateTemperature.setItemValue(
-                unitsConverter.getTemperatureOffsetString(it?.temperatureOffset ?: 0.0))
+                unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
             calibratePressure.setItemValue(
-                unitsConverter.getPressureString(it?.pressureOffset ?: 0.0))
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
             calibrateHumidity.setItemValue(
-                unitsConverter.getHumidityString(it.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
             )
         })
 

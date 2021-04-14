@@ -4,6 +4,7 @@ import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
+import com.ruuvi.station.database.SensorSettingsRepository
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -29,7 +30,8 @@ class NetworkDataSyncInteractor (
     private val preferencesRepository: PreferencesRepository,
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val imageInteractor: ImageInteractor
+    private val imageInteractor: ImageInteractor,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -172,17 +174,23 @@ class NetworkDataSyncInteractor (
 
     private fun saveSensorData(tag: RuuviTagEntity, measurements: List<SensorDataMeasurementResponse>, existsData: List<Date>): Int {
         val list = mutableListOf<TagSensorReading>()
-        tag.id?.let{ tagId ->
+        tag.id?.let{ sensorId ->
+            val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
             measurements.forEach { measurement ->
                 val createdAt = Date(measurement.timestamp * 1000)
                 if (!existsData.contains(createdAt)) {
                     try {
                         if (measurement.data.isNotEmpty()) {
-                            val reading = BluetoothLibrary.decode(tagId, measurement.data, measurement.rssi)
-                            list.add(TagSensorReading(reading, tag, createdAt))
+                            val reading = TagSensorReading(
+                                BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
+                                tag,
+                                createdAt
+                            )
+                            sensorSettings?.calibrateSensor(reading)
+                            list.add(reading)
                         }
                     } catch (e: Exception) {
-                        Timber.e(e, "NetworkData: $tagId measurement = $measurement")
+                        Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
                     }
 
                 }

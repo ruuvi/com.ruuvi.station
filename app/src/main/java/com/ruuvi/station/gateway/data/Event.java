@@ -1,11 +1,8 @@
-package com.ruuvi.station.model;
+package com.ruuvi.station.gateway.data;
 
 import android.content.Context;
 import android.os.BatteryManager;
 import android.os.Build;
-
-import com.ruuvi.station.gateway.data.ScanLocation;
-
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;

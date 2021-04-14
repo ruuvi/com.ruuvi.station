@@ -31,8 +31,8 @@ class TagSettingsViewModel(
     private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
     val tagObserve: LiveData<RuuviTagEntity?> = tagState
 
-    private val sensorSettings = MutableLiveData<SensorSettings>()
-    val sensorSettingsObserve: LiveData<SensorSettings> = sensorSettings
+    private val sensorSettings = MutableLiveData<SensorSettings?>()
+    val sensorSettingsObserve: LiveData<SensorSettings?> = sensorSettings
 
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn

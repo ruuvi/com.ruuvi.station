@@ -32,6 +32,7 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
 
         setupViewModel()
         setupUI()
+        setupCalibrationMessage()
     }
 
     override fun onResume() {
@@ -42,11 +43,12 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
         }
     }
 
+    abstract fun setupCalibrationMessage()
+
     override fun onPause() {
         super.onPause()
         timer?.cancel()
     }
-
 
     fun setupUI() {
         binding.calibrateButton.setDebouncedOnClickListener {

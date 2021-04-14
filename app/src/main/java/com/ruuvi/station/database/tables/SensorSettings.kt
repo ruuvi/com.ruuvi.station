@@ -43,4 +43,19 @@ data class SensorSettings(
         }
         sensor.humidityOffset = humidityOffset ?: 0.0
     }
+
+    fun calibrateSensor(sensorReading: TagSensorReading) {
+        sensorReading.temperature += (temperatureOffset ?: 0.0)
+        sensorReading.temperatureOffset = temperatureOffset ?: 0.0
+
+        sensorReading.pressure?.let { pressure ->
+            sensorReading.pressure = pressure + (pressureOffset ?: 0.0)
+        }
+        sensorReading.pressureOffset = pressureOffset ?: 0.0
+
+        sensorReading.humidity?.let { humidity ->
+            sensorReading.humidity = humidity + (humidityOffset ?: 0.0)
+        }
+        sensorReading.humidityOffset = humidityOffset ?: 0.0
+    }
 }

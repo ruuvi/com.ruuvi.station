@@ -1,8 +1,6 @@
 package com.ruuvi.station.gateway.data;
 
 import android.content.Context;
-
-import com.ruuvi.station.model.Event;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
 
 /**

@@ -18,9 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="16sp"
-            android:text="Calibration instructions \n\n
-It can be long description. It can be long description. It can be long description. It can be long description. It can be long description.\n\n
-It can be long description. It can be long description. It can be long description. It can be long description. It can be long description."/>
+            android:text=""/>
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
