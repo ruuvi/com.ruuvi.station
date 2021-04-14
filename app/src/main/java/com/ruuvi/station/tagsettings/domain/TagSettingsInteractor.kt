@@ -1,13 +1,16 @@
 package com.ruuvi.station.tagsettings.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.SensorSettingsRepository
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.units.model.TemperatureUnit
 
 class TagSettingsInteractor(
     private val tagRepository: TagRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
     fun getTagById(tagId: String): RuuviTagEntity? =
         tagRepository
@@ -31,4 +34,6 @@ class TagSettingsInteractor(
     fun updateNetworkBackground(tagId: String, guid: String?) {
         tagRepository.updateNetworkBackground(tagId, guid)
     }
+
+    fun getSensorSettings(sensorId: String): SensorSettings? = sensorSettingsRepository.getSensorSettings(sensorId)
 }

@@ -15,26 +15,24 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.calibration.model.CalibrationType
+import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.makeWebLinks
@@ -50,11 +48,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.text.DateFormat
-import java.text.DateFormat.getTimeInstance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.math.round
 
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
@@ -71,13 +66,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private val unitsConverter: UnitsConverter by instance()
     private val imageInteractor: ImageInteractor by instance()
     private var timer: Timer? = null
-
-    private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
-        val item = viewModel.alarmItems[buttonView.tag as Int]
-        item.isChecked = isChecked
-        if (!isChecked) item.mutedTill = null
-        item.updateView()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,9 +93,22 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         shareTagButton.setDebouncedOnClickListener {
             ShareSensorActivity.start(this, viewModel.tagId )
         }
+
+        calibrateHumidity.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.HUMIDITY)
+        }
+
+        calibrateTemperature.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.TEMPERATURE)
+        }
+
+        calibratePressure.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.PRESSURE)
+        }
     }
 
     private fun setupViewModel() {
+        viewModel.setupAlarmElements()
 
         viewModel.tagObserve.observe(this, Observer {  tag ->
             tag?.let {
@@ -115,12 +116,20 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 setupTagName(it)
                 setupInputMac(it)
                 setupTagImage(it)
-                calibrateHumidity(it)
+                setupCalibration(it)
                 updateReadings(it)
             }
         })
 
-        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+        viewModel.sensorSettingsObserve.observe(this, Observer {sensorSettings ->
+            calibrateTemperature.setItemValue(
+                unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
+            calibratePressure.setItemValue(
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
+            calibrateHumidity.setItemValue(
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+            )
+        })
 
         viewModel.userLoggedInObserve.observe(this, Observer {
             if (it == true) {
@@ -243,7 +252,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         viewModel.tagObserve.value?.let {
-            if (it.isFavorite) {
+            if (it.favorite) {
                 menuInflater.inflate(R.menu.menu_edit, menu)
             }
         }
@@ -251,8 +260,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun isTagFavorite(tag: RuuviTagEntity) {
-        if (!tag.isFavorite) {
-            tag.isFavorite = true
+        if (!tag.favorite) {
+            tag.favorite = true
             tag.createDate = Date()
             tag.update()
         }
@@ -356,112 +365,66 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private fun calibrateHumidity(tag: RuuviTagEntity) {
-        calibrateHumidityButton.isGone = tag.humidity == null
-        calibrateHumidityButton.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
+    private fun setupCalibration(tag: RuuviTagEntity) {
+        calibrateHumidity.isGone = tag.humidity == null
+        calibratePressure.isGone = tag.pressure == null
+        calibrateHumidityDivider.isGone = tag.humidity == null
+        calibratePressureDivider.isGone = tag.pressure == null
+    }
 
-            val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
+    private fun calibrateOld(tag: RuuviTagEntity) {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
 
-            val container = FrameLayout(applicationContext)
+        val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
 
-            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val container = FrameLayout(applicationContext)
 
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+        params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
 
-            content.layoutParams = params
+        params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
 
-            val infoTextView = content.findViewById<View>(R.id.info) as TextView
-            infoTextView?.let {
-                it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+        content.layoutParams = params
+
+        val infoTextView = content.findViewById<View>(R.id.info) as TextView
+        infoTextView?.let {
+            it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
+        }
+
+        (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
+
+        builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
+            tag.id?.let {
+                humidityCalibrationInteractor.calibrate(it)
+                viewModel.getTagInfo()
             }
-
-            (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
-
-            builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
+        }
+        if (tag.humidityOffset != 0.0) {
+            builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
                 tag.id?.let {
-                    humidityCalibrationInteractor.calibrate(it)
+                    humidityCalibrationInteractor.clear(it)
                     viewModel.getTagInfo()
                 }
             }
-            if (tag.humidityOffset != 0.0) {
-                builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
-                    tag.id?.let {
-                        humidityCalibrationInteractor.clear(it)
-                        viewModel.getTagInfo()
-                    }
-                }
-                (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
-            }
-
-            builder.setNeutralButton(getString(R.string.close), null)
-
-            container.addView(content)
-
-            builder.setView(container)
-
-            builder.create().show()
+            (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
         }
+
+        builder.setNeutralButton(getString(R.string.close), null)
+
+        container.addView(content)
+
+        builder.setView(container)
+
+        builder.create().show()
     }
 
     private fun setupAlarmItems() {
-        viewModel.alarmItems.clear()
-        with(viewModel.alarmItems) {
-            add(AlarmItem(
-                getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
-                Alarm.TEMPERATURE,
-                false,
-                -40,
-                85
-            ))
-            add(AlarmItem(
-                getString(R.string.humidity, unitsConverter.getHumidityUnitString()),
-                Alarm.HUMIDITY,
-                false,
-                0,
-                100
-            ))
-            add(AlarmItem(
-                getString(R.string.pressure, unitsConverter.getPressureUnitString()),
-                Alarm.PRESSURE,
-                false,
-                30000,
-                110000
-            ))
-            add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
-            add(AlarmItem(getString(R.string.alert_movement), Alarm.MOVEMENT, false, 0, 0))
-        }
-
-        for (alarm in viewModel.tagAlarms) {
-            val item = viewModel.alarmItems[alarm.type]
-            item.high = alarm.high
-            item.low = alarm.low
-            item.isChecked = alarm.enabled
-            item.customDescription = alarm.customDescription ?: ""
-            item.mutedTill = alarm.mutedTill
-            item.alarm = alarm
-            item.normalizeValues()
-        }
-
-        for (i in viewModel.alarmItems.indices) {
-            val item = viewModel.alarmItems[i]
-
-            item.view = layoutInflater.inflate(R.layout.view_alarm, alertsContainerLayout, false)
-
-            item.view?.id = View.generateViewId()
-
-            val switch = item.view?.findViewById<SwitchCompat>(R.id.alertSwitch)
-
-            switch?.tag = i
-
-            switch?.setOnCheckedChangeListener(alarmCheckboxListener)
-
-            item.createView()
-
-            alertsContainerLayout.addView(item.view)
-        }
+        alarmTemperature.restoreState(viewModel.alarmElements[0])
+        alarmHumidity.restoreState(viewModel.alarmElements[1])
+        alarmPressure.restoreState(viewModel.alarmElements[2])
+        alarmRssi.restoreState(viewModel.alarmElements[3])
+        alarmMovement.restoreState(viewModel.alarmElements[4])
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
@@ -488,7 +451,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         builder.setMessage(this.getString(R.string.tagsettings_sensor_remove_confirm))
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
-            for (alarm: AlarmItem in viewModel.alarmItems) {
+            for (alarm in viewModel.alarmElements) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
             viewModel.tagObserve.value?.let { viewModel.deleteTag(it) }
@@ -566,145 +529,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture)), REQUEST_GALLERY_PHOTO)
         }
-
-    inner class AlarmItem(
-        var name: String,
-        var type: Int,
-        var isChecked: Boolean,
-        var min: Int,
-        var max: Int,
-        var customDescription: String = "",
-        var mutedTill: Date? = null,
-        val gap: Int = 1
-    ) {
-        private var subtitle: String? = null
-        var low: Int
-        var high: Int
-        var view: View? = null
-        var alarm: Alarm? = null
-
-        fun createView() {
-            view?.let { view ->
-                val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
-
-                seekBar.setMinValue(min.toFloat())
-
-                seekBar.setMaxValue(max.toFloat())
-
-                seekBar.setMinStartValue(low.toFloat())
-
-                seekBar.setMaxStartValue(high.toFloat())
-
-                seekBar.setGap(gap.toFloat())
-
-                seekBar.apply()
-
-                seekBar.setOnRangeSeekbarChangeListener { minValue: Number, maxValue: Number ->
-                    low = minValue.toInt()
-                    high = maxValue.toInt()
-                    updateView()
-                }
-
-                val customDescriptionEditText = view.findViewById(R.id.customDescriptionEditText) as EditText
-                customDescriptionEditText.setText(customDescription)
-                customDescriptionEditText.addTextChangedListener {
-                    customDescription = it.toString()
-                }
-
-                if (min == 0 && max == 0) {
-                    seekBar.isVisible = false
-                    view.findViewById<View>(R.id.alertMinValueTextView).visibility = View.GONE
-                    view.findViewById<View>(R.id.alertMaxValueTextView).visibility = View.GONE
-                }
-            }
-
-            updateView()
-        }
-
-        fun updateView() {
-            view?.let { view ->
-                val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
-                val minTextView = (view.findViewById<View>(R.id.alertMinValueTextView) as TextView)
-                val maxTextView = (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView)
-                val customDescriptionEditView = (view.findViewById<View>(R.id.customDescriptionEditText) as TextView)
-
-                var lowDisplay = low
-                var highDisplay = high
-
-                val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
-                alertSwitch.isChecked = isChecked
-                alertSwitch.text = name
-
-                var setSeekbarColor = R.color.inactive
-                when (type) {
-                    Alarm.TEMPERATURE -> {
-                        lowDisplay = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
-                        highDisplay = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()
-                    }
-                    Alarm.PRESSURE -> {
-                        lowDisplay = round(unitsConverter.getPressureValue(low.toDouble())).toInt()
-                        highDisplay = round(unitsConverter.getPressureValue(high.toDouble())).toInt()
-                    }
-                }
-
-                if (isChecked) {
-                    setSeekbarColor = R.color.main
-                    subtitle = getString(R.string.alert_movement_description)
-                    subtitle = when (type) {
-                        Alarm.MOVEMENT -> getString(R.string.alert_movement_description)
-                        else -> String.format(getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
-                    }
-                } else {
-                    subtitle = getString(R.string.alert_subtitle_off)
-                }
-
-                seekBar.isGone = !isChecked || type == Alarm.MOVEMENT
-                maxTextView.isGone = !isChecked || type == Alarm.MOVEMENT
-                minTextView.isGone = !isChecked || type == Alarm.MOVEMENT
-                customDescriptionEditView.isGone = !isChecked
-
-                seekBar.setRightThumbColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setRightThumbHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setLeftThumbColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setLeftThumbHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setBarHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.isEnabled = isChecked
-
-                val mutedTextView = view.findViewById(R.id.mutedTextView) as TextView
-                if (mutedTill ?: Date(0) > Date()) {
-                    mutedTextView.text = getTimeInstance(DateFormat.SHORT).format(mutedTill)
-                    mutedTextView.isGone = false
-                } else {
-                    mutedTextView.isGone = true
-                }
-
-                (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
-
-                minTextView.text = lowDisplay.toString()
-                maxTextView.text = highDisplay.toString()
-            }
-        }
-
-        fun normalizeValues() {
-            if (low < min) low = min
-            if (low >= max) low = max - gap
-            if (high > max) high = max
-            if (high < min) high = min + gap
-            if (low > high) {
-                low = high.also { high = low }
-            }
-        }
-
-        init {
-            low = min
-            high = max
-        }
-    }
 
     companion object {
         private const val TAG_ID = "TAG_ID"

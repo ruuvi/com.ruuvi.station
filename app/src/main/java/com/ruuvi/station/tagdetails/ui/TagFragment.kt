@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -11,8 +10,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.graph.GraphView
-import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -132,50 +131,47 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun observeSync() {
         viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
             when (it.syncProgress) {
-                TagViewModel.SyncProgress.STILL -> {
+                SyncProgress.STILL -> {
                     // nothing is happening
                 }
-                TagViewModel.SyncProgress.CONNECTING -> {
+                SyncProgress.CONNECTING -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
-                    gattSyncViewButtons.visibility = View.GONE
-                    gattSyncViewProgress.visibility = View.VISIBLE
-                    gattSyncCancel.visibility = View.GONE
                 }
-                TagViewModel.SyncProgress.CONNECTED -> {
+                SyncProgress.CONNECTED -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
-                TagViewModel.SyncProgress.DISCONNECTED -> {
+                SyncProgress.DISCONNECTED -> {
                     gattAlertDialog(requireContext().getString(R.string.disconnected))
                 }
-                TagViewModel.SyncProgress.READING_INFO -> {
+                SyncProgress.READING_INFO -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
-                TagViewModel.SyncProgress.NOT_SUPPORTED -> {
+                SyncProgress.NOT_SUPPORTED -> {
                     gattAlertDialog("${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}")
                 }
-                TagViewModel.SyncProgress.READING_DATA -> {
+                SyncProgress.READING_DATA -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.reading_history)}"+"..."
-                    gattSyncCancel.visibility = View.VISIBLE
                 }
-                TagViewModel.SyncProgress.SAVING_DATA -> {
+                SyncProgress.SAVING_DATA -> {
                     gattSyncStatusTextView.text = if (it.readDataSize > 0) {
                         "${context?.getString(R.string.data_points_read, it.readDataSize)}"
                     } else {
                         "${context?.getString(R.string.no_new_data_points)}"
                     }
                 }
-                TagViewModel.SyncProgress.NOT_FOUND -> {
+                SyncProgress.NOT_FOUND -> {
                     gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
                 }
-                TagViewModel.SyncProgress.ERROR -> {
+                SyncProgress.ERROR -> {
                     gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
                 }
-                TagViewModel.SyncProgress.DONE -> {
+                SyncProgress.DONE -> {
                     //gattAlertDialog(requireContext().getString(R.string.sync_complete))
-                    gattSyncViewButtons.visibility = View.VISIBLE
-                    gattSyncViewProgress.visibility = View.GONE
                 }
             }
+            gattSyncViewButtons.isVisible = it.syncProgress == SyncProgress.STILL || it.syncProgress == SyncProgress.DONE
+            gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
+            gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
         })
     }
 

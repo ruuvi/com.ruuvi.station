@@ -21,7 +21,43 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 19;
+    public static final int VERSION = 20;
+
+    @Migration(version = 20, database = LocalDatabase.class)
+    public static class Migration20_1 extends BaseMigration {
+        @Override
+        public void migrate(@NonNull DatabaseWrapper database) {
+            database.execSQL("INSERT INTO SensorSettings (id, humidityOffset, humidityOffsetDate) SELECT id, humidityOffset, humidityOffsetDate FROM RuuviTag WHERE favorite=1");
+        }
+    }
+
+    @Migration(version = 20, database = LocalDatabase.class)
+    public static class Migration20_2 extends AlterTableMigration<RuuviTagEntity> {
+        public Migration20_2(Class<RuuviTagEntity> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.REAL, "temperatureOffset");
+            addColumn(SQLiteType.REAL, "pressureOffset");
+        }
+    }
+
+    @Migration(version = 20, database = LocalDatabase.class)
+    public static class Migration20_3 extends AlterTableMigration<TagSensorReading> {
+        public Migration20_3(Class<TagSensorReading> table) {
+            super(table);
+        }
+
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.REAL, "temperatureOffset");
+            addColumn(SQLiteType.REAL, "pressureOffset");
+        }
+    }
 
     @Migration(version = 19, database = LocalDatabase.class)
     public static class Migration19 extends AlterTableMigration<RuuviTagEntity> {

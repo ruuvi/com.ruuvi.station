@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.di
 
-import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
@@ -27,10 +26,6 @@ object TagDetailsInjectionModule {
 
         bind<TagViewModel>() with factory { args: TagViewModelArgs ->
             TagViewModel(instance(), instance(), tagId = args.tagId)
-        }
-
-        bind<TagRepository>() with singleton {
-            TagRepository(instance())
         }
     }
 }

@@ -41,11 +41,15 @@ public class TagSensorReading extends BaseModel {
     @Column
     public Double temperature;
     @Column
+    public Double temperatureOffset;
+    @Column
     @Nullable
     public Double humidity;
     @Column
     @Nullable
     public Double pressure;
+    @Column
+    public Double pressureOffset;
     @Column
     public int rssi;
     @Column
@@ -73,9 +77,11 @@ public class TagSensorReading extends BaseModel {
     public TagSensorReading(RuuviTagEntity tag) {
         this.ruuviTagId = tag.getId();
         this.temperature = tag.getTemperature();
+        this.temperatureOffset = tag.getTemperatureOffset();
         this.humidity = tag.getHumidity();
         this.humidityOffset = tag.getHumidityOffset();
         this.pressure = tag.getPressure();
+        this.pressureOffset = tag.getPressureOffset();
         this.rssi = tag.getRssi();
         this.accelX = tag.getAccelX();
         this.accelY = tag.getAccelY();

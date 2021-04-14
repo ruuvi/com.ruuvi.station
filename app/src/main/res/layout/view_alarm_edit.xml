@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/alarm_layout"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/tag_settings_text_padding"
     android:layout_width="match_parent"
+    android:layout_margin="@dimen/tag_settings_text_padding"
     android:animateLayoutChanges="true">
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/alertSwitch"
@@ -68,6 +68,10 @@
         app:bar_highlight_color="@color/main"
         app:data_type="_integer"
         app:gap="1"
+        app:right_thumb_color="@color/main"
+        app:left_thumb_color="@color/main"
+        app:right_thumb_color_pressed="@color/main"
+        app:left_thumb_color_pressed="@color/main"
         app:layout_constraintStart_toStartOf="@id/alertMinValueTextView"
         app:layout_constraintEnd_toEndOf="@id/alertMaxValueTextView"
         app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView" />
@@ -96,4 +100,4 @@
         android:inputType="textCapSentences"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

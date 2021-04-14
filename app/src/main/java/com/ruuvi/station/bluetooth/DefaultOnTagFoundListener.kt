@@ -4,6 +4,7 @@ import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
+import com.ruuvi.station.database.SensorSettingsRepository
 import com.ruuvi.station.database.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -25,7 +26,8 @@ class DefaultOnTagFoundListener(
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val humidityCalibrationInteractor: HumidityCalibrationInteractor,
-    private val locationInteractor: LocationInteractor
+    private val locationInteractor: LocationInteractor,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
@@ -45,15 +47,18 @@ class DefaultOnTagFoundListener(
     private fun saveReading(ruuviTag: RuuviTagEntity) {
         Timber.d("saveReading for tag(${ruuviTag.id})")
         ioScope.launch {
-            val dbTag = ruuviTag.id?.let { repository.getTagById(it) }
-            if (dbTag != null) {
-                val ruuviTag = dbTag.preserveData(ruuviTag)
-                humidityCalibrationInteractor.apply(ruuviTag)
-                repository.updateTag(ruuviTag)
-                if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
-            } else {
-                ruuviTag.updateAt = Date()
-                repository.saveTag(ruuviTag)
+            ruuviTag.id?.let { sensorId ->
+                val dbTag = repository.getTagById(sensorId)
+                if (dbTag != null) {
+                    val ruuviTag = dbTag.preserveData(ruuviTag)
+                    val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+                    sensorSettings?.calibrateSensor(ruuviTag)
+                    repository.updateTag(ruuviTag)
+                    if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
+                } else {
+                    ruuviTag.updateAt = Date()
+                    repository.saveTag(ruuviTag)
+                }
             }
         }
     }
