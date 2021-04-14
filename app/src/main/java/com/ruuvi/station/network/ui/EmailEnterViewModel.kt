@@ -16,7 +16,12 @@ class EmailEnterViewModel (
     private val successfullyRegistered = MutableLiveData<Boolean>(false)
     val successfullyRegisteredObserve: LiveData<Boolean> = successfullyRegistered
 
+    private val requestInProcess = MutableLiveData<Boolean>(false)
+    val requestInProcessObserve: LiveData<Boolean> = requestInProcess
+
     fun submitEmail(email: String) {
+        requestInProcess.value = true
+        errorText.value = ""
         networkInteractor.registerUser(UserRegisterRequest(email = email)) {
             if (it == null) {
                 //todo localize
@@ -28,6 +33,7 @@ class EmailEnterViewModel (
                     successfullyRegistered.value = true
                 }
             }
+            requestInProcess.value = false
         }
     }
 

@@ -88,6 +88,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/progressIndicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
+        style="@style/progressStyle"
+        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton"
+        app:layout_constraintStart_toStartOf="@+id/submitCodeButton"
+        app:layout_constraintEnd_toEndOf="@+id/submitCodeButton" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/skipTextView"
         android:layout_width="match_parent"
@@ -99,6 +110,7 @@
         android:fontFamily="@font/montserrat_extra_bold_ttf"
         android:textAlignment="textEnd"
         android:textSize="14sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
