@@ -5,8 +5,9 @@ import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
 import com.ruuvi.station.bluetooth.model.SyncProgress
-import com.ruuvi.station.database.SensorSettingsRepository
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,8 @@ import java.util.*
 class BluetoothGattInteractor (
     private val interactor: BluetoothInteractor,
     private val tagRepository: TagRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val sensorHistoryRepository: SensorHistoryRepository
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
@@ -83,7 +85,7 @@ class BluetoothGattInteractor (
             sensorSettings?.calibrateSensor(reading)
             tagReadingList.add(reading)
         }
-        TagSensorReading.saveList(tagReadingList)
+        sensorHistoryRepository.bulkInsert(tagReadingList)
         updateLastSync(sensorId, Date())
     }
 

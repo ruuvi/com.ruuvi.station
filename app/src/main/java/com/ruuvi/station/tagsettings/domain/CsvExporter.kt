@@ -1,4 +1,4 @@
-package com.ruuvi.station.util
+package com.ruuvi.station.tagsettings.domain
 
 import android.content.Context
 import android.content.Intent
@@ -6,8 +6,8 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
-import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
 import java.io.File
 import java.io.FileWriter
@@ -17,12 +17,13 @@ import java.util.*
 class CsvExporter(
     private val context: Context,
     private val repository: TagRepository,
+    private val sensorHistoryRepository: SensorHistoryRepository,
     private val unitsConverter: UnitsConverter
 ) {
 
     fun toCsv(tagId: String) {
         val tag = repository.getTagById(tagId)
-        val readings = TagSensorReading.getForTag(tagId, GlobalSettings.historyLengthDays)
+        val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthDays)
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
 

@@ -2,9 +2,12 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
 import androidx.lifecycle.*
+import com.raizlabs.android.dbflow.kotlinextensions.save
+import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.alarm.domain.AlarmType
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
@@ -21,7 +24,8 @@ class TagSettingsViewModel(
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val networkDataSyncInteractor: NetworkDataSyncInteractor
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    private val alarmRepository: AlarmRepository
 ) : ViewModel() {
     var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
@@ -117,7 +121,13 @@ class TagSettingsViewModel(
         for (alarmItem in alarmElements) {
             if (alarmItem.isEnabled || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type.value, tagId, alarmItem.customDescription, alarmItem.mutedTill)
+                    alarmItem.alarm = Alarm(
+                        ruuviTagId = tagId,
+                        low = alarmItem.low,
+                        high = alarmItem.high,
+                        type = alarmItem.type.value,
+                        customDescription = alarmItem.customDescription,
+                        mutedTill = alarmItem.mutedTill)
                     alarmItem.alarm?.enabled = alarmItem.isEnabled
                     alarmItem.alarm?.save()
                 } else {
@@ -204,7 +214,7 @@ class TagSettingsViewModel(
             ))
         }
 
-        val dbAlarms = Alarm.getForTag(tagId)
+        val dbAlarms = alarmRepository.getForSensor(tagId)
         for (alarm in dbAlarms) {
             val item = alarmElements.firstOrNull { it.type.value == alarm.type }
             item?.let {

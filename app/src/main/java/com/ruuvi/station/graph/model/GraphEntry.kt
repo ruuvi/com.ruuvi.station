@@ -1,4 +1,4 @@
-package com.ruuvi.station.graph
+package com.ruuvi.station.graph.model
 
 data class GraphEntry(
     val timestamp: Float,

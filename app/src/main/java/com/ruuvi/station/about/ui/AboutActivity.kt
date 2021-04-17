@@ -9,8 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.database.LocalDatabase
-import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.database.domain.LocalDatabase
 import kotlinx.android.synthetic.main.activity_about.toolbar
 import kotlinx.android.synthetic.main.content_about.debugInfo
 import kotlinx.android.synthetic.main.content_about.infoText
@@ -57,7 +56,7 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun drawDebugInfo(sizes: Pair<Int, Int>?) {
-        val readingCount = TagSensorReading.countAll()
+        val readingCount = viewModel.getHistoryLength()
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
 
         sizes?.let {

@@ -79,16 +79,18 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
 
     fun setupViewModel() {
         viewModel.calibrationInfoObserve.observe(viewLifecycleOwner) {info ->
-            binding.originalValueTextView.text = viewModel.getStringForValue(info.rawValue)
-            binding.originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
-            binding.correctedlValueTextView.text = viewModel.getStringForValue(info.calibratedValue)
-            binding.correctedOffsetTextView.text = "(Offset ${info.currentOffsetString})"
+            with(binding) {
+                originalValueTextView.text = viewModel.getStringForValue(info.rawValue)
+                originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
+                correctedlValueTextView.text = viewModel.getStringForValue(info.calibratedValue)
+                correctedOffsetTextView.text = "(Offset ${info.currentOffsetString})"
 
-            binding.correctedTitleTextView.isInvisible = !info.isCalibrated
-            binding.correctedlValueTextView.isInvisible = !info.isCalibrated
-            binding.correctedOffsetTextView.isInvisible = !info.isCalibrated
-            binding.clearButton.isEnabled = info.isCalibrated
-            binding.separatorView.isInvisible = !info.isCalibrated
+                correctedTitleTextView.isInvisible = !info.isCalibrated
+                correctedlValueTextView.isInvisible = !info.isCalibrated
+                correctedOffsetTextView.isInvisible = !info.isCalibrated
+                clearButton.isEnabled = info.isCalibrated
+                separatorView.isInvisible = !info.isCalibrated
+            }
         }
     }
 

@@ -4,12 +4,12 @@ import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
-import com.ruuvi.station.database.SensorSettingsRepository
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.gateway.GatewaySender
-import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.util.extensions.logData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +25,9 @@ class DefaultOnTagFoundListener(
     private val gatewaySender: GatewaySender,
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
-    private val humidityCalibrationInteractor: HumidityCalibrationInteractor,
     private val locationInteractor: LocationInteractor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val sensorHistoryRepository: SensorHistoryRepository
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
@@ -94,7 +94,7 @@ class DefaultOnTagFoundListener(
         val cleaningThreshold = calendar.time.time
         if (lastCleanedDate == null || lastCleanedDate < cleaningThreshold) {
             Timber.d("Cleaning DB from old tag readings")
-            TagSensorReading.removeOlderThan(GlobalSettings.historyLengthHours)
+            sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
             lastCleanedDate = Date().time
         }
     }

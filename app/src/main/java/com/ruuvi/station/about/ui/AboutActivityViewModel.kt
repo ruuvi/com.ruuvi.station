@@ -12,7 +12,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
-class AboutActivityViewModel(private val tagInteractor: TagInteractor) : ViewModel() {
+class AboutActivityViewModel(
+    private val tagInteractor: TagInteractor
+) : ViewModel() {
 
     private val tagsSizes = MutableStateFlow<Pair<Int, Int>?>(null)
     val tagsSizesFlow: StateFlow<Pair<Int, Int>?> = tagsSizes
@@ -29,4 +31,6 @@ class AboutActivityViewModel(private val tagInteractor: TagInteractor) : ViewMod
     private suspend fun getAllNonFavouriteTagsSize(): Int {
         return suspendCoroutine { it.resume(tagInteractor.getTagEntities(false).size) }
     }
+
+    fun getHistoryLength(): Long = tagInteractor.getHistoryLength()
 }
