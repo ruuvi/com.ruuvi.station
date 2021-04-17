@@ -1,4 +1,4 @@
-package com.ruuvi.station.database
+package com.ruuvi.station.database.domain
 
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.sql.language.SQLite
@@ -39,33 +39,12 @@ class TagRepository(
         tag.delete()
     }
 
-    fun getTagReadings(tagId: String): List<TagSensorReading>? {
-        return if (preferences.graphShowAllPoint) {
-            TagSensorReading.getForTag(tagId, preferences.graphViewPeriodDays)
-        } else {
-            TagSensorReading.getForTagPruned(
-                tagId,
-                preferences.graphPointInterval,
-                preferences.graphViewPeriodDays
-            )
-        }
-    }
-
     fun updateTag(tag: RuuviTagEntity) {
         tag.update()
     }
 
     fun saveTag(@NonNull tag: RuuviTagEntity) {
         tag.save()
-    }
-
-    fun getLatestForTag(id: String, limit: Int): List<TagSensorReading> {
-        return SQLite.select()
-            .from(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.ruuviTagId.eq(id))
-            .orderBy(TagSensorReading_Table.createdAt, false)
-            .limit(limit)
-            .queryList()
     }
 
     fun getTagReadingsDate(tagId: String, since: Date): List<TagSensorReading>? {

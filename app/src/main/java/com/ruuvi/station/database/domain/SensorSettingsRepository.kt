@@ -1,4 +1,4 @@
-package com.ruuvi.station.database
+package com.ruuvi.station.database.domain
 
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.SensorSettings
@@ -22,15 +22,6 @@ class SensorSettingsRepository {
         settings.temperatureOffset = temperatureOffset
         settings.temperatureOffsetDate = Date()
         settings.update()
-//        SQLite
-//            .update(SensorSettings::class.java)
-//            .set(
-//                SensorSettings_Table.temperatureOffset.eq(temperatureOffset),
-//                SensorSettings_Table.temperatureOffsetDate.eq(Date())
-//            )
-//            .where(SensorSettings_Table.id.eq(sensorId))
-//            .async()
-//            .execute()
     }
 
     fun clearTemperatureCalibration(sensorId: String) {

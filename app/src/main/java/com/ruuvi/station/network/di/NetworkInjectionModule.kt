@@ -17,7 +17,7 @@ object NetworkInjectionModule {
         bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<EmailEnterViewModel>() with provider {

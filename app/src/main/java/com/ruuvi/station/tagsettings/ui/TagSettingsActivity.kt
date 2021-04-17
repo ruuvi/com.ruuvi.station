@@ -25,17 +25,16 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.calibration.ui.CalibrationActivity
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
-import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
+import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.util.CsvExporter
 import com.ruuvi.station.util.Utils
-import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.android.synthetic.main.activity_tag_settings.*
@@ -62,9 +61,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val repository: TagRepository by instance()
-    private val humidityCalibrationInteractor: HumidityCalibrationInteractor by instance()
     private val unitsConverter: UnitsConverter by instance()
     private val imageInteractor: ImageInteractor by instance()
+    private val sensorHistoryRepository: SensorHistoryRepository by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -231,7 +230,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
-                    // ... O.o
                     Timber.e("Could not load photo: $e")
                 }
             }
@@ -240,7 +238,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, repository, unitsConverter)
+            val exporter = CsvExporter(this, repository, sensorHistoryRepository, unitsConverter)
             viewModel.tagObserve.value?.id?.let {
                 exporter.toCsv(it)
             }
@@ -370,53 +368,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         calibratePressure.isGone = tag.pressure == null
         calibrateHumidityDivider.isGone = tag.humidity == null
         calibratePressureDivider.isGone = tag.pressure == null
-    }
-
-    private fun calibrateOld(tag: RuuviTagEntity) {
-        val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-        val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
-
-        val container = FrameLayout(applicationContext)
-
-        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-        params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-        params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-        content.layoutParams = params
-
-        val infoTextView = content.findViewById<View>(R.id.info) as TextView
-        infoTextView?.let {
-            it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
-        }
-
-        (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
-
-        builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
-            tag.id?.let {
-                humidityCalibrationInteractor.calibrate(it)
-                viewModel.getTagInfo()
-            }
-        }
-        if (tag.humidityOffset != 0.0) {
-            builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
-                tag.id?.let {
-                    humidityCalibrationInteractor.clear(it)
-                    viewModel.getTagInfo()
-                }
-            }
-            (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
-        }
-
-        builder.setNeutralButton(getString(R.string.close), null)
-
-        container.addView(content)
-
-        builder.setView(container)
-
-        builder.create().show()
     }
 
     private fun setupAlarmItems() {

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
@@ -21,6 +22,7 @@ import java.util.*
 class TagViewModel(
         private val tagDetailsInteractor: TagDetailsInteractor,
         private val gattInteractor: BluetoothGattInteractor,
+        private val sensorHistoryRepository: SensorHistoryRepository,
         val tagId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
@@ -75,7 +77,7 @@ class TagViewModel(
     }
 
     fun removeTagData() {
-        TagSensorReading.removeForTag(tagId)
+        sensorHistoryRepository.removeForSensor(tagId)
         tagDetailsInteractor.clearLastSync(tagId)
     }
 

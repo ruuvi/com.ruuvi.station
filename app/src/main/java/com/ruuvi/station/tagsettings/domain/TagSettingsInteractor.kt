@@ -1,8 +1,8 @@
 package com.ruuvi.station.tagsettings.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.database.SensorSettingsRepository
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.units.model.TemperatureUnit

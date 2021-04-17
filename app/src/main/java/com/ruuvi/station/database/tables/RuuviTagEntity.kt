@@ -5,7 +5,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.bluetooth.FoundRuuviTag
-import com.ruuvi.station.database.LocalDatabase
+import com.ruuvi.station.database.domain.LocalDatabase
 import java.util.*
 
 @Table(

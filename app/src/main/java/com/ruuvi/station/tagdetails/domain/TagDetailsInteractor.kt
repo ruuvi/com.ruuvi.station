@@ -1,6 +1,8 @@
 package com.ruuvi.station.tagdetails.domain
 
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
@@ -9,9 +11,10 @@ import java.util.*
 
 class TagDetailsInteractor(
     private val tagRepository: TagRepository,
+    private val sensorHistoryRepository: SensorHistoryRepository,
     private val tagConverter: TagConverter,
-    private val unitsConverter: UnitsConverter
-
+    private val unitsConverter: UnitsConverter,
+    private val preferences: PreferencesRepository
 ) {
 
     fun getTagById(tagId: String): RuuviTag? =
@@ -32,8 +35,13 @@ class TagDetailsInteractor(
             return tagConverter.fromDatabase(it)
         }
 
-    fun getTagReadings(tagId: String): List<TagSensorReading>? =
-        tagRepository.getTagReadings(tagId)
+    fun getTagReadings(tagId: String): List<TagSensorReading>? {
+        return if (preferences.isShowAllGraphPoint()) {
+            sensorHistoryRepository.getHistory(tagId, preferences.getGraphViewPeriodDays())
+        } else {
+            sensorHistoryRepository.getCompositeHistory(tagId, preferences.getGraphViewPeriodDays(), preferences.getGraphPointInterval())
+        }
+    }
 
     fun getTemperatureString(tag: RuuviTag): String =
         unitsConverter.getTemperatureString(tag.temperature)

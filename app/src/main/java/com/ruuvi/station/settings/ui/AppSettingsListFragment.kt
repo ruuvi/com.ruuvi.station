@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*

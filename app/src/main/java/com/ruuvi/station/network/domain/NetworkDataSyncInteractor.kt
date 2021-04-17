@@ -4,8 +4,9 @@ import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
-import com.ruuvi.station.database.SensorSettingsRepository
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.image.ImageInteractor
@@ -31,7 +32,8 @@ class NetworkDataSyncInteractor (
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val imageInteractor: ImageInteractor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val sensorHistoryRepository: SensorHistoryRepository
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -183,7 +185,6 @@ class NetworkDataSyncInteractor (
                         if (measurement.data.isNotEmpty()) {
                             val reading = TagSensorReading(
                                 BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
-                                tag,
                                 createdAt
                             )
                             sensorSettings?.calibrateSensor(reading)
@@ -192,7 +193,6 @@ class NetworkDataSyncInteractor (
                     } catch (e: Exception) {
                         Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
                     }
-
                 }
             }
         }
@@ -201,7 +201,7 @@ class NetworkDataSyncInteractor (
             val newestPoint = list.sortedByDescending { it.createdAt }.first()
             tag.updateData(newestPoint)
             tagRepository.updateTag(tag)
-            TagSensorReading.saveList(list)
+            sensorHistoryRepository.bulkInsert(list)
             return list.size
         }
         return 0

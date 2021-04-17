@@ -1,20 +1,18 @@
 package com.ruuvi.station.util.test
 
 import com.ruuvi.station.bluetooth.FoundRuuviTag
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import timber.log.Timber
 import java.util.*
 
 class StressTestGenerator {
     companion object {
-        lateinit var humidityCalibrationInteractor: HumidityCalibrationInteractor
-
+        val sensorHistoryRepository = SensorHistoryRepository()
         fun generateData(tagsCount: Int, sensorReadingsPerTag: Int, repository: TagRepository) {
             Timber.d("Generate $tagsCount fake tags and add $sensorReadingsPerTag readings for each")
-            humidityCalibrationInteractor = HumidityCalibrationInteractor(repository)
             var sensorReadingsPerTag = sensorReadingsPerTag
             if (sensorReadingsPerTag > 20000)
                 sensorReadingsPerTag = 20000
@@ -43,13 +41,12 @@ class StressTestGenerator {
             val tag = RuuviTagEntity(newTag)
             val dbtag = tag.id?.let { repository.getTagById(it) }
             if (dbtag == null) {
-                humidityCalibrationInteractor.apply(tag)
                 tag.favorite = true
                 tag.updateAt = Date()
                 repository.saveTag(tag)
             }
             val calendar = Calendar.getInstance()
-            val latest = TagSensorReading.getLatestForTag(tagId, 1)
+            val latest = sensorHistoryRepository.getLatestForSensor(tagId, 1)
             if (latest != null && latest.size > 0) {
                 calendar.time = latest[0].createdAt
             } else {

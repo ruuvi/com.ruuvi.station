@@ -31,7 +31,7 @@ object BluetoothScannerInjectionModule {
             BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance())
         }
 
-        bind<BluetoothGattInteractor>() with singleton { BluetoothGattInteractor(instance(), instance(), instance()) }
+        bind<BluetoothGattInteractor>() with singleton { BluetoothGattInteractor(instance(), instance(), instance(), instance()) }
 
         bind<BluetoothStateReceiver>() with singleton { BluetoothStateReceiver(instance(), instance()) }
 

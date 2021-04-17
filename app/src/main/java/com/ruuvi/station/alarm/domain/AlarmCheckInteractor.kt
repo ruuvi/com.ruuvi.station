@@ -10,6 +10,8 @@ import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
+import com.ruuvi.station.database.domain.AlarmRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -21,7 +23,9 @@ import java.util.Calendar
 
 class AlarmCheckInteractor(
     private val context: Context,
-    private val tagConverter: TagConverter
+    private val tagConverter: TagConverter,
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val alarmRepository: AlarmRepository
 ) {
     private val lastFiredNotification = mutableMapOf<Int, Long>()
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -52,9 +56,7 @@ class AlarmCheckInteractor(
     }
 
     private fun getEnabledAlarms(ruuviTag: RuuviTag): List<Alarm> =
-        Alarm
-            .getForTag(ruuviTag.id)
-            .filter { it.enabled }
+        alarmRepository.getForSensor(ruuviTag.id).filter { it.enabled }
 
     private fun getResourceId(it: Alarm, ruuviTag: RuuviTag, shouldCompareMovementCounter: Boolean = false): Int {
         return when (it.type) {
@@ -64,7 +66,7 @@ class AlarmCheckInteractor(
             Alarm.RSSI -> compareWithAlarmRange(it, ruuviTag)
             Alarm.MOVEMENT -> {
                 val readings: List<TagSensorReading> =
-                    TagSensorReading.getLatestForTag(ruuviTag.id, 2)
+                    sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
                 if (readings.size == 2) {
                     when {
                         shouldCompareMovementCounter && ruuviTag.dataFormat == SOME_DATA_FORMAT_VALUE && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
@@ -157,7 +159,8 @@ class AlarmCheckInteractor(
         val now = calendar.timeInMillis
         calendar.add(Calendar.SECOND, -10)
         val notificationThreshold = calendar.timeInMillis
-        val muted = alarm.mutedTill != null && alarm.mutedTill.time > now
+        val alarmMutedTill = alarm.mutedTill
+        val muted = alarmMutedTill != null && alarmMutedTill.time > now
         return if (!muted && (lastNotificationTime == null || lastNotificationTime < notificationThreshold)) {
             lastFiredNotification[alarm.id] = now
             true

@@ -1,4 +1,4 @@
-package com.ruuvi.station.database;
+package com.ruuvi.station.database.domain;
 
 import androidx.annotation.NonNull;
 

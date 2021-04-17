@@ -235,7 +235,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
-        private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
+        private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
         private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
