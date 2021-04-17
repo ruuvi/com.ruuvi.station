@@ -2,6 +2,7 @@ package com.ruuvi.station.database.domain
 
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.sql.language.Method
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -50,8 +51,7 @@ class SensorHistoryRepository {
         highDensityDate.add(Calendar.MINUTE, -HIGH_DENSITY_INTERVAL_MINUTES)
 
         val pruningInterval = 1000 * 60 * interval
-
-        Timber.d("getPrunedHistory $fromDate")
+        //val pruningInterval = (highDensityDate.time.time - fromDate.time) / MAXIMUM_POINTS_COUNT
 
         val sqlString = "Select tr.* from " +
             "(select min(id) as id from TagSensorReading where RuuviTagId = '$sensorId' and createdAt > ${fromDate.time} and createdAt < ${highDensityDate.time.time} group by createdAt / $pruningInterval) gr " +
@@ -94,7 +94,7 @@ class SensorHistoryRepository {
 
     fun getCount(sensorId: String, fromDate: Date): Long {
         return SQLite
-            .select()
+            .select(Method.count())
             .from(TagSensorReading::class)
             .indexedBy(TagSensorReading_Table.index_TagId)
             .where(TagSensorReading_Table.ruuviTagId.eq(sensorId))
@@ -137,5 +137,6 @@ class SensorHistoryRepository {
         const val POINT_THRESHOLD = 1000
         const val HIGH_DENSITY_INTERVAL_MINUTES = 15
         const val BULK_INSERT_BATCH_SIZE = 100
+        const val MAXIMUM_POINTS_COUNT = 5000
     }
 }
