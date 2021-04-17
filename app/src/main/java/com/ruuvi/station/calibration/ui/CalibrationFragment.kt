@@ -12,6 +12,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.FragmentCalibrateBinding
 import com.ruuvi.station.util.extensions.describingTimeSince
+import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import timber.log.Timber
 import java.util.*
@@ -43,7 +44,16 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
         }
     }
 
-    abstract fun setupCalibrationMessage()
+    fun setupCalibrationMessage() {
+        //TODO Localize
+        binding.calibrationInstructionsTextView.text = "\tIn normal use, it's not necessary to adjust the offset.\n\n" +
+            "\tIf you're an advanced user and you'd like to manually configure the factory calibrated sensors, it's possible to do so.\n\n" +
+            "\tCalibration tips are available on ruuvi.com/support"
+        binding.calibrationInstructionsTextView.makeWebLinks(
+            requireContext(),
+            Pair("ruuvi.com/support", "http://ruuvi.com/support")
+        )
+    }
 
     override fun onPause() {
         super.onPause()

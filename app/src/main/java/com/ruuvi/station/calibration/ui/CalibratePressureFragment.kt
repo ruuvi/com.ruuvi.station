@@ -20,8 +20,6 @@ class CalibratePressureFragment : CalibrationFragment(R.layout.fragment_calibrat
 
     override val calibrationType: CalibrationType = CalibrationType.PRESSURE
 
-    override fun setupCalibrationMessage() { }
-
     companion object {
         const val SENSOR_ID = "SENSOR_ID"
         fun newInstance(sensorId: String): CalibratePressureFragment {
