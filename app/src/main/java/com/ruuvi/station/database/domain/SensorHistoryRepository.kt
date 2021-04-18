@@ -50,8 +50,8 @@ class SensorHistoryRepository {
         highDensityDate.time = Date()
         highDensityDate.add(Calendar.MINUTE, -HIGH_DENSITY_INTERVAL_MINUTES)
 
-        val pruningInterval = 1000 * 60 * interval
-        //val pruningInterval = (highDensityDate.time.time - fromDate.time) / MAXIMUM_POINTS_COUNT
+        //val pruningInterval = 1000 * 60 * interval
+        val pruningInterval = (highDensityDate.time.time - fromDate.time) / MAXIMUM_POINTS_COUNT
 
         val sqlString = "Select tr.* from " +
             "(select min(id) as id from TagSensorReading where RuuviTagId = '$sensorId' and createdAt > ${fromDate.time} and createdAt < ${highDensityDate.time.time} group by createdAt / $pruningInterval) gr " +
@@ -137,6 +137,6 @@ class SensorHistoryRepository {
         const val POINT_THRESHOLD = 1000
         const val HIGH_DENSITY_INTERVAL_MINUTES = 15
         const val BULK_INSERT_BATCH_SIZE = 100
-        const val MAXIMUM_POINTS_COUNT = 5000
+        const val MAXIMUM_POINTS_COUNT = 3000
     }
 }
