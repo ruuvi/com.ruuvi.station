@@ -56,6 +56,14 @@ class BluetoothGattInteractor (
                 saveGattReadings(sensorId, data)
             }
 
+            override fun syncProgress(syncedDataPoints: Int) {
+                // Throttle UI updates, this might have to be tweaked.
+                // Maybe a time based thing would be better?
+                if (syncedDataPoints % 10 == 0) {
+                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_DATA, syncedDataPoints = syncedDataPoints))
+                }
+            }
+
             override fun heartbeat(raw: String) {
             }
         })

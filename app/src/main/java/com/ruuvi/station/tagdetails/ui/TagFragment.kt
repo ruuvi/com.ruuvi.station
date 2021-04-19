@@ -150,7 +150,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                     gattAlertDialog("${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}")
                 }
                 SyncProgress.READING_DATA -> {
-                    gattSyncStatusTextView.text = "${context?.getString(R.string.reading_history)}"+"..."
+                    var status = "${context?.getString(R.string.reading_history)}.. "
+                    if (it.syncedDataPoints > 0) status += it.syncedDataPoints
+                    gattSyncStatusTextView.text = status
                 }
                 SyncProgress.SAVING_DATA -> {
                     gattSyncStatusTextView.text = if (it.readDataSize > 0) {

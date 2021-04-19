@@ -78,8 +78,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.2.0'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:PR7-SNAPSHOT'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:PR25-SNAPSHOT'
     //implementation project(':bluetooth_library')
     //implementation project(':default_bluetooth_library')
 
