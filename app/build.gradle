@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.2.1'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.1'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.1a'
     //implementation project(':bluetooth_library')
     //implementation project(':default_bluetooth_library')
 
