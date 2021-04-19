@@ -128,6 +128,7 @@ class SensorHistoryRepository {
             if (i >= BULK_INSERT_BATCH_SIZE) {
                 executeSQL(query)
                 query = null
+                i = 0
             }
         }
         if (query != null) executeSQL(query)
