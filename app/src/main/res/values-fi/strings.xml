@@ -197,6 +197,7 @@
     <string name="sync">SYNKRONOI</string>
     <string name="sync_complete">Synkronointi valmis</string>
     <string name="sync_confirm">Ladataanko historiatiedot anturista?</string>
+    <string name="synchronizing">Synkronoidaan</string>
     <string name="tag_name">Anturin nimi</string>
     <string name="tag_not_in_range">Anturia ei löydetty. Onko laite lähettyvillä?</string>
     <string name="tagsettings_sensor_remove">Poista</string>

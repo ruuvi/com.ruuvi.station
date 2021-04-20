@@ -228,6 +228,7 @@
     <string name="sync">СКАЧАТЬ</string>
     <string name="sync_complete">Синхронизация завершена</string>
     <string name="sync_confirm">Вы уверены что хотите синхронизировать данные с устройством?</string>
+    <string name="synchronizing">Обмениваюсь</string>
     <string name="tag_name">Имя</string>
     <string name="tag_not_in_range">Датчик не найден</string>
     <string name="tagsettings_claim_button">Мой сенсор</string>

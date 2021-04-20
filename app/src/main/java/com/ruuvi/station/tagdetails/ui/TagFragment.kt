@@ -55,6 +55,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagReadings()
         observeSelectedTag()
         observeSync()
+        observeSyncStatus()
 
         gattSyncButton.setOnClickListener {
             viewModel.syncGatt()
@@ -67,6 +68,22 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         gattSyncCancel.setOnClickListener {
             viewModel.disconnectGatt()
         }
+    }
+
+    private fun observeSyncStatus() {
+        var i = 0
+        viewModel.syncStatus.observe(viewLifecycleOwner, Observer {
+            tagSynchronizingTextView.isVisible = it
+            if (it) {
+                var syncText = getText(R.string.synchronizing).toString()
+                for (j in 1 .. i) {
+                    syncText = syncText + "."
+                }
+                i++
+                if (i > 3) i = 0
+                tagSynchronizingTextView.text = syncText
+            }
+        })
     }
 
     override fun onResume() {
