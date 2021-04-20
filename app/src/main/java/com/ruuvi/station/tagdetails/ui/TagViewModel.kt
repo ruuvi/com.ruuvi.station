@@ -1,14 +1,14 @@
 package com.ruuvi.station.tagdetails.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
@@ -20,10 +20,12 @@ import timber.log.Timber
 import java.util.*
 
 class TagViewModel(
-        private val tagDetailsInteractor: TagDetailsInteractor,
-        private val gattInteractor: BluetoothGattInteractor,
-        private val sensorHistoryRepository: SensorHistoryRepository,
-        val tagId: String
+    private val tagDetailsInteractor: TagDetailsInteractor,
+    private val gattInteractor: BluetoothGattInteractor,
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    val tagId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
     val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
@@ -33,6 +35,16 @@ class TagViewModel(
 
     private val syncStatusObj = MutableLiveData<GattSyncStatus>()
     val syncStatusObserve: LiveData<GattSyncStatus> = syncStatusObj
+
+    private val networkSyncInProgress = MutableLiveData<Boolean>(false)
+
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
+
+    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it != null
+    }
+
+    val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -52,7 +64,17 @@ class TagViewModel(
                 }
             }
         }
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncInProgressFlow.collect {
+                networkSyncInProgress.value = it
+            }
+        }
+
+        syncStatus.addSource(networkSyncInProgress) { syncStatus.value = isSyncInProgress() }
+        syncStatus.addSource(isNetworkTagObserve) { syncStatus.value = isSyncInProgress() }
     }
+
+    private fun isSyncInProgress(): Boolean = networkSyncInProgress.value ?: false && isNetworkTagObserve.value ?: false
 
     fun isShowGraph(isShow: Boolean) {
         showGraph = isShow
@@ -109,11 +131,13 @@ class TagViewModel(
     private fun getTagEntryData(tagId: String) {
         Timber.d("getTagEntryData for tagId = $tagId")
         ioScope.launch {
+            val status = networkInteractor.getSensorNetworkStatus(tagId)
             tagDetailsInteractor
                 .getTagById(tagId)
                 ?.let {
                     withContext(Dispatchers.Main) {
                         tagEntry.value = it
+                        networkStatus.value = status
                     }
                 }
         }
