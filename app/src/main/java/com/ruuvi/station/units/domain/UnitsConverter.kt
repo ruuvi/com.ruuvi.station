@@ -132,7 +132,7 @@ class UnitsConverter (
             if (humidityUnit == HumidityUnit.DEW) {
                 context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getTemperatureUnitString())
             } else {
-                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString())
+                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString(humidityUnit))
             }
         }
     }

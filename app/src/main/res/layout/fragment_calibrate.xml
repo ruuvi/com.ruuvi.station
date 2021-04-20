@@ -16,7 +16,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/calibrationInstructionsTextView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text=""/>
     </ScrollView>
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Original measured value"
+            android:text="@string/calibration_original_value"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Corrected value"
+            android:text="@string/calibration_corrected_value"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/originalValueTextView" />

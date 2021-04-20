@@ -38,20 +38,17 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
 
     override fun onResume() {
         super.onResume()
-        timer = Timer("CalibrateTemperatureTimer", false)
+        timer = Timer("CalibrationTimer", false)
         timer?.scheduleAtFixedRate(0, 500) {
             viewModel.refreshSensorData()
         }
     }
 
     fun setupCalibrationMessage() {
-        //TODO Localize
-        binding.calibrationInstructionsTextView.text = "\tIn normal use, it's not necessary to adjust the offset.\n\n" +
-            "\tIf you're an advanced user and you'd like to manually configure the factory calibrated sensors, it's possible to do so.\n\n" +
-            "\tCalibration tips are available on ruuvi.com/support"
+        binding.calibrationInstructionsTextView.text = getString(R.string.calibration_description)
         binding.calibrationInstructionsTextView.makeWebLinks(
             requireContext(),
-            Pair("ruuvi.com/support", "http://ruuvi.com/support")
+            Pair(getString(R.string.calibration_description_link), getString(R.string.calibration_description_link_url))
         )
     }
 
@@ -77,11 +74,11 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
 
         binding.clearButton.setDebouncedOnClickListener {
             val alertDialog = AlertDialog.Builder(requireContext()).create()
-            alertDialog.setTitle("Confirm")
-            alertDialog.setMessage("Clear calibration settings?")
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, requireContext().getString(R.string.yes)
+            alertDialog.setTitle(getString(R.string.confirm))
+            alertDialog.setMessage(getString(R.string.calibration_clear_confirm))
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes)
             ) { _, _ -> viewModel.clearCalibration() }
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, requireContext().getString(R.string.no)
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no)
             ) { _, _ -> }
             alertDialog.show()
         }
@@ -93,7 +90,7 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
                 originalValueTextView.text = viewModel.getStringForValue(info.rawValue)
                 originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
                 correctedlValueTextView.text = viewModel.getStringForValue(info.calibratedValue)
-                correctedOffsetTextView.text = "(Offset ${info.currentOffsetString})"
+                correctedOffsetTextView.text = getString(R.string.calibration_offset, info.currentOffsetString)
 
                 correctedTitleTextView.isInvisible = !info.isCalibrated
                 correctedlValueTextView.isInvisible = !info.isCalibrated
