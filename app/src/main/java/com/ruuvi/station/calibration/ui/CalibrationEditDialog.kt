@@ -23,7 +23,7 @@ class CalibrationEditDialog(val calibrationType: CalibrationType): DialogFragmen
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
             builder
                 .setView(binding.root)
-                .setTitle("Calibration setup")
+                .setTitle(getString(R.string.calibration_setup))
                 .setPositiveButton(R.string.ok) {_,_->
                     listener?.onDialogPositiveClick(this, binding.calibrationValueEditText.text.toString().toDouble())
                 }
@@ -39,13 +39,11 @@ class CalibrationEditDialog(val calibrationType: CalibrationType): DialogFragmen
         val confirmButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         confirmButton.isEnabled = false
 
-        val unitName = when (calibrationType) {
-            CalibrationType.PRESSURE -> "pressure"
-            CalibrationType.TEMPERATURE -> "temperature"
-            CalibrationType.HUMIDITY -> "humidity"
+        binding.dialogTitle.text = when (calibrationType) {
+            CalibrationType.PRESSURE -> getString(R.string.calibration_enter_pressure, unit)
+            CalibrationType.TEMPERATURE -> getString(R.string.calibration_enter_temperature, unit)
+            CalibrationType.HUMIDITY -> getString(R.string.calibration_enter_humidity, unit)
         }
-
-        binding.dialogTitle.text = "Enter $unitName value expected from sensor in current conditions ($unit): "
 
         binding.calibrationValueEditText.addTextChangedListener {
             try {

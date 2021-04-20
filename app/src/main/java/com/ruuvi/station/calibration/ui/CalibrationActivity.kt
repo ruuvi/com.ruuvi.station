@@ -45,7 +45,7 @@ class CalibrationActivity : AppCompatActivity() {
             CalibrationType.PRESSURE -> CalibratePressureFragment.newInstance(sensorId)
         }
         transaction.replace(R.id.calibration_frame, fragment).commit()
-        title = calibrationType.title
+        title = getString(calibrationType.titleId)
     }
 
     companion object {
