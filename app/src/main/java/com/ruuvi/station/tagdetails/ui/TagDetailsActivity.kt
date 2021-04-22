@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.Manifest
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.PendingIntent
@@ -12,10 +11,8 @@ import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -30,7 +27,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -60,7 +56,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.PermissionsHelper
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
 import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
@@ -98,7 +94,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private val permissionsHelper = PermissionsHelper(this)
+    private val permissionsInteractor = PermissionsInteractor(this)
+
     private var tagPagerScrolling = false
     private var timer: Timer? = null
     private var signedIn = false
@@ -115,10 +112,27 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.openAddView = false
             return
         }
-        if (permissionsHelper.arePermissionsGranted() && preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-            permissionsHelper.requestBackgroundPermission()
-        } else {
-            permissionsHelper.requestPermissions()
+
+        requestPermission()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH) {
+            requestPermission()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestPermission()
+                    if (viewModel.openAddView) noTagsTextView.callOnClick()
+                } else {
+                    permissionsInteractor.showPermissionSnackbar()
+                }
+            }
         }
     }
 
@@ -459,7 +473,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
-                                permissionsHelper.requestBackgroundPermission()
+                                permissionsInteractor.requestBackgroundPermission()
                             }
                             simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
@@ -492,38 +506,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onPause() {
         super.onPause()
         timer?.cancel()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            10 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-                        permissionsHelper.requestBackgroundPermission()
-                    }
-                    if (viewModel.openAddView) noTagsTextView.callOnClick()
-                } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        permissionsHelper.requestPermissions()
-                    } else {
-                        showPermissionSnackbar()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showPermissionSnackbar() {
-        val snackbar = Snackbar.make(mainDrawerLayout, getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
-        snackbar.setAction(getString(R.string.settings)) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            startActivity(intent)
-        }
-        snackbar.show()
     }
 
     private fun setupVisibility(isEmptyTags: Boolean) {
@@ -562,6 +544,10 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             this.tags = tags
             notifyDataSetChanged()
         }
+    }
+
+    private fun requestPermission() {
+        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
     }
 
     companion object {
