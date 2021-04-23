@@ -39,13 +39,14 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     private val preferencesRepository: PreferencesRepository by instance()
     private val tags: ArrayList<RuuviTagEntity> = arrayListOf()
     private var adapter: AddTagAdapter? = null
-    private val permissionsInteractor = PermissionsInteractor(this)
+    private lateinit var permissionsInteractor: PermissionsInteractor
     private var timer :Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_tag)
         setSupportActionBar(toolbar)
+        permissionsInteractor = PermissionsInteractor(this)
 
         requestPermission()
         setupViewmodel()
@@ -54,7 +55,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH) {
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
             requestPermission()
         } else {
             finish()
