@@ -210,7 +210,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         tagHumidityTextView.text = viewModel.getHumidityString(tag)
         tagPressureTextView.text = viewModel.getPressureString(tag)
         tagSignalTextView.text = viewModel.getSignalString(tag)
-        tagUpdatedTextView.text = getString(R.string.updated, tag.updatedAt?.describingTimeSince(requireContext()))
+        tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
         val unit = viewModel.getTemperatureUnitString()
         val unitSpan = SpannableString(unit)

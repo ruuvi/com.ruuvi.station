@@ -1,6 +1,7 @@
 package com.ruuvi.station.util.extensions
 
 import android.content.Context
+import android.text.format.DateFormat
 import com.ruuvi.station.R
 import java.util.*
 import kotlin.math.abs
@@ -19,7 +20,9 @@ fun Date.describingTimeSince(context: Context): String {
     val diffInMS: Long = dateNow.time - this.time
     // show date if the tag has not been seen for 24h
     if (diffInMS > 24 * 60 * 60 * 1000) {
-        output += this.toString()
+        val dateFormat = DateFormat.getDateFormat(context)
+        val timeFormat = DateFormat.getTimeFormat(context)
+        output += "${dateFormat.format(this)} ${timeFormat.format(this)}"
     } else {
         val seconds = (diffInMS / 1000).toInt() % 60
         val minutes = (diffInMS / (1000 * 60) % 60).toInt()
