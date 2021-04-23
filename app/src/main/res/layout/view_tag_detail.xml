@@ -42,10 +42,11 @@
 
         <LinearLayout
             android:id="@+id/tagHumidityLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tagPressureLayout">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -70,10 +71,11 @@
 
         <LinearLayout
             android:id="@+id/tagPressureLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tagSignalLayout">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -98,10 +100,11 @@
 
         <LinearLayout
             android:id="@+id/tagSignalLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="56dp"
             android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -136,13 +139,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/sourceTypeImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/tagUpdatedTextView"
+            app:layout_constraintEnd_toEndOf="@+id/tagUpdatedTextView"
+            tools:src="@drawable/ic_icon_bluetooth" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tagUpdatedTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:alpha="0.5"
-            tools:text="@string/updated"
+            tools:text="5 sec ago"
             android:textAlignment="textEnd"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

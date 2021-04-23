@@ -28,6 +28,7 @@ class TagConverter(
             userBackground = entity.userBackground,
             dataFormat = entity.dataFormat,
             connectable = entity.connectable,
-            lastSync = entity.lastSync
+            lastSync = entity.lastSync,
+            networkLastSync = entity.networkLastSync
         )
 }
