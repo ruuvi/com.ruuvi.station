@@ -58,13 +58,14 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private lateinit var adapter: RuuviTagAdapter
     private var getTagsTimer :Timer? = null
     private var signedIn = false
-    private val permissionsInteractor = PermissionsInteractor(this)
+    private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         setSupportActionBar(toolbar)
+        permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo)
@@ -78,7 +79,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH) {
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
             requestPermission()
         }
     }

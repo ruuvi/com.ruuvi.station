@@ -94,7 +94,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     private val preferencesRepository: PreferencesRepository by instance()
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private val permissionsInteractor = PermissionsInteractor(this)
+    private lateinit var permissionsInteractor: PermissionsInteractor
 
     private var tagPagerScrolling = false
     private var timer: Timer? = null
@@ -103,6 +103,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag_details)
+        permissionsInteractor = PermissionsInteractor(this)
 
         setupViewModel()
         setupUI()
@@ -118,7 +119,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH) {
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
             requestPermission()
         }
     }
