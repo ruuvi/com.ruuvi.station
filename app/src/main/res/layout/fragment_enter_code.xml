@@ -12,9 +12,8 @@
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginBottom="24dp"
         android:layout_marginRight="8dp"
         android:fontFamily="@font/montserrat_extra_bold_ttf"
         android:singleLine="false"
@@ -22,18 +21,19 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/registerTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/registerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="24dp"
         android:layout_marginRight="32dp"
+        android:layout_marginBottom="24dp"
         android:fontFamily="@font/montserrat_bold"
         android:lineSpacingExtra="16dp"
         android:singleLine="false"
@@ -41,16 +41,17 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/centerGuideline"/>
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/enterCodeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
         android:layout_marginTop="24dp"
+        android:layout_marginRight="32dp"
         android:textColorHint="@color/white"
         app:hintTextColor="@color/white"
         app:layout_constraintTop_toTopOf="@+id/centerGuideline">
@@ -83,12 +84,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginEnd="64dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="64dp"
         android:text="@string/sign_in_login_button"
-        app:layout_constraintTop_toBottomOf="@+id/errorTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorTextView" />
 
     <ProgressBar
         android:id="@+id/progressIndicator"
@@ -122,6 +123,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.6" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
