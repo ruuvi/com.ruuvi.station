@@ -223,6 +223,12 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 gattSyncView.visibility = View.GONE
             }
         }
+
+        if (tag.updatedAt == tag.networkLastSync) {
+            sourceTypeImageView.setImageResource(R.drawable.ic_icon_gateway)
+        } else {
+            sourceTypeImageView.setImageResource(R.drawable.ic_icon_bluetooth)
+        }
     }
 
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
