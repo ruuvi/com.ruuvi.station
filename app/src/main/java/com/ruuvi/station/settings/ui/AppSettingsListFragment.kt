@@ -34,7 +34,6 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
     private fun setupViewModel() {
         viewModel.experimentalFeatures.observe(viewLifecycleOwner, Observer {
-            Timber.d("experimentalSettingsContainer $it")
             experimentalSettingsContainer.isVisible = it
         })
     }

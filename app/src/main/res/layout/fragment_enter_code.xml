@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".network.ui.EnterCodeFragment"
-    tools:background="@drawable/gradient_background">
+    tools:background="@drawable/gradient_background"
+    tools:context=".network.ui.EnterCodeFragment">
 
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login_to_ruuvi_network"
-        android:singleLine="false"
-        android:layout_marginTop="88dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginRight="8dp"
-        android:textColor="@color/white"
         android:fontFamily="@font/montserrat_extra_bold_ttf"
-        android:textSize="40sp"
+        android:singleLine="false"
+        android:text="@string/login_to_ruuvi_network"
         android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/white"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/registerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="32dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:lineSpacingExtra="16dp"
         android:singleLine="false"
         android:text="@string/sign_in_check_email"
-        android:textColor="@color/white"
-        android:fontFamily="@font/montserrat_bold"
-        android:textSize="14sp"
-        android:lineSpacingExtra="16dp"
         android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        app:layout_constraintBottom_toTopOf="@id/centerGuideline"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/enterCodeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="24dp"
         android:textColorHint="@color/white"
         app:hintTextColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/submitCodeButton">
+        app:layout_constraintTop_toTopOf="@+id/centerGuideline">
+
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/enterCodeManuallyEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/white"
             android:fontFamily="@font/montserrat"
-            android:hint="@string/sign_in_code_hint" />
+            android:hint="@string/sign_in_code_hint"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/errorTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        tools:text="error text"
-        android:textColor="@color/white"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="32dp"
         android:fontFamily="@font/montserrat"
-        app:layout_constraintTop_toBottomOf="@+id/enterCodeLayout" />
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/enterCodeLayout"
+        tools:text="error text" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/submitCodeButton"
@@ -82,22 +84,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="88dp"
+        android:layout_marginTop="24dp"
         android:text="@string/sign_in_login_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressIndicator"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:visibility="invisible"
         style="@style/progressStyle"
-        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/submitCodeButton"
         app:layout_constraintStart_toStartOf="@+id/submitCodeButton"
-        app:layout_constraintEnd_toEndOf="@+id/submitCodeButton" />
+        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/skipTextView"
@@ -105,14 +107,21 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="28dp"
-        android:text="@string/skip"
-        android:textColor="@color/white"
         android:fontFamily="@font/montserrat_extra_bold_ttf"
+        android:text="@string/skip"
         android:textAlignment="textEnd"
+        android:textColor="@color/white"
         android:textSize="14sp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/centerGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
