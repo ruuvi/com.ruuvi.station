@@ -59,8 +59,7 @@ class RuuviTagAdapter(
         val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, view.deviceId.text.toString(), letterSize)
         view.letterImage.setImageBitmap(ballBitmap)
 
-        val updatedAt =
-            context.getString(R.string.updated, item?.updatedAt?.describingTimeSince(activity))
+        val updatedAt = item?.updatedAt?.describingTimeSince(activity)
         view.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM

@@ -220,7 +220,7 @@
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed</string>
     <string name="share_sensor_add_friend">Add friend</string>
     <string name="share_sensor_already_shared">Already shared</string>
-    <string name="share_sensor_description">Share your Ruuvi sensor. Add your friend email address (10 max)</string>
+    <string name="share_sensor_description">Share your Ruuvi sensor. Add your friend\'s email address (10 max)</string>
     <string name="share_sensor_send_button">Send</string>
     <string name="share_sensor_title">Share Ruuvi sensor</string>
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
