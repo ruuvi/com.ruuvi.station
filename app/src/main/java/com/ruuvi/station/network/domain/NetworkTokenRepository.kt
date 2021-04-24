@@ -14,5 +14,6 @@ class NetworkTokenRepository (
 
     fun signOut() {
         saveTokenInfo(NetworkTokenInfo("", ""))
+        preferencesRepository.setLastSyncDate(Long.MIN_VALUE)
     }
 }
