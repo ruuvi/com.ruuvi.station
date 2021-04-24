@@ -209,15 +209,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private fun login(signedIn: Boolean) {
         if (signedIn == false) {
-            val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-            alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
-            alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener {
-                SignInActivity.start(this)
-            }
-            alertDialog.show()
+            SignInActivity.start(this)
         } else {
             val builder = AlertDialog.Builder(this)
             with(builder)
@@ -232,6 +224,18 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 show()
             }
         }
+    }
+
+    fun showNetworkBenefitsDialog() {
+        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
+        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+        ) { dialog, _ -> dialog.dismiss() }
+        alertDialog.setOnDismissListener {
+            SignInActivity.start(this)
+        }
+        alertDialog.show()
     }
 
     private fun updateMenu(signed: Boolean) {
