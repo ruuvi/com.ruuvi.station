@@ -29,7 +29,8 @@ fun Date.describingTimeSince(context: Context): String {
         val hours = (diffInMS / (1000 * 60 * 60) % 24).toInt()
         if (hours > 0) output += "$hours ${context.getString(R.string.h)} "
         if (minutes > 0) output += "$minutes ${context.getString(R.string.min)} "
-        output += "$seconds ${context.getString(R.string.s)} ${context.getString(R.string.ago)}"
+        output += "$seconds ${context.getString(R.string.s)}"
+        output = context.getString(R.string.time_since, output)
     }
     return output
 }
