@@ -210,6 +210,7 @@
     <string name="temperature_kelvin_name">Kelvin (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="time_since">il y\'a %1$s</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>

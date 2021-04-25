@@ -245,6 +245,7 @@
     <string name="temperature_kelvin_name">Кельвин (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="time_since">%1$s назад</string>
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>
     <string name="updated">Обновлено %1$s</string>
