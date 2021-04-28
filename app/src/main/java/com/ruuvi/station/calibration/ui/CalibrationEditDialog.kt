@@ -11,11 +11,13 @@ import com.ruuvi.station.databinding.DialogCalibrationEditBinding
 import java.lang.Exception
 import java.lang.IllegalStateException
 
-class CalibrationEditDialog(val calibrationType: CalibrationType): DialogFragment() {
+class CalibrationEditDialog(
+    private val calibrationType: CalibrationType,
+    private var unit: String = "",
+    private var listener: CalibrationEditListener? = null
+): DialogFragment() {
     private lateinit var binding: DialogCalibrationEditBinding
     private lateinit var alertDialog: AlertDialog
-    private var unit: String = ""
-    private var listener: CalibrationEditListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -68,10 +70,7 @@ class CalibrationEditDialog(val calibrationType: CalibrationType): DialogFragmen
             unit: String,
             listener: CalibrationEditListener
         ): CalibrationEditDialog {
-            val dialog =  CalibrationEditDialog(calibrationType)
-            dialog.unit = unit
-            dialog.listener = listener
-            return dialog
+            return CalibrationEditDialog(calibrationType, unit, listener)
         }
     }
 }

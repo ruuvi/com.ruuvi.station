@@ -35,6 +35,7 @@ public class Utils {
             "[\\u23e9-\\u23f3]|[\\u23f8-\\u23fa]|\\ud83c\\udccf|\\u2934|\\u2935|[\\u2190-\\u21ff]";
 
     public static Bitmap createBall(int radius, int ballColor, int letterColor, String deviceId, float letterSize) {
+        deviceId = deviceId.isEmpty() ? " " : deviceId;
         String letter = deviceId.matches(emojiRegex) ? deviceId : ("" + deviceId.charAt(0)).toUpperCase();
         Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

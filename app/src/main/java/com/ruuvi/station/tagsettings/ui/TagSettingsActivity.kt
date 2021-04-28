@@ -1,23 +1,20 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.InputFilter
-import android.text.InputType
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -268,56 +265,15 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun setupTagName(tag: RuuviTagEntity) {
         tagNameInputTextView.text = tag.displayName
 
-        // TODO: 25/10/17 make this less ugly
         tagNameInputTextView.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-            builder.setTitle(getString(R.string.tag_name))
-
-            val input = EditText(this@TagSettingsActivity)
-
-            input.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(32))
-
-            input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-
-            input.setText(tag.name)
-
-            val container = FrameLayout(applicationContext)
-
-            val params =
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            input.layoutParams = params
-
-            container.addView(input)
-
-            builder.setView(container)
-
-            builder.setPositiveButton(getString(R.string.ok)) { _: DialogInterface?, _: Int ->
-                val newValue = input.text.toString()
-                if (newValue.isNullOrEmpty()) {
-                    viewModel.setName(null)
-                } else {
-                    viewModel.setName(input.text.toString())
+            val sensorNameEditDialog = SensorNameEditDialog.new_instance(tag.name, object: SensorNameEditListener {
+                override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
+                    viewModel.setName(value)
                 }
-            }
+                override fun onDialogNegativeClick(dialog: DialogFragment) { }
+            })
 
-            builder.setNegativeButton(getString(R.string.cancel), null)
-
-            val dialog: Dialog = builder.create()
-
-            try {
-                dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            } catch (e: Exception) {
-                Timber.e(e, "Could not open keyboard")
-            }
-            dialog.show()
-
-            input.requestFocus()
+            sensorNameEditDialog.show(this.supportFragmentManager, "sensorName")
         }
     }
 

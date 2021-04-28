@@ -15,7 +15,7 @@ class TagConverter(
         RuuviTag(
             id = entity.id.orEmpty(),
             name = entity.name.orEmpty(),
-            displayName = entity.name ?: entity.id.toString(),
+            displayName = if (entity.name.isNullOrEmpty()) entity.id.toString() else entity.name!!,
             rssi = entity.rssi,
             temperature = entity.temperature,
             humidity = entity.humidity,
