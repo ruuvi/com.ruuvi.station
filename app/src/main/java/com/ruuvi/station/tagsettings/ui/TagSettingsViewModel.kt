@@ -44,16 +44,8 @@ class TagSettingsViewModel(
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
         it?.owner == networkInteractor.getEmail()
-    }
-
-    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
-        it?.owner
-    }
-
-    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
-        it != null
     }
 
     fun getTagInfo() {
@@ -83,17 +75,6 @@ class TagSettingsViewModel(
 
     fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
-        if (networkStatus.value?.owner == networkInteractor.getEmail()) {
-            networkInteractor.unclaimSensor(tagId)
-        } else if (!networkStatus.value?.owner.isNullOrEmpty()) {
-            networkInteractor.getEmail()?.let { email ->
-                networkInteractor.unshareSensor(email, tagId, handler) {response->
-                    if (response?.isError() == true) {
-                        operationStatus.value = response.error
-                    }
-                }
-            }
-        }
     }
 
     fun removeNotificationById(notificationId: Int) {
@@ -169,13 +150,7 @@ class TagSettingsViewModel(
     fun setName(name: String?) {
         interactor.updateTagName(tagId, name)
         getTagInfo()
-        networkStatus.value?.let {
-            networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
-                if (response?.isError() == true) {
-                    operationStatus.value = response.error
-                }
-            }
-        }
+        if (networkInteractor.signedIn) networkInteractor.updateSensor(tagId, name ?: "")
     }
 
     fun setupAlarmElements() {

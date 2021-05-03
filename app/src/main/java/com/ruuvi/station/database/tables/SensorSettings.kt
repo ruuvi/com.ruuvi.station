@@ -27,7 +27,9 @@ data class SensorSettings(
     @Column
     var pressureOffset: Double? = null,
     @Column
-    var pressureOffsetDate: Date? = null
+    var pressureOffsetDate: Date? = null,
+    @Column
+    var owner: String? = null
 ): BaseModel() {
     fun calibrateSensor(sensor: RuuviTagEntity) {
         sensor.temperature += (temperatureOffset ?: 0.0)

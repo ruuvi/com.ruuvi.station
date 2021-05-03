@@ -5,13 +5,15 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.model.TemperatureUnit
 
 class TagSettingsInteractor(
     private val tagRepository: TagRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository
-) {
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val networkInteractor: RuuviNetworkInteractor
+    ) {
     fun getTagById(tagId: String): RuuviTagEntity? =
         tagRepository
             .getTagById(tagId)
@@ -22,8 +24,18 @@ class TagSettingsInteractor(
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun deleteTagsAndRelatives(tag: RuuviTagEntity) =
+    fun deleteTagsAndRelatives(tag: RuuviTagEntity) {
+        val sensorId = tag.id.toString()
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         tagRepository.deleteTagsAndRelatives(tag)
+        sensorSettings?.owner?.let { owner ->
+            if (sensorSettings.owner == networkInteractor.getEmail()) {
+                networkInteractor.unclaimSensor(sensorId)
+            } else {
+                networkInteractor.unshareSensor(owner, sensorId)
+            }
+        }
+    }
 
     fun updateTagName(tagId: String, tagName: String?) =
         tagRepository.updateTagName(tagId, tagName)

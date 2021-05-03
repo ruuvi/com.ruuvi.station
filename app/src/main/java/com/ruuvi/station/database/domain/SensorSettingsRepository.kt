@@ -13,12 +13,17 @@ class SensorSettingsRepository {
             .where(SensorSettings_Table.id.eq(sensorId))
             .querySingle()
 
-    fun setSensorTemperatureCalibrationOffset(sensorId: String, temperatureOffset: Double) {
+    fun getSensorSettingsOrCreate(sensorId: String): SensorSettings {
         var settings = getSensorSettings(sensorId)
         if (settings == null) {
             settings = SensorSettings(sensorId)
             settings.insert()
         }
+        return settings
+    }
+
+    fun setSensorTemperatureCalibrationOffset(sensorId: String, temperatureOffset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
         settings.temperatureOffset = temperatureOffset
         settings.temperatureOffsetDate = Date()
         settings.update()
@@ -33,6 +38,13 @@ class SensorSettingsRepository {
         }
     }
 
+    fun setSensorPressureCalibrationOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.pressureOffset = offset
+        settings.pressureOffsetDate = Date()
+        settings.update()
+    }
+
     fun clearPressureCalibration(sensorId: String) {
         var settings = getSensorSettings(sensorId)
         settings?.let {
@@ -42,14 +54,10 @@ class SensorSettingsRepository {
         }
     }
 
-    fun setSensorPressureCalibrationOffset(sensorId: String, offset: Double) {
-        var settings = getSensorSettings(sensorId)
-        if (settings == null) {
-            settings = SensorSettings(sensorId)
-            settings.insert()
-        }
-        settings.pressureOffset = offset
-        settings.pressureOffsetDate = Date()
+    fun setSensorHumidityOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.humidityOffset = offset
+        settings.humidityOffsetDate = Date()
         settings.update()
     }
 
@@ -62,14 +70,9 @@ class SensorSettingsRepository {
         }
     }
 
-    fun setSensorHumidityOffset(sensorId: String, offset: Double) {
-        var settings = getSensorSettings(sensorId)
-        if (settings == null) {
-            settings = SensorSettings(sensorId)
-            settings.insert()
-        }
-        settings.humidityOffset = offset
-        settings.humidityOffsetDate = Date()
+    fun setSensorOwner(sensorId: String, owner: String) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.owner = owner
         settings.update()
     }
 }

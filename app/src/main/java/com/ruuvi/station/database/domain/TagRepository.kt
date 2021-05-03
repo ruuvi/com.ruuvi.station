@@ -3,12 +3,7 @@ package com.ruuvi.station.database.domain
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.database.tables.Alarm_Table
-import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.RuuviTagEntity_Table
-import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.database.tables.TagSensorReading_Table
+import com.ruuvi.station.database.tables.*
 import java.util.*
 
 class TagRepository(
@@ -34,6 +29,10 @@ class TagRepository(
 
         SQLite.delete(TagSensorReading::class.java)
             .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
+            .execute()
+
+        SQLite.delete(SensorSettings::class.java)
+            .where(SensorSettings_Table.id.eq(tag.id))
             .execute()
 
         tag.delete()

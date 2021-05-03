@@ -1,9 +1,6 @@
 package com.ruuvi.station.database.di
 
-import com.ruuvi.station.database.domain.AlarmRepository
-import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -25,6 +22,10 @@ object DatabaseInjectionModule {
 
         bind<AlarmRepository>() with singleton {
             AlarmRepository()
+        }
+
+        bind<NetworkRequestRepository>() with singleton {
+            NetworkRequestRepository()
         }
     }
 }

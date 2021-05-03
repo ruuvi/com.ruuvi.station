@@ -11,6 +11,7 @@ import com.raizlabs.android.dbflow.sql.migration.IndexMigration;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.ruuvi.station.database.tables.Alarm;
 import com.ruuvi.station.database.tables.RuuviTagEntity;
+import com.ruuvi.station.database.tables.SensorSettings;
 import com.ruuvi.station.database.tables.TagSensorReading;
 import com.ruuvi.station.database.tables.TagSensorReading_Table;
 
@@ -21,7 +22,20 @@ import com.ruuvi.station.database.tables.TagSensorReading_Table;
 @Database(name = LocalDatabase.NAME, version = LocalDatabase.VERSION)
 public class LocalDatabase {
     public static final String NAME = "LocalDatabase";
-    public static final int VERSION = 20;
+    public static final int VERSION = 21;
+
+    @Migration(version = 21, database = LocalDatabase.class)
+    public static class Migration21 extends AlterTableMigration<SensorSettings> {
+        public Migration21(Class<SensorSettings> table) {
+            super(table);
+        }
+        @Override
+        public void onPreMigrate() {
+            super.onPreMigrate();
+            addColumn(SQLiteType.TEXT, "owner");
+        }
+    }
+
 
     @Migration(version = 20, database = LocalDatabase.class)
     public static class Migration20_1 extends BaseMigration {

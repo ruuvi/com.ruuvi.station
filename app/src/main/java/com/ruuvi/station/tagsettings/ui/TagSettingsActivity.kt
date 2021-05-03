@@ -125,6 +125,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             calibrateHumidity.setItemValue(
                 unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
             )
+            ownerValueTextView.text = sensorSettings?.owner ?: "None"
+
+            claimTagButton.isEnabled = sensorSettings?.owner.isNullOrEmpty()
         })
 
         viewModel.userLoggedInObserve.observe(this, Observer {
@@ -143,19 +146,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             shareTagButton.isEnabled = it
         })
 
-        viewModel.isNetworkTagObserve.observe(this, Observer {
-            claimTagButton.isEnabled = !it
-        })
-
         viewModel.operationStatusObserve.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        })
-
-        viewModel.sensorOwnerObserve.observe(this, Observer {
-            ownerValueTextView.text = it ?: "None"
         })
     }
 

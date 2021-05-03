@@ -15,6 +15,7 @@ import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
+import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
@@ -33,7 +34,8 @@ class NetworkDataSyncInteractor (
     private val networkInteractor: RuuviNetworkInteractor,
     private val imageInteractor: ImageInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val sensorHistoryRepository: SensorHistoryRepository
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val networkRequestExecutor: NetworkRequestExecutor
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -53,6 +55,8 @@ class NetworkDataSyncInteractor (
         syncJob = CoroutineScope(IO).launch() {
             try {
                 setSyncInProgress(true)
+
+                networkRequestExecutor.executeScheduledRequests()
 
                 val userInfo = networkInteractor.getUserInfo()
 
@@ -227,25 +231,31 @@ class NetworkDataSyncInteractor (
                 if (sensor.name.isNotEmpty()) tagDb.name = sensor.name
                 tagDb.update()
             }
+            sensorSettingsRepository.setSensorOwner(sensor.sensor, sensor.owner)
+
             if (sensor.picture.isNullOrEmpty() == false) {
-                val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
-                if (networkImageGuid != tagDb.networkBackground) {
-                    Timber.d("updating image $networkImageGuid")
-                    try {
-                        val imageFile = imageInteractor.downloadImage(
-                            "cloud_${sensor.sensor}",
-                            sensor.picture
-                        )
-                        tagRepository.updateTagBackground(
-                            sensor.sensor,
-                            Uri.fromFile(imageFile).toString(),
-                            null,
-                            networkImageGuid
-                        )
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to load image: ${sensor.picture}")
-                    }
-                }
+                setSensorImage(sensor, tagDb)
+            }
+        }
+    }
+
+    private suspend fun setSensorImage(sensor: SensorDataResponse, tagDb: RuuviTagEntity) {
+        val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
+        if (networkImageGuid != tagDb.networkBackground) {
+            Timber.d("updating image $networkImageGuid")
+            try {
+                val imageFile = imageInteractor.downloadImage(
+                    "cloud_${sensor.sensor}",
+                    sensor.picture
+                )
+                tagRepository.updateTagBackground(
+                    sensor.sensor,
+                    Uri.fromFile(imageFile).toString(),
+                    null,
+                    networkImageGuid
+                )
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to load image: ${sensor.picture}")
             }
         }
     }
