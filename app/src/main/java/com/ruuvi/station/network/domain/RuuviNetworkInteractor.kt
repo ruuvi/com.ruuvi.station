@@ -6,6 +6,7 @@ import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
+import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -184,6 +185,12 @@ class  RuuviNetworkInteractor (
     fun updateSensor(sensorId: String, name: String) {
         val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId, UpdateSensorRequest(sensorId, name))
         Timber.d("updateSensor $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
+    }
+
+    fun uploadImage(sensorId: String, filename: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
+        Timber.d("uploadImage $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest)
     }
 

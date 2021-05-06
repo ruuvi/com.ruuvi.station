@@ -3,12 +3,15 @@ package com.ruuvi.station.network.domain
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.ruuvi.station.database.domain.NetworkRequestRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.model.NetworkRequestStatus
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.network.data.request.UnclaimSensorRequest
 import com.ruuvi.station.network.data.request.UnshareSensorRequest
 import com.ruuvi.station.network.data.request.UpdateSensorRequest
+import com.ruuvi.station.network.data.request.UploadImageRequest
+import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,8 +20,9 @@ import timber.log.Timber
 class NetworkRequestExecutor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
-    private val networkRequestRepository: NetworkRequestRepository
-){
+    private val networkRequestRepository: NetworkRequestRepository,
+    private val tagRepository: TagRepository
+    ){
     private fun getToken() = tokenRepository.getTokenInfo()
 
     fun registerRequest(networkRequest: NetworkRequest) {
@@ -34,71 +38,62 @@ class NetworkRequestExecutor (
     }
     
     private fun execute(networkRequest: NetworkRequest) {
+        val token = getToken()?.token
+
+        val request = getRequest(networkRequest)
+
+        if (request != null) {
+            token?.let {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        runSpecificAction(token, networkRequest, request)
+                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    } catch (e: Exception) {
+                        registerFailedAttempt(networkRequest)
+                    }
+                }
+            }
+        } else {
+            disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
+        }
+    }
+
+    private fun getRequest(networkRequest: NetworkRequest): Any? {
+        return when (networkRequest.type) {
+            NetworkRequestType.UNCLAIM -> parseJson<UnclaimSensorRequest>(networkRequest.requestData)
+            NetworkRequestType.UPDATE_SENSOR -> parseJson<UpdateSensorRequest>(networkRequest.requestData)
+            NetworkRequestType.UPLOAD_IMAGE -> parseJson<UploadImageRequestWrapper>(networkRequest.requestData)
+            NetworkRequestType.SETTINGS -> parseJson<UploadImageRequest>(networkRequest.requestData)
+            NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(networkRequest.requestData)
+        }
+    }
+
+    private suspend fun runSpecificAction(token:String, networkRequest: NetworkRequest, request: Any?) {
         when (networkRequest.type) {
-            NetworkRequestType.UNCLAIM -> unclaimSensor(networkRequest)
-            NetworkRequestType.UPDATE_SENSOR -> updateSensor(networkRequest)
-            NetworkRequestType.UNSHARE -> unshareSensor(networkRequest)
+            NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
+            NetworkRequestType.UPDATE_SENSOR -> updateSensor(token, request as UpdateSensorRequest)
+            NetworkRequestType.UPLOAD_IMAGE -> uploadImage(token, request as UploadImageRequestWrapper)
+            NetworkRequestType.SETTINGS -> request
+            NetworkRequestType.UNSHARE -> unshareSensor(token, request as UnshareSensorRequest)
         }
     }
 
-    private fun unshareSensor(networkRequest: NetworkRequest) {
-        val token = getToken()?.token
-        val request = parseJson<UnshareSensorRequest>(networkRequest.data)
-        if (request != null) {
-            token?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        networkRepository.unshareSensor(request, token)
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                    } catch (e: Exception) {
-                        Timber.e(e, "unshareSensor")
-                        registerFailedAttempt(networkRequest)
-                    }
-                }
-            }
-        } else {
-            disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
-        }
+    private suspend fun unshareSensor(token: String, request: UnshareSensorRequest) {
+        networkRepository.unshareSensor(request, token)
     }
 
-    private fun unclaimSensor(networkRequest: NetworkRequest) {
-        val token = getToken()?.token
-        val request = parseJson<UnclaimSensorRequest>(networkRequest.data)
-        if (request != null) {
-            token?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        networkRepository.unclaimSensor(request, token)
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                    } catch (e: Exception) {
-                        Timber.e(e, "unclaimSensor")
-                        registerFailedAttempt(networkRequest)
-                    }
-                }
-            }
-        } else {
-            disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
-        }
+    private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest) {
+        networkRepository.unclaimSensor(request, token)
     }
 
-    private fun updateSensor(networkRequest: NetworkRequest) {
-        val token = getToken()?.token
+    private suspend fun updateSensor(token: String, request: UpdateSensorRequest) {
+        networkRepository.updateSensor(request, token)
+    }
 
-        val request = parseJson<UpdateSensorRequest>(networkRequest.data)
-        if (request != null) {
-            token?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        networkRepository.updateSensor(request, token)
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                    } catch (e: Exception) {
-                        Timber.e(e, "updateSensor")
-                        registerFailedAttempt(networkRequest)
-                    }
-                }
-            }
-        } else {
-            disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
+    private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper) {
+        val response = networkRepository.uploadImage(request.filename, request.request, token)
+        if (response?.isSuccess() == true && response.data?.guid.isNullOrEmpty()) {
+            tagRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
         }
     }
 

@@ -81,19 +81,13 @@ class TagSettingsViewModel(
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
+    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
         interactor.updateTagBackground(tagId, userBackground, defaultBackground)
-        networkStatus.value?.let {
+        if (networkInteractor.signedIn) {
             if (userBackground.isNullOrEmpty() == false) {
-                Timber.d("Upload image filename: $userBackground")
-                networkInteractor.uploadImage(tagId, userBackground, handler) { response ->
-                    if (response?.isSuccess() == true && !response.data?.guid.isNullOrEmpty()) {
-                        interactor.updateNetworkBackground(tagId, response.data?.guid)
-                    }
-                }
-            } else if (it.picture.isNotEmpty()){
-                networkInteractor.resetImage(tagId, handler) {
-                }
+                networkInteractor.uploadImage(tagId, userBackground)
+            } else if (networkStatus.value?.picture.isNullOrEmpty() == false){
+                networkInteractor.resetImage(tagId, handler) { }
             }
         }
     }

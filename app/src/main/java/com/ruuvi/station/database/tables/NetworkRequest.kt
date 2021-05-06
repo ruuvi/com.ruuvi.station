@@ -20,7 +20,9 @@ data class NetworkRequest(
     @PrimaryKey(autoincrement = true)
     var id: Int = 0,
     @Column(typeConverter = NetworkRequestTypeConverter::class)
-    var type: NetworkRequestType = NetworkRequestType.SETTING,
+    var type: NetworkRequestType = NetworkRequestType.SETTINGS,
+    @Column(typeConverter = NetworkRequestStatusConverter::class)
+    var status: NetworkRequestStatus = NetworkRequestStatus.READY,
     @Column
     var key: String = "",
     @Column
@@ -30,13 +32,11 @@ data class NetworkRequest(
     @Column
     var attempts: Int = 0,
     @Column
-    var data: String = "",
-    @Column(typeConverter = NetworkRequestStatusConverter::class)
-    var status: NetworkRequestStatus = NetworkRequestStatus.READY
+    var requestData: String = ""
 ) {
     constructor (type: NetworkRequestType, key: String, request: Any): this(
         type = type,
         key = key,
-        data = Gson().toJson(request)
+        requestData = Gson().toJson(request)
     )
 }
