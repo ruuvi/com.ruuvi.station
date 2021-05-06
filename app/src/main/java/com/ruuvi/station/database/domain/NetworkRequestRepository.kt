@@ -42,7 +42,6 @@ class NetworkRequestRepository {
             .where(NetworkRequest_Table.type.eq(networkRequest.type))
             .and(NetworkRequest_Table.key.eq(networkRequest.key))
             .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
-            .orderBy(NetworkRequest_Table.requestDate, true)
             .async()
             .execute()
     }
@@ -51,6 +50,7 @@ class NetworkRequestRepository {
         return SQLite.select()
             .from(NetworkRequest::class.java)
             .where(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
+            .orderBy(NetworkRequest_Table.requestDate, true)
             .queryList()
     }
 }

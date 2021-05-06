@@ -207,6 +207,12 @@ class  RuuviNetworkInteractor (
         }
     }
 
+    fun resetImage(sensorId: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.RESET_IMAGE, sensorId, UploadImageRequest.getResetImageRequest(sensorId))
+        Timber.d("resetImage $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
+    }
+
     fun resetImage(tagId: String, handler: CoroutineExceptionHandler, onResult: (UploadImageResponse?) -> Unit) {
         val token = getToken()?.token
         CoroutineScope(Dispatchers.IO).launch(handler) {

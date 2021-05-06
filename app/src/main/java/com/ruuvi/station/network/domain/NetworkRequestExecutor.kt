@@ -65,6 +65,7 @@ class NetworkRequestExecutor (
             NetworkRequestType.UPLOAD_IMAGE -> parseJson<UploadImageRequestWrapper>(networkRequest.requestData)
             NetworkRequestType.SETTINGS -> parseJson<UploadImageRequest>(networkRequest.requestData)
             NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(networkRequest.requestData)
+            NetworkRequestType.RESET_IMAGE -> parseJson<UploadImageRequest>(networkRequest.requestData)
         }
     }
 
@@ -75,11 +76,8 @@ class NetworkRequestExecutor (
             NetworkRequestType.UPLOAD_IMAGE -> uploadImage(token, request as UploadImageRequestWrapper)
             NetworkRequestType.SETTINGS -> request
             NetworkRequestType.UNSHARE -> unshareSensor(token, request as UnshareSensorRequest)
+            NetworkRequestType.RESET_IMAGE -> resetImage(token, request as UploadImageRequest)
         }
-    }
-
-    private suspend fun unshareSensor(token: String, request: UnshareSensorRequest) {
-        networkRepository.unshareSensor(request, token)
     }
 
     private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest) {
@@ -90,11 +88,19 @@ class NetworkRequestExecutor (
         networkRepository.updateSensor(request, token)
     }
 
+    private suspend fun unshareSensor(token: String, request: UnshareSensorRequest) {
+        networkRepository.unshareSensor(request, token)
+    }
+
     private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper) {
         val response = networkRepository.uploadImage(request.filename, request.request, token)
         if (response?.isSuccess() == true && response.data?.guid.isNullOrEmpty()) {
             tagRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
         }
+    }
+
+    private suspend fun resetImage(token: String, request: UploadImageRequest) {
+        networkRepository.resetImage(request, token)
     }
 
     private inline fun <reified T>parseJson(jsonString: String): T? {

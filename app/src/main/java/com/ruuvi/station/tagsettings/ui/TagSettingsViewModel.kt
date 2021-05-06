@@ -86,8 +86,8 @@ class TagSettingsViewModel(
         if (networkInteractor.signedIn) {
             if (userBackground.isNullOrEmpty() == false) {
                 networkInteractor.uploadImage(tagId, userBackground)
-            } else if (networkStatus.value?.picture.isNullOrEmpty() == false){
-                networkInteractor.resetImage(tagId, handler) { }
+            } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
+                networkInteractor.resetImage(tagId)
             }
         }
     }
