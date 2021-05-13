@@ -28,7 +28,7 @@ class GatewaySender(
     fun sendData(tag: RuuviTagEntity, location: Location?) {
         val backendUrl = preferences.getGatewayUrl()
         if (backendUrl.isNotEmpty()) {
-            Timber.d("sendData for [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
+            Timber.d("sendData for ${tag.id} to $backendUrl")
 
             var scanLocation: ScanLocation? = null
             location?.let {

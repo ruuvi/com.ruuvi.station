@@ -3,6 +3,7 @@ package com.ruuvi.station.network.domain
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.ruuvi.station.database.domain.NetworkRequestRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.model.NetworkRequestStatus
 import com.ruuvi.station.database.model.NetworkRequestType
@@ -21,6 +22,7 @@ class NetworkRequestExecutor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestRepository: NetworkRequestRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
     private val tagRepository: TagRepository
     ){
     private fun getToken() = tokenRepository.getTokenInfo()
@@ -95,7 +97,7 @@ class NetworkRequestExecutor (
     private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper) {
         val response = networkRepository.uploadImage(request.filename, request.request, token)
         if (response?.isSuccess() == true && response.data?.guid.isNullOrEmpty()) {
-            tagRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
+            sensorSettingsRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
         }
     }
 

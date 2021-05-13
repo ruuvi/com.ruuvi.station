@@ -126,11 +126,12 @@ class TagSettingsViewModel(
     }
 
     fun claimSensor() {
-        val tag = tagState.value
-        if (tag != null) {
-            networkInteractor.claimSensor(tag) {
+        val sensorSettings = sensorSettings.value
+        if (sensorSettings != null) {
+            networkInteractor.claimSensor(sensorSettings) {
                 updateNetworkStatus()
                 if (it == null || it.error.isNullOrEmpty() == false) {
+                    //TODO LOCALIZE
                     operationStatus.value = "Failed to claim tag: ${it?.error}"
                 } else {
                     operationStatus.value = "Tag successfully claimed"

@@ -3,7 +3,7 @@ package com.ruuvi.station.network.domain
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.NetworkRequest
-import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
@@ -75,15 +75,15 @@ class  RuuviNetworkInteractor (
         return userInfo?.data?.sensors?.firstOrNull {it.sensor == mac}
     }
 
-    fun claimSensor(tag: RuuviTagEntity, onResult: (ClaimSensorResponse?) -> Unit) {
+    fun claimSensor(sensorSettings: SensorSettings, onResult: (ClaimSensorResponse?) -> Unit) {
         val token = getToken()?.token
         token?.let {
             CoroutineScope(Dispatchers.IO).launch{
-                val request = ClaimSensorRequest(tag.id.toString(), tag.displayName)
+                val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
                 try {
                     networkRepository.claimSensor(request, token) { claimResponse ->
                         if (claimResponse?.isSuccess() == true) {
-                            sensorSettingsRepository.setSensorOwner(tag.id.toString(), getEmail()
+                            sensorSettingsRepository.setSensorOwner(sensorSettings.id, getEmail()
                                 ?: "")
                         }
                         getUserInfo {

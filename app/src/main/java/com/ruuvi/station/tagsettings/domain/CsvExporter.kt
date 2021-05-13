@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
 import java.io.File
@@ -18,6 +19,7 @@ class CsvExporter(
     private val context: Context,
     private val repository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
     private val unitsConverter: UnitsConverter
 ) {
 
@@ -29,11 +31,12 @@ class CsvExporter(
 
         val filenameDateFormat = SimpleDateFormat("yyyyMMdd-HHmm")
         val filenameDate = filenameDateFormat.format(Date())
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(tagId)
 
-        val filename = if (tag?.name.isNullOrEmpty()) {
+        val filename = if (sensorSettings?.name.isNullOrEmpty()) {
             "$cacheDir/${tag?.id}_${filenameDate}.csv"
         } else {
-            "$cacheDir/${tag?.name}_${filenameDate}.csv"
+            "$cacheDir/${sensorSettings?.name}_${filenameDate}.csv"
         }
 
         val csvFile = File(filename)

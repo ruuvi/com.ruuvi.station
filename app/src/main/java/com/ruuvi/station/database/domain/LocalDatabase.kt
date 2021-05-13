@@ -13,14 +13,36 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 21
+        const val VERSION = 22
+    }
+
+    @Migration(version = 22, database = LocalDatabase::class)
+    class Migration22 : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL("INSERT INTO SensorSettings (id) SELECT RT.id FROM RuuviTag RT left join SensorSettings SS on RT.id =SS.id WHERE favorite=1 and SS.id is null;")
+            database.execSQL("UPDATE SensorSettings SET " +
+                "name = (SELECT networkBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "networkBackground = (SELECT networkBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "userBackground = (SELECT userBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "defaultBackground = (SELECT defaultBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "createDate = (SELECT createDate FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "lastSync = (SELECT lastSync FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "networkLastSync = (SELECT networkLastSync FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id);")
+        }
     }
 
     @Migration(version = 21, database = LocalDatabase::class)
     class Migration21(table: Class<SensorSettings?>?) : AlterTableMigration<SensorSettings?>(table) {
         override fun onPreMigrate() {
             super.onPreMigrate()
+            addColumn(SQLiteType.TEXT, "name")
+            addColumn(SQLiteType.INTEGER, "createDate")
+            addColumn(SQLiteType.INTEGER, "lastSync")
+            addColumn(SQLiteType.INTEGER, "networkLastSync")
             addColumn(SQLiteType.TEXT, "owner")
+            addColumn(SQLiteType.TEXT, "networkBackground")
+            addColumn(SQLiteType.TEXT, "userBackground")
+            addColumn(SQLiteType.TEXT, "defaultBackground")
         }
     }
 

@@ -14,6 +14,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
@@ -44,8 +45,8 @@ class AlarmCheckInteractor(
         return AlarmStatus.NO_ALARM
     }
 
-    fun check(ruuviTagEntity: RuuviTagEntity) {
-        val ruuviTag = tagConverter.fromDatabase(ruuviTagEntity)
+    fun check(ruuviTagEntity: RuuviTagEntity, sensorSettings: SensorSettings) {
+        val ruuviTag = tagConverter.fromDatabase(ruuviTagEntity, sensorSettings)
         getEnabledAlarms(ruuviTag)
             .forEach { alarm ->
                 val resourceId = getResourceId(alarm, ruuviTag, true)
@@ -69,7 +70,7 @@ class AlarmCheckInteractor(
                     sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
                 if (readings.size == 2) {
                     when {
-                        shouldCompareMovementCounter && ruuviTag.dataFormat == SOME_DATA_FORMAT_VALUE && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
+                        shouldCompareMovementCounter && ruuviTag.dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
                         hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
                         else -> NOTIFICATION_RESOURCE_ID
                     }
@@ -226,9 +227,7 @@ class AlarmCheckInteractor(
         private const val NOTIFICATION_RESOURCE_ID = -9001
         private const val CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
-
-        //Fixme correct name
-        private const val SOME_DATA_FORMAT_VALUE = 5
+        private const val FORMAT5 = 5
     }
 }
 

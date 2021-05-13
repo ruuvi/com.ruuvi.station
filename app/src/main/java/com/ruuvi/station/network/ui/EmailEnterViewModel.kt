@@ -24,7 +24,7 @@ class EmailEnterViewModel (
         errorText.value = ""
         networkInteractor.registerUser(UserRegisterRequest(email = email)) {
             if (it == null) {
-                //todo localize
+                //TODO LOCALIZE
                 errorText.value = "Unknown error"
             } else {
                 if (it.error.isNullOrEmpty() == false) {

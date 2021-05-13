@@ -37,14 +37,14 @@ class TagSettingsInteractor(
         }
     }
 
-    fun updateTagName(tagId: String, tagName: String?) =
-        tagRepository.updateTagName(tagId, tagName)
+    fun updateTagName(sensorId: String, sensorName: String?) =
+        sensorSettingsRepository.updateSensorName(sensorId, sensorName)
 
     fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) =
-        tagRepository.updateTagBackground(tagId, userBackground, defaultBackground, null)
+        sensorSettingsRepository.updateSensorBackground(tagId, userBackground, defaultBackground, null)
 
     fun updateNetworkBackground(tagId: String, guid: String?) {
-        tagRepository.updateNetworkBackground(tagId, guid)
+        sensorSettingsRepository.updateNetworkBackground(tagId, guid)
     }
 
     fun getSensorSettings(sensorId: String): SensorSettings? = sensorSettingsRepository.getSensorSettings(sensorId)
