@@ -35,7 +35,7 @@ class TagRepository(
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
-            .orderBy(SensorSettings_Table.createDate, true)
+            .orderBy(SensorSettings_Table.createDate.withTable(), true)
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
     }
@@ -47,7 +47,7 @@ class TagRepository(
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
             .where(SensorSettings_Table.id.withTable().eq(id))
-            .orderBy(SensorSettings_Table.createDate, true)
+            .orderBy(SensorSettings_Table.createDate.withTable(), true)
             .queryCustomSingle(FavouriteSensorQuery::class.java)
         return if (queryResult != null) tagConverter.fromDatabase(queryResult) else null
     }
