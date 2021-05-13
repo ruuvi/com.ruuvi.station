@@ -38,4 +38,24 @@ data class FavouriteSensorQuery(
     var networkLastSync: Date? = null,
     @Column
     var connectable: Boolean = false,
-): BaseQueryModel()
+): BaseQueryModel() {
+    companion object {
+        val queryFields = arrayOf(
+            SensorSettings_Table.id.withTable(),
+            SensorSettings_Table.name.withTable(),
+            RuuviTagEntity_Table.rssi.withTable(),
+            RuuviTagEntity_Table.temperature.withTable(),
+            RuuviTagEntity_Table.humidity.withTable(),
+            RuuviTagEntity_Table.pressure.withTable(),
+            RuuviTagEntity_Table.movementCounter.withTable(),
+            SensorSettings_Table.defaultBackground.withTable(),
+            SensorSettings_Table.userBackground.withTable(),
+            SensorSettings_Table.networkBackground.withTable(),
+            RuuviTagEntity_Table.dataFormat.withTable(),
+            RuuviTagEntity_Table.updateAt.withTable(),
+            SensorSettings_Table.lastSync.withTable(),
+            SensorSettings_Table.networkLastSync.withTable(),
+            RuuviTagEntity_Table.connectable.withTable()
+        )
+    }
+}

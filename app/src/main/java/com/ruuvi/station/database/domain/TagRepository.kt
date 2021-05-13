@@ -31,7 +31,7 @@ class TagRepository(
 
     fun getFavoriteSensors(): List<RuuviTag> {
         return SQLite
-            .select()
+            .select(*FavouriteSensorQuery.queryFields)
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
@@ -42,7 +42,7 @@ class TagRepository(
 
     fun getFavoriteSensorById(id: String): RuuviTag? {
         val queryResult = SQLite
-            .select()
+            .select(*FavouriteSensorQuery.queryFields)
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
