@@ -1,23 +1,20 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.InputFilter
-import android.text.InputType
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -26,8 +23,10 @@ import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
@@ -64,6 +63,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private val unitsConverter: UnitsConverter by instance()
     private val imageInteractor: ImageInteractor by instance()
     private val sensorHistoryRepository: SensorHistoryRepository by instance()
+    private val sensorSettingsRepository: SensorSettingsRepository by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,16 +111,17 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         viewModel.tagObserve.observe(this, Observer {  tag ->
             tag?.let {
-                isTagFavorite(it)
-                setupTagName(it)
-                setupInputMac(it)
-                setupTagImage(it)
                 setupCalibration(it)
                 updateReadings(it)
             }
         })
 
-        viewModel.sensorSettingsObserve.observe(this, Observer {sensorSettings ->
+        viewModel.sensorSettingsObserve.observe(this) {sensorSettings ->
+            sensorSettings?.let {
+                setupInputMac(sensorSettings)
+                setupSensorImage(sensorSettings)
+                setupSensorName(sensorSettings)
+            }
             calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
             calibratePressure.setItemValue(
@@ -128,7 +129,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             calibrateHumidity.setItemValue(
                 unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
             )
-        })
+            ownerValueTextView.text = sensorSettings?.owner ?: "None"
+
+            claimTagButton.isEnabled = sensorSettings?.owner.isNullOrEmpty()
+        }
 
         viewModel.userLoggedInObserve.observe(this, Observer {
             if (it == true) {
@@ -146,19 +150,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             shareTagButton.isEnabled = it
         })
 
-        viewModel.isNetworkTagObserve.observe(this, Observer {
-            claimTagButton.isEnabled = !it
-        })
-
         viewModel.operationStatusObserve.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        })
-
-        viewModel.sensorOwnerObserve.observe(this, Observer {
-            ownerValueTextView.text = it ?: "None"
         })
     }
 
@@ -183,9 +179,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             if (viewModel.file != null) {
                 val rotation = imageInteractor.getCameraPhotoOrientation(viewModel.file)
                 imageInteractor.resize(currentPhotoPath, viewModel.file, rotation)
-                viewModel.tagObserve.value?.userBackground = viewModel.file.toString()
                 viewModel.updateTagBackground(viewModel.file.toString(), null)
-                val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+                val backgroundUri = Uri.parse(viewModel.file.toString())
                 val background = imageInteractor.getImage(backgroundUri)
                 tagImageView.setImageBitmap(background)
             }
@@ -223,9 +218,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         val uri = Uri.fromFile(photoFile)
                         val rotation = imageInteractor.getCameraPhotoOrientation(uri)
                         imageInteractor.resize(currentPhotoPath, uri, rotation)
-                        viewModel.tagObserve.value?.userBackground = uri.toString()
                         viewModel.updateTagBackground(uri.toString(), null)
-                        val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+                        val backgroundUri = Uri.parse(uri.toString())
                         val background = imageInteractor.getImage(backgroundUri)
                         tagImageView.setImageBitmap(background)
                     }
@@ -238,7 +232,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, repository, sensorHistoryRepository, unitsConverter)
+            val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
             viewModel.tagObserve.value?.id?.let {
                 exporter.toCsv(it)
             }
@@ -257,77 +251,28 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         return true
     }
 
-    private fun isTagFavorite(tag: RuuviTagEntity) {
-        if (!tag.favorite) {
-            tag.favorite = true
-            tag.createDate = Date()
-            tag.update()
-        }
-    }
+    private fun setupSensorName(sensorSettings: SensorSettings) {
+        tagNameInputTextView.text = sensorSettings.displayName
 
-    private fun setupTagName(tag: RuuviTagEntity) {
-        tagNameInputTextView.text = tag.displayName
-
-        // TODO: 25/10/17 make this less ugly
         tagNameInputTextView.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-            builder.setTitle(getString(R.string.tag_name))
-
-            val input = EditText(this@TagSettingsActivity)
-
-            input.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(32))
-
-            input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-
-            input.setText(tag.name)
-
-            val container = FrameLayout(applicationContext)
-
-            val params =
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            input.layoutParams = params
-
-            container.addView(input)
-
-            builder.setView(container)
-
-            builder.setPositiveButton(getString(R.string.ok)) { _: DialogInterface?, _: Int ->
-                val newValue = input.text.toString()
-                if (newValue.isNullOrEmpty()) {
-                    viewModel.setName(null)
-                } else {
-                    viewModel.setName(input.text.toString())
+            val sensorNameEditDialog = SensorNameEditDialog.new_instance(sensorSettings.name, object: SensorNameEditListener {
+                override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
+                    viewModel.setName(value)
                 }
-            }
+                override fun onDialogNegativeClick(dialog: DialogFragment) { }
+            })
 
-            builder.setNegativeButton(getString(R.string.cancel), null)
-
-            val dialog: Dialog = builder.create()
-
-            try {
-                dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            } catch (e: Exception) {
-                Timber.e(e, "Could not open keyboard")
-            }
-            dialog.show()
-
-            input.requestFocus()
+            sensorNameEditDialog.show(this.supportFragmentManager, "sensorName")
         }
     }
 
-    private fun setupInputMac(tag: RuuviTagEntity) {
-        inputMacTextView.text = tag.id
+    private fun setupInputMac(sensorSettings: SensorSettings) {
+        inputMacTextView.text = sensorSettings.id
 
         inputMacTextView.setOnLongClickListener {
             val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-            val clip = ClipData.newPlainText(getString(R.string.mac_address), tag.id)
+            val clip = ClipData.newPlainText(getString(R.string.mac_address), sensorSettings.id)
 
             try {
                 if (BuildConfig.DEBUG && clipboard == null) {
@@ -344,21 +289,21 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private fun setupTagImage(tag: RuuviTagEntity) {
-        if (viewModel.tagObserve.value?.userBackground.isNullOrEmpty() == false) {
-            val backgroundUri = Uri.parse(viewModel.tagObserve.value?.userBackground)
+    private fun setupSensorImage(sensorSettings: SensorSettings) {
+        if (sensorSettings.userBackground.isNullOrEmpty() == false) {
+            val backgroundUri = Uri.parse(sensorSettings.userBackground)
             val background = imageInteractor.getImage(backgroundUri)
             tagImageView.setImageBitmap(background)
         } else {
-            tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(tag.defaultBackground)))
+            tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorSettings.defaultBackground)))
         }
 
         tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
         tagImageSelectButton.setDebouncedOnClickListener {
-            val defaultBackground = if (tag.defaultBackground == 8) 0 else tag.defaultBackground + 1
+            val defaultBackground = if (sensorSettings.defaultBackground == 8) 0 else sensorSettings.defaultBackground + 1
             viewModel.updateTagBackground(null, defaultBackground)
-            tag.defaultBackground = defaultBackground
+            sensorSettings.defaultBackground = defaultBackground
             tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
     }

@@ -8,6 +8,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.util.extensions.logData
@@ -54,7 +55,7 @@ class DefaultOnTagFoundListener(
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
                     sensorSettings?.calibrateSensor(ruuviTag)
                     repository.updateTag(ruuviTag)
-                    if (dbTag.favorite == true) saveFavouriteReading(ruuviTag)
+                    if (dbTag.favorite == true && sensorSettings != null) saveFavoriteReading(ruuviTag, sensorSettings)
                 } else {
                     ruuviTag.updateAt = Date()
                     repository.saveTag(ruuviTag)
@@ -63,29 +64,29 @@ class DefaultOnTagFoundListener(
         }
     }
 
-    private fun saveFavouriteReading(ruuviTag: RuuviTagEntity) {
+    private fun saveFavoriteReading(ruuviTag: RuuviTagEntity, sensorSettings: SensorSettings) {
         val interval = if (isForeground) {
             DATA_LOG_INTERVAL
         } else {
             preferences.backgroundScanInterval
         }
-        Timber.d("saveFavouriteReading (interval = $interval)")
+        Timber.d("saveFavoriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
         val lastLoggedDate = lastLogged[ruuviTag.id]
         if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
             ruuviTag.id?.let {
-                Timber.d("saveFavouriteReading actual SAVING for [${ruuviTag.name}] (${ruuviTag.id})")
+                Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
                 lastLogged[it] = Date().time
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
                 gatewaySender.sendData(ruuviTag, locationInteractor.lastLocation)
             }
         } else {
-            Timber.d("saveFavouriteReading SKIPPED [${ruuviTag.name}] (${ruuviTag.id}) lastLogged = ${Date(lastLoggedDate)}")
+            Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id} lastLogged = ${Date(lastLoggedDate)}")
         }
-        alarmCheckInteractor.check(ruuviTag)
+        alarmCheckInteractor.check(ruuviTag, sensorSettings)
     }
 
     private fun cleanUpOldData() {

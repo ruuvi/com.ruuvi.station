@@ -18,11 +18,7 @@ data class RuuviTagEntity(
     @PrimaryKey
     var id: String? = null,
     @Column
-    var url: String? = null,
-    @Column
     var rssi: Int = 0,
-    @Column
-    var name: String? = null,
     @Column
     var temperature: Double = 0.0,
     @Column
@@ -48,12 +44,6 @@ data class RuuviTagEntity(
     @Column
     var updateAt: Date? = null,
     @Column
-    var gatewayUrl: String? = null,
-    @Column
-    var defaultBackground: Int = 0,
-    @Column
-    var userBackground: String? = null,
-    @Column
     var dataFormat: Int = 0,
     @Column
     var txPower: Double = 0.0,
@@ -62,22 +52,11 @@ data class RuuviTagEntity(
     @Column
     var measurementSequenceNumber: Int = 0,
     @Column
-    var createDate: Date? = null,
-    @Column
-    var humidityOffsetDate: Date? = null,
-    @Column
-    var connectable: Boolean = false,
-    @Column
-    var lastSync: Date? = null,
-    @Column
-    var networkLastSync: Date? = null,
-    @Column
-    var networkBackground: String? = null
+    var connectable: Boolean = false
 ): BaseModel() {
 
     constructor(tag: FoundRuuviTag) :this(
         id = tag.id,
-        url = tag.url,
         rssi = tag.rssi ?: 0,
         temperature = tag.temperature ?: 0.0,
         humidity = tag.humidity,
@@ -93,20 +72,29 @@ data class RuuviTagEntity(
         connectable = tag.connectable ?: false
     )
 
-    val displayName get() = if (name.isNullOrEmpty()) id.toString() else name.toString()
+    constructor(reading: TagSensorReading):this(
+        id = reading.ruuviTagId,
+        rssi = reading.rssi ?: 0,
+        temperature = reading.temperature,
+        humidity = reading.humidity,
+        pressure = reading.pressure,
+        accelX = reading.accelX,
+        accelY = reading.accelY,
+        accelZ = reading.accelZ,
+        voltage = reading.voltage,
+        dataFormat = reading.dataFormat,
+        txPower = reading.txPower,
+        movementCounter = reading.movementCounter,
+        measurementSequenceNumber = reading.measurementSequenceNumber,
+        temperatureOffset = reading.temperatureOffset,
+        humidityOffset = reading.humidityOffset,
+        pressureOffset = reading.pressureOffset,
+        updateAt = reading.createdAt
+    )
 
     fun preserveData(tag: RuuviTagEntity): RuuviTagEntity {
-        tag.name = name
-        tag.createDate = createDate
         tag.favorite = favorite
-        tag.defaultBackground = defaultBackground
-        tag.userBackground = userBackground
         tag.updateAt = Date()
-        tag.humidityOffset = humidityOffset
-        tag.humidityOffsetDate = humidityOffsetDate
-        tag.lastSync = lastSync
-        tag.networkLastSync = networkLastSync
-        tag.networkBackground = networkBackground
         return tag
     }
 
@@ -124,6 +112,8 @@ data class RuuviTagEntity(
         movementCounter = reading.movementCounter
         measurementSequenceNumber = reading.measurementSequenceNumber
         updateAt = reading.createdAt
-        networkLastSync = reading.createdAt
+        temperatureOffset = reading.temperatureOffset
+        humidityOffset = reading.humidityOffset
+        pressureOffset = reading.pressureOffset
     }
 }

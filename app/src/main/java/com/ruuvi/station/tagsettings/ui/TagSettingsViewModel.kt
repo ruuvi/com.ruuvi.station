@@ -44,16 +44,8 @@ class TagSettingsViewModel(
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
         it?.owner == networkInteractor.getEmail()
-    }
-
-    val sensorOwnerObserve: LiveData<String> = Transformations.map(networkStatus) {
-        it?.owner
-    }
-
-    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
-        it != null
     }
 
     fun getTagInfo() {
@@ -83,36 +75,19 @@ class TagSettingsViewModel(
 
     fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
-        if (networkStatus.value?.owner == networkInteractor.getEmail()) {
-            networkInteractor.unclaimSensor(tagId)
-        } else if (!networkStatus.value?.owner.isNullOrEmpty()) {
-            networkInteractor.getEmail()?.let { email ->
-                networkInteractor.unshareSensor(email, tagId, handler) {response->
-                    if (response?.isError() == true) {
-                        operationStatus.value = response.error
-                    }
-                }
-            }
-        }
     }
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
+    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
         interactor.updateTagBackground(tagId, userBackground, defaultBackground)
-        networkStatus.value?.let {
+        if (networkInteractor.signedIn) {
             if (userBackground.isNullOrEmpty() == false) {
-                Timber.d("Upload image filename: $userBackground")
-                networkInteractor.uploadImage(tagId, userBackground, handler) { response ->
-                    if (response?.isSuccess() == true && !response.data?.guid.isNullOrEmpty()) {
-                        interactor.updateNetworkBackground(tagId, response.data?.guid)
-                    }
-                }
-            } else if (it.picture.isNotEmpty()){
-                networkInteractor.resetImage(tagId, handler) {
-                }
+                networkInteractor.uploadImage(tagId, userBackground)
+            } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
+                networkInteractor.resetImage(tagId)
             }
         }
     }
@@ -151,11 +126,12 @@ class TagSettingsViewModel(
     }
 
     fun claimSensor() {
-        val tag = tagState.value
-        if (tag != null) {
-            networkInteractor.claimSensor(tag) {
+        val sensorSettings = sensorSettings.value
+        if (sensorSettings != null) {
+            networkInteractor.claimSensor(sensorSettings) {
                 updateNetworkStatus()
                 if (it == null || it.error.isNullOrEmpty() == false) {
+                    //TODO LOCALIZE
                     operationStatus.value = "Failed to claim tag: ${it?.error}"
                 } else {
                     operationStatus.value = "Tag successfully claimed"
@@ -169,13 +145,7 @@ class TagSettingsViewModel(
     fun setName(name: String?) {
         interactor.updateTagName(tagId, name)
         getTagInfo()
-        networkStatus.value?.let {
-            networkInteractor.updateSensor(tagId, name ?: "", handler) {response->
-                if (response?.isError() == true) {
-                    operationStatus.value = response.error
-                }
-            }
-        }
+        if (networkInteractor.signedIn) networkInteractor.updateSensor(tagId, name ?: "")
     }
 
     fun setupAlarmElements() {

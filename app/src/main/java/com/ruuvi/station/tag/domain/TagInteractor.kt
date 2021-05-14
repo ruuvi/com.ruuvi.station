@@ -12,18 +12,13 @@ class TagInteractor constructor(
     private val tagRepository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val converter: TagConverter,
     private val alarmCheckInteractor: AlarmCheckInteractor
 ) {
 
-    fun getTags(isFavorite: Boolean = true): List<RuuviTag> =
+    fun getTags(): List<RuuviTag> =
         tagRepository
-            .getAllTags(isFavorite)
-            .map {
-                val ruuviTag = converter.fromDatabase(it)
-                val status = alarmCheckInteractor.getStatus(ruuviTag)
-                ruuviTag.copy(status = status)
-            }
+            .getFavoriteSensors()
+            .map { it.copy(status = alarmCheckInteractor.getStatus(it)) }
             .also { Timber.d("TagInteractor - getTags") }
 
     fun getTagEntities(isFavorite: Boolean = true): List<RuuviTagEntity> =
@@ -34,9 +29,7 @@ class TagInteractor constructor(
         tagRepository.getTagById(tagId)
 
     fun getTagByID(tagId: String): RuuviTag? =
-        tagRepository
-            .getTagById(tagId)
-            ?.let { converter.fromDatabase(it) }
+        tagRepository.getFavoriteSensorById(tagId)
 
     fun getBackgroundScanMode(): BackgroundScanModes =
         preferencesRepository.getBackgroundScanMode()
@@ -54,4 +47,8 @@ class TagInteractor constructor(
         preferencesRepository.isDashboardEnabled()
 
     fun getHistoryLength(): Long = sensorHistoryRepository.countAll()
+
+    fun makeSensorFavorite(sensor: RuuviTagEntity) {
+        tagRepository.makeSensorFavorite(sensor)
+    }
 }

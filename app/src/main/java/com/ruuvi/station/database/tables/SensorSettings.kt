@@ -1,14 +1,12 @@
 package com.ruuvi.station.database.tables
 
-import com.raizlabs.android.dbflow.annotation.Column
-import com.raizlabs.android.dbflow.annotation.PrimaryKey
-import com.raizlabs.android.dbflow.annotation.Table
+import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.database.domain.LocalDatabase
+import com.ruuvi.station.network.data.response.SensorDataResponse
 import java.util.*
 
 @Table (
-    name = "SensorSettings",
     database = LocalDatabase::class,
     useBooleanGetterSetters = false
 )
@@ -16,6 +14,16 @@ data class SensorSettings(
     @Column
     @PrimaryKey
     var id: String = "",
+    @Column
+    var createDate: Date? = null,
+    @Column
+    var name: String? = null,
+    @Column
+    var defaultBackground: Int = 0,
+    @Column
+    var userBackground: String? = null,
+    @Column
+    var networkBackground: String? = null,
     @Column
     var humidityOffset: Double? = null,
     @Column
@@ -27,8 +35,16 @@ data class SensorSettings(
     @Column
     var pressureOffset: Double? = null,
     @Column
-    var pressureOffsetDate: Date? = null
+    var pressureOffsetDate: Date? = null,
+    @Column
+    var owner: String? = null,
+    @Column
+    var lastSync: Date? = null,
+    @Column
+    var networkLastSync: Date? = null
 ): BaseModel() {
+    val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
+
     fun calibrateSensor(sensor: RuuviTagEntity) {
         sensor.temperature += (temperatureOffset ?: 0.0)
         sensor.temperatureOffset = temperatureOffset ?: 0.0
@@ -57,5 +73,10 @@ data class SensorSettings(
             sensorReading.humidity = humidity + (humidityOffset ?: 0.0)
         }
         sensorReading.humidityOffset = humidityOffset ?: 0.0
+    }
+
+    fun updateFromNetwork(sensor: SensorDataResponse) {
+        name = sensor.name
+        owner = sensor.owner
     }
 }

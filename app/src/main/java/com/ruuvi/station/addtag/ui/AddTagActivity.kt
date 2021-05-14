@@ -101,9 +101,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
                         .show()
                 return@OnItemClickListener
             }
-            tag.defaultBackground = getKindaRandomBackground()
-            // FIXME: Database interaction in the main thread?
-            tag.update()
+            viewModel.makeSensorFavorite(tag)
             TagSettingsActivity.startForResult(this, 1, tag.id)
         }
 
@@ -129,25 +127,6 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
             finish()
         }
         return true
-    }
-
-    private fun getKindaRandomBackground(): Int {
-        val tags = viewModel.getAllTags(true)
-        var background = (Math.random() * 9.0).toInt()
-        for (i in 0..99) {
-            if (!isBackgroundInUse(tags, background)) {
-                return background
-            }
-            background = (Math.random() * 9.0).toInt()
-        }
-        return background
-    }
-
-    private fun isBackgroundInUse(tags: List<RuuviTagEntity>, background: Int): Boolean {
-        for (tag in tags) {
-            if (tag.defaultBackground == background) return true
-        }
-        return false
     }
 
     private fun requestPermission() {

@@ -41,4 +41,8 @@ class AddTagActivityViewModel(
 
     fun getAllTags(isFavourite: Boolean): List<RuuviTagEntity> =
         tagInteractor.getTagEntities(isFavourite)
+
+    fun makeSensorFavorite(sensor: RuuviTagEntity) {
+        tagInteractor.makeSensorFavorite(sensor)
+    }
 }

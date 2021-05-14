@@ -13,12 +13,32 @@ class SensorSettingsRepository {
             .where(SensorSettings_Table.id.eq(sensorId))
             .querySingle()
 
-    fun setSensorTemperatureCalibrationOffset(sensorId: String, temperatureOffset: Double) {
+    fun getSensorSettings(): List<SensorSettings> =
+        SQLite
+            .select()
+            .from(SensorSettings::class.java)
+            .queryList()
+
+    fun getSensorSettingsOrCreate(sensorId: String): SensorSettings {
         var settings = getSensorSettings(sensorId)
         if (settings == null) {
-            settings = SensorSettings(sensorId)
+            settings = SensorSettings(sensorId, Date())
+            setKindaRandomBackground(settings)
             settings.insert()
         }
+        return settings
+    }
+
+    fun updateSensorName(sensorId: String, sensorName: String?) {
+        SQLite.update(SensorSettings::class.java)
+            .set(SensorSettings_Table.name.eq(sensorName))
+            .where(SensorSettings_Table.id.eq(sensorId))
+            .async()
+            .execute()
+    }
+
+    fun setSensorTemperatureCalibrationOffset(sensorId: String, temperatureOffset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
         settings.temperatureOffset = temperatureOffset
         settings.temperatureOffsetDate = Date()
         settings.update()
@@ -33,6 +53,13 @@ class SensorSettingsRepository {
         }
     }
 
+    fun setSensorPressureCalibrationOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.pressureOffset = offset
+        settings.pressureOffsetDate = Date()
+        settings.update()
+    }
+
     fun clearPressureCalibration(sensorId: String) {
         var settings = getSensorSettings(sensorId)
         settings?.let {
@@ -42,14 +69,10 @@ class SensorSettingsRepository {
         }
     }
 
-    fun setSensorPressureCalibrationOffset(sensorId: String, offset: Double) {
-        var settings = getSensorSettings(sensorId)
-        if (settings == null) {
-            settings = SensorSettings(sensorId)
-            settings.insert()
-        }
-        settings.pressureOffset = offset
-        settings.pressureOffsetDate = Date()
+    fun setSensorHumidityOffset(sensorId: String, offset: Double) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.humidityOffset = offset
+        settings.humidityOffsetDate = Date()
         settings.update()
     }
 
@@ -62,14 +85,59 @@ class SensorSettingsRepository {
         }
     }
 
-    fun setSensorHumidityOffset(sensorId: String, offset: Double) {
-        var settings = getSensorSettings(sensorId)
-        if (settings == null) {
-            settings = SensorSettings(sensorId)
-            settings.insert()
+    fun updateSensorBackground(sensorId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
+        SQLite.update(SensorSettings::class.java)
+            .set(
+                SensorSettings_Table.userBackground.eq(userBackground),
+                SensorSettings_Table.defaultBackground.eq(defaultBackground),
+                SensorSettings_Table.networkBackground.eq(networkBackground)
+            )
+            .where(SensorSettings_Table.id.eq(sensorId))
+            .execute()
+    }
+
+    fun updateNetworkBackground(sensorId: String, networkBackground: String?) {
+        SQLite.update(SensorSettings::class.java)
+            .set(
+                SensorSettings_Table.networkBackground.eq(networkBackground)
+            )
+            .where(SensorSettings_Table.id.eq(sensorId))
+            .async()
+            .execute()
+    }
+
+    fun setSensorOwner(sensorId: String, owner: String) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.owner = owner
+        settings.update()
+    }
+
+    fun setKindaRandomBackground(sensorSettings: SensorSettings){
+        val settings = getSensorSettings()
+        var background = (Math.random() * 9.0).toInt()
+        for (i in 0..99) {
+            if (settings.none { it.defaultBackground == background }) break
+            background = (Math.random() * 9.0).toInt()
         }
-        settings.humidityOffset = offset
-        settings.humidityOffsetDate = Date()
+        sensorSettings.defaultBackground = background
+    }
+
+    fun updateLastSync(sensorId: String, date: Date?) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.lastSync = date
+        settings.update()
+    }
+
+    fun clearLastSync(sensorId: String) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.lastSync = null
+        settings.networkLastSync = null
+        settings.update()
+    }
+
+    fun updateNetworkLastSync(sensorId: String, date: Date) {
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.networkLastSync = date
         settings.update()
     }
 }

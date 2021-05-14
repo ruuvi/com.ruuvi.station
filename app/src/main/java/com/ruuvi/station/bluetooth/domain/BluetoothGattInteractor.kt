@@ -98,8 +98,5 @@ class BluetoothGattInteractor (
     }
 
     fun updateLastSync(sensorId: String, date: Date?) =
-        tagRepository.getTagById(sensorId)?.let {
-            it.lastSync = date
-            it.update()
-        }
+        sensorSettingsRepository.updateLastSync(sensorId, date)
 }

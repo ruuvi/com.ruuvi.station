@@ -1,16 +1,23 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.model.NetworkRequestType
+import com.ruuvi.station.database.tables.NetworkRequest
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
+import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.Exception
 import java.util.*
 
 class  RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
-    private val networkRepository: RuuviNetworkRepository
+    private val networkRepository: RuuviNetworkRepository,
+    private val networkRequestExecutor: NetworkRequestExecutor,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
     val signedIn: Boolean
         get() = getToken() != null
@@ -23,10 +30,6 @@ class  RuuviNetworkInteractor (
 
     val mainScope = CoroutineScope(Dispatchers.Main)
     val ioScope = CoroutineScope(Dispatchers.IO)
-
-    init {
-        getUserInfo {}
-    }
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         networkRepository.registerUser(user) {
@@ -72,25 +75,40 @@ class  RuuviNetworkInteractor (
         return userInfo?.data?.sensors?.firstOrNull {it.sensor == mac}
     }
 
-    fun claimSensor(tag: RuuviTagEntity, onResult: (ClaimSensorResponse?) -> Unit) {
+    fun claimSensor(sensorSettings: SensorSettings, onResult: (ClaimSensorResponse?) -> Unit) {
         val token = getToken()?.token
         token?.let {
-            val request = ClaimSensorRequest(tag.displayName, tag.id.toString())
-            networkRepository.claimSensor(request, token) { claimResponse ->
-                getUserInfo {
-                    onResult(claimResponse)
+            CoroutineScope(Dispatchers.IO).launch{
+                val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
+                try {
+                    networkRepository.claimSensor(request, token) { claimResponse ->
+                        if (claimResponse?.isSuccess() == true) {
+                            sensorSettingsRepository.setSensorOwner(sensorSettings.id, getEmail()
+                                ?: "")
+                        }
+                        getUserInfo {
+                            onResult(claimResponse)
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null))
+                    }
                 }
             }
         }
     }
 
-    fun unclaimSensor(tagId: String) {
-        val token = getToken()?.token
-        token?.let {
-            ioScope.launch {
-                networkRepository.unclaimSensor(UnclaimSensorRequest(tagId), token)
-            }
-        }
+    fun unclaimSensor(sensorId: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.UNCLAIM, sensorId, UnclaimSensorRequest(sensorId))
+        Timber.d("unclaimSensor $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
+    }
+
+    fun unshareSensor(recipientEmail: String, sensorId: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.UNSHARE, sensorId, UnshareSensorRequest(recipientEmail, sensorId))
+        Timber.d("unshareSensor $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
     }
 
     fun shareSensor(recipientEmail: String, tagId: String, handler: CoroutineExceptionHandler, onResult: (ShareSensorResponse?) -> Unit) {
@@ -164,17 +182,16 @@ class  RuuviNetworkInteractor (
         }
     }
 
-    fun updateSensor(tagId: String, newName: String, handler: CoroutineExceptionHandler, onResult: (UpdateSensorResponse?) -> Unit) {
-        val token = getToken()?.token
-        CoroutineScope(Dispatchers.IO).launch(handler) {
-            token?.let {
-                val request = UpdateSensorRequest(tagId, newName)
-                val response = networkRepository.updateSensor(request, token)
-                withContext(Dispatchers.Main) {
-                    onResult(response)
-                }
-            }
-        }
+    fun updateSensor(sensorId: String, name: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId, UpdateSensorRequest(sensorId, name))
+        Timber.d("updateSensor $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
+    }
+
+    fun uploadImage(sensorId: String, filename: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
+        Timber.d("uploadImage $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
     }
 
     fun uploadImage(tagId: String, filename: String, handler: CoroutineExceptionHandler, onResult: (UploadImageResponse?) -> Unit) {
@@ -188,6 +205,12 @@ class  RuuviNetworkInteractor (
                 }
             }
         }
+    }
+
+    fun resetImage(sensorId: String) {
+        val networkRequest = NetworkRequest(NetworkRequestType.RESET_IMAGE, sensorId, UploadImageRequest.getResetImageRequest(sensorId))
+        Timber.d("resetImage $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
     }
 
     fun resetImage(tagId: String, handler: CoroutineExceptionHandler, onResult: (UploadImageResponse?) -> Unit) {
