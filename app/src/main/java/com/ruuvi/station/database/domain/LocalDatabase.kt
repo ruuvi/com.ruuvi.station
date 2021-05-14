@@ -21,7 +21,7 @@ class LocalDatabase {
         override fun migrate(database: DatabaseWrapper) {
             database.execSQL("INSERT INTO SensorSettings (id) SELECT RT.id FROM RuuviTag RT left join SensorSettings SS on RT.id =SS.id WHERE favorite=1 and SS.id is null;")
             database.execSQL("UPDATE SensorSettings SET " +
-                "name = (SELECT networkBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
+                "name = (SELECT name FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
                 "networkBackground = (SELECT networkBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
                 "userBackground = (SELECT userBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
                 "defaultBackground = (SELECT defaultBackground FROM RuuviTag WHERE RuuviTag.id = SensorSettings.id), " +
