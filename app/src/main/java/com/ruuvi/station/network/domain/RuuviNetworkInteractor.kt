@@ -182,10 +182,20 @@ class  RuuviNetworkInteractor (
         }
     }
 
-    fun updateSensor(sensorId: String, name: String) {
-        val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId, UpdateSensorRequest(sensorId, name))
-        Timber.d("updateSensor $networkRequest")
-        networkRequestExecutor.registerRequest(networkRequest)
+    fun updateSensor(sensorId: String) {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings != null) {
+            val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId,
+                UpdateSensorRequest(
+                    sensorId,
+                    sensorSettings.displayName,
+                    offsetTemperature = sensorSettings.temperatureOffset,
+                    offsetHumidity = sensorSettings.humidityOffset,
+                    offsetPressure = sensorSettings.pressureOffset
+                ))
+            Timber.d("updateSensor $networkRequest")
+            networkRequestExecutor.registerRequest(networkRequest)
+        }
     }
 
     fun uploadImage(sensorId: String, filename: String) {

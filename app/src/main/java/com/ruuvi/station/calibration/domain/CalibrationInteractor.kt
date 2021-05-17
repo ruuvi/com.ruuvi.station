@@ -5,14 +5,16 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 
 class CalibrationInteractor (
     val tagRepository: TagRepository,
     val sensorSettingsRepository: SensorSettingsRepository,
-    val unitsConverter: UnitsConverter
-) {
+    val unitsConverter: UnitsConverter,
+    private val networkInteractor: RuuviNetworkInteractor
+    ) {
     fun getSensorData(sensorId: String): RuuviTagEntity? = tagRepository.getTagById(sensorId)
 
     fun getTemperatureString(temperature: Double?): String = unitsConverter.getTemperatureString(temperature)
@@ -26,6 +28,7 @@ class CalibrationInteractor (
             val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset)
+            saveCalibrationToNetwork(sensorId)
         }
     }
 
@@ -33,6 +36,7 @@ class CalibrationInteractor (
 
     fun clearTemperatureCalibration(sensorId: String) {
         sensorSettingsRepository.clearTemperatureCalibration(sensorId)
+        saveCalibrationToNetwork(sensorId)
     }
 
     private fun isTemperatureCalibrated(settings: SensorSettings?): Boolean = settings?.temperatureOffset ?: 0.0 != 0.0
@@ -110,6 +114,7 @@ class CalibrationInteractor (
 
     fun clearPressureCalibration(sensorId: String) {
         sensorSettingsRepository.clearPressureCalibration(sensorId)
+        saveCalibrationToNetwork(sensorId)
     }
 
     fun calibratePressure(sensorId: String, targetValue: Double) {
@@ -119,6 +124,7 @@ class CalibrationInteractor (
             val targetPascal = unitsConverter.getPressurePascalValue(targetValue)
             val offset = targetPascal - fromPressure
             sensorSettingsRepository.setSensorPressureCalibrationOffset(sensorId, offset)
+            saveCalibrationToNetwork(sensorId)
         }
     }
 
@@ -126,7 +132,10 @@ class CalibrationInteractor (
 
     fun getHumidityString(value: Double): String = unitsConverter.getHumidityString(value, 0.0, HumidityUnit.PERCENT)
 
-    fun clearHumidityCalibration(sensorId: String) = sensorSettingsRepository.clearHumidityCalibration(sensorId)
+    fun clearHumidityCalibration(sensorId: String) {
+        sensorSettingsRepository.clearHumidityCalibration(sensorId)
+        saveCalibrationToNetwork(sensorId)
+    }
 
     fun calibrateHumidity(sensorId: String, targetValue: Double) {
         val data = getSensorData(sensorId)
@@ -134,6 +143,13 @@ class CalibrationInteractor (
             val fromHumidity = (data.humidity ?: 0.0) - data.humidityOffset
             val offset = targetValue - fromHumidity
             sensorSettingsRepository.setSensorHumidityOffset(sensorId, offset)
+            saveCalibrationToNetwork(sensorId)
+        }
+    }
+
+    fun saveCalibrationToNetwork(sensorId: String) {
+        if (networkInteractor.signedIn) {
+            networkInteractor.updateSensor(sensorId)
         }
     }
 }

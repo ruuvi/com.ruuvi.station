@@ -11,7 +11,7 @@ import org.kodein.di.generic.*
 object CalibrationInjectionModule {
     val module = Kodein.Module(CalibrationInjectionModule.javaClass.name) {
         bind<CalibrationInteractor>() with singleton {
-            CalibrationInteractor(instance(), instance(), instance())
+            CalibrationInteractor(instance(), instance(), instance(), instance())
         }
 
         bind<CalibrateTemperatureViewModel>() with factory { args: CalibrationViewModelArgs ->
