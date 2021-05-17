@@ -82,4 +82,17 @@ interface RuuviNetworkApi{
         @Header("Content-Type") type: String,
         @Body data: RequestBody
     )
+
+    @Headers("Content-Type: application/json")
+    @POST("settings")
+    suspend fun updateUserSettings(
+        @Header("Authorization")auth: String,
+        @Body request: UpdateUserSettingRequest
+    ): Response<UpdateUserSettingResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("settings")
+    suspend fun getUserSettings(
+        @Header("Authorization")auth: String
+    ): Response<GetUserSettingsResponse>
 }

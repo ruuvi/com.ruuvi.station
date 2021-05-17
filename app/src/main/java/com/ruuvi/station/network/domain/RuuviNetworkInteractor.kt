@@ -13,7 +13,7 @@ import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
-class  RuuviNetworkInteractor (
+class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
@@ -241,5 +241,15 @@ class  RuuviNetworkInteractor (
         token?.let {
             return@withContext networkRepository.getSensorData(token, request)
         }
+    }
+
+    fun updateUserSetting(name: String, value: String) {
+        val networkRequest = NetworkRequest(
+            NetworkRequestType.SETTINGS,
+            name,
+            UpdateUserSettingRequest(name, value)
+        )
+        Timber.d("updateUserSetting $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
     }
 }
