@@ -25,19 +25,39 @@ class NetworkApplicationSettings (
             getToken()?.token?.let { token ->
                 val response = networkRepository.getUserSettings(token)
                 if (response?.data != null && response.isSuccess()) {
-                    applyBackgroundScanMode(response.data.settings)
-                    applyBackgroundScanInterval(response.data.settings)
-                    applyTemperatureUnit(response.data.settings)
-                    applyHumidityUnit(response.data.settings)
-                    applyPressureUnit(response.data.settings)
-                    applyDashboardEnabled(response.data.settings)
-                    applyChartShowAllPoints(response.data.settings)
-                    applyChartDrawDots(response.data.settings)
-                    applyChartViewPeriod(response.data.settings)
+                    if (initializeSettings(response.data.settings)) {
+                        applyBackgroundScanMode(response.data.settings)
+                        applyBackgroundScanInterval(response.data.settings)
+                        applyTemperatureUnit(response.data.settings)
+                        applyHumidityUnit(response.data.settings)
+                        applyPressureUnit(response.data.settings)
+                        applyDashboardEnabled(response.data.settings)
+                        applyChartShowAllPoints(response.data.settings)
+                        applyChartDrawDots(response.data.settings)
+                        applyChartViewPeriod(response.data.settings)
+                    }
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e, "updateSettingsFromNetwork")
+            Timber.e(e, "NetworkApplicationSettings-updateSettingsFromNetwork")
+        }
+    }
+
+    private fun initializeSettings(settings: NetworkUserSettings): Boolean {
+        return if (settings.isEmpty()) {
+            Timber.d("NetworkApplicationSettings-initializeSettings")
+            updateBackgroundScanMode()
+            updateBackgroundScanInterval()
+            updateTemperatureUnit()
+            updateHumidityUnit()
+            updatePressureUnit()
+            updateDashboardEnabled()
+            updateChartShowAllPoints()
+            updateChartDrawDots()
+            updateChartViewPeriod()
+            false
+        } else {
+            true
         }
     }
 
@@ -53,7 +73,7 @@ class NetworkApplicationSettings (
 
     private fun applyBackgroundScanInterval(settings: NetworkUserSettings) {
         settings.BACKGROUND_SCAN_INTERVAL?.toIntOrNull()?.let {
-            Timber.d("NetworkApplicationSettings-applyBackgroundScanMode: $it")
+            Timber.d("NetworkApplicationSettings-applyBackgroundScanInterval: $it")
             preferencesRepository.setBackgroundScanInterval(it)
         }
     }

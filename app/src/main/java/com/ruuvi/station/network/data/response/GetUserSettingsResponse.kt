@@ -14,4 +14,15 @@ data class NetworkUserSettings(
     val CHART_SHOW_ALL_POINTS: String?,
     val CHART_DRAW_DOTS: String?,
     val CHART_VIEW_PERIOD: String?
-)
+) {
+    fun isEmpty() =
+            BACKGROUND_SCAN_MODE == null &&
+            BACKGROUND_SCAN_INTERVAL == null &&
+            UNIT_TEMPERATURE == null &&
+            UNIT_HUMIDITY == null &&
+            UNIT_PRESSURE == null &&
+            DASHBOARD_ENABLED == null &&
+            CHART_SHOW_ALL_POINTS == null &&
+            CHART_DRAW_DOTS == null &&
+            CHART_VIEW_PERIOD == null
+}
