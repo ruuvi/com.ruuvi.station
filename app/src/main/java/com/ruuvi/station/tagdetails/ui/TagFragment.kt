@@ -124,8 +124,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
         ) { dialog, _ -> dialog.dismiss() }
         alertDialog.setOnDismissListener {
-            gattSyncViewButtons.visibility = View.VISIBLE
-            gattSyncViewProgress.visibility = View.GONE
+            gattSyncViewButtons?.visibility = View.VISIBLE
+            gattSyncViewProgress?.visibility = View.GONE
         }
         alertDialog.show()
     }
