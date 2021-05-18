@@ -15,7 +15,7 @@ object DatabaseInjectionModule {
         }
 
         bind<TagRepository>() with singleton {
-            TagRepository(instance(), instance(), instance(), instance())
+            TagRepository(instance(), instance(), instance())
         }
 
         bind<SensorSettingsRepository>() with singleton {

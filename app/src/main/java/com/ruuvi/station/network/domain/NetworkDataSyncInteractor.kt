@@ -37,7 +37,8 @@ class NetworkDataSyncInteractor (
     private val imageInteractor: ImageInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
-    private val networkRequestExecutor: NetworkRequestExecutor
+    private val networkRequestExecutor: NetworkRequestExecutor,
+    private val networkApplicationSettings: NetworkApplicationSettings
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -58,6 +59,7 @@ class NetworkDataSyncInteractor (
             try {
                 setSyncInProgress(true)
 
+                networkApplicationSettings.updateSettingsFromNetwork()
                 networkRequestExecutor.executeScheduledRequests()
 
                 val userInfo = networkInteractor.getUserInfo()

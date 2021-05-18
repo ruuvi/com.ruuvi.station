@@ -78,5 +78,9 @@ data class SensorSettings(
     fun updateFromNetwork(sensor: SensorDataResponse) {
         name = sensor.name
         owner = sensor.owner
+        humidityOffset = sensor.offsetHumidity
+        pressureOffset = sensor.offsetPressure
+        temperatureOffset = sensor.offsetTemperature
+        update()
     }
 }

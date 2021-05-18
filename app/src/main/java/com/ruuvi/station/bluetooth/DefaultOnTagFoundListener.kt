@@ -2,7 +2,7 @@ package com.ruuvi.station.bluetooth
 
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.GlobalSettings
-import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -22,7 +22,7 @@ import java.util.HashMap
 
 @Suppress("NAME_SHADOWING")
 class DefaultOnTagFoundListener(
-    private val preferences: Preferences,
+    private val preferencesRepository: PreferencesRepository,
     private val gatewaySender: GatewaySender,
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
@@ -68,7 +68,7 @@ class DefaultOnTagFoundListener(
         val interval = if (isForeground) {
             DATA_LOG_INTERVAL
         } else {
-            preferences.backgroundScanInterval
+            preferencesRepository.getBackgroundScanInterval()
         }
         Timber.d("saveFavoriteReading (interval = $interval)")
         val calendar = Calendar.getInstance()

@@ -4,6 +4,9 @@ typealias GetSensorDataResponse = RuuviNetworkResponse<GetSensorDataResponseBody
 
 data class GetSensorDataResponseBody (
     val sensor: String,
+    val offsetTemperature: Double,
+    val offsetHumidity: Double,
+    val offsetPressure: Double,
     val total: Int,
     val measurements: List<SensorDataMeasurementResponse>
 )

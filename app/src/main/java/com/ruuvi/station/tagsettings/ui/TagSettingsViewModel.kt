@@ -20,7 +20,7 @@ import timber.log.Timber
 import java.util.*
 
 class TagSettingsViewModel(
-    val tagId: String,
+    val sensorId: String,
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
@@ -30,9 +30,9 @@ class TagSettingsViewModel(
     var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
 
-    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
 
-    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(tagId))
+    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
     val tagObserve: LiveData<RuuviTagEntity?> = tagState
 
     private val sensorSettings = MutableLiveData<SensorSettings?>()
@@ -50,8 +50,8 @@ class TagSettingsViewModel(
 
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
-            val tagInfo = getTagById(tagId)
-            val settings = interactor.getSensorSettings(tagId)
+            val tagInfo = getTagById(sensorId)
+            val settings = interactor.getSensorSettings(sensorId)
             withContext(Dispatchers.Main) {
                 tagState.value = tagInfo
                 sensorSettings.value = settings
@@ -70,7 +70,7 @@ class TagSettingsViewModel(
         interactor.getTagById(tagId)
 
     fun updateNetworkStatus() {
-        networkStatus.value = networkInteractor.getSensorNetworkStatus(tagId)
+        networkStatus.value = networkInteractor.getSensorNetworkStatus(sensorId)
     }
 
     fun deleteTag(tag: RuuviTagEntity) {
@@ -82,12 +82,12 @@ class TagSettingsViewModel(
     }
 
     fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
-        interactor.updateTagBackground(tagId, userBackground, defaultBackground)
+        interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
         if (networkInteractor.signedIn) {
             if (userBackground.isNullOrEmpty() == false) {
-                networkInteractor.uploadImage(tagId, userBackground)
+                networkInteractor.uploadImage(sensorId, userBackground)
             } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
-                networkInteractor.resetImage(tagId)
+                networkInteractor.resetImage(sensorId)
             }
         }
     }
@@ -97,7 +97,7 @@ class TagSettingsViewModel(
             if (alarmItem.isEnabled || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
                 if (alarmItem.alarm == null) {
                     alarmItem.alarm = Alarm(
-                        ruuviTagId = tagId,
+                        ruuviTagId = sensorId,
                         low = alarmItem.low,
                         high = alarmItem.high,
                         type = alarmItem.type.value,
@@ -143,9 +143,11 @@ class TagSettingsViewModel(
     fun statusProcessed() { operationStatus.value = "" }
 
     fun setName(name: String?) {
-        interactor.updateTagName(tagId, name)
+        interactor.updateTagName(sensorId, name)
         getTagInfo()
-        if (networkInteractor.signedIn) networkInteractor.updateSensor(tagId, name ?: "")
+        if (networkInteractor.signedIn) {
+            networkInteractor.updateSensor(sensorId)
+        }
     }
 
     fun setupAlarmElements() {
@@ -184,7 +186,7 @@ class TagSettingsViewModel(
             ))
         }
 
-        val dbAlarms = alarmRepository.getForSensor(tagId)
+        val dbAlarms = alarmRepository.getForSensor(sensorId)
         for (alarm in dbAlarms) {
             val item = alarmElements.firstOrNull { it.type.value == alarm.type }
             item?.let {

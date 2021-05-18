@@ -3,7 +3,6 @@ package com.ruuvi.station.database.domain
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.config.DatabaseDefinition
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.tables.*
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
@@ -11,7 +10,6 @@ import timber.log.Timber
 import java.util.*
 
 class TagRepository(
-    private val preferences: Preferences,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val database: DatabaseDefinition,
     private val tagConverter: TagConverter

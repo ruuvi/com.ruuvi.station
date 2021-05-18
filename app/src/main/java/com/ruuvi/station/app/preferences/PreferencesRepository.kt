@@ -1,14 +1,14 @@
 package com.ruuvi.station.app.preferences
 
-import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdGenerator
 
-class PreferencesRepository(private val preferences: Preferences) {
-
+class PreferencesRepository(
+    private val preferences: Preferences
+    ) {
     fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
 
@@ -39,7 +39,7 @@ class PreferencesRepository(private val preferences: Preferences) {
 
     fun getDeviceId(): String {
         var deviceId = preferences.deviceId
-        if(deviceId.isEmpty()){
+        if (deviceId.isEmpty()) {
             deviceId = DeviceIdGenerator.generateId()
             setDeviceId(deviceId)
         }
@@ -129,19 +129,6 @@ class PreferencesRepository(private val preferences: Preferences) {
 
     fun setFirstStart(isFirstStart: Boolean) {
         preferences.isFirstStart = isFirstStart
-    }
-
-    fun getNetworkTokenInfo(): NetworkTokenInfo? {
-        if (preferences.networkEmail.isEmpty() || preferences.networkToken.isEmpty()) {
-            return null
-        } else {
-            return  NetworkTokenInfo(preferences.networkEmail, preferences.networkToken)
-        }
-    }
-
-    fun setNetworkTokenInfo(tokenInfo: NetworkTokenInfo) {
-        preferences.networkEmail = tokenInfo.email
-        preferences.networkToken = tokenInfo.token
     }
 
     fun getLastSyncDate(): Long =

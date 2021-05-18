@@ -6,6 +6,7 @@ import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -15,20 +16,25 @@ import com.ruuvi.station.util.BackgroundScanModes
 class AppSettingsInteractor(
     private val preferencesRepository: PreferencesRepository,
     private val gatewaySender: GatewaySender,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val networkApplicationSettings: NetworkApplicationSettings
 ) {
 
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun setTemperatureUnit(unit: TemperatureUnit) =
+    fun setTemperatureUnit(unit: TemperatureUnit) {
         preferencesRepository.setTemperatureUnit(unit)
+        networkApplicationSettings.updateTemperatureUnit()
+    }
 
     fun getHumidityUnit(): HumidityUnit =
         preferencesRepository.getHumidityUnit()
 
-    fun setHumidityUnit(unit: HumidityUnit) =
+    fun setHumidityUnit(unit: HumidityUnit) {
         preferencesRepository.setHumidityUnit(unit)
+        networkApplicationSettings.updateHumidityUnit()
+    }
 
     fun getGatewayUrl(): String =
         preferencesRepository.getGatewayUrl()
@@ -56,32 +62,42 @@ class AppSettingsInteractor(
     fun getBackgroundScanMode(): BackgroundScanModes =
         preferencesRepository.getBackgroundScanMode()
 
-    fun setBackgroundScanMode(mode: BackgroundScanModes) =
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
         preferencesRepository.setBackgroundScanMode(mode)
+        networkApplicationSettings.updateBackgroundScanMode()
+    }
 
     fun isDashboardEnabled(): Boolean =
         preferencesRepository.isDashboardEnabled()
 
-    fun setIsDashboardEnabled(isEnabled: Boolean) =
+    fun setIsDashboardEnabled(isEnabled: Boolean) {
         preferencesRepository.setIsDashboardEnabled(isEnabled)
+        networkApplicationSettings.updateDashboardEnabled()
+    }
 
     fun getBackgroundScanInterval(): Int =
         preferencesRepository.getBackgroundScanInterval()
 
-    fun setBackgroundScanInterval(interval: Int) =
+    fun setBackgroundScanInterval(interval: Int) {
         preferencesRepository.setBackgroundScanInterval(interval)
+        networkApplicationSettings.updateBackgroundScanInterval()
+    }
 
     fun isShowAllGraphPoint(): Boolean =
         preferencesRepository.isShowAllGraphPoint()
 
-    fun setIsShowAllGraphPoint(isShow: Boolean) =
-        preferencesRepository.setIsShowAllGraphPoint(isShow)
+    fun setIsShowAllGraphPoint(isShowAll: Boolean) {
+        preferencesRepository.setIsShowAllGraphPoint(isShowAll)
+        networkApplicationSettings.updateChartShowAllPoints()
+    }
 
     fun graphDrawDots(): Boolean =
         preferencesRepository.graphDrawDots()
 
-    fun setGraphDrawDots(isDrawDots: Boolean) =
+    fun setGraphDrawDots(isDrawDots: Boolean) {
         preferencesRepository.setGraphDrawDots(isDrawDots)
+        networkApplicationSettings.updateChartDrawDots()
+    }
 
     fun getGraphPointInterval(): Int =
         preferencesRepository.getGraphPointInterval()
@@ -92,8 +108,10 @@ class AppSettingsInteractor(
     fun getGraphViewPeriod(): Int =
         preferencesRepository.getGraphViewPeriodDays()
 
-    fun setGraphViewPeriod(newPeriod: Int) =
+    fun setGraphViewPeriod(newPeriod: Int) {
         preferencesRepository.setGraphViewPeriodDays(newPeriod)
+        networkApplicationSettings.updateChartViewPeriod()
+    }
 
     fun testGateway(
         gatewayUrl: String,
@@ -107,6 +125,7 @@ class AppSettingsInteractor(
 
     fun setPressureUnit(unit: PressureUnit) {
         preferencesRepository.setPressureUnit(unit)
+        networkApplicationSettings.updatePressureUnit()
     }
 
     fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()

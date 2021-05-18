@@ -13,7 +13,7 @@ import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
-class  RuuviNetworkInteractor (
+class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
@@ -182,10 +182,20 @@ class  RuuviNetworkInteractor (
         }
     }
 
-    fun updateSensor(sensorId: String, name: String) {
-        val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId, UpdateSensorRequest(sensorId, name))
-        Timber.d("updateSensor $networkRequest")
-        networkRequestExecutor.registerRequest(networkRequest)
+    fun updateSensor(sensorId: String) {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings != null) {
+            val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId,
+                UpdateSensorRequest(
+                    sensorId,
+                    sensorSettings.displayName,
+                    offsetTemperature = sensorSettings.temperatureOffset,
+                    offsetHumidity = sensorSettings.humidityOffset,
+                    offsetPressure = sensorSettings.pressureOffset
+                ))
+            Timber.d("updateSensor $networkRequest")
+            networkRequestExecutor.registerRequest(networkRequest)
+        }
     }
 
     fun uploadImage(sensorId: String, filename: String) {
@@ -231,5 +241,15 @@ class  RuuviNetworkInteractor (
         token?.let {
             return@withContext networkRepository.getSensorData(token, request)
         }
+    }
+
+    fun updateUserSetting(name: String, value: String) {
+        val networkRequest = NetworkRequest(
+            NetworkRequestType.SETTINGS,
+            name,
+            UpdateUserSettingRequest(name, value)
+        )
+        Timber.d("updateUserSetting $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest)
     }
 }

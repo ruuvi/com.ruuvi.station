@@ -14,10 +14,10 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.d("ruuvi.BOOT_COMPLETED.onReceive")
         context?.let {
-            val prefs = Preferences(it)
+            val preferences = Preferences(it)
             Timber.d("Start from reboot")
-            if (prefs.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-                ScanningPeriodicReceiver.start(it, prefs.backgroundScanInterval * 1000L)
+            if (preferences.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+                ScanningPeriodicReceiver.start(it, preferences.backgroundScanInterval * 1000L)
                 startForegroundService(it)
             } else {
                 Timber.d("Background scan disabled")

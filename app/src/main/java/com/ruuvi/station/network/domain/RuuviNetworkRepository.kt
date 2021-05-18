@@ -245,6 +245,32 @@ class RuuviNetworkRepository
         }
     }
 
+    suspend fun updateUserSettings(request: UpdateUserSettingRequest, token: String) {
+        val response = retrofitService.updateUserSettings(getAuth(token), request)
+        var result: UpdateUserSettingResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            var errorResponse: UpdateUserSettingResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun getUserSettings(token: String): GetUserSettingsResponse? = withContext(dispatcher){
+        val response = retrofitService.getUserSettings(getAuth(token))
+        var result: GetUserSettingsResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetUserSettingsResponse>() {}.type
+            var errorResponse: GetUserSettingsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/"
 

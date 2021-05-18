@@ -5,6 +5,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.util.BackgroundScanModes
 import timber.log.Timber
 
@@ -12,7 +13,8 @@ class TagInteractor constructor(
     private val tagRepository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkApplicationSettings: NetworkApplicationSettings
 ) {
 
     fun getTags(): List<RuuviTag> =
@@ -34,8 +36,10 @@ class TagInteractor constructor(
     fun getBackgroundScanMode(): BackgroundScanModes =
         preferencesRepository.getBackgroundScanMode()
 
-    fun setBackgroundScanMode(mode: BackgroundScanModes) =
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
         preferencesRepository.setBackgroundScanMode(mode)
+        networkApplicationSettings.updateBackgroundScanMode()
+    }
 
     fun isFirstGraphVisit(): Boolean =
         preferencesRepository.isFirstGraphVisit()

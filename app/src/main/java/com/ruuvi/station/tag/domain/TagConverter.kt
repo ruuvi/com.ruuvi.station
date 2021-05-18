@@ -1,7 +1,6 @@
 package com.ruuvi.station.tag.domain
 
 import android.content.Context
-import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.database.tables.FavouriteSensorQuery
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
@@ -9,7 +8,6 @@ import com.ruuvi.station.units.domain.UnitsConverter
 
 class TagConverter(
     private val context: Context,
-    private val preferences: Preferences,
     private val unitsConverter: UnitsConverter
 ) {
 

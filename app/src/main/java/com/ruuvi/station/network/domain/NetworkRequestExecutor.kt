@@ -8,10 +8,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.model.NetworkRequestStatus
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.NetworkRequest
-import com.ruuvi.station.network.data.request.UnclaimSensorRequest
-import com.ruuvi.station.network.data.request.UnshareSensorRequest
-import com.ruuvi.station.network.data.request.UpdateSensorRequest
-import com.ruuvi.station.network.data.request.UploadImageRequest
+import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +62,7 @@ class NetworkRequestExecutor (
             NetworkRequestType.UNCLAIM -> parseJson<UnclaimSensorRequest>(networkRequest.requestData)
             NetworkRequestType.UPDATE_SENSOR -> parseJson<UpdateSensorRequest>(networkRequest.requestData)
             NetworkRequestType.UPLOAD_IMAGE -> parseJson<UploadImageRequestWrapper>(networkRequest.requestData)
-            NetworkRequestType.SETTINGS -> parseJson<UploadImageRequest>(networkRequest.requestData)
+            NetworkRequestType.SETTINGS -> parseJson<UpdateUserSettingRequest>(networkRequest.requestData)
             NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(networkRequest.requestData)
             NetworkRequestType.RESET_IMAGE -> parseJson<UploadImageRequest>(networkRequest.requestData)
         }
@@ -76,7 +73,7 @@ class NetworkRequestExecutor (
             NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
             NetworkRequestType.UPDATE_SENSOR -> updateSensor(token, request as UpdateSensorRequest)
             NetworkRequestType.UPLOAD_IMAGE -> uploadImage(token, request as UploadImageRequestWrapper)
-            NetworkRequestType.SETTINGS -> request
+            NetworkRequestType.SETTINGS -> updateUserSettings(token, request as UpdateUserSettingRequest)
             NetworkRequestType.UNSHARE -> unshareSensor(token, request as UnshareSensorRequest)
             NetworkRequestType.RESET_IMAGE -> resetImage(token, request as UploadImageRequest)
         }
@@ -103,6 +100,10 @@ class NetworkRequestExecutor (
 
     private suspend fun resetImage(token: String, request: UploadImageRequest) {
         networkRepository.resetImage(request, token)
+    }
+
+    private suspend fun updateUserSettings(token: String, request: UpdateUserSettingRequest) {
+        networkRepository.updateUserSettings(request, token)
     }
 
     private inline fun <reified T>parseJson(jsonString: String): T? {

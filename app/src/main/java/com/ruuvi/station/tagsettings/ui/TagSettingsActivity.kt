@@ -90,19 +90,19 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
 
         shareTagButton.setDebouncedOnClickListener {
-            ShareSensorActivity.start(this, viewModel.tagId )
+            ShareSensorActivity.start(this, viewModel.sensorId )
         }
 
         calibrateHumidity.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.HUMIDITY)
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
         }
 
         calibrateTemperature.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.TEMPERATURE)
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
         }
 
         calibratePressure.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.tagId, CalibrationType.PRESSURE)
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
         }
     }
 
@@ -381,7 +381,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private var currentPhotoPath: String? = null
 
     private fun createImageFile(): File {
-        val imageFileName = "background_" + viewModel.tagId
+        val imageFileName = "background_" + viewModel.sensorId
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         currentPhotoPath = image.absolutePath
