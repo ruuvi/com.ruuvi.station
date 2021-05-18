@@ -15,8 +15,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15017
-        versionName "1.5.17"
+        versionCode 15018
+        versionName "1.5.18"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
