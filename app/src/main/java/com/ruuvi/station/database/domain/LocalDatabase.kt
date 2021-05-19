@@ -13,7 +13,18 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 22
+        const val VERSION = 23
+    }
+
+    @Migration(version = 23, database = LocalDatabase::class)
+    class Migration23 : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL(
+                "UPDATE SensorSettings " +
+                "SET name = 'Ruuvi ' || substr(id,13,2) || substr(id,16,2) " +
+                "WHERE name is NULL or name = ''"
+            )
+        }
     }
 
     @Migration(version = 22, database = LocalDatabase::class)

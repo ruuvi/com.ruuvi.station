@@ -92,6 +92,8 @@ data class RuuviTagEntity(
         updateAt = reading.createdAt
     )
 
+    fun displayName(): String = "Ruuvi ${id?.takeLast(5)?.removeRange(2,3)}"
+
     fun preserveData(tag: RuuviTagEntity): RuuviTagEntity {
         tag.favorite = favorite
         tag.updateAt = Date()
