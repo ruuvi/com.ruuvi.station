@@ -22,7 +22,7 @@ class LocalDatabase {
             database.execSQL(
                 "UPDATE SensorSettings " +
                 "SET name = 'Ruuvi ' || substr(id,13,2) || substr(id,16,2) " +
-                "WHERE name is NULL or name = ''"
+                "WHERE (name is NULL or name = '') and LENGTH(id) = 17"
             )
         }
     }
