@@ -127,6 +127,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             gattSyncViewButtons?.visibility = View.VISIBLE
             gattSyncViewProgress?.visibility = View.GONE
         }
+        viewModel.resetGattStatus()
         alertDialog.show()
     }
 

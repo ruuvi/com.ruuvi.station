@@ -99,4 +99,8 @@ class BluetoothGattInteractor (
 
     fun updateLastSync(sensorId: String, date: Date?) =
         sensorSettingsRepository.updateLastSync(sensorId, date)
+
+    fun resetGattStatus(sensorId: String) {
+        setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL))
+    }
 }

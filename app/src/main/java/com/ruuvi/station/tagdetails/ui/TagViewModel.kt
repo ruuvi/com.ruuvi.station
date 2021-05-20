@@ -25,7 +25,7 @@ class TagViewModel(
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    val tagId: String
+    val sensorId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
     val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
@@ -38,7 +38,7 @@ class TagViewModel(
 
     private val networkSyncInProgress = MutableLiveData<Boolean>(false)
 
-    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(tagId))
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
 
     val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
         it != null
@@ -60,7 +60,7 @@ class TagViewModel(
             gattInteractor.syncStatusFlow.collect {
                 Timber.d("syncStatusFlow collected $it")
                 it?.let {
-                    if (it.sensorId == tagId) syncStatusObj.value = it
+                    if (it.sensorId == sensorId) syncStatusObj.value = it
                 }
             }
         }
@@ -98,20 +98,24 @@ class TagViewModel(
         }
     }
 
+    fun resetGattStatus() {
+        gattInteractor.resetGattStatus(sensorId)
+    }
+
     fun removeTagData() {
-        sensorHistoryRepository.removeForSensor(tagId)
-        tagDetailsInteractor.clearLastSync(tagId)
+        sensorHistoryRepository.removeForSensor(sensorId)
+        tagDetailsInteractor.clearLastSync(sensorId)
     }
 
     fun tagSelected(selectedTag: RuuviTag?) {
-        selected = tagId == selectedTag?.id
+        selected = sensorId == selectedTag?.id
     }
 
     fun getTagInfo() {
         ioScope.launch {
-            Timber.d("getTagInfo $tagId")
-            getTagEntryData(tagId)
-            if (showGraph && selected) getGraphData(tagId)
+            Timber.d("getTagInfo $sensorId")
+            getTagEntryData(sensorId)
+            if (showGraph && selected) getGraphData(sensorId)
         }
     }
 
