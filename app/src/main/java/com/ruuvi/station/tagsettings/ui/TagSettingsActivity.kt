@@ -243,11 +243,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        viewModel.tagObserve.value?.let {
-            if (it.favorite) {
-                menuInflater.inflate(R.menu.menu_edit, menu)
-            }
-        }
+        menuInflater.inflate(R.menu.menu_edit, menu)
         return true
     }
 
@@ -332,7 +328,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
             dataFormatTextView.text = tag.dataFormat.toString()
             txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
-            movementCounterTextView.text = tag.movementCounter.toString()
+            rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
             sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
         } else {
             rawValuesLayout.isVisible = false
