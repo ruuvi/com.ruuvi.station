@@ -48,15 +48,20 @@ class RuuviNetworkRepository
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         ioScope.launch {
-            val response = retrofitService.registerUser(user)
             var result: UserRegisterResponse? = null
-            if (response.isSuccessful) {
-                result = response.body()
-            } else {
-                val type = object : TypeToken<UserRegisterResponse>() {}.type
-                var errorResponse: UserRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                result = errorResponse
+            try {
+                var response = retrofitService.registerUser(user)
+                if (response.isSuccessful) {
+                    result = response.body()
+                } else {
+                    val type = object : TypeToken<UserRegisterResponse>() {}.type
+                    var errorResponse: UserRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                    result = errorResponse
+                }
+            } catch (e: Exception) {
+                result = UserRegisterResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null)
             }
+
             withContext(Dispatchers.Main) {
                 onResult(result)
             }
@@ -65,14 +70,18 @@ class RuuviNetworkRepository
 
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         ioScope.launch {
-            val response = retrofitService.verifyUser(token)
             var result: UserVerifyResponse? = null
-            if (response.isSuccessful) {
-                result = response.body()
-            } else {
-                val type = object : TypeToken<UserVerifyResponse>() {}.type
-                var errorResponse: UserVerifyResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-                result = errorResponse
+            try {
+                val response = retrofitService.verifyUser(token)
+                if (response.isSuccessful) {
+                    result = response.body()
+                } else {
+                    val type = object : TypeToken<UserVerifyResponse>() {}.type
+                    var errorResponse: UserVerifyResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                    result = errorResponse
+                }
+            } catch (e: Exception) {
+                result = UserVerifyResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null)
             }
             withContext(Dispatchers.Main) {
                 onResult(result)
