@@ -25,7 +25,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagViewModel>() with factory { args: TagViewModelArgs ->
-            TagViewModel(instance(), instance(), instance(), instance(), instance(), tagId = args.tagId)
+            TagViewModel(instance(), instance(), instance(), instance(), instance(), sensorId = args.tagId)
         }
     }
 }
