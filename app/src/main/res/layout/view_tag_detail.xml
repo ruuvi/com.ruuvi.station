@@ -108,19 +108,19 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/tagSignalIcon"
+                android:id="@+id/tagMovementIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_measure_signal" />
+                app:srcCompat="@drawable/ic_icon_measure_movement" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tagSignalTextView"
+                android:id="@+id/tagMovementTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_gravity="center_vertical"
                 android:fontFamily="@font/montserrat"
-                tools:text="@string/signal_reading"
+                tools:text="124"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />

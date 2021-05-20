@@ -345,16 +345,16 @@
                         app:layout_constraintTop_toBottomOf="@id/title_z" />
 
                     <TextView
-                        android:id="@+id/movementCounterTitleTextView"
+                        android:id="@+id/rssiTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/movement_counter"
+                        android:text="@string/rssi"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
 
                     <TextView
-                        android:id="@+id/movementCounterTextView"
+                        android:id="@+id/rssiTextView"
                         style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/movementCounterTitleTextView"
+                        app:layout_constraintStart_toEndOf="@id/rssiTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
 
@@ -363,14 +363,14 @@
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/measurement_sequence_number"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/movementCounterTitleTextView" />
+                        app:layout_constraintTop_toBottomOf="@id/rssiTitleTextView" />
 
                     <TextView
                         android:id="@+id/sequenceNumberTextView"
                         style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/sequenceNumberTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/movementCounterTitleTextView" />
+                        app:layout_constraintTop_toBottomOf="@id/rssiTitleTextView" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

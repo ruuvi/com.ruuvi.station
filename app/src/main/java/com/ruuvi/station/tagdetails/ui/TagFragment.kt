@@ -207,9 +207,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun updateTagData(tag: RuuviTag) {
         Timber.d("updateTagData for ${tag.id}")
         tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
-        tagHumidityTextView.text = viewModel.getHumidityString(tag)
-        tagPressureTextView.text = viewModel.getPressureString(tag)
-        tagSignalTextView.text = viewModel.getSignalString(tag)
+        tagHumidityTextView.text = tag.humidityString
+        tagPressureTextView.text = tag.pressureString
+        tagMovementTextView.text = tag.movementCounter.toString()
         tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
         val unit = viewModel.getTemperatureUnitString()

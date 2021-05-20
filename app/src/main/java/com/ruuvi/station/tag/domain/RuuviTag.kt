@@ -11,6 +11,7 @@ data class RuuviTag(
     val temperature: Double?,
     val humidity: Double?,
     val pressure: Double?,
+    val movementCounter: Int,
     val temperatureString: String,
     val humidityString: String,
     val pressureString: String,

@@ -157,21 +157,21 @@
             app:layout_columnWeight="1">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/row_main_signal_icon"
+                android:id="@+id/row_main_movement_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.5"
-                app:srcCompat="@drawable/icon_measure_small_signal" />
+                app:srcCompat="@drawable/ic_icon_measure_small_movement" />
 
             <TextView
-                android:id="@+id/signal"
+                android:id="@+id/movement"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="4dp"
-                android:layout_toEndOf="@id/row_main_signal_icon"
+                android:layout_toEndOf="@id/row_main_movement_icon"
                 android:fontFamily="@font/montserrat"
-                android:text="@string/signal_reading"
+                tools:text="124"
                 android:textColor="@color/mainDark"
                 android:textStyle="bold" />
 
