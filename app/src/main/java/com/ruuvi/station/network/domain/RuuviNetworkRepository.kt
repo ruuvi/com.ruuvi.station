@@ -154,19 +154,6 @@ class RuuviNetworkRepository
         result
     }
 
-    suspend fun getSharedSensors(token: String): SharedSensorsResponse? = withContext(dispatcher){
-        val response = retrofitService.getSharedSensors(getAuth(token))
-        var result: SharedSensorsResponse? = null
-        if (response.isSuccessful) {
-            result = response.body()
-        } else {
-            val type = object : TypeToken<SharedSensorsResponse>() {}.type
-            var errorResponse: SharedSensorsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-            result = errorResponse
-        }
-        result
-    }
-
     suspend fun getSensorData(token: String, request: GetSensorDataRequest): GetSensorDataResponse? = withContext(dispatcher) {
         val response = retrofitService.getSensorData(
             getAuth(token),

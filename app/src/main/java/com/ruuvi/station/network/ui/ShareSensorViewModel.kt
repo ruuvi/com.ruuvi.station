@@ -21,7 +21,7 @@ class ShareSensorViewModel (
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    private val canShare = MutableLiveData<Boolean> (false)
+    private val canShare = MutableLiveData<Boolean> (true)
     val canShareObserve: LiveData<Boolean> = canShare
 
     private val handler = CoroutineExceptionHandler() { _, exception ->
