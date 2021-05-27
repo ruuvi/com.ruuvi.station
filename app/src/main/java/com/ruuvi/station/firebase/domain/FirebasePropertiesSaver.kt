@@ -4,9 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.util.BackgroundScanModes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Exception
 
@@ -18,6 +16,7 @@ class FirebasePropertiesSaver(
 ) {
     fun saveUserProperties() {
         CoroutineScope(Dispatchers.IO).launch {
+            delay(15*1000)
             Timber.d("FirebasePropertySaver.saveUserProperties")
             try {
                 firebaseAnalytics.setUserProperty("background_scan_enabled",

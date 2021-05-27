@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
@@ -65,12 +66,17 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
             adapter.notifyDataSetChanged()
         })
 
-        viewModel.operationStatusObserve.observe(this, Observer {
+        viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(sensorRecipientsListView, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        })
+        }
+
+        viewModel.canShareObserve.observe(this) {
+            shareSensorDisabledTitleTextView.isVisible = !it
+            sharingLayout.isVisible = it
+        }
     }
 
     private fun confirmUnshareSensor(email: String) {

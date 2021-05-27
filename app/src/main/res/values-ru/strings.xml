@@ -219,7 +219,7 @@
     <string name="sign_in_request_code">Запросить код</string>
     <string name="sign_in_submit_button">Отправить</string>
     <string name="sign_out">Выйти из сети</string>
-    <string name="sign_out_confirm">Хотите выйти их сети?</string>
+    <string name="sign_out_confirm">Хотите выйти из сети?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">дБм</string>

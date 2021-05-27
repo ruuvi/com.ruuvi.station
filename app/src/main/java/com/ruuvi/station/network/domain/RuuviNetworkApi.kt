@@ -48,10 +48,6 @@ interface RuuviNetworkApi{
     ): Response<ShareSensorResponse>
 
     @Headers("Content-Type: application/json")
-    @GET("shared")
-    suspend fun getSharedSensors(@Header("Authorization") auth: String): Response<SharedSensorsResponse>
-
-    @Headers("Content-Type: application/json")
     @GET("get")
     suspend fun getSensorData(
         @Header("Authorization") auth: String,
