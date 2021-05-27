@@ -148,8 +148,6 @@ class CalibrationInteractor (
     }
 
     fun saveCalibrationToNetwork(sensorId: String) {
-        if (networkInteractor.signedIn) {
-            networkInteractor.updateSensor(sensorId)
-        }
+        networkInteractor.updateSensorCalibration(sensorId)
     }
 }

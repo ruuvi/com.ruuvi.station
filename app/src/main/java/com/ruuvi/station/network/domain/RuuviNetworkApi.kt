@@ -95,4 +95,25 @@ interface RuuviNetworkApi{
     suspend fun getUserSettings(
         @Header("Authorization")auth: String
     ): Response<GetUserSettingsResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("alerts")
+    suspend fun setAlert(
+        @Header("Authorization")auth: String,
+        @Body request: SetAlertRequest
+    ): Response<SetAlertResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("alerts")
+    suspend fun getAlerts(
+        @Header("Authorization")auth: String,
+        @Query("sensor") sensor: String?
+    ): Response<GetAlertsResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("sensors")
+    suspend fun geSensors(
+        @Header("Authorization") auth: String,
+        @Query("sensor") sensor: String?
+    ): Response<GetSensorsResponse>
 }

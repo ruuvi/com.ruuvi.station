@@ -156,6 +156,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 viewModel.statusProcessed()
             }
         })
+
+        viewModel.canCalibrate.observe(this) {
+            calibration_header.isVisible = it
+            calibrationLayout.isVisible = it
+        }
     }
 
     override fun onResume() {

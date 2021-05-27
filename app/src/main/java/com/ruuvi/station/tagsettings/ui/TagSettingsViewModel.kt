@@ -2,13 +2,9 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
 import androidx.lifecycle.*
-import com.raizlabs.android.dbflow.kotlinextensions.save
-import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
-import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.database.domain.AlarmRepository
-import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.response.SensorDataResponse
@@ -48,6 +44,21 @@ class TagSettingsViewModel(
         it?.owner == networkInteractor.getEmail()
     }
 
+    val canCalibrate = MediatorLiveData<Boolean>()
+
+    init {
+        canCalibrate.addSource(sensorOwnedByUserObserve) { canCalibrate.value = getCanCalibrateValue()}
+        canCalibrate.addSource(userLoggedIn) { canCalibrate.value = getCanCalibrateValue() }
+        canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }
+    }
+
+    private fun getCanCalibrateValue(): Boolean? {
+        val ownedByUser = sensorOwnedByUserObserve.value ?: false
+        val loggedIn = userLoggedIn.value ?: false
+        val owner: String? = sensorSettings.value?.owner
+        return !loggedIn || ownedByUser || owner.isNullOrEmpty()
+    }
+
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
             val tagInfo = getTagById(sensorId)
@@ -83,40 +94,19 @@ class TagSettingsViewModel(
 
     fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
         interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
-        if (networkInteractor.signedIn) {
-            if (userBackground.isNullOrEmpty() == false) {
-                networkInteractor.uploadImage(sensorId, userBackground)
-            } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
-                networkInteractor.resetImage(sensorId)
-            }
+        if (userBackground.isNullOrEmpty() == false) {
+            networkInteractor.uploadImage(sensorId, userBackground)
+        } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
+            networkInteractor.resetImage(sensorId)
         }
     }
 
+
     fun saveOrUpdateAlarmItems() {
         for (alarmItem in alarmElements) {
-            if (alarmItem.isEnabled || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
-                if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(
-                        ruuviTagId = sensorId,
-                        low = alarmItem.low,
-                        high = alarmItem.high,
-                        type = alarmItem.type.value,
-                        customDescription = alarmItem.customDescription,
-                        mutedTill = alarmItem.mutedTill)
-                    alarmItem.alarm?.enabled = alarmItem.isEnabled
-                    alarmItem.alarm?.save()
-                } else {
-                    alarmItem.alarm?.enabled = alarmItem.isEnabled
-                    alarmItem.alarm?.low = alarmItem.low
-                    alarmItem.alarm?.high = alarmItem.high
-                    alarmItem.alarm?.customDescription = alarmItem.customDescription
-                    alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                    alarmItem.alarm?.update()
-                }
-            } else if (alarmItem.alarm != null) {
-                alarmItem.alarm?.enabled = false
-                alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                alarmItem.alarm?.update()
+            if (alarmItem.shouldBeSaved()) {
+                alarmRepository.saveAlarmElement(alarmItem)
+                networkInteractor.setAlert(sensorId, alarmItem)
             }
             if (!alarmItem.isEnabled) {
                 val notificationId = alarmItem.alarm?.id ?: -1
@@ -145,45 +135,18 @@ class TagSettingsViewModel(
     fun setName(name: String?) {
         interactor.updateTagName(sensorId, name)
         getTagInfo()
-        if (networkInteractor.signedIn) {
-            networkInteractor.updateSensor(sensorId)
-        }
+        networkInteractor.updateSensorName(sensorId)
     }
 
     fun setupAlarmElements() {
         alarmElements.clear()
 
         with(alarmElements) {
-            add(AlarmElement(
-                AlarmType.TEMPERATURE,
-                false,
-                -40,
-                85
-            ))
-            add(AlarmElement(
-                AlarmType.HUMIDITY,
-                false,
-                0,
-                100
-            ))
-            add(AlarmElement(
-                AlarmType.PRESSURE,
-                false,
-                30000,
-                110000
-            ))
-            add(AlarmElement(
-                AlarmType.RSSI,
-                false,
-                -105,
-                0
-            ))
-            add(AlarmElement(
-                AlarmType.MOVEMENT,
-                false,
-                0,
-                0
-            ))
+            add(AlarmElement.getTemperatureAlarmElement(sensorId))
+            add(AlarmElement.getHumidityAlarmElement(sensorId))
+            add(AlarmElement.getPressureAlarmElement(sensorId))
+            add(AlarmElement.getRssiAlarmElement(sensorId))
+            add(AlarmElement.getMovementAlarmElement(sensorId))
         }
 
         val dbAlarms = alarmRepository.getForSensor(sensorId)
