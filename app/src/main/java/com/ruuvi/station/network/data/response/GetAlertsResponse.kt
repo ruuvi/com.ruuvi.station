@@ -15,5 +15,6 @@ data class NetworkAlertItem(
     val type: String,
     val min: Double,
     val max: Double,
-    val enabled: Boolean
+    val enabled: Boolean,
+    val description: String
 )
