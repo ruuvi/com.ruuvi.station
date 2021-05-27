@@ -26,30 +26,30 @@ class NetworkRequestExecutor (
 
     fun registerRequest(networkRequest: NetworkRequest) {
         networkRequestRepository.disableSimilar(networkRequest)
-        execute(networkRequest)
+        CoroutineScope(Dispatchers.IO).launch {
+            execute(networkRequest)
+        }
     }
 
-    fun executeScheduledRequests() {
+    suspend fun executeScheduledRequests() {
         val requests = networkRequestRepository.getScheduledRequests()
         for (networkRequest in requests) {
             execute(networkRequest)
         }
     }
-    
-    private fun execute(networkRequest: NetworkRequest) {
+
+    private suspend fun execute(networkRequest: NetworkRequest) {
         val token = getToken()?.token
 
         val request = getRequest(networkRequest)
 
         if (request != null) {
             token?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        runSpecificAction(token, networkRequest, request)
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                    } catch (e: Exception) {
-                        registerFailedAttempt(networkRequest)
-                    }
+                try {
+                    runSpecificAction(token, networkRequest, request)
+                    disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                } catch (e: Exception) {
+                    registerFailedAttempt(networkRequest)
                 }
             }
         } else {
@@ -58,13 +58,16 @@ class NetworkRequestExecutor (
     }
 
     private fun getRequest(networkRequest: NetworkRequest): Any? {
-        return when (networkRequest.type) {
-            NetworkRequestType.UNCLAIM -> parseJson<UnclaimSensorRequest>(networkRequest.requestData)
-            NetworkRequestType.UPDATE_SENSOR -> parseJson<UpdateSensorRequest>(networkRequest.requestData)
-            NetworkRequestType.UPLOAD_IMAGE -> parseJson<UploadImageRequestWrapper>(networkRequest.requestData)
-            NetworkRequestType.SETTINGS -> parseJson<UpdateUserSettingRequest>(networkRequest.requestData)
-            NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(networkRequest.requestData)
-            NetworkRequestType.RESET_IMAGE -> parseJson<UploadImageRequest>(networkRequest.requestData)
+        with(networkRequest){
+            return when (type) {
+                NetworkRequestType.UNCLAIM -> parseJson<UnclaimSensorRequest>(requestData)
+                NetworkRequestType.UPDATE_SENSOR -> parseJson<UpdateSensorRequest>(requestData)
+                NetworkRequestType.UPLOAD_IMAGE -> parseJson<UploadImageRequestWrapper>(requestData)
+                NetworkRequestType.SETTINGS -> parseJson<UpdateUserSettingRequest>(requestData)
+                NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(requestData)
+                NetworkRequestType.RESET_IMAGE -> parseJson<UploadImageRequest>(requestData)
+                NetworkRequestType.SET_ALERT -> parseJson<SetAlertRequest>(requestData)
+            }
         }
     }
 
@@ -76,7 +79,12 @@ class NetworkRequestExecutor (
             NetworkRequestType.SETTINGS -> updateUserSettings(token, request as UpdateUserSettingRequest)
             NetworkRequestType.UNSHARE -> unshareSensor(token, request as UnshareSensorRequest)
             NetworkRequestType.RESET_IMAGE -> resetImage(token, request as UploadImageRequest)
+            NetworkRequestType.SET_ALERT -> setAlert(token, request as SetAlertRequest)
         }
+    }
+
+    private suspend fun setAlert(token: String, request: SetAlertRequest) {
+        networkRepository.setAlert(request, token)
     }
 
     private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest) {

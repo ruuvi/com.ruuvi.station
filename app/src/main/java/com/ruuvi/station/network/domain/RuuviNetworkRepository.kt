@@ -197,7 +197,7 @@ class RuuviNetworkRepository
             Timber.d("updateSensor.result: $result")
         } else {
             val type = object : TypeToken<UpdateSensorResponse>() {}.type
-            var errorResponse: UpdateSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            val errorResponse: UpdateSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result
@@ -246,7 +246,7 @@ class RuuviNetworkRepository
     fun <T>parseError(errorBody: ResponseBody?): T? {
         try {
             val type = object : TypeToken<T>() {}.type
-            var errorResponse: T? = Gson().fromJson(errorBody?.charStream(), type)
+            val errorResponse: T? = Gson().fromJson(errorBody?.charStream(), type)
             return errorResponse
         } catch (e: Exception) {
             Timber.e(e)
@@ -261,7 +261,7 @@ class RuuviNetworkRepository
             result = response.body()
         } else {
             val type = object : TypeToken<ShareSensorResponse>() {}.type
-            var errorResponse: UpdateUserSettingResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            val errorResponse: UpdateUserSettingResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result
@@ -274,7 +274,46 @@ class RuuviNetworkRepository
             result = response.body()
         } else {
             val type = object : TypeToken<GetUserSettingsResponse>() {}.type
-            var errorResponse: GetUserSettingsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            val errorResponse: GetUserSettingsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun setAlert(request: SetAlertRequest, token: String) {
+        val response = retrofitService.setAlert(getAuth(token), request)
+        var result: SetAlertResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<SetAlertResponse>() {}.type
+            val errorResponse: SetAlertResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun getAlerts(sensorId: String?, token: String): GetAlertsResponse? = withContext(dispatcher){
+        val response = retrofitService.getAlerts(getAuth(token), sensorId)
+        var result: GetAlertsResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetAlertsResponse>() {}.type
+            val errorResponse: GetAlertsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun getSensors(sensorId: String?, token: String): GetSensorsResponse? = withContext(dispatcher){
+        val response = retrofitService.geSensors(getAuth(token), sensorId)
+        var result: GetSensorsResponse? = null
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetAlertsResponse>() {}.type
+            val errorResponse: GetSensorsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result

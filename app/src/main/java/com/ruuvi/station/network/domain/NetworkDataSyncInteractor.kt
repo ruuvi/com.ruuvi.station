@@ -18,7 +18,6 @@ import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
-import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -38,7 +37,8 @@ class NetworkDataSyncInteractor (
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
-    private val networkApplicationSettings: NetworkApplicationSettings
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -59,8 +59,8 @@ class NetworkDataSyncInteractor (
             try {
                 setSyncInProgress(true)
 
-                networkApplicationSettings.updateSettingsFromNetwork()
                 networkRequestExecutor.executeScheduledRequests()
+                networkApplicationSettings.updateSettingsFromNetwork()
 
                 val userInfo = networkInteractor.getUserInfo()
 
@@ -78,6 +78,7 @@ class NetworkDataSyncInteractor (
                 syncForPeriod(userInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
+                networkAlertsSyncInteractor.updateAlertsFromNetwork()
             } catch (exception: Exception) {
                 val message = exception.message
                 message?.let {
