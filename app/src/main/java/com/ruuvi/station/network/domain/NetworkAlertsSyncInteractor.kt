@@ -48,7 +48,8 @@ class NetworkAlertsSyncInteractor(
                 low = low,
                 high = high,
                 enabled = alert.enabled,
-                type = type.value
+                type = type.value,
+                description = alert.description
             )
         } else {
             Timber.d("NetworkAlertsSyncInteractor-unknown alarm type: ${alert.type}")

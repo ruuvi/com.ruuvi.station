@@ -45,7 +45,8 @@ class AlarmRepository {
         low: Int,
         high: Int,
         type: Int,
-        enabled: Boolean
+        enabled: Boolean,
+        description: String
     ): Alarm {
         Timber.d("upsertAlarm $sensorId $low-$high ($type) - $enabled")
         var alarm = getForSensor(sensorId).firstOrNull { it.type == type }
@@ -57,6 +58,7 @@ class AlarmRepository {
         alarm.low = low
         alarm.high = high
         alarm.type = type
+        alarm.customDescription = description
         alarm.save()
         return alarm
     }

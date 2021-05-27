@@ -8,7 +8,8 @@ data class SetAlertRequest(
     val type: String,
     val min: Int,
     val max: Int,
-    val enabled: Boolean
+    val enabled: Boolean,
+    val description: String
 ) {
     companion object {
         fun getAlarmRequest(alarm: AlarmElement): SetAlertRequest {
@@ -18,7 +19,14 @@ data class SetAlertRequest(
                 } else {
                     Pair(alarm.low, alarm.high)
                 }
-            return SetAlertRequest(alarm.sensorId, alarm.type.networkCode ?: throw IllegalArgumentException(), low, high, alarm.isEnabled)
+            return SetAlertRequest(
+                sensor = alarm.sensorId,
+                type = alarm.type.networkCode ?: throw IllegalArgumentException(),
+                min = low,
+                max = high,
+                enabled = alarm.isEnabled,
+                description = alarm.customDescription
+            )
         }
     }
 }
