@@ -24,7 +24,7 @@ class ShareSensorViewModel (
     private val canShare = MutableLiveData<Boolean> (true)
     val canShareObserve: LiveData<Boolean> = canShare
 
-    private val handler = CoroutineExceptionHandler() { _, exception ->
+    private val handler = CoroutineExceptionHandler { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
             operationStatus.value = exception.message
         }
@@ -35,7 +35,7 @@ class ShareSensorViewModel (
     }
 
     fun getSensorSharedEmails() {
-        ruuviNetworkInteractor.getShаredInfo(tagId, handler) { response ->
+        ruuviNetworkInteractor.getSharedInfo(tagId, handler) { response ->
             Timber.d("getSensorSharedEmails ${response.toString()}")
             emails.value = response?.sharedTo ?: listOf()
             canShare.value = response?.canShare ?: false

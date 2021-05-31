@@ -48,7 +48,7 @@ class RuuviNetworkRepository
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         ioScope.launch {
-            var result: UserRegisterResponse? = null
+            var result: UserRegisterResponse?
             try {
                 var response = retrofitService.registerUser(user)
                 if (response.isSuccessful) {
@@ -70,7 +70,7 @@ class RuuviNetworkRepository
 
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         ioScope.launch {
-            var result: UserVerifyResponse? = null
+            var result: UserVerifyResponse?
             try {
                 val response = retrofitService.verifyUser(token)
                 if (response.isSuccessful) {
@@ -91,7 +91,7 @@ class RuuviNetworkRepository
 
     suspend fun getUserInfo(token: String): UserInfoResponse? = withContext(dispatcher){
         val response = retrofitService.getUserInfo(getAuth(token))
-        var result: UserInfoResponse? = null
+        var result: UserInfoResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -104,7 +104,7 @@ class RuuviNetworkRepository
 
     suspend fun claimSensor(request: ClaimSensorRequest, token: String, onResult: (ClaimSensorResponse?) -> Unit) {
         val response = retrofitService.claimSensor(getAuth(token), request)
-        var result: ClaimSensorResponse? = null
+        var result: ClaimSensorResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -117,7 +117,7 @@ class RuuviNetworkRepository
 
     suspend fun unclaimSensor(request: UnclaimSensorRequest, token: String): ClaimSensorResponse? = withContext(dispatcher) {
         val response = retrofitService.unclaimSensor(getAuth(token), request)
-        var result: ClaimSensorResponse? = null
+        var result: ClaimSensorResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -130,7 +130,7 @@ class RuuviNetworkRepository
 
     suspend fun shareSensor(request: ShareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
         val response = retrofitService.shareSensor(getAuth(token), request)
-        var result: ShareSensorResponse? = null
+        var result: ShareSensorResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -143,7 +143,7 @@ class RuuviNetworkRepository
 
     suspend fun unshareSensor(request: UnshareSensorRequest, token: String): ShareSensorResponse? = withContext(dispatcher) {
         val response = retrofitService.unshareSensor(getAuth(token), request)
-        var result: ShareSensorResponse? = null
+        var result: ShareSensorResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -163,7 +163,7 @@ class RuuviNetworkRepository
             request.sort,
             request.limit
         )
-        var result: GetSensorDataResponse? = null
+        var result: GetSensorDataResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -178,7 +178,7 @@ class RuuviNetworkRepository
         Timber.d("updateSensor.request: $request")
         val response = retrofitService.updateSensor(getAuth(token), request)
         Timber.d("updateSensor.response: $response")
-        var result: UpdateSensorResponse? = null
+        var result: UpdateSensorResponse?
         if (response.isSuccessful) {
             result = response.body()
             Timber.d("updateSensor.result: $result")
@@ -192,7 +192,7 @@ class RuuviNetworkRepository
 
     suspend fun uploadImage(filename: String, request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
         val response = retrofitService.uploadImage(getAuth(token), request)
-        var result: UploadImageResponse? = null
+        var result: UploadImageResponse?
         if (response.isSuccessful) {
             result = response.body()
             Timber.d("upload response: $result")
@@ -218,7 +218,7 @@ class RuuviNetworkRepository
 
     suspend fun resetImage(request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
         val response = retrofitService.uploadImage(getAuth(token), request)
-        var result: UploadImageResponse? = null
+        var result: UploadImageResponse?
         if (response.isSuccessful) {
             result = response.body()
             Timber.d("reset response: $result")
@@ -241,22 +241,24 @@ class RuuviNetworkRepository
         }
     }
 
-    suspend fun updateUserSettings(request: UpdateUserSettingRequest, token: String) {
+    suspend fun updateUserSettings(
+        request: UpdateUserSettingRequest,
+        token: String
+    ): UpdateUserSettingResponse? {
         val response = retrofitService.updateUserSettings(getAuth(token), request)
-        var result: UpdateUserSettingResponse? = null
-        if (response.isSuccessful) {
-            result = response.body()
+        return if (response.isSuccessful) {
+            response.body()
         } else {
             val type = object : TypeToken<ShareSensorResponse>() {}.type
-            val errorResponse: UpdateUserSettingResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-            result = errorResponse
+            val errorResponse: UpdateUserSettingResponse? =
+                Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
         }
-        result
     }
 
     suspend fun getUserSettings(token: String): GetUserSettingsResponse? = withContext(dispatcher){
         val response = retrofitService.getUserSettings(getAuth(token))
-        var result: GetUserSettingsResponse? = null
+        var result: GetUserSettingsResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -269,7 +271,7 @@ class RuuviNetworkRepository
 
     suspend fun setAlert(request: SetAlertRequest, token: String) {
         val response = retrofitService.setAlert(getAuth(token), request)
-        var result: SetAlertResponse? = null
+        var result: SetAlertResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
@@ -282,20 +284,19 @@ class RuuviNetworkRepository
 
     suspend fun getAlerts(sensorId: String?, token: String): GetAlertsResponse? = withContext(dispatcher){
         val response = retrofitService.getAlerts(getAuth(token), sensorId)
-        var result: GetAlertsResponse? = null
-        if (response.isSuccessful) {
-            result = response.body()
+        val result: GetAlertsResponse? = if (response.isSuccessful) {
+            response.body()
         } else {
             val type = object : TypeToken<GetAlertsResponse>() {}.type
             val errorResponse: GetAlertsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
-            result = errorResponse
+            errorResponse
         }
         result
     }
 
     suspend fun getSensors(sensorId: String?, token: String): GetSensorsResponse? = withContext(dispatcher){
         val response = retrofitService.geSensors(getAuth(token), sensorId)
-        var result: GetSensorsResponse? = null
+        var result: GetSensorsResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {

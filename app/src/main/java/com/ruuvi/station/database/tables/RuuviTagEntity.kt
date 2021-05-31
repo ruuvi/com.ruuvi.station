@@ -74,7 +74,7 @@ data class RuuviTagEntity(
 
     constructor(reading: TagSensorReading):this(
         id = reading.ruuviTagId,
-        rssi = reading.rssi ?: 0,
+        rssi = reading.rssi,
         temperature = reading.temperature,
         humidity = reading.humidity,
         pressure = reading.pressure,

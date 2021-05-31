@@ -14,12 +14,10 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.util.ShakeEventListener
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-@ExperimentalCoroutinesApi
 class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
 
     override val kodein by closestKodein()

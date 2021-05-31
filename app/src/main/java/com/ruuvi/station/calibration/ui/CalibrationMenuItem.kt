@@ -9,9 +9,9 @@ import com.ruuvi.station.databinding.ViewCalibrationMenuitemBinding
 
 class CalibrationMenuItem @JvmOverloads
 constructor(
-    private val ctx: Context,
-    private val attributeSet: AttributeSet? = null,
-    private val defStyleAttr: Int = 0
+    ctx: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : LinearLayout(ctx, attributeSet, defStyleAttr){
 
     private var binding: ViewCalibrationMenuitemBinding
@@ -24,6 +24,7 @@ constructor(
 
         val title = attributes.getString(R.styleable.CalibrationMenuItem_itemTitle)
         val value = attributes.getString(R.styleable.CalibrationMenuItem_itemValue)
+        attributes.recycle()
 
         binding.itemTitleTextView.text = title
         binding.itemValueTextView.text = value

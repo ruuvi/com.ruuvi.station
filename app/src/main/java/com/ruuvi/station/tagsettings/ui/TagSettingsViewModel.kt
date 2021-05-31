@@ -120,7 +120,7 @@ class TagSettingsViewModel(
         if (sensorSettings != null) {
             networkInteractor.claimSensor(sensorSettings) {
                 updateNetworkStatus()
-                if (it == null || it.error.isNullOrEmpty() == false) {
+                if (it == null || !it.error.isNullOrEmpty()) {
                     //TODO LOCALIZE
                     operationStatus.value = "Failed to claim tag: ${it?.error}"
                 } else {
@@ -156,7 +156,7 @@ class TagSettingsViewModel(
                 item.high = alarm.high
                 item.low = alarm.low
                 item.isEnabled = alarm.enabled
-                item.customDescription = alarm.customDescription ?: ""
+                item.customDescription = alarm.customDescription
                 item.mutedTill = alarm.mutedTill
                 item.alarm = alarm
                 item.normalizeValues()

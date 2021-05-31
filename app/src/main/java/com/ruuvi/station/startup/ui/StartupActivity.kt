@@ -11,12 +11,10 @@ import com.ruuvi.station.welcome.ui.WelcomeActivity
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-@ExperimentalCoroutinesApi
 class StartupActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()

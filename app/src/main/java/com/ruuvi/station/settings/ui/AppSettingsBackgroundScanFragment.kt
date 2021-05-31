@@ -12,14 +12,12 @@ import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationMinutesPicker
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationSecondsPicker
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 
-@ExperimentalCoroutinesApi
 class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_settings_background_scan), KodeinAware {
 
     override val kodein: Kodein by closestKodein()

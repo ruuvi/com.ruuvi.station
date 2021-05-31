@@ -58,14 +58,14 @@ class LocalDatabase {
     }
 
     @Migration(version = 20, database = LocalDatabase::class)
-    class Migration20_1 : BaseMigration() {
+    class Migration20a : BaseMigration() {
         override fun migrate(database: DatabaseWrapper) {
             database.execSQL("INSERT INTO SensorSettings (id, humidityOffset, humidityOffsetDate) SELECT id, humidityOffset, humidityOffsetDate FROM RuuviTag WHERE favorite=1")
         }
     }
 
     @Migration(version = 20, database = LocalDatabase::class)
-    class Migration20_2(table: Class<RuuviTagEntity?>?) : AlterTableMigration<RuuviTagEntity?>(table) {
+    class Migration20b(table: Class<RuuviTagEntity?>?) : AlterTableMigration<RuuviTagEntity?>(table) {
         override fun onPreMigrate() {
             super.onPreMigrate()
             addColumn(SQLiteType.REAL, "temperatureOffset")
@@ -74,7 +74,7 @@ class LocalDatabase {
     }
 
     @Migration(version = 20, database = LocalDatabase::class)
-    class Migration20_3(table: Class<TagSensorReading?>?) : AlterTableMigration<TagSensorReading?>(table) {
+    class Migration20c(table: Class<TagSensorReading?>?) : AlterTableMigration<TagSensorReading?>(table) {
         override fun onPreMigrate() {
             super.onPreMigrate()
             addColumn(SQLiteType.REAL, "temperatureOffset")

@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@ExperimentalCoroutinesApi
 class AboutActivityViewModel(
     private val tagInteractor: TagInteractor
 ) : ViewModel() {

@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Calendar
 
-@ExperimentalCoroutinesApi
 class AddTagActivityViewModel(
     private val tagInteractor: TagInteractor
 ) : ViewModel() {

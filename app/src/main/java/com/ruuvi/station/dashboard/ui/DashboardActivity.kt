@@ -85,6 +85,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -145,8 +146,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
-                R.id.sendFeedbackMenuItem -> SendFeedback()
-                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
             mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -215,7 +216,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.signOut()
                 }
                 setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->

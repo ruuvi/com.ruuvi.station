@@ -114,15 +114,15 @@ class UnitsConverter (
 
         return when (humidityUnit) {
             HumidityUnit.PERCENT -> Utils.round(humidity, 2)
-            HumidityUnit.GM3-> Utils.round(converter.ah, 2)
+            HumidityUnit.GM3-> Utils.round(converter.absoluteHumidity, 2)
             HumidityUnit.DEW -> {
                 when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> Utils.round(converter.Td ?: 0.0, 2)
-                    TemperatureUnit.KELVIN-> Utils.round(converter.TdK ?: 0.0, 2)
-                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.TdF ?: 0.0, 2)
+                    TemperatureUnit.CELSIUS -> Utils.round(converter.toDewCelsius ?: 0.0, 2)
+                    TemperatureUnit.KELVIN-> Utils.round(converter.toDewKelvin ?: 0.0, 2)
+                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.toDewFahrenheit ?: 0.0, 2)
                 }
             }
-        } ?: 0.0
+        }
     }
 
     fun getHumidityString(humidity: Double?, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): String {

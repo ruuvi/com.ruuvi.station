@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_add_tag.toolbar
 import kotlinx.android.synthetic.main.content_add_tag.noTagsFoundTextView
 import kotlinx.android.synthetic.main.content_add_tag.tagListView
 import kotlinx.android.synthetic.main.content_tag_details.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -30,7 +29,6 @@ import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
 class AddTagActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
@@ -63,6 +61,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

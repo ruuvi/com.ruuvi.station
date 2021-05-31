@@ -14,7 +14,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
     val converter: UnitsConverter,

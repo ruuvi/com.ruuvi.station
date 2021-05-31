@@ -5,11 +5,10 @@ import android.os.Build
 import com.ruuvi.station.R
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.*
 
-@ExperimentalCoroutinesApi
 class AppSettingsBackgroundScanViewModel(
     private val interactor: AppSettingsInteractor
 ) : ViewModel() {
@@ -37,7 +36,7 @@ class AppSettingsBackgroundScanViewModel(
     )
 
     fun getBatteryOptimizationMessageId(): Int {
-        val deviceManufacturer = Build.MANUFACTURER.toUpperCase()
+        val deviceManufacturer = Build.MANUFACTURER.toUpperCase(Locale.getDefault())
         val deviceApi = Build.VERSION.SDK_INT
 
         return when (deviceManufacturer) {
