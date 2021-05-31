@@ -213,6 +213,7 @@ class NetworkDataSyncInteractor (
                 tagEntry.favorite = true
                 tagEntry.insert()
             } else {
+                tagEntry.favorite = true
                 tagEntry.updateData(newestPoint)
                 tagEntry.update()
             }
