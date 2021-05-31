@@ -8,7 +8,6 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.response.SensorDataResponse
-import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import kotlinx.coroutines.*
@@ -20,7 +19,6 @@ class TagSettingsViewModel(
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
     var alarmElements: MutableList<AlarmElement> = ArrayList()
@@ -52,7 +50,7 @@ class TagSettingsViewModel(
         canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }
     }
 
-    private fun getCanCalibrateValue(): Boolean? {
+    private fun getCanCalibrateValue(): Boolean {
         val ownedByUser = sensorOwnedByUserObserve.value ?: false
         val loggedIn = userLoggedIn.value ?: false
         val owner: String? = sensorSettings.value?.owner

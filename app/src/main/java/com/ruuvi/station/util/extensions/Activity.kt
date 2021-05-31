@@ -12,7 +12,7 @@ import com.ruuvi.station.R
 fun AppCompatActivity.sendFeedback(){
     val intent = Intent(Intent.ACTION_SENDTO)
     intent.data = Uri.parse("mailto:")
-    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ));
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ))
     intent.putExtra(Intent.EXTRA_SUBJECT, "Ruuvi Station Android Feedback")
     val body = """
                        

@@ -60,9 +60,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
 
     override fun onPause() {
         super.onPause()
-        sensorManager?.let {
-            it.unregisterListener(sensorListener)
-        }
+        sensorManager?.unregisterListener(sensorListener)
     }
 
     override fun openFragment(resourceId: Int) {
