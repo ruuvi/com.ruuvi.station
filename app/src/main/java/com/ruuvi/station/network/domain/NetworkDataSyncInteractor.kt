@@ -28,7 +28,6 @@ import java.io.File
 import java.net.URI
 import java.util.*
 
-@ExperimentalCoroutinesApi
 class NetworkDataSyncInteractor (
     private val preferencesRepository: PreferencesRepository,
     private val tagRepository: TagRepository,
@@ -93,7 +92,7 @@ class NetworkDataSyncInteractor (
     }
 
     private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
-        if (networkInteractor.signedIn == false) {
+        if (!networkInteractor.signedIn) {
             setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
             return
         }
@@ -148,7 +147,7 @@ class NetworkDataSyncInteractor (
                 result = null
                 if (data != null && data.size > 0) {
                     measurements.addAll(data)
-                    var maxTimestamp = data.maxBy { it.timestamp }?.timestamp
+                    var maxTimestamp = data.maxByOrNull { it.timestamp }?.timestamp
                     if (maxTimestamp != null) {
                         maxTimestamp++
                         since = Date(maxTimestamp * 1000)
@@ -213,6 +212,7 @@ class NetworkDataSyncInteractor (
                 tagEntry.favorite = true
                 tagEntry.insert()
             } else {
+                tagEntry.favorite = true
                 tagEntry.updateData(newestPoint)
                 tagEntry.update()
             }
@@ -229,7 +229,7 @@ class NetworkDataSyncInteractor (
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             sensorSettings.updateFromNetwork(sensor)
 
-            if (sensor.picture.isNullOrEmpty() == false) {
+            if (!sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)
             }
         }

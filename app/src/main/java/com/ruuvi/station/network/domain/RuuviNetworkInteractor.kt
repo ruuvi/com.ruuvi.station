@@ -150,12 +150,12 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun getShаredInfo(sensorId: String?, handler: CoroutineExceptionHandler, onResult: (SensorInfo?) -> Unit) {
+    fun getSharedInfo(sensorId: String?, handler: CoroutineExceptionHandler, onResult: (SensorInfo?) -> Unit) {
         val token = getToken()?.token
         CoroutineScope(Dispatchers.IO).launch(handler) {
             token?.let {
                 val response = networkRepository.getSensors(sensorId, it)
-                if (response?.isSuccess() == true && response?.data != null) {
+                if (response?.isSuccess() == true && response.data != null) {
                     val result = response.data.sensors.firstOrNull { it.sensor == sensorId }
                     withContext(Dispatchers.Main) {
                         onResult(result)

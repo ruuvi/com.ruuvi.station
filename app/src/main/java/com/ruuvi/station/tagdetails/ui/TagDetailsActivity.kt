@@ -34,7 +34,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
@@ -125,6 +124,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -187,28 +187,28 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        viewModel.tagsObserve.observe(this, Observer {
+        viewModel.tagsObserve.observe(this) {
             setupTags(it)
-        })
+        }
     }
 
     private fun observeAlarmStatus() {
-        viewModel.alarmStatusObserve.observe(this, Observer {
+        viewModel.alarmStatusObserve.observe(this) {
             alarmStatus = it
             invalidateOptionsMenu()
-        })
+        }
     }
 
     private fun observeSelectedTag() {
-        viewModel.selectedTagObserve.observe(this, Observer {
+        viewModel.selectedTagObserve.observe(this) {
             it?.let { setupSelectedTag(it) }
-        })
+        }
     }
 
     private fun listenToShowGraph() {
-        viewModel.isShowGraphObserve.observe(this, Observer {
+        viewModel.isShowGraphObserve.observe(this) {
             animateGraphTransition(it)
-        })
+        }
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
@@ -281,8 +281,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
-                R.id.sendFeedbackMenuItem -> SendFeedback()
-                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
             mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -293,7 +293,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncResultObserve.observe(this, Observer {syncResult ->
+        viewModel.syncResultObserve.observe(this) {syncResult ->
             val message = when (syncResult.type) {
                 NetworkSyncResultType.NONE -> ""
                 NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
@@ -304,9 +304,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
                 viewModel.syncResultShowed()
             }
-        })
+        }
 
-        viewModel.syncInProgressObserve.observe(this, Observer {
+        viewModel.syncInProgressObserve.observe(this) {
             if (it) {
                 Timber.d("Sync in progress")
                 syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
@@ -314,9 +314,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 Timber.d("Sync not in progress")
                 syncNetworkButton.clearAnimation()
             }
-        })
+        }
 
-        viewModel.userEmail.observe(this, Observer {
+        viewModel.userEmail.observe(this) {
             var user = it
             if (user.isNullOrEmpty()) {
                 user = getString(R.string.none)
@@ -326,9 +326,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             }
             updateMenu(signedIn)
             loggedUserTextView.text = getString(R.string.network_user, user)
-        })
+        }
 
-        viewModel.syncStatus.observe(this, Observer {syncStatus ->
+        viewModel.syncStatus.observe(this) {syncStatus ->
             if (syncStatus.syncInProgress) {
                 syncStatusTextView.text = getString(R.string.connected_reading_info)
             } else {
@@ -340,18 +340,18 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 }
                 syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
             }
-        })
+        }
     }
 
     private fun login(signedIn: Boolean) {
-        if (signedIn == false) {
+        if (!signedIn) {
             SignInActivity.start(this)
         } else {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.signOut()
                 }
                 setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
@@ -468,15 +468,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
-                            val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
+                            val simpleAlert = AlertDialog.Builder(this).create()
                             simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
                             simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
-                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                            simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
                                 permissionsInteractor.requestBackgroundPermission()
                             }
-                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                            simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
                             simpleAlert.setOnDismissListener {
                                 viewModel.setIsFirstGraphVisit(false)

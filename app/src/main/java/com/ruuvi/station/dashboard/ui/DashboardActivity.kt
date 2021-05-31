@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -85,6 +84,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -111,12 +111,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupViewModel() {
-        viewModel.observeTags.observe( this, Observer {
+        viewModel.observeTags.observe(this) {
             tags.clear()
             tags.addAll(it)
             noTagsTextView.isVisible = tags.isEmpty()
             adapter.notifyDataSetChanged()
-        })
+        }
     }
 
     private fun setupListView() {
@@ -145,8 +145,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
-                R.id.sendFeedbackMenuItem -> SendFeedback()
-                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
             mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -157,7 +157,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncResultObserve.observe(this, Observer {syncResult ->
+        viewModel.syncResultObserve.observe(this) {syncResult ->
             val message = when (syncResult.type) {
                 NetworkSyncResultType.NONE -> ""
                 NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
@@ -168,9 +168,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
                 viewModel.syncResultShowed()
             }
-        })
+        }
 
-        viewModel.syncInProgressObserve.observe(this, Observer {
+        viewModel.syncInProgressObserve.observe(this) {
             if (it) {
                 Timber.d("Sync in progress")
                 syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
@@ -178,9 +178,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 Timber.d("Sync not in progress")
                 syncNetworkButton.clearAnimation()
             }
-        })
+        }
 
-        viewModel.userEmail.observe(this, Observer {
+        viewModel.userEmail.observe(this) {
             var user = it
             if (user.isNullOrEmpty()) {
                 user = getString(R.string.none)
@@ -190,9 +190,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             }
             updateMenu(signedIn)
             loggedUserTextView.text = getString(R.string.network_user, user)
-        })
+        }
 
-        viewModel.syncStatus.observe(this, Observer {syncStatus->
+        viewModel.syncStatus.observe(this) {syncStatus->
             if (syncStatus.syncInProgress) {
                 syncStatusTextView.text = getString(R.string.connected_reading_info)
             } else {
@@ -204,7 +204,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     }
                 syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
             }
-        })
+        }
     }
 
     private fun login(signedIn: Boolean) {
@@ -215,7 +215,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.signOut()
                 }
                 setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->

@@ -13,10 +13,10 @@ import org.kodein.di.generic.instance
 class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
 
     override lateinit var kodein: Kodein
-    val alarmRepository: AlarmRepository by instance()
+    private val alarmRepository: AlarmRepository by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
-        kodein = (context?.applicationContext as KodeinAware).kodein
+        kodein = (context.applicationContext as KodeinAware).kodein
         val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
 
         val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)

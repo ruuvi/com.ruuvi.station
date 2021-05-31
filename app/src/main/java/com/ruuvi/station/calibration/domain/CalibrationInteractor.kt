@@ -24,7 +24,7 @@ class CalibrationInteractor (
     fun calibrateTemperature(sensorId: String, targetValue: Double) {
         val data = getSensorData(sensorId)
         data?.let {
-            val fromTemperature = data.temperature - (data.temperatureOffset ?: 0.0)
+            val fromTemperature = data.temperature - data.temperatureOffset
             val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset)
@@ -51,7 +51,7 @@ class CalibrationInteractor (
         val currentTemperatureOffset = getSensorSettings(sensorId)?.temperatureOffset ?: 0.0
         val isTemperatureCalibrated = isTemperatureCalibrated(sensorSettings)
         data?.let {
-            val temperatureRaw = data.temperature - (data.temperatureOffset ?: 0.0)
+            val temperatureRaw = data.temperature - data.temperatureOffset
             val temperatureCalibrated = temperatureRaw + currentTemperatureOffset
             return CalibrationInfo(
                 sensorId,
@@ -72,7 +72,7 @@ class CalibrationInteractor (
         val currentPressureOffset = getSensorSettings(sensorId)?.pressureOffset ?: 0.0
         val isPressureCalibrated = isPressureCalibrated(sensorSettings)
         data?.let {
-            val rawValue = (data.pressure ?: 0.0) - (data.pressureOffset ?: 0.0)
+            val rawValue = (data.pressure ?: 0.0) - data.pressureOffset
             val calibratedValue = rawValue + currentPressureOffset
             return CalibrationInfo(
                 sensorId,
@@ -93,7 +93,7 @@ class CalibrationInteractor (
         val currentHumidityOffset = getSensorSettings(sensorId)?.humidityOffset ?: 0.0
         val isHumidityCalibrated = isHumidityCalibrated(sensorSettings)
         data?.let {
-            val rawValue = (data.humidity ?: 0.0) - (data.humidityOffset ?: 0.0)
+            val rawValue = (data.humidity ?: 0.0) - data.humidityOffset
             val calibratedValue = rawValue + currentHumidityOffset
             return CalibrationInfo(
                 sensorId,

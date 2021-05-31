@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.content_about.openText
 import kotlinx.android.synthetic.main.content_about.operationsText
 import kotlinx.android.synthetic.main.content_about.troubleshootingText
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
@@ -26,7 +25,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import java.io.File
 
-@ExperimentalCoroutinesApi
 class AboutActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()

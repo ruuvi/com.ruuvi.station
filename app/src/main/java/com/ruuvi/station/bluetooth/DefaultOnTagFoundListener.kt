@@ -40,7 +40,7 @@ class DefaultOnTagFoundListener(
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
-        UpdateLocation()
+        updateLocation()
         saveReading(RuuviTagEntity(tag))
         cleanUpOldData()
     }
@@ -93,14 +93,14 @@ class DefaultOnTagFoundListener(
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.MINUTE, -10)
         val cleaningThreshold = calendar.time.time
-        if (lastCleanedDate == null || lastCleanedDate < cleaningThreshold) {
+        if (lastCleanedDate < cleaningThreshold) {
             Timber.d("Cleaning DB from old tag readings")
             sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
             lastCleanedDate = Date().time
         }
     }
 
-    private fun UpdateLocation() {
+    private fun updateLocation() {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.MINUTE, -1)
         val cleaningThreshold = calendar.time.time
