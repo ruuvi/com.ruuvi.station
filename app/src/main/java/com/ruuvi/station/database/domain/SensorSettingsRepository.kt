@@ -30,11 +30,9 @@ class SensorSettingsRepository {
     }
 
     fun updateSensorName(sensorId: String, sensorName: String?) {
-        SQLite.update(SensorSettings::class.java)
-            .set(SensorSettings_Table.name.eq(sensorName))
-            .where(SensorSettings_Table.id.eq(sensorId))
-            .async()
-            .execute()
+        var settings = getSensorSettingsOrCreate(sensorId)
+        settings.name = sensorName
+        settings.update()
     }
 
     fun setSensorTemperatureCalibrationOffset(sensorId: String, temperatureOffset: Double) {
