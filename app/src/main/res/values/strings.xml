@@ -24,7 +24,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alerts">ALERTS</string>
-    <string name="app_name" translatable="false">Ruuvi Station</string>
+    <string name="app_name">Ruuvi Station</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
     <string name="background_notification_message">You can disable background scanning in settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>

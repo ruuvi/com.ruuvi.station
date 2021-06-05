@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Отключено</string>
     <string name="alert_subtitle_on">Уведомление если меньше %1$,d или больше %2$,d</string>
     <string name="alerts">УВЕДОМЛЕНИЯ</string>
+    <string name="app_name">Ruuvi Station</string>
     <string name="background_image">ФОНОВОЕ\nИЗОБРАЖЕНИЕ</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
     <string name="background_notification_scanning_every">Сканирование каждые</string>
@@ -32,14 +33,25 @@
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
+    <string name="calibration_corrected_value">Откалиброванное значение</string>
+    <string name="calibration_description">Обычно нет необходимости калибровать датчики.\n\nОднако, если вы продивнутый пользователь и хотите вручную откалибровать настроенные на заводе сенсоры, это возможно.\n\nПодсказки и информация доступны на сайте ruuvi.com/support</string>
     <string name="calibration_description_link">ruuvi.com/support</string>
     <string name="calibration_description_link_url">http://ruuvi.com/support</string>
     <string name="calibration_done">Калибровка закончена!</string>
+    <string name="calibration_enter_humidity">Введите ожидаемое значение влажности в текущих условиях (%1$s): </string>
+    <string name="calibration_enter_pressure">Введите ожидаемое значение давления в текущих условиях (%1$s): </string>
+    <string name="calibration_enter_temperature">Введите ожидаемое значение температуры в текущих условиях (%1$s): </string>
     <string name="calibration_humidity">Чтобы измерять относительную влажность наиболее точно, рекомендуется провести тест с поваренной солью. Посмотрите обучающие видео о том, как легко сделать это дома. </string>
     <string name="calibration_humidity_button">Калибровать гигрометр</string>
     <string name="calibration_humidity_disclaimer">Данные для калибровки будут сохранены локально. Если вы переустановите приложение будет нужно произвести калибровку заново.</string>
     <string name="calibration_humidity_link">обучающие видео</string>
     <string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
+    <string name="calibration_humidity_offset">Калибровка по влажности</string>
+    <string name="calibration_offset">(Калибровка %1$s)</string>
+    <string name="calibration_original_value">Измеренное значение</string>
+    <string name="calibration_pressure_offset">Калибровка по давлению</string>
+    <string name="calibration_setup">Настройка калибровок</string>
+    <string name="calibration_temperature_offset">Калибровка по температуре</string>
     <string name="camera">Камера</string>
     <string name="camera_fail">Не удалось запустить камеру</string>
     <string name="cancel">Отмена</string>
@@ -106,6 +118,8 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="login_description">Чтобы воспользоваться всеми функциями, создайте аккаунт или войдите в существующий. Пожалуйста, введите ваш email.</string>
+    <string name="login_to_ruuvi_network">Войти в\nRuuvi\nNetwork</string>
     <string name="mac_address">MAC адрес</string>
     <string name="mac_copied">MAC адрес скопирован в буфер обмена</string>
     <string name="measurement_sequence_number">Порядковый Номер Измерения</string>
@@ -121,6 +135,7 @@
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
+    <string name="network_sharing_disabled">Вы можете поделиться сенсорами только из зоны покрытия Ruuvi Gateway. Если у вас нет Gateway, вы можете приобрести его на ruuvi.com</string>
     <string name="network_status_title">Статус сети Ruuvi</string>
     <string name="network_sync_result_exception">Ошибка синхронизации: %1$s</string>
     <string name="network_sync_result_not_logged">Ошибка синхронизации: необходимо залогиниться вначале</string>
@@ -132,6 +147,7 @@
     <string name="no">Нет</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
+    <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>
