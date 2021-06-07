@@ -37,12 +37,7 @@ class NetworkAlertsSyncInteractor(
     private fun saveNetworkAlert(sensorId: String, alert: NetworkAlertItem) {
         val type = AlarmType.getByNetworkCode(alert.type)
         if (type != null) {
-            val (low, high) =
-                if (type == AlarmType.PRESSURE) {
-                    Pair((alert.min * 100).toInt(), (alert.max * 100).toInt())
-                } else {
-                    Pair(alert.min.toInt(), alert.max.toInt())
-                }
+            val (low, high) = Pair(alert.min.toInt(), alert.max.toInt())
             alarmRepository.upsertAlarm(
                 sensorId = sensorId,
                 low = low,
