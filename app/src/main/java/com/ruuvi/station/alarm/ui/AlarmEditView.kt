@@ -47,7 +47,7 @@ class AlarmEditView @JvmOverloads
         with(binding.alertSwitch) {
             text = when (alarm.type) {
                 AlarmType.TEMPERATURE -> ctx.getString(R.string.temperature, unitsConverter.getTemperatureUnitString())
-                AlarmType.HUMIDITY -> ctx.getString(R.string.humidity, unitsConverter.getHumidityUnitString())
+                AlarmType.HUMIDITY -> ctx.getString(R.string.humidity, ctx.getString(R.string.humidity_relative_unit))
                 AlarmType.PRESSURE -> ctx.getString(R.string.pressure, unitsConverter.getPressureUnitString())
                 AlarmType.RSSI -> ctx.getString(R.string.rssi)
                 AlarmType.MOVEMENT -> ctx.getString(R.string.alert_movement)
