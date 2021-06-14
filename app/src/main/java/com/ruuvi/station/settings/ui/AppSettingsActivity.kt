@@ -31,13 +31,8 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
     private var sensorManager: SensorManager? = null
     private val sensorListener = ShakeEventListener {
         if (!preferencesRepository.isExperimentalFeaturesEnabled()) {
-            when (it) {
-                1 -> { Toast.makeText(this, "Why do you shake me?", Toast.LENGTH_SHORT).show() }
-                else -> {
-                    preferencesRepository.setIsExperimentalFeaturesEnabled(true)
-                    Toast.makeText(this, "Looks like you want to unlock more settings ;)", Toast.LENGTH_SHORT).show()
-                }
-            }
+            preferencesRepository.setIsExperimentalFeaturesEnabled(true)
+            Toast.makeText(this, "Looks like you want to unlock experimental settings ;)", Toast.LENGTH_SHORT).show()
         }
     }
 
