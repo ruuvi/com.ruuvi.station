@@ -26,7 +26,6 @@ class DefaultOnTagFoundListener(
     private val gatewaySender: GatewaySender,
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
-    private val locationInteractor: LocationInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository
 ) : IRuuviTagScanner.OnTagFoundListener {
@@ -35,12 +34,10 @@ class DefaultOnTagFoundListener(
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
     private var lastCleanedDate: Long = Date().time
-    private var locationUpdateDate: Long = Long.MIN_VALUE
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
-        updateLocation()
         saveReading(RuuviTagEntity(tag))
         cleanUpOldData()
     }
@@ -81,7 +78,7 @@ class DefaultOnTagFoundListener(
                 lastLogged[it] = Date().time
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
-                gatewaySender.sendData(ruuviTag, locationInteractor.lastLocation)
+                gatewaySender.sendData(ruuviTag, sensorSettings)
             }
         } else {
             Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id} lastLogged = ${Date(lastLoggedDate)}")
@@ -97,16 +94,6 @@ class DefaultOnTagFoundListener(
             Timber.d("Cleaning DB from old tag readings")
             sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
             lastCleanedDate = Date().time
-        }
-    }
-
-    private fun updateLocation() {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, -1)
-        val cleaningThreshold = calendar.time.time
-        if (locationUpdateDate < cleaningThreshold) {
-            locationInteractor.updateLocation()
-            locationUpdateDate = Date().time
         }
     }
 

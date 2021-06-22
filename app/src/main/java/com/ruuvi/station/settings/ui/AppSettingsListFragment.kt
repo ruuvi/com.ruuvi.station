@@ -44,7 +44,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
         }
 
         gatewaySettingsLayout.setDebouncedOnClickListener {
-            (activity as? AppSettingsDelegate)?.openFragment(R.string.gateway_url)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.data_forwarding_url)
         }
 
         graphSettingsLayout.setDebouncedOnClickListener {
@@ -95,7 +95,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
         }
 
         gatewayUrlSubTextView.text = viewModel.getGatewayUrl()
-        if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.gateway_disabled)
+        if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.data_forwarding_disabled)
         val temperature = viewModel.getTemperatureUnit()
         temperatureUnitSubTextView.text = getString(temperature.title)
         val humidity = viewModel.getHumidityUnit()
