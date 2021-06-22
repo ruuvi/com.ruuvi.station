@@ -18,13 +18,13 @@
                     style="@style/PrefTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/gateway_url" />
+                    android:text="@string/data_forwarding_url" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/gatewayUrlEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/gateway_url_hint"
+                    android:hint="@string/data_forwarding_url_hint"
                     android:maxLength="255" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -45,7 +45,7 @@
                     android:id="@+id/gatewayTestButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_gateway_test"
+                    android:text="@string/settings_data_forwarding_test"
                     android:layout_marginTop="8dp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView

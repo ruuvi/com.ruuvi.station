@@ -74,7 +74,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
             fragment = when (resourceId) {
                 R.string.settings_background_scan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.settings_chart -> AppSettingsGraphFragment.newInstance()
-                R.string.gateway_url -> AppSettingsGatewayFragment.newInstance()
+                R.string.data_forwarding_url -> AppSettingsGatewayFragment.newInstance()
                 R.string.settings_pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
                 R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
                 R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()
