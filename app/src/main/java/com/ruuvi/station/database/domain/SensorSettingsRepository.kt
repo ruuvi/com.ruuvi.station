@@ -138,4 +138,10 @@ class SensorSettingsRepository {
         settings.networkLastSync = date
         settings.update()
     }
+
+    fun clearLastSyncGatt() {
+        SQLite.update(SensorSettings::class.java)
+            .set(SensorSettings_Table.lastSync.eq(null))
+            .execute()
+    }
 }

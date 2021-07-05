@@ -5,6 +5,7 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.gateway.GatewaySender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -17,7 +18,8 @@ class AppSettingsInteractor(
     private val preferencesRepository: PreferencesRepository,
     private val gatewaySender: GatewaySender,
     private val unitsConverter: UnitsConverter,
-    private val networkApplicationSettings: NetworkApplicationSettings
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
 
     fun getTemperatureUnit(): TemperatureUnit =
@@ -133,4 +135,6 @@ class AppSettingsInteractor(
     fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 
     fun getAllLocales(): Array<LocaleType> = LocaleType.values()
+
+    fun clearLastSync() = sensorSettingsRepository.clearLastSyncGatt()
 }

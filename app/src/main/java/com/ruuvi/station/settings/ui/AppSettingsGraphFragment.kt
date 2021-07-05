@@ -23,10 +23,20 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+        setupViewModel()
+    }
+
+    private fun setupViewModel() {
+        viewModel.startEdit()
         observeInterval()
         observePeriod()
         observeShowAllPoints()
         observeDrawDots()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.stopEdit()
     }
 
     private fun setupViews() {
