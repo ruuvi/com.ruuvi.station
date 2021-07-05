@@ -14,12 +14,10 @@ import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.activity_welcome.start_button
 import kotlinx.android.synthetic.main.activity_welcome.tab_layout
 import kotlinx.android.synthetic.main.activity_welcome.welcome_pager
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-@ExperimentalCoroutinesApi
 class WelcomeActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()

@@ -1,7 +1,6 @@
 package com.ruuvi.station.gateway
 
 import android.content.Context
-import android.location.Location
 import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -10,14 +9,14 @@ import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.gateway.data.ScanEvent
-import com.ruuvi.station.gateway.data.ScanLocation
+import com.ruuvi.station.database.tables.SensorSettings
 import timber.log.Timber
 import java.lang.Exception
 
 class GatewaySender(
     private val context: Context,
-    private val preferences: PreferencesRepository
+    private val preferences: PreferencesRepository,
+    private val eventFactory: EventFactory
 ) {
     private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ").create()
 
@@ -25,29 +24,17 @@ class GatewaySender(
         Ion.getDefault(context).configure().gson = gson
     }
 
-    fun sendData(tag: RuuviTagEntity, location: Location?) {
+    fun sendData(tag: RuuviTagEntity, sensorSettings: SensorSettings) {
         val backendUrl = preferences.getGatewayUrl()
         if (backendUrl.isNotEmpty()) {
-            Timber.d("sendData for [${tag.name}] (${tag.id}) to ${tag.gatewayUrl}")
+            Timber.d("sendData for ${tag.id} to $backendUrl")
 
-            var scanLocation: ScanLocation? = null
-            location?.let {
-                scanLocation = ScanLocation(
-                    it.latitude,
-                    it.longitude,
-                    it.accuracy
-                )
-            }
-
-            val deviceId = preferences.getDeviceId()
-            val eventBatch = ScanEvent(context, deviceId)
-            eventBatch.location = scanLocation
-            eventBatch.tags.add(tag)
+            val event = eventFactory.createEvent(tag, sensorSettings)
             try {
                 Ion.with(context)
                     .load(backendUrl)
                     .setLogging("HTTP_LOGS", Log.DEBUG)
-                    .setJsonPojoBody(eventBatch)
+                    .setJsonPojoBody(event)
                     .asJsonObject()
                     .setCallback { e, _ ->
                         if (e != null) {
@@ -62,7 +49,7 @@ class GatewaySender(
 
     fun test(gatewayUrl: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
         try {
-            val scanEvent = ScanEvent(context, deviceId)
+            val scanEvent = eventFactory.createTestEvent()
             Ion.with(context)
                 .load(gatewayUrl)
                 .setJsonPojoBody(scanEvent)

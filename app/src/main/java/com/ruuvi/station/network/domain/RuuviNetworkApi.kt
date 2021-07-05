@@ -48,10 +48,6 @@ interface RuuviNetworkApi{
     ): Response<ShareSensorResponse>
 
     @Headers("Content-Type: application/json")
-    @GET("shared")
-    suspend fun getSharedSensors(@Header("Authorization") auth: String): Response<SharedSensorsResponse>
-
-    @Headers("Content-Type: application/json")
     @GET("get")
     suspend fun getSensorData(
         @Header("Authorization") auth: String,
@@ -82,4 +78,38 @@ interface RuuviNetworkApi{
         @Header("Content-Type") type: String,
         @Body data: RequestBody
     )
+
+    @Headers("Content-Type: application/json")
+    @POST("settings")
+    suspend fun updateUserSettings(
+        @Header("Authorization")auth: String,
+        @Body request: UpdateUserSettingRequest
+    ): Response<UpdateUserSettingResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("settings")
+    suspend fun getUserSettings(
+        @Header("Authorization")auth: String
+    ): Response<GetUserSettingsResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("alerts")
+    suspend fun setAlert(
+        @Header("Authorization")auth: String,
+        @Body request: SetAlertRequest
+    ): Response<SetAlertResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("alerts")
+    suspend fun getAlerts(
+        @Header("Authorization")auth: String,
+        @Query("sensor") sensor: String?
+    ): Response<GetAlertsResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("sensors")
+    suspend fun geSensors(
+        @Header("Authorization") auth: String,
+        @Query("sensor") sensor: String?
+    ): Response<GetSensorsResponse>
 }

@@ -19,9 +19,14 @@ class EnterCodeViewModel (
     private val successfullyVerified = MutableLiveData<Boolean>(false)
     val successfullyVerifiedObserve: LiveData<Boolean> = successfullyVerified
 
+    private val requestInProcess = MutableLiveData<Boolean>(false)
+    val requestInProcessObserve: LiveData<Boolean> = requestInProcess
+
     val signedIn = networkInteractor.signedIn
 
     fun verifyCode(token: String) {
+        requestInProcess.value = true
+        errorText.value = ""
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
                 successfullyVerified.value = true
@@ -29,6 +34,7 @@ class EnterCodeViewModel (
             } else {
                 errorText.value = response
             }
+            requestInProcess.value = false
         }
     }
 }

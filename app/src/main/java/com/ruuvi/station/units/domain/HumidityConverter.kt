@@ -7,72 +7,58 @@ import kotlin.math.pow
 /***
  * @see https://doi.org/10.1063/1.1461829
  */
-data class HumidityConverter(val c: Double, val rh: Double) {
+data class HumidityConverter(val celsiusTemperature: Double, val rh: Double) {
 
-    val k: Double = c + 273.15 // kelvin K
-    val f: Double = (c * 9.0 / 5.0) + 32.0 // fahrenheit °F
-    val ah: Double by lazy { // absolute humidity g/m³
-        cgkJ * (rh * Pws()) / k
+    private val kelvinTemperature: Double = celsiusTemperature + 273.15 // kelvin K
+    val fahrenheitTemperature: Double = (celsiusTemperature * 9.0 / 5.0) + 32.0 // fahrenheit °F
+    val absoluteHumidity: Double by lazy { // absolute humidity g/m³
+        cgkJ * (rh * pws()) / kelvinTemperature
     }
-    val Td: Double? by lazy { // dew point °C
-        val m = m(c = c)
-        val A = A(c = c)
-        val Tn = Tn(c = c)
-        val Pw = Pws() * rh / 100.0
-        if (m != null && A != null && Tn != null) {
-            Tn / ((m / (log10(Pw / A))) - 1.0)
+    val toDewCelsius: Double? by lazy { // dew point °C
+        val m = m(c = celsiusTemperature)
+        val a = a(c = celsiusTemperature)
+        val tn = tn(c = celsiusTemperature)
+        val pw = pws() * rh / 100.0
+        if (m != null && a != null && tn != null) {
+            tn / ((m / (log10(pw / a))) - 1.0)
         } else {
             null
         }
     }
 
-    val TdF: Double? by lazy { // dew point °F
-        if (Td != null) {
-            (Td!! * 9.0 / 5.0) + 32.0
+    val toDewFahrenheit: Double? by lazy { // dew point °F
+        if (toDewCelsius != null) {
+            (toDewCelsius!! * 9.0 / 5.0) + 32.0
         } else {
             null
         }
     }
 
-    val TdK: Double? by lazy { // dew point K
-        if (Td != null) {
-            Td!! + 273.15
+    val toDewKelvin: Double? by lazy { // dew point K
+        if (toDewCelsius != null) {
+            toDewCelsius!! + 273.15
         } else {
             null
         }
     }
 
-    private val cgkJ: Double = 2.16679 // gk/J
 
-    private val Tc: Double = 647.096 // K
-    private val c1: Double = -7.85951783
-    private val c2: Double = 1.84408259
-    private val c3: Double = -11.7866497
-    private val c4: Double = 22.6807411
-    private val c5: Double = -15.9618719
-    private val c6: Double = 1.80122502
-    private val Pc: Double = 22064000.0 // Pa
 
-    private val Tn: Double = 273.16 // K
-    private val a0: Double = -13.928169
-    private val a1: Double = 34.707823
-    private val Pn: Double = 611.657 // Pa
-
-    private fun Pws(): Double {
-        return if (c > 0.01) { // estimate for 0°C-373°C
-            val n = 1 - (k / Tc)
-            val p = Tc / k * (c1 * n + c2 * n.pow(1.5) + c3 * n.pow(3) + c4 * n.pow(3.5) + c5 * n.pow(4) + c6 * n.pow(7.5))
+    private fun pws(): Double {
+        return if (celsiusTemperature > 0.01) { // estimate for 0°C-373°C
+            val n = 1 - (kelvinTemperature / tc)
+            val p = tc / kelvinTemperature * (c1 * n + c2 * n.pow(1.5) + c3 * n.pow(3) + c4 * n.pow(3.5) + c5 * n.pow(4) + c6 * n.pow(7.5))
             val l = E.pow(p)
-            Pc * l
+            pc * l
         } else { // estimate for -100°C-0.01°C
-            val n = k / Tn
+            val n = kelvinTemperature / tn
             val p = a0 * (1 - n.pow(-1.5)) + a1 * (1 - n.pow(-1.25))
             val l = E.pow(p)
-            Pn * l
+            pn * l
         }
     }
 
-    private fun Tn(c: Double): Double? {
+    private fun tn(c: Double): Double? {
         return when (c) {
             in -70.0..(-20.0 - Double.MIN_VALUE) -> 273.1466
             in -20.0..(50.0 - Double.MIN_VALUE) -> 240.7263
@@ -84,7 +70,7 @@ data class HumidityConverter(val c: Double, val rh: Double) {
         }
     }
 
-    private fun A(c: Double): Double? {
+    private fun a(c: Double): Double? {
         return when (c) {
             in -70.0..(-20.0 - Double.MIN_VALUE) -> 6.114742
             in -20.0..(50.0 - Double.MIN_VALUE) -> 6.116441
@@ -106,5 +92,23 @@ data class HumidityConverter(val c: Double, val rh: Double) {
             in 200.0..(350.0 - Double.MIN_VALUE) -> 7.388931
             else -> null
         }
+    }
+
+    companion object {
+        private const val cgkJ: Double = 2.16679 // gk/J
+
+        private const val tc: Double = 647.096 // K
+        private const val c1: Double = -7.85951783
+        private const val c2: Double = 1.84408259
+        private const val c3: Double = -11.7866497
+        private const val c4: Double = 22.6807411
+        private const val c5: Double = -15.9618719
+        private const val c6: Double = 1.80122502
+        private const val pc: Double = 22064000.0 // Pa
+
+        private const val tn: Double = 273.16 // K
+        private const val a0: Double = -13.928169
+        private const val a1: Double = 34.707823
+        private const val pn: Double = 611.657 // Pa
     }
 }

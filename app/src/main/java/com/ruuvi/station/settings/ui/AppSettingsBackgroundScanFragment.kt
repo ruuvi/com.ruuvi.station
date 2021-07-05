@@ -8,30 +8,27 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.PermissionsHelper
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationMinutesPicker
 import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationSecondsPicker
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 
-@ExperimentalCoroutinesApi
 class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_settings_background_scan), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AppSettingsBackgroundScanViewModel by viewModel()
 
-    private lateinit var permissionsHelper: PermissionsHelper
+    private lateinit var permissionsInteractor: PermissionsInteractor
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        permissionsHelper = PermissionsHelper(requireActivity())
-
+        permissionsInteractor = PermissionsInteractor(requireActivity())
         setupViews()
         observeScanMode()
         observeInterval()
@@ -57,7 +54,7 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
                 viewModel.setBackgroundMode(selection)
                 settingsDescriptionTextView.text = getString(selection.description)
                 if (selection == BackgroundScanModes.BACKGROUND && permissionAsked == false) {
-                    permissionsHelper.requestBackgroundPermission()
+                    permissionsInteractor.requestBackgroundPermission()
                     permissionAsked = true
                 }
             }

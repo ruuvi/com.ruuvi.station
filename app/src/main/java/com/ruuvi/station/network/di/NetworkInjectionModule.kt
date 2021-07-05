@@ -12,12 +12,22 @@ object NetworkInjectionModule {
 
         bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance()) }
 
-        bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance()) }
+        bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance()) }
 
         bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance()) }
 
+        bind<NetworkRequestExecutor>() with singleton { NetworkRequestExecutor(instance(), instance(), instance(), instance(), instance()) }
+
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+        }
+
+        bind<NetworkApplicationSettings>() with  singleton {
+            NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance())
+        }
+
+        bind<NetworkAlertsSyncInteractor>() with  singleton {
+            NetworkAlertsSyncInteractor(instance(), instance(), instance(), instance())
         }
 
         bind<EmailEnterViewModel>() with provider {

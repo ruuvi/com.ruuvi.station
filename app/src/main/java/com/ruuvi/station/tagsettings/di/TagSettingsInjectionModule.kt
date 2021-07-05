@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagsettings.di
 
-import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.tagsettings.ui.TagSettingsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,15 +14,11 @@ object TagSettingsInjectionModule {
     val module = Kodein.Module(TagSettingsInjectionModule.javaClass.name) {
 
         bind<TagSettingsInteractor>() with singleton {
-            TagSettingsInteractor(instance(), instance())
+            TagSettingsInteractor(instance(), instance(), instance(), instance())
         }
 
         bind<TagSettingsViewModel>() with factory { args: TagSettingsViewModelArgs ->
             TagSettingsViewModel(args.tagId, instance(), instance(), instance(), instance())
-        }
-
-        bind<HumidityCalibrationInteractor>() with singleton {
-            HumidityCalibrationInteractor(instance())
         }
     }
 }

@@ -167,7 +167,7 @@
                 style="@style/PrefTitleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_gateway" />
+                android:text="@string/settings_data_forwarding" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gatewayUrlSubTextView"
@@ -177,7 +177,7 @@
                 android:ellipsize="end"
                 android:maxLength="64"
                 android:maxLines="1"
-                android:text="@string/gateway_url" />
+                android:text="@string/data_forwarding_url" />
         </LinearLayout>
 
         <include layout="@layout/divider" />

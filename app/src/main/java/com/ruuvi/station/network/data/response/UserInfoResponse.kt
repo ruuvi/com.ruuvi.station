@@ -12,5 +12,8 @@ data class SensorDataResponse(
     val name: String,
     val owner: String,
     val picture: String,
-    val public: Boolean
+    val public: Boolean,
+    val offsetTemperature: Double,
+    val offsetHumidity: Double,
+    val offsetPressure: Double
 )

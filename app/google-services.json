@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "443545302471-mlvlhv41fucinc80p9ooa6qsqvd18p4v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ruuvi.station",
+            "certificate_hash": "5ebcf2a3bb636a0fe56d96b2cb508998c45b390e"
+          }
+        },
+        {
           "client_id": "443545302471-2hhu2ojg14co447fbveaq8b1hbnag2n8.apps.googleusercontent.com",
           "client_type": 3
         }

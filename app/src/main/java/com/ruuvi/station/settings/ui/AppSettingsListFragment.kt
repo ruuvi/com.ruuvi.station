@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.android.synthetic.main.fragment_app_settings_list.*
@@ -34,7 +34,6 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
     private fun setupViewModel() {
         viewModel.experimentalFeatures.observe(viewLifecycleOwner, Observer {
-            Timber.d("experimentalSettingsContainer $it")
             experimentalSettingsContainer.isVisible = it
         })
     }
@@ -45,7 +44,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
         }
 
         gatewaySettingsLayout.setDebouncedOnClickListener {
-            (activity as? AppSettingsDelegate)?.openFragment(R.string.gateway_url)
+            (activity as? AppSettingsDelegate)?.openFragment(R.string.data_forwarding_url)
         }
 
         graphSettingsLayout.setDebouncedOnClickListener {
@@ -96,7 +95,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
         }
 
         gatewayUrlSubTextView.text = viewModel.getGatewayUrl()
-        if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.gateway_disabled)
+        if (gatewayUrlSubTextView.text.isEmpty()) gatewayUrlSubTextView.text = getString(R.string.data_forwarding_disabled)
         val temperature = viewModel.getTemperatureUnit()
         temperatureUnitSubTextView.text = getString(temperature.title)
         val humidity = viewModel.getHumidityUnit()

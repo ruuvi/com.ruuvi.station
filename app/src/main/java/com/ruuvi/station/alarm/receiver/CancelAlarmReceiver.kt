@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
-import com.ruuvi.station.database.tables.Alarm
+import com.ruuvi.station.database.domain.AlarmRepository
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.generic.instance
@@ -13,19 +13,16 @@ import org.kodein.di.generic.instance
 class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
 
     override lateinit var kodein: Kodein
+    private val alarmRepository: AlarmRepository by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
-        kodein = (context?.applicationContext as KodeinAware).kodein
+        kodein = (context.applicationContext as KodeinAware).kodein
         val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
 
         val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)
         val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
         if (alarmId != -1) {
-            val alarm = Alarm.get(alarmId)
-            if (alarm != null) {
-                alarm.enabled = false
-                alarm.update()
-            }
+            alarmRepository.disableAlarm(alarmId)
         }
         alarmCheckInteractor.removeNotificationById(notificationId)
     }

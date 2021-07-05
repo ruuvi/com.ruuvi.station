@@ -14,12 +14,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
     val converter: UnitsConverter,
     val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    private val preferencesRepository: PreferencesRepository,
+    preferencesRepository: PreferencesRepository,
     private val tokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 

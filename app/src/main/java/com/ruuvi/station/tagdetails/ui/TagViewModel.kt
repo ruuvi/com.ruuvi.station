@@ -1,29 +1,31 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.ruuvi.station.app.preferences.GlobalSettings
-import com.ruuvi.station.bluetooth.IRuuviGattListener
-import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
+import com.ruuvi.station.bluetooth.model.GattSyncStatus
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 
-
 class TagViewModel(
-        private val tagDetailsInteractor: TagDetailsInteractor,
-        private val gattInteractor: BluetoothGattInteractor,
-        val tagId: String
+    private val tagDetailsInteractor: TagDetailsInteractor,
+    private val gattInteractor: BluetoothGattInteractor,
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    val sensorId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
     val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
@@ -31,19 +33,18 @@ class TagViewModel(
     private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
     val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
-    enum class SyncProgress {
-        STILL, CONNECTING, CONNECTED, DISCONNECTED, READING_INFO, READING_DATA, SAVING_DATA, NOT_SUPPORTED, NOT_FOUND, ERROR, DONE
+    private val syncStatusObj = MutableLiveData<GattSyncStatus>()
+    val syncStatusObserve: LiveData<GattSyncStatus> = syncStatusObj
+
+    private val networkSyncInProgress = MutableLiveData<Boolean>(false)
+
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
+
+    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+        it != null
     }
 
-    class SyncStatus {
-        var syncProgress = SyncProgress.STILL
-        var deviceInfoModel = ""
-        var deviceInfoFw = ""
-        var readDataSize = 0
-    }
-
-    private val syncStatusObj = MutableLiveData<SyncStatus>()
-    val syncStatusObserve: LiveData<SyncStatus> = syncStatusObj
+    val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -54,7 +55,26 @@ class TagViewModel(
     init {
         Timber.d("TagViewModel initialized")
         getTagInfo()
+
+        viewModelScope.launch {
+            gattInteractor.syncStatusFlow.collect {
+                Timber.d("syncStatusFlow collected $it")
+                it?.let {
+                    if (it.sensorId == sensorId) syncStatusObj.value = it
+                }
+            }
+        }
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncInProgressFlow.collect {
+                networkSyncInProgress.value = it
+            }
+        }
+
+        syncStatus.addSource(networkSyncInProgress) { syncStatus.value = isSyncInProgress() }
+        syncStatus.addSource(isNetworkTagObserve) { syncStatus.value = isSyncInProgress() }
     }
+
+    private fun isSyncInProgress(): Boolean = networkSyncInProgress.value ?: false && isNetworkTagObserve.value ?: false
 
     fun isShowGraph(isShow: Boolean) {
         showGraph = isShow
@@ -67,9 +87,6 @@ class TagViewModel(
     }
 
     fun syncGatt() {
-        syncStatusObj.value = SyncStatus()
-        syncStatusObj.value?.syncProgress = SyncProgress.CONNECTING
-        syncStatusObj.postValue(syncStatusObj.value)
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
             val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
@@ -77,87 +94,28 @@ class TagViewModel(
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
-            val found = gattInteractor.readLogs(tag.id, syncFrom, object : IRuuviGattListener {
-                override fun connected(state: Boolean) {
-                    if (state) {
-                        syncStatusObj.value?.syncProgress = SyncProgress.CONNECTED
-                        syncStatusObj.value?.syncProgress = SyncProgress.READING_INFO
-                    } else {
-                        if (syncStatusObj.value?.syncProgress == SyncProgress.SAVING_DATA) {
-                            syncStatusObj.value?.syncProgress = SyncProgress.DONE
-                        } else {
-                            syncStatusObj.value?.syncProgress = SyncProgress.DISCONNECTED
-                        }
-                    }
-                    syncStatusObj.postValue(syncStatusObj.value)
-                }
-
-                override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                    syncStatusObj.value?.deviceInfoModel = model
-                    syncStatusObj.value?.deviceInfoFw = fw
-                    if (canReadLogs) {
-                        syncStatusObj.value?.syncProgress = SyncProgress.READING_DATA
-                    } else {
-                        syncStatusObj.value?.syncProgress = SyncProgress.NOT_SUPPORTED
-                    }
-                    syncStatusObj.postValue(syncStatusObj.value)
-                }
-
-                override fun dataReady(data: List<LogReading>) {
-                    syncStatusObj.value?.readDataSize = data.size
-                    syncStatusObj.value?.syncProgress = SyncProgress.SAVING_DATA
-                    syncStatusObj.postValue(syncStatusObj.value)
-                    saveGattReadings(tag, data)
-                }
-
-                override fun heartbeat(raw: String) {
-                }
-            })
-            if (!found) {
-                syncStatusObj.value?.syncProgress = SyncProgress.NOT_FOUND
-                syncStatusObj.postValue(syncStatusObj.value)
-            }
-        } ?: kotlin.run {
-            Handler(Looper.getMainLooper()).post {
-                syncStatusObj.value?.syncProgress = SyncProgress.ERROR
-                syncStatusObj.postValue(syncStatusObj.value)
-            }
+            gattInteractor.readLogs(tag.id, syncFrom)
         }
+    }
+
+    fun resetGattStatus() {
+        gattInteractor.resetGattStatus(sensorId)
     }
 
     fun removeTagData() {
-        TagSensorReading.removeForTag(tagId)
-        tagDetailsInteractor.clearLastSync(tagId)
-    }
-
-    fun saveGattReadings(tag: RuuviTag, data: List<LogReading>) {
-        val tagReadingList = mutableListOf<TagSensorReading>()
-        data.forEach { logReading ->
-            val reading = TagSensorReading()
-            reading.ruuviTagId = tag.id
-            reading.temperature = logReading.temperature
-            reading.humidity = logReading.humidity
-            reading.pressure = logReading.pressure
-            reading.createdAt = logReading.date
-            tagReadingList.add(reading)
-        }
-        TagSensorReading.saveList(tagReadingList)
-        updateLastSync(Date())
-    }
-
-    fun updateLastSync(date: Date?) {
-        tagDetailsInteractor.updateLastSync(tagId, date)
+        sensorHistoryRepository.removeForSensor(sensorId)
+        tagDetailsInteractor.clearLastSync(sensorId)
     }
 
     fun tagSelected(selectedTag: RuuviTag?) {
-        selected = tagId == selectedTag?.id
+        selected = sensorId == selectedTag?.id
     }
 
     fun getTagInfo() {
         ioScope.launch {
-            Timber.d("getTagInfo $tagId")
-            getTagEntryData(tagId)
-            if (showGraph && selected) getGraphData(tagId)
+            Timber.d("getTagInfo $sensorId")
+            getTagEntryData(sensorId)
+            if (showGraph && selected) getGraphData(sensorId)
         }
     }
 
@@ -177,11 +135,13 @@ class TagViewModel(
     private fun getTagEntryData(tagId: String) {
         Timber.d("getTagEntryData for tagId = $tagId")
         ioScope.launch {
+            val status = networkInteractor.getSensorNetworkStatus(tagId)
             tagDetailsInteractor
                 .getTagById(tagId)
                 ?.let {
                     withContext(Dispatchers.Main) {
                         tagEntry.value = it
+                        networkStatus.value = status
                     }
                 }
         }

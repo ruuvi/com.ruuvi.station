@@ -2,6 +2,7 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
@@ -16,11 +17,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.data.NetworkSyncResultType
@@ -28,11 +29,14 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.util.PermissionsHelper
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.util.extensions.*
 import kotlinx.android.synthetic.main.activity_dashboard.mainDrawerLayout
 import kotlinx.android.synthetic.main.activity_dashboard.toolbar
 import kotlinx.android.synthetic.main.content_dashboard.*
+import kotlinx.android.synthetic.main.content_dashboard.noTagsTextView
+import kotlinx.android.synthetic.main.content_tag_details.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -49,16 +53,18 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private val viewModel: DashboardActivityViewModel by viewModel()
 
     private val runtimeBehavior: RuntimeBehavior by instance()
-    private lateinit var permissionsHelper: PermissionsHelper
     private var tags: MutableList<RuuviTag> = arrayListOf()
     private lateinit var adapter: RuuviTagAdapter
     private var getTagsTimer :Timer? = null
     private var signedIn = false
+    private lateinit var permissionsInteractor: PermissionsInteractor
+    private val preferencesRepository: PreferencesRepository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         setSupportActionBar(toolbar)
+        permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo)
@@ -67,8 +73,27 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         setupDrawer()
         setupListView()
 
-        permissionsHelper = PermissionsHelper(this)
-        permissionsHelper.requestPermissions()
+        requestPermission()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
+            requestPermission()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestPermission()
+                } else {
+                    permissionsInteractor.showPermissionSnackbar()
+                }
+            }
+        }
     }
 
     override fun onResume() {
@@ -86,12 +111,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupViewModel() {
-        viewModel.observeTags.observe( this, Observer {
+        viewModel.observeTags.observe(this) {
             tags.clear()
             tags.addAll(it)
             noTagsTextView.isVisible = tags.isEmpty()
             adapter.notifyDataSetChanged()
-        })
+        }
     }
 
     private fun setupListView() {
@@ -120,8 +145,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
-                R.id.sendFeedbackMenuItem -> SendFeedback()
-                R.id.getMoreSensorsMenuItem -> OpenUrl(WEB_URL)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
             mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -132,7 +157,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             viewModel.networkDataSync()
         }
 
-        viewModel.syncResultObserve.observe(this, Observer {syncResult ->
+        viewModel.syncResultObserve.observe(this) {syncResult ->
             val message = when (syncResult.type) {
                 NetworkSyncResultType.NONE -> ""
                 NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
@@ -143,9 +168,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
                 viewModel.syncResultShowed()
             }
-        })
+        }
 
-        viewModel.syncInProgressObserve.observe(this, Observer {
+        viewModel.syncInProgressObserve.observe(this) {
             if (it) {
                 Timber.d("Sync in progress")
                 syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
@@ -153,9 +178,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 Timber.d("Sync not in progress")
                 syncNetworkButton.clearAnimation()
             }
-        })
+        }
 
-        viewModel.userEmail.observe(this, Observer {
+        viewModel.userEmail.observe(this) {
             var user = it
             if (user.isNullOrEmpty()) {
                 user = getString(R.string.none)
@@ -165,9 +190,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             }
             updateMenu(signedIn)
             loggedUserTextView.text = getString(R.string.network_user, user)
-        })
+        }
 
-        viewModel.syncStatus.observe(this, Observer {syncStatus->
+        viewModel.syncStatus.observe(this) {syncStatus->
             if (syncStatus.syncInProgress) {
                 syncStatusTextView.text = getString(R.string.connected_reading_info)
             } else {
@@ -179,26 +204,18 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     }
                 syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
             }
-        })
+        }
     }
 
     private fun login(signedIn: Boolean) {
         if (signedIn == false) {
-            val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-            alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
-            alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener {
-                SignInActivity.start(this)
-            }
-            alertDialog.show()
+            SignInActivity.start(this)
         } else {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { dialogInterface, i ->
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.signOut()
                 }
                 setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
@@ -207,6 +224,18 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 show()
             }
         }
+    }
+
+    fun showNetworkBenefitsDialog() {
+        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
+        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+        ) { dialog, _ -> dialog.dismiss() }
+        alertDialog.setOnDismissListener {
+            SignInActivity.start(this)
+        }
+        alertDialog.show()
     }
 
     private fun updateMenu(signed: Boolean) {
@@ -232,6 +261,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
         val tag = view.tag as RuuviTag
         TagDetailsActivity.start(this, tag.id)
+    }
+
+    private fun requestPermission() {
+        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
     }
 
     companion object {

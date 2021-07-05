@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -11,8 +10,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.graph.GraphView
-import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -56,6 +55,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagReadings()
         observeSelectedTag()
         observeSync()
+        observeSyncStatus()
 
         gattSyncButton.setOnClickListener {
             viewModel.syncGatt()
@@ -68,6 +68,22 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         gattSyncCancel.setOnClickListener {
             viewModel.disconnectGatt()
         }
+    }
+
+    private fun observeSyncStatus() {
+        var i = 0
+        viewModel.syncStatus.observe(viewLifecycleOwner, Observer {
+            tagSynchronizingTextView.isVisible = it
+            if (it) {
+                var syncText = getText(R.string.synchronizing).toString()
+                for (j in 1 .. i) {
+                    syncText = syncText + "."
+                }
+                i++
+                if (i > 3) i = 0
+                tagSynchronizingTextView.text = syncText
+            }
+        })
     }
 
     override fun onResume() {
@@ -108,9 +124,10 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
         ) { dialog, _ -> dialog.dismiss() }
         alertDialog.setOnDismissListener {
-            gattSyncViewButtons.visibility = View.VISIBLE
-            gattSyncViewProgress.visibility = View.GONE
+            gattSyncViewButtons?.visibility = View.VISIBLE
+            gattSyncViewProgress?.visibility = View.GONE
         }
+        viewModel.resetGattStatus()
         alertDialog.show()
     }
 
@@ -132,50 +149,49 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun observeSync() {
         viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
             when (it.syncProgress) {
-                TagViewModel.SyncProgress.STILL -> {
+                SyncProgress.STILL -> {
                     // nothing is happening
                 }
-                TagViewModel.SyncProgress.CONNECTING -> {
+                SyncProgress.CONNECTING -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
-                    gattSyncViewButtons.visibility = View.GONE
-                    gattSyncViewProgress.visibility = View.VISIBLE
-                    gattSyncCancel.visibility = View.GONE
                 }
-                TagViewModel.SyncProgress.CONNECTED -> {
+                SyncProgress.CONNECTED -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
-                TagViewModel.SyncProgress.DISCONNECTED -> {
+                SyncProgress.DISCONNECTED -> {
                     gattAlertDialog(requireContext().getString(R.string.disconnected))
                 }
-                TagViewModel.SyncProgress.READING_INFO -> {
+                SyncProgress.READING_INFO -> {
                     gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
                 }
-                TagViewModel.SyncProgress.NOT_SUPPORTED -> {
+                SyncProgress.NOT_SUPPORTED -> {
                     gattAlertDialog("${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}")
                 }
-                TagViewModel.SyncProgress.READING_DATA -> {
-                    gattSyncStatusTextView.text = "${context?.getString(R.string.reading_history)}"+"..."
-                    gattSyncCancel.visibility = View.VISIBLE
+                SyncProgress.READING_DATA -> {
+                    var status = "${context?.getString(R.string.reading_history)}.. "
+                    if (it.syncedDataPoints > 0) status += it.syncedDataPoints
+                    gattSyncStatusTextView.text = status
                 }
-                TagViewModel.SyncProgress.SAVING_DATA -> {
+                SyncProgress.SAVING_DATA -> {
                     gattSyncStatusTextView.text = if (it.readDataSize > 0) {
                         "${context?.getString(R.string.data_points_read, it.readDataSize)}"
                     } else {
                         "${context?.getString(R.string.no_new_data_points)}"
                     }
                 }
-                TagViewModel.SyncProgress.NOT_FOUND -> {
+                SyncProgress.NOT_FOUND -> {
                     gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
                 }
-                TagViewModel.SyncProgress.ERROR -> {
+                SyncProgress.ERROR -> {
                     gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
                 }
-                TagViewModel.SyncProgress.DONE -> {
+                SyncProgress.DONE -> {
                     //gattAlertDialog(requireContext().getString(R.string.sync_complete))
-                    gattSyncViewButtons.visibility = View.VISIBLE
-                    gattSyncViewProgress.visibility = View.GONE
                 }
             }
+            gattSyncViewButtons.isVisible = it.syncProgress == SyncProgress.STILL || it.syncProgress == SyncProgress.DONE
+            gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
+            gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
         })
     }
 
@@ -192,10 +208,10 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun updateTagData(tag: RuuviTag) {
         Timber.d("updateTagData for ${tag.id}")
         tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
-        tagHumidityTextView.text = viewModel.getHumidityString(tag)
-        tagPressureTextView.text = viewModel.getPressureString(tag)
-        tagSignalTextView.text = viewModel.getSignalString(tag)
-        tagUpdatedTextView.text = getString(R.string.updated, tag.updatedAt?.describingTimeSince(requireContext()))
+        tagHumidityTextView.text = tag.humidityString
+        tagPressureTextView.text = tag.pressureString
+        tagMovementTextView.text = tag.movementCounter.toString()
+        tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
         val unit = viewModel.getTemperatureUnitString()
         val unitSpan = SpannableString(unit)
@@ -207,6 +223,12 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             } else {
                 gattSyncView.visibility = View.GONE
             }
+        }
+
+        if (tag.updatedAt == tag.networkLastSync) {
+            sourceTypeImageView.setImageResource(R.drawable.ic_icon_gateway)
+        } else {
+            sourceTypeImageView.setImageResource(R.drawable.ic_icon_bluetooth)
         }
     }
 

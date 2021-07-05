@@ -14,7 +14,7 @@
     <color name="lastSeenColor">#829fa5</color>
     <color name="inactive">#b3b3b3</color>
     <color name="noTagsColor">#bbbbbb</color>
-    <color name="divider">#dddddd</color>
+    <color name="divider">#D6D6D6</color>
     <color name="href">#6aeae1</color>
     <color name="activeAlarm">#FF5555</color>
 </resources>

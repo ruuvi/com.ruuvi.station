@@ -49,12 +49,24 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/shareSensorDisabledTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_sharing_disabled"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            style="@style/TextViewLink"
+            app:layout_constraintTop_toBottomOf="@+id/shareSensorTitleTextView"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sharingLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shareSensorTitleTextView"
+            app:layout_constraintTop_toBottomOf="@+id/shareSensorDisabledTitleTextView"
             app:layout_constraintVertical_bias="0.0"
             tools:layout_editor_absoluteX="0dp">
 

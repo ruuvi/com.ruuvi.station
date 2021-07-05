@@ -14,12 +14,10 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.util.ShakeEventListener
 import kotlinx.android.synthetic.main.activity_app_settings.toolbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-@ExperimentalCoroutinesApi
 class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
 
     override val kodein by closestKodein()
@@ -33,15 +31,8 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
     private var sensorManager: SensorManager? = null
     private val sensorListener = ShakeEventListener {
         if (!preferencesRepository.isExperimentalFeaturesEnabled()) {
-            when (it) {
-                1 -> { }
-                2 -> Toast.makeText(this, "Why do you shake me?", Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(this, "What are you trying to get?", Toast.LENGTH_SHORT).show()
-                else -> {
-                    preferencesRepository.setIsExperimentalFeaturesEnabled(true)
-                    Toast.makeText(this, "Looks like you want to unlock more settings ;)", Toast.LENGTH_SHORT).show()
-                }
-            }
+            preferencesRepository.setIsExperimentalFeaturesEnabled(true)
+            Toast.makeText(this, "Looks like you want to unlock experimental settings ;)", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -64,9 +55,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
 
     override fun onPause() {
         super.onPause()
-        sensorManager?.let {
-            it.unregisterListener(sensorListener)
-        }
+        sensorManager?.unregisterListener(sensorListener)
     }
 
     override fun openFragment(resourceId: Int) {
@@ -85,7 +74,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
             fragment = when (resourceId) {
                 R.string.settings_background_scan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.settings_chart -> AppSettingsGraphFragment.newInstance()
-                R.string.gateway_url -> AppSettingsGatewayFragment.newInstance()
+                R.string.data_forwarding_url -> AppSettingsGatewayFragment.newInstance()
                 R.string.settings_pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
                 R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
                 R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()

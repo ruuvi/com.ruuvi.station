@@ -1,6 +1,6 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.database.TagRepository
+import com.ruuvi.station.database.domain.TagRepository
 
 class NetworkSignInInteractor (
     private val tagRepository: TagRepository,

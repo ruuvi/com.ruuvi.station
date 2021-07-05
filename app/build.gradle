@@ -9,14 +9,14 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 android {
 
     compileSdkVersion 30
-    buildToolsVersion '29.0.3'
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15008
-        versionName "1.5.8"
+        versionCode 15026
+        versionName "1.5.26"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -41,6 +41,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     dexOptions {
@@ -74,21 +78,21 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.2.0'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.2.1'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.3'
     //implementation project(':bluetooth_library')
     //implementation project(':default_bluetooth_library')
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -106,20 +110,16 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    // for manual locale change
-    //implementation "com.github.YarikSOffice:lingver:1.3.0"
-
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
 
     kapt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbflow_version"
-//    kapt "com.github.agrosner.dbflow:processor:${dbflow_version}"
     implementation "com.github.Raizlabs.DBFlow:dbflow-core:$dbflow_version"
     implementation "com.github.Raizlabs.DBFlow:dbflow:$dbflow_version"
     implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:$dbflow_version"
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.21.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.72"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     //DI
@@ -135,10 +135,10 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     //Android KTX
-    implementation "androidx.core:core-ktx:1.3.1"
+    implementation "androidx.core:core-ktx:1.3.2"
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+    implementation platform('com.google.firebase:firebase-bom:28.0.1')
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'

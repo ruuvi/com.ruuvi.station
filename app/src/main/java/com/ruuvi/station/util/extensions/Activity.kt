@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 
-fun AppCompatActivity.SendFeedback(){
+fun AppCompatActivity.sendFeedback(){
     val intent = Intent(Intent.ACTION_SENDTO)
     intent.data = Uri.parse("mailto:")
-    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ));
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ))
     intent.putExtra(Intent.EXTRA_SUBJECT, "Ruuvi Station Android Feedback")
     val body = """
                        
@@ -24,7 +24,7 @@ App: ${applicationInfo.loadLabel(packageManager)} ${BuildConfig.VERSION_NAME}"""
     startActivity(Intent.createChooser(intent, getString(R.string.send_email)))
 }
 
-fun AppCompatActivity.OpenUrl(url: String){
+fun AppCompatActivity.openUrl(url: String){
     val webIntent = Intent(Intent.ACTION_VIEW)
     webIntent.data = Uri.parse(url)
     startActivity(webIntent)

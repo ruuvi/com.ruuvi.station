@@ -10,8 +10,11 @@ import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
+import com.ruuvi.station.database.domain.AlarmRepository
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
@@ -21,7 +24,9 @@ import java.util.Calendar
 
 class AlarmCheckInteractor(
     private val context: Context,
-    private val tagConverter: TagConverter
+    private val tagConverter: TagConverter,
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val alarmRepository: AlarmRepository
 ) {
     private val lastFiredNotification = mutableMapOf<Int, Long>()
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -40,8 +45,8 @@ class AlarmCheckInteractor(
         return AlarmStatus.NO_ALARM
     }
 
-    fun check(ruuviTagEntity: RuuviTagEntity) {
-        val ruuviTag = tagConverter.fromDatabase(ruuviTagEntity)
+    fun check(ruuviTagEntity: RuuviTagEntity, sensorSettings: SensorSettings) {
+        val ruuviTag = tagConverter.fromDatabase(ruuviTagEntity, sensorSettings)
         getEnabledAlarms(ruuviTag)
             .forEach { alarm ->
                 val resourceId = getResourceId(alarm, ruuviTag, true)
@@ -52,9 +57,7 @@ class AlarmCheckInteractor(
     }
 
     private fun getEnabledAlarms(ruuviTag: RuuviTag): List<Alarm> =
-        Alarm
-            .getForTag(ruuviTag.id)
-            .filter { it.enabled }
+        alarmRepository.getForSensor(ruuviTag.id).filter { it.enabled }
 
     private fun getResourceId(it: Alarm, ruuviTag: RuuviTag, shouldCompareMovementCounter: Boolean = false): Int {
         return when (it.type) {
@@ -64,10 +67,10 @@ class AlarmCheckInteractor(
             Alarm.RSSI -> compareWithAlarmRange(it, ruuviTag)
             Alarm.MOVEMENT -> {
                 val readings: List<TagSensorReading> =
-                    TagSensorReading.getLatestForTag(ruuviTag.id, 2)
+                    sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
                 if (readings.size == 2) {
                     when {
-                        shouldCompareMovementCounter && ruuviTag.dataFormat == SOME_DATA_FORMAT_VALUE && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
+                        shouldCompareMovementCounter && ruuviTag.dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
                         hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
                         else -> NOTIFICATION_RESOURCE_ID
                     }
@@ -157,7 +160,8 @@ class AlarmCheckInteractor(
         val now = calendar.timeInMillis
         calendar.add(Calendar.SECOND, -10)
         val notificationThreshold = calendar.timeInMillis
-        val muted = alarm.mutedTill != null && alarm.mutedTill.time > now
+        val alarmMutedTill = alarm.mutedTill
+        val muted = alarmMutedTill != null && alarmMutedTill.time > now
         return if (!muted && (lastNotificationTime == null || lastNotificationTime < notificationThreshold)) {
             lastFiredNotification[alarm.id] = now
             true
@@ -223,9 +227,7 @@ class AlarmCheckInteractor(
         private const val NOTIFICATION_RESOURCE_ID = -9001
         private const val CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
-
-        //Fixme correct name
-        private const val SOME_DATA_FORMAT_VALUE = 5
+        private const val FORMAT5 = 5
     }
 }
 

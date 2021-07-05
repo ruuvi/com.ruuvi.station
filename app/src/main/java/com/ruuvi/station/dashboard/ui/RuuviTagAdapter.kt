@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.item_dashboard.view.humidity
 import kotlinx.android.synthetic.main.item_dashboard.view.lastSeenTextView
 import kotlinx.android.synthetic.main.item_dashboard.view.letterImage
 import kotlinx.android.synthetic.main.item_dashboard.view.pressure
-import kotlinx.android.synthetic.main.item_dashboard.view.signal
+import kotlinx.android.synthetic.main.item_dashboard.view.movement
 import kotlinx.android.synthetic.main.item_dashboard.view.temperature
 
 class RuuviTagAdapter(
@@ -43,9 +43,9 @@ class RuuviTagAdapter(
         item?.let {
             view.deviceId.text = it.displayName
             view.temperature.text = it.temperatureString
-            view.humidity.text = converter.getHumidityString(it.humidity, it.temperature)
-            view.pressure.text = converter.getPressureString(it.pressure)
-            view.signal.text = converter.getSignalString(it.rssi)
+            view.humidity.text = it.humidityString
+            view.pressure.text = it.pressureString
+            view.movement.text = it.movementCounter.toString()
         }
 
         val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight
@@ -59,8 +59,7 @@ class RuuviTagAdapter(
         val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, view.deviceId.text.toString(), letterSize)
         view.letterImage.setImageBitmap(ballBitmap)
 
-        val updatedAt =
-            context.getString(R.string.updated, item?.updatedAt?.describingTimeSince(activity))
+        val updatedAt = item?.updatedAt?.describingTimeSince(activity)
         view.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM
