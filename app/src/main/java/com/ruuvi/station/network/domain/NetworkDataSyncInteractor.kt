@@ -164,8 +164,7 @@ class NetworkDataSyncInteractor (
 
             if (measurements.size > 0) {
                 val benchUpdate1 = Date()
-                val existData = tagRepository.getTagReadingsDate(sensorId, originalSince)?.map { it.createdAt }
-                saveSensorData( sensorSettings, measurements, existData ?: listOf())
+                saveSensorData( sensorSettings, measurements)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-saveSensorData-finish ${sensorId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
@@ -182,41 +181,30 @@ class NetworkDataSyncInteractor (
         syncInProgress.value = status
     }
 
-    private fun saveSensorData(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>, existsData: List<Date>): Int {
-        val list = mutableListOf<TagSensorReading>()
+    private fun saveSensorData(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
         val sensorId = sensorSettings.id
-        measurements.forEach { measurement ->
-            val createdAt = Date(measurement.timestamp * 1000)
-            if (!existsData.contains(createdAt)) {
-                try {
-                    if (measurement.data.isNotEmpty()) {
-                        val reading = TagSensorReading(
-                            BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
-                            createdAt
-                        )
-                        sensorSettings.calibrateSensor(reading)
-                        list.add(reading)
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
+        val list = measurements.mapNotNull { measurement ->
+            try {
+                if (measurement.data.isNotEmpty()) {
+                    val reading = TagSensorReading(
+                        BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
+                        Date(measurement.timestamp * 1000)
+                    )
+                    sensorSettings.calibrateSensor(reading)
+                    reading
+                } else {
+                    null
                 }
+            } catch (e: Exception) {
+                Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
+                null
             }
         }
+        val newestPoint = list.maxByOrNull { it.createdAt }
 
-        if (list.size > 0) {
-            val newestPoint = list.sortedByDescending { it.createdAt }.first()
-            //TODO move logic to some repo
-            var tagEntry = tagRepository.getTagById(sensorId)
-            if (tagEntry == null) {
-                tagEntry = RuuviTagEntity(newestPoint)
-                tagEntry.favorite = true
-                tagEntry.insert()
-            } else {
-                tagEntry.favorite = true
-                tagEntry.updateData(newestPoint)
-                tagEntry.update()
-            }
-            sensorHistoryRepository.bulkInsert(list)
+        if (list.isNotEmpty() && newestPoint != null) {
+            tagRepository.activateSensor(newestPoint)
+            sensorHistoryRepository.bulkInsert(sensorId, list)
             sensorSettingsRepository.updateNetworkLastSync(sensorId, newestPoint.createdAt)
             return list.size
         }

@@ -1,7 +1,7 @@
 package com.ruuvi.station.tagdetails.ui
 
 import androidx.lifecycle.*
-import com.ruuvi.station.app.preferences.GlobalSettings
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
 import com.ruuvi.station.database.domain.SensorHistoryRepository
@@ -25,6 +25,7 @@ class TagViewModel(
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    private val preferencesRepository: PreferencesRepository,
     val sensorId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
@@ -89,7 +90,7 @@ class TagViewModel(
     fun syncGatt() {
         tagEntryObserve.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
+            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * preferencesRepository.getGraphViewPeriodDays())
             if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }
