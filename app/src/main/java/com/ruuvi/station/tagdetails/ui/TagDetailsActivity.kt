@@ -26,6 +26,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
@@ -516,8 +517,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         invalidateOptionsMenu()
 
         if (isEmptyTags) {
-            val bitmap = Utils.getDefaultBackground(8, applicationContext)
-            imageSwitcher.setImageDrawable(bitmap)
+            imageSwitcher.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.gradient_background))
         }
     }
 
