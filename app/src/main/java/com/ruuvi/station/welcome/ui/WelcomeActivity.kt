@@ -58,8 +58,7 @@ class WelcomePager : PagerAdapter() {
             1 -> resId = R.id.welcome_1
             2 -> resId = R.id.welcome_2
             3 -> resId = R.id.welcome_3
-            4 -> resId = R.id.welcome_4
-            5 -> resId = R.id.welcome_5
+            4 -> resId = R.id.welcome_5
         }
 
         return container.findViewById(resId)
@@ -70,6 +69,6 @@ class WelcomePager : PagerAdapter() {
     }
 
     override fun getCount(): Int {
-        return 6
+        return 5
     }
 }
