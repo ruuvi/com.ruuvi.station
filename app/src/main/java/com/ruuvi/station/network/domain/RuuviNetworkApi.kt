@@ -55,7 +55,8 @@ interface RuuviNetworkApi{
         @Query("since") since: Long?,
         @Query("until") until: Long?,
         @Query("sort") sort: String?,
-        @Query("limit") limit: Int?
+        @Query("limit") limit: Int?,
+        @Query("mode") mode: String?
     ): Response<GetSensorDataResponse>
 
     @Headers("Content-Type: application/json")
