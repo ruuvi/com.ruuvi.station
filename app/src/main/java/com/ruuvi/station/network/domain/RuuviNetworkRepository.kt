@@ -156,12 +156,13 @@ class RuuviNetworkRepository
 
     suspend fun getSensorData(token: String, request: GetSensorDataRequest): GetSensorDataResponse? = withContext(dispatcher) {
         val response = retrofitService.getSensorData(
-            getAuth(token),
-            request.sensor,
-            request.since?.getEpochSecond(),
-            request.until?.getEpochSecond(),
-            request.sort,
-            request.limit
+            auth = getAuth(token),
+            sensor = request.sensor,
+            since = request.since?.getEpochSecond(),
+            until = request.until?.getEpochSecond(),
+            sort = request.sort,
+            limit = request.limit,
+            mode = request.mode?.code
         )
         val result: GetSensorDataResponse?
         if (response.isSuccessful) {

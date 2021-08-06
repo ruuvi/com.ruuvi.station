@@ -14,6 +14,7 @@ import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
+import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorDataResponse
@@ -248,10 +249,11 @@ class NetworkDataSyncInteractor (
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
         Timber.d("benchmark-getSince-$tagId since $since")
         val request = GetSensorDataRequest(
-            tagId,
+            sensor = tagId,
             since = since,
             sort = "asc",
-            limit = limit
+            limit = limit,
+            mode = SensorDataMode.DENSE
         )
         return networkInteractor.getSensorData(request)
     }
