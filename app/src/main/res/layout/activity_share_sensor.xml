@@ -89,6 +89,7 @@
               android:layout_marginLeft="8dp"
               android:layout_marginTop="16dp"
               android:layout_marginRight="8dp"
+              android:inputType="textEmailAddress"
               android:hint="@string/email"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/addFriendTextView" />
@@ -110,7 +111,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginLeft="8dp"
-              android:layout_marginTop="16dp"
+              android:layout_marginTop="32dp"
               android:layout_marginRight="8dp"
               android:text="@string/share_sensor_already_shared"
               android:textStyle="bold"
