@@ -106,7 +106,7 @@
     <string name="help_troubleshooting_title">FELSÖKNING</string>
     <string name="hours">Timmar</string>
     <string name="humidity">Luftfuktighet (%1$s)</string>
-    <string name="humidity_absolute_name">Absolut (gr/m³)</string>
+    <string name="humidity_absolute_name">Absolut (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Daggpunkt (°)</string>
     <string name="humidity_dew_point_unit">°</string>

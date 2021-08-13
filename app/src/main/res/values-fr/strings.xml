@@ -106,7 +106,7 @@
     <string name="help_troubleshooting_title">DÉPANNAGE TECHNIQUE</string>
     <string name="hours">Heures</string>
     <string name="humidity">Humidité de l\'air (%1$s)</string>
-    <string name="humidity_absolute_name">Absolue (gr/m³)</string>
+    <string name="humidity_absolute_name">Absolue (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Point de rosée (°)</string>
     <string name="humidity_dew_point_unit">°</string>
