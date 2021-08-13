@@ -10,18 +10,19 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
+import com.ruuvi.station.databinding.ActivityShareSensorBinding
+import com.ruuvi.station.network.ui.model.ShareOperationType
 import com.ruuvi.station.util.extensions.hideKeyboard
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.activity_share_sensor.*
 import kotlinx.android.synthetic.main.item_shared_to_email.view.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 
-class ShareSensorActivity : AppCompatActivity() , KodeinAware {
+class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -31,13 +32,17 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
         }
     }
 
+    private lateinit var binding: ActivityShareSensorBinding
+
     val emailsList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_share_sensor)
 
-        setSupportActionBar(toolbar)
+        binding = ActivityShareSensorBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
@@ -46,9 +51,9 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
     }
 
     private fun setupUI() {
-        shareButton.setOnClickListener {
-            viewModel.shareTag(friendEmailEditText.text.toString())
-            friendEmailEditText.setText("")
+        binding.shareButton.setOnClickListener {
+            viewModel.shareTag(binding.friendEmailEditText.text.toString())
+            binding.friendEmailEditText.setText("")
             hideKeyboard()
         }
     }
@@ -58,24 +63,41 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
             confirmUnshareSensor(email)
         }
 
-        sensorRecipientsListView.adapter = adapter
+        binding.sensorRecipientsListView.adapter = adapter
 
-        viewModel.emailsObserve.observe(this, Observer {
+        viewModel.emailsObserve.observe(this){
             emailsList.clear()
             emailsList.addAll(it)
+            binding.sharedTextView.isVisible = emailsList.isNotEmpty()
+
             adapter.notifyDataSetChanged()
-        })
+        }
 
         viewModel.operationStatusObserve.observe(this) {
-            if (!it.isNullOrEmpty()) {
-                Snackbar.make(sensorRecipientsListView, it, Snackbar.LENGTH_SHORT).show()
+            it?.let { status ->
+                when (status.type) {
+                    ShareOperationType.SHARING_SUCCESS ->
+                        Snackbar.make(
+                            binding.sensorRecipientsListView,
+                            getString(R.string.successfully_shared),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    ShareOperationType.SHARING_ERROR ->
+                        if (!it.message.isNullOrEmpty()) {
+                            Snackbar.make(
+                                binding.sensorRecipientsListView,
+                                it.message ?: "",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                }
                 viewModel.statusProcessed()
             }
         }
 
         viewModel.canShareObserve.observe(this) {
-            shareSensorDisabledTitleTextView.isVisible = !it
-            sharingLayout.isVisible = it
+            binding.shareSensorDisabledTitleTextView.isVisible = !it
+            binding.sharingLayout.isVisible = it
         }
     }
 

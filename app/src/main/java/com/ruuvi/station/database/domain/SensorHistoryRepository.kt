@@ -125,19 +125,21 @@ class SensorHistoryRepository {
                 }
             }
 
-            var query: StringBuilder? = StringBuilder(insertQuery)
-            var i = 0
-            for (valuesString in queries) {
-                if (query == null) query = StringBuilder(insertQuery)
-                query.append(valuesString)
-                i++
-                if (i >= BULK_INSERT_BATCH_SIZE) {
-                    executeSQL(query)
-                    query = null
-                    i = 0
+            if (queries.isNotEmpty()) {
+                var query: StringBuilder? = StringBuilder(insertQuery)
+                var i = 0
+                for (valuesString in queries) {
+                    if (query == null) query = StringBuilder(insertQuery)
+                    query.append(valuesString)
+                    i++
+                    if (i >= BULK_INSERT_BATCH_SIZE) {
+                        executeSQL(query)
+                        query = null
+                        i = 0
+                    }
                 }
+                if (query != null) executeSQL(query)
             }
-            if (query != null) executeSQL(query)
         }
     }
 

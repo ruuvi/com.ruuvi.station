@@ -85,7 +85,7 @@
     <string name="gallery">Галерея</string>
     <string name="gateway_test_exception">Произошла ошибка. Адрес правильный?</string>
     <string name="gateway_test_fail">Произошла ошибка. Код ответа: %1$d</string>
-    <string name="gateway_test_success">Гейтвей работает! Код ответа: %1$d</string>
+    <string name="gateway_test_success">Шлюз работает! Код ответа: %1$d</string>
     <string name="gateway_testing">Проверка...</string>
     <string name="h">ч</string>
     <string name="help_about_text">Ruuvi Station - простой в использовании, но мощный инструмент для работы с вашими Ruuvi сенсорами.</string>
@@ -106,7 +106,7 @@
     <string name="help_troubleshooting_title">РЕШЕНИЕ ПРОБЛЕМ</string>
     <string name="hours">Часов</string>
     <string name="humidity">Влажность воздуха (%1$s)</string>
-    <string name="humidity_absolute_name">Абсолютная влажность (гр/м³)</string>
+    <string name="humidity_absolute_name">Абсолютная влажность (г/м³)</string>
     <string name="humidity_absolute_unit">г/м³</string>
     <string name="humidity_dew_point_name">Точка росы (°)</string>
     <string name="humidity_dew_point_unit">°</string>

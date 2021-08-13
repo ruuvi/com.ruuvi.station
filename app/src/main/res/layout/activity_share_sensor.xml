@@ -114,7 +114,9 @@
               android:layout_marginTop="32dp"
               android:layout_marginRight="8dp"
               android:text="@string/share_sensor_already_shared"
+              android:visibility="invisible"
               android:textStyle="bold"
+              tools:visibility="visible"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/shareButton" />
 

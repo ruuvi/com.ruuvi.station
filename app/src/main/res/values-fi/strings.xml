@@ -106,7 +106,7 @@
     <string name="help_troubleshooting_title">VIANETSINTÄ</string>
     <string name="hours">Tuntia</string>
     <string name="humidity">Ilmankosteus (%1$s)</string>
-    <string name="humidity_absolute_name">Absoluuttinen (gr/m³)</string>
+    <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Kastepiste (°)</string>
     <string name="humidity_dew_point_unit">°</string>
