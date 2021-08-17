@@ -173,7 +173,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/calibration_header"
+                    android:id="@+id/calibrationHeaderTextView"
                     style="@style/sensorSettingGroupHeaderStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -188,7 +188,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/calibration_header" >
+                    app:layout_constraintTop_toBottomOf="@id/calibrationHeaderTextView" >
                     <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibrateTemperature"
                         android:layout_width="match_parent"

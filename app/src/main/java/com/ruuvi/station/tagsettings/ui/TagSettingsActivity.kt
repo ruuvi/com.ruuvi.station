@@ -27,6 +27,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.databinding.ActivityTagSettingsBinding
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
@@ -36,7 +37,6 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.activity_tag_settings.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -52,6 +52,8 @@ import kotlin.concurrent.scheduleAtFixedRate
 class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
+
+    private lateinit var binding: ActivityTagSettingsBinding
 
     private val viewModel: TagSettingsViewModel by viewModel {
         intent.getStringExtra(TAG_ID)?.let {
@@ -69,9 +71,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_tag_settings)
+        binding = ActivityTagSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
@@ -83,25 +86,25 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun setupUI() {
         setupAlarmItems()
 
-        removeTagButton.setDebouncedOnClickListener { delete() }
+        binding.removeTagButton.setDebouncedOnClickListener { delete() }
 
-        claimTagButton.setDebouncedOnClickListener {
+        binding.claimTagButton.setDebouncedOnClickListener {
             viewModel.claimSensor()
         }
 
-        shareTagButton.setDebouncedOnClickListener {
-            ShareSensorActivity.start(this, viewModel.sensorId )
+        binding.shareTagButton.setDebouncedOnClickListener {
+            ShareSensorActivity.start(this, viewModel.sensorId)
         }
 
-        calibrateHumidity.setDebouncedOnClickListener {
+        binding.calibrateHumidity.setDebouncedOnClickListener {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
         }
 
-        calibrateTemperature.setDebouncedOnClickListener {
+        binding.calibrateTemperature.setDebouncedOnClickListener {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
         }
 
-        calibratePressure.setDebouncedOnClickListener {
+        binding.calibratePressure.setDebouncedOnClickListener {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
         }
     }
@@ -122,44 +125,44 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 setupSensorImage(sensorSettings)
                 setupSensorName(sensorSettings)
             }
-            calibrateTemperature.setItemValue(
+            binding.calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
-            calibratePressure.setItemValue(
+            binding.calibratePressure.setItemValue(
                 unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
-            calibrateHumidity.setItemValue(
+            binding.calibrateHumidity.setItemValue(
                 unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
             )
-            ownerValueTextView.text = sensorSettings?.owner ?: "None"
+            binding.ownerValueTextView.text = sensorSettings?.owner ?: "None"
 
-            claimTagButton.isEnabled = sensorSettings?.owner.isNullOrEmpty()
+            binding.claimTagButton.isEnabled = sensorSettings?.owner.isNullOrEmpty()
         }
 
         viewModel.userLoggedInObserve.observe(this, Observer {
             if (it == true) {
-                claimTagButton.visibility = View.VISIBLE
-                shareTagButton.visibility = View.VISIBLE
-                networkLayout.visibility = View.VISIBLE
+                binding.claimTagButton.visibility = View.VISIBLE
+                binding.shareTagButton.visibility = View.VISIBLE
+                binding.networkLayout.visibility = View.VISIBLE
             } else {
-                claimTagButton.visibility = View.GONE
-                shareTagButton.visibility = View.GONE
-                networkLayout.visibility = View.GONE
+                binding.claimTagButton.visibility = View.GONE
+                binding.shareTagButton.visibility = View.GONE
+                binding.networkLayout.visibility = View.GONE
             }
         })
 
         viewModel.sensorOwnedByUserObserve.observe(this, Observer {
-            shareTagButton.isEnabled = it
+            binding.shareTagButton.isEnabled = it
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
-                Snackbar.make(toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
         })
 
         viewModel.canCalibrate.observe(this) {
-            calibration_header.isVisible = it
-            calibrationLayout.isVisible = it
+            binding.calibrationHeaderTextView.isVisible = it
+            binding.calibrationLayout.isVisible = it
         }
     }
 
@@ -187,7 +190,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 viewModel.updateTagBackground(viewModel.file.toString(), null)
                 val backgroundUri = Uri.parse(viewModel.file.toString())
                 val background = imageInteractor.getImage(backgroundUri)
-                tagImageView.setImageBitmap(background)
+                binding.tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.let {
@@ -226,7 +229,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                         viewModel.updateTagBackground(uri.toString(), null)
                         val backgroundUri = Uri.parse(uri.toString())
                         val background = imageInteractor.getImage(backgroundUri)
-                        tagImageView.setImageBitmap(background)
+                        binding.tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
                     Timber.e("Could not load photo: $e")
@@ -253,9 +256,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupSensorName(sensorSettings: SensorSettings) {
-        tagNameInputTextView.text = sensorSettings.displayName
+        binding.tagNameInputTextView.text = sensorSettings.displayName
 
-        tagNameInputTextView.setDebouncedOnClickListener {
+        binding.tagNameInputTextView.setDebouncedOnClickListener {
             val sensorNameEditDialog = SensorNameEditDialog.new_instance(sensorSettings.name, object: SensorNameEditListener {
                 override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
                     viewModel.setName(value)
@@ -268,9 +271,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupInputMac(sensorSettings: SensorSettings) {
-        inputMacTextView.text = sensorSettings.id
+        binding.inputMacTextView.text = sensorSettings.id
 
-        inputMacTextView.setOnLongClickListener {
+        binding.inputMacTextView.setOnLongClickListener {
             val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             val clip = ClipData.newPlainText(getString(R.string.mac_address), sensorSettings.id)
@@ -294,49 +297,49 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         if (sensorSettings.userBackground.isNullOrEmpty() == false) {
             val backgroundUri = Uri.parse(sensorSettings.userBackground)
             val background = imageInteractor.getImage(backgroundUri)
-            tagImageView.setImageBitmap(background)
+            binding.tagImageView.setImageBitmap(background)
         } else {
-            tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorSettings.defaultBackground)))
+            binding.tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorSettings.defaultBackground)))
         }
 
-        tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
+        binding.tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
-        tagImageSelectButton.setDebouncedOnClickListener {
+        binding.tagImageSelectButton.setDebouncedOnClickListener {
             val defaultBackground = if (sensorSettings.defaultBackground == 8) 0 else sensorSettings.defaultBackground + 1
             viewModel.updateTagBackground(null, defaultBackground)
             sensorSettings.defaultBackground = defaultBackground
-            tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
+            binding.tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
     }
 
     private fun setupCalibration(tag: RuuviTagEntity) {
-        calibrateHumidity.isGone = tag.humidity == null
-        calibratePressure.isGone = tag.pressure == null
-        calibrateHumidityDivider.isGone = tag.humidity == null
-        calibratePressureDivider.isGone = tag.pressure == null
+        binding.calibrateHumidity.isGone = tag.humidity == null
+        binding.calibratePressure.isGone = tag.pressure == null
+        binding.calibrateHumidityDivider.isGone = tag.humidity == null
+        binding.calibratePressureDivider.isGone = tag.pressure == null
     }
 
     private fun setupAlarmItems() {
-        alarmTemperature.restoreState(viewModel.alarmElements[0])
-        alarmHumidity.restoreState(viewModel.alarmElements[1])
-        alarmPressure.restoreState(viewModel.alarmElements[2])
-        alarmRssi.restoreState(viewModel.alarmElements[3])
-        alarmMovement.restoreState(viewModel.alarmElements[4])
+        binding.alarmTemperature.restoreState(viewModel.alarmElements[0])
+        binding.alarmHumidity.restoreState(viewModel.alarmElements[1])
+        binding.alarmPressure.restoreState(viewModel.alarmElements[2])
+        binding.alarmRssi.restoreState(viewModel.alarmElements[3])
+        binding.alarmMovement.restoreState(viewModel.alarmElements[4])
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
-            rawValuesLayout.isVisible = true
-            inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            xInputTextView.text = getString(R.string.acceleration_reading, tag.accelX)
-            yInputTextView.text = getString(R.string.acceleration_reading, tag.accelY)
-            zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
-            dataFormatTextView.text = tag.dataFormat.toString()
-            txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
-            rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
-            sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
+            binding.rawValuesLayout.isVisible = true
+            binding.inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
+            binding.xInputTextView.text = getString(R.string.acceleration_reading, tag.accelX)
+            binding.yInputTextView.text = getString(R.string.acceleration_reading, tag.accelY)
+            binding.zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
+            binding.dataFormatTextView.text = tag.dataFormat.toString()
+            binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
+            binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
+            binding.sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
         } else {
-            rawValuesLayout.isVisible = false
+            binding.rawValuesLayout.isVisible = false
         }
     }
 
