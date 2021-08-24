@@ -35,6 +35,9 @@ class TagSettingsViewModel(
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
+    private val sensorShared = MutableLiveData<Boolean> (false)
+    val sensorSharedObserve: LiveData<Boolean> = sensorShared
+
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
@@ -66,12 +69,21 @@ class TagSettingsViewModel(
                 sensorSettings.value = settings
             }
         }
+        // TODO remove frequent updates
+        getSensorSharedEmails()
     }
 
     private val handler = CoroutineExceptionHandler() { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
             operationStatus.value = exception.message
             Timber.d("CoroutineExceptionHandler: ${exception.message}")
+        }
+    }
+
+    fun getSensorSharedEmails() {
+        networkInteractor.getSharedInfo(sensorId, handler) { response ->
+            Timber.d("getSensorSharedEmails ${response.toString()}")
+            sensorShared.value = response?.sharedTo?.isNotEmpty() == true
         }
     }
 
@@ -98,7 +110,6 @@ class TagSettingsViewModel(
             networkInteractor.resetImage(sensorId)
         }
     }
-
 
     fun saveOrUpdateAlarmItems() {
         for (alarmItem in alarmElements) {

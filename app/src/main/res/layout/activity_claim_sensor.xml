@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".network.ui.ClaimSensorActivity">
+  <RelativeLayout
+      android:background="@drawable/header"
+      android:fitsSystemWindows="true"
+      android:id="@+id/toolbarContainer"
+      android:layout_height="match_parent"
+      android:layout_width="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/appBarLayout"
+      android:background="@color/ap_transparent"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:theme="@style/AppTheme.AppBarOverlay"
+      app:elevation="0dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:background="@drawable/header"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+  </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bodyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBarLayout"
+        android:background="@color/white">
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/claimSensorTitleTextView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="8dp"
+          android:layout_marginTop="16dp"
+          android:layout_marginRight="8dp"
+          android:text="@string/claim_description"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+
+      <androidx.appcompat.widget.AppCompatButton
+          android:id="@+id/claimButton"
+          style="@style/roundButton"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="48dp"
+          android:layout_marginTop="24dp"
+          android:layout_marginRight="48dp"
+          android:text="@string/claim_ownership"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/claimSensorTitleTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </RelativeLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>

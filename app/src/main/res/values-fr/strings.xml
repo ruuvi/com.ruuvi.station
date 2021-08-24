@@ -168,6 +168,8 @@
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="reading_history">Analyse de l\'historique</string>
     <string name="reading_history_not_supported">Firmware non supporté</string>
+    <string name="remove">Supprimer</string>
+    <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">BALAYAGE EN COURS</string>
@@ -218,6 +220,7 @@
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression</string>
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température</string>
+    <string name="share">Partager</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Le capteur est déjà partagé</string>
     <string name="share_sensor_description">Pour partager votre capteur, veuillez ajouter l\'adresse mail des destinataires (maximum 10).</string>
@@ -251,8 +254,6 @@
     <string name="tagsettings_network_info">RÉSEAU</string>
     <string name="tagsettings_owner">Propriétaire</string>
     <string name="tagsettings_sensor_remove">Supprimer le capteur</string>
-    <string name="tagsettings_sensor_remove_confirm">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
-    <string name="tagsettings_share_button">Partager</string>
     <string name="temperature">Température (%1$s)</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>

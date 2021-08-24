@@ -168,6 +168,8 @@
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="reading_history">Historiatietoja luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
+    <string name="remove">Poista</string>
+    <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNAA</string>
@@ -218,6 +220,7 @@
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö</string>
     <string name="settings_temperature_unit">Lämpötilayksikkö</string>
     <string name="settings_temperature_unit_details">Valitse sovelluksessa käytettävä lämpötilayksikkö</string>
+    <string name="share">Jaa</string>
     <string name="share_sensor_add_friend">Lisää ystävä</string>
     <string name="share_sensor_already_shared">Anturi on jo jaettu</string>
     <string name="share_sensor_description">Jaa anturitiedot verkossa lisäämällä ystäväsi sähköpostiosoite (maks. 10)</string>
@@ -251,8 +254,6 @@
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
-    <string name="tagsettings_sensor_remove_confirm">Haluatko varmasti poistaa tämän anturin?</string>
-    <string name="tagsettings_share_button">Jaa</string>
     <string name="temperature">Lämpötila (%1$s)</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
