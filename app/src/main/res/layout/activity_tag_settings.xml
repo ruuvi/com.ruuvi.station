@@ -100,10 +100,10 @@
                     app:layout_constraintTop_toBottomOf="@id/tagImageSelectButton" />
 
                 <TextView
-                    android:id="@+id/name_header"
+                    android:id="@+id/general_header"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:text="@string/name"
+                    android:text="@string/general"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tagImageView"
@@ -114,7 +114,7 @@
                     style="@style/sensorSettingInfoTitleStyle"
                     android:text="@string/tag_name"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/name_header" />
+                    app:layout_constraintTop_toBottomOf="@id/general_header" />
 
                 <TextView
                     android:id="@+id/tagNameInputTextView"
@@ -123,8 +123,55 @@
                     android:focusable="true"
                     app:layout_constraintStart_toEndOf="@id/tagNameTitleTextView"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/name_header"
+                    app:layout_constraintTop_toBottomOf="@id/general_header"
                     tools:text="00:00:00:00:00:00" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/ownerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/tagNameTitleTextView">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/ownerTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tagsettings_owner"
+                        android:layout_gravity="start"
+                        style="@style/sensorSettingInfoTitleStyle"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/ownerValueTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        style="@style/sensorSettingInfoValueStyle"
+                        app:layout_constraintRight_toRightOf="parent" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/shareLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/ownerLayout"
+                    tools:layout_editor_absoluteX="1dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/shareTitleTextView"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:layout_gravity="start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/shareValueTextView"
+                        style="@style/sensorSettingInfoValueStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <TextView
                     android:id="@+id/alerts_header"
@@ -134,7 +181,7 @@
                     android:text="@string/alerts"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tagNameInputTextView" />
+                    app:layout_constraintTop_toBottomOf="@id/shareLayout" />
 
                 <LinearLayout
                     android:id="@+id/alertsContainerLayout"
@@ -374,77 +421,33 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/networkLayout"
+                    android:id="@+id/removeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/rawValuesLayout">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/networkTitleTextView"
+                        android:id="@+id/removeTitleTextView"
                         style="@style/sensorSettingGroupHeaderStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/tagsettings_network_info"
+                        android:text="@string/remove"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ownerTitleTextView"
+                        android:id="@+id/removeSensorTitleTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/tagsettings_owner"
+                        android:text="@string/remove_this_sensor"
                         style="@style/sensorSettingInfoTitleStyle"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/networkTitleTextView" />
+                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/removeTitleTextView" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ownerValueTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/ownerTitleTextView"
-                        app:layout_constraintTop_toBottomOf="@id/networkTitleTextView" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/claimTagButton"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    style="@style/roundButton"
-                    android:text="@string/tagsettings_claim_button"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@+id/shareTagButton"
-                    app:layout_constraintTop_toBottomOf="@+id/networkLayout" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/shareTagButton"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    style="@style/roundButton"
-                    android:text="@string/tagsettings_share_button"
-                    app:layout_constraintLeft_toRightOf="@id/claimTagButton"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/networkLayout" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/removeTagButton"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="wrap_content"
-                    android:text="@string/tagsettings_sensor_remove"
-                    style="@style/roundButton"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/claimTagButton" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

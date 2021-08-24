@@ -87,6 +87,7 @@
     <string name="gateway_test_fail">Произошла ошибка. Код ответа: %1$d</string>
     <string name="gateway_test_success">Шлюз работает! Код ответа: %1$d</string>
     <string name="gateway_testing">Проверка...</string>
+    <string name="general">Основное</string>
     <string name="h">ч</string>
     <string name="help_about_text">Ruuvi Station - простой в использовании, но мощный инструмент для работы с вашими Ruuvi сенсорами.</string>
     <string name="help_about_title">О ПРИЛОЖЕНИИ</string>
@@ -168,6 +169,9 @@
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="reading_history">Чтение истории</string>
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
+    <string name="remove">Удалить</string>
+    <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
+    <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
@@ -218,6 +222,7 @@
     <string name="settings_pressure_unit_details">Выберите единицу измерения давления для отображения</string>
     <string name="settings_temperature_unit">Ед. изм. Температуры</string>
     <string name="settings_temperature_unit_details">Выберите единицу измерения температуры для отображения</string>
+    <string name="share">Поделиться</string>
     <string name="share_sensor_add_friend">Добавить друга</string>
     <string name="share_sensor_already_shared">Поделились</string>
     <string name="share_sensor_description">Поделитесь показаниями своего датчика. Добавьте адреса своих друзей (10 максимум)</string>
@@ -241,6 +246,7 @@
     <string name="signal_unit">дБм</string>
     <string name="skip">ПРОПУСТИТЬ</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="successfully_shared">Успешно поделились данными датчика</string>
     <string name="sync">СКАЧАТЬ</string>
     <string name="sync_complete">Синхронизация завершена</string>
     <string name="sync_confirm">Вы уверены что хотите синхронизировать данные с устройством?</string>
@@ -251,8 +257,6 @@
     <string name="tagsettings_network_info">Данные сети</string>
     <string name="tagsettings_owner">Владелец</string>
     <string name="tagsettings_sensor_remove">Удалить сенсор</string>
-    <string name="tagsettings_sensor_remove_confirm">Вы уверены что хотите удалить этот сенсор?</string>
-    <string name="tagsettings_share_button">Поделиться</string>
     <string name="temperature">Температура (%1$s)</string>
     <string name="temperature_celsius_name">Цельсий (℃)</string>
     <string name="temperature_celsius_unit">°C</string>

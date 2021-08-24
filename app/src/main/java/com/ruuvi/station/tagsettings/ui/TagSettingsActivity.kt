@@ -29,6 +29,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
 import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
@@ -86,13 +87,15 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     private fun setupUI() {
         setupAlarmItems()
 
-        binding.removeTagButton.setDebouncedOnClickListener { delete() }
+        binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
 
-        binding.claimTagButton.setDebouncedOnClickListener {
-            viewModel.claimSensor()
+        binding.ownerValueTextView.setDebouncedOnClickListener {
+            if (binding.ownerLayout.isEnabled) {
+                ClaimSensorActivity.start(this, viewModel.sensorId)
+            }
         }
 
-        binding.shareTagButton.setDebouncedOnClickListener {
+        binding.shareLayout.setDebouncedOnClickListener {
             ShareSensorActivity.start(this, viewModel.sensorId)
         }
 
@@ -108,6 +111,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
         }
     }
+
+    private var deleteString: String = ""
 
     private fun setupViewModel() {
         viewModel.setupAlarmElements()
@@ -134,23 +139,35 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: "None"
 
-            binding.claimTagButton.isEnabled = sensorSettings?.owner.isNullOrEmpty()
+            if (sensorSettings?.owner.isNullOrEmpty()) {
+                deleteString = getString(R.string.remove_local_sensor)
+                binding.ownerLayout.isEnabled = true
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)
+            } else {
+                binding.ownerLayout.isEnabled = false
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                if (viewModel.sensorOwnedByUserObserve.value == true) {
+                    deleteString = getString(R.string.remove_claimed_sensor)
+                } else {
+                    deleteString = getString(R.string.remove_shared_sensor)
+                }
+            }
         }
 
         viewModel.userLoggedInObserve.observe(this, Observer {
             if (it == true) {
-                binding.claimTagButton.visibility = View.VISIBLE
-                binding.shareTagButton.visibility = View.VISIBLE
-                binding.networkLayout.visibility = View.VISIBLE
+                binding.ownerLayout.visibility = View.VISIBLE
             } else {
-                binding.claimTagButton.visibility = View.GONE
-                binding.shareTagButton.visibility = View.GONE
-                binding.networkLayout.visibility = View.GONE
+                binding.ownerLayout.visibility = View.GONE
             }
         })
 
-        viewModel.sensorOwnedByUserObserve.observe(this, Observer {
-            binding.shareTagButton.isEnabled = it
+        viewModel.sensorOwnedByUserObserve.observe(this, {
+            if (it) {
+                binding.shareLayout.visibility = View.VISIBLE
+            } else {
+                binding.shareLayout.visibility = View.GONE
+            }
         })
 
         viewModel.operationStatusObserve.observe(this, Observer {
@@ -163,6 +180,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         viewModel.canCalibrate.observe(this) {
             binding.calibrationHeaderTextView.isVisible = it
             binding.calibrationLayout.isVisible = it
+        }
+
+        viewModel.sensorSharedObserve.observe(this) { isShared ->
+            binding.shareValueTextView.text = if (isShared) {
+                 getText(R.string.sensor_shared)
+            } else {
+                getText(R.string.sensor_not_shared)
+            }
         }
     }
 
@@ -348,7 +373,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
-        builder.setMessage(this.getString(R.string.tagsettings_sensor_remove_confirm))
+        builder.setMessage(deleteString)
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
             for (alarm in viewModel.alarmElements) {

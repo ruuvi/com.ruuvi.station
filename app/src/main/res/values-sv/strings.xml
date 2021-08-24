@@ -168,6 +168,8 @@
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="reading_history">Läser historik</string>
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
+    <string name="remove">Ta bort</string>
+    <string name="remove_local_sensor">Är du säker på att du vill ta bort den här sensorn?</string>
     <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNA</string>
@@ -218,6 +220,7 @@
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas</string>
     <string name="settings_temperature_unit">Temperaturenhet</string>
     <string name="settings_temperature_unit_details">Välj den temperaturenhet som du vill ska visas</string>
+    <string name="share">Dela</string>
     <string name="share_sensor_add_friend">Lägg till vän</string>
     <string name="share_sensor_already_shared">Sensorn är redan delad</string>
     <string name="share_sensor_description">Dela din Ruuvi sensor. Lägg till dina vänners e-postadresser (max 10).</string>
@@ -251,8 +254,6 @@
     <string name="tagsettings_network_info">NÄTVERKSINFO</string>
     <string name="tagsettings_owner">Ägare</string>
     <string name="tagsettings_sensor_remove">Ta bort sensor</string>
-    <string name="tagsettings_sensor_remove_confirm">Är du säker på att du vill ta bort den här sensorn?</string>
-    <string name="tagsettings_share_button">Dela</string>
     <string name="temperature">Temperatur (%1$s)</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
