@@ -98,6 +98,11 @@ class RuuviNetworkInteractor (
                         if (claimResponse?.isSuccess() == true) {
                             sensorSettingsRepository.setSensorOwner(sensorSettings.id, getEmail()
                                 ?: "")
+                        } else {
+                            val maskedEmail = Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
+                            if (maskedEmail?.isNotEmpty() == true) {
+                                sensorSettingsRepository.setSensorOwner(sensorSettings.id, maskedEmail)
+                            }
                         }
                         getUserInfo {
                             onResult(claimResponse)

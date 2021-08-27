@@ -58,6 +58,7 @@
           android:layout_marginTop="16dp"
           android:layout_marginRight="8dp"
           android:text="@string/network_sharing_disabled"
+          android:textStyle="bold"
           app:layout_constraintLeft_toLeftOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/shareSensorTitleTextView" />
 
