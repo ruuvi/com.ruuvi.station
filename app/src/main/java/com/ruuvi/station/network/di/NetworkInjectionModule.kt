@@ -43,7 +43,7 @@ object NetworkInjectionModule {
         }
 
         bind<ClaimSensorViewModel>() with factory { sensorId: String ->
-            ClaimSensorViewModel(sensorId, instance(), instance())
+            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance())
         }
     }
 }

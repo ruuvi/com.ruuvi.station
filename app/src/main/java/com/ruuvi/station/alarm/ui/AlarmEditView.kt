@@ -37,7 +37,7 @@ class AlarmEditView @JvmOverloads
     private val networkInteractor: RuuviNetworkInteractor by instance()
     private val alarmRepository: AlarmRepository by instance()
     private val alarmCheckInteractor: AlarmCheckInteractor by instance()
-    private lateinit var alarm: AlarmElement
+    private lateinit var alarmElement: AlarmElement
     private var timer = Timer("AlarmEditView", true)
 
     var binding: ViewAlarmEditBinding
@@ -49,7 +49,7 @@ class AlarmEditView @JvmOverloads
     }
 
     fun restoreState(alarm: AlarmElement) {
-        this.alarm = alarm
+        this.alarmElement = alarm
         if (alarm.type == AlarmType.MOVEMENT) useSeekBar = false
 
         with(binding.alertSwitch) {
@@ -103,22 +103,22 @@ class AlarmEditView @JvmOverloads
     }
 
     private fun updateUI() {
-        var lowDisplay = alarm.low
-        var highDisplay = alarm.high
+        var lowDisplay = alarmElement.low
+        var highDisplay = alarmElement.high
 
-        when (alarm.type) {
+        when (alarmElement.type) {
             AlarmType.TEMPERATURE -> {
-                lowDisplay = round(unitsConverter.getTemperatureValue(alarm.low.toDouble())).toInt()
-                highDisplay = round(unitsConverter.getTemperatureValue(alarm.high.toDouble())).toInt()
+                lowDisplay = round(unitsConverter.getTemperatureValue(alarmElement.low.toDouble())).toInt()
+                highDisplay = round(unitsConverter.getTemperatureValue(alarmElement.high.toDouble())).toInt()
             }
             AlarmType.PRESSURE -> {
-                lowDisplay = round(unitsConverter.getPressureValue(alarm.low.toDouble())).toInt()
-                highDisplay = round(unitsConverter.getPressureValue(alarm.high.toDouble())).toInt()
+                lowDisplay = round(unitsConverter.getPressureValue(alarmElement.low.toDouble())).toInt()
+                highDisplay = round(unitsConverter.getPressureValue(alarmElement.high.toDouble())).toInt()
             }
         }
 
-        binding.alertSubtitleTextView.text = if (alarm.isEnabled) {
-            when (alarm.type) {
+        binding.alertSubtitleTextView.text = if (alarmElement.isEnabled) {
+            when (alarmElement.type) {
                 AlarmType.MOVEMENT -> ctx.getString(R.string.alert_movement_description)
                 else -> String.format(ctx.getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
             }
@@ -126,20 +126,20 @@ class AlarmEditView @JvmOverloads
             ctx.getString(R.string.alert_subtitle_off)
         }
 
-        binding.customDescriptionEditText.isGone = !alarm.isEnabled
+        binding.customDescriptionEditText.isGone = !alarmElement.isEnabled
 
         if (useSeekBar) {
-            binding.alertSeekBar.isGone = !alarm.isEnabled
-            binding.alertMaxValueTextView.isGone = !alarm.isEnabled
-            binding.alertMinValueTextView.isGone = !alarm.isEnabled
+            binding.alertSeekBar.isGone = !alarmElement.isEnabled
+            binding.alertMaxValueTextView.isGone = !alarmElement.isEnabled
+            binding.alertMinValueTextView.isGone = !alarmElement.isEnabled
 
             binding.alertMinValueTextView.text = lowDisplay.toString()
             binding.alertMaxValueTextView.text = highDisplay.toString()
         }
 
         with(binding.mutedTextView) {
-            if (alarm.mutedTill ?: Date(0) > Date()) {
-                text = DateFormat.getTimeInstance(DateFormat.SHORT).format(alarm.mutedTill)
+            if (alarmElement.mutedTill ?: Date(0) > Date()) {
+                text = DateFormat.getTimeInstance(DateFormat.SHORT).format(alarmElement.mutedTill)
                 isGone = false
             } else {
                 isGone = true
@@ -159,13 +159,15 @@ class AlarmEditView @JvmOverloads
     fun saveAlarm() {
         Timber.d("saveAlarm-start")
         timer.cancel()
-        if (alarm.shouldBeSaved()) {
+        if (alarmElement.shouldBeSaved()) {
             Timber.d("saveAlarm-shouldBeSaved")
-            alarmRepository.saveAlarmElement(alarm)
-            networkInteractor.setAlert(alarm.sensorId, alarm)
+            alarmRepository.saveAlarmElement(alarmElement)
+            alarmElement.alarm?.let {
+                networkInteractor.setAlert(it)
+            }
         }
-        if (!alarm.isEnabled) {
-            val notificationId = alarm.alarm?.id ?: -1
+        if (!alarmElement.isEnabled) {
+            val notificationId = alarmElement.alarm?.id ?: -1
             removeNotificationById(notificationId)
         }
     }
