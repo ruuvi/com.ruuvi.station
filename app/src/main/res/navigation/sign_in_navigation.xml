@@ -26,6 +26,6 @@
         <deepLink
             android:id="@+id/deepLink"
             app:action="ACTION_VIEW"
-            app:uri="https://network.ruuvi.com/verify?token={token}" />
+            app:uri="https://station.ruuvi.com/verify?token={token}" />
     </fragment>
 </navigation>

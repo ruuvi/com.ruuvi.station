@@ -106,7 +106,7 @@
     <string name="help_troubleshooting_text">Если вы испытываете какие либо проблемы или наши руководства не помогли вам, посмотрите наши многочисленные темы с решением проблем здесь: ruuvi.com/troubles</string>
     <string name="help_troubleshooting_title">РЕШЕНИЕ ПРОБЛЕМ</string>
     <string name="hours">Часов</string>
-    <string name="humidity">Влажность воздуха (%1$s)</string>
+    <string name="humidity">Влажность</string>
     <string name="humidity_absolute_name">Абсолютная влажность (г/м³)</string>
     <string name="humidity_absolute_unit">г/м³</string>
     <string name="humidity_dew_point_name">Точка росы (°)</string>
@@ -114,6 +114,7 @@
     <string name="humidity_reading">%1$,.2f %2$s</string>
     <string name="humidity_relative_name">Относительная влажность (%)</string>
     <string name="humidity_relative_unit">%</string>
+    <string name="humidity_with_unit">Влажность воздуха (%1$s)</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -156,7 +157,7 @@
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
     <string name="press_to_add">Нет добавленных датчиков,\nнажмите чтобы добавить</string>
-    <string name="pressure">Атмосферное Давление (%1$s)</string>
+    <string name="pressure">Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
     <string name="pressure_hpa_unit">гПа</string>
     <string name="pressure_inhg_name">Дюймов ртутного столба (inHg)</string>
@@ -167,6 +168,7 @@
     <string name="pressure_pa_unit">Па</string>
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
+    <string name="pressure_with_unit">Атмосферное Давление (%1$s)</string>
     <string name="reading_history">Чтение истории</string>
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
     <string name="remove">Удалить</string>
@@ -257,7 +259,7 @@
     <string name="tagsettings_network_info">Данные сети</string>
     <string name="tagsettings_owner">Владелец</string>
     <string name="tagsettings_sensor_remove">Удалить сенсор</string>
-    <string name="temperature">Температура (%1$s)</string>
+    <string name="temperature">Температура</string>
     <string name="temperature_celsius_name">Цельсий (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Фаренгейт (℉)</string>
@@ -265,6 +267,7 @@
     <string name="temperature_kelvin_name">Кельвин (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="temperature_with_unit">Температура (%1$s)</string>
     <string name="time_since">%1$s назад</string>
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>

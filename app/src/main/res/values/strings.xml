@@ -110,7 +110,7 @@
     <string name="help_troubleshooting_text">If you’re experiencing problems and our manuals didn’t provide the help you need, check out our many troubleshooting topics, here: ruuvi.com/troubles</string>
     <string name="help_troubleshooting_title">TROUBLESHOOTING</string>
     <string name="hours">Hours</string>
-    <string name="humidity">Air Humidity (%1$s)</string>
+    <string name="humidity">Humidity</string>
     <string name="humidity_absolute_name">Absolute (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Dew point (°)</string>
@@ -118,6 +118,7 @@
     <string name="humidity_reading">%1$,.2f %2$s</string>
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
+    <string name="humidity_with_unit">Air Humidity (%1$s)</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -160,7 +161,7 @@
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in settings to see sensors.</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
-    <string name="pressure">Air Pressure (%1$s)</string>
+    <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Inch of mercury (inHg)</string>
@@ -171,6 +172,7 @@
     <string name="pressure_pa_unit">Pa</string>
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
+    <string name="pressure_with_unit">Air Pressure (%1$s)</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
     <string name="remove">Remove</string>
@@ -266,7 +268,7 @@
     <string name="tagsettings_network_info">NETWORK INFO</string>
     <string name="tagsettings_owner">Owner</string>
     <string name="tagsettings_sensor_remove">Remove sensor</string>
-    <string name="temperature">Temperature (%1$s)</string>
+    <string name="temperature">Temperature</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -274,6 +276,7 @@
     <string name="temperature_kelvin_name">Kelvin (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="temperature_with_unit">Temperature (%1$s)</string>
     <string name="time_since">%1$s ago</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>

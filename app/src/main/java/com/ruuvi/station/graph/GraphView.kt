@@ -97,9 +97,9 @@ class GraphView (
                 pressureData.add(Entry(timestamp, 0f))
             }
 
-            addDataToChart(tempData, tempChart, context.getString(R.string.temperature, unitsConverter.getTemperatureUnitString()))
-            addDataToChart(humidData, humidChart, context.getString(R.string.humidity, unitsConverter.getHumidityUnitString()))
-            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure, unitsConverter.getPressureUnitString()))
+            addDataToChart(tempData, tempChart, context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString()))
+            addDataToChart(humidData, humidChart, context.getString(R.string.humidity_with_unit, unitsConverter.getHumidityUnitString()))
+            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString()))
 
             if (!offsetsNormalized) {
                 normalizeOffsets(tempChart, humidChart, pressureChart)

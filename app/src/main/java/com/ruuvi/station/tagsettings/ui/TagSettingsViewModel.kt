@@ -111,34 +111,6 @@ class TagSettingsViewModel(
         }
     }
 
-    fun saveOrUpdateAlarmItems() {
-        for (alarmItem in alarmElements) {
-            if (alarmItem.shouldBeSaved()) {
-                alarmRepository.saveAlarmElement(alarmItem)
-                networkInteractor.setAlert(sensorId, alarmItem)
-            }
-            if (!alarmItem.isEnabled) {
-                val notificationId = alarmItem.alarm?.id ?: -1
-                removeNotificationById(notificationId)
-            }
-        }
-    }
-
-    fun claimSensor() {
-        val sensorSettings = sensorSettings.value
-        if (sensorSettings != null) {
-            networkInteractor.claimSensor(sensorSettings) {
-                updateNetworkStatus()
-                if (it == null || !it.error.isNullOrEmpty()) {
-                    //TODO LOCALIZE
-                    operationStatus.value = "Failed to claim tag: ${it?.error}"
-                } else {
-                    operationStatus.value = "Tag successfully claimed"
-                }
-            }
-        }
-    }
-
     fun statusProcessed() { operationStatus.value = "" }
 
     fun setName(name: String?) {

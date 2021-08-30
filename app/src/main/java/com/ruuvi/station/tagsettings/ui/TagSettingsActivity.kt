@@ -15,7 +15,6 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
@@ -84,45 +83,15 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         setupUI()
     }
 
-    private fun setupUI() {
-        setupAlarmItems()
-
-        binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
-
-        binding.ownerValueTextView.setDebouncedOnClickListener {
-            if (binding.ownerLayout.isEnabled) {
-                ClaimSensorActivity.start(this, viewModel.sensorId)
-            }
-        }
-
-        binding.shareLayout.setDebouncedOnClickListener {
-            ShareSensorActivity.start(this, viewModel.sensorId)
-        }
-
-        binding.calibrateHumidity.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
-        }
-
-        binding.calibrateTemperature.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
-        }
-
-        binding.calibratePressure.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
-        }
-    }
-
-    private var deleteString: String = ""
-
     private fun setupViewModel() {
         viewModel.setupAlarmElements()
 
-        viewModel.tagObserve.observe(this, Observer {  tag ->
+        viewModel.tagObserve.observe(this) { tag ->
             tag?.let {
                 setupCalibration(it)
                 updateReadings(it)
             }
-        })
+        }
 
         viewModel.sensorSettingsObserve.observe(this) {sensorSettings ->
             sensorSettings?.let {
@@ -154,28 +123,28 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-        viewModel.userLoggedInObserve.observe(this, Observer {
+        viewModel.userLoggedInObserve.observe(this) {
             if (it == true) {
                 binding.ownerLayout.visibility = View.VISIBLE
             } else {
                 binding.ownerLayout.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.sensorOwnedByUserObserve.observe(this, {
+        viewModel.sensorOwnedByUserObserve.observe(this) {
             if (it) {
                 binding.shareLayout.visibility = View.VISIBLE
             } else {
                 binding.shareLayout.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.operationStatusObserve.observe(this, Observer {
+        viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(binding.toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        })
+        }
 
         viewModel.canCalibrate.observe(this) {
             binding.calibrationHeaderTextView.isVisible = it
@@ -184,12 +153,42 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         viewModel.sensorSharedObserve.observe(this) { isShared ->
             binding.shareValueTextView.text = if (isShared) {
-                 getText(R.string.sensor_shared)
+                getText(R.string.sensor_shared)
             } else {
                 getText(R.string.sensor_not_shared)
             }
         }
     }
+
+    private fun setupUI() {
+        setupAlarmItems()
+
+        binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
+
+        binding.ownerValueTextView.setDebouncedOnClickListener {
+            if (binding.ownerLayout.isEnabled) {
+                ClaimSensorActivity.start(this, viewModel.sensorId)
+            }
+        }
+
+        binding.shareLayout.setDebouncedOnClickListener {
+            ShareSensorActivity.start(this, viewModel.sensorId)
+        }
+
+        binding.calibrateHumidity.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
+        }
+
+        binding.calibrateTemperature.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
+        }
+
+        binding.calibratePressure.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
+        }
+    }
+
+    private var deleteString: String = ""
 
     override fun onResume() {
         super.onResume()
@@ -201,8 +200,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveOrUpdateAlarmItems()
         timer?.cancel()
+        binding.alarmTemperature.saveAlarm()
+        binding.alarmHumidity.saveAlarm()
+        binding.alarmPressure.saveAlarm()
+        binding.alarmRssi.saveAlarm()
+        binding.alarmMovement.saveAlarm()
+
     }
 
     @Suppress("NAME_SHADOWING")

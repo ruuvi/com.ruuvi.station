@@ -240,7 +240,7 @@
                         android:id="@+id/calibrateTemperature"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:itemTitle="Temperature"
+                        app:itemTitle="@string/temperature"
                         app:itemValue="0.0"
                         />
                     <View
@@ -252,7 +252,7 @@
                         android:id="@+id/calibrateHumidity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:itemTitle="Humidity"
+                        app:itemTitle="@string/humidity"
                         app:itemValue="0.0"
                         />
                     <View
@@ -264,7 +264,7 @@
                         android:id="@+id/calibratePressure"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:itemTitle="Pressure"
+                        app:itemTitle="@string/pressure"
                         app:itemValue="0.0"
                         />
 
