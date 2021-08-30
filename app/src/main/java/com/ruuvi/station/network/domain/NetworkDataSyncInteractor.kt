@@ -253,7 +253,7 @@ class NetworkDataSyncInteractor (
             since = since,
             sort = "asc",
             limit = limit,
-            mode = SensorDataMode.DENSE
+            mode = SensorDataMode.MIXED
         )
         return networkInteractor.getSensorData(request)
     }
