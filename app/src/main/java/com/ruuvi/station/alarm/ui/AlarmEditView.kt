@@ -8,16 +8,21 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.alarm.domain.AlarmType
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.databinding.ViewAlarmEditBinding
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import kotlin.concurrent.schedule
 import kotlin.math.round
 
 class AlarmEditView @JvmOverloads
@@ -29,7 +34,11 @@ class AlarmEditView @JvmOverloads
 
     override val kodein: Kodein by kodein()
     private val unitsConverter: UnitsConverter by instance()
+    private val networkInteractor: RuuviNetworkInteractor by instance()
+    private val alarmRepository: AlarmRepository by instance()
+    private val alarmCheckInteractor: AlarmCheckInteractor by instance()
     private lateinit var alarm: AlarmElement
+    private var timer = Timer("AlarmEditView", true)
 
     var binding: ViewAlarmEditBinding
     private var useSeekBar = true
@@ -41,14 +50,13 @@ class AlarmEditView @JvmOverloads
 
     fun restoreState(alarm: AlarmElement) {
         this.alarm = alarm
-
         if (alarm.type == AlarmType.MOVEMENT) useSeekBar = false
 
         with(binding.alertSwitch) {
             text = when (alarm.type) {
-                AlarmType.TEMPERATURE -> ctx.getString(R.string.temperature, unitsConverter.getTemperatureUnitString())
-                AlarmType.HUMIDITY -> ctx.getString(R.string.humidity, ctx.getString(R.string.humidity_relative_unit))
-                AlarmType.PRESSURE -> ctx.getString(R.string.pressure, unitsConverter.getPressureUnitString())
+                AlarmType.TEMPERATURE -> ctx.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
+                AlarmType.HUMIDITY -> ctx.getString(R.string.humidity_with_unit, ctx.getString(R.string.humidity_relative_unit))
+                AlarmType.PRESSURE -> ctx.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
                 AlarmType.RSSI -> ctx.getString(R.string.rssi)
                 AlarmType.MOVEMENT -> ctx.getString(R.string.alert_movement)
             }
@@ -57,6 +65,7 @@ class AlarmEditView @JvmOverloads
                 alarm.isEnabled = isChecked
                 if (!isChecked) alarm.mutedTill = null
                 updateUI()
+                scheduleSaving()
             }
         }
 
@@ -73,6 +82,7 @@ class AlarmEditView @JvmOverloads
                     alarm.low = minValue.toInt()
                     alarm.high = maxValue.toInt()
                     updateUI()
+                    scheduleSaving()
                 }
             } else {
                 isVisible = false
@@ -85,6 +95,7 @@ class AlarmEditView @JvmOverloads
             setText(alarm.customDescription)
             addTextChangedListener {
                 alarm.customDescription = it.toString()
+                scheduleSaving()
             }
         }
 
@@ -134,5 +145,32 @@ class AlarmEditView @JvmOverloads
                 isGone = true
             }
         }
+    }
+
+    private fun scheduleSaving() {
+        Timber.d("setTimer")
+        timer.cancel()
+        timer = Timer("AlarmEditView", true)
+        timer.schedule(1500) {
+            saveAlarm()
+        }
+    }
+
+    fun saveAlarm() {
+        Timber.d("saveAlarm-start")
+        timer.cancel()
+        if (alarm.shouldBeSaved()) {
+            Timber.d("saveAlarm-shouldBeSaved")
+            alarmRepository.saveAlarmElement(alarm)
+            networkInteractor.setAlert(alarm.sensorId, alarm)
+        }
+        if (!alarm.isEnabled) {
+            val notificationId = alarm.alarm?.id ?: -1
+            removeNotificationById(notificationId)
+        }
+    }
+
+    private fun removeNotificationById(notificationId: Int) {
+        alarmCheckInteractor.removeNotificationById(notificationId)
     }
 }

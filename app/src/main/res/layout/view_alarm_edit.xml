@@ -12,7 +12,7 @@
         android:id="@+id/alertSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/temperature"
+        android:text="@string/temperature_with_unit"
         android:fontFamily="@font/roboto_medium"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="16sp"

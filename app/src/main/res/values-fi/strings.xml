@@ -57,6 +57,9 @@
     <string name="cancel">Peruuta</string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
+    <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat, kalibrointi- ja hälytystiedot turvallisesta pilvipalvelusta\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jopa 2 vuoden historiatiedot osoitteesta station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
+    <string name="claim_ownership">VAHVISTA OMISTAJUUS</string>
+    <string name="claim_sensor">Vahvista omistajuus</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen tallennetut historiatiedot?</string>
     <string name="close">Sulje</string>
@@ -87,6 +90,7 @@
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
     <string name="gateway_test_success">Palvelin vastasi! Palautekoodi: %1$d</string>
     <string name="gateway_testing">Testataan...</string>
+    <string name="general">Yleisasetukset</string>
     <string name="h">t</string>
     <string name="help_about_text">Ruuvi Station on helppokäyttöinen sovellus Ruuvin tuotteiden hallinnointiin. Aloita lisäämällä antureita.</string>
     <string name="help_about_title">TIETOA / APUA</string>
@@ -105,7 +109,7 @@
     <string name="help_troubleshooting_text">Jos törmäät ongelmiin ja ohjeet eivät auttaneet, tarkista vianetsintäkysymykset:  ruuvi.com/troubles</string>
     <string name="help_troubleshooting_title">VIANETSINTÄ</string>
     <string name="hours">Tuntia</string>
-    <string name="humidity">Ilmankosteus (%1$s)</string>
+    <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Kastepiste (°)</string>
@@ -113,6 +117,7 @@
     <string name="humidity_reading">%1$,.2f %2$s</string>
     <string name="humidity_relative_name">Suhteellinen (%)</string>
     <string name="humidity_relative_unit">%</string>
+    <string name="humidity_with_unit">Ilmankosteus (%1$s)</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -155,7 +160,7 @@
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
-    <string name="pressure">Ilmanpaine (%1$s)</string>
+    <string name="pressure">Paine</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Elohopeatuuma (inHg)</string>
@@ -166,10 +171,14 @@
     <string name="pressure_pa_unit">Pa</string>
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
+    <string name="pressure_with_unit">Ilmanpaine (%1$s)</string>
     <string name="reading_history">Historiatietoja luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
     <string name="remove">Poista</string>
+    <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
+    <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen luku-oikeus päättyy.</string>
+    <string name="remove_this_sensor">Poista tämä anturi</string>
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNAA</string>
@@ -178,7 +187,9 @@
     <string name="select_picture">Valitse kuva</string>
     <string name="send_email">Lähetä sähköpostia</string>
     <string name="sensor_already_added">Anturi on jo lisätty</string>
+    <string name="sensor_not_shared">Ei jaettu</string>
     <string name="sensor_settings">Asetukset</string>
+    <string name="sensor_shared">Jaettu</string>
     <string name="settings">Asetukset</string>
     <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
     <string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Akku -> Virransäästö ja valitse \'Älä käytä\'</string>
@@ -244,6 +255,8 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
+    <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
+    <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
     <string name="sync">SYNKRONOI</string>
     <string name="sync_complete">Synkronointi valmis</string>
     <string name="sync_confirm">Ladataanko historiatiedot anturista?</string>
@@ -254,7 +267,7 @@
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
-    <string name="temperature">Lämpötila (%1$s)</string>
+    <string name="temperature">Lämpötila</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -262,6 +275,7 @@
     <string name="temperature_kelvin_name">Kelvin (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="temperature_with_unit">Lämpötila (%1$s)</string>
     <string name="time_since">%1$s sitten</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
