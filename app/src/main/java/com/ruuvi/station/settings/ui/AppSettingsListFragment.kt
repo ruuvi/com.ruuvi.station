@@ -15,7 +15,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
-import timber.log.Timber
 
 class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), KodeinAware {
 
@@ -34,7 +33,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
     private fun setupViewModel() {
         viewModel.experimentalFeatures.observe(viewLifecycleOwner, Observer {
-            experimentalSettingsContainer.isVisible = it
+            experimentalSettingsContainer.isVisible = false
         })
     }
 

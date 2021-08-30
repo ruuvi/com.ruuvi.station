@@ -32,7 +32,7 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
     private val sensorListener = ShakeEventListener {
         if (!preferencesRepository.isExperimentalFeaturesEnabled()) {
             preferencesRepository.setIsExperimentalFeaturesEnabled(true)
-            Toast.makeText(this, "Looks like you want to unlock experimental settings ;)", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Looks like you want to unlock experimental settings ;)", Toast.LENGTH_SHORT).show()
         }
     }
 
