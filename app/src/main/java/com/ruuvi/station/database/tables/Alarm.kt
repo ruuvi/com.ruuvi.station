@@ -3,6 +3,7 @@ package com.ruuvi.station.database.tables
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
+import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.database.domain.LocalDatabase
 import java.util.*
 
@@ -29,6 +30,9 @@ data class Alarm (
     @Column
     var customDescription: String = ""
 ) {
+    val alarmType: AlarmType?
+        get() = AlarmType.getByDbCode(type)
+
     companion object {
         const val TEMPERATURE = 0
         const val HUMIDITY = 1

@@ -1,6 +1,6 @@
 package com.ruuvi.station.network.data.request
 
-import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.database.tables.Alarm
 
 data class SetAlertRequest(
     val sensor: String,
@@ -11,13 +11,13 @@ data class SetAlertRequest(
     val description: String
 ) {
     companion object {
-        fun getAlarmRequest(alarm: AlarmElement): SetAlertRequest {
+        fun getAlarmRequest(alarm: Alarm): SetAlertRequest {
             return SetAlertRequest(
-                sensor = alarm.sensorId,
-                type = alarm.type.networkCode ?: throw IllegalArgumentException(),
+                sensor = alarm.ruuviTagId,
+                type = alarm.alarmType?.networkCode ?: throw IllegalArgumentException(),
                 min = alarm.low,
                 max = alarm.high,
-                enabled = alarm.isEnabled,
+                enabled = alarm.enabled,
                 description = alarm.customDescription
             )
         }
