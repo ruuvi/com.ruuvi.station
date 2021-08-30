@@ -27,9 +27,13 @@ class AlarmRepository {
     fun disableAlarm(alarmId: Int) {
         val alarm = getById(alarmId)
         alarm?.let {
-            it.enabled = false
-            it.update()
+            disableAlarm(it)
         }
+    }
+
+    fun disableAlarm(alarm: Alarm) {
+        alarm.enabled = false
+        alarm.update()
     }
 
     fun muteAlarm(alarmId: Int, mutedTill: Date) {
