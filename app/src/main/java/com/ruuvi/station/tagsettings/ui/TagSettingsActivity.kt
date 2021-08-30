@@ -196,6 +196,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.getTagInfo()
         }
+        viewModel.checkIfSensorShared()
     }
 
     override fun onPause() {

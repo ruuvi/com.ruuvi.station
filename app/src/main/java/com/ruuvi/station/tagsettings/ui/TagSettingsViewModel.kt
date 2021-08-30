@@ -42,7 +42,7 @@ class TagSettingsViewModel(
     val operationStatusObserve: LiveData<String> = operationStatus
 
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
-        it?.owner == networkInteractor.getEmail()
+        it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
     }
 
     val canCalibrate = MediatorLiveData<Boolean>()
@@ -69,8 +69,11 @@ class TagSettingsViewModel(
                 sensorSettings.value = settings
             }
         }
-        // TODO remove frequent updates
+    }
+
+    fun checkIfSensorShared() {
         getSensorSharedEmails()
+
     }
 
     private val handler = CoroutineExceptionHandler() { _, exception ->
