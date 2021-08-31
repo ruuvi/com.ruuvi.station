@@ -58,7 +58,7 @@
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
     <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat, kalibrointi- ja hälytystiedot turvallisesta pilvipalvelusta\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jopa 2 vuoden historiatiedot osoitteesta station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
-    <string name="claim_ownership">VAHVISTA OMISTAJUUS</string>
+    <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen tallennetut historiatiedot?</string>
@@ -123,8 +123,8 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
-    <string name="login_description">Hyödynnä kaikki Ruuvi Network mahdollisuudet! Kirjaudu sisään tai luo uusi Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
-    <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nNetworkiin</string>
+    <string name="login_description">Hyödynnä Ruuvi-pilvipalvelun mahdollisuudet! Kirjaudu sisään tai luo uusi Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
+    <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\ncloudiin</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
@@ -141,7 +141,7 @@
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
     <string name="network_sharing_disabled">Voit jakaa vain Ruuvi Gateway -reitittimen läheisyydessä olevia antureita. Lisätietoja reitittimestä osoitteesta ruuvi.com</string>
-    <string name="network_status_title">Ruuvi Networkin tila</string>
+    <string name="network_status_title">Ruuvi cloudin tila</string>
     <string name="network_sync_result_exception">Synkronointi epäonnistui: %1$s</string>
     <string name="network_sync_result_not_logged">Synkronointi epäonnistui: kirjaudu ensin</string>
     <string name="network_sync_result_success">Synkronointi onnistui!</string>
@@ -249,7 +249,7 @@
     <string name="sign_in_request_code">Pyydä kirjautumiskoodi</string>
     <string name="sign_in_submit_button">Lähetä</string>
     <string name="sign_out">Kirjaudu ulos</string>
-    <string name="sign_out_confirm">Haluatko varmasti kirjautua ulos?</string>
+    <string name="sign_out_confirm">Anturit, joiden omistajuuden olet vahvistanut asetussivulla poistetaan sovelluksesta automaattisesti uloskirjauduttaessa. Anturitiedot palautetaan pilvipalvelusta samalla sähköpostiosoitteella uudelleenkirjauduttaessa.\n\n Haluatko varmasti kirjautua ulos?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
@@ -263,7 +263,7 @@
     <string name="synchronizing">Synkronoidaan</string>
     <string name="tag_name">Anturin nimi</string>
     <string name="tag_not_in_range">Anturia ei löydetty. Onko laite lähettyvillä?</string>
-    <string name="tagsettings_claim_button">Lukitse</string>
+    <string name="tagsettings_claim_button">Vahvista</string>
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>

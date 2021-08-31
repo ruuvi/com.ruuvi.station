@@ -59,7 +59,7 @@
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
     <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Every Ruuvi sensor can have only one owner.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored in the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
-    <string name="claim_ownership">CLAIM OWNERSHIP</string>
+    <string name="claim_ownership">Claim Ownership</string>
     <string name="claim_sensor">Claim sensor</string>
     <string name="clear">Clear</string>
     <string name="clear_confirm">Clear the historical data from the app?</string>
@@ -125,7 +125,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="login_description">To enjoy all the features, create an account or login to your existing Ruuvi account by entering your email address.</string>
-    <string name="login_to_ruuvi_network">Login to\nRuuvi\nNetwork</string>
+    <string name="login_to_ruuvi_network">Login to\nRuuvi\ncloud</string>
     <string name="mac_address">MAC Address</string>
     <string name="mac_copied">MAC address copied to clipboard</string>
     <string name="measurement_sequence_number">Measurement Sequence Number</string>
@@ -142,7 +142,7 @@
     <string name="navigation_drawer_close">Close the navigation drawer</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
     <string name="network_sharing_disabled">Only sensors within range of your Ruuvi Gateway can be shared. If you don\'t have one, get it on ruuvi.com</string>
-    <string name="network_status_title">Ruuvi Network status</string>
+    <string name="network_status_title">Ruuvi cloud status</string>
     <string name="network_sync_result_exception">Synchronization failed: %1$s</string>
     <string name="network_sync_result_not_logged">Synchronization failed: need to log in first</string>
     <string name="network_sync_result_success">Synchronized successfully!</string>
