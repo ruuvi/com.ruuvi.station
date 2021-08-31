@@ -10,7 +10,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/tag_background_view"
-        android:src="@drawable/bg9"
+        android:src="@drawable/gradient_background"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

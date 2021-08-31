@@ -9,6 +9,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
 import timber.log.Timber
 import java.util.*
+import kotlin.math.abs
 
 class SensorHistoryRepository {
     fun getCompositeHistory(sensorId: String, daysPeriod: Int, interval: Int): List<TagSensorReading> {
@@ -104,34 +105,42 @@ class SensorHistoryRepository {
 
     fun countAll() = SQLite.selectCountOf().from(TagSensorReading::class).longValue()
 
-    fun bulkInsert(readings: List<TagSensorReading>) {
+    fun bulkInsert(sensorId: String, readings: List<TagSensorReading>) {
         fun executeSQL(sql: StringBuilder) {
             sql.replace(sql.length - 1, sql.length, ";")
             Timber.d("bulkInsert $sql")
             FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(sql.toString())
         }
+        if (readings.size > 0) {
+            val minDate = readings.minOf { it.createdAt }
+            val existingHistory = getHistory(sensorId, minDate)
 
-        val insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`, 'temperatureOffset', 'pressureOffset') values "
-        val queries: MutableList<String> = ArrayList()
-        for (reading in readings) {
-            with(reading) {
-                queries.add("(\"${ruuviTagId}\", ${createdAt.time}, $temperature, $humidity, $pressure, $rssi, $accelX, $accelY, $accelZ, $voltage, $dataFormat, $txPower, $movementCounter, $measurementSequenceNumber, $humidityOffset, $temperatureOffset, $pressureOffset),")
+            val insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`, 'temperatureOffset', 'pressureOffset') values "
+            val queries: MutableList<String> = ArrayList()
+            for (reading in readings) {
+                if (existingHistory.none { abs(reading.createdAt.time - it.createdAt.time) < TIMELINE_DISTANCE}) {
+                    with(reading) {
+                        queries.add("(\"${ruuviTagId}\", ${createdAt.time}, $temperature, $humidity, $pressure, $rssi, $accelX, $accelY, $accelZ, $voltage, $dataFormat, $txPower, $movementCounter, $measurementSequenceNumber, $humidityOffset, $temperatureOffset, $pressureOffset),")
+                    }
+                }
+            }
+
+            if (queries.isNotEmpty()) {
+                var query: StringBuilder? = StringBuilder(insertQuery)
+                var i = 0
+                for (valuesString in queries) {
+                    if (query == null) query = StringBuilder(insertQuery)
+                    query.append(valuesString)
+                    i++
+                    if (i >= BULK_INSERT_BATCH_SIZE) {
+                        executeSQL(query)
+                        query = null
+                        i = 0
+                    }
+                }
+                if (query != null) executeSQL(query)
             }
         }
-
-        var query: StringBuilder? = StringBuilder(insertQuery)
-        var i = 0
-        for (valuesString in queries) {
-            if (query == null) query = StringBuilder(insertQuery)
-            query.append(valuesString)
-            i++
-            if (i >= BULK_INSERT_BATCH_SIZE) {
-                executeSQL(query)
-                query = null
-                i = 0
-            }
-        }
-        if (query != null) executeSQL(query)
     }
 
     companion object {
@@ -139,5 +148,6 @@ class SensorHistoryRepository {
         const val HIGH_DENSITY_INTERVAL_MINUTES = 15
         const val BULK_INSERT_BATCH_SIZE = 100
         const val MAXIMUM_POINTS_COUNT = 3000
+        const val TIMELINE_DISTANCE = 1500
     }
 }

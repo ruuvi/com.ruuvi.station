@@ -239,11 +239,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
-        networkLayout.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
-
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
-            it.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {

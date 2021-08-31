@@ -105,14 +105,15 @@
     <string name="help_troubleshooting_text">Si vous rencontrez des problèmes et que vous ne trouvez pas la réponse dans la notice, veuillez consulter la page d\'assistance technique : ruuvi.com/troubles</string>
     <string name="help_troubleshooting_title">DÉPANNAGE TECHNIQUE</string>
     <string name="hours">Heures</string>
-    <string name="humidity">Humidité de l\'air (%1$s)</string>
-    <string name="humidity_absolute_name">Absolue (gr/m³)</string>
+    <string name="humidity">Humidité</string>
+    <string name="humidity_absolute_name">Absolue (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Point de rosée (°)</string>
     <string name="humidity_dew_point_unit">°</string>
     <string name="humidity_reading">%1$,.2f %2$s</string>
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
+    <string name="humidity_with_unit">Humidité de l\'air (%1$s)</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -155,7 +156,7 @@
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
-    <string name="pressure">Pression de l\'air (%1$s)</string>
+    <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Pouce de mercure (inHg)</string>
@@ -166,8 +167,11 @@
     <string name="pressure_pa_unit">Pa</string>
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
+    <string name="pressure_with_unit">Pression de l\'air (%1$s)</string>
     <string name="reading_history">Analyse de l\'historique</string>
     <string name="reading_history_not_supported">Firmware non supporté</string>
+    <string name="remove">Supprimer</string>
+    <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">BALAYAGE EN COURS</string>
@@ -218,6 +222,7 @@
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression</string>
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température</string>
+    <string name="share">Partager</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Le capteur est déjà partagé</string>
     <string name="share_sensor_description">Pour partager votre capteur, veuillez ajouter l\'adresse mail des destinataires (maximum 10).</string>
@@ -251,9 +256,7 @@
     <string name="tagsettings_network_info">RÉSEAU</string>
     <string name="tagsettings_owner">Propriétaire</string>
     <string name="tagsettings_sensor_remove">Supprimer le capteur</string>
-    <string name="tagsettings_sensor_remove_confirm">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
-    <string name="tagsettings_share_button">Partager</string>
-    <string name="temperature">Température (%1$s)</string>
+    <string name="temperature">Température</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -261,6 +264,7 @@
     <string name="temperature_kelvin_name">Kelvin (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="temperature_with_unit">Température (%1$s)</string>
     <string name="time_since">il y\'a %1$s</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>

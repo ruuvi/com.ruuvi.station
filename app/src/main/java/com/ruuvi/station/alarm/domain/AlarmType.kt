@@ -9,5 +9,7 @@ enum class AlarmType(val value: Int, val networkCode: String?) {
 
     companion object {
         fun getByNetworkCode(networkCode: String): AlarmType? = values().firstOrNull { it.networkCode == networkCode }
+
+        fun getByDbCode(code: Int): AlarmType? = values().firstOrNull { it.value == code }
     }
 }

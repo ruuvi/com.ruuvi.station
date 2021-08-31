@@ -1,8 +1,8 @@
 package com.ruuvi.station.network.domain
 
-import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestType
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.NetworkTokenInfo
@@ -98,6 +98,11 @@ class RuuviNetworkInteractor (
                         if (claimResponse?.isSuccess() == true) {
                             sensorSettingsRepository.setSensorOwner(sensorSettings.id, getEmail()
                                 ?: "")
+                        } else {
+                            val maskedEmail = Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
+                            if (maskedEmail?.isNotEmpty() == true) {
+                                sensorSettingsRepository.setSensorOwner(sensorSettings.id, maskedEmail)
+                            }
                         }
                         getUserInfo {
                             onResult(claimResponse)
@@ -239,12 +244,12 @@ class RuuviNetworkInteractor (
         networkRequestExecutor.registerRequest(networkRequest)
     }
 
-    fun setAlert(sensorId: String, alarmItem: AlarmElement) {
-        if (shouldSendSensorDataToNetwork(sensorId) && alarmItem.type.networkCode != null) {
+    fun setAlert(alarm: Alarm) {
+        if (shouldSendSensorDataToNetwork(alarm.ruuviTagId) && alarm.alarmType?.networkCode != null) {
             val networkRequest = NetworkRequest(
                 NetworkRequestType.SET_ALERT,
-                sensorId + alarmItem.type.networkCode,
-                SetAlertRequest.getAlarmRequest(alarmItem)
+                alarm.ruuviTagId + alarm.alarmType?.networkCode,
+                SetAlertRequest.getAlarmRequest(alarm)
             )
             Timber.d("setAlert $networkRequest")
             networkRequestExecutor.registerRequest(networkRequest)

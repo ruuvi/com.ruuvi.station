@@ -105,14 +105,15 @@
     <string name="help_troubleshooting_text">Om du stöter på problem och våra manualer inte hjälper så kan det hjälpa att ta en titt på våra många felsökningsämnen: ruuvi.com/troubles</string>
     <string name="help_troubleshooting_title">FELSÖKNING</string>
     <string name="hours">Timmar</string>
-    <string name="humidity">Luftfuktighet (%1$s)</string>
-    <string name="humidity_absolute_name">Absolut (gr/m³)</string>
+    <string name="humidity">Fuktighet</string>
+    <string name="humidity_absolute_name">Absolut (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
     <string name="humidity_dew_point_name">Daggpunkt (°)</string>
     <string name="humidity_dew_point_unit">°</string>
     <string name="humidity_reading">%1$,.2f %2$s</string>
     <string name="humidity_relative_name">Relativ (%)</string>
     <string name="humidity_relative_unit">%</string>
+    <string name="humidity_with_unit">Luftfuktighet (%1$s)</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -155,7 +156,7 @@
     <string name="permission_dialog_title">Aktivera bluetooth skanning</string>
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
     <string name="press_to_add">Inga sensorer har lags till,\ntryck här för att lägga till sensorer</string>
-    <string name="pressure">Lufttryck (%1$s)</string>
+    <string name="pressure">Lufttryck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Tum kvicksilver (inHg)</string>
@@ -166,8 +167,11 @@
     <string name="pressure_pa_unit">Pa</string>
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
+    <string name="pressure_with_unit">Lufttryck (%1$s)</string>
     <string name="reading_history">Läser historik</string>
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
+    <string name="remove">Ta bort</string>
+    <string name="remove_local_sensor">Är du säker på att du vill ta bort den här sensorn?</string>
     <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNA</string>
@@ -218,6 +222,7 @@
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas</string>
     <string name="settings_temperature_unit">Temperaturenhet</string>
     <string name="settings_temperature_unit_details">Välj den temperaturenhet som du vill ska visas</string>
+    <string name="share">Dela</string>
     <string name="share_sensor_add_friend">Lägg till vän</string>
     <string name="share_sensor_already_shared">Sensorn är redan delad</string>
     <string name="share_sensor_description">Dela din Ruuvi sensor. Lägg till dina vänners e-postadresser (max 10).</string>
@@ -251,9 +256,7 @@
     <string name="tagsettings_network_info">NÄTVERKSINFO</string>
     <string name="tagsettings_owner">Ägare</string>
     <string name="tagsettings_sensor_remove">Ta bort sensor</string>
-    <string name="tagsettings_sensor_remove_confirm">Är du säker på att du vill ta bort den här sensorn?</string>
-    <string name="tagsettings_share_button">Dela</string>
-    <string name="temperature">Temperatur (%1$s)</string>
+    <string name="temperature">Temperatur</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -261,6 +264,7 @@
     <string name="temperature_kelvin_name">Kelvin (K)</string>
     <string name="temperature_kelvin_unit">K</string>
     <string name="temperature_reading">%1$,.2f%2$s</string>
+    <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">%1$s sedan</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>

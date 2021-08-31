@@ -41,5 +41,9 @@ object NetworkInjectionModule {
         bind<ShareSensorViewModel>() with factory { tagId: String ->
             ShareSensorViewModel(tagId, instance())
         }
+
+        bind<ClaimSensorViewModel>() with factory { sensorId: String ->
+            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance())
+        }
     }
 }

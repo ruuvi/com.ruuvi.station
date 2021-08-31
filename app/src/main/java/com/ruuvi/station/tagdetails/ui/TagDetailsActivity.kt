@@ -26,6 +26,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
@@ -376,11 +377,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
-        networkLayout.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
-
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
-            it.isVisible = runtimeBehavior.isFeatureEnabled(FeatureFlag.RUUVI_NETWORK)
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {
@@ -516,8 +514,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         invalidateOptionsMenu()
 
         if (isEmptyTags) {
-            val bitmap = Utils.getDefaultBackground(8, applicationContext)
-            imageSwitcher.setImageDrawable(bitmap)
+            imageSwitcher.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.gradient_background))
         }
     }
 

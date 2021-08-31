@@ -35,11 +35,14 @@ class TagSettingsViewModel(
     private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
     val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
 
+    private val sensorShared = MutableLiveData<Boolean> (false)
+    val sensorSharedObserve: LiveData<Boolean> = sensorShared
+
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
-        it?.owner == networkInteractor.getEmail()
+        it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
     }
 
     val canCalibrate = MediatorLiveData<Boolean>()
@@ -68,10 +71,22 @@ class TagSettingsViewModel(
         }
     }
 
+    fun checkIfSensorShared() {
+        getSensorSharedEmails()
+
+    }
+
     private val handler = CoroutineExceptionHandler() { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
             operationStatus.value = exception.message
             Timber.d("CoroutineExceptionHandler: ${exception.message}")
+        }
+    }
+
+    fun getSensorSharedEmails() {
+        networkInteractor.getSharedInfo(sensorId, handler) { response ->
+            Timber.d("getSensorSharedEmails ${response.toString()}")
+            sensorShared.value = response?.sharedTo?.isNotEmpty() == true
         }
     }
 
@@ -96,35 +111,6 @@ class TagSettingsViewModel(
             networkInteractor.uploadImage(sensorId, userBackground)
         } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
             networkInteractor.resetImage(sensorId)
-        }
-    }
-
-
-    fun saveOrUpdateAlarmItems() {
-        for (alarmItem in alarmElements) {
-            if (alarmItem.shouldBeSaved()) {
-                alarmRepository.saveAlarmElement(alarmItem)
-                networkInteractor.setAlert(sensorId, alarmItem)
-            }
-            if (!alarmItem.isEnabled) {
-                val notificationId = alarmItem.alarm?.id ?: -1
-                removeNotificationById(notificationId)
-            }
-        }
-    }
-
-    fun claimSensor() {
-        val sensorSettings = sensorSettings.value
-        if (sensorSettings != null) {
-            networkInteractor.claimSensor(sensorSettings) {
-                updateNetworkStatus()
-                if (it == null || !it.error.isNullOrEmpty()) {
-                    //TODO LOCALIZE
-                    operationStatus.value = "Failed to claim tag: ${it?.error}"
-                } else {
-                    operationStatus.value = "Tag successfully claimed"
-                }
-            }
         }
     }
 

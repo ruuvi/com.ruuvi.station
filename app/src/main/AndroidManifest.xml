@@ -102,8 +102,12 @@ package="com.ruuvi.station">
 
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-        />
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
+        android:label="@string/claim_sensor"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <provider
         android:name="androidx.core.content.FileProvider"

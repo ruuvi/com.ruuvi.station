@@ -27,6 +27,21 @@ class TagRepository(
             .where(RuuviTagEntity_Table.id.eq(id))
             .querySingle()
 
+    fun activateSensor(reading: TagSensorReading) {
+        reading.ruuviTagId?.let { sensorId ->
+            var tagEntry = getTagById(sensorId)
+            if (tagEntry == null) {
+                tagEntry = RuuviTagEntity(reading)
+                tagEntry.favorite = true
+                tagEntry.insert()
+            } else {
+                tagEntry.favorite = true
+                tagEntry.updateData(reading)
+                tagEntry.update()
+            }
+        }
+    }
+
     fun getFavoriteSensors(): List<RuuviTag> {
         return SQLite
             .select(*FavouriteSensorQuery.queryFields)
@@ -72,14 +87,6 @@ class TagRepository(
 
     fun saveTag(@NonNull tag: RuuviTagEntity) {
         tag.save()
-    }
-
-    fun getTagReadingsDate(tagId: String, since: Date): List<TagSensorReading>? {
-        return SQLite.select()
-            .from(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.ruuviTagId.eq(tagId))
-            .and(TagSensorReading_Table.createdAt.greaterThanOrEq(since))
-            .queryList()
     }
 
     fun makeSensorFavorite(sensor: RuuviTagEntity) {

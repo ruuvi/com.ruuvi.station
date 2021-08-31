@@ -93,7 +93,7 @@ class BluetoothGattInteractor (
             sensorSettings?.calibrateSensor(reading)
             tagReadingList.add(reading)
         }
-        sensorHistoryRepository.bulkInsert(tagReadingList)
+        sensorHistoryRepository.bulkInsert(sensorId, tagReadingList)
         updateLastSync(sensorId, Date())
     }
 
