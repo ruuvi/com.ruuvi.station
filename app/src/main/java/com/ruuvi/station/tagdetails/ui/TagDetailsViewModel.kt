@@ -158,6 +158,8 @@ class TagDetailsViewModel(
     }
 
     fun signOut() {
-        tokenRepository.signOut()
+        tokenRepository.signOut {
+            refreshTags()
+        }
     }
 }

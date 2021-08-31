@@ -89,6 +89,8 @@ class DashboardActivityViewModel(
     }
 
     fun signOut() {
-        tokenRepository.signOut()
+        tokenRepository.signOut {
+            updateTags()
+        }
     }
 }

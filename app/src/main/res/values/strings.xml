@@ -250,7 +250,7 @@
     <string name="sign_in_request_code">Request a Code</string>
     <string name="sign_in_submit_button">Submit</string>
     <string name="sign_out">Sign out</string>
-    <string name="sign_out_confirm">Do you want sign out?</string>
+    <string name="sign_out_confirm">When you sign out, sensors of which ownerships you\'ve claimed on the sensor settings page, will be automatically removed from the app. When you sign in again using the same email address, the sensors will be returned from the cloud.\n\n Do you want sign out?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>

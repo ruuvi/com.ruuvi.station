@@ -208,9 +208,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun login(signedIn: Boolean) {
-        if (signedIn == false) {
-            SignInActivity.start(this)
-        } else {
+        if (signedIn) {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
@@ -223,6 +221,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 }
                 show()
             }
+        } else {
+            SignInActivity.start(this)
+
         }
     }
 
@@ -239,6 +240,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {

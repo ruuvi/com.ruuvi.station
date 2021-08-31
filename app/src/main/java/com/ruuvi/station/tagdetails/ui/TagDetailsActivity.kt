@@ -345,9 +345,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun login(signedIn: Boolean) {
-        if (!signedIn) {
-            SignInActivity.start(this)
-        } else {
+        if (signedIn) {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
@@ -360,6 +358,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 }
                 show()
             }
+        } else {
+            SignInActivity.start(this)
         }
     }
 
@@ -377,6 +377,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
@@ -531,7 +532,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
 
         override fun getPageTitle(position: Int): String {
-            return tags[position].displayName.toUpperCase(Locale.getDefault())
+            return tags.elementAtOrNull(position)?.displayName?.toUpperCase(Locale.getDefault()) ?: ""
         }
 
         override fun getItemPosition(`object`: Any): Int {

@@ -104,9 +104,10 @@ class SensorSettingsRepository {
             .execute()
     }
 
-    fun setSensorOwner(sensorId: String, owner: String) {
+    fun setSensorOwner(sensorId: String, owner: String, isNetworkSensor: Boolean) {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.owner = owner
+        settings.networkSensor = isNetworkSensor
         settings.update()
     }
 

@@ -41,7 +41,9 @@ data class SensorSettings(
     @Column
     var lastSync: Date? = null,
     @Column
-    var networkLastSync: Date? = null
+    var networkLastSync: Date? = null,
+    @Column
+    var networkSensor: Boolean = false
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -81,6 +83,7 @@ data class SensorSettings(
         humidityOffset = sensor.offsetHumidity
         pressureOffset = sensor.offsetPressure
         temperatureOffset = sensor.offsetTemperature
+        networkSensor = true
         update()
     }
 }

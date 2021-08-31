@@ -10,7 +10,7 @@ object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
         bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance()) }
 
-        bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance()) }
+        bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance(), instance(), instance()) }
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance()) }
 
