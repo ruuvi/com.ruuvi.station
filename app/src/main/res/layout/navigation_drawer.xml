@@ -14,8 +14,9 @@
     android:background="@android:color/white" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="24dp"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -23,41 +24,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="0dp">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/networkStatusTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:textStyle="bold"
-                android:text="@string/network_status_title"/>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/logged_in"
+                android:textStyle="bold" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/loggedUserTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                tools:text="@string/network_user"/>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/syncLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/syncNetworkButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_sync_24"
-                android:layout_margin="8dp" />
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/syncStatusTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center|start"
-                tools:text="Syncronized 1 day ago"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                tools:text="@string/network_user" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

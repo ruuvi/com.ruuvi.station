@@ -123,8 +123,8 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
-    <string name="login_description">Hyödynnä Ruuvi-pilvipalvelun mahdollisuudet! Kirjaudu sisään tai luo uusi Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
-    <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\ncloudiin</string>
+    <string name="login_description">Hyödyntääksesi kaikkia sovelluksen ominaisuuksia, kirjaudu sisään tai luo uusi ilmainen Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
+    <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nStationiin</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
@@ -141,14 +141,14 @@
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
     <string name="network_sharing_disabled">Voit jakaa vain Ruuvi Gateway -reitittimen läheisyydessä olevia antureita. Lisätietoja reitittimestä osoitteesta ruuvi.com</string>
-    <string name="network_status_title">Ruuvi cloudin tila</string>
+    <string name="network_status_title">Ruuvin pilven tila</string>
     <string name="network_sync_result_exception">Synkronointi epäonnistui: %1$s</string>
     <string name="network_sync_result_not_logged">Synkronointi epäonnistui: kirjaudu ensin</string>
     <string name="network_sync_result_success">Synkronointi onnistui!</string>
     <string name="network_synced">Synkronoitu: %1$s</string>
-    <string name="network_syncing">Synkronoidaan…</string>
+    <string name="network_syncing">Synkronoidaan...</string>
     <string name="network_user">Käyttäjä: %1$s</string>
-    <string name="never">koskaan</string>
+    <string name="never">ei koskaan</string>
     <string name="no">Ei</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="none">ei kirjautunut</string>
@@ -240,7 +240,7 @@
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Sinut merkitään lähelläsi olevien Ruuvi-anturien omistajaksi sisäänkirjautumisen yhteydessä. Kaikki omistajan vaatimat anturit palautetaan verkosta sovelluksen uudelleenasennuksen yhteydessä.\n\nRuuvi Gatewayn avulla voit tarkastella omistamiasi antureita etänä ja jakaa niitä ystävillesi verkossa.</string>
-    <string name="sign_in_benefits_title">Ruuvi Networkin etuja</string>
+    <string name="sign_in_benefits_title">Ruuvin pilvipalvelun etuja</string>
     <string name="sign_in_check_email">Tarkasta aktivointikoodi saamastasi sähköpostista.</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
@@ -263,7 +263,7 @@
     <string name="synchronizing">Synkronoidaan</string>
     <string name="tag_name">Anturin nimi</string>
     <string name="tag_not_in_range">Anturia ei löydetty. Onko laite lähettyvillä?</string>
-    <string name="tagsettings_claim_button">Vahvista</string>
+    <string name="tagsettings_claim_button">Vahvista omistajuus</string>
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
