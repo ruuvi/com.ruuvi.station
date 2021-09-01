@@ -43,11 +43,38 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var syncJob: Job? = null
 
+    @Volatile
+    private var autoRefreshJob: Job? = null
+
     private val syncResult = MutableStateFlow<NetworkSyncResult> (NetworkSyncResult(NetworkSyncResultType.NONE))
     val syncResultFlow: StateFlow<NetworkSyncResult> = syncResult
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
+
+    fun startAutoRefresh() {
+        Timber.d("startAutoRefresh")
+        if (autoRefreshJob != null && autoRefreshJob?.isActive == true) {
+            Timber.d("Already in auto refresh mode")
+            return
+        }
+
+        autoRefreshJob = CoroutineScope(IO).launch {
+            while (true) {
+                Timber.d("Cloud auto refresh another round")
+                if (networkInteractor.signedIn &&
+                    Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
+                    syncNetworkData()
+                }
+                delay(65 * 1000)
+            }
+        }
+    }
+
+    fun stopAutoRefresh() {
+        Timber.d("stopAutoRefresh")
+        autoRefreshJob?.cancel()
+    }
 
     fun syncNetworkData() {
         if (syncJob != null && syncJob?.isActive == true) {

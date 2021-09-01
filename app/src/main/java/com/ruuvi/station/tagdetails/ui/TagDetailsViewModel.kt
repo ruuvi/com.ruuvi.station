@@ -143,10 +143,6 @@ class TagDetailsViewModel(
         }
     }
 
-    fun networkDataSync() {
-        networkDataSyncInteractor.syncNetworkData()
-    }
-
     fun syncResultShowed() {
         networkDataSyncInteractor.syncStatusShowed()
     }
