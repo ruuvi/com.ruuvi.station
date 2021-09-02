@@ -249,6 +249,13 @@ class NetworkDataSyncInteractor (
                 setSensorImage(sensor, sensorSettings)
             }
         }
+
+        val sensors = sensorSettingsRepository.getSensorSettings()
+        for (sensor in sensors) {
+            if (sensor.networkSensor && userInfoData.sensors.none { it.sensor == sensor.id }) {
+                tagRepository.deleteSensorAndRelatives(sensor.id)
+            }
+        }
     }
 
     private suspend fun setSensorImage(sensor: SensorDataResponse, sensorSettings: SensorSettings) {

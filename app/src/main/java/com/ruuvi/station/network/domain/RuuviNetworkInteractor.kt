@@ -117,7 +117,7 @@ class RuuviNetworkInteractor (
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null))
+                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null, null))
                     }
                 }
             }
