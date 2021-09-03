@@ -50,7 +50,7 @@ class TagRepository(
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
-            .orderBy(OrderBy.fromProperty(SensorSettings_Table.name.withTable()).collate(Collate.UNICODE).ascending())
+            .orderBy(OrderBy.fromProperty(SensorSettings_Table.name.withTable()).collate(Collate.LOCALIZED).ascending())
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
     }
