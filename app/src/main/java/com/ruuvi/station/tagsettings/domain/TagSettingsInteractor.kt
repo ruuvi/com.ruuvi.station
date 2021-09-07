@@ -32,7 +32,7 @@ class TagSettingsInteractor(
             if (sensorSettings.owner == networkInteractor.getEmail()) {
                 networkInteractor.unclaimSensor(sensorId)
             } else {
-                networkInteractor.unshareSensor(owner, sensorId)
+                networkInteractor.unshareSensor(networkInteractor.getEmail() ?: "", sensorId)
             }
         }
     }

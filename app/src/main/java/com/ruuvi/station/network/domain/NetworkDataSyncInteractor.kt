@@ -7,7 +7,6 @@ import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.image.ImageInteractor
@@ -60,13 +59,17 @@ class NetworkDataSyncInteractor (
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
+            syncNetworkData()
+            delay(10000)
             while (true) {
-                Timber.d("Cloud auto refresh another round")
+                val lastSync = preferencesRepository.getLastSyncDate()
+                Timber.d("Cloud auto refresh another round. Last sync ${Date(lastSync)}")
                 if (networkInteractor.signedIn &&
-                    Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
+                    Date(lastSync).diffGreaterThan(60000)) {
+                        Timber.d("Do actual sync")
                     syncNetworkData()
                 }
-                delay(65 * 1000)
+                delay(10000)
             }
         }
     }
@@ -97,7 +100,7 @@ class NetworkDataSyncInteractor (
                 }
 
                 val benchUpdate1 = Date()
-                updateTags(userInfo.data)
+                updateSensors(userInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")
@@ -239,7 +242,7 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
-    private suspend fun updateTags(userInfoData: UserInfoResponseBody) {
+    private suspend fun updateSensors(userInfoData: UserInfoResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
