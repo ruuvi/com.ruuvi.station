@@ -175,6 +175,7 @@
     <string name="remove">Удалить</string>
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
+    <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
     <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>

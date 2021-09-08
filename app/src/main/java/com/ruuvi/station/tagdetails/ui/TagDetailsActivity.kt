@@ -213,19 +213,21 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
-        val previousTagsSize = adapter.count
+        val newSensorId = getNewSensor(adapter.getTags(), tags)
+        Timber.d("newSensorId = $newSensorId desiredTag = ${viewModel.desiredTag}")
+        if (newSensorId != null) viewModel.desiredTag = newSensorId
         adapter.setTags(tags)
 
-        val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
         setupVisibility(tags.isNullOrEmpty())
         if (tags.isNotEmpty()) {
-            if (!viewModel.desiredTag.isNullOrEmpty() && !isSizeChanged) {
-                val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
-                scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
-            } else {
-                scrollOrCacheCurrentPosition(isSizeChanged, tags.size - 1)
-            }
+            val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
+            scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
         }
+    }
+
+    private fun getNewSensor(previousSensors: List<RuuviTag>, newSensors: List<RuuviTag>): String? {
+        if (previousSensors.isNullOrEmpty()) return null
+        return newSensors.firstOrNull { newSens -> previousSensors.none { it.id == newSens.id } }?.id
     }
 
     private fun scrollOrCacheCurrentPosition(shouldScroll: Boolean, scrollToPosition: Int) {
@@ -502,6 +504,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             this.tags = tags
             notifyDataSetChanged()
         }
+
+        fun getTags() = tags
     }
 
     private fun requestPermission() {

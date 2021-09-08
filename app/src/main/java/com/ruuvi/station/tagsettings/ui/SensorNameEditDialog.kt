@@ -26,6 +26,7 @@ class SensorNameEditDialog(
             builder
                 .setView(binding.root)
                 .setTitle(getString(R.string.tag_name))
+                .setMessage(R.string.rename_sensor_message)
                 .setPositiveButton(R.string.ok) {_,_->
                     var value: String? = binding.sensorNameEditText.text.toString()
                     if (value.isNullOrEmpty()) value = null
