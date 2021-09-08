@@ -181,6 +181,7 @@
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you cannot access the sensor anymore.</string>
     <string name="remove_this_sensor">Remove this sensor</string>
+    <string name="rename_sensor_message">Your sensors will be in alphabetical order.</string>
     <string name="rssi">Signal strength (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SCAN</string>

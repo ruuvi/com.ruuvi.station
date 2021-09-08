@@ -180,6 +180,7 @@
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen luku-oikeus päättyy.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
+    <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNAA</string>
