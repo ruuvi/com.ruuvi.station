@@ -4,6 +4,7 @@ import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
+import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -37,7 +38,8 @@ class NetworkDataSyncInteractor (
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor
+    private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
+    private val calibrationInteractor: CalibrationInteractor
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -162,7 +164,6 @@ class NetworkDataSyncInteractor (
 
             var since = cal.time
             if (sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE) > since) since = sensorSettings.networkLastSync
-            val originalSince = since
 
             // if we have data for recent minute - skipping update
             if (!since.diffGreaterThan(60*1000)) return
@@ -246,7 +247,7 @@ class NetworkDataSyncInteractor (
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            sensorSettings.updateFromNetwork(sensor)
+            sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
 
             if (!sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)

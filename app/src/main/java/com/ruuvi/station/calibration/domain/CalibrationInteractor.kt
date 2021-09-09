@@ -1,6 +1,7 @@
 package com.ruuvi.station.calibration.domain
 
 import com.ruuvi.station.calibration.model.CalibrationInfo
+import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -13,6 +14,7 @@ class CalibrationInteractor (
     val tagRepository: TagRepository,
     val sensorSettingsRepository: SensorSettingsRepository,
     val unitsConverter: UnitsConverter,
+    val sensorHistoryRepository: SensorHistoryRepository,
     private val networkInteractor: RuuviNetworkInteractor
     ) {
     fun getSensorData(sensorId: String): RuuviTagEntity? = tagRepository.getTagById(sensorId)
@@ -29,6 +31,7 @@ class CalibrationInteractor (
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset)
             saveCalibrationToNetwork(sensorId)
+            recalibrateHistory(sensorId)
         }
     }
 
@@ -37,6 +40,7 @@ class CalibrationInteractor (
     fun clearTemperatureCalibration(sensorId: String) {
         sensorSettingsRepository.clearTemperatureCalibration(sensorId)
         saveCalibrationToNetwork(sensorId)
+        recalibrateHistory(sensorId)
     }
 
     private fun isTemperatureCalibrated(settings: SensorSettings?): Boolean = settings?.temperatureOffset ?: 0.0 != 0.0
@@ -115,6 +119,7 @@ class CalibrationInteractor (
     fun clearPressureCalibration(sensorId: String) {
         sensorSettingsRepository.clearPressureCalibration(sensorId)
         saveCalibrationToNetwork(sensorId)
+        recalibrateHistory(sensorId)
     }
 
     fun calibratePressure(sensorId: String, targetValue: Double) {
@@ -125,6 +130,7 @@ class CalibrationInteractor (
             val offset = targetPascal - fromPressure
             sensorSettingsRepository.setSensorPressureCalibrationOffset(sensorId, offset)
             saveCalibrationToNetwork(sensorId)
+            recalibrateHistory(sensorId)
         }
     }
 
@@ -135,6 +141,7 @@ class CalibrationInteractor (
     fun clearHumidityCalibration(sensorId: String) {
         sensorSettingsRepository.clearHumidityCalibration(sensorId)
         saveCalibrationToNetwork(sensorId)
+        recalibrateHistory(sensorId)
     }
 
     fun calibrateHumidity(sensorId: String, targetValue: Double) {
@@ -144,10 +151,22 @@ class CalibrationInteractor (
             val offset = targetValue - fromHumidity
             sensorSettingsRepository.setSensorHumidityOffset(sensorId, offset)
             saveCalibrationToNetwork(sensorId)
+            recalibrateHistory(sensorId)
         }
     }
 
     fun saveCalibrationToNetwork(sensorId: String) {
         networkInteractor.updateSensorCalibration(sensorId)
+    }
+
+    fun recalibrateHistory(sensorId: String) {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        sensorSettings?.let {
+            recalibrateHistory(it)
+        }
+    }
+
+    fun recalibrateHistory(sensorSettings: SensorSettings) {
+        sensorHistoryRepository.recalibrate(sensorSettings)
     }
 }
