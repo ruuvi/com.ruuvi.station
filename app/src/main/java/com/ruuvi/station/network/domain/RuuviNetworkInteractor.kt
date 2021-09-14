@@ -5,6 +5,7 @@ import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
@@ -18,7 +19,8 @@ class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val firebaseInteractor: FirebaseInteractor
 ) {
     val signedIn: Boolean
         get() = getToken() != null
@@ -44,6 +46,7 @@ class RuuviNetworkInteractor (
                 if (response.error.isNullOrEmpty() && response.data != null) {
                     tokenRepository.saveTokenInfo(
                         NetworkTokenInfo(response.data.email, response.data.accessToken))
+                    firebaseInteractor.logSignIn()
                 }
             }
             onResult(response)
