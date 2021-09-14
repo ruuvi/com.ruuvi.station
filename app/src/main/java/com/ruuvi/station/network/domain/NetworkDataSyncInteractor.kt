@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
@@ -39,7 +40,8 @@ class NetworkDataSyncInteractor (
     private val networkRequestExecutor: NetworkRequestExecutor,
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
-    private val calibrationInteractor: CalibrationInteractor
+    private val calibrationInteractor: CalibrationInteractor,
+    private val firebaseInteractor: FirebaseInteractor
 ) {
     @Volatile
     private var syncJob: Job? = null
@@ -103,6 +105,7 @@ class NetworkDataSyncInteractor (
 
                 val benchUpdate1 = Date()
                 updateSensors(userInfo.data)
+                firebaseInteractor.logSync(userInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")

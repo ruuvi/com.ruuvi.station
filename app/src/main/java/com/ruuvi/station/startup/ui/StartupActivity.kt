@@ -9,7 +9,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.welcome.ui.WelcomeActivity
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
-import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -20,7 +20,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
 
     private val viewModel: StartupActivityViewModel by viewModel()
-    private val firebasePropertySaver: FirebasePropertiesSaver by instance()
+    private val firebasePropertySaver: FirebaseInteractor by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
