@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat"
             android:hint="@string/sign_in_code_hint"
-            android:inputType="textEmailAddress"
+            android:inputType="textCapCharacters"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
