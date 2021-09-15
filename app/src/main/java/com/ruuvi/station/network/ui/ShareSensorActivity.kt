@@ -69,7 +69,7 @@ class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , 
             emailsList.clear()
             emailsList.addAll(it)
             binding.sharedTextView.isVisible = emailsList.isNotEmpty()
-
+            binding.sharedTextView.text = getString(R.string.share_sensor_already_shared, emailsList.size, 10)
             adapter.notifyDataSetChanged()
         }
 
