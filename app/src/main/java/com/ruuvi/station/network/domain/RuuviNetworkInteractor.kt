@@ -20,7 +20,8 @@ class RuuviNetworkInteractor (
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val firebaseInteractor: FirebaseInteractor
+    private val firebaseInteractor: FirebaseInteractor,
+    private val networkResponseLocalizer: NetworkResponseLocalizer
 ) {
     val signedIn: Boolean
         get() = getToken() != null
@@ -42,6 +43,7 @@ class RuuviNetworkInteractor (
 
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         networkRepository.verifyUser(token) { response ->
+            networkResponseLocalizer.localizeResponse(response)
             response?.let {
                 if (response.error.isNullOrEmpty() && response.data != null) {
                     tokenRepository.saveTokenInfo(
@@ -68,6 +70,7 @@ class RuuviNetworkInteractor (
     fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
         ioScope.launch {
             val result = getUserInfo()
+            networkResponseLocalizer.localizeResponse(result)
             withContext(Dispatchers.Main) {
                 onResult(result)
             }
@@ -98,6 +101,7 @@ class RuuviNetworkInteractor (
                 val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
                 try {
                     networkRepository.claimSensor(request, token) { claimResponse ->
+                        networkResponseLocalizer.localizeResponse(claimResponse)
                         if (claimResponse?.isSuccess() == true) {
                             sensorSettingsRepository.setSensorOwner(
                                 sensorSettings.id,
@@ -145,6 +149,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = ShareSensorRequest(recipientEmail, tagId)
                 val response = networkRepository.shareSensor(request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
@@ -158,6 +163,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = UnshareSensorRequest(recipientEmail, tagId)
                 val response = networkRepository.unshareSensor(request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
@@ -170,6 +176,7 @@ class RuuviNetworkInteractor (
         CoroutineScope(Dispatchers.IO).launch(handler) {
             token?.let {
                 val response = networkRepository.getSensors(sensorId, it)
+                networkResponseLocalizer.localizeResponse(response)
                 if (response?.isSuccess() == true && response.data != null) {
                     val result = response.data.sensors.firstOrNull { it.sensor == sensorId }
                     withContext(Dispatchers.Main) {
@@ -222,6 +229,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = UploadImageRequest(tagId, "image/jpeg")
                 val response = networkRepository.uploadImage(filename, request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
