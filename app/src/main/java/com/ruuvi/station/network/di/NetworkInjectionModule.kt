@@ -12,7 +12,7 @@ object NetworkInjectionModule {
 
         bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance(), instance(), instance()) }
 
-        bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance(), instance()) }
+        bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance()) }
 
@@ -45,5 +45,7 @@ object NetworkInjectionModule {
         bind<ClaimSensorViewModel>() with factory { sensorId: String ->
             ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance())
         }
+
+        bind<NetworkResponseLocalizer>() with provider { NetworkResponseLocalizer(instance()) }
     }
 }
