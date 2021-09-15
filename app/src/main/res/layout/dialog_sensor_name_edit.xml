@@ -9,7 +9,7 @@
         android:id="@+id/sensorNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:maxLength="32"
         android:layout_marginStart="@dimen/dialog_margin"
         android:layout_marginEnd="@dimen/dialog_margin"
