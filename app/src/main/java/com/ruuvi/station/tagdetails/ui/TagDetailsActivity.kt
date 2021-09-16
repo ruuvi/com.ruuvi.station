@@ -142,7 +142,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         setSupportActionBar(toolbar)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_white)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 

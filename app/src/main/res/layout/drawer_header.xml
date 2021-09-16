@@ -21,5 +21,5 @@
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/logo_2021" />
 </androidx.constraintlayout.widget.ConstraintLayout>

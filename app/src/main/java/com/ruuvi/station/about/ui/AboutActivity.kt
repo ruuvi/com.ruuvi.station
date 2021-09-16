@@ -38,7 +38,7 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_white)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         infoText.movementMethod = LinkMovementMethod.getInstance()
         operationsText.movementMethod = LinkMovementMethod.getInstance()
