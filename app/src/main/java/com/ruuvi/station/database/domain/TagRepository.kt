@@ -38,7 +38,10 @@ class TagRepository(
                 tagEntry.insert()
             } else {
                 tagEntry.favorite = true
-                tagEntry.updateData(reading)
+                val previousUpdate = tagEntry.updateAt
+                if (previousUpdate == null ||  previousUpdate < reading.createdAt) {
+                    tagEntry.updateData(reading)
+                }
                 tagEntry.update()
             }
         }
