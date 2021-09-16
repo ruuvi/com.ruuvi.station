@@ -41,6 +41,7 @@ class TagRepository(
                 val previousUpdate = tagEntry.updateAt
                 if (previousUpdate == null ||  previousUpdate < reading.createdAt) {
                     tagEntry.updateData(reading)
+                    tagEntry.connectable = false
                 }
                 tagEntry.update()
             }
