@@ -4,11 +4,10 @@
     <item
         android:drawable="@drawable/gradient_background"/>
 
-    <item>
-        <bitmap
-            android:gravity="clip_horizontal"
-            android:dither="true"
-            android:src="@drawable/ruuvi_logo_nega" />
+    <item
+        android:gravity="center_horizontal|center_vertical"
+        android:drawable="@drawable/logo_2021"
+        android:dither="true">
     </item>
 
 </layer-list>

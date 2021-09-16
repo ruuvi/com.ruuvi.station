@@ -67,7 +67,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         setupViewModel()
         setupDrawer()
