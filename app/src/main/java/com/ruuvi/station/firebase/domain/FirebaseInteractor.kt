@@ -81,4 +81,14 @@ class FirebaseInteractor(
             }
         }
     }
+
+    fun logGattSync(size: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val emptyHistory = size == 0
+            firebaseAnalytics.logEvent("gatt_sync") {
+                param("gatt_sync_count", size.toLong())
+                param("gatt_empty_history", emptyHistory.toString())
+            }
+        }
+    }
 }

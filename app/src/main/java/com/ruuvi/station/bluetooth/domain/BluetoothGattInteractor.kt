@@ -9,6 +9,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
@@ -18,7 +19,8 @@ class BluetoothGattInteractor (
     private val interactor: BluetoothInteractor,
     private val tagRepository: TagRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val sensorHistoryRepository: SensorHistoryRepository
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val firebaseInteractor: FirebaseInteractor
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
@@ -81,6 +83,8 @@ class BluetoothGattInteractor (
     }
 
     fun saveGattReadings(sensorId: String, data: List<LogReading>) {
+        Timber.d("saveGattReadings")
+        firebaseInteractor.logGattSync(data.size)
         val tagReadingList = mutableListOf<TagSensorReading>()
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         data.forEach { logReading ->
