@@ -37,6 +37,7 @@ class RuuviNetworkInteractor (
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         networkRepository.registerUser(user) {
+            networkResponseLocalizer.localizeResponse(it)
             onResult(it)
         }
     }
