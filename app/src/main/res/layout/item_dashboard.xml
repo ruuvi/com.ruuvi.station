@@ -19,7 +19,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/deviceId"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/letter_ball_radius"
         android:fontFamily="@font/montserrat_bold"
@@ -60,21 +60,15 @@
         tools:layout_height="26dp"
         tools:layout_width="26dp" />
 
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/row_main_grid"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:padding="8dp"
-        app:columnCount="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/letterImage"
-        app:useDefaultMargins="true">
-
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:id="@+id/temperatureLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/letterImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/guideline3"
             app:layout_columnWeight="1">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -99,8 +93,13 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/letterImage"
+            app:layout_constraintStart_toEndOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_columnWeight="1">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -125,8 +124,14 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:id="@+id/pressureLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/temperatureLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/guideline3"
             app:layout_columnWeight="1">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -152,8 +157,13 @@
 
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/temperatureLayout"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_columnWeight="1">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -171,12 +181,11 @@
                 android:layout_marginStart="4dp"
                 android:layout_toEndOf="@id/row_main_movement_icon"
                 android:fontFamily="@font/montserrat"
-                tools:text="124"
                 android:textColor="@color/mainDark"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="124" />
 
         </RelativeLayout>
-    </androidx.gridlayout.widget.GridLayout>
 
     <TextView
         android:id="@+id/lastSeenTextView"
@@ -190,6 +199,13 @@
         android:textSize="15sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/row_main_grid"
+        app:layout_constraintTop_toBottomOf="@+id/pressureLayout"
         tools:text="Updated 2 h 5 min 45 s ago" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
