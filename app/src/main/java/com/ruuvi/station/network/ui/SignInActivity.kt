@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.R
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.startup.ui.StartupActivity
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -25,7 +25,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware{
 
     override fun onBackPressed() {
         if (networkInteractor.signedIn) {
-            val parentIntent = Intent(this, TagDetailsActivity::class.java)
+            val parentIntent = Intent(this, StartupActivity::class.java)
             parentIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(parentIntent)
             finish()
