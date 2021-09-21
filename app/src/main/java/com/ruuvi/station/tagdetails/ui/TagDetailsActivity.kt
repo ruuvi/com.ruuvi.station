@@ -20,7 +20,6 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.SuperscriptSpan
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -37,7 +36,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -46,10 +44,8 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
-import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
