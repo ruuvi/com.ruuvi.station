@@ -160,13 +160,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <include
-            android:id="@+id/tag_graphs"
-            layout="@layout/view_graphs"
-            android:visibility="invisible"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/tag_graphs"
+        layout="@layout/view_graphs"
+        android:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
