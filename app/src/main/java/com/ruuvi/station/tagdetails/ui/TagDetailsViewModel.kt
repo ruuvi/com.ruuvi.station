@@ -108,8 +108,12 @@ class TagDetailsViewModel(
     fun refreshTags() {
         ioScope.launch {
             val list = interactor.getTags()
-            withContext(Dispatchers.Main) {
-                tags.value = list
+            val sensorListChanged = sensorListChanged(tags.value ?: listOf(), list)
+            Timber.d("sensorListChanged = $sensorListChanged")
+            if (sensorListChanged) {
+                withContext(Dispatchers.Main) {
+                    tags.value = list
+                }
             }
         }
     }
@@ -161,5 +165,11 @@ class TagDetailsViewModel(
         tokenRepository.signOut {
             refreshTags()
         }
+    }
+
+    private fun sensorListChanged(old: List<RuuviTag>, new: List<RuuviTag>): Boolean {
+        return old.any { oldTag -> new.none { it.id == oldTag.id} } ||
+            new.any{ newTag -> old.none{ it.id == newTag.id}} ||
+            new.any { newTag -> old.any { it.id == newTag.id && it.displayName != newTag.displayName } }
     }
 }
