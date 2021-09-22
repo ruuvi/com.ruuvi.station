@@ -15,8 +15,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15045
-        versionName "1.5.45"
+        versionCode 15046
+        versionName "1.5.46"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -102,6 +102,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.play:core:1.10.1'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
 
     implementation 'com.koushikdutta.ion:ion:2.2.1'
     implementation "com.androidplot:androidplot-core:1.5.0"

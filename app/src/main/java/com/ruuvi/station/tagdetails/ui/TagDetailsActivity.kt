@@ -44,6 +44,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.ui.SignInActivity
@@ -88,6 +89,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private val runtimeBehavior: RuntimeBehavior by instance()
     private val preferencesRepository: PreferencesRepository by instance()
+    private val reviewManagerInteractor: ReviewManagerInteractor by instance()
+
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
     private lateinit var permissionsInteractor: PermissionsInteractor
@@ -108,6 +111,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             AddTagActivity.start(this)
             viewModel.openAddView = false
             return
+        } else {
+            reviewManagerInteractor.requestReview(this)
         }
 
         requestPermission()
