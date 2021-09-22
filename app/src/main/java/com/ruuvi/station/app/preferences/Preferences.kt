@@ -190,6 +190,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_EXPERIMENTAL_FEATURES, experimentalFeatures).apply()
         }
 
+    var requestForReviewDate: Long
+        get() = sharedPreferences.getLong(PREF_REQUEST_FOR_REVIEW_DATE, DEFAULT_REQUEST_FOR_REVIEW_DATE)
+        set(requestDate) {
+            sharedPreferences.edit().putLong(PREF_REQUEST_FOR_REVIEW_DATE, requestDate).apply()
+        }
+
     fun getUserEmailLiveData() = SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
     fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
@@ -228,6 +234,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
+        private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_GATEWAY_URL = ""
@@ -238,6 +245,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
+        private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = Long.MIN_VALUE
         private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
     }
 }

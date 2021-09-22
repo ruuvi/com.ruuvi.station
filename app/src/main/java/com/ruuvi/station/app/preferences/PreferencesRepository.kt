@@ -5,6 +5,7 @@ import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdGenerator
+import java.util.*
 
 class PreferencesRepository(
     private val preferences: Preferences
@@ -152,4 +153,10 @@ class PreferencesRepository(
     }
 
     fun getUserEmail() = preferences.networkEmail
+
+    fun getRequestForReviewDate() = preferences.requestForReviewDate
+
+    fun updateRequestForReviewDate() {
+        preferences.requestForReviewDate = Date().time
+    }
 }
