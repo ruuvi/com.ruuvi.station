@@ -15,7 +15,6 @@ class ReviewManagerInteractor(
     private val preferencesRepository: PreferencesRepository,
     private val sensorSettingsRepository: SensorSettingsRepository
 ) {
-    val manager = ReviewManagerFactory.create(context)
 
     private fun shouldAskForReview(): Boolean {
         val installDate =
@@ -37,6 +36,7 @@ class ReviewManagerInteractor(
         val shouldAskForReview = shouldAskForReview()
         Timber.d("shouldAskForReview = $shouldAskForReview")
         if (!shouldAskForReview()) return
+        val manager = ReviewManagerFactory.create(activity)
         val request = manager.requestReviewFlow()
         request.addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -52,9 +52,8 @@ class ReviewManagerInteractor(
     }
 
     companion object {
-        //TODO these values are for testing
-        const val intervalAfterInstallDays = 0
-        const val intervalBetweenRequestsDays = 0
+        const val intervalAfterInstallDays = 7
+        const val intervalBetweenRequestsDays = 50
         const val minimumSensorsCount = 1
     }
 }
