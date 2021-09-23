@@ -150,4 +150,6 @@ class PreferencesRepository(
     fun setLocale(locale: String) {
         preferences.locale = locale
     }
+
+    fun getUserEmail() = preferences.networkEmail
 }

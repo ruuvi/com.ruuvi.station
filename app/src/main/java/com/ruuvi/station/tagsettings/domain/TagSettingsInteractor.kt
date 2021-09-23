@@ -27,12 +27,12 @@ class TagSettingsInteractor(
     fun deleteTagsAndRelatives(tag: RuuviTagEntity) {
         val sensorId = tag.id.toString()
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        tagRepository.deleteTagsAndRelatives(tag)
+        tagRepository.deleteSensorAndRelatives(tag)
         sensorSettings?.owner?.let { owner ->
             if (sensorSettings.owner == networkInteractor.getEmail()) {
                 networkInteractor.unclaimSensor(sensorId)
             } else {
-                networkInteractor.unshareSensor(owner, sensorId)
+                networkInteractor.unshareSensor(networkInteractor.getEmail() ?: "", sensorId)
             }
         }
     }

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
@@ -26,7 +27,8 @@ class TagDetailsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository
+    private val tokenRepository: NetworkTokenRepository,
+    private val networkApplicationSettings: NetworkApplicationSettings
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -115,8 +117,10 @@ class TagDetailsViewModel(
     fun getBackgroundScanMode(): BackgroundScanModes =
         interactor.getBackgroundScanMode()
 
-    fun setBackgroundScanMode(mode: BackgroundScanModes) =
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
         interactor.setBackgroundScanMode(mode)
+        networkApplicationSettings.updateBackgroundScanMode()
+    }
 
     fun isFirstGraphVisit(): Boolean =
         interactor.isFirstGraphVisit()
@@ -143,10 +147,6 @@ class TagDetailsViewModel(
         }
     }
 
-    fun networkDataSync() {
-        networkDataSyncInteractor.syncNetworkData()
-    }
-
     fun syncResultShowed() {
         networkDataSyncInteractor.syncStatusShowed()
     }
@@ -158,6 +158,8 @@ class TagDetailsViewModel(
     }
 
     fun signOut() {
-        tokenRepository.signOut()
+        tokenRepository.signOut {
+            refreshTags()
+        }
     }
 }

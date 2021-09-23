@@ -142,7 +142,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         setSupportActionBar(toolbar)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_white)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
@@ -213,19 +213,21 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
-        val previousTagsSize = adapter.count
+        val newSensorId = getNewSensor(adapter.getTags(), tags)
+        Timber.d("newSensorId = $newSensorId desiredTag = ${viewModel.desiredTag}")
+        if (newSensorId != null) viewModel.desiredTag = newSensorId
         adapter.setTags(tags)
 
-        val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
         setupVisibility(tags.isNullOrEmpty())
         if (tags.isNotEmpty()) {
-            if (!viewModel.desiredTag.isNullOrEmpty() && !isSizeChanged) {
-                val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
-                scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
-            } else {
-                scrollOrCacheCurrentPosition(isSizeChanged, tags.size - 1)
-            }
+            val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
+            scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
         }
+    }
+
+    private fun getNewSensor(previousSensors: List<RuuviTag>, newSensors: List<RuuviTag>): String? {
+        if (previousSensors.isNullOrEmpty()) return null
+        return newSensors.firstOrNull { newSens -> previousSensors.none { it.id == newSens.id } }?.id
     }
 
     private fun scrollOrCacheCurrentPosition(shouldScroll: Boolean, scrollToPosition: Int) {
@@ -290,33 +292,6 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             return@setNavigationItemSelectedListener true
         }
 
-        syncLayout.setOnClickListener {
-            viewModel.networkDataSync()
-        }
-
-        viewModel.syncResultObserve.observe(this) {syncResult ->
-            val message = when (syncResult.type) {
-                NetworkSyncResultType.NONE -> ""
-                NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
-                NetworkSyncResultType.EXCEPTION -> getString(R.string.network_sync_result_exception, syncResult.errorMessage)
-                NetworkSyncResultType.NOT_LOGGED -> getString(R.string.network_sync_result_not_logged)
-            }
-            if (message.isNotEmpty()) {
-                Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
-                viewModel.syncResultShowed()
-            }
-        }
-
-        viewModel.syncInProgressObserve.observe(this) {
-            if (it) {
-                Timber.d("Sync in progress")
-                syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
-            } else {
-                Timber.d("Sync not in progress")
-                syncNetworkButton.clearAnimation()
-            }
-        }
-
         viewModel.userEmail.observe(this) {
             var user = it
             if (user.isNullOrEmpty()) {
@@ -326,28 +301,12 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 signedIn = true
             }
             updateMenu(signedIn)
-            loggedUserTextView.text = getString(R.string.network_user, user)
-        }
-
-        viewModel.syncStatus.observe(this) {syncStatus ->
-            if (syncStatus.syncInProgress) {
-                syncStatusTextView.text = getString(R.string.connected_reading_info)
-            } else {
-                val lastSyncString =
-                if (syncStatus.lastSync == Long.MIN_VALUE) {
-                    getString(R.string.never)
-                } else {
-                    Date(syncStatus.lastSync).describingTimeSince(this)
-                }
-                syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
-            }
+            loggedUserTextView.text = user
         }
     }
 
     private fun login(signedIn: Boolean) {
-        if (!signedIn) {
-            SignInActivity.start(this)
-        } else {
+        if (signedIn) {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
@@ -360,6 +319,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 }
                 show()
             }
+        } else {
+            SignInActivity.start(this)
         }
     }
 
@@ -377,6 +338,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
@@ -531,7 +493,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
 
         override fun getPageTitle(position: Int): String {
-            return tags[position].displayName.toUpperCase(Locale.getDefault())
+            return tags.elementAtOrNull(position)?.displayName?.toUpperCase(Locale.getDefault()) ?: ""
         }
 
         override fun getItemPosition(`object`: Any): Int {
@@ -542,6 +504,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             this.tags = tags
             notifyDataSetChanged()
         }
+
+        fun getTags() = tags
     }
 
     private fun requestPermission() {

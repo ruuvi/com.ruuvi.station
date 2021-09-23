@@ -4,12 +4,13 @@ import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
+import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
@@ -38,16 +39,49 @@ class NetworkDataSyncInteractor (
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor
+    private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
+    private val calibrationInteractor: CalibrationInteractor,
+    private val firebaseInteractor: FirebaseInteractor
 ) {
     @Volatile
     private var syncJob: Job? = null
+
+    @Volatile
+    private var autoRefreshJob: Job? = null
 
     private val syncResult = MutableStateFlow<NetworkSyncResult> (NetworkSyncResult(NetworkSyncResultType.NONE))
     val syncResultFlow: StateFlow<NetworkSyncResult> = syncResult
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
+
+    fun startAutoRefresh() {
+        Timber.d("startAutoRefresh")
+        if (autoRefreshJob != null && autoRefreshJob?.isActive == true) {
+            Timber.d("Already in auto refresh mode")
+            return
+        }
+
+        autoRefreshJob = CoroutineScope(IO).launch {
+            syncNetworkData()
+            delay(10000)
+            while (true) {
+                val lastSync = preferencesRepository.getLastSyncDate()
+                Timber.d("Cloud auto refresh another round. Last sync ${Date(lastSync)}")
+                if (networkInteractor.signedIn &&
+                    Date(lastSync).diffGreaterThan(60000)) {
+                        Timber.d("Do actual sync")
+                    syncNetworkData()
+                }
+                delay(10000)
+            }
+        }
+    }
+
+    fun stopAutoRefresh() {
+        Timber.d("stopAutoRefresh")
+        autoRefreshJob?.cancel()
+    }
 
     fun syncNetworkData() {
         if (syncJob != null && syncJob?.isActive == true) {
@@ -70,7 +104,8 @@ class NetworkDataSyncInteractor (
                 }
 
                 val benchUpdate1 = Date()
-                updateTags(userInfo.data)
+                updateSensors(userInfo.data)
+                firebaseInteractor.logSync(userInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")
@@ -132,7 +167,6 @@ class NetworkDataSyncInteractor (
 
             var since = cal.time
             if (sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE) > since) since = sensorSettings.networkLastSync
-            val originalSince = since
 
             // if we have data for recent minute - skipping update
             if (!since.diffGreaterThan(60*1000)) return
@@ -212,14 +246,21 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
-    private suspend fun updateTags(userInfoData: UserInfoResponseBody) {
+    private suspend fun updateSensors(userInfoData: UserInfoResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            sensorSettings.updateFromNetwork(sensor)
+            sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
 
             if (!sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)
+            }
+        }
+
+        val sensors = sensorSettingsRepository.getSensorSettings()
+        for (sensor in sensors) {
+            if (sensor.networkSensor && userInfoData.sensors.none { it.sensor == sensor.id }) {
+                tagRepository.deleteSensorAndRelatives(sensor.id)
             }
         }
     }

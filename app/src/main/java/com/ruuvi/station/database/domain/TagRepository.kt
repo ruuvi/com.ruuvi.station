@@ -8,6 +8,8 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import timber.log.Timber
 import java.util.*
+import com.raizlabs.android.dbflow.annotation.Collate
+import com.raizlabs.android.dbflow.sql.language.OrderBy
 
 class TagRepository(
     private val sensorSettingsRepository: SensorSettingsRepository,
@@ -36,7 +38,11 @@ class TagRepository(
                 tagEntry.insert()
             } else {
                 tagEntry.favorite = true
-                tagEntry.updateData(reading)
+                val previousUpdate = tagEntry.updateAt
+                if (previousUpdate == null ||  previousUpdate < reading.createdAt) {
+                    tagEntry.updateData(reading)
+                    tagEntry.connectable = false
+                }
                 tagEntry.update()
             }
         }
@@ -48,7 +54,7 @@ class TagRepository(
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
-            .orderBy(SensorSettings_Table.createDate.withTable(), true)
+            .orderBy(OrderBy.fromProperty(SensorSettings_Table.name.withTable()).collate(Collate.LOCALIZED).ascending())
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
     }
@@ -65,20 +71,26 @@ class TagRepository(
         return if (queryResult != null) tagConverter.fromDatabase(queryResult) else null
     }
 
-    fun deleteTagsAndRelatives(tag: RuuviTagEntity) {
+    fun deleteSensorAndRelatives(sensorId: String) {
+        getTagById(sensorId)?.let {
+            deleteSensorAndRelatives(it)
+        }
+    }
+
+    fun deleteSensorAndRelatives(sensor: RuuviTagEntity) {
         SQLite.delete(Alarm::class.java)
-            .where(Alarm_Table.ruuviTagId.eq(tag.id))
+            .where(Alarm_Table.ruuviTagId.eq(sensor.id))
             .execute()
 
         SQLite.delete(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.ruuviTagId.eq(tag.id))
+            .where(TagSensorReading_Table.ruuviTagId.eq(sensor.id))
             .execute()
 
         SQLite.delete(SensorSettings::class.java)
-            .where(SensorSettings_Table.id.eq(tag.id))
+            .where(SensorSettings_Table.id.eq(sensor.id))
             .execute()
 
-        tag.delete()
+        sensor.delete()
     }
 
     fun updateTag(tag: RuuviTagEntity) {

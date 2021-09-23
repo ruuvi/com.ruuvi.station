@@ -67,7 +67,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         setupViewModel()
         setupDrawer()
@@ -153,33 +153,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             return@setNavigationItemSelectedListener true
         }
 
-        syncLayout.setOnClickListener {
-            viewModel.networkDataSync()
-        }
-
-        viewModel.syncResultObserve.observe(this) {syncResult ->
-            val message = when (syncResult.type) {
-                NetworkSyncResultType.NONE -> ""
-                NetworkSyncResultType.SUCCESS -> getString(R.string.network_sync_result_success)
-                NetworkSyncResultType.EXCEPTION -> getString(R.string.network_sync_result_exception, syncResult.errorMessage)
-                NetworkSyncResultType.NOT_LOGGED -> getString(R.string.network_sync_result_not_logged)
-            }
-            if (message.isNotEmpty()) {
-                Snackbar.make(mainDrawerLayout, message, Snackbar.LENGTH_SHORT).show()
-                viewModel.syncResultShowed()
-            }
-        }
-
-        viewModel.syncInProgressObserve.observe(this) {
-            if (it) {
-                Timber.d("Sync in progress")
-                syncNetworkButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
-            } else {
-                Timber.d("Sync not in progress")
-                syncNetworkButton.clearAnimation()
-            }
-        }
-
         viewModel.userEmail.observe(this) {
             var user = it
             if (user.isNullOrEmpty()) {
@@ -189,28 +162,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 signedIn = true
             }
             updateMenu(signedIn)
-            loggedUserTextView.text = getString(R.string.network_user, user)
-        }
-
-        viewModel.syncStatus.observe(this) {syncStatus->
-            if (syncStatus.syncInProgress) {
-                syncStatusTextView.text = getString(R.string.connected_reading_info)
-            } else {
-                val lastSyncString =
-                    if (syncStatus.lastSync == Long.MIN_VALUE) {
-                        getString(R.string.never)
-                    } else {
-                        Date(syncStatus.lastSync).describingTimeSince(this)
-                    }
-                syncStatusTextView.text = getString(R.string.network_synced, lastSyncString)
-            }
+            loggedUserTextView.text = user
         }
     }
 
     private fun login(signedIn: Boolean) {
-        if (signedIn == false) {
-            SignInActivity.start(this)
-        } else {
+        if (signedIn) {
             val builder = AlertDialog.Builder(this)
             with(builder)
             {
@@ -223,6 +180,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 }
                 show()
             }
+        } else {
+            SignInActivity.start(this)
+
         }
     }
 
@@ -239,6 +199,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
+        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {

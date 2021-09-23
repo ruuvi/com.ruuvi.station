@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.from
 import com.raizlabs.android.dbflow.sql.language.Method
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.sql.queriable.StringQuery
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
 import timber.log.Timber
@@ -141,6 +142,25 @@ class SensorHistoryRepository {
                 if (query != null) executeSQL(query)
             }
         }
+    }
+
+    fun recalibrate(sensorSettings: SensorSettings) {
+        fun executeSQL(sql: String) {
+            Timber.d("executeSQL $sql")
+            FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL(sql)
+        }
+        val updateQuery = """
+            update TagSensorReading 
+                set 
+                    temperature = temperature - ifnull(temperatureOffset, 0) + ${sensorSettings.temperatureOffset ?: 0.0},
+                    humidity = humidity - ifnull(humidityOffset, 0) + ${sensorSettings.humidityOffset ?: 0.0},
+                    pressure = pressure - ifnull(pressureOffset, 0) + ${sensorSettings.pressureOffset ?: 0.0},
+                    temperatureOffset = ${sensorSettings.temperatureOffset ?: 0.0},
+                    humidityOffset = ${sensorSettings.humidityOffset ?: 0.0},
+                    pressureOffset = ${sensorSettings.pressureOffset ?: 0.0}
+            where ruuviTagId = "${sensorSettings.id}"
+        """
+        executeSQL(updateQuery)
     }
 
     companion object {

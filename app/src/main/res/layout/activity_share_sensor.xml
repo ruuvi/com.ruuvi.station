@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context="com.ruuvi.station.network.ui.ShareSensorActivity">
 
-  <RelativeLayout
-      android:background="@drawable/header"
-      android:fitsSystemWindows="true"
-      android:id="@+id/toolbarContainer"
-      android:layout_height="match_parent"
-      android:layout_width="match_parent">
+  <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/appBarLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/ap_transparent"
+      android:theme="@style/AppTheme.AppBarOverlay"
+      app:elevation="0dp"
+      app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:background="@color/ap_transparent"
-        android:layout_height="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="0dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/header"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+  </com.google.android.material.appbar.AppBarLayout>
 
-      <androidx.appcompat.widget.Toolbar
-          android:id="@+id/toolbar"
-          android:background="@drawable/header"
-          android:layout_height="?attr/actionBarSize"
-          android:layout_width="match_parent"
-          app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </com.google.android.material.appbar.AppBarLayout>
+  <androidx.core.widget.NestedScrollView
+      android:id="@+id/scrollView"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:background="@color/white"
+      app:layout_constraintBottom_toTopOf="@+id/guideline2"
+      app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tag_settings_item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBarLayout"
         android:background="@color/white">
 
       <androidx.appcompat.widget.AppCompatTextView
@@ -62,75 +63,89 @@
           app:layout_constraintLeft_toLeftOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/shareSensorTitleTextView" />
 
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/sharingLayout"
-          android:layout_width="match_parent"
-          android:layout_height="0dp"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/shareSensorDisabledTitleTextView"
-          app:layout_constraintVertical_bias="0.0"
-          tools:layout_editor_absoluteX="0dp">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/addFriendTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/share_sensor_add_friend"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/friendEmailEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="8dp"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addFriendTextView" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/shareButton"
-            style="@style/roundButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="48dp"
-            android:layout_marginRight="48dp"
-            android:text="@string/share"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friendEmailEditText" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/sharedTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/share_sensor_already_shared"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shareButton"
-            tools:visibility="visible" />
-
-        <ListView
-            android:id="@+id/sensorRecipientsListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sharedTextView"
-            tools:listitem="@layout/item_shared_to_email" />
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-  </RelativeLayout>
+  </androidx.core.widget.NestedScrollView>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="@color/ap_gray"
+      app:layout_constraintBottom_toTopOf="@+id/guideline2"
+
+      />
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      app:layout_constraintGuide_percent="0.50" />
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/sharingLayout"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/guideline2">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/addFriendTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/share_sensor_add_friend"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/friendEmailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addFriendTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/shareButton"
+        style="@style/roundButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:text="@string/share"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/friendEmailEditText" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/sharedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/share_sensor_already_shared"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shareButton"
+        tools:visibility="visible" />
+
+    <ListView
+        android:id="@+id/sensorRecipientsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sharedTextView"
+        tools:listitem="@layout/item_shared_to_email" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

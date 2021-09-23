@@ -52,13 +52,14 @@ class RuuviScannerApplication : Application(), KodeinAware {
         override fun onBecameForeground() {
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
-            updateNetwork()
+            networkDataSyncInteractor.startAutoRefresh()
             runtimeBehavior.refreshFeatureFlags()
         }
 
         override fun onBecameBackground() {
             isInForeground = false
             defaultOnTagFoundListener.isForeground = false
+            networkDataSyncInteractor.stopAutoRefresh()
         }
     }
 
@@ -89,8 +90,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
         foreground.addListener(listener)
 
         setupExperimentalFeatures()
-
-        updateNetwork()
     }
 
     private fun setupDependencyInjection() {
@@ -109,12 +108,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private fun setupExperimentalFeatures() {
         if (networkInteractor.signedIn) {
             runtimeFeatureFlagProvider.setFeatureEnabled(FeatureFlag.RUUVI_NETWORK, true)
-        }
-    }
-
-    private fun updateNetwork() {
-        if (networkInteractor.signedIn && Date(preferencesRepository.getLastSyncDate()).diffGreaterThan(60*1000)) {
-            networkDataSyncInteractor.syncNetworkData()
         }
     }
 }

@@ -18,10 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            tools:text="@string/temperature_reading"
+            tools:text="21.72"
             android:fontFamily="@font/oswald_bold"
             android:textColor="@color/white"
-            android:textSize="76sp"
+            android:textSize="72sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,11 +34,11 @@
             android:gravity="center"
             android:fontFamily="@font/oswald_light"
             android:textColor="@color/white"
-            android:textSize="40sp"
+            android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@id/tagTemperatureTextView"
             app:layout_constraintLeft_toRightOf="@id/tagTemperatureTextView"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="°U" />
+            tools:text="°С" />
 
         <LinearLayout
             android:id="@+id/tagHumidityLayout"

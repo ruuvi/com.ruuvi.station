@@ -74,10 +74,6 @@ class DashboardActivityViewModel(
         }
     }
 
-    fun networkDataSync() {
-        networkDataSyncInteractor.syncNetworkData()
-    }
-
     fun syncResultShowed() {
         networkDataSyncInteractor.syncStatusShowed()
     }
@@ -89,6 +85,8 @@ class DashboardActivityViewModel(
     }
 
     fun signOut() {
-        tokenRepository.signOut()
+        tokenRepository.signOut {
+            updateTags()
+        }
     }
 }

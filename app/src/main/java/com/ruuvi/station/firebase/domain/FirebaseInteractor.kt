@@ -1,14 +1,16 @@
 package com.ruuvi.station.firebase.domain
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Exception
 
-class FirebasePropertiesSaver(
+class FirebaseInteractor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val preferences: PreferencesRepository,
     private val tagInteractor: TagInteractor
@@ -16,7 +18,7 @@ class FirebasePropertiesSaver(
 ) {
     fun saveUserProperties() {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(15*1000)
+            delay(15000)
             Timber.d("FirebasePropertySaver.saveUserProperties")
             try {
                 firebaseAnalytics.setUserProperty("background_scan_enabled",
@@ -47,8 +49,45 @@ class FirebasePropertiesSaver(
                 } else {
                     firebaseAnalytics.setUserProperty("added_tags", "10+")
                 }
+
+                val signedIn = preferences.getUserEmail().isEmpty()
+                firebaseAnalytics.setUserProperty("signed_in", signedIn.toString())
             } catch (e: Exception) {
                 Timber.e(e)
+            }
+        }
+    }
+
+    fun logSignIn() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val addedTags = tagInteractor.getTagEntities(true).size
+            val notAddedTags = tagInteractor.getTagEntities(false).size
+            val seenTags = addedTags + notAddedTags
+
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
+                param("sensors_added", addedTags.toLong())
+                param("sensors_seen", seenTags.toLong())
+            }
+        }
+    }
+
+    fun logSync(userInfoData: UserInfoResponseBody) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val claimed = userInfoData.sensors.count { it.owner == userInfoData.email }
+            val notOwned = userInfoData.sensors.count { it.owner != userInfoData.email }
+            firebaseAnalytics.logEvent("sync") {
+                param("sensors_claimed", claimed.toLong())
+                param("sensors_shared_to_user", notOwned.toLong())
+            }
+        }
+    }
+
+    fun logGattSync(size: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val emptyHistory = size == 0
+            firebaseAnalytics.logEvent("gatt_sync") {
+                param("gatt_sync_count", size.toLong())
+                param("gatt_empty_history", emptyHistory.toString())
             }
         }
     }

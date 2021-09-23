@@ -5,6 +5,7 @@ import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
@@ -18,7 +19,9 @@ class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val networkRequestExecutor: NetworkRequestExecutor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val firebaseInteractor: FirebaseInteractor,
+    private val networkResponseLocalizer: NetworkResponseLocalizer
 ) {
     val signedIn: Boolean
         get() = getToken() != null
@@ -34,16 +37,19 @@ class RuuviNetworkInteractor (
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
         networkRepository.registerUser(user) {
+            networkResponseLocalizer.localizeResponse(it)
             onResult(it)
         }
     }
 
     fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
         networkRepository.verifyUser(token) { response ->
+            networkResponseLocalizer.localizeResponse(response)
             response?.let {
                 if (response.error.isNullOrEmpty() && response.data != null) {
                     tokenRepository.saveTokenInfo(
                         NetworkTokenInfo(response.data.email, response.data.accessToken))
+                    firebaseInteractor.logSignIn()
                 }
             }
             onResult(response)
@@ -65,6 +71,7 @@ class RuuviNetworkInteractor (
     fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
         ioScope.launch {
             val result = getUserInfo()
+            networkResponseLocalizer.localizeResponse(result)
             withContext(Dispatchers.Main) {
                 onResult(result)
             }
@@ -95,13 +102,21 @@ class RuuviNetworkInteractor (
                 val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
                 try {
                     networkRepository.claimSensor(request, token) { claimResponse ->
+                        networkResponseLocalizer.localizeResponse(claimResponse)
                         if (claimResponse?.isSuccess() == true) {
-                            sensorSettingsRepository.setSensorOwner(sensorSettings.id, getEmail()
-                                ?: "")
+                            sensorSettingsRepository.setSensorOwner(
+                                sensorSettings.id,
+                                getEmail() ?: "",
+                                true
+                            )
                         } else {
                             val maskedEmail = Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
                             if (maskedEmail?.isNotEmpty() == true) {
-                                sensorSettingsRepository.setSensorOwner(sensorSettings.id, maskedEmail)
+                                sensorSettingsRepository.setSensorOwner(
+                                    sensorSettings.id,
+                                    maskedEmail,
+                                    false
+                                )
                             }
                         }
                         getUserInfo {
@@ -110,7 +125,7 @@ class RuuviNetworkInteractor (
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null))
+                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null, null))
                     }
                 }
             }
@@ -135,6 +150,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = ShareSensorRequest(recipientEmail, tagId)
                 val response = networkRepository.shareSensor(request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
@@ -148,6 +164,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = UnshareSensorRequest(recipientEmail, tagId)
                 val response = networkRepository.unshareSensor(request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }
@@ -160,6 +177,7 @@ class RuuviNetworkInteractor (
         CoroutineScope(Dispatchers.IO).launch(handler) {
             token?.let {
                 val response = networkRepository.getSensors(sensorId, it)
+                networkResponseLocalizer.localizeResponse(response)
                 if (response?.isSuccess() == true && response.data != null) {
                     val result = response.data.sensors.firstOrNull { it.sensor == sensorId }
                     withContext(Dispatchers.Main) {
@@ -212,6 +230,7 @@ class RuuviNetworkInteractor (
             token?.let {
                 val request = UploadImageRequest(tagId, "image/jpeg")
                 val response = networkRepository.uploadImage(filename, request, token)
+                networkResponseLocalizer.localizeResponse(response)
                 withContext(Dispatchers.Main) {
                     onResult(response)
                 }

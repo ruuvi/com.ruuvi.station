@@ -108,7 +108,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: "None"
 
-            if (sensorSettings?.owner.isNullOrEmpty()) {
+            if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
                 binding.ownerLayout.isEnabled = true
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)

@@ -59,7 +59,7 @@ class RuuviNetworkRepository
                     result = errorResponse
                 }
             } catch (e: Exception) {
-                result = UserRegisterResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null)
+                result = UserRegisterResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null, code = null)
             }
 
             withContext(Dispatchers.Main) {
@@ -81,7 +81,7 @@ class RuuviNetworkRepository
                     result = errorResponse
                 }
             } catch (e: Exception) {
-                result = UserVerifyResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null)
+                result = UserVerifyResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null, code = null)
             }
             withContext(Dispatchers.Main) {
                 onResult(result)
