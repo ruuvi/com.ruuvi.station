@@ -314,4 +314,5 @@
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
     <string name="yes">Yes</string>
+    <string name="title_activity_dfu_update">DfuUpdateActivity</string>
 </resources>

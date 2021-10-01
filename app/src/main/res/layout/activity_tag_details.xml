@@ -9,7 +9,7 @@
     tools:context="com.ruuvi.station.tagdetails.ui.TagDetailsActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/tag_background_view"
+        android:id="@+id/tagBackgroundView"
         android:src="@drawable/gradient_background"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         android:layout_height="match_parent"/>
 
     <ImageView
-        android:id="@+id/background_fader"
+        android:id="@+id/backgroundFader"
         android:animateLayoutChanges="true"
         android:alpha="0"
         android:background="@color/black"
@@ -52,11 +52,14 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_tag_details" />
+        <include
+            android:id="@+id/content"
+            layout="@layout/content_tag_details" />
 
     </LinearLayout>
 
     <include
+        android:id="@+id/navigationContent"
         layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

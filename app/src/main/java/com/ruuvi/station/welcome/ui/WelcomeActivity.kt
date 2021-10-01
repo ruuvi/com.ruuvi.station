@@ -9,34 +9,41 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.databinding.ActivityWelcomeBinding
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
-import kotlinx.android.synthetic.main.activity_welcome.start_button
-import kotlinx.android.synthetic.main.activity_welcome.tab_layout
-import kotlinx.android.synthetic.main.activity_welcome.welcome_pager
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-class WelcomeActivity : AppCompatActivity(), KodeinAware {
+class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val preferencesRepository : PreferencesRepository by instance()
 
+    private lateinit var binding: ActivityWelcomeBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
+        binding = ActivityWelcomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val welcomeAdapter = WelcomePager()
-        welcome_pager.adapter = welcomeAdapter
-        welcome_pager.offscreenPageLimit = 100 // just keep them all in memory
+        setupUI()
+    }
 
-        tab_layout.setupWithViewPager(welcome_pager)
+    private fun setupUI() {
+        with(binding) {
+            val welcomeAdapter = WelcomePager()
+            welcomePager.adapter = welcomeAdapter
+            welcomePager.offscreenPageLimit = 100 // just keep them all in memory
 
-        start_button.setDebouncedOnClickListener {
-            preferencesRepository.setFirstStart(false)
-            StartupActivity.start(this, true)
+            tabLayout.setupWithViewPager(welcomePager)
+
+            startButton.setDebouncedOnClickListener {
+                preferencesRepository.setFirstStart(false)
+                StartupActivity.start(this@WelcomeActivity, true)
+            }
         }
     }
 
@@ -54,11 +61,11 @@ class WelcomePager : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         var resId = 0
         when (position) {
-            0 -> resId = R.id.welcome_0
-            1 -> resId = R.id.welcome_1
-            2 -> resId = R.id.welcome_2
-            3 -> resId = R.id.welcome_3
-            4 -> resId = R.id.welcome_5
+            0 -> resId = R.id.welcomeLayout0
+            1 -> resId = R.id.welcomeLayout1
+            2 -> resId = R.id.welcomeLayout2
+            3 -> resId = R.id.welcomeLayout3
+            4 -> resId = R.id.welcomeLayout5
         }
 
         return container.findViewById(resId)

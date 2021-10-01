@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.RadioButton
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import kotlinx.android.synthetic.main.fragment_app_settings_humidity.*
+import com.ruuvi.station.databinding.FragmentAppSettingsHumidityBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
@@ -17,8 +17,11 @@ class AppSettingsHumidityFragment : Fragment(R.layout.fragment_app_settings_humi
 
     private val viewModel: AppSettingsHumidityViewModel by viewModel()
 
+    private lateinit var binding: FragmentAppSettingsHumidityBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentAppSettingsHumidityBinding.bind(view)
         setupUI()
     }
 
@@ -31,10 +34,10 @@ class AppSettingsHumidityFragment : Fragment(R.layout.fragment_app_settings_humi
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option == current
-            radioGroup.addView(radioButton)
+            binding.radioGroup.addView(radioButton)
         }
 
-        radioGroup.setOnCheckedChangeListener { _, i ->
+        binding.radioGroup.setOnCheckedChangeListener { _, i ->
             viewModel.setHumidityUnit(items[i])
         }
     }

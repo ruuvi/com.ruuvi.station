@@ -10,13 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.database.domain.LocalDatabase
-import kotlinx.android.synthetic.main.activity_about.toolbar
-import kotlinx.android.synthetic.main.content_about.debugInfo
-import kotlinx.android.synthetic.main.content_about.infoText
-import kotlinx.android.synthetic.main.content_about.moreText
-import kotlinx.android.synthetic.main.content_about.openText
-import kotlinx.android.synthetic.main.content_about.operationsText
-import kotlinx.android.synthetic.main.content_about.troubleshootingText
+import com.ruuvi.station.databinding.ActivityAboutBinding
+import com.ruuvi.station.databinding.ActivityClaimSensorBinding
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,26 +20,31 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import java.io.File
 
-class AboutActivity : AppCompatActivity(), KodeinAware {
+class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AboutActivityViewModel by viewModel()
 
+    lateinit var binding: ActivityAboutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
-        setSupportActionBar(toolbar)
+        binding = ActivityAboutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_2021)
 
-        infoText.movementMethod = LinkMovementMethod.getInstance()
-        operationsText.movementMethod = LinkMovementMethod.getInstance()
-        troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
-        openText.movementMethod = LinkMovementMethod.getInstance()
-        moreText.movementMethod = LinkMovementMethod.getInstance()
+        with(binding.content) {
+            infoText.movementMethod = LinkMovementMethod.getInstance()
+            operationsText.movementMethod = LinkMovementMethod.getInstance()
+            troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
+            openText.movementMethod = LinkMovementMethod.getInstance()
+            moreText.movementMethod = LinkMovementMethod.getInstance()
+        }
 
         lifecycleScope.launch {
             viewModel.tagsSizesFlow.collect {
@@ -67,7 +67,7 @@ class AboutActivity : AppCompatActivity(), KodeinAware {
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
         val dbFile = File(dbPath)
         debugText += getString(R.string.help_db_size, dbFile.length() / 1024)
-        debugInfo.text = debugText
+        binding.content.debugInfo.text = debugText
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

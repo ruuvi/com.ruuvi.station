@@ -54,16 +54,9 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
-import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
-import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
-import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
-import kotlinx.android.synthetic.main.activity_tag_details.toolbar
-import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
-import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
-import kotlinx.android.synthetic.main.content_tag_details.tagPager
-import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -72,9 +65,11 @@ import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class TagDetailsActivity : AppCompatActivity(), KodeinAware {
+class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
+
+    private lateinit var binding: ActivityTagDetailsBinding
 
     private val viewModel: TagDetailsViewModel by viewModel {
         TagDetailsArguments(
@@ -101,7 +96,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tag_details)
+        binding = ActivityTagDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         permissionsInteractor = PermissionsInteractor(this)
 
         setupViewModel()
@@ -131,7 +127,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestPermission()
-                    if (viewModel.openAddView) noTagsTextView.callOnClick()
+                    if (viewModel.openAddView) binding.content.noTagsTextView.callOnClick()
                 } else {
                     permissionsInteractor.showPermissionSnackbar()
                 }
@@ -140,14 +136,14 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupUI() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_2021)
 
-        noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
+        binding.content.noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
-        imageSwitcher.setFactory {
+        binding.imageSwitcher.setFactory {
             val imageView = AppCompatImageView(applicationContext)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.layoutParams = FrameLayout.LayoutParams(
@@ -158,14 +154,14 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         if (viewModel.dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
             setupDrawer()
         }
 
-        tagPager.adapter = adapter
-        tagPager.offscreenPageLimit = 1
-        tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.content.tagPager.adapter = adapter
+        binding.content.tagPager.offscreenPageLimit = 1
+        binding.content.tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(position: Int, offset: Float, offsetPixels: Int) {
@@ -222,7 +218,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         setupVisibility(tags.isNullOrEmpty())
         if (tags.isNotEmpty()) {
             val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
-            scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
+            scrollOrCacheCurrentPosition(binding.content.tagPager.currentItem != index, index)
         }
     }
 
@@ -233,33 +229,33 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun scrollOrCacheCurrentPosition(shouldScroll: Boolean, scrollToPosition: Int) {
         if (shouldScroll) {
-            tagPager.setCurrentItem(scrollToPosition, false)
+            binding.content.tagPager.setCurrentItem(scrollToPosition, false)
         }
-        viewModel.pageSelected(tagPager.currentItem)
+        viewModel.pageSelected(binding.content.tagPager.currentItem)
     }
 
     private fun setupSelectedTag(selectedTag: RuuviTag) {
         val previousBitmapDrawable = backgrounds[viewModel.getPrevTag()?.id]
         if (previousBitmapDrawable != null) {
-            tag_background_view.setImageDrawable(previousBitmapDrawable)
+            binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
         }
         val bitmap = Utils.getBackground(applicationContext, selectedTag)
         val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
         backgrounds[selectedTag.id] = bitmapDrawable
-        imageSwitcher.setImageDrawable(bitmapDrawable)
+        binding.imageSwitcher.setImageDrawable(bitmapDrawable)
     }
 
     private fun animateGraphTransition(isShowGraph: Boolean) {
-        tagPager.isSwipeEnabled = !isShowGraph
-        pagerTitleStrip.isTabSwitchEnabled = !isShowGraph
+        binding.content.tagPager.isSwipeEnabled = !isShowGraph
+        binding.content.pagerTitleStrip.isTabSwitchEnabled = !isShowGraph
         val textSpacing = if (isShowGraph) MAX_TEXT_SPACING else MIN_TEXT_SPACING
         val (animateFrom, animateTo) =
             if (isShowGraph) MIN_TEXT_SPACING to MAX_TEXT_SPACING else MAX_TEXT_SPACING to MIN_TEXT_SPACING
 
-        if (pagerTitleStrip.textSpacing != textSpacing) {
+        if (binding.content.pagerTitleStrip.textSpacing != textSpacing) {
             val animator = ValueAnimator.ofInt(animateFrom, animateTo)
             animator.addUpdateListener {
-                pagerTitleStrip.textSpacing = animator.animatedValue as Int
+                binding.content.pagerTitleStrip.textSpacing = animator.animatedValue as Int
             }
             animator.start()
         }
@@ -267,11 +263,11 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun setupDrawer() {
         val drawerToggle = ActionBarDrawerToggle(
-            this, mainDrawerLayout, toolbar,
+            this, binding.mainDrawerLayout, binding.toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
 
-        mainDrawerLayout.addDrawerListener(drawerToggle)
+        binding.mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
@@ -280,7 +276,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         updateMenu(signedIn)
 
-        navigationView.setNavigationItemSelectedListener {
+        binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
@@ -289,7 +285,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
-            mainDrawerLayout.closeDrawer(GravityCompat.START)
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
 
@@ -302,7 +298,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 signedIn = true
             }
             updateMenu(signedIn)
-            loggedUserTextView.text = user
+            binding.navigationContent.loggedUserTextView.text = user
         }
     }
 
@@ -339,8 +335,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
-        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
-        val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
+        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
+        val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
                 getString(R.string.sign_out)
@@ -471,13 +467,18 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupVisibility(isEmptyTags: Boolean) {
-        pagerTitleStrip.isVisible = !isEmptyTags
-        tagPager.isVisible = !isEmptyTags
-        noTagsTextView.isVisible = isEmptyTags
+        binding.content.pagerTitleStrip.isVisible = !isEmptyTags
+        binding.content.tagPager.isVisible = !isEmptyTags
+        binding.content.noTagsTextView.isVisible = isEmptyTags
         invalidateOptionsMenu()
 
         if (isEmptyTags) {
-            imageSwitcher.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.gradient_background))
+            binding.imageSwitcher.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.gradient_background
+                )
+            )
         }
     }
 

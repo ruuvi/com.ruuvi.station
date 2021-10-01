@@ -2,20 +2,21 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.4.0'
+        kotlin_version = '1.5.10'
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
         coroutines_version = "1.4.0"
         lifecycle_version = "2.2.0"
         retrofit_version = "2.9.0"
         navigation_version = '2.3.0'
+        compose_version = '1.0.0'
     }
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'com.google.gms:google-services:4.3.8'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.6.1'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"
