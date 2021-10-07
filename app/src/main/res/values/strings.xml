@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_activity_dfu_update">DFU update</string>
     <string name="acceleration_reading">%1$,.3f g</string>
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
@@ -107,6 +108,8 @@
     <string name="export_csv_header_format3">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage</string>
     <string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number</string>
     <string name="file_not_supported">File type not supported</string>
+    <string name="firmware">FIRMWARE</string>
+    <string name="firmware_update">Update Firmware</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
@@ -314,5 +317,4 @@
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
     <string name="yes">Yes</string>
-    <string name="title_activity_dfu_update">DfuUpdateActivity</string>
 </resources>

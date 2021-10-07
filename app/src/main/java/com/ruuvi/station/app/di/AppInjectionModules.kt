@@ -7,6 +7,7 @@ import com.ruuvi.station.bluetooth.di.BluetoothScannerInjectionModule
 import com.ruuvi.station.calibration.di.CalibrationInjectionModule
 import com.ruuvi.station.dashboard.di.DashboardActivityInjectionModule
 import com.ruuvi.station.database.di.DatabaseInjectionModule
+import com.ruuvi.station.dfu.di.DfuInjectionModule
 import com.ruuvi.station.feature.di.FeatureInjectionModule
 import com.ruuvi.station.firebase.di.FirebaseInjectionModule
 import com.ruuvi.station.gateway.di.GatewayInjectionModule
@@ -46,5 +47,6 @@ object AppInjectionModules {
         import(FeatureInjectionModule.module)
         import(CalibrationInjectionModule.module)
         import(DatabaseInjectionModule.module)
+        import(DfuInjectionModule.module)
     }
 }

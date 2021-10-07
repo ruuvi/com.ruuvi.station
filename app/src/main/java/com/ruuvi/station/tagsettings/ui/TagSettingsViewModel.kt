@@ -48,6 +48,7 @@ class TagSettingsViewModel(
     val canCalibrate = MediatorLiveData<Boolean>()
 
     init {
+        Timber.d("TagSettingsViewModel $sensorId")
         canCalibrate.addSource(sensorOwnedByUserObserve) { canCalibrate.value = getCanCalibrateValue()}
         canCalibrate.addSource(userLoggedIn) { canCalibrate.value = getCanCalibrateValue() }
         canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -19,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.domain.SensorVersionInteractor
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository
@@ -27,6 +29,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
+import com.ruuvi.station.dfu.ui.DfuUpdateActivity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -37,6 +40,7 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
+import no.nordicsemi.android.dfu.DfuServiceInitiator
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -49,7 +53,7 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class TagSettingsActivity : AppCompatActivity(), KodeinAware {
+class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -185,6 +189,26 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         binding.calibratePressure.setDebouncedOnClickListener {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
+        }
+
+        binding.firmwareUpdateTitleTextView.setDebouncedOnClickListener {
+            DfuUpdateActivity.start(this, viewModel.sensorId)
+        }
+
+        binding.generalHeader.setDebouncedOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                DfuServiceInitiator.createDfuNotificationChannel(this)
+            }
+
+
+//            val sensorUpdateMac = incrementMacAddress(viewModel.sensorId)
+//            Timber.d("incrementMacAddress $sensorUpdateMac")
+//            val initiator = DfuServiceInitiator(sensorUpdateMac)
+//                 .setKeepBond(true)
+//            val file = File("//storage//emulated//0//DFU//ruuvitag3_30_4_dfu.zip")
+//            Timber.d("file exists ${file.exists()}")
+//            initiator.setZip("//storage//emulated//0//DFU//ruuvitag3_30_4_dfu.zip")
+//            initiator.start(this, DfuService::class.java)
         }
     }
 
