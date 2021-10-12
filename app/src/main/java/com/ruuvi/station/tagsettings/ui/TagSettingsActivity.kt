@@ -20,7 +20,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.domain.SensorVersionInteractor
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository

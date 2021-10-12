@@ -11,7 +11,7 @@ import com.ruuvi.station.bluetooth.IRuuviTagScanner
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
-import com.ruuvi.station.bluetooth.domain.SensorVersionInteractor
+import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.bluetooth.util.ScannerSettings
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
@@ -77,6 +77,6 @@ object BluetoothScannerInjectionModule {
             }
         }
 
-        bind<SensorVersionInteractor>() with singleton { SensorVersionInteractor(instance()) }
+        bind<SensorFwVersionInteractor>() with singleton { SensorFwVersionInteractor(instance()) }
     }
 }

@@ -1,31 +1,38 @@
 package com.ruuvi.station.dfu.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.ruuvi.station.bluetooth.domain.SensorVersionInteractor
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.*
+import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
+import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
+import com.ruuvi.station.dfu.data.DownloadFileStatus
+import com.ruuvi.station.dfu.data.LatestReleaseResponse
+import com.ruuvi.station.dfu.domain.LatestFwInteractor
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.kodein.di.generic.instance
+import net.swiftzer.semver.SemVer
 import timber.log.Timber
+import java.io.File
 
 class DfuUpdateViewModel(
     val sensorId: String,
-    val sensorVersionInteractor: SensorVersionInteractor
+    private val sensorFwVersionInteractor: SensorFwVersionInteractor,
+    private val latestFwInteractor: LatestFwInteractor,
     ): ViewModel() {
-
-    fun startUpdate() {
-
-    }
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
     val stage: LiveData<DfuUpdateStage> = _stage
 
-    private val _sensorFwVersion = MutableLiveData<String>(null)
-    val sensorFwVersion: LiveData<String> = _sensorFwVersion
+    private val _sensorFwVersion = MutableLiveData<SensorFirmwareResult>(null)
+    val sensorFwVersion: LiveData<SensorFirmwareResult> = _sensorFwVersion
+
+    private val _latestFwVersion = MutableLiveData<String>(null)
+    val latestFwVersion: LiveData<String> = _latestFwVersion
+
+    private val _downloadFwProgress = MutableLiveData<Int>(0)
+    val downloadFwProgress: LiveData<Int> = _downloadFwProgress
+
+    val canStartUpdate = MediatorLiveData<Boolean>()
+
+    private var latestFwinfo: LatestReleaseResponse? = null
 
     @Volatile
     private var getFwJob: Job? = null
@@ -33,6 +40,31 @@ class DfuUpdateViewModel(
     init {
         Timber.d("Init viewmodel for $sensorId ${sensorFwVersion.value}")
         getSensorFirmwareVersion()
+        getLatestFw()
+
+        canStartUpdate.addSource(_sensorFwVersion) { canStartUpdate.value = updateAllowed() }
+        canStartUpdate.addSource(_latestFwVersion) { canStartUpdate.value = updateAllowed() }
+        canStartUpdate.addSource(_stage) { canStartUpdate.value = updateAllowed() }
+    }
+
+    private fun updateAllowed(): Boolean {
+        val sensorFw = _sensorFwVersion.value
+        val latestFw = _latestFwVersion.value
+        val stage = _stage.value
+
+        if (sensorFw == null || latestFw == null || stage != DfuUpdateStage.CHECKING_CURRENT_FW_VERSION) {
+            return false
+        }
+
+        if (!sensorFw.isSuccess) {
+            return true
+        } else {
+            val firstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
+            val sensorFwParsed = SemVer.parse(sensorFw.fw)
+            val latestFwParsed = SemVer.parse(latestFw.subSequence(firstNumberIndex, latestFw.length).toString())
+            //TODO change for production
+            return true//sensorFwParsed.compareTo(latestFwParsed) == -1
+        }
     }
 
     fun getSensorFirmwareVersion() {
@@ -44,13 +76,30 @@ class DfuUpdateViewModel(
         }
 
         getFwJob = viewModelScope.launch {
-            val getFwResult = sensorVersionInteractor.getSensorFirmwareVersion(sensorId)
-            if (getFwResult.isSuccess) {
-                _sensorFwVersion.value = getFwResult.fw
-                _stage.value = DfuUpdateStage.READY_FOR_UPDATE
-            } else {
-                _sensorFwVersion.value = getFwResult.error
-                //_stage.value = DfuUpdateStage.ERROR
+            _sensorFwVersion.value = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+        }
+    }
+
+    fun getLatestFw() {
+        viewModelScope.launch {
+            val latestFw = latestFwInteractor.funGetLatestFwVersion()
+            latestFwinfo = latestFw
+            _latestFwVersion.value = latestFw?.tag_name
+        }
+    }
+
+    fun startUpdateProcess(filesDir: File) {
+        _stage.value = DfuUpdateStage.DOWNLOADING_FW
+        val url = latestFwinfo?.assets?.first()?.browser_download_url
+        val name = latestFwinfo?.assets?.first()?.name
+        val file = File(filesDir, name)
+        if (url != null) {
+            viewModelScope.launch {
+                latestFwInteractor.downloadFw(url, file.absolutePath) {
+                    if (it is DownloadFileStatus.Progress) {
+                        _downloadFwProgress.value = it.percent
+                    }
+                }
             }
         }
     }

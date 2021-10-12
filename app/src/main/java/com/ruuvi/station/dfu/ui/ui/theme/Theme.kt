@@ -16,9 +16,9 @@ val DarkColorPalette = darkColors(
     background = Color.White,
     surface = Color(0xFF168EA7),
     onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onSecondary = Color.DarkGray,
+    onBackground = Color.DarkGray,
+    onSurface = Color.DarkGray,
 )
 
 @SuppressLint("ConflictingOnColor")
@@ -29,9 +29,9 @@ val LightColorPalette = lightColors(
     background = Color.White,
     surface = Color(0xFF168EA7),
     onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onSecondary = Color.DarkGray,
+    onBackground = Color.DarkGray,
+    onSurface = Color.DarkGray,
 )
 
 @Composable

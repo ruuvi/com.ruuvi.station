@@ -8,6 +8,5 @@ data class LatestReleaseResponse(
 
 data class ReleaseAssets(
     val name: String,
-    val url: String,
     val browser_download_url: String
 )

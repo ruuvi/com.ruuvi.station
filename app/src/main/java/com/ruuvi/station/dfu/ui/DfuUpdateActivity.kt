@@ -4,24 +4,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -32,6 +33,7 @@ import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import com.ruuvi.station.R
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -68,15 +70,17 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
 
         val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
 
+        val activity = LocalContext.current as Activity
+
         // A surface container using the 'background' color from the theme
-        Surface(color = Color.White) {
-            Column() {
-                MyTopAppBar("DFU Update")
+        Surface(color = Color.White,
+        modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+            Column {
+                MyTopAppBar(activity.title.toString())
                 when (stage) {
                     DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(viewModel)
-                    DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateStageScreen(viewModel)
+                    DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
                 }
-                Text(text = "test text")
             }
         }
 
@@ -91,21 +95,44 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
 
 @Composable
 fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
-    val sensorFW = viewModel.sensorFwVersion.observeAsState()
+    val sensorFW by viewModel.sensorFwVersion.observeAsState()
+    val latestFW by viewModel.latestFwVersion.observeAsState()
+    val canUpdate by viewModel.canStartUpdate.observeAsState()
 
-    Text(text = "CheckingCurrentFwStageScreen FW = ${sensorFW.value}")
-}
+    HeaderText(stringResource(R.string.latest_available_fw))
+    if (latestFW.isNullOrEmpty()) {
+        LoadingStatus()
+    } else {
+        RegularText("${latestFW}")
+    }
+    HeaderText(stringResource(R.string.current_version_fw))
+    
+    if (sensorFW == null) {
+        LoadingStatus()
+    } else {
+        if (sensorFW?.isSuccess == true) {
+            RegularText("${sensorFW?.fw}")
+        } else {
+            RegularText(stringResource(id = R.string.old_sensor_fw))
+        }
+    }
+    val context = LocalContext.current as Activity
 
-@Composable
-fun ReadyForUpdateStageScreen(viewModel: DfuUpdateViewModel) {
-    val sensorFW = viewModel.sensorFwVersion.observeAsState()
-
-    Text(text = "ReadyForUpdateStageScreen FW = ${sensorFW.value}")
-    Button(onClick = {viewModel.startUpdate()}) {
-        Text(text = "press")
+    if (canUpdate == true) {
+        Row(horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()) {
+            RuuviButton(stringResource(id = R.string.start_update_process)) {
+                viewModel.startUpdateProcess(context.filesDir)
+            }
+        }
     }
 }
 
+@Composable
+fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
+    val downloadPercent by viewModel.downloadFwProgress.observeAsState()
+    HeaderText(text = "Downloading FW $downloadPercent")
+}
 
 @Composable
 fun MyTopAppBar(
@@ -128,5 +155,67 @@ fun MyTopAppBar(
         backgroundColor = Color.Transparent,
         contentColor = Color.White,
         elevation = 0.dp
+    )
+}
+
+@Composable
+fun HeaderText(text: String) {
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+        fontWeight = FontWeight.Bold,
+        text = text)
+}
+
+@Composable
+fun RegularText(text: String) {
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+        text = text)
+}
+
+@Composable
+fun RuuviButton(text: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+
+        shape = RoundedCornerShape(50),
+        onClick = { onClick() }) {
+        Text(text = text)
+    }
+}
+
+@Composable
+fun LoadingStatus() {
+    val isRotated = remember { mutableStateOf(true) }
+
+    val angle: Float by animateFloatAsState(
+        targetValue = 360F,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    var currentRotation by remember { mutableStateOf(0f) }
+    val rotation = remember { Animatable(currentRotation) }
+
+    LaunchedEffect(1) {
+        rotation.animateTo(
+            targetValue = currentRotation + 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(3000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            )
+        )
+    }
+
+    Icon(
+        Icons.Default.Refresh,
+        contentDescription = "Localized description",
+        Modifier
+            .padding(start = 16.dp, top = 16.dp)
+            .size(24.dp)
+            .rotate(rotation.value),
+        tint = Color.Black
     )
 }

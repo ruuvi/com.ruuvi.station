@@ -87,6 +87,7 @@
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
+    <string name="current_version_fw">Nuvarande version:</string>
     <string name="dashboard">Översikt vy</string>
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång. Starta om appen för att ändringen ska träda i kraft.</string>
     <string name="dashboard_empty">Översikt vyn är tom</string>
@@ -146,6 +147,7 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="latest_available_fw">Senast tillgängliga Ruuvi firmwareversion:</string>
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
     <string name="login_to_ruuvi_network">Logga in till\nRuuvi\nStation</string>
@@ -178,6 +180,7 @@
     <string name="none">ingen</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
+    <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
@@ -279,6 +282,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
+    <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="successfully_claimed">Sensorägande bekräftat</string>
     <string name="successfully_shared">Delningen lyckades</string>
     <string name="sync">SYNK</string>
@@ -301,6 +305,7 @@
     <string name="temperature_reading">%1$,.2f%2$s</string>
     <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">%1$s sedan</string>
+    <string name="title_activity_dfu_update">Firmware Uppdatering</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="updated">Uppdaterad %1$s</string>
