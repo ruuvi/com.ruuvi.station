@@ -34,6 +34,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.R
+import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -74,12 +75,19 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
 
         // A surface container using the 'background' color from the theme
         Surface(color = Color.White,
-        modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()) {
             Column {
                 MyTopAppBar(activity.title.toString())
                 when (stage) {
                     DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(viewModel)
                     DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
+                    DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(viewModel)
+                    DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
+                    DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
+                    DfuUpdateStage.UPDATING_FW -> TODO()
+                    DfuUpdateStage.ERROR -> TODO()
                 }
             }
         }
@@ -91,6 +99,16 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
             )
         }
     }
+}
+
+@Composable
+fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
+    HeaderText(text = stringResource(id = R.string.prepare_your_sensor))
+}
+
+@Composable
+fun UpdateSuccessfulScreen(viewModel: DfuUpdateViewModel) {
+    HeaderText(text = stringResource(id = R.string.update_successful))
 }
 
 @Composable
@@ -131,7 +149,22 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
 @Composable
 fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
     val downloadPercent by viewModel.downloadFwProgress.observeAsState()
-    HeaderText(text = "Downloading FW $downloadPercent")
+    HeaderText(text = stringResource(id = R.string.downloading_latest_firmware))
+    LinearProgressIndicator(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            .fillMaxWidth(),
+        progress = (downloadPercent?.toFloat() ?: 0f) / 100f
+    )
+    Row(horizontalArrangement = Arrangement.Center,
+    modifier = Modifier.fillMaxWidth()) {
+        RegularText(text = "$downloadPercent %")
+    }
+}
+
+@Composable
+fun AlreadyLatestVersionScreen(viewModel: DfuUpdateViewModel) {
+    RegularText(text = stringResource(id = R.string.already_latest_version))
 }
 
 @Composable

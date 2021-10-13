@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
     <string name="alerts">HÄLYTYKSET</string>
+    <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">TAUSTAKUVA</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
@@ -98,6 +99,7 @@
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
     <string name="days">päivää</string>
     <string name="disconnected">Ei yhteyttä</string>
+    <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="export">VIE</string>
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
@@ -186,6 +188,7 @@
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
+    <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
     <string name="pressure">Paine</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
@@ -309,6 +312,7 @@
     <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="version">Versio: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

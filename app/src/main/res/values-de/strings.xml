@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Aus</string>
     <string name="alert_subtitle_on">Warnung bei weniger als %1$,d oder mehr als %2$,d</string>
     <string name="alerts">WARNUNGEN</string>
+    <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">HINTERGRUND BILD</string>
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
@@ -98,6 +99,7 @@
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
     <string name="days">Tage</string>
     <string name="disconnected">Disconnected</string>
+    <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV-Export</string>
@@ -186,6 +188,7 @@
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_title">Bluetooth-Scan aktivieren</string>
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
+    <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt, klicken Sie hier, um Sensoren hinzuzufügen</string>
     <string name="pressure">Druck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
@@ -309,6 +312,7 @@
     <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

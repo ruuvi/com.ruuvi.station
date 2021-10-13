@@ -62,8 +62,16 @@ class DfuUpdateViewModel(
             val firstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
             val sensorFwParsed = SemVer.parse(sensorFw.fw)
             val latestFwParsed = SemVer.parse(latestFw.subSequence(firstNumberIndex, latestFw.length).toString())
-            //TODO change for production
-            return true//sensorFwParsed.compareTo(latestFwParsed) == -1
+
+            //TODO remove this "return true" for production
+            return true
+
+            if (sensorFwParsed.compareTo(latestFwParsed) == -1) {
+                return true
+            } else {
+                _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
+                return false
+            }
         }
     }
 
@@ -90,14 +98,23 @@ class DfuUpdateViewModel(
 
     fun startUpdateProcess(filesDir: File) {
         _stage.value = DfuUpdateStage.DOWNLOADING_FW
+
         val url = latestFwinfo?.assets?.first()?.browser_download_url
         val name = latestFwinfo?.assets?.first()?.name
         val file = File(filesDir, name)
+        Timber.d("startUpdateProcess ${file.absolutePath} exists ${file.exists()}")
+        if (file.exists()) {
+            _stage.value = DfuUpdateStage.READY_FOR_UPDATE
+            return
+        }
+
         if (url != null) {
             viewModelScope.launch {
                 latestFwInteractor.downloadFw(url, file.absolutePath) {
                     if (it is DownloadFileStatus.Progress) {
                         _downloadFwProgress.value = it.percent
+                    } else if (it is DownloadFileStatus.Finished) {
+                        _stage.value = DfuUpdateStage.READY_FOR_UPDATE
                     }
                 }
             }
@@ -108,8 +125,8 @@ class DfuUpdateViewModel(
 enum class DfuUpdateStage{
     CHECKING_CURRENT_FW_VERSION,
     ALREADY_LATEST_VERSION,
-    READY_FOR_UPDATE,
     DOWNLOADING_FW,
+    READY_FOR_UPDATE,
     UPDATING_FW,
     UPDATE_FINISHED,
     ERROR

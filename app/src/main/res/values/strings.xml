@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alerts">ALERTS</string>
+    <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>
@@ -99,6 +100,7 @@
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
     <string name="disconnected">Disconnected</string>
+    <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
@@ -187,6 +189,7 @@
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
+    <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -310,6 +313,7 @@
     <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
