@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$,d ou supérieure à %2$,d</string>
     <string name="alerts">NOTIFICATIONS</string>
+    <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">FOND D\'ÉCRAN</string>
     <string name="background_notification_message">Désactiver le balayage en arrière-plan dans les réglages</string>
@@ -94,6 +95,7 @@
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
     <string name="days">Jours</string>
     <string name="disconnected">Déconnecté</string>
+    <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
     <string name="email">Email</string>
     <string name="export">EXPORTER</string>
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
@@ -179,6 +181,7 @@
     <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
+    <string name="prepare_your_sensor">Configuration de l\'appareil pour la mise à jour</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
     <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -290,6 +293,7 @@
     <string name="title_activity_dfu_update">Mise à jour du firmware</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="version">Version : %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

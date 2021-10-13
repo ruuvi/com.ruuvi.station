@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Отключено</string>
     <string name="alert_subtitle_on">Уведомление если меньше %1$,d или больше %2$,d</string>
     <string name="alerts">УВЕДОМЛЕНИЯ</string>
+    <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">ФОНОВОЕ\nИЗОБРАЖЕНИЕ</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
@@ -95,6 +96,7 @@
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
     <string name="days">Дней</string>
     <string name="disconnected">Отсоединен</string>
+    <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
     <string name="export">ЭКСПОРТ</string>
     <string name="export_csv_chooser_title">Датчик %1$s экспорт CSV</string>
@@ -183,6 +185,7 @@
     <string name="permission_dialog_request_message">Для того чтобы находить Bluetooth-утройства, Android требует включить доступ к местоположению.\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
+    <string name="prepare_your_sensor">Подготовьте ваш сенсор</string>
     <string name="press_to_add">Нет добавленных датчиков,\nнажмите чтобы добавить</string>
     <string name="pressure">Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
@@ -297,6 +300,7 @@
     <string name="title_activity_dfu_update">Обновление Прошивки</string>
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>
+    <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
     <string name="version">Версия: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
