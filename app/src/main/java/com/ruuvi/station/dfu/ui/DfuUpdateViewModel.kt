@@ -1,12 +1,18 @@
 package com.ruuvi.station.dfu.ui
 
 import androidx.lifecycle.*
+import com.ruuvi.station.bluetooth.domain.BluetoothDevicesInteractor
+import com.ruuvi.station.bluetooth.domain.DfuInteractor
+import com.ruuvi.station.bluetooth.domain.DfuUpdateStatus
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
+import com.ruuvi.station.dfu.data.ReleaseAssets
 import com.ruuvi.station.dfu.domain.LatestFwInteractor
+import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.swiftzer.semver.SemVer
 import timber.log.Timber
@@ -16,6 +22,8 @@ class DfuUpdateViewModel(
     val sensorId: String,
     private val sensorFwVersionInteractor: SensorFwVersionInteractor,
     private val latestFwInteractor: LatestFwInteractor,
+    private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
+    private val dfuInteractor: DfuInteractor
     ): ViewModel() {
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
@@ -30,9 +38,17 @@ class DfuUpdateViewModel(
     private val _downloadFwProgress = MutableLiveData<Int>(0)
     val downloadFwProgress: LiveData<Int> = _downloadFwProgress
 
+    private val _updateFwProgress = MutableLiveData<Int>(0)
+    val updateFwProgress: LiveData<Int> = _updateFwProgress
+
     val canStartUpdate = MediatorLiveData<Boolean>()
 
+    private val _deviceDiscovered = MutableLiveData<Boolean>(false)
+    val deviceDiscovered: LiveData<Boolean> = _deviceDiscovered
+
     private var latestFwinfo: LatestReleaseResponse? = null
+
+    private var fwFile: File? = null
 
     @Volatile
     private var getFwJob: Job? = null
@@ -62,9 +78,6 @@ class DfuUpdateViewModel(
             val firstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
             val sensorFwParsed = SemVer.parse(sensorFw.fw)
             val latestFwParsed = SemVer.parse(latestFw.subSequence(firstNumberIndex, latestFw.length).toString())
-
-            //TODO remove this "return true" for production
-            return true
 
             if (sensorFwParsed.compareTo(latestFwParsed) == -1) {
                 return true
@@ -96,29 +109,98 @@ class DfuUpdateViewModel(
         }
     }
 
-    fun startUpdateProcess(filesDir: File) {
+    fun startDownloadProcess(filesDir: File) {
         _stage.value = DfuUpdateStage.DOWNLOADING_FW
+        val asset = selectAsset(latestFwinfo?.assets ?: listOf())
 
-        val url = latestFwinfo?.assets?.first()?.browser_download_url
-        val name = latestFwinfo?.assets?.first()?.name
-        val file = File(filesDir, name)
-        Timber.d("startUpdateProcess ${file.absolutePath} exists ${file.exists()}")
-        if (file.exists()) {
-            _stage.value = DfuUpdateStage.READY_FOR_UPDATE
-            return
-        }
+        Timber.d("selected asset = $asset)")
+        asset?.let {
+            val url = asset.browser_download_url
+            val name = asset.name
+            fwFile = File(filesDir, name)
+            Timber.d("startUpdateProcess ${fwFile?.absolutePath} exists ${fwFile?.exists()}")
+            if (fwFile?.exists() == true) {
+                searchForDevice()
+                return
+            }
 
-        if (url != null) {
             viewModelScope.launch {
-                latestFwInteractor.downloadFw(url, file.absolutePath) {
-                    if (it is DownloadFileStatus.Progress) {
-                        _downloadFwProgress.value = it.percent
-                    } else if (it is DownloadFileStatus.Finished) {
-                        _stage.value = DfuUpdateStage.READY_FOR_UPDATE
+                fwFile?.let { file ->
+                    latestFwInteractor.downloadFw(url, file.absolutePath) {
+                        if (it is DownloadFileStatus.Progress) {
+                            _downloadFwProgress.value = it.percent
+                        } else if (it is DownloadFileStatus.Finished) {
+                            searchForDevice()
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun selectAsset(assets: List<ReleaseAssets>): ReleaseAssets? {
+        val sensorFw = _sensorFwVersion.value
+
+        val pattern =
+        if (sensorFw?.isSuccess != true) {
+            PATTERN_2_TO_3
+        } else {
+            val sensorFwParsed = SemVer.parse(sensorFw.fw)
+            if (sensorFwParsed.major < 3) {
+                PATTERN_2_TO_3
+            }
+            else {
+                PATTERN_3x
+            }
+        }
+
+        val regex = Regex(pattern)
+        return assets.firstOrNull { regex.matches(it.name) }
+    }
+
+    private fun searchForDevice() {
+        _stage.value = DfuUpdateStage.READY_FOR_UPDATE
+
+        val sensorUpdateMac = incrementMacAddress(sensorId)
+        viewModelScope.launch {
+            var searching = true
+            while (searching) {
+                Timber.d("discovering Devices")
+                bluetoothDevicesInteractor.cancelDiscovery()
+                delay(3000)
+                bluetoothDevicesInteractor.discoverDevices() {
+                    Timber.d("discoverDevices $it")
+                    if (it.mac == sensorUpdateMac) {
+                        searching = false
+                        _deviceDiscovered.value = true
+                        bluetoothDevicesInteractor.cancelDiscovery()
+                    }
+                }
+                delay(12000)
+            }
+        }
+    }
+
+    fun startUpdateProcess() {
+        _stage.value = DfuUpdateStage.UPDATING_FW
+        _updateFwProgress.value = 0
+
+        dfuInteractor.startDfuUpdate(incrementMacAddress(sensorId), requireNotNull(fwFile)) {
+            if (it is DfuUpdateStatus.Progress) {
+                _updateFwProgress.value = it.percent
+            } else if (it is DfuUpdateStatus.Finished) {
+                updateFinished()
+            }
+        }
+    }
+
+    private fun updateFinished() {
+        _stage.value = DfuUpdateStage.UPDATE_FINISHED
+    }
+
+    companion object {
+        const val PATTERN_2_TO_3 = "ruuvitag.*default.*_sdk12\\.3_to_15\\.3_dfu\\.zip"
+        const val PATTERN_3x = "ruuvitag.*default.*dfu_app\\.zip"
     }
 }
 

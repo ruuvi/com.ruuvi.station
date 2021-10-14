@@ -98,6 +98,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
     <string name="days">Tage</string>
+    <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
@@ -189,6 +190,11 @@
     <string name="permission_dialog_title">Bluetooth-Scan aktivieren</string>
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
+    <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie die Abdeckung Ihres Ruuvi-Sensors</string>
+    <string name="prepare_your_sensor_instructions_2">2. Stellen Sie den Sensor in den Aktualisierungsmodus</string>
+    <string name="prepare_your_sensor_instructions_3">Wenn Ihr Sensor über zwei Tasten verfügt, drücken Sie die R-Taste und gleichzeitig die B-Taste</string>
+    <string name="prepare_your_sensor_instructions_4">Wenn Ihr Sensor über eine Taste verfügt, halten Sie die Taste zehn Sekunden lang gedrückt</string>
+    <string name="prepare_your_sensor_instructions_5">3. Nach erfolgreichem Abschluss sehen Sie ein kontinuierliches rotes Licht</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt, klicken Sie hier, um Sensoren hinzuzufügen</string>
     <string name="pressure">Druck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
@@ -213,6 +219,7 @@
     <string name="rssi">Signalstärke (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SCANNEN</string>
+    <string name="searching_for_sensor">Auf der Suche nach einem Sensor</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekunden</string>
     <string name="select_picture">Bild auswählen</string>
@@ -252,7 +259,7 @@
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
-    <string name="settings_gateway_details_link">Überprüfen Sie die Dokumentation</string>
+    <string name="settings_gateway_details_link">Dokumentation</string>
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Gerätekennung</string>
     <string name="settings_humidity_unit">Feuchtigkeitseinheit</string>
@@ -279,13 +286,14 @@
     <string name="sign_in_manual_code">Code manuell eingeben</string>
     <string name="sign_in_request_code">Fordern Sie einen Code an</string>
     <string name="sign_in_submit_button">Abschicken</string>
-    <string name="sign_out">Sign out</string>
+    <string name="sign_out">Ausloggen</string>
     <string name="sign_out_confirm">Wenn Sie sich abmelden, werden Sensoren, deren Eigentum Sie mit den Sensoreinstellungen bestätigt haben, automatisch aus der App entfernt. Wenn Sie sich erneut mit derselben E-Mail-Adresse anmelden, werden die Sensoren aus der Cloud zurückgegeben.\n\nMöchten Sie sich abmelden?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
     <string name="skip">ÜBERSPRINGEN</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="start_the_update">Starten Sie das Update</string>
     <string name="start_update_process">Update-Prozess starten</string>
     <string name="successfully_claimed">Besitz des Sensors erfolgreich beansprucht</string>
     <string name="successfully_shared">Sensor erfolgreich geteilt</string>
@@ -314,6 +322,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
+    <string name="updating">Aktualisierung...</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

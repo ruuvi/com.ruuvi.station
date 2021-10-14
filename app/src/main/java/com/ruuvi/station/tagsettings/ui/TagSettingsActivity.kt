@@ -28,6 +28,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
+import com.ruuvi.station.dfu.domain.DfuService
 import com.ruuvi.station.dfu.ui.DfuUpdateActivity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ClaimSensorActivity
@@ -36,6 +37,7 @@ import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
@@ -192,22 +194,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
         binding.firmwareUpdateTitleTextView.setDebouncedOnClickListener {
             DfuUpdateActivity.start(this, viewModel.sensorId)
-        }
-
-        binding.generalHeader.setDebouncedOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                DfuServiceInitiator.createDfuNotificationChannel(this)
-            }
-
-
-//            val sensorUpdateMac = incrementMacAddress(viewModel.sensorId)
-//            Timber.d("incrementMacAddress $sensorUpdateMac")
-//            val initiator = DfuServiceInitiator(sensorUpdateMac)
-//                 .setKeepBond(true)
-//            val file = File("//storage//emulated//0//DFU//ruuvitag3_30_4_dfu.zip")
-//            Timber.d("file exists ${file.exists()}")
-//            initiator.setZip("//storage//emulated//0//DFU//ruuvitag3_30_4_dfu.zip")
-//            initiator.start(this, DfuService::class.java)
         }
     }
 

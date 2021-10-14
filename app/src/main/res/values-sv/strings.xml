@@ -98,6 +98,7 @@
     <string name="data_forwarding_url_hint">https://proxy.server/...</string>
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
     <string name="days">Dagar</string>
+    <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
     <string name="disconnected">Frånkopplad</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
     <string name="email">E-post</string>
@@ -189,6 +190,11 @@
     <string name="permission_dialog_title">Aktivera bluetooth skanning</string>
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
+    <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
+    <string name="prepare_your_sensor_instructions_2">2. Lägg sensorn i uppdateringsläge</string>
+    <string name="prepare_your_sensor_instructions_3">Om din sensor har två knappar, tryck på R-knappen medan du håller ned B-knappen</string>
+    <string name="prepare_your_sensor_instructions_4">Om din sensor har en knapp, håll knappen intryckt i tio sekunder</string>
+    <string name="prepare_your_sensor_instructions_5">3. När sensor är i uppdateringsläge så lyser den röda lysdioden lyser</string>
     <string name="press_to_add">Inga sensorer har lags till,\ntryck här för att lägga till sensorer</string>
     <string name="pressure">Lufttryck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
@@ -212,6 +218,7 @@
     <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNA</string>
+    <string name="searching_for_sensor">Söker efter sensor</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekunder</string>
     <string name="select_picture">Välj bild</string>
@@ -285,6 +292,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
+    <string name="start_the_update">Starta uppdateringen</string>
     <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="successfully_claimed">Sensorägande bekräftat</string>
     <string name="successfully_shared">Delningen lyckades</string>
@@ -313,6 +321,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
+    <string name="updating">Uppdaterar...</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

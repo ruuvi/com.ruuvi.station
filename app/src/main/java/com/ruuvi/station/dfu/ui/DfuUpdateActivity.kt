@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -34,7 +36,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.R
-import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -86,7 +87,7 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
                     DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(viewModel)
                     DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
                     DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
-                    DfuUpdateStage.UPDATING_FW -> TODO()
+                    DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
                     DfuUpdateStage.ERROR -> TODO()
                 }
             }
@@ -103,7 +104,26 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
 
 @Composable
 fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
+    val deviceDiscovered by viewModel.deviceDiscovered.observeAsState()
     HeaderText(text = stringResource(id = R.string.prepare_your_sensor))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_1))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_2))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_3))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_4))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_5))
+
+    val buttonCaption = if (deviceDiscovered == true) {
+        stringResource(id = R.string.start_the_update)
+    } else {
+        stringResource(id = R.string.searching_for_sensor)
+    }
+    Row(horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()) {
+        RuuviButton(text = buttonCaption, deviceDiscovered == true, deviceDiscovered != true) {
+            viewModel.startUpdateProcess()
+        }
+    }
 }
 
 @Composable
@@ -119,14 +139,14 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
 
     HeaderText(stringResource(R.string.latest_available_fw))
     if (latestFW.isNullOrEmpty()) {
-        LoadingStatus()
+        LoadingStatus(modifier = Modifier.padding(top = 16.dp))
     } else {
         RegularText("${latestFW}")
     }
     HeaderText(stringResource(R.string.current_version_fw))
     
     if (sensorFW == null) {
-        LoadingStatus()
+        LoadingStatus(modifier = Modifier.padding(top = 16.dp))
     } else {
         if (sensorFW?.isSuccess == true) {
             RegularText("${sensorFW?.fw}")
@@ -140,7 +160,7 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
         Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()) {
             RuuviButton(stringResource(id = R.string.start_update_process)) {
-                viewModel.startUpdateProcess(context.filesDir)
+                viewModel.startDownloadProcess(context.cacheDir)
             }
         }
     }
@@ -159,6 +179,26 @@ fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
     Row(horizontalArrangement = Arrangement.Center,
     modifier = Modifier.fillMaxWidth()) {
         RegularText(text = "$downloadPercent %")
+    }
+}
+
+@Composable
+fun UpdatingFwStageScreen(viewModel: DfuUpdateViewModel) {
+    val updatePercent by viewModel.updateFwProgress.observeAsState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        HeaderText(text = stringResource(id = R.string.updating))
+        LinearProgressIndicator(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .fillMaxWidth(),
+            progress = (updatePercent?.toFloat() ?: 0f) / 100f
+        )
+
+        RegularText(text = "$updatePercent %")
+        HeaderText(text = stringResource(id = R.string.dfu_update_do_not_close_app))
     }
 }
 
@@ -207,28 +247,22 @@ fun RegularText(text: String) {
 }
 
 @Composable
-fun RuuviButton(text: String, onClick: () -> Unit) {
+fun RuuviButton(text: String, enabled: Boolean = true, loading: Boolean = false, onClick: () -> Unit) {
     Button(
         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-
+        enabled = enabled,
         shape = RoundedCornerShape(50),
         onClick = { onClick() }) {
-        Text(text = text)
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(text = text)
+            if (loading) LoadingStatus(Modifier.clickable {  })
+        }
     }
 }
 
 @Composable
-fun LoadingStatus() {
-    val isRotated = remember { mutableStateOf(true) }
-
-    val angle: Float by animateFloatAsState(
-        targetValue = 360F,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
+fun LoadingStatus(modifier: Modifier) {
     var currentRotation by remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation) }
 
@@ -245,8 +279,8 @@ fun LoadingStatus() {
     Icon(
         Icons.Default.Refresh,
         contentDescription = "Localized description",
-        Modifier
-            .padding(start = 16.dp, top = 16.dp)
+        modifier = modifier
+            .padding(start = 16.dp)
             .size(24.dp)
             .rotate(rotation.value),
         tint = Color.Black
