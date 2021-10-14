@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 package="com.ruuvi.station">
 
@@ -108,6 +109,27 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
         android:label="@string/claim_sensor"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name="com.ruuvi.station.dfu.ui.DfuStatusActivity"
+        android:exported="true" />
+
+    <activity
+        android:name="com.ruuvi.station.dfu.ui.DfuUpdateActivity"
+        android:exported="true"
+        android:label="@string/title_activity_dfu_update"
+        android:theme="@style/AppTheme.NoActionBar" />
+
+    <service
+        android:name="com.ruuvi.station.dfu.domain.DfuService"
+        android:exported="true"
+        android:label="Dfu Service">
+        <intent-filter>
+            <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </service>
 
     <provider
         android:name="androidx.core.content.FileProvider"

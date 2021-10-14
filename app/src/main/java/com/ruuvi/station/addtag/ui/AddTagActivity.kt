@@ -17,10 +17,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
-import kotlinx.android.synthetic.main.activity_add_tag.toolbar
-import kotlinx.android.synthetic.main.content_add_tag.noTagsFoundTextView
-import kotlinx.android.synthetic.main.content_add_tag.tagListView
-import kotlinx.android.synthetic.main.content_tag_details.*
+import com.ruuvi.station.databinding.ActivityAddTagBinding
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -29,7 +26,7 @@ import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class AddTagActivity : AppCompatActivity(), KodeinAware {
+class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -39,11 +36,13 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
     private var adapter: AddTagAdapter? = null
     private lateinit var permissionsInteractor: PermissionsInteractor
     private var timer :Timer? = null
+    lateinit var binding: ActivityAddTagBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_tag)
-        setSupportActionBar(toolbar)
+        binding = ActivityAddTagBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
 
         requestPermission()
@@ -80,7 +79,7 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
                 tags.clear()
                 tags.addAll(ruuviTags)
 
-                noTagsFoundTextView.isVisible = tags.isEmpty()
+                binding.content.noTagsFoundTextView.isVisible = tags.isEmpty()
                 adapter?.notifyDataSetChanged()
             }
         }
@@ -91,10 +90,10 @@ class AddTagActivity : AppCompatActivity(), KodeinAware {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        tagListView.adapter = adapter
+        binding.content.tagListView.adapter = adapter
 
-        tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
+        binding.content.tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            val tag = binding.content.tagListView.getItemAtPosition(i) as RuuviTagEntity
             if (tag.id?.let { viewModel.getTagById(it)?.favorite } == true) {
                 Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
                         .show()

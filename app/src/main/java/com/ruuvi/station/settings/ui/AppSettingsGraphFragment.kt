@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
-import kotlinx.android.synthetic.main.fragment_app_settings_graph.*
+import com.ruuvi.station.databinding.FragmentAppSettingsGraphBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
@@ -20,8 +20,11 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
     private val viewModel: AppSettingsGraphViewModel by viewModel()
 
+    private lateinit var binding: FragmentAppSettingsGraphBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentAppSettingsGraphBinding.bind(view)
         setupViews()
         setupViewModel()
     }
@@ -40,32 +43,34 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     }
 
     private fun setupViews() {
-        graphIntervalNumberPicker.minValue = 1
-        graphIntervalNumberPicker.maxValue = 60
-        viewPeriodNumberPicker.minValue = 1
-        viewPeriodNumberPicker.maxValue = GlobalSettings.historyLengthDays
+        with(binding) {
+            graphIntervalNumberPicker.minValue = 1
+            graphIntervalNumberPicker.maxValue = 60
+            viewPeriodNumberPicker.minValue = 1
+            viewPeriodNumberPicker.maxValue = GlobalSettings.historyLengthDays
 
-        graphIntervalNumberPicker.setOnValueChangedListener { _, _, new ->
-            viewModel.setPointInterval(new)
-        }
+            graphIntervalNumberPicker.setOnValueChangedListener { _, _, new ->
+                viewModel.setPointInterval(new)
+            }
 
-        viewPeriodNumberPicker.setOnValueChangedListener { _, _, new ->
-            viewModel.setViewPeriod(new)
-        }
+            viewPeriodNumberPicker.setOnValueChangedListener { _, _, new ->
+                viewModel.setViewPeriod(new)
+            }
 
-        graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setShowAllPoints(isChecked)
-        }
+            graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setShowAllPoints(isChecked)
+            }
 
-        graphDrawDotsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setDrawDots(isChecked)
+            graphDrawDotsSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setDrawDots(isChecked)
+            }
         }
     }
 
     private fun observeInterval() {
         lifecycleScope.launch {
             viewModel.observePointInterval().collect {
-                graphIntervalNumberPicker.value = it
+                binding.graphIntervalNumberPicker.value = it
             }
         }
     }
@@ -73,7 +78,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     private fun observePeriod() {
         lifecycleScope.launch {
             viewModel.observeViewPeriod().collect {
-                viewPeriodNumberPicker.value = it
+                binding.viewPeriodNumberPicker.value = it
             }
         }
     }
@@ -81,8 +86,10 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     private fun observeShowAllPoints() {
         lifecycleScope.launch {
             viewModel.showAllPointsFlow.collect {
-                graphAllPointsSwitch.isChecked = it
-                graphIntervalNumberPicker.isEnabled = !graphAllPointsSwitch.isChecked
+                with(binding) {
+                    graphAllPointsSwitch.isChecked = it
+                    graphIntervalNumberPicker.isEnabled = !graphAllPointsSwitch.isChecked
+                }
             }
         }
     }
@@ -90,7 +97,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     private fun observeDrawDots() {
         lifecycleScope.launch {
             viewModel.drawDotsFlow.collect {
-                graphDrawDotsSwitch.isChecked = it
+                binding.graphDrawDotsSwitch.isChecked = it
             }
         }
     }

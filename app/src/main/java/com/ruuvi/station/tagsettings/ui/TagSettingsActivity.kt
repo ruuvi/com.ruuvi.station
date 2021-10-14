@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -27,6 +28,8 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
+import com.ruuvi.station.dfu.domain.DfuService
+import com.ruuvi.station.dfu.ui.DfuUpdateActivity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -34,9 +37,11 @@ import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
+import no.nordicsemi.android.dfu.DfuServiceInitiator
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -49,7 +54,7 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class TagSettingsActivity : AppCompatActivity(), KodeinAware {
+class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -185,6 +190,10 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
         binding.calibratePressure.setDebouncedOnClickListener {
             CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
+        }
+
+        binding.firmwareUpdateTitleTextView.setDebouncedOnClickListener {
+            DfuUpdateActivity.start(this, viewModel.sensorId)
         }
     }
 

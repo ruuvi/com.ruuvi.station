@@ -13,14 +13,13 @@ import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.databinding.ActivityShareSensorBinding
+import com.ruuvi.station.databinding.ItemSharedToEmailBinding
 import com.ruuvi.station.network.ui.model.ShareOperationType
 import com.ruuvi.station.util.extensions.hideKeyboard
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.item_shared_to_email.view.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import timber.log.Timber
 
 class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , KodeinAware {
 
@@ -135,14 +134,16 @@ class TestListAdapter (
 ): ArrayAdapter<String>(context, 0, items) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val item = getItem(position)
-        val view =
-            convertView
-                ?: LayoutInflater.from(context).inflate(R.layout.item_shared_to_email, parent, false)
-
-        view.userEmailTextView.text = item
-        item?.let {
-            view.unshareButton.setOnClickListener { clickListener(item) }
+        val binding = if (convertView != null) {
+            ItemSharedToEmailBinding.bind(convertView)
+        } else {
+            ItemSharedToEmailBinding.inflate(LayoutInflater.from(context), parent, false)
         }
-        return view
+
+        binding.userEmailTextView.text = item
+        item?.let {
+            binding.unshareButton.setOnClickListener { clickListener(item) }
+        }
+        return binding.root
     }
 }

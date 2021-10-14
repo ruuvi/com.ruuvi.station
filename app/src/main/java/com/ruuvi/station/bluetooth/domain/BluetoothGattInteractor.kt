@@ -66,6 +66,10 @@ class BluetoothGattInteractor (
                 }
             }
 
+            override fun error(errorMessage: String) {
+                Timber.d("Error: $errorMessage")
+            }
+
             override fun heartbeat(raw: String) {
             }
         })

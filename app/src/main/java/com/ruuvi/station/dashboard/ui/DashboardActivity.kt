@@ -17,36 +17,27 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
-import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.util.extensions.*
-import kotlinx.android.synthetic.main.activity_dashboard.mainDrawerLayout
-import kotlinx.android.synthetic.main.activity_dashboard.toolbar
-import kotlinx.android.synthetic.main.content_dashboard.*
-import kotlinx.android.synthetic.main.content_dashboard.noTagsTextView
-import kotlinx.android.synthetic.main.content_tag_details.*
-import kotlinx.android.synthetic.main.navigation_drawer.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
-import timber.log.Timber
 import java.util.*
 import kotlin.collections.MutableList
 import kotlin.concurrent.scheduleAtFixedRate
 
-class DashboardActivity : AppCompatActivity(), KodeinAware {
+class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
 
     override val kodein by closestKodein()
 
@@ -59,11 +50,13 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     private var signedIn = false
     private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
+    private lateinit var binding: ActivityDashboardBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
-        setSupportActionBar(toolbar)
+        binding = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
@@ -114,25 +107,25 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         viewModel.observeTags.observe(this) {
             tags.clear()
             tags.addAll(it)
-            noTagsTextView.isVisible = tags.isEmpty()
+            binding.content.noTagsTextView.isVisible = tags.isEmpty()
             adapter.notifyDataSetChanged()
         }
     }
 
     private fun setupListView() {
         adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
-        dashboardListView.adapter = adapter
-        dashboardListView.onItemClickListener = tagClick
+        binding.content.dashboardListView.adapter = adapter
+        binding.content.dashboardListView.onItemClickListener = tagClick
     }
 
     private fun setupDrawer() {
         val drawerToggle =
             ActionBarDrawerToggle(
-                this, mainDrawerLayout, toolbar,
+                this, binding.mainDrawerLayout, binding.toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
             )
 
-        mainDrawerLayout.addDrawerListener(drawerToggle)
+        binding.mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
@@ -140,7 +133,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
         updateMenu(signedIn)
 
-        navigationView.setNavigationItemSelectedListener {
+        binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
@@ -149,7 +142,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
                 R.id.loginMenuItem -> login(signedIn)
             }
-            mainDrawerLayout.closeDrawer(GravityCompat.START)
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
 
@@ -162,7 +155,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 signedIn = true
             }
             updateMenu(signedIn)
-            loggedUserTextView.text = user
+            binding.navigationContent.loggedUserTextView.text = user
         }
     }
 
@@ -199,8 +192,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun updateMenu(signed: Boolean) {
-        networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
-        val loginMenuItem = navigationView.menu.findItem(R.id.loginMenuItem)
+        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
+        val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
                 getString(R.string.sign_out)

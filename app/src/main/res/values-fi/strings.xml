@@ -98,6 +98,7 @@
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
     <string name="days">päivää</string>
+    <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
@@ -189,6 +190,11 @@
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
+    <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-laitteen suojakotelo</string>
+    <string name="prepare_your_sensor_instructions_2">2. Aseta anturi päivitystilaan</string>
+    <string name="prepare_your_sensor_instructions_3">Aseta kaksipainikkeinen anturi päivitystilaan pitämällä painiketta B alaspainettuna ja painamalla samalla nollauspainiketta R</string>
+    <string name="prepare_your_sensor_instructions_4">Pidä painiketta alaspainettuna 10 sekunnin ajan, mikäli laitteessa on vain yksi painike</string>
+    <string name="prepare_your_sensor_instructions_5">3. Laite on päivitystilassa punaisen LED-valon ollessa aktivoituna</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
     <string name="pressure">Paine</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
@@ -213,6 +219,7 @@
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SKANNAA</string>
+    <string name="searching_for_sensor">Laitetta etsitään</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekuntia</string>
     <string name="select_picture">Valitse kuva</string>
@@ -286,6 +293,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
+    <string name="start_the_update">Aloita päivitys</string>
     <string name="start_update_process">Päivitystä aloitetaan</string>
     <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
     <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
@@ -314,6 +322,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
+    <string name="updating">Päivitetään...</string>
     <string name="version">Versio: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

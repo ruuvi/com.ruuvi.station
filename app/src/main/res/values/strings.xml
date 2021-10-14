@@ -99,6 +99,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
+    <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
@@ -190,6 +191,11 @@
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
+    <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
+    <string name="prepare_your_sensor_instructions_2">2. Set the sensor to updating mode</string>
+    <string name="prepare_your_sensor_instructions_3">If your sensor has two buttons, press the R button while also pressing the B button</string>
+    <string name="prepare_your_sensor_instructions_4">If your sensor has one button, keep the button pressed for ten seconds</string>
+    <string name="prepare_your_sensor_instructions_5">3. When successfully completed you will see a continuous red light</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -214,6 +220,7 @@
     <string name="rssi">Signal strength (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SCAN</string>
+    <string name="searching_for_sensor">Searching for a sensor</string>
     <string name="sec">sec</string>
     <string name="seconds">Seconds</string>
     <string name="select_picture">Select Picture</string>
@@ -287,6 +294,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="start_the_update">Start the update</string>
     <string name="start_update_process">Start update process</string>
     <string name="successfully_claimed">Ownership of the sensor claimed successfully</string>
     <string name="successfully_shared">Successfully shared sensor</string>
@@ -315,6 +323,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
+    <string name="updating">Updating...</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

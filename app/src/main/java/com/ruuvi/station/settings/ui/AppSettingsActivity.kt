@@ -6,19 +6,18 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.databinding.ActivityAppSettingsBinding
 import com.ruuvi.station.util.ShakeEventListener
-import kotlinx.android.synthetic.main.activity_app_settings.toolbar
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAware {
+class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), AppSettingsDelegate, KodeinAware {
 
     override val kodein by closestKodein()
 
@@ -36,10 +35,13 @@ class AppSettingsActivity : AppCompatActivity(), AppSettingsDelegate, KodeinAwar
         }
     }
 
+    private lateinit var binding: ActivityAppSettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_app_settings)
-        setSupportActionBar(toolbar)
+        binding = ActivityAppSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         openFragment(viewModel.resourceId)
 

@@ -98,6 +98,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
     <string name="days">Tage</string>
+    <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
@@ -189,6 +190,11 @@
     <string name="permission_dialog_title">Bluetooth-Scan aktivieren</string>
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
+    <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie die Abdeckung Ihres Ruuvi-Sensors</string>
+    <string name="prepare_your_sensor_instructions_2">2. Stellen Sie den Sensor in den Aktualisierungsmodus</string>
+    <string name="prepare_your_sensor_instructions_3">Wenn Ihr Sensor über zwei Tasten verfügt, drücken Sie die R-Taste und gleichzeitig die B-Taste</string>
+    <string name="prepare_your_sensor_instructions_4">Wenn Ihr Sensor über eine Taste verfügt, halten Sie die Taste zehn Sekunden lang gedrückt</string>
+    <string name="prepare_your_sensor_instructions_5">3. Nach erfolgreichem Abschluss sehen Sie ein kontinuierliches rotes Licht</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt, klicken Sie hier, um Sensoren hinzuzufügen</string>
     <string name="pressure">Druck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
@@ -213,6 +219,7 @@
     <string name="rssi">Signalstärke (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SCANNEN</string>
+    <string name="searching_for_sensor">Auf der Suche nach einem Sensor</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekunden</string>
     <string name="select_picture">Bild auswählen</string>
@@ -286,6 +293,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">ÜBERSPRINGEN</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="start_the_update">Starten Sie das Update</string>
     <string name="start_update_process">Update-Prozess starten</string>
     <string name="successfully_claimed">Besitz des Sensors erfolgreich beansprucht</string>
     <string name="successfully_shared">Sensor erfolgreich geteilt</string>
@@ -314,6 +322,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
+    <string name="updating">Aktualisierung...</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

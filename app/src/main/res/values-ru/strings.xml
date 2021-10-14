@@ -95,6 +95,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
     <string name="days">Дней</string>
+    <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
@@ -186,6 +187,11 @@
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
     <string name="prepare_your_sensor">Подготовьте ваш сенсор</string>
+    <string name="prepare_your_sensor_instructions_1">1. Откройте крышку вашего сенсора Ruuvi</string>
+    <string name="prepare_your_sensor_instructions_2">2. Переведите сенсор в режим обновления</string>
+    <string name="prepare_your_sensor_instructions_3">Если вы видите две кнопки на сенсоре, зажмите кнопку B и после коротко нажмите кнопку R</string>
+    <string name="prepare_your_sensor_instructions_4">Если вы видите только одну кнопку на сенсоре, зажмите кнопку на десять секунд</string>
+    <string name="prepare_your_sensor_instructions_5">3. Если все получилось, вы увидите непрерывный красный цвет индикатора</string>
     <string name="press_to_add">Нет добавленных датчиков,\nнажмите чтобы добавить</string>
     <string name="pressure">Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
@@ -208,6 +214,7 @@
     <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
+    <string name="searching_for_sensor">Ищу сенсор</string>
     <string name="sec">сек</string>
     <string name="seconds">Секунд</string>
     <string name="select_picture">Выберите изображение</string>
@@ -276,6 +283,7 @@
     <string name="signal_unit">дБм</string>
     <string name="skip">ПРОПУСТИТЬ</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="start_the_update">Начать обновление</string>
     <string name="start_update_process">Начать процесс обновления</string>
     <string name="successfully_shared">Успешно поделились данными датчика</string>
     <string name="sync">СКАЧАТЬ</string>
@@ -302,6 +310,7 @@
     <string name="tx_power_reading">%1$,.0f дБм</string>
     <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
+    <string name="updating">Обновляю...</string>
     <string name="version">Версия: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">В</string>

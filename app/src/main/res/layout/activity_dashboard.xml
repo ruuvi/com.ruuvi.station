@@ -31,11 +31,14 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_dashboard" />
+        <include
+            android:id="@+id/content"
+            layout="@layout/content_dashboard" />
 
     </LinearLayout>
 
     <include
+        android:id="@+id/navigationContent"
         layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

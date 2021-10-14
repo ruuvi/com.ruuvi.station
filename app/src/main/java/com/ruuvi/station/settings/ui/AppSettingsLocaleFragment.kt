@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
+import com.ruuvi.station.databinding.FragmentAppSettingsLocaleBinding
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.fragment_app_settings_temperature.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
@@ -21,8 +21,11 @@ class AppSettingsLocaleFragment : Fragment(R.layout.fragment_app_settings_locale
 
     private val viewModel: AppSettingsLocaleViewModel by viewModel()
 
+    private lateinit var binding: FragmentAppSettingsLocaleBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentAppSettingsLocaleBinding.bind(view)
         setupUI()
     }
 
@@ -35,10 +38,10 @@ class AppSettingsLocaleFragment : Fragment(R.layout.fragment_app_settings_locale
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option.code == current
-            radioGroup.addView(radioButton)
+            binding.radioGroup.addView(radioButton)
         }
 
-        radioGroup.setOnCheckedChangeListener { _, i ->
+        binding.radioGroup.setOnCheckedChangeListener { _, i ->
             viewModel.setLocale(items[i].code)
             //Lingver.getInstance().setLocale(requireContext(), Locale(items[i].code, items[i].country))
             activity?.finish()

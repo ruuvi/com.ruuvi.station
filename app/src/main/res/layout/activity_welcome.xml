@@ -10,7 +10,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:fitsSystemWindows="true"
-        android:id="@+id/logo"
+        android:id="@+id/logoImage"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         app:srcCompat="@drawable/logo_2021" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
+        android:id="@+id/tabLayout"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_width="0dp"
@@ -31,22 +31,22 @@
         app:tabIndicatorHeight="0dp" />
 
     <com.ruuvi.station.app.ui.MultiTouchViewPager
-        android:id="@+id/welcome_pager"
+        android:id="@+id/welcomePager"
         android:layout_height="0dp"
         android:layout_width="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logo">
+        app:layout_constraintTop_toBottomOf="@id/logoImage">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/welcome_0"
+            android:id="@+id/welcomeLayout0"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/welcome_0_image"
+                android:id="@+id/welcomeImage0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="150dp"
@@ -63,18 +63,18 @@
                 android:text="@string/welcome_text_0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome_0_image" />
+                app:layout_constraintTop_toBottomOf="@id/welcomeImage0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/welcome_1"
+            android:id="@+id/welcomeLayout1"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/welcome_1_image"
+                android:id="@+id/welcomeImage1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="150dp"
@@ -91,18 +91,18 @@
                 android:text="@string/welcome_text_1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome_1_image" />
+                app:layout_constraintTop_toBottomOf="@id/welcomeImage1" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/welcome_2"
+            android:id="@+id/welcomeLayout2"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/welcome_2_image"
+                android:id="@+id/welcomeImage2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="150dp"
@@ -119,18 +119,18 @@
                 android:text="@string/welcome_text_2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome_2_image" />
+                app:layout_constraintTop_toBottomOf="@id/welcomeImage2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/welcome_3"
+            android:id="@+id/welcomeLayout3"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/welcome_3_image"
+                android:id="@+id/welcomeImage3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="150dp"
@@ -147,17 +147,17 @@
                 android:text="@string/welcome_text_3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome_3_image" />
+                app:layout_constraintTop_toBottomOf="@id/welcomeImage3" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/welcome_5"
+            android:id="@+id/welcomeLayout5"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/welcome_5_image"
+                android:id="@+id/welcomeImage5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="150dp"
@@ -170,18 +170,18 @@
 
             <TextView
                 style="@style/WelcomeText"
-                android:id="@+id/welcome_text_5"
+                android:id="@+id/welcomeText5"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_5"
-                app:layout_constraintBottom_toTopOf="@id/start_button"
+                app:layout_constraintBottom_toTopOf="@id/startButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome_5_image" />
+                app:layout_constraintTop_toBottomOf="@id/welcomeImage5" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:background="@drawable/border_button"
                 android:fontFamily="@font/montserrat_bold"
-                android:id="@+id/start_button"
+                android:id="@+id/startButton"
                 android:layout_height="50dp"
                 android:layout_marginBottom="75dp"
                 android:layout_width="150dp"
