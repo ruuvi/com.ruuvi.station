@@ -11,12 +11,14 @@ import com.ruuvi.station.dfu.data.LatestReleaseResponse
 import com.ruuvi.station.dfu.data.ReleaseAssets
 import com.ruuvi.station.dfu.domain.LatestFwInteractor
 import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.swiftzer.semver.SemVer
 import timber.log.Timber
 import java.io.File
+import java.util.*
 
 class DfuUpdateViewModel(
     val sensorId: String,
@@ -163,25 +165,29 @@ class DfuUpdateViewModel(
 
         val sensorUpdateMac = incrementMacAddress(sensorId)
         viewModelScope.launch {
-            var searching = true
-            while (searching) {
+            var deviceDiscoveredDate: Date? = null
+            while (_stage.value == DfuUpdateStage.READY_FOR_UPDATE) {
                 Timber.d("discovering Devices")
                 bluetoothDevicesInteractor.cancelDiscovery()
-                delay(3000)
+                delay(1000)
                 bluetoothDevicesInteractor.discoverDevices() {
                     Timber.d("discoverDevices $it")
                     if (it.mac == sensorUpdateMac) {
-                        searching = false
-                        _deviceDiscovered.value = true
+                        _deviceDiscovered.postValue(true)
+                        deviceDiscoveredDate = Date()
                         bluetoothDevicesInteractor.cancelDiscovery()
                     }
                 }
-                delay(12000)
+                delay(9000)
+                if (deviceDiscoveredDate != null && deviceDiscoveredDate?.diffGreaterThan(10000) == true) {
+                    _deviceDiscovered.postValue(false)
+                }
             }
         }
     }
 
     fun startUpdateProcess() {
+        bluetoothDevicesInteractor.cancelDiscovery()
         _stage.value = DfuUpdateStage.UPDATING_FW
         _updateFwProgress.value = 0
 
@@ -196,6 +202,11 @@ class DfuUpdateViewModel(
 
     private fun updateFinished() {
         _stage.value = DfuUpdateStage.UPDATE_FINISHED
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        bluetoothDevicesInteractor.cancelDiscovery()
     }
 
     companion object {

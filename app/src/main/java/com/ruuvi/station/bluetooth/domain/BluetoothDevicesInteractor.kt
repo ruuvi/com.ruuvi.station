@@ -43,6 +43,7 @@ class BluetoothDevicesInteractor(
     }
 
     fun cancelDiscovery() {
+        this.discoveredCallback = null
         bluetoothAdapter.cancelDiscovery()
     }
 }
