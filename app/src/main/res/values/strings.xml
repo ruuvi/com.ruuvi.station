@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alerts">ALERTS</string>
+    <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>
@@ -88,6 +89,7 @@
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>
+    <string name="current_version_fw">Current version:</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance. Restart the app after enabling it.</string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
@@ -98,6 +100,7 @@
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
     <string name="disconnected">Disconnected</string>
+    <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
@@ -107,6 +110,8 @@
     <string name="export_csv_header_format3">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage</string>
     <string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number</string>
     <string name="file_not_supported">File type not supported</string>
+    <string name="firmware">FIRMWARE</string>
+    <string name="firmware_update">Update Firmware</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
@@ -145,6 +150,7 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="latest_available_fw">Latest available Ruuvi Firmware version:</string>
     <string name="logged_in">Logged in:</string>
     <string name="login_description">To enjoy all the features, create a free account or login to your existing Ruuvi account by entering your email address.</string>
     <string name="login_to_ruuvi_network">Login to\nRuuvi\nStation</string>
@@ -177,11 +183,13 @@
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
+    <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
+    <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -279,6 +287,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="start_update_process">Start update process</string>
     <string name="successfully_claimed">Ownership of the sensor claimed successfully</string>
     <string name="successfully_shared">Successfully shared sensor</string>
     <string name="sync">SYNC</string>
@@ -301,8 +310,10 @@
     <string name="temperature_reading">%1$,.2f%2$s</string>
     <string name="temperature_with_unit">Temperature (%1$s)</string>
     <string name="time_since">%1$s ago</string>
+    <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

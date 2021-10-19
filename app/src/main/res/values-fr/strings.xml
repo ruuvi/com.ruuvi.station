@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$,d ou supérieure à %2$,d</string>
     <string name="alerts">NOTIFICATIONS</string>
+    <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">FOND D\'ÉCRAN</string>
     <string name="background_notification_message">Désactiver le balayage en arrière-plan dans les réglages</string>
@@ -83,6 +84,7 @@
     <string name="confirm">Confirmer</string>
     <string name="connected_reading_info">Synchronisation...</string>
     <string name="connecting">Connexion...</string>
+    <string name="current_version_fw">Version actuelle :</string>
     <string name="dashboard">Affichage tableau de bord</string>
     <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord. Le tableau de bord s\'affiche après redémarrage de l\'application.</string>
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
@@ -93,6 +95,7 @@
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
     <string name="days">Jours</string>
     <string name="disconnected">Déconnecté</string>
+    <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
     <string name="email">Email</string>
     <string name="export">EXPORTER</string>
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
@@ -102,6 +105,8 @@
     <string name="export_csv_header_format3">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension</string>
     <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence</string>
     <string name="file_not_supported">Format non supporté</string>
+    <string name="firmware">FIRMWARE</string>
+    <string name="firmware_update">Mettre à jour le firmware</string>
     <string name="gallery">Gallerie</string>
     <string name="gateway_test_exception">Erreur. L\'adresse est-elle correcte ?</string>
     <string name="gateway_test_fail">Erreur. Réponse : %1$d</string>
@@ -139,6 +144,7 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="latest_available_fw">Dernière version du Ruuvi Firmware :</string>
     <string name="login_description">Profitez de tous les avantages du Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
     <string name="login_to_ruuvi_network">Connexion \nRuuvi\nStation</string>
     <string name="mac_address">Adresse MAC</string>
@@ -169,11 +175,13 @@
     <string name="none">non connecté</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
+    <string name="old_sensor_fw">Impossible d\'obtenir la version actuelle de l\'appareil. La version est probablement trop ancienne et il est recommandé d\'effectuer une mise à jour</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
     <string name="permission_dialog_background_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nAutorisez l\'utilisation de votre position pour utiliser le balayage en arrière plan. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
+    <string name="prepare_your_sensor">Configuration de l\'appareil pour la mise à jour</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
     <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -262,6 +270,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
+    <string name="start_update_process">Début de la mise à jour</string>
     <string name="sync">SYNCHRONISATION</string>
     <string name="sync_complete">Synchronisation terminée</string>
     <string name="sync_confirm">Souhaitez vous importer les données du capteur?</string>
@@ -281,8 +290,10 @@
     <string name="temperature_reading">%1$,.2f%2$s</string>
     <string name="temperature_with_unit">Température (%1$s)</string>
     <string name="time_since">il y\'a %1$s</string>
+    <string name="title_activity_dfu_update">Mise à jour du firmware</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="version">Version : %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

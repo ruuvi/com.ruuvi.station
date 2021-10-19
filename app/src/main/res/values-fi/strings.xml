@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
     <string name="alerts">HÄLYTYKSET</string>
+    <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">TAUSTAKUVA</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
@@ -87,6 +88,7 @@
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
+    <string name="current_version_fw">Nykyinen versio:</string>
     <string name="dashboard">Koontinäyttö</string>
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla. Koontinäyttö otetaan käyttöön sovelluksen uudelleenkäynnistyksen yhteydessä.</string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
@@ -97,6 +99,7 @@
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
     <string name="days">päivää</string>
     <string name="disconnected">Ei yhteyttä</string>
+    <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="export">VIE</string>
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
@@ -106,6 +109,8 @@
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite,Liikelaskuri,Mittajärjestysnumero</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
+    <string name="firmware">LAITEOHJELMISTO</string>
+    <string name="firmware_update">Päivitä laiteohjelmisto</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
@@ -144,6 +149,7 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="latest_available_fw">Uusin saatavilla oleva Ruuvi-laiteohjelmisto</string>
     <string name="logged_in">Kirjautunut:</string>
     <string name="login_description">Hyödyntääksesi kaikkia sovelluksen ominaisuuksia, kirjaudu sisään tai luo uusi ilmainen Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
     <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nStationiin</string>
@@ -176,11 +182,13 @@
     <string name="none">ei kirjautunut</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
+    <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Kyseessä on todennäköisesti vanha laiteohjelmisto ja sen päivittäminen on suositeltavaa</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
+    <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
     <string name="pressure">Paine</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
@@ -278,6 +286,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
+    <string name="start_update_process">Päivitystä aloitetaan</string>
     <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
     <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
     <string name="sync">SYNKRONOI</string>
@@ -300,8 +309,10 @@
     <string name="temperature_reading">%1$,.2f%2$s</string>
     <string name="temperature_with_unit">Lämpötila (%1$s)</string>
     <string name="time_since">%1$s sitten</string>
+    <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="version">Versio: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>

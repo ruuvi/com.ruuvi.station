@@ -24,6 +24,7 @@
     <string name="alert_subtitle_off">Av</string>
     <string name="alert_subtitle_on">Alarmera när mindre än %1$,d eller mer än %2$,d</string>
     <string name="alerts">ALARM</string>
+    <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">BAKGRUNDSBILD</string>
     <string name="background_notification_message">Avaktivera bakgrundsskanning i inställningar</string>
@@ -87,6 +88,7 @@
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
+    <string name="current_version_fw">Nuvarande version:</string>
     <string name="dashboard">Översikt vy</string>
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång. Starta om appen för att ändringen ska träda i kraft.</string>
     <string name="dashboard_empty">Översikt vyn är tom</string>
@@ -97,6 +99,7 @@
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
     <string name="days">Dagar</string>
     <string name="disconnected">Frånkopplad</string>
+    <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
     <string name="email">E-post</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
@@ -106,6 +109,8 @@
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning, Rörelseräknare,Mätningssekvensnummer</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
+    <string name="firmware">PROGRAMVARA</string>
+    <string name="firmware_update">Uppdatera Programvara</string>
     <string name="gallery">Galleri</string>
     <string name="gateway_test_exception">Fel uppstod. Är adressen korrekt?</string>
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
@@ -144,6 +149,7 @@
     <string name="language_french">Français</string>
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
+    <string name="latest_available_fw">Senast tillgängliga Ruuvi firmwareversion:</string>
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
     <string name="login_to_ruuvi_network">Logga in till\nRuuvi\nStation</string>
@@ -176,11 +182,13 @@
     <string name="none">ingen</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
+    <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_title">Aktivera bluetooth skanning</string>
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
+    <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="press_to_add">Inga sensorer har lags till,\ntryck här för att lägga till sensorer</string>
     <string name="pressure">Lufttryck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
@@ -277,6 +285,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
+    <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="successfully_claimed">Sensorägande bekräftat</string>
     <string name="successfully_shared">Delningen lyckades</string>
     <string name="sync">SYNK</string>
@@ -299,8 +308,10 @@
     <string name="temperature_reading">%1$,.2f%2$s</string>
     <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">%1$s sedan</string>
+    <string name="title_activity_dfu_update">Firmware Uppdatering</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
