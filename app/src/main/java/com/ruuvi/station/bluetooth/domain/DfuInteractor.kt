@@ -1,6 +1,7 @@
 package com.ruuvi.station.bluetooth.domain
 
 import android.content.Context
+import com.ruuvi.station.R
 import com.ruuvi.station.dfu.domain.DfuService
 import no.nordicsemi.android.dfu.DfuProgressListener
 import no.nordicsemi.android.dfu.DfuServiceInitiator
@@ -79,16 +80,34 @@ class DfuInteractor(val context: Context) {
         }
 
         override fun onError(p0: String, p1: Int, p2: Int, p3: String?) {
-            Timber.d("onError $p0")
+            Timber.d("onError $p0 $p3")
+            statusCallback?.invoke(DfuUpdateStatus.Error(tryToLocalizeMessage(p3)))
         }
     }
 
+    private fun tryToLocalizeMessage(message: String?): String? =
+        when (message) {
+            DFU_DEVICE_DISCONNECTED -> context.getString(R.string.error_dfu_disconnected)
+            GATT_ERROR -> context.getString(R.string.error_dfu_update)
+            DFU_FILE_NOT_FOUND -> context.getString(R.string.error_dfu_firmware_not_valid)
+            OPERATION_FAILED -> context.getString(R.string.error_dfu_firmware_not_valid)
+            else -> message
+        }
+
     init {
         DfuServiceListenerHelper.registerProgressListener(context, dfuProgressListener)
+    }
+
+    companion object {
+        const val DFU_DEVICE_DISCONNECTED = "DFU DEVICE DISCONNECTED"
+        const val GATT_ERROR = "GATT ERROR"
+        const val DFU_FILE_NOT_FOUND = "DFU FILE NOT FOUND"
+        const val OPERATION_FAILED =  "OPERATION FAILED"
     }
 }
 
 sealed class DfuUpdateStatus{
     data class Progress(val percent: Int): DfuUpdateStatus()
     data class Finished(val success: Boolean): DfuUpdateStatus()
+    data class Error(val message: String?): DfuUpdateStatus()
 }

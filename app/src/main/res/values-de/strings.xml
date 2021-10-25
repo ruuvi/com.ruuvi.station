@@ -102,6 +102,7 @@
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
+    <string name="error">Fehler</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV-Export</string>
     <string name="export_csv_created">.csv erstellt, Freigabemenü öffnen</string>

@@ -88,7 +88,7 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
                     DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
                     DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
                     DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
-                    DfuUpdateStage.ERROR -> TODO()
+                    DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
                 }
             }
         }
@@ -100,6 +100,13 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
             )
         }
     }
+}
+
+@Composable
+fun ErrorScreen(viewModel: DfuUpdateViewModel) {
+    val errorMessage by viewModel.error.observeAsState()
+    HeaderText(text = stringResource(id = R.string.error))
+    RegularText(text = errorMessage ?: "Unknown error")
 }
 
 @Composable

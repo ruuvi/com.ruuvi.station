@@ -103,6 +103,10 @@
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
+    <string name="error">Error</string>
+    <string name="error_dfu_disconnected">Device disconnected</string>
+    <string name="error_dfu_firmware_not_valid">Firmware is not valid</string>
+    <string name="error_dfu_update">Firmware update failed</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>

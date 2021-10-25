@@ -98,6 +98,7 @@
     <string name="disconnected">Déconnecté</string>
     <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
     <string name="email">Email</string>
+    <string name="error">Erreur</string>
     <string name="export">EXPORTER</string>
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>

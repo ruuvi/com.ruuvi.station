@@ -102,6 +102,7 @@
     <string name="disconnected">Frånkopplad</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
     <string name="email">E-post</string>
+    <string name="error">Fel</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
     <string name="export_csv_created">.csv skapad, öppnar dela menyn</string>
