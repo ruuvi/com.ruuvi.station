@@ -48,6 +48,9 @@ class DfuUpdateViewModel(
     private val _deviceDiscovered = MutableLiveData<Boolean>(false)
     val deviceDiscovered: LiveData<Boolean> = _deviceDiscovered
 
+    private val _error = MutableLiveData<String>(null)
+    val error: LiveData<String> = _error
+
     private var latestFwinfo: LatestReleaseResponse? = null
 
     private var fwFile: File? = null
@@ -192,12 +195,23 @@ class DfuUpdateViewModel(
         _updateFwProgress.value = 0
 
         dfuInteractor.startDfuUpdate(incrementMacAddress(sensorId), requireNotNull(fwFile)) {
-            if (it is DfuUpdateStatus.Progress) {
-                _updateFwProgress.value = it.percent
-            } else if (it is DfuUpdateStatus.Finished) {
-                updateFinished()
+            when (it) {
+                is DfuUpdateStatus.Progress -> {
+                    _updateFwProgress.value = it.percent
+                }
+                is DfuUpdateStatus.Error -> {
+                    error(it.message)
+                }
+                is DfuUpdateStatus.Finished -> {
+                    updateFinished()
+                }
             }
         }
+    }
+
+    private fun error(message: String?) {
+        _error.value = message
+        _stage.value = DfuUpdateStage.ERROR
     }
 
     private fun updateFinished() {
