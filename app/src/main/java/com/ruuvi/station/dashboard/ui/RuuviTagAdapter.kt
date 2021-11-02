@@ -63,7 +63,7 @@ class RuuviTagAdapter(
                 AlarmStatus.NO_TRIGGERED -> true to R.drawable.ic_notifications_on_24px
                 AlarmStatus.TRIGGERED -> !binding.bell.isVisible to R.drawable.ic_notifications_active_24px
             }
-        binding.bell.isVisible = isVisible
+        binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
         binding.bell.setImageResource(iconResource)
 
         val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main))
