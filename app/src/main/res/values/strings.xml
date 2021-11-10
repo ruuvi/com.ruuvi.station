@@ -99,6 +99,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
+    <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
@@ -325,6 +326,7 @@
     <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="unknown_error">Unknown error</string>
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
