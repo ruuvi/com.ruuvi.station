@@ -80,11 +80,12 @@ class DfuUpdateViewModel(
         if (!sensorFw.isSuccess) {
             return true
         } else {
-            val firstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
-            val sensorFwParsed = SemVer.parse(sensorFw.fw)
-            val latestFwParsed = SemVer.parse(latestFw.subSequence(firstNumberIndex, latestFw.length).toString())
+            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
+            val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
+            val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
 
-            if (sensorFwParsed.compareTo(latestFwParsed) == -1) {
+            if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
                 return true
             } else {
                 _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
