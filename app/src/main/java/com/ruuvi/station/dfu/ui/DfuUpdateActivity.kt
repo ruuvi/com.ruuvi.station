@@ -105,8 +105,13 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
 @Composable
 fun ErrorScreen(viewModel: DfuUpdateViewModel) {
     val errorMessage by viewModel.error.observeAsState()
+    val errorMessageId by viewModel.errorCode.observeAsState()
     HeaderText(text = stringResource(id = R.string.error))
-    RegularText(text = errorMessage ?: "Unknown error")
+    if (errorMessageId != null) {
+        RegularText(text = stringResource(id = errorMessageId ?: R.string.unknown_error))
+    } else {
+        RegularText(text = errorMessage ?: stringResource(id = R.string.unknown_error))
+    }
 }
 
 @Composable

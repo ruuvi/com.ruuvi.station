@@ -1,6 +1,7 @@
 package com.ruuvi.station.dfu.ui
 
 import androidx.lifecycle.*
+import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.domain.BluetoothDevicesInteractor
 import com.ruuvi.station.bluetooth.domain.DfuInteractor
 import com.ruuvi.station.bluetooth.domain.DfuUpdateStatus
@@ -50,6 +51,9 @@ class DfuUpdateViewModel(
 
     private val _error = MutableLiveData<String>(null)
     val error: LiveData<String> = _error
+
+    private val _errorCode = MutableLiveData<Int>(null)
+    val errorCode: LiveData<Int> = _errorCode
 
     private var latestFwinfo: LatestReleaseResponse? = null
 
@@ -109,9 +113,14 @@ class DfuUpdateViewModel(
 
     fun getLatestFw() {
         viewModelScope.launch {
-            val latestFw = latestFwInteractor.funGetLatestFwVersion()
-            latestFwinfo = latestFw
-            _latestFwVersion.value = latestFw?.tag_name
+            try {
+                val latestFw = latestFwInteractor.funGetLatestFwVersion()
+                latestFwinfo = latestFw
+                _latestFwVersion.value = latestFw?.tag_name
+            } catch (e: Exception) {
+                Timber.e(e, "getLatestFw error")
+                error(R.string.dfu_no_internet)
+            }
         }
     }
 
@@ -131,14 +140,19 @@ class DfuUpdateViewModel(
             }
 
             viewModelScope.launch {
-                fwFile?.let { file ->
-                    latestFwInteractor.downloadFw(url, file.absolutePath) {
-                        if (it is DownloadFileStatus.Progress) {
-                            _downloadFwProgress.value = it.percent
-                        } else if (it is DownloadFileStatus.Finished) {
-                            searchForDevice()
+                try {
+                    fwFile?.let { file ->
+                        latestFwInteractor.downloadFw(url, file.absolutePath) {
+                            if (it is DownloadFileStatus.Progress) {
+                                _downloadFwProgress.value = it.percent
+                            } else if (it is DownloadFileStatus.Finished) {
+                                searchForDevice()
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "startDownloadProcess error")
+                    error(R.string.dfu_no_internet)
                 }
             }
         }
@@ -151,7 +165,8 @@ class DfuUpdateViewModel(
         if (sensorFw?.isSuccess != true) {
             PATTERN_2_TO_3
         } else {
-            val sensorFwParsed = SemVer.parse(sensorFw.fw)
+            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
             if (sensorFwParsed.major < 3) {
                 PATTERN_2_TO_3
             }
@@ -212,6 +227,11 @@ class DfuUpdateViewModel(
 
     private fun error(message: String?) {
         _error.value = message
+        _stage.value = DfuUpdateStage.ERROR
+    }
+
+    private fun error(messageId: Int) {
+        _errorCode.value = messageId
         _stage.value = DfuUpdateStage.ERROR
     }
 

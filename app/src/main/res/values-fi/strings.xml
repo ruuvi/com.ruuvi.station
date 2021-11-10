@@ -98,7 +98,8 @@
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
     <string name="days">päivää</string>
-    <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana</string>
+    <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
+    <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
@@ -298,7 +299,7 @@
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
     <string name="start_the_update">Aloita päivitys</string>
-    <string name="start_update_process">Päivitystä aloitetaan</string>
+    <string name="start_update_process">Siirry päivittämään</string>
     <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
     <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
     <string name="sync">SYNKRONOI</string>
@@ -324,6 +325,7 @@
     <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="unknown_error">Tuntematon virhe</string>
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>

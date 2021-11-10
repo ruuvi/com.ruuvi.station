@@ -95,6 +95,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
     <string name="days">Дней</string>
+    <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
@@ -312,6 +313,7 @@
     <string name="title_activity_dfu_update">Обновление Прошивки</string>
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
     <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
