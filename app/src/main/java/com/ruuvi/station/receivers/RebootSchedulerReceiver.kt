@@ -27,11 +27,6 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
 
     private fun startForegroundService(context: Context) {
         Timber.d("startForegroundService after reboot")
-        val serviceIntent = Intent(context, BluetoothForegroundService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent)
-        } else {
-            context.startService(serviceIntent)
-        }
+        BluetoothForegroundService.start(context)
     }
 }
