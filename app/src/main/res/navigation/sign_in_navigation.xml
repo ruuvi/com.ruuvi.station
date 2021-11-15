@@ -25,6 +25,7 @@
             app:nullable="true" />
         <deepLink
             android:id="@+id/deepLink"
+            android:autoVerify="true"
             app:action="ACTION_VIEW"
             app:uri="https://station.ruuvi.com/verify?token={token}" />
     </fragment>
