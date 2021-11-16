@@ -15,7 +15,7 @@ object FirebaseInjectionModule {
         bind<FirebaseAnalytics>() with singleton { Firebase.analytics }
 
         bind<FirebaseInteractor>() with singleton {
-            FirebaseInteractor(instance(), instance(), instance())
+            FirebaseInteractor(instance(), instance(), instance(), instance())
         }
     }
 }
