@@ -3,6 +3,7 @@ package com.ruuvi.station.firebase.domain
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.util.BackgroundScanModes
@@ -13,45 +14,80 @@ import java.lang.Exception
 class FirebaseInteractor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val preferences: PreferencesRepository,
-    private val tagInteractor: TagInteractor
-
+    private val tagInteractor: TagInteractor,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
     fun saveUserProperties() {
         CoroutineScope(Dispatchers.IO).launch {
             delay(15000)
             Timber.d("FirebasePropertySaver.saveUserProperties")
             try {
-                firebaseAnalytics.setUserProperty("background_scan_enabled",
-                    (preferences.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND).toString())
-                firebaseAnalytics.setUserProperty("background_scan_interval", preferences.getBackgroundScanInterval().toString())
-                firebaseAnalytics.setUserProperty("gateway_enabled", preferences.getGatewayUrl().isNotEmpty().toString())
-                firebaseAnalytics.setUserProperty("temperature_unit", preferences.getTemperatureUnit().code)
-                firebaseAnalytics.setUserProperty("humidity_unit", preferences.getHumidityUnit().code.toString())
-                firebaseAnalytics.setUserProperty("pressure_unit", preferences.getPressureUnit().code.toString())
-                firebaseAnalytics.setUserProperty("dashboard_enabled", preferences.isDashboardEnabled().toString())
-                firebaseAnalytics.setUserProperty("graph_point_interval", preferences.getGraphPointInterval().toString())
-                firebaseAnalytics.setUserProperty("graph_view_period", preferences.getGraphViewPeriodDays().toString())
-                firebaseAnalytics.setUserProperty("graph_show_all_points", preferences.isShowAllGraphPoint().toString())
-                firebaseAnalytics.setUserProperty("graph_draw_dots", preferences.graphDrawDots().toString())
+                firebaseAnalytics.setUserProperty(
+                    BACKGROUND_SCAN_ENABLED,
+                    (preferences.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND).toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    BACKGROUND_SCAN_INTERVAL,
+                    preferences.getBackgroundScanInterval().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    GATEWAY_ENABLED,
+                    preferences.getGatewayUrl().isNotEmpty().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    TEMPERATURE_UNIT,
+                    preferences.getTemperatureUnit().code
+                )
+                firebaseAnalytics.setUserProperty(
+                    HUMIDITY_UNIT,
+                    preferences.getHumidityUnit().code.toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    PRESSURE_UNIT,
+                    preferences.getPressureUnit().code.toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    DASHBOARD_ENABLED,
+                    preferences.isDashboardEnabled().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    GRAPH_POINT_INTERVAL,
+                    preferences.getGraphPointInterval().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    GRAPH_VIEW_PERIOD,
+                    preferences.getGraphViewPeriodDays().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    GRAPH_SHOW_ALL_POINTS,
+                    preferences.isShowAllGraphPoint().toString()
+                )
+                firebaseAnalytics.setUserProperty(
+                    GRAPH_DRAW_DOTS,
+                    preferences.graphDrawDots().toString()
+                )
 
                 val addedTags = tagInteractor.getTagEntities(true).size
                 val notAddedTags = tagInteractor.getTagEntities(false).size
                 val seenTags = addedTags + notAddedTags
 
-                if (seenTags < 10) {
-                    firebaseAnalytics.setUserProperty("seen_tags", (addedTags + notAddedTags).toString())
-                } else {
-                    firebaseAnalytics.setUserProperty("seen_tags", "10+")
-                }
+                firebaseAnalytics.setUserProperty(SEEN_TAGS, seenTags.toString())
 
-                if (addedTags < 10) {
-                    firebaseAnalytics.setUserProperty("added_tags", addedTags.toString())
-                } else {
-                    firebaseAnalytics.setUserProperty("added_tags", "10+")
-                }
+                firebaseAnalytics.setUserProperty(ADDED_TAGS, addedTags.toString())
 
-                val signedIn = preferences.getUserEmail().isEmpty()
-                firebaseAnalytics.setUserProperty("signed_in", signedIn.toString())
+                val userEmail = preferences.getUserEmail()
+                val signedIn = userEmail.isEmpty()
+                firebaseAnalytics.setUserProperty(SIGNED_IN, signedIn.toString())
+
+
+                val sensorSettings = sensorSettingsRepository.getSensorSettings()
+                val claimedSensors =
+                    sensorSettings.count { it.networkSensor && it.owner == userEmail }
+                val offlineSensors =
+                    sensorSettings.count { !it.networkSensor }
+
+                firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
+                firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -65,8 +101,8 @@ class FirebaseInteractor(
             val seenTags = addedTags + notAddedTags
 
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
-                param("sensors_added", addedTags.toLong())
-                param("sensors_seen", seenTags.toLong())
+                param(SENSORS_ADDED, addedTags.toLong())
+                param(SENSORS_SEEN, seenTags.toLong())
             }
         }
     }
@@ -76,8 +112,8 @@ class FirebaseInteractor(
             val claimed = userInfoData.sensors.count { it.owner == userInfoData.email }
             val notOwned = userInfoData.sensors.count { it.owner != userInfoData.email }
             firebaseAnalytics.logEvent("sync") {
-                param("sensors_claimed", claimed.toLong())
-                param("sensors_shared_to_user", notOwned.toLong())
+                param(SENSORS_CLAIMED, claimed.toLong())
+                param(SENSORS_SHARED_TO_USER, notOwned.toLong())
             }
         }
     }
@@ -86,9 +122,35 @@ class FirebaseInteractor(
         CoroutineScope(Dispatchers.IO).launch {
             val emptyHistory = size == 0
             firebaseAnalytics.logEvent("gatt_sync") {
-                param("gatt_sync_count", size.toLong())
-                param("gatt_empty_history", emptyHistory.toString())
+                param(GATT_SYNC_COUNT, size.toLong())
+                param(GATT_EMPTY_HISTORY, emptyHistory.toString())
             }
         }
+    }
+
+    companion object {
+        const val BACKGROUND_SCAN_ENABLED = "background_scan_enabled"
+        const val BACKGROUND_SCAN_INTERVAL = "background_scan_interval"
+        const val GATEWAY_ENABLED = "gateway_enabled"
+        const val TEMPERATURE_UNIT = "temperature_unit"
+        const val HUMIDITY_UNIT = "humidity_unit"
+        const val PRESSURE_UNIT = "pressure_unit"
+        const val DASHBOARD_ENABLED = "dashboard_enabled"
+        const val GRAPH_POINT_INTERVAL = "graph_point_interval"
+        const val GRAPH_VIEW_PERIOD = "graph_view_period"
+        const val GRAPH_SHOW_ALL_POINTS = "graph_show_all_points"
+        const val GRAPH_DRAW_DOTS = "graph_draw_dots"
+        const val SEEN_TAGS = "seen_tags"
+        const val ADDED_TAGS = "added_tags"
+        const val SIGNED_IN = "signed_in"
+        const val CLAIMED_TAGS = "claimed_tags"
+        const val OFFLINE_TAGS = "offline_tags"
+
+        const val SENSORS_ADDED = "sensors_added"
+        const val SENSORS_SEEN = "sensors_seen"
+        const val SENSORS_CLAIMED = "sensors_claimed"
+        const val SENSORS_SHARED_TO_USER = "sensors_shared_to_user"
+        const val GATT_SYNC_COUNT = "gatt_sync_count"
+        const val GATT_EMPTY_HISTORY = "gatt_empty_history"
     }
 }
