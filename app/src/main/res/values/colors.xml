@@ -17,4 +17,6 @@
     <color name="divider">#D6D6D6</color>
     <color name="href">#6aeae1</color>
     <color name="activeAlarm">#FF5555</color>
+    <color name="ap_gray">#888</color>
+    <color name="ap_transparent">#00000000</color>
 </resources>

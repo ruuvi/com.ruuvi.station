@@ -9,7 +9,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.databinding.FragmentAppSettingsHumidityBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsHumidityFragment : Fragment(R.layout.fragment_app_settings_humidity), KodeinAware {
 
