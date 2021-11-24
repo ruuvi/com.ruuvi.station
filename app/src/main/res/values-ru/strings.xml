@@ -191,6 +191,7 @@
     <string name="permission_dialog_request_message">Для того чтобы находить Bluetooth-утройства, Android требует включить доступ к местоположению.\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
+    <string name="permission_location_needed_api31">Разрешите доступ к устройствам поблизости, чтобы увидеть датчики.</string>
     <string name="prepare_your_sensor">Подготовьте ваш сенсор</string>
     <string name="prepare_your_sensor_instructions_1">1. Откройте крышку вашего сенсора Ruuvi</string>
     <string name="prepare_your_sensor_instructions_2">2. Переведите сенсор в режим обновления</string>

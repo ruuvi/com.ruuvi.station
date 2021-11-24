@@ -7,13 +7,13 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 16007
         versionName "1.6.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -48,9 +48,6 @@ android {
         compose true
     }
 
-    dexOptions {
-        preDexLibraries = false
-    }
     flavorDimensions 'fileLogs'
     productFlavors {
         withFileLogs {
@@ -84,10 +81,10 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.2'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.3'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.5'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
-    implementation 'no.nordicsemi.android:dfu:1.11.0'
+    implementation 'no.nordicsemi.android:dfu:1.12.0'
     implementation 'no.nordicsemi.android:ble-ktx:2.3.1'
 
     // Compose
@@ -153,7 +150,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     //Android KTX
-    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "androidx.core:core-ktx:1.7.0"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
