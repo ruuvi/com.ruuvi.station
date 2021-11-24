@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_settings_background_scan), KodeinAware {
 

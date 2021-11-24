@@ -9,8 +9,8 @@ import com.ruuvi.station.R
 import com.ruuvi.station.databinding.FragmentEnterCodeBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
 import com.ruuvi.station.util.extensions.viewModel
+import org.kodein.di.android.x.closestKodein
 
 class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 

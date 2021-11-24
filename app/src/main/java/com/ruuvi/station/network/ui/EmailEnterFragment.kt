@@ -11,7 +11,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.databinding.FragmentEmailEnterBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class EmailEnterFragment: Fragment(R.layout.fragment_email_enter), KodeinAware {
     override val kodein: Kodein by closestKodein()

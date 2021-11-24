@@ -128,7 +128,7 @@ class Preferences constructor(val context: Context) {
 
     // chart view period (in days)
     var graphViewPeriodDays: Int
-        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, getDefaultGraphViewPeriodDays())
+        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD_DAYS, DEFAULT_GRAPH_VIEW_PERIOD_DAYS)
         set(period) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD_DAYS, period).apply()
         }
@@ -201,14 +201,6 @@ class Preferences constructor(val context: Context) {
     fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
 
     fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
-
-    private fun getDefaultGraphViewPeriodDays(): Int {
-        return if (context.isUpdateInstall()) {
-            return max(round(graphViewPeriod / 24f).toInt(), 1)
-        } else {
-            DEFAULT_GRAPH_VIEW_PERIOD_DAYS
-        }
-    }
 
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 15 * 60

@@ -13,7 +13,7 @@ import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsLocaleFragment : Fragment(R.layout.fragment_app_settings_locale), KodeinAware {
 

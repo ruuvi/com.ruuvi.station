@@ -12,7 +12,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph), KodeinAware {
 

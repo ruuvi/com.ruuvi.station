@@ -540,7 +540,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
             return TaskStackBuilder.create(context)
                 .addNextIntent(intent)
-                .getPendingIntent(alarmId, PendingIntent.FLAG_UPDATE_CURRENT)
+                .getPendingIntent(alarmId, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

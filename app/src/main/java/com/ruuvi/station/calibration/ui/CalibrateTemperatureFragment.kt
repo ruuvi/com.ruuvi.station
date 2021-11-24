@@ -7,7 +7,7 @@ import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class CalibrateTemperatureFragment : CalibrationFragment(R.layout.fragment_calibrate), KodeinAware {
 

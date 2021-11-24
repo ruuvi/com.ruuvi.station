@@ -20,7 +20,7 @@ import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*

@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gateway) , KodeinAware {
 

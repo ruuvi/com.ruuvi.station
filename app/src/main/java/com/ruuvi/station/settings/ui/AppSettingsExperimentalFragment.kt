@@ -9,7 +9,7 @@ import com.ruuvi.station.databinding.FragmentAppSettingsExperimentalBinding
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsExperimentalFragment : Fragment(R.layout.fragment_app_settings_experimental) , KodeinAware {
 

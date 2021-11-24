@@ -1,6 +1,5 @@
 package com.ruuvi.station.bluetooth.domain
 
-import android.Manifest
 import android.Manifest.permission.*
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -11,6 +10,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,13 +28,29 @@ class PermissionsInteractor(private val activity: Activity) {
         if (BuildConfig.FILE_LOGS_ENABLED) it.add(WRITE_EXTERNAL_STORAGE)
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    private val requiredPermissionsApi31 = mutableListOf(
+        BLUETOOTH_CONNECT,
+        BLUETOOTH_SCAN
+    ).also {
+        if (BuildConfig.FILE_LOGS_ENABLED) it.add(WRITE_EXTERNAL_STORAGE)
+    }
+
+    private val permissionsList = if (isApi31Behaviour) {
+        requiredPermissionsApi31
+    } else {
+        requiredPermissions
+    }
+
+    private val isApi31Behaviour: Boolean
+        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
     private var locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var shouldShowLocationDialog = true
-    private var shouldAskToEnableLocation = true
+    private var shouldAskToEnableLocation = !isApi31Behaviour
     private var shouldAskToEnableBluetooth = true
 
-
-    fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
+    private fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
 
     fun requestPermissions(needBackground: Boolean) {
         if (enableBluetooth()) {
@@ -44,21 +60,10 @@ class PermissionsInteractor(private val activity: Activity) {
                     shouldShowLocationDialog = false
                     showPermissionDialog(neededPermissions)
                 }
-            } else if (enableLocation() && needBackground && backgroundLocationNeeded()) {
+            } else if (shouldAskToEnableLocation && enableLocation() && needBackground && backgroundLocationNeeded()) {
                 requestBackgroundPermission()
             }
         }
-    }
-
-
-    fun showLocationPermissionDialog(action: Runnable) {
-        val alertDialog = AlertDialog.Builder(activity).create()
-        alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
-        alertDialog.setMessage(activity.getString(R.string.permission_dialog_request_message))
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-        ) { dialog, _ -> dialog.dismiss() }
-        alertDialog.setOnDismissListener { action.run() }
-        alertDialog.show()
     }
 
     fun requestBackgroundPermission() {
@@ -75,8 +80,42 @@ class PermissionsInteractor(private val activity: Activity) {
         }
     }
 
-    private fun backgroundLocationNeeded() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-        && ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    fun showPermissionSnackbar() {
+        val messageText = activity.getString(
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                R.string.permission_location_needed
+            } else {
+                R.string.permission_location_needed_api31
+            }
+        )
+        val snackBar = Snackbar.make(activity.findViewById(android.R.id.content), messageText, Snackbar.LENGTH_LONG)
+        snackBar.setAction(activity.getString(R.string.settings)) {
+            val intent = Intent()
+            val uri = Uri.fromParts("package", activity.packageName, null)
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            intent.data = uri
+            activity.startActivity(intent)
+        }
+        snackBar.show()
+    }
+
+    private fun showLocationPermissionDialog(action: Runnable) {
+        if (isApi31Behaviour) {
+            action.run()
+        } else {
+            val alertDialog = AlertDialog.Builder(activity).create()
+            alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
+            alertDialog.setMessage(activity.getString(R.string.permission_dialog_request_message))
+            alertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
+            ) { dialog, _ -> dialog.dismiss() }
+            alertDialog.setOnDismissListener { action.run() }
+            alertDialog.show()
+        }
+    }
+
+    private fun backgroundLocationNeeded() = Build.VERSION.SDK_INT == Build.VERSION_CODES.R
+        && ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_BACKGROUND_LOCATION)
 
     private fun showPermissionDialog(requiredPermissions: List<String>): Boolean {
         if (requiredPermissions.isNotEmpty()) {
@@ -86,7 +125,7 @@ class PermissionsInteractor(private val activity: Activity) {
     }
 
     private fun getRequiredPermissions(): List<String> {
-        return requiredPermissions.mapNotNull { permission ->
+        return permissionsList.mapNotNull { permission ->
             if (!isPermissionGranted(permission)) {
                 Timber.d("$permission required")
                 permission
@@ -94,18 +133,6 @@ class PermissionsInteractor(private val activity: Activity) {
                 null
             }
         }
-    }
-
-    fun showPermissionSnackbar() {
-        val snackbar = Snackbar.make(activity.findViewById(android.R.id.content), activity.getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
-        snackbar.setAction(activity.getString(R.string.settings)) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            activity.startActivity(intent)
-        }
-        snackbar.show()
     }
 
     private fun isBluetoothEnabled(): Boolean {

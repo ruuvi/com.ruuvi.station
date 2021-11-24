@@ -50,6 +50,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
     private val listener: ForegroundListener = object : ForegroundListener {
         override fun onBecameForeground() {
+            Timber.d("onBecameForeground")
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
             networkDataSyncInteractor.startAutoRefresh()
@@ -57,6 +58,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         }
 
         override fun onBecameBackground() {
+            Timber.d("onBecameBackground")
             isInForeground = false
             defaultOnTagFoundListener.isForeground = false
             networkDataSyncInteractor.stopAutoRefresh()

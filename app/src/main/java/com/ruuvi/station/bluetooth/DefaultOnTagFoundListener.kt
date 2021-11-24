@@ -3,7 +3,6 @@ package com.ruuvi.station.bluetooth
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
