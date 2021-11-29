@@ -443,6 +443,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     }
                 }
             }
+            R.id.action_alarm -> {
+                if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.selectedTagObserve.value?.id, true)
+            }
             R.id.action_settings -> {
                 if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.selectedTagObserve.value?.id)
             }

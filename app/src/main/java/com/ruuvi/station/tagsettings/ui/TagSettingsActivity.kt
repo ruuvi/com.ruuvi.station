@@ -4,9 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.view.*
 import android.widget.*
@@ -16,6 +14,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
@@ -28,7 +27,6 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
-import com.ruuvi.station.dfu.domain.DfuService
 import com.ruuvi.station.dfu.ui.DfuUpdateActivity
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.ui.ClaimSensorActivity
@@ -37,11 +35,9 @@ import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
-import no.nordicsemi.android.dfu.DfuServiceInitiator
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -86,6 +82,18 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         setupViewModel()
 
         setupUI()
+
+        scrollToAlarms()
+    }
+
+    private fun scrollToAlarms() {
+        val scrollToAlarms = intent.getBooleanExtra(SCROLL_TO_ALARMS, false)
+        Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
+        if (scrollToAlarms) {
+            Handler(Looper.getMainLooper()).post {
+                binding.scrollView.scrollTo(0, binding.alertsHeader.top-binding.toolbar.height)
+            }
+        }
     }
 
     private fun setupViewModel() {
@@ -471,14 +479,16 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
     companion object {
         private const val TAG_ID = "TAG_ID"
+        private const val SCROLL_TO_ALARMS = "SCROLL_TO_ALARMS"
 
         private const val REQUEST_TAKE_PHOTO = 1
 
         private const val REQUEST_GALLERY_PHOTO = 2
 
-        fun start(context: Context, tagId: String?) {
+        fun start(context: Context, tagId: String?, scrollToAlarms: Boolean = false) {
             val intent = Intent(context, TagSettingsActivity::class.java)
             intent.putExtra(TAG_ID, tagId)
+            intent.putExtra(SCROLL_TO_ALARMS, scrollToAlarms)
             context.startActivity(intent)
         }
 
