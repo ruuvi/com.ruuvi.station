@@ -53,16 +53,14 @@ class PermissionsInteractor(private val activity: Activity) {
     private fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
 
     fun requestPermissions(needBackground: Boolean) {
-        if (enableBluetooth()) {
-            val neededPermissions = getRequiredPermissions()
-            if (neededPermissions.isNotEmpty()) {
-                showLocationPermissionDialog {
-                    shouldShowLocationDialog = false
-                    showPermissionDialog(neededPermissions)
-                }
-            } else if (shouldAskToEnableLocation && enableLocation() && needBackground && backgroundLocationNeeded()) {
-                requestBackgroundPermission()
+        val neededPermissions = getRequiredPermissions()
+        if (neededPermissions.isNotEmpty()) {
+            showLocationPermissionDialog {
+                shouldShowLocationDialog = false
+                showPermissionDialog(neededPermissions)
             }
+        } else if (enableBluetooth() && shouldAskToEnableLocation && enableLocation() && needBackground && backgroundLocationNeeded()) {
+            requestBackgroundPermission()
         }
     }
 
