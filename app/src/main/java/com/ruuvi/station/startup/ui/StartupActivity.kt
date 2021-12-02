@@ -48,7 +48,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         fun start(context: Context, isFromWelcome: Boolean) {
-            val intent = Intent(context, StartupActivity::class.java)
+            val intent = createIntentForNotification(context)
             intent.putExtra(ARGUMENT_FROM_WELCOME, isFromWelcome)
             context.startActivity(intent)
         }

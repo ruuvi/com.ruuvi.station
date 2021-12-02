@@ -7,7 +7,7 @@ import org.kodein.di.generic.*
 
 object SettingsInjectionModule {
     val module = Kodein.Module(SettingsInjectionModule.javaClass.name) {
-        bind<AppSettingsViewModel>() with provider { AppSettingsViewModel() }
+        bind<AppSettingsViewModel>() with provider { AppSettingsViewModel(instance()) }
 
         bind<AppSettingsBackgroundScanViewModel>() with provider { AppSettingsBackgroundScanViewModel(instance()) }
 

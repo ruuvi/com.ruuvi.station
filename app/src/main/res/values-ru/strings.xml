@@ -87,7 +87,7 @@
     <string name="connecting">Соединение...</string>
     <string name="current_version_fw">Текущая версия:</string>
     <string name="dashboard">Панель датчиков</string>
-    <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно. Перезапустите приложение после включения функции</string>
+    <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
     <string name="data_format">Формат Данных</string>
     <string name="data_forwarding_disabled">Отключено</string>

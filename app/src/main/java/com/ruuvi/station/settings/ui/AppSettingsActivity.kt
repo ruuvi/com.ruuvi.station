@@ -12,6 +12,7 @@ import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.databinding.ActivityAppSettingsBinding
+import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.ShakeEventListener
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -94,7 +95,7 @@ class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), A
         if (showingFragmentTitle != R.string.menu_app_settings) {
             openFragment(R.string.menu_app_settings)
         } else {
-            finish()
+            closeActivity()
         }
     }
 
@@ -110,6 +111,13 @@ class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), A
             val settingsIntent = Intent(context, AppSettingsActivity::class.java)
             context.startActivity(settingsIntent)
         }
+    }
+
+    fun closeActivity() {
+        if (viewModel.shouldRestartApp()) {
+            StartupActivity.start(this, false)
+        }
+        finish()
     }
 }
 

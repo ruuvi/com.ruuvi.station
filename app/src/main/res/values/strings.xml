@@ -91,7 +91,7 @@
     <string name="connecting">Connecting...</string>
     <string name="current_version_fw">Current version:</string>
     <string name="dashboard">Dashboard</string>
-    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance. Restart the app after enabling it.</string>
+    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="data_format">Data Format</string>
     <string name="data_forwarding_disabled">Disabled</string>

@@ -90,7 +90,7 @@
     <string name="connecting">Yhdistetään...</string>
     <string name="current_version_fw">Nykyinen versio:</string>
     <string name="dashboard">Koontinäyttö</string>
-    <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla. Koontinäyttö otetaan käyttöön sovelluksen uudelleenkäynnistyksen yhteydessä.</string>
+    <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla</string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="data_format">Dataformaatti</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>
