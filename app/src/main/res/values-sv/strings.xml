@@ -90,7 +90,7 @@
     <string name="connecting">Ansluter...</string>
     <string name="current_version_fw">Nuvarande version:</string>
     <string name="dashboard">Översikt vy</string>
-    <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång. Starta om appen för att ändringen ska träda i kraft.</string>
+    <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång</string>
     <string name="dashboard_empty">Översikt vyn är tom</string>
     <string name="data_format">Dataformat</string>
     <string name="data_forwarding_disabled">Inaktiverad</string>

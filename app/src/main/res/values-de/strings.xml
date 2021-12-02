@@ -90,7 +90,7 @@
     <string name="connecting">Verbinden...</string>
     <string name="current_version_fw">Aktuelle Version:</string>
     <string name="dashboard">Dashboard</string>
-    <string name="dashboard_description">Verwenden Sie die Dashboard-Ansicht, um mehrere Sensoren auf einen Blick zu sehen. Starten Sie die App nach der Aktivierung neu.</string>
+    <string name="dashboard_description">Verwenden Sie die Dashboard-Ansicht, um mehrere Sensoren auf einen Blick zu sehen</string>
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
     <string name="data_format">Datei Format</string>
     <string name="data_forwarding_disabled">Ausgeschaltet</string>

@@ -86,7 +86,7 @@
     <string name="connecting">Connexion...</string>
     <string name="current_version_fw">Version actuelle :</string>
     <string name="dashboard">Affichage tableau de bord</string>
-    <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord. Le tableau de bord s\'affiche après redémarrage de l\'application.</string>
+    <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord</string>
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
     <string name="data_format">Format des données</string>
     <string name="data_forwarding_disabled">Désactivé</string>
