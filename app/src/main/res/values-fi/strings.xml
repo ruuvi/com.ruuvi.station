@@ -98,6 +98,7 @@
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
     <string name="days">päivää</string>
+    <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>

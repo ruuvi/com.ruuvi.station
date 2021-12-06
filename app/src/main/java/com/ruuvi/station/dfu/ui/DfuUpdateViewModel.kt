@@ -7,6 +7,7 @@ import com.ruuvi.station.bluetooth.domain.DfuInteractor
 import com.ruuvi.station.bluetooth.domain.DfuUpdateStatus
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
 import com.ruuvi.station.dfu.data.ReleaseAssets
@@ -26,7 +27,8 @@ class DfuUpdateViewModel(
     private val sensorFwVersionInteractor: SensorFwVersionInteractor,
     private val latestFwInteractor: LatestFwInteractor,
     private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
-    private val dfuInteractor: DfuInteractor
+    private val dfuInteractor: DfuInteractor,
+    private val tagRepository: TagRepository
     ): ViewModel() {
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
@@ -54,6 +56,9 @@ class DfuUpdateViewModel(
 
     private val _errorCode = MutableLiveData<Int>(null)
     val errorCode: LiveData<Int> = _errorCode
+
+    private val _lowBattery = MutableLiveData<Boolean>(isLowBattery())
+    val lowBattery: LiveData<Boolean> = _lowBattery
 
     private var latestFwinfo: LatestReleaseResponse? = null
 
@@ -223,6 +228,19 @@ class DfuUpdateViewModel(
                 }
             }
         }
+    }
+
+    private fun isLowBattery(): Boolean {
+        val tagInfo = tagRepository.getTagById(sensorId)
+        if (tagInfo != null) {
+            return when {
+                tagInfo.temperature < -20 && tagInfo.voltage < 2 -> true
+                tagInfo.temperature < 0 && tagInfo.voltage < 2.3 -> true
+                tagInfo.voltage < 2.5 -> true
+                else -> false
+            }
+        }
+        return false
     }
 
     private fun error(message: String?) {

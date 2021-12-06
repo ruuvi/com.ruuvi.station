@@ -148,6 +148,7 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
     val sensorFW by viewModel.sensorFwVersion.observeAsState()
     val latestFW by viewModel.latestFwVersion.observeAsState()
     val canUpdate by viewModel.canStartUpdate.observeAsState()
+    val lowBattery by viewModel.lowBattery.observeAsState()
 
     HeaderText(stringResource(R.string.latest_available_fw))
     if (latestFW.isNullOrEmpty()) {
@@ -168,6 +169,10 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
     }
     val context = LocalContext.current as Activity
 
+    if (lowBattery == true) {
+        WarningText(stringResource(id = R.string.dfu_low_battery_warning))
+    }
+    
     if (canUpdate == true) {
         Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()) {
@@ -255,6 +260,14 @@ fun HeaderText(text: String) {
 fun RegularText(text: String) {
     Text(
         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+        text = text)
+}
+
+@Composable
+fun WarningText(text: String) {
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+        color = Color.Red,
         text = text)
 }
 

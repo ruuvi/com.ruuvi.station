@@ -95,6 +95,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
     <string name="days">Дней</string>
+    <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
