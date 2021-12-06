@@ -99,6 +99,7 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
+    <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
