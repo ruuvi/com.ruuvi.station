@@ -236,7 +236,7 @@ class DfuUpdateViewModel(
             return when {
                 tagInfo.temperature < -20 && tagInfo.voltage < 2 -> true
                 tagInfo.temperature < 0 && tagInfo.voltage < 2.3 -> true
-                tagInfo.voltage < 2.5 -> true
+                tagInfo.temperature >= 0 && tagInfo.voltage < 2.5 -> true
                 else -> false
             }
         }
