@@ -14,8 +14,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 16009
-        versionName "1.6.9"
+        versionCode 16010
+        versionName "1.6.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -164,6 +164,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:3.8.0"
+    implementation "io.grpc:grpc-okhttp:1.32.2"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
