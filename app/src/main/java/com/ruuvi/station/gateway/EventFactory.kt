@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.BatteryManager
 import android.os.Build
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.gateway.data.ScanEvent
@@ -13,7 +12,6 @@ import timber.log.Timber
 
 class EventFactory (
     private val context: Context,
-    private val locationInteractor: LocationInteractor,
     private val preferences: PreferencesRepository
 ) {
     private val batteryManager: BatteryManager by lazy {
@@ -22,14 +20,14 @@ class EventFactory (
 
     fun createEvent(tagEntity: RuuviTagEntity, sensorSettings: SensorSettings): ScanEvent {
         val deviceId = preferences.getDeviceId()
-        val scanEvent = ScanEvent(deviceId, locationInteractor.getLocation(), getBatteryLevel())
+        val scanEvent = ScanEvent(deviceId, null, getBatteryLevel())
         scanEvent.tags.add(SensorInfo.createEvent(tagEntity, sensorSettings))
         return scanEvent
     }
 
     fun createTestEvent(): ScanEvent {
         val deviceId = preferences.getDeviceId()
-        return ScanEvent(deviceId, locationInteractor.getLocation(), getBatteryLevel())
+        return ScanEvent(deviceId, null, getBatteryLevel())
     }
 
     private fun getBatteryLevel(): Int? {

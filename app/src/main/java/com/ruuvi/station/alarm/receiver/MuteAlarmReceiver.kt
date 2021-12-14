@@ -40,7 +40,7 @@ class MuteAlarmReceiver : BroadcastReceiver(), KodeinAware {
             val muteIntent = Intent(context, MuteAlarmReceiver::class.java)
             muteIntent.putExtra(ALARM_ID, alarmId)
             muteIntent.putExtra(NOTIFICATION_ID, alarmId)
-            return PendingIntent.getBroadcast(context, alarmId, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            return PendingIntent.getBroadcast(context, alarmId, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

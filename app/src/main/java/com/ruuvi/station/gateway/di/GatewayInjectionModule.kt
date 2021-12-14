@@ -11,6 +11,6 @@ object GatewayInjectionModule {
     val module = Kodein.Module(GatewayInjectionModule.javaClass.name) {
         bind<GatewaySender>() with singleton { GatewaySender(instance(), instance(), instance()) }
 
-        bind<EventFactory>() with singleton { EventFactory(instance(), instance(), instance()) }
+        bind<EventFactory>() with singleton { EventFactory(instance(), instance()) }
     }
 }

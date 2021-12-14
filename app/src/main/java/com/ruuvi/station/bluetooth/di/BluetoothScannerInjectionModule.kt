@@ -8,9 +8,7 @@ import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.IRuuviTagScanner
-import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
-import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
-import com.ruuvi.station.bluetooth.domain.LocationInteractor
+import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.util.ScannerSettings
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
@@ -43,8 +41,6 @@ object BluetoothScannerInjectionModule {
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
 
-        bind<LocationInteractor>() with singleton { LocationInteractor(instance()) }
-
         bind<ScannerSettings>() with singleton {
             object : ScannerSettings {
                 var context = instance<Context>()
@@ -71,9 +67,15 @@ object BluetoothScannerInjectionModule {
                 override fun getNotificationPendingIntent(): PendingIntent? {
                     val resultIntent = StartupActivity.createIntentForNotification(context)
                     return PendingIntent
-                        .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                 }
             }
         }
+
+        bind<SensorFwVersionInteractor>() with singleton { SensorFwVersionInteractor(instance()) }
+
+        bind<BluetoothDevicesInteractor>() with singleton { BluetoothDevicesInteractor(instance()) }
+
+        bind<DfuInteractor>() with singleton { DfuInteractor(instance()) }
     }
 }

@@ -91,7 +91,7 @@
     <string name="connecting">Connecting...</string>
     <string name="current_version_fw">Current version:</string>
     <string name="dashboard">Dashboard</string>
-    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance. Restart the app after enabling it.</string>
+    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="data_format">Data Format</string>
     <string name="data_forwarding_disabled">Disabled</string>
@@ -99,9 +99,16 @@
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
     <string name="days">Days</string>
+    <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
+    <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
+    <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
+    <string name="error">Error</string>
+    <string name="error_dfu_disconnected">Device disconnected</string>
+    <string name="error_dfu_firmware_not_valid">Firmware is not valid</string>
+    <string name="error_dfu_update">Firmware update failed</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>
@@ -189,7 +196,13 @@
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
+    <string name="permission_location_needed_api31">Please allow to discover nearby devices in Settings to see sensors.</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
+    <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
+    <string name="prepare_your_sensor_instructions_2">2. Set the sensor to updating mode</string>
+    <string name="prepare_your_sensor_instructions_3">If your sensor has two buttons, press the R button while also pressing the B button</string>
+    <string name="prepare_your_sensor_instructions_4">If your sensor has one button, keep the button pressed for ten seconds</string>
+    <string name="prepare_your_sensor_instructions_5">3. When successfully completed you will see a continuous red light</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -214,6 +227,7 @@
     <string name="rssi">Signal strength (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">SCAN</string>
+    <string name="searching_for_sensor">Searching for a sensor</string>
     <string name="sec">sec</string>
     <string name="seconds">Seconds</string>
     <string name="select_picture">Select Picture</string>
@@ -287,6 +301,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="start_the_update">Start the update</string>
     <string name="start_update_process">Start update process</string>
     <string name="successfully_claimed">Ownership of the sensor claimed successfully</string>
     <string name="successfully_shared">Successfully shared sensor</string>
@@ -313,8 +328,10 @@
     <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="unknown_error">Unknown error</string>
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
+    <string name="updating">Updating...</string>
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

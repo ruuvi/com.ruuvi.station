@@ -86,7 +86,7 @@
     <string name="connecting">Connexion...</string>
     <string name="current_version_fw">Version actuelle :</string>
     <string name="dashboard">Affichage tableau de bord</string>
-    <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord. Le tableau de bord s\'affiche après redémarrage de l\'application.</string>
+    <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord</string>
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
     <string name="data_format">Format des données</string>
     <string name="data_forwarding_disabled">Désactivé</string>
@@ -94,9 +94,11 @@
     <string name="data_forwarding_url_hint">https://mon.routeur/...</string>
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
     <string name="days">Jours</string>
+    <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour</string>
     <string name="disconnected">Déconnecté</string>
     <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
     <string name="email">Email</string>
+    <string name="error">Erreur</string>
     <string name="export">EXPORTER</string>
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>
@@ -182,6 +184,11 @@
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
     <string name="prepare_your_sensor">Configuration de l\'appareil pour la mise à jour</string>
+    <string name="prepare_your_sensor_instructions_1">1. Ouvrir le boitier du capteur Ruuvi</string>
+    <string name="prepare_your_sensor_instructions_2">2. Configuration de l\'appareil pour la mise à jour</string>
+    <string name="prepare_your_sensor_instructions_3">Sur un appareil à deux boutons, enfoncez le bouton B, tout en le gardant enfoncé, appuyez sur le bouton R</string>
+    <string name="prepare_your_sensor_instructions_4">Si l\'appareil n\'a qu\'un seul bouton, maintenez le enfoncé pendant 10 secondes</string>
+    <string name="prepare_your_sensor_instructions_5">3. Une led rouge s\'allume lorsque l\'appareil est configuré</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
     <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -202,6 +209,7 @@
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">BALAYAGE EN COURS</string>
+    <string name="searching_for_sensor">Recherche de capteur</string>
     <string name="sec">sec</string>
     <string name="seconds">Secondes</string>
     <string name="select_picture">Choisissez une photo</string>
@@ -270,6 +278,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
+    <string name="start_the_update">Commencer la mise à jour</string>
     <string name="start_update_process">Début de la mise à jour</string>
     <string name="sync">SYNCHRONISATION</string>
     <string name="sync_complete">Synchronisation terminée</string>
@@ -295,6 +304,7 @@
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
+    <string name="updating">Mise à jour...</string>
     <string name="version">Version : %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>

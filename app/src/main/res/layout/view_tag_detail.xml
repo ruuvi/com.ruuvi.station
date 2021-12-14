@@ -163,7 +163,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
-        android:id="@+id/tag_graphs"
+        android:id="@+id/graphsContent"
         layout="@layout/view_graphs"
         android:visibility="invisible" />
 

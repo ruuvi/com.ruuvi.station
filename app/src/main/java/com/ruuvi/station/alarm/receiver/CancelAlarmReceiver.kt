@@ -42,7 +42,7 @@ class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
             val cancelIntent = Intent(context, CancelAlarmReceiver::class.java)
             cancelIntent.putExtra("alarmId", alarmId)
             cancelIntent.putExtra("notificationId", alarmId)
-            return PendingIntent.getBroadcast(context, alarmId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            return PendingIntent.getBroadcast(context, alarmId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

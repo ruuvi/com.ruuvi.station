@@ -33,6 +33,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
+            android:id="@+id/scrollView"
             android:background="@color/white"
             android:layout_below="@id/appBarLayout"
             android:layout_height="match_parent"
@@ -421,10 +422,39 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/removeLayout"
+                    android:id="@+id/firmwareLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/rawValuesLayout">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/firmwareTitleTextView"
+                        style="@style/sensorSettingGroupHeaderStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/firmware"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/firmwareUpdateTitleTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/firmware_update"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/removeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/firmwareLayout">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/removeTitleTextView"
@@ -449,7 +479,6 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </ScrollView>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
@@ -8,15 +7,15 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 15048
-        versionName "1.5.48"
+        minSdkVersion 23
+        targetSdkVersion 31
+        versionCode 16010
+        versionName "1.6.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -27,6 +26,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
+        useIR = true
     }
 
     lintOptions {
@@ -45,11 +45,9 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
     }
 
-    dexOptions {
-        preDexLibraries = false
-    }
     flavorDimensions 'fileLogs'
     productFlavors {
         withFileLogs {
@@ -66,6 +64,10 @@ android {
             enableSplit = false
         }
     }
+    composeOptions {
+        kotlinCompilerVersion kotlin_version
+        kotlinCompilerExtensionVersion compose_version
+    }
 }
 
 dependencies {
@@ -78,10 +80,23 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.2.1'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.2.6'
-    //implementation project(':bluetooth_library')
-    //implementation project(':default_bluetooth_library')
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.2'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.5'
+//    implementation project(':bluetooth_library')
+//    implementation project(':default_bluetooth_library')
+    implementation 'no.nordicsemi.android:dfu:1.12.0'
+    implementation 'no.nordicsemi.android:ble-ktx:2.3.1'
+
+    // Compose
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.activity:activity-compose:1.3.1"
+    implementation "androidx.compose.compiler:compiler:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.18.0"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -101,16 +116,16 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.android.play:core:1.10.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.play:core:1.10.2'
     implementation 'com.google.android.play:core-ktx:1.8.1'
 
-    implementation 'com.koushikdutta.ion:ion:2.2.1'
-    implementation "com.androidplot:androidplot-core:1.5.0"
+    implementation 'com.koushikdutta.ion:ion:3.1.0'
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
 //    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'net.swiftzer.semver:semver:1.1.1'
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
 
@@ -126,8 +141,6 @@ dependencies {
 
     //DI
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
-    implementation "org.kodein.di:kodein-di-framework-android-core:$kodein_version"
-    implementation "org.kodein.di:kodein-di-framework-android-support:$kodein_version"
     implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
 
@@ -137,7 +150,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     //Android KTX
-    implementation "androidx.core:core-ktx:1.3.2"
+    implementation "androidx.core:core-ktx:1.7.0"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
@@ -151,6 +164,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:3.8.0"
+    implementation "io.grpc:grpc-okhttp:1.32.2"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
@@ -158,4 +172,3 @@ dependencies {
 
     implementation("io.coil-kt:coil:1.1.1")
 }
-

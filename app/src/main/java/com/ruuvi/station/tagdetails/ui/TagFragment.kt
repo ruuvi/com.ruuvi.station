@@ -11,17 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.model.SyncProgress
+import com.ruuvi.station.databinding.ViewTagDetailBinding
 import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.view_graphs.*
-import kotlinx.android.synthetic.main.view_tag_detail.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
@@ -41,6 +40,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private val activityViewModel: TagDetailsViewModel by sharedViewModel()
 
+    private lateinit var binding: ViewTagDetailBinding
+
     private val graphView: GraphView by instance()
 
     init {
@@ -49,7 +50,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding = ViewTagDetailBinding.bind(view)
         observeShowGraph()
         observeTagEntry()
         observeTagReadings()
@@ -57,23 +58,25 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeSync()
         observeSyncStatus()
 
-        gattSyncButton.setOnClickListener {
-            viewModel.syncGatt()
-        }
-        clearDataButton.setOnClickListener {
-            confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
-                viewModel.removeTagData()
-            })
-        }
-        gattSyncCancel.setOnClickListener {
-            viewModel.disconnectGatt()
+        with(binding.graphsContent) {
+            gattSyncButton.setOnClickListener {
+                viewModel.syncGatt()
+            }
+            clearDataButton.setOnClickListener {
+                confirm(getString(R.string.clear_confirm), DialogInterface.OnClickListener { _, _ ->
+                    viewModel.removeTagData()
+                })
+            }
+            gattSyncCancel.setOnClickListener {
+                viewModel.disconnectGatt()
+            }
         }
     }
 
     private fun observeSyncStatus() {
         var i = 0
         viewModel.syncStatus.observe(viewLifecycleOwner, Observer {
-            tagSynchronizingTextView.isVisible = it
+            binding.tagSynchronizingTextView.isVisible = it
             if (it) {
                 var syncText = getText(R.string.synchronizing).toString()
                 for (j in 1 .. i) {
@@ -81,7 +84,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 }
                 i++
                 if (i > 3) i = 0
-                tagSynchronizingTextView.text = syncText
+                binding.tagSynchronizingTextView.text = syncText
             }
         })
     }
@@ -124,8 +127,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
         ) { dialog, _ -> dialog.dismiss() }
         alertDialog.setOnDismissListener {
-            gattSyncViewButtons?.visibility = View.VISIBLE
-            gattSyncViewProgress?.visibility = View.GONE
+            binding.graphsContent.gattSyncViewButtons?.visibility = View.VISIBLE
+            binding.graphsContent.gattSyncViewProgress?.visibility = View.GONE
         }
         viewModel.resetGattStatus()
         alertDialog.show()
@@ -148,50 +151,63 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private fun observeSync() {
         viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
-            when (it.syncProgress) {
-                SyncProgress.STILL -> {
-                    // nothing is happening
-                }
-                SyncProgress.CONNECTING -> {
-                    gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
-                }
-                SyncProgress.CONNECTED -> {
-                    gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
-                }
-                SyncProgress.DISCONNECTED -> {
-                    gattAlertDialog(requireContext().getString(R.string.disconnected))
-                }
-                SyncProgress.READING_INFO -> {
-                    gattSyncStatusTextView.text = "${context?.getString(R.string.connected_reading_info)}"
-                }
-                SyncProgress.NOT_SUPPORTED -> {
-                    gattAlertDialog("${it.deviceInfoModel}, ${it.deviceInfoFw}\n${context?.getString(R.string.reading_history_not_supported)}")
-                }
-                SyncProgress.READING_DATA -> {
-                    var status = "${context?.getString(R.string.reading_history)}.. "
-                    if (it.syncedDataPoints > 0) status += it.syncedDataPoints
-                    gattSyncStatusTextView.text = status
-                }
-                SyncProgress.SAVING_DATA -> {
-                    gattSyncStatusTextView.text = if (it.readDataSize > 0) {
-                        "${context?.getString(R.string.data_points_read, it.readDataSize)}"
-                    } else {
-                        "${context?.getString(R.string.no_new_data_points)}"
+            with(binding.graphsContent) {
+                when (it.syncProgress) {
+                    SyncProgress.STILL -> {
+                        // nothing is happening
+                    }
+                    SyncProgress.CONNECTING -> {
+                        gattSyncStatusTextView.text = "${context?.getString(R.string.connecting)}"
+                    }
+                    SyncProgress.CONNECTED -> {
+                        gattSyncStatusTextView.text =
+                            "${context?.getString(R.string.connected_reading_info)}"
+                    }
+                    SyncProgress.DISCONNECTED -> {
+                        gattAlertDialog(requireContext().getString(R.string.disconnected))
+                    }
+                    SyncProgress.READING_INFO -> {
+                        gattSyncStatusTextView.text =
+                            "${context?.getString(R.string.connected_reading_info)}"
+                    }
+                    SyncProgress.NOT_SUPPORTED -> {
+                        gattAlertDialog(
+                            "${it.deviceInfoModel}, ${it.deviceInfoFw}\n${
+                                context?.getString(
+                                    R.string.reading_history_not_supported
+                                )
+                            }"
+                        )
+                    }
+                    SyncProgress.READING_DATA -> {
+                        var status = "${context?.getString(R.string.reading_history)}.. "
+                        if (it.syncedDataPoints > 0) status += it.syncedDataPoints
+                        gattSyncStatusTextView.text = status
+                    }
+                    SyncProgress.SAVING_DATA -> {
+                        gattSyncStatusTextView.text =
+                            if (it.readDataSize > 0) {
+                                "${context?.getString(R.string.data_points_read, it.readDataSize)}"
+                            } else {
+                                "${context?.getString(R.string.no_new_data_points)}"
+                            }
+                    }
+                    SyncProgress.NOT_FOUND -> {
+                        gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
+                    }
+                    SyncProgress.ERROR -> {
+                        gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
+                    }
+                    SyncProgress.DONE -> {
+                        //gattAlertDialog(requireContext().getString(R.string.sync_complete))
                     }
                 }
-                SyncProgress.NOT_FOUND -> {
-                    gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
-                }
-                SyncProgress.ERROR -> {
-                    gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
-                }
-                SyncProgress.DONE -> {
-                    //gattAlertDialog(requireContext().getString(R.string.sync_complete))
-                }
+
+                gattSyncViewButtons.isVisible =
+                    it.syncProgress == SyncProgress.STILL || it.syncProgress == SyncProgress.DONE
+                gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
+                gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
             }
-            gattSyncViewButtons.isVisible = it.syncProgress == SyncProgress.STILL || it.syncProgress == SyncProgress.DONE
-            gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
-            gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
         })
     }
 
@@ -206,36 +222,38 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun updateTagData(tag: RuuviTag) {
-        Timber.d("updateTagData for ${tag.id}")
-        tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
-        tagHumidityTextView.text = tag.humidityString
-        tagPressureTextView.text = tag.pressureString
-        tagMovementTextView.text = tag.movementCounter.toString()
-        tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
+        with(binding) {
+            Timber.d("updateTagData for ${tag.id}")
+            tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
+            tagHumidityTextView.text = tag.humidityString
+            tagPressureTextView.text = tag.pressureString
+            tagMovementTextView.text = tag.movementCounter.toString()
+            tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
-        val unit = viewModel.getTemperatureUnitString()
-        val unitSpan = SpannableString(unit)
-        unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
-        tagTempUnitTextView.text = unitSpan
-        tag.connectable?.let {
-            if (it) {
-                gattSyncView.visibility = View.VISIBLE
-            } else {
-                gattSyncView.visibility = View.GONE
+            val unit = viewModel.getTemperatureUnitString()
+            val unitSpan = SpannableString(unit)
+            unitSpan.setSpan(SuperscriptSpan(), 0, unit.length, 0)
+            tagTempUnitTextView.text = unitSpan
+            tag.connectable?.let {
+                if (it) {
+                    graphsContent.gattSyncView.visibility = View.VISIBLE
+                } else {
+                    graphsContent.gattSyncView.visibility = View.GONE
+                }
             }
-        }
 
-        if (tag.updatedAt == tag.networkLastSync) {
-            sourceTypeImageView.setImageResource(R.drawable.ic_icon_gateway)
-        } else {
-            sourceTypeImageView.setImageResource(R.drawable.ic_icon_bluetooth)
+            if (tag.updatedAt == tag.networkLastSync) {
+                sourceTypeImageView.setImageResource(R.drawable.ic_icon_gateway)
+            } else {
+                sourceTypeImageView.setImageResource(R.drawable.ic_icon_bluetooth)
+            }
         }
     }
 
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
-        val graph = view.findViewById<View>(R.id.tag_graphs)
+        val graph = view.findViewById<View>(R.id.graphsContent)
         graph.isVisible = showGraph
-        tagContainer.isVisible = !showGraph
+        binding.tagContainer.isVisible = !showGraph
     }
 
     companion object {

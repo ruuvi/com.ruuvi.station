@@ -1,12 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 package="com.ruuvi.station">
 
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<uses-permission android:name="android.permission.BLUETOOTH"
+    android:maxSdkVersion="30"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+    android:maxSdkVersion="30"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+    android:maxSdkVersion="30"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+    android:maxSdkVersion="30"/>
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"
+    android:maxSdkVersion="30"/>
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation"/>
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -32,6 +41,7 @@ package="com.ruuvi.station">
     <activity
         android:name=".network.ui.SignInActivity"
         android:label="@string/sign_in"
+        android:exported="true"
         android:screenOrientation="portrait"
         android:windowSoftInputMode="adjustPan"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
@@ -40,11 +50,13 @@ package="com.ruuvi.station">
     <activity
         android:name=".tagdetails.ui.TagDetailsActivity"
         android:launchMode="singleTop"
+        android:exported="false"
         android:configChanges="orientation|screenSize|locale"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".tagsettings.ui.TagSettingsActivity"
         android:configChanges="orientation|screenSize|locale"
+        android:exported="false"
         android:label="@string/sensor_settings"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
         android:windowSoftInputMode="adjustResize" />
@@ -63,6 +75,7 @@ package="com.ruuvi.station">
     <activity
         android:name=".welcome.ui.WelcomeActivity"
         android:noHistory="true"
+        android:exported="false"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
@@ -72,42 +85,67 @@ package="com.ruuvi.station">
 
     <activity
         android:name=".about.ui.AboutActivity"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".addtag.ui.AddTagActivity"
         android:label="@string/add_tag_title"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
         android:label="@string/menu_app_settings"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".startup.ui.StartupActivity"
         android:noHistory="true"
+        android:exported="true"
         android:theme="@style/SplashTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
-
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
     <activity
         android:name=".dashboard.ui.DashboardActivity"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
         android:name=".network.ui.ShareSensorActivity"
         android:label="@string/share_sensor_title"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+        android:exported="false"
+        />
 
     <activity
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
         android:label="@string/claim_sensor"
+        android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name="com.ruuvi.station.dfu.ui.DfuUpdateActivity"
+        android:exported="true"
+        android:label="@string/title_activity_dfu_update"
+        android:theme="@style/AppTheme.NoActionBar" />
+
+    <service
+        android:name="com.ruuvi.station.dfu.domain.DfuService"
+        android:exported="true"
+        android:label="Dfu Service">
+        <intent-filter>
+            <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </service>
 
     <provider
         android:name="androidx.core.content.FileProvider"
