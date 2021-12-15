@@ -3,9 +3,12 @@ package com.ruuvi.station.network.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class EnterCodeViewModel (
     val networkInteractor: RuuviNetworkInteractor,
@@ -29,12 +32,19 @@ class EnterCodeViewModel (
         errorText.value = ""
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
-                successfullyVerified.value = true
-                networkDataSyncInteractor.syncNetworkData()
+                viewModelScope.launch {
+                    networkDataSyncInteractor.syncNetworkData()
+                    networkDataSyncInteractor.syncInProgressFlow.collect {
+                        if (!it) {
+                            successfullyVerified.value = true
+                            requestInProcess.value = false
+                        }
+                    }
+                }
             } else {
                 errorText.value = response
+                requestInProcess.value = false
             }
-            requestInProcess.value = false
         }
     }
 }
