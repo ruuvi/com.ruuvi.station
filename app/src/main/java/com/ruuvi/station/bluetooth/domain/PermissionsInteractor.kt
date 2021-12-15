@@ -50,7 +50,7 @@ class PermissionsInteractor(private val activity: Activity) {
     private var shouldAskToEnableLocation = !isApi31Behaviour
     private var shouldAskToEnableBluetooth = true
 
-    private fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
+    fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
 
     fun requestPermissions(needBackground: Boolean) {
         val neededPermissions = getRequiredPermissions()
@@ -79,13 +79,7 @@ class PermissionsInteractor(private val activity: Activity) {
     }
 
     fun showPermissionSnackbar() {
-        val messageText = activity.getString(
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
-                R.string.permission_location_needed
-            } else {
-                R.string.permission_location_needed_api31
-            }
-        )
+        val messageText = activity.getString(getPermissionsMissedMessage())
         val snackBar = Snackbar.make(activity.findViewById(android.R.id.content), messageText, Snackbar.LENGTH_LONG)
         snackBar.setAction(activity.getString(R.string.settings)) {
             val intent = Intent()
@@ -179,5 +173,13 @@ class PermissionsInteractor(private val activity: Activity) {
         const val REQUEST_CODE_PERMISSIONS = 10
         const val REQUEST_CODE_BLUETOOTH = 87
         const val REQUEST_CODE_LOCATION = 89
+
+        fun getPermissionsMissedMessage(): Int {
+            return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                R.string.permission_location_needed
+            } else {
+                R.string.permission_location_needed_api31
+            }
+        }
     }
 }
