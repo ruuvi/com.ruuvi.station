@@ -301,4 +301,11 @@ class NetworkDataSyncInteractor (
     fun syncStatusShowed() {
         syncResult.value = NetworkSyncResult(NetworkSyncResultType.NONE)
     }
+
+    fun stopSync() {
+        Timber.d("stopSync")
+        if (syncJob?.isActive == true) {
+            syncJob?.cancel()
+        }
+    }
 }

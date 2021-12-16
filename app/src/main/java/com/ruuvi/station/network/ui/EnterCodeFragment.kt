@@ -36,6 +36,7 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
         viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
             if (it) {
                 StartupActivity.start(requireContext(), false)
+                requireActivity().finish()
             }
         })
 

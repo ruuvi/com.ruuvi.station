@@ -162,6 +162,7 @@ class TagDetailsViewModel(
     }
 
     fun signOut() {
+        networkDataSyncInteractor.stopSync()
         tokenRepository.signOut {
             refreshTags()
         }
