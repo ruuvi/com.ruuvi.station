@@ -85,6 +85,7 @@ class DashboardActivityViewModel(
     }
 
     fun signOut() {
+        networkDataSyncInteractor.stopSync()
         tokenRepository.signOut {
             updateTags()
         }
