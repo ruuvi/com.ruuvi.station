@@ -19,6 +19,9 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.util.extensions.diff
 import timber.log.Timber
 import java.util.Calendar
 
@@ -26,7 +29,8 @@ class AlarmCheckInteractor(
     private val context: Context,
     private val tagConverter: TagConverter,
     private val sensorHistoryRepository: SensorHistoryRepository,
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
+    private val unitsConverter: UnitsConverter
 ) {
     private val lastFiredNotification = mutableMapOf<Int, Long>()
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -35,9 +39,8 @@ class AlarmCheckInteractor(
         val alarms = getEnabledAlarms(ruuviTag)
         val hasEnabledAlarm = alarms.isNotEmpty()
         alarms
-            .forEach {
-                val resourceId = getResourceId(it, ruuviTag)
-                if (resourceId != NOTIFICATION_RESOURCE_ID) {
+            .forEach { alarm ->
+                if (AlarmChecker(ruuviTag, alarm).triggered) {
                     return AlarmStatus.TRIGGERED
                 }
             }
@@ -45,114 +48,19 @@ class AlarmCheckInteractor(
         return AlarmStatus.NO_ALARM
     }
 
-    fun check(ruuviTagEntity: RuuviTagEntity, sensorSettings: SensorSettings) {
-        val ruuviTag = tagConverter.fromDatabase(ruuviTagEntity, sensorSettings)
+    fun checkAlarmsForSensor(sensor: RuuviTagEntity, sensorSettings: SensorSettings) {
+        val ruuviTag = tagConverter.fromDatabase(sensor, sensorSettings)
         getEnabledAlarms(ruuviTag)
             .forEach { alarm ->
-                val resourceId = getResourceId(alarm, ruuviTag, true)
-                if (resourceId != NOTIFICATION_RESOURCE_ID && canNotify(alarm)) {
-                    sendAlert(alarm, ruuviTag.id, ruuviTag.displayName, resourceId)
+                val checker = AlarmChecker(ruuviTag, alarm)
+                if (checker.triggered && canNotify(alarm)) {
+                    sendAlert(checker)
                 }
             }
     }
 
     private fun getEnabledAlarms(ruuviTag: RuuviTag): List<Alarm> =
         alarmRepository.getForSensor(ruuviTag.id).filter { it.enabled }
-
-    private fun getResourceId(it: Alarm, ruuviTag: RuuviTag, shouldCompareMovementCounter: Boolean = false): Int {
-        return when (it.type) {
-            Alarm.TEMPERATURE,
-            Alarm.HUMIDITY,
-            Alarm.PRESSURE,
-            Alarm.RSSI -> compareWithAlarmRange(it, ruuviTag)
-            Alarm.MOVEMENT -> {
-                val readings: List<TagSensorReading> =
-                    sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
-                if (readings.size == 2) {
-                    when {
-                        shouldCompareMovementCounter && ruuviTag.dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
-                        hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
-                        else -> NOTIFICATION_RESOURCE_ID
-                    }
-                } else {
-                    NOTIFICATION_RESOURCE_ID
-                }
-            }
-            else -> NOTIFICATION_RESOURCE_ID
-        }
-    }
-
-    private fun compareWithAlarmRange(alarm: Alarm, tag: RuuviTag): Int {
-        return when (alarm.type) {
-            Alarm.TEMPERATURE ->
-                if (tag.temperature != null) {
-                    getComparisonResourceId(
-                    tag.temperature,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_temperature_low to
-                        R.string.alert_notification_temperature_high
-                    )
-                } else {
-                    NOTIFICATION_RESOURCE_ID
-                }
-            Alarm.HUMIDITY ->
-                if (tag.humidity != null) {
-                    getComparisonResourceId(
-                        tag.humidity,
-                        alarm.low to alarm.high,
-                        R.string.alert_notification_humidity_low to
-                            R.string.alert_notification_humidity_high
-                    )
-                } else {
-                    NOTIFICATION_RESOURCE_ID
-                }
-            Alarm.PRESSURE ->
-                if (tag.pressure != null) {
-                    getComparisonResourceId(
-                        tag.pressure,
-                        alarm.low to alarm.high,
-                        R.string.alert_notification_pressure_low to
-                            R.string.alert_notification_pressure_high
-                    )
-                } else {
-                    NOTIFICATION_RESOURCE_ID
-                }
-
-            Alarm.RSSI ->
-                getComparisonResourceId(
-                    tag.rssi,
-                    alarm.low to alarm.high,
-                    R.string.alert_notification_rssi_low to
-                        R.string.alert_notification_rssi_high
-                )
-            else -> NOTIFICATION_RESOURCE_ID
-        }
-    }
-
-    private fun getComparisonResourceId(
-        comparedValue: Number,
-        lowHigh: Pair<Int, Int>,
-        resources: Pair<Int, Int>
-    ): Int {
-        val (low, high) = lowHigh
-        val (lowResourceId, highResourceId) = resources
-        return when {
-            comparedValue.toDouble() < low -> lowResourceId
-            comparedValue.toDouble() > high -> highResourceId
-            else -> NOTIFICATION_RESOURCE_ID
-        }
-    }
-
-    private fun hasTagMoved(one: TagSensorReading, two: TagSensorReading): Boolean {
-        val threshold = 0.03
-        return diff(one.accelZ, two.accelZ) > threshold ||
-            diff(one.accelX, two.accelX) > threshold ||
-            diff(one.accelY, two.accelY) > threshold
-    }
-
-    private fun diff(one: Double, two: Double): Double {
-        return Math.abs(one - two)
-    }
 
     private fun canNotify(alarm: Alarm): Boolean {
         val lastNotificationTime = lastFiredNotification[alarm.id]
@@ -170,44 +78,64 @@ class AlarmCheckInteractor(
         }
     }
 
-    private fun sendAlert(alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int) {
-        Timber.d("sendAlert tag.tagName = $tagName; alarm.id = ${alarm.id}; notificationResourceId = $notificationResourceId")
+    private fun sendAlert(checker: AlarmChecker) {
+        Timber.d("sendAlert tag.tagName = ${checker.ruuviTag}tagName; alarm.id = ${checker.alarm.id}; notificationResourceId = ${checker.alarmResource}")
         createNotificationChannel()
         val notification =
-            createNotification(context, alarm, tagId, tagName, notificationResourceId)
-        notificationManager.notify(alarm.id, notification)
+            createNotification(checker)
+        notification?.let {
+            notificationManager.notify(checker.alarm.id, notification)
+        }
     }
 
-    private fun createNotification(context: Context, alarm: Alarm, tagId: String, tagName: String, notificationResourceId: Int): Notification? {
-        val tagDetailsPendingIntent = TagDetailsActivity.createPendingIntent(context, tagId, alarm.id)
-        val cancelPendingIntent = CancelAlarmReceiver.createPendingIntent(context, alarm.id)
-        val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, alarm.id)
-        val action = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_notification_disable), cancelPendingIntent)
-        val actionMute = NotificationCompat.Action(R.drawable.ic_ruuvi_app_notification_icon_v2, context.getString(R.string.alarm_mute_for_hour), mutePendingIntent)
-
-        val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
-        return NotificationCompat
-            .Builder(context, CHANNEL_ID)
-            .setContentTitle(context.getString(notificationResourceId))
-            .setTicker("$tagName ${context.getString(notificationResourceId)}")
-            .setStyle(
-                NotificationCompat
-                    .BigTextStyle()
-                    .setBigContentTitle(context.getString(notificationResourceId))
-                    .setSummaryText(tagName).
-                    bigText(alarm.customDescription)
+    private fun createNotification(checker: AlarmChecker): Notification? {
+        val message = checker.getMessage()
+        if (!message.isNullOrEmpty()) {
+            val tagDetailsPendingIntent =
+                TagDetailsActivity.createPendingIntent(
+                    context,
+                    checker.ruuviTag.id,
+                    checker.alarm.id
+                )
+            val cancelPendingIntent =
+                CancelAlarmReceiver.createPendingIntent(context, checker.alarm.id)
+            val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, checker.alarm.id)
+            val action = NotificationCompat.Action(
+                R.drawable.ic_ruuvi_app_notification_icon_v2,
+                context.getString(R.string.alarm_notification_disable),
+                cancelPendingIntent
             )
-            .setContentText(alarm.customDescription)
-            .setDefaults(Notification.DEFAULT_ALL)
-            .setOnlyAlertOnce(true)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(tagDetailsPendingIntent)
-            .setLargeIcon(bitmap)
-            .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
-            .addAction(action)
-            .addAction(actionMute)
-            .build()
+            val actionMute = NotificationCompat.Action(
+                R.drawable.ic_ruuvi_app_notification_icon_v2,
+                context.getString(R.string.alarm_mute_for_hour),
+                mutePendingIntent
+            )
+
+            val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
+            return NotificationCompat
+                .Builder(context, CHANNEL_ID)
+                .setContentTitle(message)
+                .setTicker("${checker.ruuviTag.displayName} $message")
+                .setStyle(
+                    NotificationCompat
+                        .BigTextStyle()
+                        .setBigContentTitle(message)
+                        .setSummaryText(checker.ruuviTag.displayName)
+                        .bigText(checker.alarm.customDescription)
+                )
+                .setContentText(checker.alarm.customDescription)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(tagDetailsPendingIntent)
+                .setLargeIcon(bitmap)
+                .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
+                .addAction(action)
+                .addAction(actionMute)
+                .build()
+        }
+        return null
     }
 
     private fun createNotificationChannel() {
@@ -223,11 +151,129 @@ class AlarmCheckInteractor(
         if (notificationId != -1) notificationManager.cancel(notificationId)
     }
 
+    inner class AlarmChecker(
+        val ruuviTag: RuuviTag,
+        val alarm: Alarm
+    ) {
+        var alarmResource: Int? = null
+        private var thresholdValue: Int = 0
+
+        val triggered: Boolean
+            get() = alarmResource != null
+
+        init {
+            checkAlarmStatus()
+        }
+
+        fun getMessage(): String? {
+            alarmResource?.let { resource ->
+                return when (alarm.alarmType) {
+                    AlarmType.HUMIDITY ->
+                        context.getString(resource, "$thresholdValue ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
+                    AlarmType.PRESSURE -> {
+                        val thresholdString = "${unitsConverter.getPressureValue(thresholdValue.toDouble()).toInt()} ${unitsConverter.getPressureUnitString()}"
+                        context.getString(resource, thresholdString)
+                    }
+                    AlarmType.TEMPERATURE -> {
+                        val thresholdString = "${unitsConverter.getTemperatureValue(thresholdValue.toDouble()).toInt()}${unitsConverter.getTemperatureUnitString()}"
+                        context.getString(resource, thresholdString)
+                    }
+                    AlarmType.RSSI -> {
+                        context.getString(resource, unitsConverter.getSignalString(thresholdValue))
+                    }
+                    AlarmType.MOVEMENT -> context.getString(resource)
+                    else -> null
+                }
+            }
+            return null
+        }
+
+        private fun checkAlarmStatus() {
+            when (alarm.alarmType) {
+                AlarmType.HUMIDITY,
+                AlarmType.PRESSURE,
+                AlarmType.TEMPERATURE,
+                AlarmType.RSSI -> compareWithAlarmRange()
+                AlarmType.MOVEMENT -> checkMovementData()
+            }
+        }
+
+        private fun compareWithAlarmRange() {
+            when (alarm.type) {
+                Alarm.TEMPERATURE ->
+                    if (ruuviTag.temperature != null) {
+                        compareValues(
+                            ruuviTag.temperature,
+                            R.string.alert_notification_temperature_low_threshold to
+                                R.string.alert_notification_temperature_high_threshold
+                        )
+                    }
+                Alarm.HUMIDITY ->
+                    if (ruuviTag.humidity != null) {
+                        compareValues(
+                            ruuviTag.humidity,
+                            R.string.alert_notification_humidity_low_threshold to
+                                R.string.alert_notification_humidity_high_threshold
+                        )
+                    }
+                Alarm.PRESSURE ->
+                    if (ruuviTag.pressure != null) {
+                        compareValues(
+                            ruuviTag.pressure,
+                            R.string.alert_notification_pressure_low_threshold to
+                                R.string.alert_notification_pressure_high_threshold
+                        )
+                    }
+                Alarm.RSSI ->
+                    compareValues(
+                        ruuviTag.rssi,
+                        R.string.alert_notification_rssi_low_threshold to
+                            R.string.alert_notification_rssi_high_threshold
+                    )
+            }
+        }
+
+        private fun checkMovementData() {
+            val readings: List<TagSensorReading> =
+                sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
+            if (readings.size == 2) {
+                alarmResource = when {
+                    ruuviTag.dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
+                    ruuviTag.dataFormat != FORMAT5 && hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
+                    else -> null
+                }
+            }
+        }
+
+        private fun compareValues(
+            comparedValue: Number,
+            resources: Pair<Int, Int>
+        ) {
+            val (lowResourceId, highResourceId) = resources
+            when {
+                comparedValue.toDouble() < alarm.low -> {
+                    alarmResource = lowResourceId
+                    thresholdValue = alarm.low
+                }
+                comparedValue.toDouble() > alarm.high -> {
+                    alarmResource = highResourceId
+                    thresholdValue = alarm.high
+                }
+            }
+        }
+
+        private fun hasTagMoved(one: TagSensorReading, two: TagSensorReading): Boolean {
+            return one.accelZ.diff(two.accelZ) > MOVEMENT_THRESHOLD ||
+                one.accelY.diff(two.accelY) > MOVEMENT_THRESHOLD ||
+                one.accelX.diff(two.accelX) > MOVEMENT_THRESHOLD
+        }
+    }
+
     companion object {
-        private const val NOTIFICATION_RESOURCE_ID = -9001
         private const val CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
         private const val FORMAT5 = 5
+        private const val MOVEMENT_THRESHOLD = 0.03
     }
 }
 

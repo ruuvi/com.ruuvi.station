@@ -82,7 +82,7 @@ class DefaultOnTagFoundListener(
         } else {
             Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id} lastLogged = ${Date(lastLoggedDate)}")
         }
-        alarmCheckInteractor.check(ruuviTag, sensorSettings)
+        alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
     }
 
     private fun cleanUpOldData() {
