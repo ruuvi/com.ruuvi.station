@@ -27,6 +27,8 @@
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">TAUSTAKUVA</string>
+    <string name="background_interval">joka %1$s min</string>
+    <string name="background_interval_10sec">joka %1$s sek</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
     <string name="background_notification_scanning_every">Skannataan joka</string>
     <string name="battery_voltage">Paristojännite</string>

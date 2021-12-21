@@ -21,13 +21,16 @@ class NetworkRequestExecutor (
     private val networkRequestRepository: NetworkRequestRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val tagRepository: TagRepository
-    ){
+){
     private fun getToken() = tokenRepository.getTokenInfo()
 
-    fun registerRequest(networkRequest: NetworkRequest) {
+    fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true) {
         networkRequestRepository.disableSimilar(networkRequest)
-        CoroutineScope(Dispatchers.IO).launch {
-            execute(networkRequest)
+        networkRequestRepository.saveRequest(networkRequest)
+        if (executeNow) {
+            CoroutineScope(Dispatchers.IO).launch {
+                execute(networkRequest)
+            }
         }
     }
 

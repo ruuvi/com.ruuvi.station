@@ -23,7 +23,7 @@ class NetworkRequestRepository {
         saveRequest(networkRequest)
     }
 
-    private fun saveRequest(networkRequest: NetworkRequest) {
+    fun saveRequest(networkRequest: NetworkRequest) {
         if (networkRequest.id != 0) {
             networkRequest.save()
         } else {

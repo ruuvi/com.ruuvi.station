@@ -65,8 +65,10 @@ class AppSettingsInteractor(
         preferencesRepository.getBackgroundScanMode()
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
-        preferencesRepository.setBackgroundScanMode(mode)
-        networkApplicationSettings.updateBackgroundScanMode()
+        if (mode != preferencesRepository.getBackgroundScanMode()) {
+            preferencesRepository.setBackgroundScanMode(mode)
+            networkApplicationSettings.updateBackgroundScanMode()
+        }
     }
 
     fun isDashboardEnabled(): Boolean =
@@ -81,8 +83,10 @@ class AppSettingsInteractor(
         preferencesRepository.getBackgroundScanInterval()
 
     fun setBackgroundScanInterval(interval: Int) {
-        preferencesRepository.setBackgroundScanInterval(interval)
-        networkApplicationSettings.updateBackgroundScanInterval()
+        if (interval != preferencesRepository.getBackgroundScanInterval()) {
+            preferencesRepository.setBackgroundScanInterval(interval)
+            networkApplicationSettings.updateBackgroundScanInterval()
+        }
     }
 
     fun isShowAllGraphPoint(): Boolean =
