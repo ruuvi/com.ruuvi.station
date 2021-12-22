@@ -115,8 +115,10 @@ class AppSettingsInteractor(
         preferencesRepository.getGraphViewPeriodDays()
 
     fun setGraphViewPeriod(newPeriod: Int) {
-        preferencesRepository.setGraphViewPeriodDays(newPeriod)
-        networkApplicationSettings.updateChartViewPeriod()
+        if (newPeriod != preferencesRepository.getGraphViewPeriodDays()) {
+            preferencesRepository.setGraphViewPeriodDays(newPeriod)
+            networkApplicationSettings.updateChartViewPeriod()
+        }
     }
 
     fun testGateway(

@@ -156,17 +156,14 @@
                 android:layout_marginBottom="12dp"
                 android:text="@string/settings_chart_view_period_description" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
+            <com.ruuvi.station.util.ui.SequenceNumberEdit
+                android:id="@+id/chartViewPeriodEdit"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/days" />
-
-            <NumberPicker
-                android:id="@+id/viewPeriodNumberPicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/days"
-                android:tooltipText="@string/days" />
+                app:minValue="1"
+                app:maxValue="10"
+                app:captionResource="@string/chart_view_period_days_count"
+                />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -67,6 +67,7 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
+    <string name="chart_view_period_days_count">Days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
     <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Every Ruuvi sensor can have only one owner.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored in the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
