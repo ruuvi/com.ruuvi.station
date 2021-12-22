@@ -25,7 +25,9 @@ class EnterCodeViewModel (
     private val requestInProcess = MutableLiveData<Boolean>(false)
     val requestInProcessObserve: LiveData<Boolean> = requestInProcess
 
-    val signedIn = networkInteractor.signedIn
+    fun  isSignedIn() = networkInteractor.signedIn
+
+    fun getUserEmail() = networkInteractor.getEmail()
 
     fun verifyCode(token: String) {
         requestInProcess.value = true

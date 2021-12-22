@@ -25,6 +25,7 @@
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
     <string name="alerts">HÄLYTYKSET</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
+    <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">TAUSTAKUVA</string>
     <string name="background_interval">joka %1$s min</string>
