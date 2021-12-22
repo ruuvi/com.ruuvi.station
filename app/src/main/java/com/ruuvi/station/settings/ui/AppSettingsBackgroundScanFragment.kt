@@ -3,13 +3,13 @@ package com.ruuvi.station.settings.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.RadioButton
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.FragmentAppSettingsBackgroundScanBinding
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.ui.CustomNumberEdit
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
@@ -30,50 +30,34 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAppSettingsBackgroundScanBinding.bind(view)
         permissionsInteractor = PermissionsInteractor(requireActivity())
-        setupViews()
+        setupUI()
+        setupViewModel()
+    }
+
+    private fun setupViewModel() {
         observeScanMode()
         observeInterval()
     }
 
-    private fun setupViews() {
+    private fun setupUI() {
         with(binding) {
-            durationMinutesPicker.minValue = 0
-            durationMinutesPicker.maxValue = 59
-            durationSecondsPicker.maxValue = 59
-
-            viewModel.getPossibleScanModes().forEach { mode ->
-                val radioButton = RadioButton(activity)
-                radioButton.id = mode.value
-                radioButton.text = getString(mode.label)
-                optionsRadioGroup.addView(radioButton)
-            }
-
             var permissionAsked = false
-            optionsRadioGroup.setOnCheckedChangeListener { _, i ->
-                val selection = BackgroundScanModes.fromInt(i)
-
-                selection?.let {
-                    viewModel.setBackgroundMode(selection)
-                    settingsDescriptionTextView.text = getString(selection.description)
-                    if (selection == BackgroundScanModes.BACKGROUND && permissionAsked == false) {
-                        permissionsInteractor.requestBackgroundPermission()
-                        permissionAsked = true
-                    }
+            backgroundSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setBackgroundScanEnabled(isChecked)
+                if (isChecked && !permissionAsked) {
+                    permissionsInteractor.requestBackgroundPermission()
+                    permissionAsked = true
                 }
             }
 
-            durationMinutesPicker.setOnValueChangedListener { _, _, new ->
-                if (new == 0) {
-                    durationSecondsPicker.minValue = 10
-                    if (durationSecondsPicker.value < 10) durationSecondsPicker.value = 10
-                } else {
-                    durationSecondsPicker.minValue = 0
-                }
-                viewModel.setBackgroundScanInterval(new * 60 + durationSecondsPicker.value)
+            val list: MutableList<CustomNumberEdit.SelectionElement> = mutableListOf()
+            list.add(CustomNumberEdit.SelectionElement(10, 10, R.string.background_interval_10sec))
+            for (i in 1..60) {
+                list.add(CustomNumberEdit.SelectionElement(60 * i, i, R.string.background_interval))
             }
-
-            durationSecondsPicker.setOnValueChangedListener { _, _, new ->
-                viewModel.setBackgroundScanInterval(durationMinutesPicker.value * 60 + new)
+            intervalEdit.elements = list
+            intervalEdit.setOnValueChangedListener { value ->
+                viewModel.setBackgroundScanInterval(value)
             }
 
             settingsInstructionsTextView.text =
@@ -84,9 +68,9 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
     private fun observeScanMode() {
         lifecycleScope.launch {
             viewModel.scanModeFlow.collect { mode ->
-                mode?.let {
-                    binding.optionsRadioGroup.check(it.value)
-                }
+                val isEnabled = mode == BackgroundScanModes.BACKGROUND
+                binding.backgroundSwitch.isChecked = isEnabled
+                binding.intervalEdit.isEnabled = isEnabled
             }
         }
     }
@@ -95,13 +79,7 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
         lifecycleScope.launch {
             viewModel.intervalFlow.collect {
                 it?.let { interval ->
-                    val min = interval / 60
-                    val sec = interval - min * 60
-
-                    if (min == 0) binding.durationSecondsPicker.minValue = 10
-
-                    binding.durationMinutesPicker.value = min
-                    binding.durationSecondsPicker.value = sec
+                    binding.intervalEdit.setSelectedItem(interval)
                 }
             }
         }
