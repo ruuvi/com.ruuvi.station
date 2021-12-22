@@ -33,6 +33,7 @@
     <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alerts">ALERTS</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
+    <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
     <string name="background_interval">every %1$s min</string>
@@ -67,7 +68,7 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
-    <string name="chart_view_period_days_count">Days: %1$s</string>
+    <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
     <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Every Ruuvi sensor can have only one owner.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored in the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
