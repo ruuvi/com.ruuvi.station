@@ -91,16 +91,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/errorTextView" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/syncingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/synchronizing"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
     <ProgressBar
         android:id="@+id/progressIndicator"
         style="@style/progressStyle"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/submitCodeButton"
-        app:layout_constraintStart_toStartOf="@+id/submitCodeButton"
-        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton" />
+        tools:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/syncingTextView"
+        app:layout_constraintTop_toTopOf="@+id/syncingTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/syncingTextView"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/skipTextView"

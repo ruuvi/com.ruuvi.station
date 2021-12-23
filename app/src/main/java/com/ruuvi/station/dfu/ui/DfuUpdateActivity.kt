@@ -36,12 +36,15 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: DfuUpdateViewModel by viewModel { TagSettingsViewModelArgs(intent.getStringExtra(SENSOR_ID) ?:"") }
+
+    private lateinit var permissionsInteractor: PermissionsInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,18 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
                 DfuUpdateScreen(viewModel)
             }
         }
+        permissionsInteractor = PermissionsInteractor(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.permissionsGranted) requestPermission()
+    }
+
+    private fun requestPermission() {
+        val permissionsGranted = permissionsInteractor.arePermissionsGranted()
+        viewModel.permissionsChecked(permissionsGranted)
+        if (!permissionsGranted) permissionsInteractor.showPermissionSnackbar()
     }
 
     companion object {

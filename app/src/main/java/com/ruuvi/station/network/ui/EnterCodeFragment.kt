@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ruuvi.station.R
 import com.ruuvi.station.databinding.FragmentEnterCodeBinding
+import com.ruuvi.station.startup.ui.StartupActivity
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import com.ruuvi.station.util.extensions.viewModel
@@ -34,13 +35,15 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
         viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
             if (it) {
-                activity?.onBackPressed()
+                StartupActivity.start(requireContext(), false)
+                requireActivity().finish()
             }
         })
 
         viewModel.requestInProcessObserve.observe(viewLifecycleOwner, Observer { inProcess ->
             binding.submitCodeButton.isEnabled = !inProcess
             binding.progressIndicator.isVisible = inProcess
+            binding.syncingTextView.isVisible = inProcess
         })
     }
 

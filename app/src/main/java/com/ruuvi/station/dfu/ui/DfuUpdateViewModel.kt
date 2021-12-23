@@ -2,10 +2,7 @@ package com.ruuvi.station.dfu.ui
 
 import androidx.lifecycle.*
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.domain.BluetoothDevicesInteractor
-import com.ruuvi.station.bluetooth.domain.DfuInteractor
-import com.ruuvi.station.bluetooth.domain.DfuUpdateStatus
-import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
+import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.dfu.data.DownloadFileStatus
@@ -63,18 +60,26 @@ class DfuUpdateViewModel(
     private var latestFwinfo: LatestReleaseResponse? = null
 
     private var fwFile: File? = null
+    var permissionsGranted: Boolean = false
 
     @Volatile
     private var getFwJob: Job? = null
 
     init {
         Timber.d("Init viewmodel for $sensorId ${sensorFwVersion.value}")
-        getSensorFirmwareVersion()
+        _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
         getLatestFw()
 
         canStartUpdate.addSource(_sensorFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_latestFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_stage) { canStartUpdate.value = updateAllowed() }
+    }
+
+    fun permissionsChecked(permissionsGranted: Boolean) {
+        this.permissionsGranted = permissionsGranted
+        if (permissionsGranted) {
+            getSensorFirmwareVersion()
+        }
     }
 
     private fun updateAllowed(): Boolean {
@@ -104,8 +109,6 @@ class DfuUpdateViewModel(
     }
 
     fun getSensorFirmwareVersion() {
-        _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
-
         if (getFwJob != null && getFwJob?.isActive == true) {
             Timber.d("Already in sync mode")
             return
@@ -259,7 +262,9 @@ class DfuUpdateViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        bluetoothDevicesInteractor.cancelDiscovery()
+        if (permissionsGranted) {
+            bluetoothDevicesInteractor.cancelDiscovery()
+        }
     }
 
     companion object {

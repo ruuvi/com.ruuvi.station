@@ -162,6 +162,7 @@ class TagDetailsViewModel(
     }
 
     fun signOut() {
+        networkDataSyncInteractor.stopSync()
         tokenRepository.signOut {
             refreshTags()
         }
@@ -170,6 +171,13 @@ class TagDetailsViewModel(
     private fun sensorListChanged(old: List<RuuviTag>, new: List<RuuviTag>): Boolean {
         return old.any { oldTag -> new.none { it.id == oldTag.id} } ||
             new.any{ newTag -> old.none{ it.id == newTag.id}} ||
-            new.any { newTag -> old.any { it.id == newTag.id && it.displayName != newTag.displayName } }
+            new.any { newTag -> old.any { it.sensorListSpecificChange(newTag) } }
     }
+}
+
+fun RuuviTag.sensorListSpecificChange(newTag: RuuviTag): Boolean {
+    return this.id == newTag.id &&
+            (this.displayName != newTag.displayName ||
+            this.defaultBackground != newTag.defaultBackground ||
+            this.userBackground != newTag.userBackground)
 }

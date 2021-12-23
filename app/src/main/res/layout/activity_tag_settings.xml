@@ -40,7 +40,7 @@
             android:layout_width="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/tag_settings_item_layout"
+                android:id="@+id/tagSettingsLayout"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:paddingBottom="24dp">
@@ -101,7 +101,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tagImageSelectButton" />
 
                 <TextView
-                    android:id="@+id/general_header"
+                    android:id="@+id/generalHeaderTextView"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
                     android:text="@string/general"
@@ -115,7 +115,8 @@
                     style="@style/sensorSettingInfoTitleStyle"
                     android:text="@string/tag_name"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/general_header" />
+                    app:layout_constraintEnd_toStartOf="@+id/tagNameInputTextView"
+                    app:layout_constraintTop_toBottomOf="@id/generalHeaderTextView" />
 
                 <TextView
                     android:id="@+id/tagNameInputTextView"
@@ -124,7 +125,7 @@
                     android:focusable="true"
                     app:layout_constraintStart_toEndOf="@id/tagNameTitleTextView"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/general_header"
+                    app:layout_constraintTop_toBottomOf="@id/generalHeaderTextView"
                     tools:text="00:00:00:00:00:00" />
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/ownerLayout"
@@ -145,8 +146,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintRight_toRightOf="parent" />
+                        style="@style/sensorSettingInfoValueStyle" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -175,7 +175,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <TextView
-                    android:id="@+id/alerts_header"
+                    android:id="@+id/alertsHeaderTextView"
                     style="@style/sensorSettingGroupHeaderStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -192,7 +192,7 @@
                     android:padding="8dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alerts_header">
+                    app:layout_constraintTop_toBottomOf="@id/alertsHeaderTextView">
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmTemperature"
                         android:layout_width="match_parent"
@@ -272,7 +272,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/mac_header"
+                    android:id="@+id/moreInfoHeaderTextView"
                     style="@style/sensorSettingGroupHeaderStyle"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -282,36 +282,32 @@
                     app:layout_constraintTop_toBottomOf="@id/calibrationLayout" />
 
                 <TextView
-                    android:id="@+id/title_mac"
-                    style="@style/sensorSettingInfoTitleStyle"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/macTitleTextView"
                     android:text="@string/mac_address"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mac_header" />
+                    app:layout_constraintEnd_toStartOf="@+id/macTextView"
+                    app:layout_constraintTop_toBottomOf="@id/moreInfoHeaderTextView"
+                    style="@style/sensorSettingInfoTitleStyle" />
 
                 <TextView
-                    android:id="@+id/inputMacTextView"
-                    android:gravity="end"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:padding="@dimen/tag_settings_text_padding"
-                    android:textSize="16sp"
+                    android:id="@+id/macTextView"
                     android:focusable="true"
                     android:longClickable="true"
-                    app:layout_constraintStart_toEndOf="@id/title_mac"
+                    app:layout_constraintStart_toEndOf="@id/macTitleTextView"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mac_header" />
+                    app:layout_constraintTop_toBottomOf="@id/moreInfoHeaderTextView"
+                    style="@style/sensorSettingInfoValueStyle" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/rawValuesLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    app:layout_constraintTop_toBottomOf="@id/title_mac">
+                    app:layout_constraintTop_toBottomOf="@id/macTitleTextView">
                     <TextView
                         android:id="@+id/dataFormatTitleTextView"
                         android:text="@string/data_format"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/dataFormatTextView"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/sensorSettingInfoTitleStyle" />
 
@@ -323,80 +319,86 @@
                         style="@style/sensorSettingInfoValueStyle" />
 
                     <TextView
-                        android:id="@+id/title_voltage"
+                        android:id="@+id/voltageTitleTextView"
                         android:text="@string/battery_voltage"
                         style="@style/sensorSettingInfoTitleStyle"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/voltageTextView"
                         app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
 
                     <TextView
-                        android:id="@+id/inputVoltageTextView"
+                        android:id="@+id/voltageTextView"
                         style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/title_voltage"
+                        app:layout_constraintStart_toEndOf="@id/voltageTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
 
                     <TextView
-                        android:id="@+id/title_x"
+                        android:id="@+id/accelerationXTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_x"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_voltage" />
+                        app:layout_constraintEnd_toStartOf="@+id/accelerationXTextView"
+                        app:layout_constraintTop_toBottomOf="@id/voltageTitleTextView" />
 
                     <TextView
-                        android:id="@+id/xInputTextView"
+                        android:id="@+id/accelerationXTextView"
                         style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/title_x"
+                        app:layout_constraintStart_toEndOf="@id/accelerationXTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_voltage" />
+                        app:layout_constraintTop_toBottomOf="@id/voltageTitleTextView" />
 
                     <TextView
-                        android:id="@+id/title_y"
+                        android:id="@+id/accelerationYTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_y"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_x" />
+                        app:layout_constraintEnd_toStartOf="@+id/accelerationYTextView"
+                        app:layout_constraintTop_toBottomOf="@id/accelerationXTitleTextView" />
 
                     <TextView
-                        android:id="@+id/yInputTextView"
+                        android:id="@+id/accelerationYTextView"
                         style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/title_y"
+                        app:layout_constraintStart_toEndOf="@id/accelerationYTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_x" />
+                        app:layout_constraintTop_toBottomOf="@id/accelerationXTitleTextView" />
 
                     <TextView
-                        android:id="@+id/title_z"
+                        android:id="@+id/accelerationZTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/acceleration_z"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_y" />
+                        app:layout_constraintEnd_toStartOf="@+id/accelerationZTextView"
+                        app:layout_constraintTop_toBottomOf="@id/accelerationYTitleTextView" />
 
                     <TextView
-                        android:id="@+id/zInputTextView"
+                        android:id="@+id/accelerationZTextView"
                         style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/title_z"
+                        app:layout_constraintStart_toEndOf="@id/accelerationZTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_y" />
+                        app:layout_constraintTop_toBottomOf="@id/accelerationYTitleTextView" />
 
                     <TextView
                         android:id="@+id/txPowerTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/tx_power"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_z" />
+                        app:layout_constraintEnd_toStartOf="@+id/txPowerTextView"
+                        app:layout_constraintTop_toBottomOf="@id/accelerationZTitleTextView" />
 
                     <TextView
                         android:id="@+id/txPowerTextView"
                         style="@style/sensorSettingInfoValueStyle"
                         app:layout_constraintStart_toEndOf="@id/txPowerTitleTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title_z" />
+                        app:layout_constraintTop_toBottomOf="@id/accelerationZTitleTextView" />
 
                     <TextView
                         android:id="@+id/rssiTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/rssi"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/rssiTextView"
                         app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
 
                     <TextView
@@ -411,6 +413,7 @@
                         style="@style/sensorSettingInfoTitleStyle"
                         android:text="@string/measurement_sequence_number"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/sequenceNumberTextView"
                         app:layout_constraintTop_toBottomOf="@id/rssiTitleTextView" />
 
                     <TextView

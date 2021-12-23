@@ -14,8 +14,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 16010
-        versionName "1.6.10"
+        versionCode 16012
+        versionName "1.6.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.2'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.5'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.6'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:1.12.0'

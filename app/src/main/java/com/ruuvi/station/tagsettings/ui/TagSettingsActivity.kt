@@ -14,7 +14,6 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
@@ -91,7 +90,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
         if (scrollToAlarms) {
             Handler(Looper.getMainLooper()).post {
-                binding.scrollView.scrollTo(0, binding.alertsHeader.top-binding.toolbar.height)
+                binding.scrollView.scrollTo(0, binding.alertsHeaderTextView.top-binding.toolbar.height)
             }
         }
     }
@@ -318,9 +317,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun setupInputMac(sensorSettings: SensorSettings) {
-        binding.inputMacTextView.text = sensorSettings.id
+        binding.macTextView.text = sensorSettings.id
 
-        binding.inputMacTextView.setOnLongClickListener {
+        binding.macTextView.setOnLongClickListener {
             val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             val clip = ClipData.newPlainText(getString(R.string.mac_address), sensorSettings.id)
@@ -377,10 +376,10 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     private fun updateReadings(tag: RuuviTagEntity) {
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
-            binding.inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            binding.xInputTextView.text = getString(R.string.acceleration_reading, tag.accelX)
-            binding.yInputTextView.text = getString(R.string.acceleration_reading, tag.accelY)
-            binding.zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
+            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
+            binding.accelerationXTextView.text = getString(R.string.acceleration_reading, tag.accelX)
+            binding.accelerationYTextView.text = getString(R.string.acceleration_reading, tag.accelY)
+            binding.accelerationZTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
             binding.dataFormatTextView.text = tag.dataFormat.toString()
             binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
             binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)

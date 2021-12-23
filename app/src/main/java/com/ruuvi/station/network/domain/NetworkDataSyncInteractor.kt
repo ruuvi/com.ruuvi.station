@@ -89,10 +89,9 @@ class NetworkDataSyncInteractor (
             return
         }
 
+        setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
-                setSyncInProgress(true)
-
                 networkRequestExecutor.executeScheduledRequests()
                 networkApplicationSettings.updateSettingsFromNetwork()
 
@@ -211,7 +210,7 @@ class NetworkDataSyncInteractor (
         syncResult.value = status
     }
 
-    private suspend fun setSyncInProgress(status: Boolean) = withContext(Dispatchers.Main) {
+    private fun setSyncInProgress(status: Boolean) {//} = withContext(Dispatchers.Main) {
         Timber.d("SyncInProgress = $status")
         syncInProgress.value = status
     }
@@ -301,5 +300,12 @@ class NetworkDataSyncInteractor (
 
     fun syncStatusShowed() {
         syncResult.value = NetworkSyncResult(NetworkSyncResultType.NONE)
+    }
+
+    fun stopSync() {
+        Timber.d("stopSync")
+        if (syncJob?.isActive == true) {
+            syncJob?.cancel()
+        }
     }
 }
