@@ -79,6 +79,20 @@ class AppSettingsInteractor(
         networkApplicationSettings.updateDashboardEnabled()
     }
 
+    fun isCloudModeEnabled(): Boolean =
+        preferencesRepository.isCloudModeEnabled()
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) {
+        preferencesRepository.setIsCloudModeEnabled(isEnabled)
+        networkApplicationSettings.updateCloudModeEnabled()
+    }
+
+    fun shouldShowCloudMode(): Boolean {
+        return preferencesRepository.signedIn()
+            && sensorSettingsRepository.getSensorSettings()
+            .any { it.networkSensor && it.networkLastSync != null }
+    }
+
     fun getBackgroundScanInterval(): Int =
         preferencesRepository.getBackgroundScanInterval()
 

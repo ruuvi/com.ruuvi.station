@@ -11,6 +11,7 @@ data class NetworkUserSettings(
     val UNIT_HUMIDITY: String?,
     val UNIT_PRESSURE: String?,
     val DASHBOARD_ENABLED: String?,
+    val CLOUD_MODE_ENABLED: String?,
     val CHART_SHOW_ALL_POINTS: String?,
     val CHART_DRAW_DOTS: String?,
     val CHART_VIEW_PERIOD: String?
@@ -22,6 +23,7 @@ data class NetworkUserSettings(
             UNIT_HUMIDITY == null &&
             UNIT_PRESSURE == null &&
             DASHBOARD_ENABLED == null &&
+            CLOUD_MODE_ENABLED == null &&
             CHART_SHOW_ALL_POINTS == null &&
             CHART_DRAW_DOTS == null &&
             CHART_VIEW_PERIOD == null

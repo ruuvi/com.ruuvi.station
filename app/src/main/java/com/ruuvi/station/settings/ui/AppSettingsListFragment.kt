@@ -77,6 +77,14 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             dashboardSwitch.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.setIsDashboardEnabled(isChecked)
             }
+
+            val shouldShowCloudMode = viewModel.shouldShowCloudMode()
+            cloudModeLayout.isVisible = shouldShowCloudMode
+            networkModeDivider.divider.isVisible = shouldShowCloudMode
+            cloudModeSwitch.isChecked = viewModel.isCloudModeEnabled()
+            cloudModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setIsCloudModeEnabled(isChecked)
+            }
         }
         updateView()
     }

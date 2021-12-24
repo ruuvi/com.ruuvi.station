@@ -38,4 +38,13 @@ class AppSettingsListViewModel(
 
     fun getPressureUnit(): PressureUnit =
         interactor.getPressureUnit()
+
+    fun isCloudModeEnabled(): Boolean =
+        interactor.isCloudModeEnabled()
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) =
+        interactor.setIsCloudModeEnabled(isEnabled)
+
+    fun shouldShowCloudMode() =
+        interactor.shouldShowCloudMode()
 }

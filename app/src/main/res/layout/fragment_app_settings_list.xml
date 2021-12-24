@@ -146,13 +146,59 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/dashboardSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/divider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cloudModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
+
+            <LinearLayout
+                android:id="@+id/cloudModeTextLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/cloudModeSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/cloudModeTitleTextView"
+                    style="@style/PrefTitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cloud_only_mode" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/PrefSecondaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cloud_only_mode_description" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/cloudModeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cloudModeTextLayout"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/networkModeDivider"
+            layout="@layout/divider" />
 
         <LinearLayout
             android:id="@+id/gatewaySettingsLayout"

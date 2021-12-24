@@ -47,11 +47,15 @@ class DefaultOnTagFoundListener(
             ruuviTag.id?.let { sensorId ->
                 val dbTag = repository.getTagById(sensorId)
                 if (dbTag != null) {
-                    val ruuviTag = dbTag.preserveData(ruuviTag)
+                    dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
                     sensorSettings?.calibrateSensor(ruuviTag)
-                    repository.updateTag(ruuviTag)
-                    if (dbTag.favorite == true && sensorSettings != null) saveFavoriteReading(ruuviTag, sensorSettings)
+                    if (shouldSkipForCloudMode(sensorSettings) == false) {
+                        repository.updateTag(ruuviTag)
+                        if (dbTag.favorite == true && sensorSettings != null) {
+                            saveFavoriteReading(ruuviTag, sensorSettings)
+                        }
+                    }
                 } else {
                     ruuviTag.updateAt = Date()
                     repository.saveTag(ruuviTag)
@@ -61,6 +65,20 @@ class DefaultOnTagFoundListener(
     }
 
     private fun saveFavoriteReading(ruuviTag: RuuviTagEntity, sensorSettings: SensorSettings) {
+        ruuviTag.id?.let { sensorId ->
+            if (shouldSkipReading(sensorId)) {
+                Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
+                val reading = TagSensorReading(ruuviTag)
+                reading.save()
+                gatewaySender.sendData(ruuviTag, sensorSettings)
+            } else {
+                Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
+            }
+            alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
+        }
+    }
+
+    private fun shouldSkipReading(sensorId: String): Boolean {
         val interval = if (isForeground) {
             DATA_LOG_INTERVAL
         } else {
@@ -70,19 +88,10 @@ class DefaultOnTagFoundListener(
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
-        val lastLoggedDate = lastLogged[ruuviTag.id]
-        if (lastLoggedDate == null || lastLoggedDate <= loggingThreshold) {
-            ruuviTag.id?.let {
-                Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
-                lastLogged[it] = Date().time
-                val reading = TagSensorReading(ruuviTag)
-                reading.save()
-                gatewaySender.sendData(ruuviTag, sensorSettings)
-            }
-        } else {
-            Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id} lastLogged = ${Date(lastLoggedDate)}")
-        }
-        alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
+        val lastLoggedDate = lastLogged[sensorId]
+        val shouldSkip = lastLoggedDate != null && lastLoggedDate > loggingThreshold
+        if (shouldSkip) lastLogged[sensorId] = Date().time
+        return shouldSkip
     }
 
     private fun cleanUpOldData() {
@@ -94,6 +103,13 @@ class DefaultOnTagFoundListener(
             sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
             lastCleanedDate = Date().time
         }
+    }
+
+    private fun shouldSkipForCloudMode(sensorSettings: SensorSettings?): Boolean {
+        return preferencesRepository.signedIn() &&
+            preferencesRepository.isCloudModeEnabled() &&
+            sensorSettings?.networkSensor == true &&
+            sensorSettings.networkLastSync != null
     }
 
     companion object {

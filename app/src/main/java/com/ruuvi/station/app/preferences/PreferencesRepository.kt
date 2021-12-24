@@ -154,9 +154,18 @@ class PreferencesRepository(
 
     fun getUserEmail() = preferences.networkEmail
 
+    fun signedIn() = preferences.networkEmail.isNotEmpty() && preferences.networkToken.isNotEmpty()
+
     fun getRequestForReviewDate() = preferences.requestForReviewDate
 
     fun updateRequestForReviewDate() {
         preferences.requestForReviewDate = Date().time
+    }
+
+    fun isCloudModeEnabled(): Boolean =
+        preferences.cloudModeEnabled
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) {
+        preferences.cloudModeEnabled = isEnabled
     }
 }
