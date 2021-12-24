@@ -32,6 +32,7 @@ class NetworkApplicationSettings (
                         applyHumidityUnit(response.data.settings)
                         applyPressureUnit(response.data.settings)
                         applyDashboardEnabled(response.data.settings)
+                        applyCloudModeEnabled(response.data.settings)
                         applyChartShowAllPoints(response.data.settings)
                         applyChartDrawDots(response.data.settings)
                         applyChartViewPeriod(response.data.settings)
@@ -117,6 +118,15 @@ class NetworkApplicationSettings (
         }
     }
 
+    private fun applyCloudModeEnabled(settings: NetworkUserSettings) {
+        if (settings.CLOUD_MODE_ENABLED != null) {
+            settings.CLOUD_MODE_ENABLED.toBoolean().let {
+                Timber.d("NetworkApplicationSettings-applyCloudModeEnabled: $it")
+                preferencesRepository.setIsCloudModeEnabled(it)
+            }
+        }
+    }
+
     private fun applyChartShowAllPoints(settings: NetworkUserSettings) {
         if (settings.CHART_SHOW_ALL_POINTS != null) {
             settings.CHART_SHOW_ALL_POINTS.toBoolean().let {
@@ -178,6 +188,15 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateCloudModeEnabled() {
+        if (networkInteractor.signedIn) {
+            networkInteractor.updateUserSetting(
+                CLOUD_MODE_ENABLED,
+                preferencesRepository.isCloudModeEnabled().toString()
+            )
+        }
+    }
+
     fun updateBackgroundScanInterval() {
         if (networkInteractor.signedIn) {
             networkInteractor.updateUserSetting(
@@ -230,6 +249,7 @@ class NetworkApplicationSettings (
         val UNIT_HUMIDITY = "UNIT_HUMIDITY"
         val UNIT_PRESSURE = "UNIT_PRESSURE"
         val DASHBOARD_ENABLED = "DASHBOARD_ENABLED"
+        val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
         val CHART_VIEW_PERIOD = "CHART_VIEW_PERIOD"

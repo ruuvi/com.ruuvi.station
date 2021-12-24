@@ -46,4 +46,6 @@ class NetworkTokenRepository (
         preferences.networkEmail = tokenInfo.email
         preferences.networkToken = tokenInfo.token
     }
+
+    fun signedIn() = getTokenInfo() != null
 }

@@ -98,6 +98,8 @@
     <string name="cloud_er_unable_to_send_email">Unable to send e-mail</string>
     <string name="cloud_er_unauthorized">Unauthorised</string>
     <string name="cloud_er_user_not_found">User not found</string>
+    <string name="cloud_only_mode">Cloud mode</string>
+    <string name="cloud_only_mode_description">If this feature is enabled app will ignore any Bluetooth advertisements for claimed sensors. Data will be collected from cloud only.</string>
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>
