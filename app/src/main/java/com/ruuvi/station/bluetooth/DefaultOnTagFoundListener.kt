@@ -66,7 +66,7 @@ class DefaultOnTagFoundListener(
 
     private fun saveFavoriteReading(ruuviTag: RuuviTagEntity, sensorSettings: SensorSettings) {
         ruuviTag.id?.let { sensorId ->
-            if (shouldSkipReading(sensorId)) {
+            if (shouldSaveReading(sensorId)) {
                 Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
@@ -78,7 +78,7 @@ class DefaultOnTagFoundListener(
         }
     }
 
-    private fun shouldSkipReading(sensorId: String): Boolean {
+    private fun shouldSaveReading(sensorId: String): Boolean {
         val interval = if (isForeground) {
             DATA_LOG_INTERVAL
         } else {
@@ -89,9 +89,9 @@ class DefaultOnTagFoundListener(
         calendar.add(Calendar.SECOND, -interval)
         val loggingThreshold = calendar.time.time
         val lastLoggedDate = lastLogged[sensorId]
-        val shouldSkip = lastLoggedDate != null && lastLoggedDate > loggingThreshold
-        if (shouldSkip) lastLogged[sensorId] = Date().time
-        return shouldSkip
+        val shouldSave = lastLoggedDate == null || lastLoggedDate < loggingThreshold
+        if (shouldSave) lastLogged[sensorId] = Date().time
+        return shouldSave
     }
 
     private fun cleanUpOldData() {

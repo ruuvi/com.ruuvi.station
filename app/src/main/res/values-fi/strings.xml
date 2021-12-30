@@ -89,6 +89,8 @@
     <string name="cloud_er_unable_to_send_email">Sähköpostin lähetys epäonnistui</string>
     <string name="cloud_er_unauthorized">Ei sallittu</string>
     <string name="cloud_er_user_not_found">Käyttäjää ei löydy</string>
+    <string name="cloud_only_mode">Pilvitila</string>
+    <string name="cloud_only_mode_description">Päivitä lähellä olevat pilveen rekisteröidyt anturit ainoastaan pilvestä hylkäämällä niiden Bluetooth-viestit. Vaatii Ruuvi Gateway -reitittimen.</string>
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
