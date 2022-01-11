@@ -11,8 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 class AppSettingsGatewayViewModel(
         private val interactor: AppSettingsInteractor
 ) : ViewModel() {
-    private val gatewayUrl = MutableStateFlow(interactor.getGatewayUrl())
-    val observeGatewayUrl: StateFlow<String> = gatewayUrl
+    private val dataForwardingUrl = MutableStateFlow(interactor.getDataForwardingUrl())
+    val observeDataForwardingUrl: StateFlow<String> = dataForwardingUrl
+
+    private val dataForwardingLocationEnabled = MutableStateFlow(interactor.getDataForwardingLocationEnabled())
+    val observeDataForwardingLocationEnabled: StateFlow<Boolean> = dataForwardingLocationEnabled
 
     private val deviceId = MutableStateFlow(interactor.getDeviceId())
     val observeDeviceId: StateFlow<String> = deviceId
@@ -20,8 +23,12 @@ class AppSettingsGatewayViewModel(
     private val testGatewayResult = MutableStateFlow(GatewayTestResult(GatewayTestResultType.NONE))
     val observeTestGatewayResult: StateFlow<GatewayTestResult> = testGatewayResult
 
-    fun setGatewayUrl(newGatewayUrl: String) {
-        interactor.setGatewayUrl(newGatewayUrl)
+    fun setDataForwardingUrl(url: String) {
+        interactor.setDataForwardingUrl(url)
+    }
+
+    fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
+        interactor.setDataForwardingLocationEnabled(locationEnabled)
     }
 
     fun setDeviceId(newDeviceId: String) {
@@ -31,7 +38,7 @@ class AppSettingsGatewayViewModel(
     fun testGateway() {
         testGatewayResult.value = GatewayTestResult(GatewayTestResultType.TESTING)
         interactor.testGateway(
-                interactor.getGatewayUrl(),
+                interactor.getDataForwardingUrl(),
                 interactor.getDeviceId(),
                 FutureCallback { e, result ->
                     when {

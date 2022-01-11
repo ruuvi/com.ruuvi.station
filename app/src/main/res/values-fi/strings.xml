@@ -13,14 +13,22 @@
     <string name="alert_movement">Liike</string>
     <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
     <string name="alert_notification_humidity_high">Suhteellinen ilmankosteus liian korkea!</string>
+    <string name="alert_notification_humidity_high_threshold">Ilmankosteus on yli %1$s</string>
     <string name="alert_notification_humidity_low">Suhteellinen ilmankosteus liian alhainen!</string>
+    <string name="alert_notification_humidity_low_threshold">Ilmankosteus on alle %1$s</string>
     <string name="alert_notification_movement">Liike havaittu!</string>
     <string name="alert_notification_pressure_high">Ilmanpaine liian korkea!</string>
+    <string name="alert_notification_pressure_high_threshold">Ilmanpaine on yli %1$s</string>
     <string name="alert_notification_pressure_low">Ilmanpaine liian alhainen!</string>
+    <string name="alert_notification_pressure_low_threshold">Ilmanpaine on alle %1$s</string>
     <string name="alert_notification_rssi_high">Signaalin voimakkuus liian korkea!</string>
+    <string name="alert_notification_rssi_high_threshold">Signaalinvoimakkuus on yli %1$s</string>
     <string name="alert_notification_rssi_low">Signaalin voimakkuus liian alhainen!</string>
+    <string name="alert_notification_rssi_low_threshold">Signaalinvoimakkuus on alle %1$s</string>
     <string name="alert_notification_temperature_high">Lämpötila liian korkea!</string>
+    <string name="alert_notification_temperature_high_threshold">Lämpötila on yli %1$s</string>
     <string name="alert_notification_temperature_low">Lämpötila liian alhainen!</string>
+    <string name="alert_notification_temperature_low_threshold">Lämpötila on alle %1$s</string>
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
     <string name="alerts">HÄLYTYKSET</string>
@@ -32,6 +40,7 @@
     <string name="background_interval_10sec">joka %1$s sek</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
     <string name="background_notification_scanning_every">Skannataan joka</string>
+    <string name="background_scanning">Taustaskannaus</string>
     <string name="battery_voltage">Paristojännite</string>
     <string name="beta">beta</string>
     <string name="calibrate">Kalibroi</string>
@@ -99,7 +108,9 @@
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla</string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="data_format">Dataformaatti</string>
+    <string name="data_forwarding_background_location_message">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>
+    <string name="data_forwarding_location_enable">Lähetä myös tämän laitteen paikkatietokoordinaatit</string>
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
@@ -196,6 +207,7 @@
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Kyseessä on todennäköisesti vanha laiteohjelmisto ja sen päivittäminen on suositeltavaa</string>
+    <string name="owner_none">Ei omistajaa</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
@@ -291,7 +303,6 @@
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Sinut merkitään lähelläsi olevien Ruuvi-anturien omistajaksi sisäänkirjautumisen yhteydessä. Kaikki omistajan vaatimat anturit palautetaan verkosta sovelluksen uudelleenasennuksen yhteydessä.\n\nRuuvi Gatewayn avulla voit tarkastella omistamiasi antureita etänä ja jakaa niitä ystävillesi verkossa.</string>
-    <string name="sign_in_benefits_title">Ruuvin pilvipalvelun etuja</string>
     <string name="sign_in_check_email">Tarkasta aktivointikoodi saamastasi sähköpostista.</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>

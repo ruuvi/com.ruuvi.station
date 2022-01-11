@@ -7,10 +7,7 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.extensions.isUpdateInstall
 import java.util.*
-import kotlin.math.max
-import kotlin.math.round
 
 class Preferences constructor(val context: Context) {
 
@@ -81,11 +78,17 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
         }
 
-    var gatewayUrl: String
-        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL)
-            ?: DEFAULT_GATEWAY_URL
+    var dataForwardingUrl: String
+        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_DATA_FORWARDING_URL)
+            ?: DEFAULT_DATA_FORWARDING_URL
         set(url) {
             sharedPreferences.edit().putString(PREF_BACKEND, url).apply()
+        }
+
+    var dataForwardingLocationEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BACKEND_LOCATION, false)
+        set(locationEnabled) {
+            sharedPreferences.edit().putBoolean(PREF_BACKEND_LOCATION, locationEnabled).apply()
         }
 
     var deviceId: String
@@ -218,6 +221,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
         private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
         private const val PREF_BACKEND = "pref_backend"
+        private const val PREF_BACKEND_LOCATION = "pref_backend_location"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_DASHBOARD_ENABLED = "DASHBOARD_ENABLED_PREF"
@@ -236,7 +240,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
-        private const val DEFAULT_GATEWAY_URL = ""
+        private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24

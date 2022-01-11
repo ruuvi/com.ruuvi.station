@@ -118,7 +118,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             binding.calibrateHumidity.setItemValue(
                 unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
             )
-            binding.ownerValueTextView.text = sensorSettings?.owner ?: "None"
+            binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
 
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)

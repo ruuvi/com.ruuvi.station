@@ -9,7 +9,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.gateway.DataForwardingSender
 import com.ruuvi.station.util.extensions.logData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ import java.util.HashMap
 @Suppress("NAME_SHADOWING")
 class DefaultOnTagFoundListener(
     private val preferencesRepository: PreferencesRepository,
-    private val gatewaySender: GatewaySender,
+    private val dataForwardingSender: DataForwardingSender,
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
@@ -70,7 +70,7 @@ class DefaultOnTagFoundListener(
                 Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
-                gatewaySender.sendData(ruuviTag, sensorSettings)
+                dataForwardingSender.sendData(ruuviTag, sensorSettings)
             } else {
                 Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
             }

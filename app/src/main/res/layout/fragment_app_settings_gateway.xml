@@ -41,6 +41,15 @@
                     android:layout_height="wrap_content"
                     android:maxLength="32" />
 
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/locationSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="@string/data_forwarding_location_enable"
+                    />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/gatewayTestButton"
                     android:layout_width="match_parent"
