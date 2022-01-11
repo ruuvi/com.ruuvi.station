@@ -321,19 +321,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
     }
 
-    // disabled for now
-    fun showNetworkBenefitsDialog() {
-        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-        alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
-        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-        ) { dialog, _ -> dialog.dismiss() }
-        alertDialog.setOnDismissListener {
-            SignInActivity.start(this)
-        }
-        alertDialog.show()
-    }
-
     private fun updateMenu(signed: Boolean) {
         binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)

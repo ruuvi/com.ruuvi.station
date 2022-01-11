@@ -185,6 +185,7 @@
     <string name="offset_correction">Offset-Korrektur</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ihr Sensor meldet seine aktuelle Firmware-Version nicht. Dies bedeutet, dass wahrscheinlich eine alte Firmware-Version ausgeführt wird und eine Aktualisierung empfohlen wird</string>
+    <string name="owner_none">Keiner</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
@@ -279,7 +280,6 @@
     <string name="share_sensor_unshare_confirm">Möchten Sie die Freigabe des Sensors für %1$s aufheben?</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Nach der Anmeldung werden Sie automatisch als Besitzer Ihrer Ruuvi-Sensoren in der Nähe markiert. Die Sensoren werden nach einer Neuinstallation der App wiederhergestellt.\n\nMit einem Ruuvi Gateway-Router können Sie die Sensoren aus der Ferne überwachen und mit Ihren Freunden teilen.</string>
-    <string name="sign_in_benefits_title">Vorteile des Ruuvi Cloud-Dienstes</string>
     <string name="sign_in_check_email">Überprüfen Sie Ihre E-Mail auf einen Aktivierungscode.</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">E-Mail gesendet</string>

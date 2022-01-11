@@ -32,7 +32,7 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     GATEWAY_ENABLED,
-                    preferences.getGatewayUrl().isNotEmpty().toString()
+                    preferences.getDataForwardingUrl().isNotEmpty().toString()
                 )
                 firebaseAnalytics.setUserProperty(
                     TEMPERATURE_UNIT,

@@ -28,7 +28,7 @@ class AppSettingsListViewModel(
         interactor.getBackgroundScanInterval()
 
     fun getGatewayUrl(): String =
-        interactor.getGatewayUrl()
+        interactor.getDataForwardingUrl()
 
     fun getTemperatureUnit(): TemperatureUnit =
         interactor.getTemperatureUnit()

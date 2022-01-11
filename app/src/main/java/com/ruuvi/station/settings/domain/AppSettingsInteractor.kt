@@ -6,7 +6,7 @@ import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.gateway.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
@@ -16,7 +16,7 @@ import com.ruuvi.station.util.BackgroundScanModes
 
 class AppSettingsInteractor(
     private val preferencesRepository: PreferencesRepository,
-    private val gatewaySender: GatewaySender,
+    private val dataForwardingSender: DataForwardingSender,
     private val unitsConverter: UnitsConverter,
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val sensorSettingsRepository: SensorSettingsRepository
@@ -38,11 +38,18 @@ class AppSettingsInteractor(
         networkApplicationSettings.updateHumidityUnit()
     }
 
-    fun getGatewayUrl(): String =
-        preferencesRepository.getGatewayUrl()
+    fun getDataForwardingUrl(): String =
+        preferencesRepository.getDataForwardingUrl()
 
-    fun setGatewayUrl(gatewayUrl: String) {
-        preferencesRepository.setGatewayUrl(gatewayUrl)
+    fun setDataForwardingUrl(url: String) {
+        preferencesRepository.setDataForwardingUrl(url)
+    }
+
+    fun getDataForwardingLocationEnabled():Boolean =
+        preferencesRepository.getDataForwardingLocationEnabled()
+
+    fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
+        preferencesRepository.setDataForwardingLocationEnabled(locationEnabled)
     }
 
     fun getDeviceId(): String =
@@ -139,7 +146,7 @@ class AppSettingsInteractor(
         gatewayUrl: String,
         deviceId: String,
         callback: FutureCallback<Response<JsonObject>>
-    ) = gatewaySender.test(gatewayUrl, deviceId, callback)
+    ) = dataForwardingSender.test(gatewayUrl, deviceId, callback)
 
     fun getAllPressureUnits(): Array<PressureUnit> = unitsConverter.getAllPressureUnits()
 
