@@ -10,7 +10,7 @@ import com.ruuvi.station.database.di.DatabaseInjectionModule
 import com.ruuvi.station.dfu.di.DfuInjectionModule
 import com.ruuvi.station.feature.di.FeatureInjectionModule
 import com.ruuvi.station.firebase.di.FirebaseInjectionModule
-import com.ruuvi.station.gateway.di.GatewayInjectionModule
+import com.ruuvi.station.dataforwarding.di.DataForwardingInjectionModule
 import com.ruuvi.station.graph.di.GraphInjectionModule
 import com.ruuvi.station.image.di.ImageInjectionModule
 import com.ruuvi.station.network.di.NetworkInjectionModule
@@ -31,7 +31,7 @@ object AppInjectionModules {
         import(PreferencesInjectionModule.module)
         import(BluetoothScannerInjectionModule.module)
         import(SettingsInjectionModule.module)
-        import(GatewayInjectionModule.module)
+        import(DataForwardingInjectionModule.module)
         import(TagDetailsInjectionModule.module)
         import(DashboardActivityInjectionModule.module)
         import(StartupActivityInjectionModule.module)

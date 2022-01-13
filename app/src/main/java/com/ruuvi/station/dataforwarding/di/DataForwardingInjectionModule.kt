@@ -1,14 +1,14 @@
-package com.ruuvi.station.gateway.di
+package com.ruuvi.station.dataforwarding.di
 
-import com.ruuvi.station.gateway.EventFactory
-import com.ruuvi.station.gateway.DataForwardingSender
+import com.ruuvi.station.dataforwarding.domain.EventFactory
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
-object GatewayInjectionModule {
-    val module = Kodein.Module(GatewayInjectionModule.javaClass.name) {
+object DataForwardingInjectionModule {
+    val module = Kodein.Module(DataForwardingInjectionModule.javaClass.name) {
         bind<DataForwardingSender>() with singleton { DataForwardingSender(instance(), instance(), instance()) }
 
         bind<EventFactory>() with singleton { EventFactory(instance(), instance(), instance()) }

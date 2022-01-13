@@ -1,4 +1,4 @@
-package com.ruuvi.station.gateway.data
+package com.ruuvi.station.dataforwarding.data
 
 class ScanLocation(
     var latitude: Double = 0.0,

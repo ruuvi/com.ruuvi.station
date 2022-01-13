@@ -108,7 +108,9 @@
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
     <string name="data_format">Формат Данных</string>
-    <string name="data_forwarding_background_location_message">Эта функция требует доступа к местоположению устройства. Чтобы добавить данные о местоположении, на следующем системном диалоге выберите \'Разрешить в любом режиме\'</string>
+    <string name="data_forwarding_background_location_message_bloked">Включите доступ к местоположению, чтобы добавить координаты</string>
+    <string name="data_forwarding_background_location_message_first">Эта функция требует доступа к местоположению устройства. Чтобы добавить данные о местоположении, на следующем системном диалоге укажите хотите вы точное или примерное местоположение и разрешите доступ к местоположению пока приложение активно.</string>
+    <string name="data_forwarding_background_location_message_second">Чтобы добавить данные о местоположении, когда приложение работает в фоне: на следующем системном диалоге выберите \'Разрешить в любом режиме\'</string>
     <string name="data_forwarding_disabled">Отключено</string>
     <string name="data_forwarding_location_enable">Отправлять также координаты местоположения устройство</string>
     <string name="data_forwarding_url">URL шлюза</string>

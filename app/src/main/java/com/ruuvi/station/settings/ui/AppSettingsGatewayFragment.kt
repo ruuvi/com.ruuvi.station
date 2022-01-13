@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.FragmentAppSettingsGatewayBinding
+import com.ruuvi.station.dataforwarding.domain.LocationPermissionsInteractor
 import com.ruuvi.station.settings.domain.GatewayTestResultType
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
@@ -30,12 +30,12 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
 
     private lateinit var binding: FragmentAppSettingsGatewayBinding
 
-    private var permissionsInteractor: PermissionsInteractor? = null
+    private var permissionsInteractor: LocationPermissionsInteractor? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAppSettingsGatewayBinding.bind(view)
-        permissionsInteractor = PermissionsInteractor(requireActivity())
+        permissionsInteractor = LocationPermissionsInteractor(requireActivity())
         setupUI()
         setupViewModel()
     }
@@ -53,6 +53,8 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
             { permissions ->
                 if (permissions.any { it.value }) {
                     permissionsInteractor?.requestBackgroundLocationPermissionApi31(requestBackgroundLocationPermission)
+                } else {
+                    permissionsInteractor?.showLocationSnackbar()
                 }
                 permissions.entries.forEach {
                     Timber.d("${it.key} granted = ${it.value}")
@@ -86,6 +88,9 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
 
             locationSwitch.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.setDataForwardingLocationEnabled(isChecked)
+                if (isChecked) {
+                    permissionsInteractor?.requestLocationPermissionApi31(requestLocationPermissionLauncher, requestBackgroundLocationPermission)
+                }
             }
 
             deviceIdEditText.addTextChangedListener(object : TextWatcher {
@@ -139,9 +144,6 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
         lifecycleScope.launch {
             viewModel.observeDataForwardingLocationEnabled.collect { isEnabled ->
                 binding.locationSwitch.isChecked = isEnabled
-                if (isEnabled) {
-                    permissionsInteractor?.requestLocationPermissionApi31(requestLocationPermissionLauncher, requestBackgroundLocationPermission)
-                }
             }
         }
     }
