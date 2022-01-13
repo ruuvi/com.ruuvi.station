@@ -6,7 +6,7 @@ import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.gateway.DataForwardingSender
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit

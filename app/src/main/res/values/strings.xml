@@ -109,7 +109,9 @@
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="data_format">Data Format</string>
-    <string name="data_forwarding_background_location_message">This feature requires a location permission. In order to include your location coordinates, allow the app to use your location \'all the time\' when prompted in the next dialog.</string>
+    <string name="data_forwarding_background_location_message_bloked">Please enable location permission in Settings to include coordinates</string>
+    <string name="data_forwarding_background_location_message_first">This feature requires a location permission. In order to include your location coordinates, please select if you want precise or approximate location and allow access while using the app when prompted in the next dialog.</string>
+    <string name="data_forwarding_background_location_message_second">To be able to include location when app is running in background please allow the app to use your location \'all the time\' when prompted in the next dialog.</string>
     <string name="data_forwarding_disabled">Disabled</string>
     <string name="data_forwarding_location_enable">Send also location coordinates of this device</string>
     <string name="data_forwarding_url">Data Forwarding URL</string>

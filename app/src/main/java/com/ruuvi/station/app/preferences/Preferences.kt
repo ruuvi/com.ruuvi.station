@@ -212,7 +212,7 @@ class Preferences constructor(val context: Context) {
     fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
 
     companion object {
-        private const val DEFAULT_SCAN_INTERVAL = 15 * 60
+        private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
         private const val PREF_FIRST_START = "FIRST_START_PREF"

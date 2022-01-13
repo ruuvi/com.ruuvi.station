@@ -1,4 +1,4 @@
-package com.ruuvi.station.gateway
+package com.ruuvi.station.dataforwarding.domain
 
 import android.content.Context
 import android.util.Log

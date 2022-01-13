@@ -1,4 +1,4 @@
-package com.ruuvi.station.gateway.data
+package com.ruuvi.station.dataforwarding.data
 
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings

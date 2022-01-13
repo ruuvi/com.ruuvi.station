@@ -9,7 +9,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.gateway.DataForwardingSender
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.util.extensions.logData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

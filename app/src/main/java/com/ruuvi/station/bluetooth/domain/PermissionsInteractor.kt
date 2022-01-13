@@ -10,7 +10,6 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -36,11 +35,6 @@ class PermissionsInteractor(private val activity: Activity) {
     ).also {
         if (BuildConfig.FILE_LOGS_ENABLED) it.add(WRITE_EXTERNAL_STORAGE)
     }
-
-    private val requiredLocationPermissions = mutableListOf(
-            ACCESS_COARSE_LOCATION,
-            ACCESS_FINE_LOCATION
-    )
 
     private val permissionsList = if (isApi31Behaviour) {
         requiredPermissionsApi31
@@ -95,35 +89,6 @@ class PermissionsInteractor(private val activity: Activity) {
             activity.startActivity(intent)
         }
         snackBar.show()
-    }
-
-    fun requestLocationPermissionApi31(
-            resultLauncher: ActivityResultLauncher<Array<String>>,
-            requestBackgroundLocationPermission: ActivityResultLauncher<String>
-    ) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            val neededPermissions = getRequiredPermissions(requiredLocationPermissions)
-            if (neededPermissions.size > 1) {
-                resultLauncher.launch(neededPermissions.toTypedArray())
-            } else {
-                requestBackgroundLocationPermissionApi31(requestBackgroundLocationPermission)
-            }
-        }
-    }
-
-    fun requestBackgroundLocationPermissionApi31(requestBackgroundLocationPermission: ActivityResultLauncher<String>) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R &&
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_BACKGROUND_LOCATION)) {
-            val alertDialog = AlertDialog.Builder(activity).create()
-            alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
-            alertDialog.setMessage(activity.getString(R.string.data_forwarding_background_location_message))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener {
-                requestBackgroundLocationPermission.launch(ACCESS_BACKGROUND_LOCATION)
-            }
-            alertDialog.show()
-        }
     }
 
     private fun showLocationPermissionDialog(action: Runnable) {
