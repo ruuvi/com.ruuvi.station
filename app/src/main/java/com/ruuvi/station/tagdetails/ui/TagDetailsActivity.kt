@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -64,6 +65,9 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import android.content.ComponentName
+import com.ruuvi.station.widgets.ui.SensorWidget
+import com.ruuvi.station.widgets.ui.updateAppWidget
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
@@ -443,6 +447,19 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     override fun onResume() {
         super.onResume()
+
+        //TODO REMOVE TESTING UPDATE
+        val appWidgetManager =
+            AppWidgetManager.getInstance(this)
+
+        val widgetIds = appWidgetManager.getAppWidgetIds(ComponentName(application, SensorWidget::class.java.name ))
+        Timber.d("widgetIds count ${widgetIds.size}")
+
+        for (id in widgetIds) {
+            Timber.d("widgetIds $id")
+            updateAppWidget(this, appWidgetManager, id)
+        }
+
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {

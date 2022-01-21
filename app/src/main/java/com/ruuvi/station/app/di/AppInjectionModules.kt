@@ -20,6 +20,7 @@ import com.ruuvi.station.tag.di.RuuviTagInjectionModule
 import com.ruuvi.station.tagdetails.di.TagDetailsInjectionModule
 import com.ruuvi.station.tagsettings.di.TagSettingsInjectionModule
 import com.ruuvi.station.units.di.UnitsInjectionModule
+import com.ruuvi.station.widgets.di.WidgetInjectionModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 
@@ -48,5 +49,6 @@ object AppInjectionModules {
         import(CalibrationInjectionModule.module)
         import(DatabaseInjectionModule.module)
         import(DfuInjectionModule.module)
+        import(WidgetInjectionModule.module)
     }
 }

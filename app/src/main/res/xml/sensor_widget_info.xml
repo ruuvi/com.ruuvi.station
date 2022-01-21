@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="300dp"
+    android:minHeight="50dp"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@drawable/logo"
+    android:initialLayout="@layout/sensor_widget"
+    android:description="@string/app_widget_description"
+    android:configure="com.ruuvi.station.widgets.ui.SensorWidgetConfigureActivity"
+    android:resizeMode="vertical"
+    android:widgetCategory="home_screen"
+    android:previewLayout="@layout/sensor_widget"
+    android:targetCellHeight="1"
+    android:targetCellWidth="5"
+    android:widgetFeatures="reconfigurable"
+    android:initialKeyguardLayout="@layout/sensor_widget"
+/>

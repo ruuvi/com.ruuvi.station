@@ -1,18 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 package="com.ruuvi.station">
 
-<uses-permission android:name="android.permission.BLUETOOTH"
-    android:maxSdkVersion="30"/>
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
-    android:maxSdkVersion="30"/>
+<uses-permission
+    android:name="android.permission.BLUETOOTH"
+    android:maxSdkVersion="30" />
+<uses-permission
+    android:name="android.permission.BLUETOOTH_ADMIN"
+    android:maxSdkVersion="30" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-<uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-    android:usesPermissionFlags="neverForLocation"/>
+<uses-permission
+    android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation" />
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -118,8 +120,7 @@ package="com.ruuvi.station">
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-        android:exported="false"
-        />
+        android:exported="false" />
 
     <activity
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
@@ -132,6 +133,14 @@ package="com.ruuvi.station">
         android:exported="true"
         android:label="@string/title_activity_dfu_update"
         android:theme="@style/AppTheme.NoActionBar" />
+
+    <activity
+        android:name="com.ruuvi.station.widgets.ui.SensorWidgetConfigureActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
 
     <service
         android:name="com.ruuvi.station.dfu.domain.DfuService"
@@ -169,6 +178,18 @@ package="com.ruuvi.station">
             <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
             <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
         </intent-filter>
+    </receiver>
+
+    <receiver
+        android:name="com.ruuvi.station.widgets.ui.SensorWidget"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/sensor_widget_info" />
     </receiver>
 </application>
 </manifest>
