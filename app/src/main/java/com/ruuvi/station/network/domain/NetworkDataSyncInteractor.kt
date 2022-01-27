@@ -16,6 +16,7 @@ import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
+import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorDataResponse
@@ -83,10 +84,10 @@ class NetworkDataSyncInteractor (
         autoRefreshJob?.cancel()
     }
 
-    fun syncNetworkData() {
+    fun syncNetworkData(): Job {
         if (syncJob != null && syncJob?.isActive == true) {
             Timber.d("Already in sync mode")
-            return
+            return syncJob!!
         }
 
         setSyncInProgress(true)
@@ -124,6 +125,7 @@ class NetworkDataSyncInteractor (
             }
             setSyncInProgress(false)
         }
+        return syncJob!!
     }
 
     private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
@@ -291,7 +293,7 @@ class NetworkDataSyncInteractor (
         val request = GetSensorDataRequest(
             sensor = tagId,
             since = since,
-            sort = "asc",
+            sort = SortMode.ASCENDING,
             limit = limit,
             mode = SensorDataMode.MIXED
         )

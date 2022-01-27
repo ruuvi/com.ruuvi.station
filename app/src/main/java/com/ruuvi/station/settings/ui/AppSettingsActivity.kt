@@ -106,18 +106,18 @@ class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), A
         return true
     }
 
-    companion object {
-        fun start(context: Context) {
-            val settingsIntent = Intent(context, AppSettingsActivity::class.java)
-            context.startActivity(settingsIntent)
-        }
-    }
-
     fun closeActivity() {
         if (viewModel.shouldRestartApp()) {
             StartupActivity.start(this, false)
         }
         finish()
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val settingsIntent = Intent(context, AppSettingsActivity::class.java)
+            context.startActivity(settingsIntent)
+        }
     }
 }
 

@@ -541,13 +541,13 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             context.startActivity(intent)
         }
 
-        fun createPendingIntent(context: Context, tagId: String, alarmId: Int): PendingIntent? {
+        fun createPendingIntent(context: Context, tagId: String, requestCode: Int): PendingIntent? {
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
             return TaskStackBuilder.create(context)
                 .addNextIntent(intent)
-                .getPendingIntent(alarmId, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

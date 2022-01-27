@@ -206,6 +206,7 @@
     <string name="reading_history_not_supported">Firmware non supporté</string>
     <string name="remove">Supprimer</string>
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
+    <string name="remove_shared_sensor">Si vous supprimez le capteur, le propriétaire du capteur sera averti et vous ne pourrez plus accéder au capteur.</string>
     <string name="rename_sensor_message">Ваши датчики будут в алфавитном порядке</string>
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="s">s</string>

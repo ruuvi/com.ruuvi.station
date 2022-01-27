@@ -64,6 +64,12 @@ package="com.ruuvi.station">
         android:name=".bluetooth.ScanForDevicesService"
         android:exported="false"
         android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service android:name=".widgets.domain.WidgetsService"
+        android:enabled="true"
+        android:exported="false">
+    </service>
+
     <service
         android:name=".bluetooth.BluetoothForegroundService"
         android:enabled="true"
@@ -144,7 +150,7 @@ package="com.ruuvi.station">
 
     <service
         android:name="com.ruuvi.station.dfu.domain.DfuService"
-        android:exported="true"
+        android:exported="false"
         android:label="Dfu Service">
         <intent-filter>
             <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />

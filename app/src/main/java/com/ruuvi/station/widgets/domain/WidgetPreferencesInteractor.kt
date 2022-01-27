@@ -19,8 +19,7 @@ class WidgetPreferencesInteractor(val context: Context) {
     }
 
     companion object {
-        private const val PREF_WIDGET_PREFIX = "appwidget_"
+        private const val PREF_WIDGET_PREFIX = "ruuvi_widget_"
         private const val PREFS_NAME = "com.ruuvi.station.widgets.ui.FirstWidget"
-
     }
 }

@@ -360,9 +360,7 @@
     <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
+    <string name="widgets_gateway_only">You can use Ruuvi widgets if you\'re a Ruuvi Gateway user or if someone has shared you a Ruuvi sensor.</string>
+    <string name="widgets_sign_in_first">To use widgets, you need first to sign in.</string>
     <string name="yes">Yes</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">This is an app widget description</string>
 </resources>

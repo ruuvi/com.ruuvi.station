@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/widgetLayout"
         style="@style/Widget.Comruuvistation.AppWidget.InnerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,7 +19,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:contentDescription="Sensor name"
-            android:textSize="16sp"
+            android:padding="4dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             tools:text="Ruuvi 3AF6" />
 
@@ -44,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 tools:text="25.32 C" />
         </LinearLayout>
 
@@ -65,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 tools:text="978 hPa" />
         </LinearLayout>
 
@@ -86,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 tools:text="45 %" />
         </LinearLayout>
 
@@ -108,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 tools:text="122" />
         </LinearLayout>
 
@@ -117,10 +119,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/pressureLayout"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             tools:text="13:24" />
+
+        <ImageButton
+            android:id="@+id/refreshButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/ap_transparent"
+            android:src="@drawable/ic_baseline_sync_24" />
 
     </RelativeLayout>
 </RelativeLayout>
