@@ -141,7 +141,7 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
-        android:name="com.ruuvi.station.widgets.ui.SensorWidgetConfigureActivity"
+        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureActivity"
         android:exported="true">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -187,7 +187,7 @@ package="com.ruuvi.station">
     </receiver>
 
     <receiver
-        android:name="com.ruuvi.station.widgets.ui.SensorWidget"
+        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidget"
         android:exported="false">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

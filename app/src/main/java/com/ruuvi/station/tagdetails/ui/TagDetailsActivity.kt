@@ -66,8 +66,8 @@ import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 import android.content.ComponentName
-import com.ruuvi.station.widgets.ui.SensorWidget
-import com.ruuvi.station.widgets.ui.updateAppWidget
+import com.ruuvi.station.widgets.ui.firstWidget.SensorWidget
+import com.ruuvi.station.widgets.ui.firstWidget.updateAppWidget
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 

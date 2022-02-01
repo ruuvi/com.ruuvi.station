@@ -1,4 +1,4 @@
-package com.ruuvi.station.widgets.ui
+package com.ruuvi.station.widgets.ui.firstWidget
 
 import android.appwidget.AppWidgetManager
 import androidx.lifecycle.LiveData

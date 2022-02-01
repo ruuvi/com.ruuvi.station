@@ -10,8 +10,8 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import com.ruuvi.station.R
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.widgets.ui.SensorWidget
-import com.ruuvi.station.widgets.ui.updateAppWidget
+import com.ruuvi.station.widgets.ui.firstWidget.SensorWidget
+import com.ruuvi.station.widgets.ui.firstWidget.updateAppWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +32,6 @@ class WidgetsService(): Service(), KodeinAware {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.d("WidgetsService onStartCommand")
-
         val appWidgetId = intent?.getIntExtra("appWidgetId",-1)
         Timber.d("WidgetsService onStartCommand $appWidgetId")
 
@@ -73,11 +71,6 @@ class WidgetsService(): Service(), KodeinAware {
                 views.setOnClickPendingIntent(R.id.widgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
             }
 
-
-            val widgetsServiceIntent = Intent(context, WidgetsService::class.java)
-            widgetsServiceIntent.putExtra("appWidgetId", appWidgetId)
-            val widgetsServicePendingIntent = PendingIntent.getService(context, appWidgetId, widgetsServiceIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
             val tagDetailsPendingIntent =
                 TagDetailsActivity.createPendingIntent(
                     context,
@@ -93,6 +86,11 @@ class WidgetsService(): Service(), KodeinAware {
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        Timber.d("WidgetsService onDestroy")
+        super.onDestroy()
     }
 
     companion object {

@@ -2,7 +2,7 @@ package com.ruuvi.station.widgets.di
 
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
-import com.ruuvi.station.widgets.ui.SensorWidgetConfigureViewModel
+import com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureViewModel
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
