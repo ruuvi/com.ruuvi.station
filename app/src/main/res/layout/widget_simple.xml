@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Comruuvistation.AppWidget.Container"
+    android:theme="@style/AppTheme.AppWidgetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/widgetLayout"
+        style="@style/Widget.Comruuvistation.AppWidget.InnerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        tools:layout_height="80dp"
+        tools:layout_width="130dp">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_2021"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/updateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/logoImageView"
+            android:layout_alignBottom="@+id/logoImageView"
+            android:layout_alignParentEnd="true"
+            android:includeFontPadding="false"
+            android:textSize="10sp"
+            tools:text="13:24" />
+
+        <TextView
+            android:id="@+id/sensorNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sensorValueTextView"
+            android:layout_below="@+id/logoImageView"
+            android:gravity="center_vertical"
+            android:lines="2"
+            android:text="My Backyard Greenhouse"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/sensorValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="top"
+            android:includeFontPadding="false"
+            android:text="45.76"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/unitTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/sensorValueTextView"
+            android:layout_toRightOf="@+id/sensorValueTextView"
+            android:text="%"
+            android:textSize="10sp" />
+
+        <ImageButton
+            android:id="@+id/refreshButton"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@+id/sensorValueTextView"
+            android:layout_alignParentEnd="true"
+            android:background="@color/ap_transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_bg_refresh" />
+
+    </RelativeLayout>
+</RelativeLayout>

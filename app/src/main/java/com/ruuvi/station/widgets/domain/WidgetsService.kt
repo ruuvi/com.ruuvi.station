@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import com.ruuvi.station.R
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.firstWidget.SensorWidget
 import com.ruuvi.station.widgets.ui.firstWidget.updateAppWidget
 import kotlinx.coroutines.CoroutineScope
@@ -38,13 +39,57 @@ class WidgetsService(): Service(), KodeinAware {
         if (appWidgetId == null || appWidgetId == -1) return super.onStartCommand(intent, flags, startId)
 
         val context = this@WidgetsService
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-
-        val widgetInteractor: WidgetInteractor by kodein.instance()
 
         val preferences = WidgetPreferencesInteractor(context)
-        val sensorId = preferences.getWidgetSensor(appWidgetId)
-        Timber.d("WidgetsService sensorId=$sensorId")
+
+        var sensorId = preferences.getWidgetSensor(appWidgetId)
+        if (sensorId != null) {
+            updateFirstWidget(appWidgetId, sensorId)
+        } else {
+            sensorId = preferences.getSimpleWidgetSensor(appWidgetId)
+            val widgetType = preferences.getSimpleWidgetType(appWidgetId)
+
+            if (sensorId != null) {
+                updateSimpleWidget(appWidgetId, sensorId, widgetType)
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    fun updateSimpleWidget(appWidgetId: Int, sensorId: String, widgetType: WidgetType) {
+        val context = this@WidgetsService
+        val widgetInteractor: WidgetInteractor by kodein.instance()
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+
+        val views = RemoteViews(context.packageName, R.layout.widget_simple)
+        CoroutineScope(Dispatchers.Main).launch {
+            val widgetData = widgetInteractor.getSimpleWidgetData(
+                sensorId = sensorId,
+                widgetType = widgetType
+            )
+            views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
+            views.setTextViewText(R.id.unitTextView, widgetData.unit)
+            views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
+
+            val time = if (widgetData.updated != null) {
+                SimpleDateFormat("HH:mm", Locale.getDefault()).format(widgetData.updated)
+            } else {
+                "none"
+            }
+            views.setTextViewText(R.id.updateTextView, time)
+
+            views.setOnClickPendingIntent(R.id.widgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
+            views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntent(context, appWidgetId))
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
+    }
+
+    private fun updateFirstWidget(appWidgetId: Int, sensorId: String) {
+        val context = this@WidgetsService
+        val widgetInteractor: WidgetInteractor by kodein.instance()
+        val appWidgetManager = AppWidgetManager.getInstance(this)
 
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -84,8 +129,6 @@ class WidgetsService(): Service(), KodeinAware {
             Timber.d("WidgetsService FINISHED")
 
         }
-
-        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {

@@ -101,6 +101,17 @@ class UnitsConverter (
         }
     }
 
+    fun getPressureStringWithoutUnit(pressure: Double?): String =
+        if (pressure == null) {
+            NO_VALUE_AVAILABLE
+        } else {
+            if (getPressureUnit() == PressureUnit.PA) {
+                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), "")
+            } else {
+                context.getString(R.string.pressure_reading, getPressureValue(pressure), "")
+            }
+        }
+
     // Humidity
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
@@ -124,6 +135,13 @@ class UnitsConverter (
             }
         }
     }
+
+    fun getHumidityStringWithoutUnit(humidity: Double?, temperature: Double): String =
+        if (humidity == null) {
+            NO_VALUE_AVAILABLE
+        } else {
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), "")
+        }
 
     fun getHumidityString(humidity: Double?, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): String {
         return if (humidity == null || temperature == null) {
