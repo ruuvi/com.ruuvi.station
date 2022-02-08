@@ -6,6 +6,10 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.diffGreaterThan
+import com.ruuvi.station.util.extensions.hours24
+import com.ruuvi.station.util.extensions.localizedDateTime
+import com.ruuvi.station.util.extensions.localizedTime
 import com.ruuvi.station.widgets.data.SimpleWidgetData
 import com.ruuvi.station.widgets.data.WidgetData
 import com.ruuvi.station.widgets.data.WidgetType
@@ -74,7 +78,7 @@ class WidgetInteractor (
                 }
                 WidgetType.VOLTAGE -> {
                     unit = context.getString(R.string.voltage_unit)
-                    sensorValue = context.getString(R.string.voltage_reading, sensorData.voltage.toString(), "")
+                    sensorValue = context.getString(R.string.voltage_reading, sensorData.voltage.toString(), "").trim()
                 }
                 WidgetType.SIGNAL_STRENGTH -> {
                     unit = context.getString(R.string.signal_unit)
@@ -93,12 +97,22 @@ class WidgetInteractor (
                     sensorValue = String.format("%1\$,.3f", sensorData.accelZ)
                 }
             }
+
+            var updated: String? = null
+            sensorData.updateAt?.let { updateAt ->
+                updated = if (updateAt.diffGreaterThan(hours24)) {
+                    updateAt.localizedDateTime(context)
+                } else {
+                    updateAt.localizedTime(context)
+                }
+            }
+
             return SimpleWidgetData(
                 sensorId = sensorId,
                 displayName = sensorFav.displayName,
                 sensorValue = sensorValue,
                 unit = unit,
-                updated = sensorData.updateAt
+                updated = updated
             )
         } else {
             return emptySimpleResult(sensorId)

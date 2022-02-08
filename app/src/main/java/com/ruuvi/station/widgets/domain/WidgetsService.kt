@@ -11,8 +11,8 @@ import android.widget.RemoteViews
 import com.ruuvi.station.R
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.widgets.data.WidgetType
-import com.ruuvi.station.widgets.ui.firstWidget.SensorWidget
 import com.ruuvi.station.widgets.ui.firstWidget.updateAppWidget
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,13 +71,7 @@ class WidgetsService(): Service(), KodeinAware {
             views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
             views.setTextViewText(R.id.unitTextView, widgetData.unit)
             views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
-
-            val time = if (widgetData.updated != null) {
-                SimpleDateFormat("HH:mm", Locale.getDefault()).format(widgetData.updated)
-            } else {
-                "none"
-            }
-            views.setTextViewText(R.id.updateTextView, time)
+            views.setTextViewText(R.id.updateTextView, widgetData.updated)
 
             views.setOnClickPendingIntent(R.id.widgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
             views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntent(context, appWidgetId))
@@ -147,7 +141,7 @@ class WidgetsService(): Service(), KodeinAware {
             val appWidgetManager =
                 AppWidgetManager.getInstance(context)
 
-            val widgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, SensorWidget::class.java.name ))
+            val widgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, SimpleWidget::class.java.name ))
             Timber.d("widgetIds count ${widgetIds.size}")
 
             for (id in widgetIds) {

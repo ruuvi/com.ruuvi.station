@@ -10,11 +10,14 @@ import timber.log.Timber
 class SimpleWidget: AppWidgetProvider() {
 
     override fun onUpdate(
-        context: Context?,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetIds: IntArray?
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+        for (appWidgetId in appWidgetIds) {
+            updateSimpleWidget(context, appWidgetManager, appWidgetId)
+        }
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

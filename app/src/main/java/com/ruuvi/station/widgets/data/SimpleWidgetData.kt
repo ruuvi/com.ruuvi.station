@@ -7,5 +7,5 @@ data class SimpleWidgetData(
     val displayName: String,
     val sensorValue: String,
     val unit: String,
-    val updated: Date?
+    val updated: String?
 )

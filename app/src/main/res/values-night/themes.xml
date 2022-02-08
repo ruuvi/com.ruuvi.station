@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--
-    Having themes.xml for night-v31 because of the priority order of the resource qualifiers.
-    -->
     <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
         <item name="appWidgetRadius">8dp</item>
-        <item name="appWidgetPadding">0dp</item>
+        <item name="appWidgetPadding">4dp</item>
         <item name="appWidgetInnerRadius">8dp</item>
 
         <item name="colorPrimary">@color/ruuviLight50</item>

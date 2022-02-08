@@ -57,7 +57,7 @@ class UnitsConverter (
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "")
+            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "").trim()
         }
 
     fun getTemperatureOffsetString(offset: Double): String =
@@ -106,9 +106,9 @@ class UnitsConverter (
             NO_VALUE_AVAILABLE
         } else {
             if (getPressureUnit() == PressureUnit.PA) {
-                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), "")
+                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), "").trim()
             } else {
-                context.getString(R.string.pressure_reading, getPressureValue(pressure), "")
+                context.getString(R.string.pressure_reading, getPressureValue(pressure), "").trim()
             }
         }
 
@@ -140,7 +140,7 @@ class UnitsConverter (
         if (humidity == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), "")
+            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), "").trim()
         }
 
     fun getHumidityString(humidity: Double?, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): String {
