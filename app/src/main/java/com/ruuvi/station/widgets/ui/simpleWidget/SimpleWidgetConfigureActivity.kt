@@ -15,8 +15,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -24,15 +26,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.dfu.ui.RegularText
 import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
+import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.firstWidget.*
@@ -134,10 +134,14 @@ fun MyTopAppBar(
 
 @Composable
 fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
+    val systemUiController = rememberSystemUiController()
     val sensors by viewModel.sensors.observeAsState(listOf())
     val userLoggedIn by viewModel.userLoggedIn.observeAsState(false)
 
-    Surface(color = MaterialTheme.colors.background) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
         if (!userLoggedIn) {
             LogInFirstScreen(viewModel)
         } else if (sensors.isNullOrEmpty()) {
@@ -145,6 +149,13 @@ fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
         } else {
             SelectSensorScreen(viewModel)
         }
+    }
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = LightColorPalette.surface,
+            darkIcons = false
+        )
     }
 }
 
@@ -184,20 +195,23 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
         ) {
-            Row() {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp),
                     selected = (isSelected),
                     onClick = { viewModel.selectSensor(sensorId) }
                 )
-                val annotatedString = buildAnnotatedString {
-                    append(title)
-                }
-                ClickableText(text = annotatedString, onClick = {
-                    viewModel.selectSensor(sensorId)
-                }
-                )
+
+                ClickableText(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    text = AnnotatedString(title),
+                    onClick = {
+                        viewModel.selectSensor(sensorId)
+                    })
             }
 
         }
@@ -212,6 +226,11 @@ fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
     val selectedOption by viewModel.widgetType.observeAsState()
 
     Column() {
+        Row() {
+            Spacer(modifier = Modifier.width(32.dp))
+            // TODO localize string
+            Text(text = "Select the type of sensor value to display in this widget: ")
+        }
         for (item in WidgetType.values()) {
             WidgetTypeItem(viewModel, item ,selectedOption == item)
         }
@@ -222,22 +241,24 @@ fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
 fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: WidgetType, isSelected: Boolean) {
     Box ( modifier = Modifier
         .fillMaxWidth()
-        .height(40.dp)
     ) {
-        Row() {
-            Spacer(modifier = Modifier.width(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.width(32.dp))
 
             RadioButton(
+                modifier = Modifier
+                    .padding(vertical = 8.dp),
                 selected = (isSelected),
-                onClick = { viewModel.selectWidgetType(widgetType) }
-            )
-            val annotatedString = buildAnnotatedString {
-                append(widgetType.name)
-            }
-            ClickableText(text = annotatedString, onClick = {
-                viewModel.selectWidgetType(widgetType)
-            }
-            )
+                onClick = { viewModel.selectWidgetType(widgetType) })
+
+            ClickableText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                text = AnnotatedString(stringResource(id = widgetType.titleResId)),
+                onClick = {
+                    viewModel.selectWidgetType(widgetType)
+                })
         }
     }
 }
