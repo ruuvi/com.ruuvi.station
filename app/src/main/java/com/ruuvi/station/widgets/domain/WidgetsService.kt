@@ -73,7 +73,7 @@ class WidgetsService(): Service(), KodeinAware {
             views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
             views.setTextViewText(R.id.updateTextView, widgetData.updated)
 
-            views.setOnClickPendingIntent(R.id.widgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
+            views.setOnClickPendingIntent(R.id.simpleWidgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
             views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntent(context, appWidgetId))
 
             appWidgetManager.updateAppWidget(appWidgetId, views)

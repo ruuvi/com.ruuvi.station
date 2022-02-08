@@ -43,6 +43,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
@@ -54,6 +55,7 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
@@ -533,8 +535,15 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            return TaskStackBuilder.create(context)
-                .addNextIntent(intent)
+            val preferencesRepository = PreferencesRepository(Preferences(context))
+            val stackBuilder = TaskStackBuilder.create(context)
+            if (preferencesRepository.isDashboardEnabled()) {
+                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+                stackBuilder.addNextIntent(intentDashboardActivity)
+            }
+            stackBuilder.addNextIntent(intent)
+
+            return stackBuilder
                 .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }

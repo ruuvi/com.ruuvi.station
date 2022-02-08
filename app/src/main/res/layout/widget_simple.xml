@@ -9,7 +9,7 @@
     <!--    style="@style/Widget.Comruuvistation.AppWidget.Container"-->
 
     <RelativeLayout
-        android:id="@+id/widgetLayout"
+        android:id="@+id/simpleWidgetLayout"
         style="@style/Widget.Comruuvistation.AppWidget.InnerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
