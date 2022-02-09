@@ -4,7 +4,7 @@
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:layout_height="80dp"
+    tools:layout_height="100dp"
     tools:layout_width="130dp">
     <!--    style="@style/Widget.Comruuvistation.AppWidget.Container"-->
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
-        tools:layout_height="80dp"
+        tools:layout_height="100dp"
         tools:layout_width="130dp">
 
         <ImageView
@@ -24,6 +24,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
+            android:layout_marginBottom="2dp"
             android:src="@drawable/logo_2021"
             android:tint="?attr/colorPrimary"
             android:tintMode="src_in"
@@ -47,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/sensorValueTextView"
             android:layout_below="@+id/logoImageView"
+            android:ellipsize="end"
             android:fontFamily="@font/mulish_regular"
             android:gravity="bottom"
             android:lines="2"
@@ -62,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:fontFamily="@font/oswald_bold_ttf"
             android:gravity="top"
             android:includeFontPadding="false"
