@@ -73,7 +73,7 @@ class WidgetInteractor (
                     sensorValue = unitsConverter.getPressureStringWithoutUnit(sensorData.pressure)
                 }
                 WidgetType.MOVEMENT -> {
-                    unit = "mov."
+                    unit = context.getString(R.string.movements)
                     sensorValue = sensorData.movementCounter.toString()
                 }
                 WidgetType.VOLTAGE -> {
@@ -85,15 +85,15 @@ class WidgetInteractor (
                     sensorValue = sensorData.rssi.toString()
                 }
                 WidgetType.ACCELERATION_X -> {
-                    unit = "g"
+                    unit = context.getString(R.string.acceleration_unit)
                     sensorValue = String.format("%1\$,.3f", sensorData.accelX)
                 }
                 WidgetType.ACCELERATION_Y -> {
-                    unit = "g"
+                    unit = context.getString(R.string.acceleration_unit)
                     sensorValue = String.format("%1\$,.3f", sensorData.accelY)
                 }
                 WidgetType.ACCELERATION_Z -> {
-                    unit = "g"
+                    unit = context.getString(R.string.acceleration_unit)
                     sensorValue = String.format("%1\$,.3f", sensorData.accelZ)
                 }
             }

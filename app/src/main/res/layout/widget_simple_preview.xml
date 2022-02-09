@@ -39,7 +39,7 @@
             android:includeFontPadding="false"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="10sp"
-            tools:text="13:24" />
+            android:text="@string/widgets_preview_time" />
 
         <TextView
             android:id="@+id/sensorNameTextView"
@@ -51,7 +51,7 @@
             android:gravity="bottom"
             android:lines="2"
             android:maxLines="2"
-            android:text="@string/widgets_loading"
+            android:text="@string/widgets_preview_sensor_name"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -71,7 +71,7 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold"
-            tools:text="45.76" />
+            android:text="@string/widgets_preview_sensor_value" />
 
         <TextView
             android:id="@+id/unitTextView"
@@ -84,21 +84,18 @@
             android:paddingStart="2dp"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="10sp"
-            tools:text="%" />
+            android:text="@string/temperature_celsius_unit" />
 
     </RelativeLayout>
 
     <ImageButton
         android:id="@+id/refreshButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:background="@color/ap_transparent"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="8dp"
+        android:padding="8dp"
         android:scaleType="fitXY"
         android:src="@drawable/icon_bg_refresh"
         android:tint="?attr/colorOnSecondary"

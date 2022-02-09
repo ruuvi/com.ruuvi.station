@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Ускорение по X</string>
     <string name="acceleration_y">Ускорение по Y</string>
     <string name="acceleration_z">Ускорение по Z</string>
@@ -35,6 +36,7 @@
     <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
     <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Назад</string>
     <string name="background_image">ФОНОВОЕ\nИЗОБРАЖЕНИЕ</string>
     <string name="background_interval">каждые %1$s мин</string>
     <string name="background_interval_10sec">каждые %1$s сек</string>
@@ -121,6 +123,7 @@
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
+    <string name="done">Готово</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
     <string name="error">Ошибка</string>
@@ -191,6 +194,7 @@
     <string name="minutes">Минут</string>
     <string name="more_info">ДОПОЛНИТЕЛЬНО</string>
     <string name="movement_counter">Счетчик Движения</string>
+    <string name="movements">движений</string>
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
@@ -250,6 +254,7 @@
     <string name="sec">сек</string>
     <string name="seconds">Секунд</string>
     <string name="select_picture">Выберите изображение</string>
+    <string name="select_sensor">Выберите датчик</string>
     <string name="send_email">Отправить электронное письмо</string>
     <string name="sensor_already_added">Датчик уже добавлен</string>
     <string name="sensor_not_shared">Не делились</string>
@@ -359,5 +364,9 @@
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление</string>
     <string name="welcome_text_4">Используйте приложение как гейтвей</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station</string>
+    <string name="widgets_loading">загрузка...</string>
+    <string name="widgets_preview_sensor_name">Сауна</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="yes">Да</string>
 </resources>

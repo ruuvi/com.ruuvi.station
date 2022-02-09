@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
@@ -118,6 +119,7 @@
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
     <string name="disconnected">Frånkopplad</string>
+    <string name="done">Klar</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
     <string name="email">E-post</string>
     <string name="error">Fel</string>
@@ -356,5 +358,7 @@
     <string name="welcome_text_3">Ställ in alarm och få notiser om dem</string>
     <string name="welcome_text_4">Skicka den information som samlas in av applikationen till en extern server</string>
     <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="yes">Ja</string>
 </resources>

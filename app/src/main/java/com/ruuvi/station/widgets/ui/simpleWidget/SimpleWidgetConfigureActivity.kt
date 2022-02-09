@@ -67,7 +67,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         setContent {
             ComruuvistationTheme {
                 Column() {
-                    MyTopAppBar(viewModel, title = "Select Sensor")
+                    MyTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
                 }
             }
@@ -113,7 +113,7 @@ fun MyTopAppBar(
             IconButton(onClick = {
                 context.onBackPressed()
             }) {
-                Icon(Icons.Default.ArrowBack, "Back")
+                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
             }
         },
         backgroundColor = Color.Transparent,
@@ -125,7 +125,8 @@ fun MyTopAppBar(
                 enabled = selectedOption != null
             ) {
                 Text(
-                    text = "DONE"
+                    color = Color.White,
+                    text = stringResource(id = R.string.done)
                 )
             }
         }
@@ -228,8 +229,7 @@ fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
     Column() {
         Row() {
             Spacer(modifier = Modifier.width(32.dp))
-            // TODO localize string
-            Text(text = "Select the type of sensor value to display in this widget: ")
+            Text(text = stringResource(id = R.string.widgets_select_sensor_value_type))
         }
         for (item in WidgetType.values()) {
             WidgetTypeItem(viewModel, item ,selectedOption == item)
