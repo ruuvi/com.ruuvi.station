@@ -26,7 +26,7 @@ class WidgetInteractor (
             return emptyResult(sensorId)
         }
 
-        val syncJob = ruuviNetworkInteractor.syncNetworkData()
+        val syncJob = ruuviNetworkInteractor.syncNetworkData(true)
         syncJob.join()
 
         sensor = tagRepository.getFavoriteSensorById(sensorId)
@@ -51,7 +51,7 @@ class WidgetInteractor (
         if (sensorFav == null || !canReturnData(sensorFav)) {
             return emptySimpleResult(sensorId)
         }
-        val syncJob = ruuviNetworkInteractor.syncNetworkData()
+        val syncJob = ruuviNetworkInteractor.syncNetworkData(true)
         syncJob.join()
 
         val sensorData =tagRepository.getTagById(sensorId)
