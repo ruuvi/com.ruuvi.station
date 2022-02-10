@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
+        <item name="appWidgetRadius">8dp</item>
+        <item name="appWidgetPadding">4dp</item>
+        <item name="appWidgetInnerRadius">8dp</item>
+
+        <item name="colorPrimary">@color/ruuviLight50</item>
+        <item name="colorSurface">@color/dark_emerald</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSecondary">@color/grayNew</item>
+    </style>
+</resources>

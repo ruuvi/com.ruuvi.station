@@ -115,4 +115,14 @@
     <style name="progressStyle">
         <item name="colorAccent">@color/main</item>
     </style>
+
+    <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+
+    <style name="Widget.Comruuvistation.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
 </resources>

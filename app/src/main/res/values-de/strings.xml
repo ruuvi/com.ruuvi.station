@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Beschleunigung X</string>
     <string name="acceleration_y">Beschleunigung Y</string>
     <string name="acceleration_z">Beschleunigung Z</string>
@@ -100,6 +101,7 @@
     <string name="days">Tage</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
     <string name="disconnected">Disconnected</string>
+    <string name="done">Fertig</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
     <string name="error">Fehler</string>
@@ -333,5 +335,7 @@
     <string name="welcome_text_3">Legen Sie Benachrichtigungen fest und lassen Sie sich benachrichtigen, wenn Ihre Grenzen erreicht sind</string>
     <string name="welcome_text_4">Lassen Sie die App als Gateway fungieren</string>
     <string name="welcome_text_5">Drücken Sie SCAN, um Sensoren in der Nähe zu finden und zu Ihrer Ruuvi Station hinzuzufügen</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="yes">Ja</string>
 </resources>

@@ -253,6 +253,11 @@ class RuuviNetworkInteractor (
         }
     }
 
+    suspend fun getSensorLastData(sensorId: String):GetSensorDataResponse? {
+        val request = GetSensorDataRequest(sensor = sensorId, since = null, until = null, sort = SortMode.DESCENDING, limit = 1)
+        return getSensorData(request)
+    }
+
     fun updateUserSetting(name: String, value: String) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,

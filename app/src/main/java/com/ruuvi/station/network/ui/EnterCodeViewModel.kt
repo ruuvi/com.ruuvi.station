@@ -35,7 +35,7 @@ class EnterCodeViewModel (
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
-                    networkDataSyncInteractor.syncNetworkData()
+                    networkDataSyncInteractor.syncNetworkData(false)
                     networkDataSyncInteractor.syncInProgressFlow.collect {
                         if (!it) {
                             successfullyVerified.value = true

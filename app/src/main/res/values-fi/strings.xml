@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
@@ -35,6 +36,7 @@
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Takaisin</string>
     <string name="background_image">TAUSTAKUVA</string>
     <string name="background_interval">joka %1$s min</string>
     <string name="background_interval_10sec">joka %1$s sek</string>
@@ -120,6 +122,7 @@
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>
+    <string name="done">Valmis</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="error">Virhe</string>
@@ -190,6 +193,7 @@
     <string name="minutes">Minuuttia</string>
     <string name="more_info">LISÄTIETOA</string>
     <string name="movement_counter">Liikelaskuri</string>
+    <string name="movements">liikettä</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
@@ -249,6 +253,7 @@
     <string name="sec">sek</string>
     <string name="seconds">Sekuntia</string>
     <string name="select_picture">Valitse kuva</string>
+    <string name="select_sensor">Valitse anturi</string>
     <string name="send_email">Lähetä sähköpostia</string>
     <string name="sensor_already_added">Anturi on jo lisätty</string>
     <string name="sensor_not_shared">Ei jaettu</string>
@@ -358,5 +363,12 @@
     <string name="welcome_text_3">Aseta hälytyksiä ja ilmoituksia haluamallasi tavalla</string>
     <string name="welcome_text_4">Lähetä sovelluksen keräämät tiedot ulkoiselle palvelimelle</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA</string>
+    <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
+    <string name="widgets_loading">ladataan...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69,50</string>
+    <string name="widgets_preview_time">19.45</string>
+    <string name="widgets_select_sensor_value_type">Valitse widgetissä näytettävä anturityyppi</string>
+    <string name="widgets_sign_in_first">Käyttääksesi widgettejä, sinun on ensin kirjauduttava sisään.</string>
     <string name="yes">Kyllä</string>
 </resources>

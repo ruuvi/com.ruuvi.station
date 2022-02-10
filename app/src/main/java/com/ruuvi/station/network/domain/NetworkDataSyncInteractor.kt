@@ -16,6 +16,7 @@ import com.ruuvi.station.network.data.NetworkSyncResult
 import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
+import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorDataResponse
@@ -44,7 +45,7 @@ class NetworkDataSyncInteractor (
     private val firebaseInteractor: FirebaseInteractor
 ) {
     @Volatile
-    private var syncJob: Job? = null
+    private var syncJob: Job = Job().also { it.complete() }
 
     @Volatile
     private var autoRefreshJob: Job? = null
@@ -63,7 +64,7 @@ class NetworkDataSyncInteractor (
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
-            syncNetworkData()
+            syncNetworkData(false)
             delay(10000)
             while (true) {
                 val lastSync = preferencesRepository.getLastSyncDate()
@@ -71,7 +72,7 @@ class NetworkDataSyncInteractor (
                 if (networkInteractor.signedIn &&
                     Date(lastSync).diffGreaterThan(60000)) {
                         Timber.d("Do actual sync")
-                    syncNetworkData()
+                    syncNetworkData(false)
                 }
                 delay(10000)
             }
@@ -83,15 +84,20 @@ class NetworkDataSyncInteractor (
         autoRefreshJob?.cancel()
     }
 
-    fun syncNetworkData() {
-        if (syncJob != null && syncJob?.isActive == true) {
+    fun syncNetworkData(ecoMode: Boolean): Job {
+        if (syncJob.isActive == true) {
             Timber.d("Already in sync mode")
-            return
+            return syncJob
         }
 
         setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
+                val lastSync = preferencesRepository.getLastSyncDate()
+                if (!Date(lastSync).diffGreaterThan(60000)) {
+                    return@launch
+                }
+
                 networkRequestExecutor.executeScheduledRequests()
                 networkApplicationSettings.updateSettingsFromNetwork()
 
@@ -103,7 +109,7 @@ class NetworkDataSyncInteractor (
                 }
 
                 val benchUpdate1 = Date()
-                updateSensors(userInfo.data)
+                updateSensors(userInfo.data, ecoMode)
                 firebaseInteractor.logSync(userInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
@@ -124,6 +130,7 @@ class NetworkDataSyncInteractor (
             }
             setSyncInProgress(false)
         }
+        return syncJob
     }
 
     private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
@@ -245,13 +252,13 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
-    private suspend fun updateSensors(userInfoData: UserInfoResponseBody) {
+    private suspend fun updateSensors(userInfoData: UserInfoResponseBody, ecoMode: Boolean) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
 
-            if (!sensor.picture.isNullOrEmpty()) {
+            if (!ecoMode && !sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)
             }
         }
@@ -291,7 +298,7 @@ class NetworkDataSyncInteractor (
         val request = GetSensorDataRequest(
             sensor = tagId,
             since = since,
-            sort = "asc",
+            sort = SortMode.ASCENDING,
             limit = limit,
             mode = SensorDataMode.MIXED
         )
@@ -304,8 +311,8 @@ class NetworkDataSyncInteractor (
 
     fun stopSync() {
         Timber.d("stopSync")
-        if (syncJob?.isActive == true) {
-            syncJob?.cancel()
+        if (syncJob.isActive) {
+            syncJob.cancel()
         }
     }
 }

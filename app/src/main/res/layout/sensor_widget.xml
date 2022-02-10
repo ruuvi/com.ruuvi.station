@@ -1,0 +1,136 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Comruuvistation.AppWidget.Container"
+    android:theme="@style/AppTheme.AppWidgetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/widgetLayout"
+        style="@style/Widget.Comruuvistation.AppWidget.InnerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/widgetHeaderTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="Sensor name"
+            android:padding="4dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Ruuvi 3AF6" />
+
+        <TextView
+            android:id="@+id/centerView"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_centerHorizontal="true" />
+
+        <LinearLayout
+            android:id="@+id/temperatureLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/widgetHeaderTextView">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icon_measure_small_temp" />
+
+            <TextView
+                android:id="@+id/temperatureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:textSize="20sp"
+                tools:text="25.32 C" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pressureLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/temperatureLayout"
+            android:layout_marginTop="4dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icon_measure_small_pressure" />
+
+            <TextView
+                android:id="@+id/pressureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:textSize="20sp"
+                tools:text="978 hPa" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/humidityLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/widgetHeaderTextView"
+            android:layout_toEndOf="@id/centerView">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icon_measure_small_humid" />
+
+            <TextView
+                android:id="@+id/humidityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:textSize="20sp"
+                tools:text="45 %" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/motionLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/humidityLayout"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/centerView">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_icon_measure_small_movement" />
+
+            <TextView
+                android:id="@+id/motionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:textSize="20sp"
+                tools:text="122" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lastUpdateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pressureLayout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            tools:text="13:24" />
+
+        <ImageButton
+            android:id="@+id/refreshButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/ap_transparent"
+            android:src="@drawable/ic_baseline_sync_24" />
+
+    </RelativeLayout>
+</RelativeLayout>

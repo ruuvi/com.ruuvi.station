@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="120dp"
+    android:minHeight="50dp"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@drawable/widget_preview"
+    android:initialLayout="@layout/widget_simple"
+    android:resizeMode="horizontal"
+    android:widgetCategory="home_screen"
+    android:configure="com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
+    android:previewLayout="@layout/widget_simple_preview"
+    android:targetCellHeight="1"
+    android:targetCellWidth="2"
+    android:widgetFeatures="reconfigurable"
+    android:initialKeyguardLayout="@layout/widget_simple"
+/>
