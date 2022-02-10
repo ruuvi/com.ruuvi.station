@@ -33,7 +33,15 @@ class WidgetsService(): Service(), KodeinAware {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val appWidgetId = intent?.getIntExtra("appWidgetId",-1)
+        val updateAll = intent?.getBooleanExtra(UPDATE_ALL,false) ?: false
+        Timber.d("Update all $updateAll")
+
+        if (updateAll) {
+            updateAllWidgets(this)
+            return super.onStartCommand(intent, flags, startId)
+        }
+
+        val appWidgetId = intent?.getIntExtra(APP_WIDGET_ID,-1)
         Timber.d("WidgetsService onStartCommand $appWidgetId")
 
         if (appWidgetId == null || appWidgetId == -1) return super.onStartCommand(intent, flags, startId)
@@ -74,7 +82,7 @@ class WidgetsService(): Service(), KodeinAware {
             views.setTextViewText(R.id.updateTextView, widgetData.updated)
 
             views.setOnClickPendingIntent(R.id.simpleWidgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
-            views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntent(context, appWidgetId))
+            views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntentToUpdateAll(context, appWidgetId))
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
@@ -137,6 +145,12 @@ class WidgetsService(): Service(), KodeinAware {
             return PendingIntent.getService(context, appWidgetId, widgetsServiceIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
 
+        fun getPendingIntentToUpdateAll(context: Context, appWidgetId: Int): PendingIntent {
+            val widgetsServiceIntent = Intent(context, WidgetsService::class.java)
+            widgetsServiceIntent.putExtra(UPDATE_ALL, true)
+            return PendingIntent.getService(context, appWidgetId, widgetsServiceIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
+
         fun updateAllWidgets(context: Context) {
             val appWidgetManager =
                 AppWidgetManager.getInstance(context)
@@ -151,5 +165,6 @@ class WidgetsService(): Service(), KodeinAware {
         }
 
         const val APP_WIDGET_ID = "appWidgetId"
+        const val UPDATE_ALL = "UPDATE_ALL"
     }
 }
