@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Accélération en X</string>
     <string name="acceleration_y">Accélération en Y</string>
     <string name="acceleration_z">Accélération en Z</string>
@@ -96,6 +97,7 @@
     <string name="days">Jours</string>
     <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour</string>
     <string name="disconnected">Déconnecté</string>
+    <string name="done">Prêt</string>
     <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
     <string name="email">Email</string>
     <string name="error">Erreur</string>
@@ -316,5 +318,7 @@
     <string name="welcome_text_3">Définir des alarmes et des notifications comme vous le souhaitez</string>
     <string name="welcome_text_4">Exporter les données mesurées vers un autre support</string>
     <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="yes">Oui</string>
 </resources>

@@ -1,8 +1,13 @@
 <resources>
-    <style name="AppTheme.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+    <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
         <item name="appWidgetRadius">8dp</item>
         <item name="appWidgetPadding">4dp</item>
-        <item name="appWidgetInnerRadius">4dp</item>
+        <item name="appWidgetInnerRadius">8dp</item>
+
+        <item name="colorPrimary">@color/ruuviLight</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/titan</item>
+        <item name="colorOnSecondary">@color/titan70</item>
     </style>
 
     <style name="AppTheme.AppWidgetContainer"

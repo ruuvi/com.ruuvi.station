@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
@@ -35,6 +36,7 @@
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Back</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
     <string name="background_interval">every %1$s min</string>
     <string name="background_interval_10sec">every %1$s sec</string>
@@ -122,6 +124,7 @@
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
+    <string name="done">Done</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
     <string name="error">Error</string>
@@ -192,6 +195,7 @@
     <string name="minutes">Minutes</string>
     <string name="more_info">MORE INFO</string>
     <string name="movement_counter">Movement Counter</string>
+    <string name="movements">movements</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -251,6 +255,7 @@
     <string name="sec">sec</string>
     <string name="seconds">Seconds</string>
     <string name="select_picture">Select Picture</string>
+    <string name="select_sensor">Select sensor</string>
     <string name="send_email">Send Email</string>
     <string name="sensor_already_added">Sensor is already added</string>
     <string name="sensor_not_shared">Not shared</string>
@@ -360,7 +365,12 @@
     <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
-    <string name="widgets_gateway_only">You can use Ruuvi widgets if you\'re a Ruuvi Gateway user or if someone has shared you a Ruuvi sensor.</string>
-    <string name="widgets_sign_in_first">To use widgets, you need first to sign in.</string>
+    <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
+    <string name="widgets_loading">loading...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">7:45</string>
+    <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
+    <string name="widgets_sign_in_first">To use widgets, you need to sign in first.</string>
     <string name="yes">Yes</string>
 </resources>

@@ -3,7 +3,6 @@ package com.ruuvi.station.tagdetails.ui
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -44,6 +43,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
@@ -55,6 +55,7 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
@@ -65,9 +66,7 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import android.content.ComponentName
-import com.ruuvi.station.widgets.ui.SensorWidget
-import com.ruuvi.station.widgets.ui.updateAppWidget
+import com.ruuvi.station.widgets.domain.WidgetsService
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
@@ -449,16 +448,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         super.onResume()
 
         //TODO REMOVE TESTING UPDATE
-        val appWidgetManager =
-            AppWidgetManager.getInstance(this)
-
-        val widgetIds = appWidgetManager.getAppWidgetIds(ComponentName(application, SensorWidget::class.java.name ))
-        Timber.d("widgetIds count ${widgetIds.size}")
-
-        for (id in widgetIds) {
-            Timber.d("widgetIds $id")
-            updateAppWidget(this, appWidgetManager, id)
-        }
+        WidgetsService.updateAllWidgets(this)
 
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)
@@ -545,8 +535,15 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            return TaskStackBuilder.create(context)
-                .addNextIntent(intent)
+            val preferencesRepository = PreferencesRepository(Preferences(context))
+            val stackBuilder = TaskStackBuilder.create(context)
+            if (preferencesRepository.isDashboardEnabled()) {
+                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+                stackBuilder.addNextIntent(intentDashboardActivity)
+            }
+            stackBuilder.addNextIntent(intent)
+
+            return stackBuilder
                 .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }

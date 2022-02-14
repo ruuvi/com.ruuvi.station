@@ -16,6 +16,7 @@ package="com.ruuvi.station">
     android:name="android.permission.BLUETOOTH_SCAN"
     android:usesPermissionFlags="neverForLocation" />
 <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.VIBRATE" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -141,8 +142,18 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
-        android:name="com.ruuvi.station.widgets.ui.SensorWidgetConfigureActivity"
-        android:exported="true">
+        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
         </intent-filter>
@@ -186,8 +197,20 @@ package="com.ruuvi.station">
         </intent-filter>
     </receiver>
 
+<!--    <receiver-->
+<!--        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidget"-->
+<!--        android:exported="false">-->
+<!--        <intent-filter>-->
+<!--            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--        </intent-filter>-->
+
+<!--        <meta-data-->
+<!--            android:name="android.appwidget.provider"-->
+<!--            android:resource="@xml/sensor_widget_info" />-->
+<!--    </receiver>-->
+
     <receiver
-        android:name="com.ruuvi.station.widgets.ui.SensorWidget"
+        android:name=".widgets.ui.simpleWidget.SimpleWidget"
         android:exported="false">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -195,7 +218,7 @@ package="com.ruuvi.station">
 
         <meta-data
             android:name="android.appwidget.provider"
-            android:resource="@xml/sensor_widget_info" />
+            android:resource="@xml/simple_widget_info" />
     </receiver>
 </application>
 </manifest>
