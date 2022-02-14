@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import com.ruuvi.station.R
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.util.Vibration
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.firstWidget.updateAppWidget
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
@@ -37,6 +38,7 @@ class WidgetsService(): Service(), KodeinAware {
         Timber.d("Update all $updateAll")
 
         if (updateAll) {
+            Vibration.buzz(this, Vibration.TAP)
             updateAllWidgets(this)
             return super.onStartCommand(intent, flags, startId)
         }

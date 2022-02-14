@@ -18,7 +18,7 @@
 
         <ImageView
             android:id="@+id/logoImageView"
-            android:layout_width="48dp"
+            android:layout_width="44dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -69,7 +69,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="2dp"
-            android:height="29dp"
+            android:height="30dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:gravity="bottom"
             android:includeFontPadding="true"
@@ -87,6 +87,7 @@
             android:layout_alignEnd="@+id/updateTextView"
             android:layout_toEndOf="@+id/sensorValueTextView"
             android:height="13dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
             android:gravity="bottom|start"
             android:includeFontPadding="true"
@@ -96,8 +97,8 @@
             tools:text="%" />
 
         <ImageView
-            android:layout_width="10dp"
-            android:layout_height="10dp"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:layout_alignEnd="@+id/updateTextView"
             android:layout_alignBottom="@id/sensorValueTextView"
             android:layout_marginBottom="6dp"
