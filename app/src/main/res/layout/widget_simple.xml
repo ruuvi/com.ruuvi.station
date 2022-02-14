@@ -18,7 +18,7 @@
 
         <ImageView
             android:id="@+id/logoImageView"
-            android:layout_width="40sp"
+            android:layout_width="44dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -41,7 +41,7 @@
             android:fontFamily="sans-serif-condensed"
             android:includeFontPadding="false"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="10sp"
+            android:textSize="12dp"
             tools:text="13:24" />
 
         <TextView
@@ -59,7 +59,7 @@
             android:maxLines="2"
             android:text="@string/widgets_loading"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="12sp" />
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/sensorValueTextView"
@@ -69,14 +69,14 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="2dp"
-            android:height="25sp"
+            android:height="30dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:gravity="bottom"
             android:includeFontPadding="true"
             android:lineSpacingExtra="0sp"
             android:lines="1"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp"
+            android:textSize="28dp"
             tools:text="45.76" />
 
         <TextView
@@ -86,21 +86,22 @@
             android:layout_alignTop="@+id/sensorValueTextView"
             android:layout_alignEnd="@+id/updateTextView"
             android:layout_toEndOf="@+id/sensorValueTextView"
-            android:height="11sp"
+            android:height="13dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
             android:gravity="bottom|start"
             android:includeFontPadding="true"
             android:paddingStart="2dp"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="10sp"
+            android:textSize="12dp"
             tools:text="%" />
 
         <ImageView
-            android:layout_width="10sp"
-            android:layout_height="10sp"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:layout_alignEnd="@+id/updateTextView"
             android:layout_alignBottom="@id/sensorValueTextView"
-            android:layout_marginBottom="6sp"
+            android:layout_marginBottom="6dp"
             android:baselineAlignBottom="false"
             android:scaleType="fitXY"
             android:src="@drawable/ic_widget_d_update"
