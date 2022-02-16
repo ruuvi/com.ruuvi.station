@@ -120,14 +120,15 @@ fun MyTopAppBar(
         contentColor = Color.White,
         elevation = 0.dp,
         actions = {
-            TextButton(
-                onClick = { viewModel.saveSettings() },
-                enabled = selectedOption != null
-            ) {
-                Text(
-                    color = Color.White,
-                    text = stringResource(id = R.string.done)
-                )
+            if (selectedOption != null) {
+                TextButton(
+                    onClick = { viewModel.saveSettings() }
+                ) {
+                    Text(
+                        color = Color.White,
+                        text = stringResource(id = R.string.done)
+                    )
+                }
             }
         }
     )
@@ -136,7 +137,7 @@ fun MyTopAppBar(
 @Composable
 fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
     val systemUiController = rememberSystemUiController()
-    val sensors by viewModel.sensors.observeAsState(listOf())
+    val sensors by viewModel.cloudSensors.observeAsState(listOf())
     val userLoggedIn by viewModel.userLoggedIn.observeAsState(false)
 
     Surface(
@@ -177,11 +178,15 @@ fun ForNetworkSensorsOnlyScreen(viewModel: SimpleWidgetConfigureViewModel) {
 
 @Composable
 fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    val sensors by viewModel.sensors.observeAsState(listOf())
-    val painter = painterResource(id = R.drawable.bg1)
+    val sensors by viewModel.cloudSensors.observeAsState(listOf())
+    val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
     val selectedOption by viewModel.sensorId.observeAsState()
 
     Column() {
+        if (gotFilteredSensors) {
+            RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
+        }
+
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             itemsIndexed(items = sensors) {index, item ->
                 SensorCard(title = item.displayName, sensorId = item.id, viewModel = viewModel, isSelected = item.id == selectedOption)
