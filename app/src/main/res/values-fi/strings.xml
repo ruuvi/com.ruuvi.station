@@ -207,6 +207,7 @@
     <string name="network_user">Käyttäjä: %1$s</string>
     <string name="never">ei koskaan</string>
     <string name="no">Ei</string>
+    <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="none">ei kirjautunut</string>
     <string name="offset_correction">Kalibrointi</string>

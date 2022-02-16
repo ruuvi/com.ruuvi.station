@@ -141,7 +141,7 @@ class WidgetInteractor (
 
     private fun emptyResult(sensorId: String): WidgetData = WidgetData(sensorId)
 
-    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, sensorId, "", "", null)
+    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, context.getString(R.string.no_data), "", "", null)
 
     private fun canReturnData(sensor: RuuviTag) = sensor.networkLastSync != null
 }

@@ -209,6 +209,7 @@
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
     <string name="no">No</string>
+    <string name="no_data">No data</string>
     <string name="no_new_data_points">No new data points available</string>
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>

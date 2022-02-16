@@ -208,6 +208,7 @@
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
     <string name="no">Нет</string>
+    <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
     <string name="offset_correction">Калибровка</string>
