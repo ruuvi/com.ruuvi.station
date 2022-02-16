@@ -2,23 +2,25 @@ package com.ruuvi.station.widgets.domain
 
 import android.content.Context
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.extensions.diffGreaterThan
-import com.ruuvi.station.util.extensions.hours24
-import com.ruuvi.station.util.extensions.localizedDateTime
-import com.ruuvi.station.util.extensions.localizedTime
+import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.widgets.data.SimpleWidgetData
 import com.ruuvi.station.widgets.data.WidgetData
 import com.ruuvi.station.widgets.data.WidgetType
+import timber.log.Timber
+import java.util.*
 
 class WidgetInteractor (
+    val context: Context,
     val tagRepository: TagRepository,
-    val ruuviNetworkInteractor: NetworkDataSyncInteractor,
-    val unitsConverter: UnitsConverter,
-    val context: Context
+    val syncInteractor: NetworkDataSyncInteractor,
+    val cloudInteractor: RuuviNetworkInteractor,
+    val unitsConverter: UnitsConverter
 ) {
     suspend fun getSensorData(sensorId: String): WidgetData {
         var sensor = tagRepository.getFavoriteSensorById(sensorId)
@@ -26,7 +28,7 @@ class WidgetInteractor (
             return emptyResult(sensorId)
         }
 
-        val syncJob = ruuviNetworkInteractor.syncNetworkData(true)
+        val syncJob = syncInteractor.syncNetworkData(true)
         syncJob.join()
 
         sensor = tagRepository.getFavoriteSensorById(sensorId)
@@ -51,60 +53,77 @@ class WidgetInteractor (
         if (sensorFav == null || !canReturnData(sensorFav)) {
             return emptySimpleResult(sensorId)
         }
-        val syncJob = ruuviNetworkInteractor.syncNetworkData(true)
-        syncJob.join()
 
-        val sensorData =tagRepository.getTagById(sensorId)
+        val lastData = cloudInteractor.getSensorLastData(sensorId)
 
-        if (sensorData != null) {
+        Timber.d(lastData.toString())
+
+        if (lastData?.isSuccess() == true && lastData.data?.measurements?.isNotEmpty() == true) {
+            val measurement = lastData.data.measurements.first()
+            val decoded = BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi)
+            decoded.temperature?.let { temperature ->
+                decoded.temperature = temperature + (lastData.data.offsetTemperature ?: 0.0)
+            }
+            decoded.humidity?.let { humidity ->
+                decoded.humidity = humidity + (lastData.data.offsetHumidity ?: 0.0)
+            }
+            decoded.pressure?.let { pressure ->
+                decoded.pressure = pressure + (lastData.data.offsetPressure ?: 0.0)
+            }
+
+            val updatedDate = Date(measurement.timestamp * 1000)
+
             var unit = ""
             var sensorValue = ""
             when (widgetType) {
                 WidgetType.TEMPERATURE -> {
                     unit = context.getString(unitsConverter.getTemperatureUnit().unit)
-                    sensorValue = unitsConverter.getTemperatureStringWithoutUnit(sensorData.temperature)
+                    sensorValue =
+                        unitsConverter.getTemperatureStringWithoutUnit(decoded.temperature)
                 }
                 WidgetType.HUMIDITY -> {
                     unit = context.getString(unitsConverter.getHumidityUnit().unit)
-                    sensorValue = unitsConverter.getHumidityStringWithoutUnit(sensorData.humidity, sensorData.temperature ?: 0.0)
+                    sensorValue = unitsConverter.getHumidityStringWithoutUnit(
+                        decoded.humidity,
+                        decoded.temperature ?: 0.0
+                    )
                 }
                 WidgetType.PRESSURE -> {
                     unit = context.getString(unitsConverter.getPressureUnit().unit)
-                    sensorValue = unitsConverter.getPressureStringWithoutUnit(sensorData.pressure)
+                    sensorValue = unitsConverter.getPressureStringWithoutUnit(decoded.pressure)
                 }
                 WidgetType.MOVEMENT -> {
                     unit = context.getString(R.string.movements)
-                    sensorValue = sensorData.movementCounter.toString()
+                    sensorValue = decoded.movementCounter.toString()
                 }
                 WidgetType.VOLTAGE -> {
                     unit = context.getString(R.string.voltage_unit)
-                    sensorValue = context.getString(R.string.voltage_reading, sensorData.voltage.toString(), "").trim()
+                    sensorValue =
+                        context.getString(R.string.voltage_reading, decoded.voltage.toString(), "")
+                            .trim()
                 }
                 WidgetType.SIGNAL_STRENGTH -> {
                     unit = context.getString(R.string.signal_unit)
-                    sensorValue = sensorData.rssi.toString()
+                    sensorValue = decoded.rssi.toString()
                 }
                 WidgetType.ACCELERATION_X -> {
                     unit = context.getString(R.string.acceleration_unit)
-                    sensorValue = String.format("%1\$,.3f", sensorData.accelX)
+                    sensorValue = String.format("%1\$,.3f", decoded.accelX)
                 }
                 WidgetType.ACCELERATION_Y -> {
                     unit = context.getString(R.string.acceleration_unit)
-                    sensorValue = String.format("%1\$,.3f", sensorData.accelY)
+                    sensorValue = String.format("%1\$,.3f", decoded.accelY)
                 }
                 WidgetType.ACCELERATION_Z -> {
                     unit = context.getString(R.string.acceleration_unit)
-                    sensorValue = String.format("%1\$,.3f", sensorData.accelZ)
+                    sensorValue = String.format("%1\$,.3f", decoded.accelZ)
                 }
             }
 
-            var updated: String? = null
-            sensorData.updateAt?.let { updateAt ->
-                updated = if (updateAt.diffGreaterThan(hours24)) {
-                    updateAt.localizedDateTime(context)
-                } else {
-                    updateAt.localizedTime(context)
-                }
+            val updated = if (updatedDate.diffGreaterThan(hours24)) {
+                updatedDate.localizedDate(context)
+            } else {
+                updatedDate.localizedTime(context)
             }
 
             return SimpleWidgetData(
