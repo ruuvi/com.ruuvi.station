@@ -40,6 +40,11 @@ fun Date.localizedTime(context: Context): String {
     return timeFormat.format(this)
 }
 
+fun Date.localizedDate(context: Context): String {
+    val dateFormat = DateFormat.getDateFormat(context)
+    return dateFormat.format(this)
+}
+
 fun Date.localizedDateTime(context: Context): String {
     val dateFormat = DateFormat.getDateFormat(context)
     val timeFormat = DateFormat.getTimeFormat(context)

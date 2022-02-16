@@ -209,6 +209,7 @@
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
     <string name="no">No</string>
+    <string name="no_data">No data</string>
     <string name="no_new_data_points">No new data points available</string>
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>
@@ -367,6 +368,7 @@
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>
+    <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownerships of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>
     <string name="widgets_preview_sensor_name">Sauna</string>
     <string name="widgets_preview_sensor_value">69.50</string>
     <string name="widgets_preview_time">7:45</string>

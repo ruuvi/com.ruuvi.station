@@ -207,6 +207,7 @@
     <string name="network_user">Käyttäjä: %1$s</string>
     <string name="never">ei koskaan</string>
     <string name="no">Ei</string>
+    <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="none">ei kirjautunut</string>
     <string name="offset_correction">Kalibrointi</string>
@@ -365,6 +366,7 @@
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
     <string name="widgets_loading">ladataan...</string>
+    <string name="widgets_missing_sensors">Etkö näe kaikkia antureitasi listassa? Varmista, että olet vahvistanut kaikkien anturiesi omistajuudet sovelluksessa ja että ne ovat Ruuvi Gateway -reitittimen kuuluvuusalueella.</string>
     <string name="widgets_preview_sensor_name">Sauna</string>
     <string name="widgets_preview_sensor_value">69,50</string>
     <string name="widgets_preview_time">19.45</string>
