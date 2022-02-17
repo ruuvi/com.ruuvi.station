@@ -46,7 +46,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             }
 
             gatewaySettingsLayout.setDebouncedOnClickListener {
-                (activity as? AppSettingsDelegate)?.openFragment(R.string.data_forwarding_url)
+                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_data_forwarding)
             }
 
             graphSettingsLayout.setDebouncedOnClickListener {

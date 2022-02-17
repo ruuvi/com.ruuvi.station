@@ -77,7 +77,7 @@ class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), A
             fragment = when (resourceId) {
                 R.string.settings_background_scan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.settings_chart -> AppSettingsGraphFragment.newInstance()
-                R.string.data_forwarding_url -> AppSettingsGatewayFragment.newInstance()
+                R.string.settings_data_forwarding -> AppSettingsGatewayFragment.newInstance()
                 R.string.settings_pressure_unit -> AppSettingsPressureUnitFragment.newInstance()
                 R.string.settings_temperature_unit -> AppSettingsTemperatureUnitFragment.newInstance()
                 R.string.settings_humidity_unit -> AppSettingsHumidityFragment.newInstance()

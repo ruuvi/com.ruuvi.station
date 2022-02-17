@@ -28,7 +28,12 @@ class LocationInteractor (private val context: Context) {
         return if (location == null) {
             null
         } else {
-            ScanLocation(location.latitude, location.longitude, location.accuracy)
+            ScanLocation(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                altitude = location.altitude,
+                accuracy = location.accuracy
+            )
         }
     }
 
