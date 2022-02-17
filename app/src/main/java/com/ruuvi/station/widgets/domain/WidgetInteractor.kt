@@ -58,8 +58,8 @@ class WidgetInteractor (
 
         Timber.d(lastData.toString())
 
-        if (lastData?.isSuccess() == true && lastData.data?.measurements?.isNotEmpty() == true) {
-            val measurement = lastData.data.measurements.first()
+        val measurement = lastData?.data?.measurements?.maxByOrNull { it.timestamp }
+        if (lastData?.isSuccess() == true && measurement != null) {
             val decoded = BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi)
             decoded.temperature?.let { temperature ->
                 decoded.temperature = temperature + (lastData.data.offsetTemperature ?: 0.0)
