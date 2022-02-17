@@ -257,10 +257,10 @@ class RuuviNetworkInteractor (
         val request = GetSensorDataRequest(
             sensor = sensorId,
             since = null,
-            until = null,
+            until = Date(),
             sort = SortMode.DESCENDING,
             limit = 1,
-            mode = SensorDataMode.DENSE
+            mode = SensorDataMode.MIXED
         )
         return getSensorData(request)
     }
