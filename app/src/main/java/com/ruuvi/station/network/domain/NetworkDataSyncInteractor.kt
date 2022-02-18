@@ -93,13 +93,10 @@ class NetworkDataSyncInteractor (
         setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
-                val lastSync = preferencesRepository.getLastSyncDate()
-                if (!Date(lastSync).diffGreaterThan(60000)) {
-                    return@launch
-                }
-
                 networkRequestExecutor.executeScheduledRequests()
-                networkApplicationSettings.updateSettingsFromNetwork()
+                if (!networkRequestExecutor.anySettingsRequests()) {
+                    networkApplicationSettings.updateSettingsFromNetwork()
+                }
 
                 val userInfo = networkInteractor.getUserInfo()
 

@@ -33,16 +33,17 @@ class NetworkRequestRepository {
 
     fun registerFailedAttempt(networkRequest: NetworkRequest) {
         networkRequest.attempts++
+        if (networkRequest.attempts > MAX_ATTEMPTS) {
+            networkRequest.status = NetworkRequestStatus.FAILED
+        }
         saveRequest(networkRequest)
     }
 
     fun disableSimilar(networkRequest: NetworkRequest) {
-        SQLite.update(NetworkRequest::class.java)
-            .set(NetworkRequest_Table.status.eq(NetworkRequestStatus.OVERRIDDEN))
+        SQLite.delete(NetworkRequest::class.java)
             .where(NetworkRequest_Table.type.eq(networkRequest.type))
             .and(NetworkRequest_Table.key.eq(networkRequest.key))
             .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
-            .async()
             .execute()
     }
 
@@ -52,5 +53,9 @@ class NetworkRequestRepository {
             .where(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
             .orderBy(NetworkRequest_Table.requestDate, true)
             .queryList()
+    }
+
+    companion object {
+        const val MAX_ATTEMPTS = 10
     }
 }
