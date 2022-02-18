@@ -78,13 +78,21 @@ class WidgetsService(): Service(), KodeinAware {
                 sensorId = sensorId,
                 widgetType = widgetType
             )
-            views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
-            views.setTextViewText(R.id.unitTextView, widgetData.unit)
-            views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
-            views.setTextViewText(R.id.updateTextView, widgetData.updated)
+            if (widgetData != null) {
+                views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
+                views.setTextViewText(R.id.unitTextView, widgetData.unit)
+                views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
+                views.setTextViewText(R.id.updateTextView, widgetData.updated)
+            }
 
-            views.setOnClickPendingIntent(R.id.simpleWidgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
-            views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntentToUpdateAll(context, appWidgetId))
+            views.setOnClickPendingIntent(
+                R.id.simpleWidgetLayout,
+                TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId)
+            )
+            views.setOnClickPendingIntent(
+                R.id.refreshButton,
+                getPendingIntentToUpdateAll(context, appWidgetId)
+            )
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
