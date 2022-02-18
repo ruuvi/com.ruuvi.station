@@ -114,16 +114,20 @@ class AppSettingsInteractor(
         preferencesRepository.isShowAllGraphPoint()
 
     fun setIsShowAllGraphPoint(isShowAll: Boolean) {
-        preferencesRepository.setIsShowAllGraphPoint(isShowAll)
-        networkApplicationSettings.updateChartShowAllPoints()
+        if (isShowAll != preferencesRepository.isShowAllGraphPoint()) {
+            preferencesRepository.setIsShowAllGraphPoint(isShowAll)
+            networkApplicationSettings.updateChartShowAllPoints()
+        }
     }
 
     fun graphDrawDots(): Boolean =
         preferencesRepository.graphDrawDots()
 
     fun setGraphDrawDots(isDrawDots: Boolean) {
-        preferencesRepository.setGraphDrawDots(isDrawDots)
-        networkApplicationSettings.updateChartDrawDots()
+        if (isDrawDots != preferencesRepository.graphDrawDots()) {
+            preferencesRepository.setGraphDrawDots(isDrawDots)
+            networkApplicationSettings.updateChartDrawDots()
+        }
     }
 
     fun getGraphPointInterval(): Int =

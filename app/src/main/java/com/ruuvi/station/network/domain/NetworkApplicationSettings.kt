@@ -154,6 +154,7 @@ class NetworkApplicationSettings (
 
     fun updateBackgroundScanMode() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateBackgroundScanMode: ${preferencesRepository.getBackgroundScanMode().value}")
             networkInteractor.updateUserSetting(
                 BACKGROUND_SCAN_MODE,
                 preferencesRepository.getBackgroundScanMode().value.toString()
@@ -163,6 +164,7 @@ class NetworkApplicationSettings (
 
     fun updateTemperatureUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateTemperatureUnit: ${unitsConverter.getTemperatureUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_TEMPERATURE,
                 unitsConverter.getTemperatureUnit().code
@@ -172,6 +174,7 @@ class NetworkApplicationSettings (
 
     fun updateHumidityUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateHumidityUnit: ${unitsConverter.getHumidityUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_HUMIDITY,
                 unitsConverter.getHumidityUnit().code.toString()
@@ -181,6 +184,7 @@ class NetworkApplicationSettings (
 
     fun updateDashboardEnabled() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateDashboardEnabled: ${preferencesRepository.isDashboardEnabled()}")
             networkInteractor.updateUserSetting(
                 DASHBOARD_ENABLED,
                 preferencesRepository.isDashboardEnabled().toString()
@@ -190,6 +194,7 @@ class NetworkApplicationSettings (
 
     fun updateCloudModeEnabled() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateCloudModeEnabled: ${preferencesRepository.isCloudModeEnabled()}")
             networkInteractor.updateUserSetting(
                 CLOUD_MODE_ENABLED,
                 preferencesRepository.isCloudModeEnabled().toString()
@@ -199,6 +204,7 @@ class NetworkApplicationSettings (
 
     fun updateBackgroundScanInterval() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateBackgroundScanInterval: ${preferencesRepository.getBackgroundScanInterval()}")
             networkInteractor.updateUserSetting(
                 BACKGROUND_SCAN_INTERVAL,
                 preferencesRepository.getBackgroundScanInterval().toString()
@@ -208,6 +214,7 @@ class NetworkApplicationSettings (
 
     fun updateChartShowAllPoints() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartShowAllPoints: ${preferencesRepository.isShowAllGraphPoint()}")
             networkInteractor.updateUserSetting(
                 CHART_SHOW_ALL_POINTS,
                 preferencesRepository.isShowAllGraphPoint().toString()
@@ -217,6 +224,7 @@ class NetworkApplicationSettings (
 
     fun updateChartDrawDots() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartDrawDots: ${preferencesRepository.graphDrawDots()}")
             networkInteractor.updateUserSetting(
                 CHART_DRAW_DOTS,
                 preferencesRepository.graphDrawDots().toString()
@@ -226,6 +234,7 @@ class NetworkApplicationSettings (
 
     fun updateChartViewPeriod() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartViewPeriod: ${preferencesRepository.getGraphViewPeriodDays()}")
             networkInteractor.updateUserSetting(
                 CHART_VIEW_PERIOD,
                 preferencesRepository.getGraphViewPeriodDays().toString()
@@ -235,6 +244,7 @@ class NetworkApplicationSettings (
 
     fun updatePressureUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_PRESSURE,
                 unitsConverter.getPressureUnit().code.toString()
