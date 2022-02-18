@@ -44,12 +44,10 @@ class AppSettingsGraphViewModel(
 
     fun setShowAllPoints(isChecked: Boolean) {
         interactor.setIsShowAllGraphPoint(isChecked)
-        showAllPoints.value = isChecked
     }
 
     fun setDrawDots(isChecked: Boolean) {
         interactor.setGraphDrawDots(isChecked)
-        drawDots.value = isChecked
     }
 
     fun startEdit() {
