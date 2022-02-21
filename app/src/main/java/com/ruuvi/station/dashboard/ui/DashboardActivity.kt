@@ -186,13 +186,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {
-                val signInText = getString(R.string.sign_in)
-                val betaText = getString(R.string.beta)
-                val spannable = SpannableString (signInText+betaText)
-                spannable.setSpan(ForegroundColorSpan(Color.RED), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(SuperscriptSpan(), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(RelativeSizeSpan(0.75f), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable
+                getString(R.string.sign_in)
             }
         }
     }
