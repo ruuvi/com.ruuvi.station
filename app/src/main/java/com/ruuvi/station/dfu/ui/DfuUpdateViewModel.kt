@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import net.swiftzer.semver.SemVer
 import timber.log.Timber
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class DfuUpdateViewModel(
@@ -94,16 +95,20 @@ class DfuUpdateViewModel(
         if (!sensorFw.isSuccess) {
             return true
         } else {
-            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
-            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
-            val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
-            val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
+            try {
+                val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+                val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
+                val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
+                val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
 
-            if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
+                if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
+                    return true
+                } else {
+                    _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
+                    return false
+                }
+            } catch (e: IllegalArgumentException) {
                 return true
-            } else {
-                _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
-                return false
             }
         }
     }
@@ -170,18 +175,28 @@ class DfuUpdateViewModel(
         val sensorFw = _sensorFwVersion.value
 
         val pattern =
-        if (sensorFw?.isSuccess != true) {
-            PATTERN_2_TO_3
-        } else {
-            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
-            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
-            if (sensorFwParsed.major < 3) {
+            if (sensorFw?.isSuccess != true) {
                 PATTERN_2_TO_3
+            } else {
+                try {
+                    val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+                    if (sensorFwFirstNumberIndex == -1) throw IllegalArgumentException()
+                    val sensorFwParsed = SemVer.parse(
+                        sensorFw.fw.subSequence(
+                            sensorFwFirstNumberIndex,
+                            sensorFw.fw.length
+                        ).toString()
+                    )
+
+                    if (sensorFwParsed.major < 3) {
+                        PATTERN_2_TO_3
+                    } else {
+                        PATTERN_3x
+                    }
+                } catch (e: IllegalArgumentException) {
+                    PATTERN_2_TO_3
+                }
             }
-            else {
-                PATTERN_3x
-            }
-        }
 
         val regex = Regex(pattern)
         return assets.firstOrNull { regex.matches(it.name) }
