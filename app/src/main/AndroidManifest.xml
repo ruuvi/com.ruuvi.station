@@ -1,22 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 package="com.ruuvi.station">
 
-<uses-permission android:name="android.permission.BLUETOOTH"
-    android:maxSdkVersion="30"/>
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
-    android:maxSdkVersion="30"/>
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
-    android:maxSdkVersion="30"/>
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
-    android:maxSdkVersion="30"/>
-<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"
-    android:maxSdkVersion="30"/>
+<uses-permission
+    android:name="android.permission.BLUETOOTH"
+    android:maxSdkVersion="30" />
+<uses-permission
+    android:name="android.permission.BLUETOOTH_ADMIN"
+    android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-<uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-    android:usesPermissionFlags="neverForLocation"/>
+<uses-permission
+    android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation" />
 <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.VIBRATE" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -65,6 +65,12 @@ package="com.ruuvi.station">
         android:name=".bluetooth.ScanForDevicesService"
         android:exported="false"
         android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service android:name=".widgets.domain.WidgetsService"
+        android:enabled="true"
+        android:exported="false">
+    </service>
+
     <service
         android:name=".bluetooth.BluetoothForegroundService"
         android:enabled="true"
@@ -121,8 +127,7 @@ package="com.ruuvi.station">
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-        android:exported="false"
-        />
+        android:exported="false" />
 
     <activity
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
@@ -136,9 +141,27 @@ package="com.ruuvi.station">
         android:label="@string/title_activity_dfu_update"
         android:theme="@style/AppTheme.NoActionBar" />
 
+    <activity
+        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
+
     <service
         android:name="com.ruuvi.station.dfu.domain.DfuService"
-        android:exported="true"
+        android:exported="false"
         android:label="Dfu Service">
         <intent-filter>
             <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
@@ -172,6 +195,30 @@ package="com.ruuvi.station">
             <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
             <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
         </intent-filter>
+    </receiver>
+
+<!--    <receiver-->
+<!--        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidget"-->
+<!--        android:exported="false">-->
+<!--        <intent-filter>-->
+<!--            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--        </intent-filter>-->
+
+<!--        <meta-data-->
+<!--            android:name="android.appwidget.provider"-->
+<!--            android:resource="@xml/sensor_widget_info" />-->
+<!--    </receiver>-->
+
+    <receiver
+        android:name=".widgets.ui.simpleWidget.SimpleWidget"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/simple_widget_info" />
     </receiver>
 </application>
 </manifest>

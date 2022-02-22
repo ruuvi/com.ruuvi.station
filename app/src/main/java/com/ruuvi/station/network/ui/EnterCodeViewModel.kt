@@ -25,7 +25,9 @@ class EnterCodeViewModel (
     private val requestInProcess = MutableLiveData<Boolean>(false)
     val requestInProcessObserve: LiveData<Boolean> = requestInProcess
 
-    val signedIn = networkInteractor.signedIn
+    fun  isSignedIn() = networkInteractor.signedIn
+
+    fun getUserEmail() = networkInteractor.getEmail()
 
     fun verifyCode(token: String) {
         requestInProcess.value = true
@@ -33,7 +35,7 @@ class EnterCodeViewModel (
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
-                    networkDataSyncInteractor.syncNetworkData()
+                    networkDataSyncInteractor.syncNetworkData(false)
                     networkDataSyncInteractor.syncInProgressFlow.collect {
                         if (!it) {
                             successfullyVerified.value = true

@@ -28,7 +28,7 @@ class AppSettingsListViewModel(
         interactor.getBackgroundScanInterval()
 
     fun getGatewayUrl(): String =
-        interactor.getGatewayUrl()
+        interactor.getDataForwardingUrl()
 
     fun getTemperatureUnit(): TemperatureUnit =
         interactor.getTemperatureUnit()
@@ -38,4 +38,13 @@ class AppSettingsListViewModel(
 
     fun getPressureUnit(): PressureUnit =
         interactor.getPressureUnit()
+
+    fun isCloudModeEnabled(): Boolean =
+        interactor.isCloudModeEnabled()
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) =
+        interactor.setIsCloudModeEnabled(isEnabled)
+
+    fun shouldShowCloudMode() =
+        interactor.shouldShowCloudMode()
 }

@@ -116,8 +116,10 @@ class PermissionsInteractor(private val activity: Activity) {
         return requiredPermissions.isNotEmpty()
     }
 
-    private fun getRequiredPermissions(): List<String> {
-        return permissionsList.mapNotNull { permission ->
+    private fun getRequiredPermissions(): List<String> = getRequiredPermissions(permissionsList)
+
+    private fun getRequiredPermissions(permissions: List<String>): List<String> {
+        return permissions.mapNotNull { permission ->
             if (!isPermissionGranted(permission)) {
                 Timber.d("$permission required")
                 permission

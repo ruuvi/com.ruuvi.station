@@ -2,6 +2,7 @@ package com.ruuvi.station.network.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -55,8 +56,16 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
 
         val token = arguments?.getString("token")
         if (token.isNullOrEmpty() == false) {
-            if (viewModel.signedIn) {
-                activity?.onBackPressed()
+            if (viewModel.isSignedIn()) {
+                val messageDialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).create()
+                messageDialog.setMessage(getString(R.string.already_logged_in_message, viewModel.getUserEmail()))
+                messageDialog.setButton(
+                    AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
+                ) { dialog, _ -> dialog.dismiss() }
+                messageDialog.setOnDismissListener {
+                    activity?.onBackPressed()
+                }
+                messageDialog.show()
             } else {
                 binding.enterCodeManuallyEditText.setText(token)
                 binding.submitCodeButton.performClick()

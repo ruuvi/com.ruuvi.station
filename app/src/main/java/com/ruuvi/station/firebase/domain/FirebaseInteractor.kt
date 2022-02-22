@@ -32,7 +32,7 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     GATEWAY_ENABLED,
-                    preferences.getGatewayUrl().isNotEmpty().toString()
+                    preferences.getDataForwardingUrl().isNotEmpty().toString()
                 )
                 firebaseAnalytics.setUserProperty(
                     TEMPERATURE_UNIT,
@@ -76,8 +76,8 @@ class FirebaseInteractor(
                 firebaseAnalytics.setUserProperty(ADDED_TAGS, addedTags.toString())
 
                 val userEmail = preferences.getUserEmail()
-                val signedIn = userEmail.isEmpty()
-                firebaseAnalytics.setUserProperty(SIGNED_IN, signedIn.toString())
+                val loggedIn = userEmail.isNotEmpty()
+                firebaseAnalytics.setUserProperty(LOGGED_IN, loggedIn.toString())
 
 
                 val sensorSettings = sensorSettingsRepository.getSensorSettings()
@@ -142,7 +142,7 @@ class FirebaseInteractor(
         const val GRAPH_DRAW_DOTS = "graph_draw_dots"
         const val SEEN_TAGS = "seen_tags"
         const val ADDED_TAGS = "added_tags"
-        const val SIGNED_IN = "signed_in"
+        const val LOGGED_IN = "logged_in"
         const val CLAIMED_TAGS = "claimed_tags"
         const val OFFLINE_TAGS = "offline_tags"
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Ускорение по X</string>
     <string name="acceleration_y">Ускорение по Y</string>
     <string name="acceleration_z">Ускорение по Z</string>
@@ -13,22 +14,35 @@
     <string name="alert_movement">Движение</string>
     <string name="alert_movement_description">Уведомить при движении</string>
     <string name="alert_notification_humidity_high">Высокая Влажность!</string>
+    <string name="alert_notification_humidity_high_threshold">Влажность выше %1$s</string>
     <string name="alert_notification_humidity_low">Низкая Влажность!</string>
+    <string name="alert_notification_humidity_low_threshold">Влажность ниже %1$s</string>
     <string name="alert_notification_movement">Сработал Датчик Движения!</string>
     <string name="alert_notification_pressure_high">Высокое Атмосферное Давление!</string>
+    <string name="alert_notification_pressure_high_threshold">Давление выше %1$s</string>
     <string name="alert_notification_pressure_low">Низкое Атмосферное Давление!</string>
+    <string name="alert_notification_pressure_low_threshold">Давление ниже %1$s</string>
     <string name="alert_notification_rssi_high">Высокий уровень сигнала!</string>
+    <string name="alert_notification_rssi_high_threshold">Сила сигнала выше %1$s</string>
     <string name="alert_notification_rssi_low">Низкий уровен сигнала!</string>
+    <string name="alert_notification_rssi_low_threshold">Сила сигнала ниже %1$s</string>
     <string name="alert_notification_temperature_high">Высокая температура!</string>
+    <string name="alert_notification_temperature_high_threshold">Температура выше %1$s</string>
     <string name="alert_notification_temperature_low">Низкая температура!</string>
+    <string name="alert_notification_temperature_low_threshold">Температура ниже %1$s</string>
     <string name="alert_subtitle_off">Отключено</string>
     <string name="alert_subtitle_on">Уведомление если меньше %1$,d или больше %2$,d</string>
     <string name="alerts">УВЕДОМЛЕНИЯ</string>
     <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
+    <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Назад</string>
     <string name="background_image">ФОНОВОЕ\nИЗОБРАЖЕНИЕ</string>
+    <string name="background_interval">каждые %1$s мин</string>
+    <string name="background_interval_10sec">каждые %1$s сек</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
     <string name="background_notification_scanning_every">Сканирование каждые</string>
+    <string name="background_scanning">Фоновое сканирование</string>
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
     <string name="calibrate">Калибровать</string>
@@ -56,8 +70,12 @@
     <string name="camera">Камера</string>
     <string name="camera_fail">Не удалось запустить камеру</string>
     <string name="cancel">Отмена</string>
+    <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
     <string name="charts_background_dialog_title_question">Включить фоновое сканирование?</string>
+    <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
+    <string name="claim_ownership">Заявить о владении</string>
+    <string name="claim_sensor">Заявить о собственности</string>
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
@@ -82,6 +100,8 @@
     <string name="cloud_er_unable_to_send_email">Не удалось отправить e-mail</string>
     <string name="cloud_er_unauthorized">Требуется авторизация</string>
     <string name="cloud_er_user_not_found">Пользователь не найден</string>
+    <string name="cloud_only_mode">Режим облака</string>
+    <string name="cloud_only_mode_description">Получайте данные с ближайших датчиков только через облако, игнорируя при этом измерения через Bluetooth. Требуется Ruuvi Gateway.</string>
     <string name="confirm">Подтвердить</string>
     <string name="connected_reading_info">Обмениваюсь...</string>
     <string name="connecting">Соединение...</string>
@@ -90,7 +110,11 @@
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
     <string name="data_format">Формат Данных</string>
+    <string name="data_forwarding_background_location_message_bloked">Включите доступ к местоположению, чтобы добавить координаты</string>
+    <string name="data_forwarding_background_location_message_first">Эта функция требует доступа к местоположению устройства. Чтобы добавить данные о местоположении, на следующем системном диалоге укажите хотите вы точное или примерное местоположение и разрешите доступ к местоположению пока приложение активно.</string>
+    <string name="data_forwarding_background_location_message_second">Чтобы добавить данные о местоположении, когда приложение работает в фоне: на следующем системном диалоге выберите \'Разрешить в любом режиме\'</string>
     <string name="data_forwarding_disabled">Отключено</string>
+    <string name="data_forwarding_location_enable">Отправлять также координаты местоположения устройство</string>
     <string name="data_forwarding_url">URL шлюза</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
@@ -99,6 +123,7 @@
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
+    <string name="done">Готово</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
     <string name="error">Ошибка</string>
@@ -169,6 +194,7 @@
     <string name="minutes">Минут</string>
     <string name="more_info">ДОПОЛНИТЕЛЬНО</string>
     <string name="movement_counter">Счетчик Движения</string>
+    <string name="movements">движений</string>
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
@@ -182,11 +208,13 @@
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
     <string name="no">Нет</string>
+    <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано</string>
+    <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>
     <string name="permission_dialog_request_message">Для того чтобы находить Bluetooth-утройства, Android требует включить доступ к местоположению.\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>
@@ -215,7 +243,9 @@
     <string name="reading_history">Чтение истории</string>
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
     <string name="remove">Удалить</string>
+    <string name="remove_claimed_sensor">Удаляя датчик вы также отказываетесь от владения. Кто-то другой сможет заявить о владении этим датчиком. Каждый датчик может иметь только одного владельца.</string>
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
+    <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
     <string name="rssi">Сила сигнала (RSSI)</string>
@@ -225,9 +255,12 @@
     <string name="sec">сек</string>
     <string name="seconds">Секунд</string>
     <string name="select_picture">Выберите изображение</string>
+    <string name="select_sensor">Выберите датчик</string>
     <string name="send_email">Отправить электронное письмо</string>
     <string name="sensor_already_added">Датчик уже добавлен</string>
+    <string name="sensor_not_shared">Не делились</string>
     <string name="sensor_settings">Настройки датчика</string>
+    <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
     <string name="settings_background_battery_optimization_common_instructions">Перейдите в настройки Android -> Приложения -> Ruuvi Station -> Батарея -> укажите, что не нужно экономить заряд</string>
@@ -272,6 +305,7 @@
     <string name="share">Поделиться</string>
     <string name="share_sensor_add_friend">Добавить друга</string>
     <string name="share_sensor_already_shared">Предоставлен доступ %1$,d/%2$,d</string>
+    <string name="share_sensor_description">Вы можете поделиться измерениями этого датчика с друзьями или членами семьи, если датчик находится в радиусе действия Ruuvi Gateway.\n\nПолучатель будет извещен по электронной почте. Если у него нет аккаунта Ruuvi, то бесплатный аккаунт будет создан при первом входе.\n\nНазвание датчика и изображение использованное в качестве фона будет также доступно для пользователя. Пользователь сможет позже изменить название и изображение на удобное для себя. Данные калибровки датчика (если они были установлены владельцем) будут автоматически синхронизированы и получатель всегда будет видеть данные после калибровки.</string>
     <string name="share_sensor_send_button">Отправить</string>
     <string name="share_sensor_title">Поделиться датчиком Ruuvi</string>
     <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
@@ -285,6 +319,7 @@
     <string name="sign_in_request_code">Запросить код</string>
     <string name="sign_in_submit_button">Отправить</string>
     <string name="sign_out">Выйти из сети</string>
+    <string name="sign_out_confirm">После выхода все датчики, которые зарегистрованы на вас, будут удалены из приложения. Если вы повторно войдете с тем же email адресом, список ваших датчиков будет загружен из облака. \n\nВы хотите выйти из сети?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">дБм</string>
@@ -292,6 +327,7 @@
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="start_the_update">Начать обновление</string>
     <string name="start_update_process">Начать процесс обновления</string>
+    <string name="successfully_claimed">Владение датчиком зарегистрировано</string>
     <string name="successfully_shared">Успешно поделились данными датчика</string>
     <string name="sync">СКАЧАТЬ</string>
     <string name="sync_complete">Синхронизация завершена</string>
@@ -299,6 +335,7 @@
     <string name="synchronizing">Обмениваюсь</string>
     <string name="tag_name">Имя</string>
     <string name="tag_not_in_range">Датчик не найден</string>
+    <string name="tagsettings_claim_button">Заявить о собственности</string>
     <string name="tagsettings_network_info">Данные сети</string>
     <string name="tagsettings_owner">Владелец</string>
     <string name="tagsettings_sensor_remove">Удалить сенсор</string>
@@ -328,5 +365,9 @@
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление</string>
     <string name="welcome_text_4">Используйте приложение как гейтвей</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station</string>
+    <string name="widgets_loading">загрузка...</string>
+    <string name="widgets_preview_sensor_name">Сауна</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="yes">Да</string>
 </resources>

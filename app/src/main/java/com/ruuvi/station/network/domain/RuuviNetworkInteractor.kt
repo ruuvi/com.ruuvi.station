@@ -253,6 +253,18 @@ class RuuviNetworkInteractor (
         }
     }
 
+    suspend fun getSensorLastData(sensorId: String):GetSensorDataResponse? {
+        val request = GetSensorDataRequest(
+            sensor = sensorId,
+            since = null,
+            until = Date(),
+            sort = SortMode.DESCENDING,
+            limit = 1,
+            mode = SensorDataMode.MIXED
+        )
+        return getSensorData(request)
+    }
+
     fun updateUserSetting(name: String, value: String) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,
@@ -260,7 +272,7 @@ class RuuviNetworkInteractor (
             UpdateUserSettingRequest(name, value)
         )
         Timber.d("updateUserSetting $networkRequest")
-        networkRequestExecutor.registerRequest(networkRequest)
+        networkRequestExecutor.registerRequest(networkRequest, false)
     }
 
     fun setAlert(alarm: Alarm) {

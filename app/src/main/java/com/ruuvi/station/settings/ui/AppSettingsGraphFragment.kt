@@ -6,7 +6,6 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.databinding.FragmentAppSettingsGraphBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -46,15 +45,13 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
         with(binding) {
             graphIntervalNumberPicker.minValue = 1
             graphIntervalNumberPicker.maxValue = 60
-            viewPeriodNumberPicker.minValue = 1
-            viewPeriodNumberPicker.maxValue = GlobalSettings.historyLengthDays
 
             graphIntervalNumberPicker.setOnValueChangedListener { _, _, new ->
                 viewModel.setPointInterval(new)
             }
 
-            viewPeriodNumberPicker.setOnValueChangedListener { _, _, new ->
-                viewModel.setViewPeriod(new)
+            chartViewPeriodEdit.setOnValueChangedListener { period ->
+                viewModel.setViewPeriod(period)
             }
 
             graphAllPointsSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -78,7 +75,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
     private fun observePeriod() {
         lifecycleScope.launch {
             viewModel.observeViewPeriod().collect {
-                binding.viewPeriodNumberPicker.value = it
+                binding.chartViewPeriodEdit.selectedValue = it
             }
         }
     }

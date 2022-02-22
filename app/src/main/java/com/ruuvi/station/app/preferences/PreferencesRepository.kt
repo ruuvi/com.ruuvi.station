@@ -31,11 +31,18 @@ class PreferencesRepository(
         preferences.pressureUnit = unit
     }
 
-    fun getGatewayUrl(): String =
-        preferences.gatewayUrl
+    fun getDataForwardingUrl(): String =
+        preferences.dataForwardingUrl
 
-    fun setGatewayUrl(gatewayUrl: String) {
-        preferences.gatewayUrl = gatewayUrl
+    fun setDataForwardingUrl(url: String) {
+        preferences.dataForwardingUrl = url
+    }
+
+    fun getDataForwardingLocationEnabled(): Boolean =
+            preferences.dataForwardingLocationEnabled
+
+    fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
+        preferences.dataForwardingLocationEnabled = locationEnabled
     }
 
     fun getDeviceId(): String {
@@ -52,7 +59,7 @@ class PreferencesRepository(
     }
 
     fun saveUrlAndDeviceId(url: String, deviceId: String) {
-        preferences.gatewayUrl = url
+        preferences.dataForwardingUrl = url
         preferences.deviceId = deviceId
     }
 
@@ -154,9 +161,18 @@ class PreferencesRepository(
 
     fun getUserEmail() = preferences.networkEmail
 
+    fun signedIn() = preferences.networkEmail.isNotEmpty() && preferences.networkToken.isNotEmpty()
+
     fun getRequestForReviewDate() = preferences.requestForReviewDate
 
     fun updateRequestForReviewDate() {
         preferences.requestForReviewDate = Date().time
+    }
+
+    fun isCloudModeEnabled(): Boolean =
+        preferences.cloudModeEnabled
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) {
+        preferences.cloudModeEnabled = isEnabled
     }
 }

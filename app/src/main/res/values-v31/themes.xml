@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    Having themes.xml for v31 variant because @android:dimen/system_app_widget_background_radius
+     and @android:dimen/system_app_widget_internal_padding requires API level 31
+    -->
+    <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
+        <item name="appWidgetRadius">8dp</item>
+        <item name="appWidgetPadding">0dp</item>
+        <item name="appWidgetInnerRadius">8dp</item>
+
+        <item name="colorPrimary">@color/ruuviLight</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/titan</item>
+        <item name="colorOnSecondary">@color/titan70</item>
+    </style>
+</resources>

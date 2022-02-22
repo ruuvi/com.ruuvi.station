@@ -43,6 +43,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
@@ -54,6 +55,7 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
@@ -64,6 +66,7 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import com.ruuvi.station.widgets.domain.WidgetsService
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
@@ -321,19 +324,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
     }
 
-    // disabled for now
-    fun showNetworkBenefitsDialog() {
-        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-        alertDialog.setTitle(getString(R.string.sign_in_benefits_title))
-        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-        ) { dialog, _ -> dialog.dismiss() }
-        alertDialog.setOnDismissListener {
-            SignInActivity.start(this)
-        }
-        alertDialog.show()
-    }
-
     private fun updateMenu(signed: Boolean) {
         binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
@@ -456,6 +446,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     override fun onResume() {
         super.onResume()
+
+        //TODO REMOVE TESTING UPDATE
+        WidgetsService.updateAllWidgets(this)
+
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
@@ -537,13 +531,20 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             context.startActivity(intent)
         }
 
-        fun createPendingIntent(context: Context, tagId: String, alarmId: Int): PendingIntent? {
+        fun createPendingIntent(context: Context, tagId: String, requestCode: Int): PendingIntent? {
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            return TaskStackBuilder.create(context)
-                .addNextIntent(intent)
-                .getPendingIntent(alarmId, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            val preferencesRepository = PreferencesRepository(Preferences(context))
+            val stackBuilder = TaskStackBuilder.create(context)
+            if (preferencesRepository.isDashboardEnabled()) {
+                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+                stackBuilder.addNextIntent(intentDashboardActivity)
+            }
+            stackBuilder.addNextIntent(intent)
+
+            return stackBuilder
+                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

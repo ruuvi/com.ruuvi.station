@@ -160,7 +160,7 @@ class RuuviNetworkRepository
             sensor = request.sensor,
             since = request.since?.getEpochSecond(),
             until = request.until?.getEpochSecond(),
-            sort = request.sort,
+            sort = request.sort?.code,
             limit = request.limit,
             mode = request.mode?.code
         )

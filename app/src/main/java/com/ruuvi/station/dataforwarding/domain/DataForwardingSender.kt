@@ -1,4 +1,4 @@
-package com.ruuvi.station.gateway
+package com.ruuvi.station.dataforwarding.domain
 
 import android.content.Context
 import android.util.Log
@@ -13,7 +13,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import timber.log.Timber
 import java.lang.Exception
 
-class GatewaySender(
+class DataForwardingSender(
     private val context: Context,
     private val preferences: PreferencesRepository,
     private val eventFactory: EventFactory
@@ -25,7 +25,7 @@ class GatewaySender(
     }
 
     fun sendData(tag: RuuviTagEntity, sensorSettings: SensorSettings) {
-        val backendUrl = preferences.getGatewayUrl()
+        val backendUrl = preferences.getDataForwardingUrl()
         if (backendUrl.isNotEmpty()) {
             Timber.d("sendData for ${tag.id} to $backendUrl")
 
@@ -47,11 +47,11 @@ class GatewaySender(
         }
     }
 
-    fun test(gatewayUrl: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
+    fun test(url: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
         try {
             val scanEvent = eventFactory.createTestEvent()
             Ion.with(context)
-                .load(gatewayUrl)
+                .load(url)
                 .setJsonPojoBody(scanEvent)
                 .asJsonObject()
                 .withResponse()

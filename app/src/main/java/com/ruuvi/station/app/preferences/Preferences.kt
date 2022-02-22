@@ -7,10 +7,7 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.extensions.isUpdateInstall
 import java.util.*
-import kotlin.math.max
-import kotlin.math.round
 
 class Preferences constructor(val context: Context) {
 
@@ -81,11 +78,17 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
         }
 
-    var gatewayUrl: String
-        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL)
-            ?: DEFAULT_GATEWAY_URL
+    var dataForwardingUrl: String
+        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_DATA_FORWARDING_URL)
+            ?: DEFAULT_DATA_FORWARDING_URL
         set(url) {
             sharedPreferences.edit().putString(PREF_BACKEND, url).apply()
+        }
+
+    var dataForwardingLocationEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BACKEND_LOCATION, false)
+        set(locationEnabled) {
+            sharedPreferences.edit().putBoolean(PREF_BACKEND_LOCATION, locationEnabled).apply()
         }
 
     var deviceId: String
@@ -196,6 +199,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putLong(PREF_REQUEST_FOR_REVIEW_DATE, requestDate).apply()
         }
 
+    var cloudModeEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_CLOUD_MODE, false)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_CLOUD_MODE, enabled).apply()
+        }
+
     fun getUserEmailLiveData() = SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
     fun getLastSyncDateLiveData() = SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
@@ -203,7 +212,7 @@ class Preferences constructor(val context: Context) {
     fun getExperimentalFeaturesLiveData() = SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
 
     companion object {
-        private const val DEFAULT_SCAN_INTERVAL = 15 * 60
+        private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
         private const val PREF_FIRST_START = "FIRST_START_PREF"
@@ -212,6 +221,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
         private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
         private const val PREF_BACKEND = "pref_backend"
+        private const val PREF_BACKEND_LOCATION = "pref_backend_location"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_DASHBOARD_ENABLED = "DASHBOARD_ENABLED_PREF"
@@ -227,9 +237,10 @@ class Preferences constructor(val context: Context) {
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
         private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
+        private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
-        private const val DEFAULT_GATEWAY_URL = ""
+        private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24

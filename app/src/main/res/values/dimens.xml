@@ -11,4 +11,6 @@
     <dimen name="dialog_margin">20dp</dimen>
 
     <dimen name="design_navigation_separator_vertical_padding" tools:override="true">0dp</dimen>
+
+    <dimen name="widget_margin">0dp</dimen>
 </resources>

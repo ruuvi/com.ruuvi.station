@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
@@ -13,22 +14,35 @@
     <string name="alert_movement">Liike</string>
     <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
     <string name="alert_notification_humidity_high">Suhteellinen ilmankosteus liian korkea!</string>
+    <string name="alert_notification_humidity_high_threshold">Ilmankosteus on yli %1$s</string>
     <string name="alert_notification_humidity_low">Suhteellinen ilmankosteus liian alhainen!</string>
+    <string name="alert_notification_humidity_low_threshold">Ilmankosteus on alle %1$s</string>
     <string name="alert_notification_movement">Liike havaittu!</string>
     <string name="alert_notification_pressure_high">Ilmanpaine liian korkea!</string>
+    <string name="alert_notification_pressure_high_threshold">Ilmanpaine on yli %1$s</string>
     <string name="alert_notification_pressure_low">Ilmanpaine liian alhainen!</string>
+    <string name="alert_notification_pressure_low_threshold">Ilmanpaine on alle %1$s</string>
     <string name="alert_notification_rssi_high">Signaalin voimakkuus liian korkea!</string>
+    <string name="alert_notification_rssi_high_threshold">Signaalinvoimakkuus on yli %1$s</string>
     <string name="alert_notification_rssi_low">Signaalin voimakkuus liian alhainen!</string>
+    <string name="alert_notification_rssi_low_threshold">Signaalinvoimakkuus on alle %1$s</string>
     <string name="alert_notification_temperature_high">Lämpötila liian korkea!</string>
+    <string name="alert_notification_temperature_high_threshold">Lämpötila on yli %1$s</string>
     <string name="alert_notification_temperature_low">Lämpötila liian alhainen!</string>
+    <string name="alert_notification_temperature_low_threshold">Lämpötila on alle %1$s</string>
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
     <string name="alerts">HÄLYTYKSET</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
+    <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Takaisin</string>
     <string name="background_image">TAUSTAKUVA</string>
+    <string name="background_interval">joka %1$s min</string>
+    <string name="background_interval_10sec">joka %1$s sek</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
     <string name="background_notification_scanning_every">Skannataan joka</string>
+    <string name="background_scanning">Taustaskannaus</string>
     <string name="battery_voltage">Paristojännite</string>
     <string name="beta">beta</string>
     <string name="calibrate">Kalibroi</string>
@@ -56,6 +70,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
     <string name="cancel">Peruuta</string>
+    <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
     <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
@@ -85,6 +100,8 @@
     <string name="cloud_er_unable_to_send_email">Sähköpostin lähetys epäonnistui</string>
     <string name="cloud_er_unauthorized">Ei sallittu</string>
     <string name="cloud_er_user_not_found">Käyttäjää ei löydy</string>
+    <string name="cloud_only_mode">Pilvitila</string>
+    <string name="cloud_only_mode_description">Päivitä lähellä olevat pilveen rekisteröidyt anturit ainoastaan pilvestä hylkäämällä niiden Bluetooth-viestit. Vaatii Ruuvi Gateway -reitittimen.</string>
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
@@ -93,7 +110,10 @@
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla</string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="data_format">Dataformaatti</string>
+    <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
+    <string name="data_forwarding_background_location_message_second">Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin sovelluksen ollessa tausta-ajossa, anna oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>
+    <string name="data_forwarding_location_enable">Lähetä myös tämän laitteen paikkatietokoordinaatit</string>
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
@@ -102,6 +122,7 @@
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>
+    <string name="done">Valmis</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="error">Virhe</string>
@@ -172,6 +193,7 @@
     <string name="minutes">Minuuttia</string>
     <string name="more_info">LISÄTIETOA</string>
     <string name="movement_counter">Liikelaskuri</string>
+    <string name="movements">liikettä</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
@@ -185,11 +207,13 @@
     <string name="network_user">Käyttäjä: %1$s</string>
     <string name="never">ei koskaan</string>
     <string name="no">Ei</string>
+    <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="none">ei kirjautunut</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Kyseessä on todennäköisesti vanha laiteohjelmisto ja sen päivittäminen on suositeltavaa</string>
+    <string name="owner_none">Ei omistajaa</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
@@ -230,6 +254,7 @@
     <string name="sec">sek</string>
     <string name="seconds">Sekuntia</string>
     <string name="select_picture">Valitse kuva</string>
+    <string name="select_sensor">Valitse anturi</string>
     <string name="send_email">Lähetä sähköpostia</string>
     <string name="sensor_already_added">Anturi on jo lisätty</string>
     <string name="sensor_not_shared">Ei jaettu</string>
@@ -285,7 +310,6 @@
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Sinut merkitään lähelläsi olevien Ruuvi-anturien omistajaksi sisäänkirjautumisen yhteydessä. Kaikki omistajan vaatimat anturit palautetaan verkosta sovelluksen uudelleenasennuksen yhteydessä.\n\nRuuvi Gatewayn avulla voit tarkastella omistamiasi antureita etänä ja jakaa niitä ystävillesi verkossa.</string>
-    <string name="sign_in_benefits_title">Ruuvin pilvipalvelun etuja</string>
     <string name="sign_in_check_email">Tarkasta aktivointikoodi saamastasi sähköpostista.</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
@@ -340,5 +364,13 @@
     <string name="welcome_text_3">Aseta hälytyksiä ja ilmoituksia haluamallasi tavalla</string>
     <string name="welcome_text_4">Lähetä sovelluksen keräämät tiedot ulkoiselle palvelimelle</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA</string>
+    <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
+    <string name="widgets_loading">ladataan...</string>
+    <string name="widgets_missing_sensors">Etkö näe kaikkia antureitasi listassa? Varmista, että olet vahvistanut kaikkien anturiesi omistajuudet sovelluksessa ja että ne ovat Ruuvi Gateway -reitittimen kuuluvuusalueella.</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69,50</string>
+    <string name="widgets_preview_time">19.45</string>
+    <string name="widgets_select_sensor_value_type">Valitse widgetissä näytettävä anturityyppi</string>
+    <string name="widgets_sign_in_first">Käyttääksesi widgettejä, sinun on ensin kirjauduttava sisään.</string>
     <string name="yes">Kyllä</string>
 </resources>

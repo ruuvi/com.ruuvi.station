@@ -24,9 +24,6 @@ class AppSettingsBackgroundScanViewModel(
         interval.value = interactor.getBackgroundScanInterval()
     }
 
-    fun setBackgroundMode(mode: BackgroundScanModes) =
-        interactor.setBackgroundScanMode(mode)
-
     fun setBackgroundScanInterval(newInterval: Int) =
         interactor.setBackgroundScanInterval(newInterval)
 
@@ -50,6 +47,10 @@ class AppSettingsBackgroundScanViewModel(
             HUAWEI_MANUFACTURER -> R.string.settings_background_battery_optimization_huawei_instructions
             else -> R.string.settings_background_battery_optimization_common_instructions
         }
+    }
+
+    fun setBackgroundScanEnabled(enabled: Boolean) {
+        interactor.setBackgroundScanMode(if (enabled) BackgroundScanModes.BACKGROUND else BackgroundScanModes.DISABLED)
     }
 
     companion object {

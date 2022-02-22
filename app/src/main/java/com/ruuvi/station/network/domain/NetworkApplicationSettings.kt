@@ -32,6 +32,7 @@ class NetworkApplicationSettings (
                         applyHumidityUnit(response.data.settings)
                         applyPressureUnit(response.data.settings)
                         applyDashboardEnabled(response.data.settings)
+                        applyCloudModeEnabled(response.data.settings)
                         applyChartShowAllPoints(response.data.settings)
                         applyChartDrawDots(response.data.settings)
                         applyChartViewPeriod(response.data.settings)
@@ -117,6 +118,15 @@ class NetworkApplicationSettings (
         }
     }
 
+    private fun applyCloudModeEnabled(settings: NetworkUserSettings) {
+        if (settings.CLOUD_MODE_ENABLED != null) {
+            settings.CLOUD_MODE_ENABLED.toBoolean().let {
+                Timber.d("NetworkApplicationSettings-applyCloudModeEnabled: $it")
+                preferencesRepository.setIsCloudModeEnabled(it)
+            }
+        }
+    }
+
     private fun applyChartShowAllPoints(settings: NetworkUserSettings) {
         if (settings.CHART_SHOW_ALL_POINTS != null) {
             settings.CHART_SHOW_ALL_POINTS.toBoolean().let {
@@ -144,6 +154,7 @@ class NetworkApplicationSettings (
 
     fun updateBackgroundScanMode() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateBackgroundScanMode: ${preferencesRepository.getBackgroundScanMode().value}")
             networkInteractor.updateUserSetting(
                 BACKGROUND_SCAN_MODE,
                 preferencesRepository.getBackgroundScanMode().value.toString()
@@ -153,6 +164,7 @@ class NetworkApplicationSettings (
 
     fun updateTemperatureUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateTemperatureUnit: ${unitsConverter.getTemperatureUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_TEMPERATURE,
                 unitsConverter.getTemperatureUnit().code
@@ -162,6 +174,7 @@ class NetworkApplicationSettings (
 
     fun updateHumidityUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateHumidityUnit: ${unitsConverter.getHumidityUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_HUMIDITY,
                 unitsConverter.getHumidityUnit().code.toString()
@@ -171,6 +184,7 @@ class NetworkApplicationSettings (
 
     fun updateDashboardEnabled() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateDashboardEnabled: ${preferencesRepository.isDashboardEnabled()}")
             networkInteractor.updateUserSetting(
                 DASHBOARD_ENABLED,
                 preferencesRepository.isDashboardEnabled().toString()
@@ -178,8 +192,19 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateCloudModeEnabled() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateCloudModeEnabled: ${preferencesRepository.isCloudModeEnabled()}")
+            networkInteractor.updateUserSetting(
+                CLOUD_MODE_ENABLED,
+                preferencesRepository.isCloudModeEnabled().toString()
+            )
+        }
+    }
+
     fun updateBackgroundScanInterval() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateBackgroundScanInterval: ${preferencesRepository.getBackgroundScanInterval()}")
             networkInteractor.updateUserSetting(
                 BACKGROUND_SCAN_INTERVAL,
                 preferencesRepository.getBackgroundScanInterval().toString()
@@ -189,6 +214,7 @@ class NetworkApplicationSettings (
 
     fun updateChartShowAllPoints() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartShowAllPoints: ${preferencesRepository.isShowAllGraphPoint()}")
             networkInteractor.updateUserSetting(
                 CHART_SHOW_ALL_POINTS,
                 preferencesRepository.isShowAllGraphPoint().toString()
@@ -198,6 +224,7 @@ class NetworkApplicationSettings (
 
     fun updateChartDrawDots() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartDrawDots: ${preferencesRepository.graphDrawDots()}")
             networkInteractor.updateUserSetting(
                 CHART_DRAW_DOTS,
                 preferencesRepository.graphDrawDots().toString()
@@ -207,6 +234,7 @@ class NetworkApplicationSettings (
 
     fun updateChartViewPeriod() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateChartViewPeriod: ${preferencesRepository.getGraphViewPeriodDays()}")
             networkInteractor.updateUserSetting(
                 CHART_VIEW_PERIOD,
                 preferencesRepository.getGraphViewPeriodDays().toString()
@@ -216,6 +244,7 @@ class NetworkApplicationSettings (
 
     fun updatePressureUnit() {
         if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_PRESSURE,
                 unitsConverter.getPressureUnit().code.toString()
@@ -230,6 +259,7 @@ class NetworkApplicationSettings (
         val UNIT_HUMIDITY = "UNIT_HUMIDITY"
         val UNIT_PRESSURE = "UNIT_PRESSURE"
         val DASHBOARD_ENABLED = "DASHBOARD_ENABLED"
+        val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
         val CHART_VIEW_PERIOD = "CHART_VIEW_PERIOD"

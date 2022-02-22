@@ -100,7 +100,7 @@
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/rounded_layout</item>
+        <item name="android:windowBackground">@drawable/dialog_inset</item>
     </style>
 
     <style name="sensorSettingGroupHeaderStyle">
@@ -114,5 +114,15 @@
 
     <style name="progressStyle">
         <item name="colorAccent">@color/main</item>
+    </style>
+
+    <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+
+    <style name="Widget.Comruuvistation.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 </resources>

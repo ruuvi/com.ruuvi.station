@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_unit">g</string>
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
@@ -13,22 +14,35 @@
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Alert when sensor is moved</string>
     <string name="alert_notification_humidity_high">Air Humidity is too high!</string>
+    <string name="alert_notification_humidity_high_threshold">Air Humidity is above %1$s</string>
     <string name="alert_notification_humidity_low">Air Humidity is too low!</string>
+    <string name="alert_notification_humidity_low_threshold">Air Humidity is under %1$s</string>
     <string name="alert_notification_movement">Movement detected!</string>
     <string name="alert_notification_pressure_high">Air Pressure is too high!</string>
+    <string name="alert_notification_pressure_high_threshold">Air Pressure is above %1$s</string>
     <string name="alert_notification_pressure_low">Air Pressure is too low!</string>
+    <string name="alert_notification_pressure_low_threshold">Air Pressure is under %1$s</string>
     <string name="alert_notification_rssi_high">Signal strength is too high!</string>
+    <string name="alert_notification_rssi_high_threshold">Signal strength is above %1$s</string>
     <string name="alert_notification_rssi_low">Signal strength is too low!</string>
+    <string name="alert_notification_rssi_low_threshold">Signal strength is under %1$s</string>
     <string name="alert_notification_temperature_high">Temperature is too high!</string>
+    <string name="alert_notification_temperature_high_threshold">Temperature is above %1$s</string>
     <string name="alert_notification_temperature_low">Temperature is too low!</string>
+    <string name="alert_notification_temperature_low_threshold">Temperature is under %1$s</string>
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
     <string name="alerts">ALERTS</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
+    <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Back</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
+    <string name="background_interval">every %1$s min</string>
+    <string name="background_interval_10sec">every %1$s sec</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>
+    <string name="background_scanning">Background scanning</string>
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
     <string name="calibrate">Calibrate</string>
@@ -57,6 +71,7 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
+    <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
     <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Every Ruuvi sensor can have only one owner.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored in the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
@@ -86,6 +101,8 @@
     <string name="cloud_er_unable_to_send_email">Unable to send e-mail</string>
     <string name="cloud_er_unauthorized">Unauthorised</string>
     <string name="cloud_er_user_not_found">User not found</string>
+    <string name="cloud_only_mode">Cloud Mode</string>
+    <string name="cloud_only_mode_description">Refresh nearby cloud sensors only from the cloud by ignoring their Bluetooth messages. Requires a Ruuvi Gateway router.</string>
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>
@@ -94,7 +111,11 @@
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="data_format">Data Format</string>
+    <string name="data_forwarding_background_location_message_bloked">Please enable location permission in Settings to include coordinates</string>
+    <string name="data_forwarding_background_location_message_first">This feature requires a location permission. In order to include your location coordinates, please select if you want precise or approximate location and allow access while using the app when prompted in the next dialog.</string>
+    <string name="data_forwarding_background_location_message_second">To be able to include location when app is running in background please allow the app to use your location \'all the time\' when prompted in the next dialog.</string>
     <string name="data_forwarding_disabled">Disabled</string>
+    <string name="data_forwarding_location_enable">Send also location coordinates of this device</string>
     <string name="data_forwarding_url">Data Forwarding URL</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
@@ -103,6 +124,7 @@
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
+    <string name="done">Done</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
     <string name="error">Error</string>
@@ -173,6 +195,7 @@
     <string name="minutes">Minutes</string>
     <string name="more_info">MORE INFO</string>
     <string name="movement_counter">Movement Counter</string>
+    <string name="movements">movements</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -186,11 +209,13 @@
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
     <string name="no">No</string>
+    <string name="no_data">No data</string>
     <string name="no_new_data_points">No new data points available</string>
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended</string>
+    <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
@@ -231,6 +256,7 @@
     <string name="sec">sec</string>
     <string name="seconds">Seconds</string>
     <string name="select_picture">Select Picture</string>
+    <string name="select_sensor">Select sensor</string>
     <string name="send_email">Send Email</string>
     <string name="sensor_already_added">Sensor is already added</string>
     <string name="sensor_not_shared">Not shared</string>
@@ -286,7 +312,6 @@
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_in_benefits_description">After signing in, you will automatically be marked as the owner of your nearby Ruuvi sensors. The claimed sensors will be restored after an app re-install.\n\nWith a Ruuvi Gateway router, you\'ll be able to monitor the claimed sensors remotely and share them with your friends.</string>
-    <string name="sign_in_benefits_title">Benefits of the Ruuvi cloud service</string>
     <string name="sign_in_check_email">Check your email for an activation code.</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">Email sent</string>
@@ -341,5 +366,13 @@
     <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
+    <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
+    <string name="widgets_loading">loading...</string>
+    <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownerships of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">7:45</string>
+    <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
+    <string name="widgets_sign_in_first">To use widgets, you need to sign in first.</string>
     <string name="yes">Yes</string>
 </resources>

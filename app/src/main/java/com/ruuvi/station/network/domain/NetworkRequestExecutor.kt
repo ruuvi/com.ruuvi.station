@@ -10,6 +10,7 @@ import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
+import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,13 +22,16 @@ class NetworkRequestExecutor (
     private val networkRequestRepository: NetworkRequestRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val tagRepository: TagRepository
-    ){
+){
     private fun getToken() = tokenRepository.getTokenInfo()
 
-    fun registerRequest(networkRequest: NetworkRequest) {
-        networkRequestRepository.disableSimilar(networkRequest)
+    fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true) {
         CoroutineScope(Dispatchers.IO).launch {
-            execute(networkRequest)
+            networkRequestRepository.disableSimilar(networkRequest)
+            networkRequestRepository.saveRequest(networkRequest)
+            if (executeNow) {
+                execute(networkRequest)
+            }
         }
     }
 
@@ -38,6 +42,11 @@ class NetworkRequestExecutor (
         }
     }
 
+    fun anySettingsRequests(): Boolean {
+        val requests = networkRequestRepository.getScheduledRequests()
+        return requests.any{ it.type == NetworkRequestType.SETTINGS }
+    }
+
     private suspend fun execute(networkRequest: NetworkRequest) {
         val token = getToken()?.token
 
@@ -46,8 +55,12 @@ class NetworkRequestExecutor (
         if (request != null) {
             token?.let {
                 try {
-                    runSpecificAction(token, networkRequest, request)
-                    disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    val response = runSpecificAction(token, networkRequest, request)
+                    if (response?.isSuccess() == true) {
+                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    } else {
+                        registerFailedAttempt(networkRequest)
+                    }
                 } catch (e: Exception) {
                     registerFailedAttempt(networkRequest)
                 }
@@ -71,8 +84,8 @@ class NetworkRequestExecutor (
         }
     }
 
-    private suspend fun runSpecificAction(token:String, networkRequest: NetworkRequest, request: Any?) {
-        when (networkRequest.type) {
+    private suspend fun runSpecificAction(token:String, networkRequest: NetworkRequest, request: Any?): RuuviNetworkResponse<*>? {
+        return when (networkRequest.type) {
             NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
             NetworkRequestType.UPDATE_SENSOR -> updateSensor(token, request as UpdateSensorRequest)
             NetworkRequestType.UPLOAD_IMAGE -> uploadImage(token, request as UploadImageRequestWrapper)
@@ -83,35 +96,36 @@ class NetworkRequestExecutor (
         }
     }
 
-    private suspend fun setAlert(token: String, request: SetAlertRequest) {
-        networkRepository.setAlert(request, token)
+    private suspend fun setAlert(token: String, request: SetAlertRequest): SetAlertResponse? {
+        return networkRepository.setAlert(request, token)
     }
 
-    private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest) {
-        networkRepository.unclaimSensor(request, token)
+    private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest): ClaimSensorResponse? {
+        return networkRepository.unclaimSensor(request, token)
     }
 
-    private suspend fun updateSensor(token: String, request: UpdateSensorRequest) {
-        networkRepository.updateSensor(request, token)
+    private suspend fun updateSensor(token: String, request: UpdateSensorRequest): UpdateSensorResponse? {
+        return networkRepository.updateSensor(request, token)
     }
 
-    private suspend fun unshareSensor(token: String, request: UnshareSensorRequest) {
-        networkRepository.unshareSensor(request, token)
+    private suspend fun unshareSensor(token: String, request: UnshareSensorRequest): ShareSensorResponse? {
+        return networkRepository.unshareSensor(request, token)
     }
 
-    private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper) {
+    private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper): UploadImageResponse? {
         val response = networkRepository.uploadImage(request.filename, request.request, token)
         if (response?.isSuccess() == true && response.data?.guid.isNullOrEmpty()) {
             sensorSettingsRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
         }
+        return response
     }
 
-    private suspend fun resetImage(token: String, request: UploadImageRequest) {
-        networkRepository.resetImage(request, token)
+    private suspend fun resetImage(token: String, request: UploadImageRequest): UploadImageResponse? {
+        return networkRepository.resetImage(request, token)
     }
 
-    private suspend fun updateUserSettings(token: String, request: UpdateUserSettingRequest) {
-        networkRepository.updateUserSettings(request, token)
+    private suspend fun updateUserSettings(token: String, request: UpdateUserSettingRequest): UpdateUserSettingResponse? {
+        return networkRepository.updateUserSettings(request, token)
     }
 
     private inline fun <reified T>parseJson(jsonString: String): T? {

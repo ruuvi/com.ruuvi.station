@@ -6,6 +6,8 @@ import com.ruuvi.station.R
 import java.util.*
 import kotlin.math.abs
 
+const val hours24 = 24 * 60 * 60 * 1000L
+
 fun Date.getEpochSecond(): Long {
     return this.time / 1000L
 }
@@ -19,10 +21,8 @@ fun Date.describingTimeSince(context: Context): String {
     val dateNow = Date()
     val diffInMS: Long = dateNow.time - this.time
     // show date if the tag has not been seen for 24h
-    if (diffInMS > 24 * 60 * 60 * 1000) {
-        val dateFormat = DateFormat.getDateFormat(context)
-        val timeFormat = DateFormat.getTimeFormat(context)
-        output += "${dateFormat.format(this)} ${timeFormat.format(this)}"
+    if (diffInMS > hours24) {
+        output += this.localizedDateTime(context)
     } else {
         val seconds = (diffInMS / 1000).toInt() % 60
         val minutes = (diffInMS / (1000 * 60) % 60).toInt()
@@ -33,4 +33,20 @@ fun Date.describingTimeSince(context: Context): String {
         output = context.getString(R.string.time_since, output)
     }
     return output
+}
+
+fun Date.localizedTime(context: Context): String {
+    val timeFormat = DateFormat.getTimeFormat(context)
+    return timeFormat.format(this)
+}
+
+fun Date.localizedDate(context: Context): String {
+    val dateFormat = DateFormat.getDateFormat(context)
+    return dateFormat.format(this)
+}
+
+fun Date.localizedDateTime(context: Context): String {
+    val dateFormat = DateFormat.getDateFormat(context)
+    val timeFormat = DateFormat.getTimeFormat(context)
+    return "${dateFormat.format(this)} ${timeFormat.format(this)}"
 }

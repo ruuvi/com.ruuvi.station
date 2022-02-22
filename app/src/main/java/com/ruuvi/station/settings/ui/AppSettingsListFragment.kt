@@ -46,7 +46,7 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             }
 
             gatewaySettingsLayout.setDebouncedOnClickListener {
-                (activity as? AppSettingsDelegate)?.openFragment(R.string.data_forwarding_url)
+                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_data_forwarding)
             }
 
             graphSettingsLayout.setDebouncedOnClickListener {
@@ -76,6 +76,14 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             dashboardSwitch.isChecked = viewModel.isDashboardEnabled()
             dashboardSwitch.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.setIsDashboardEnabled(isChecked)
+            }
+
+            val shouldShowCloudMode = viewModel.shouldShowCloudMode()
+            cloudModeLayout.isVisible = shouldShowCloudMode
+            networkModeDivider.divider.isVisible = shouldShowCloudMode
+            cloudModeSwitch.isChecked = viewModel.isCloudModeEnabled()
+            cloudModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setIsCloudModeEnabled(isChecked)
             }
         }
         updateView()
