@@ -51,7 +51,6 @@ package="com.ruuvi.station">
         android:name=".tagdetails.ui.TagDetailsActivity"
         android:launchMode="singleTop"
         android:exported="false"
-        android:configChanges="orientation|screenSize|locale"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".tagsettings.ui.TagSettingsActivity"

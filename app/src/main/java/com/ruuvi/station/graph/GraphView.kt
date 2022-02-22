@@ -1,6 +1,7 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Color
 import android.graphics.Matrix
 import android.text.format.DateUtils
@@ -157,7 +158,11 @@ class GraphView (
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.xAxis.setLabelCount(5, false)
+        if (context.resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
+            chart.xAxis.setLabelCount(9, false)
+        } else {
+            chart.xAxis.setLabelCount(5, false)
+        }
         chart.axisLeft.setLabelCount(5, false)
 
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
