@@ -1,11 +1,13 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.content.DialogInterface
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -253,6 +255,20 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
         val graph = view.findViewById<View>(R.id.graphsContent)
         graph.isVisible = showGraph
+        binding.graphsContent.scrollView?.doOnLayout {
+            if (resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
+                val height = it.height
+                if (height != 0) {
+                    Timber.d("set height $height")
+                    binding.graphsContent.tempChart.layoutParams.height = height
+                    binding.graphsContent.humidChart.layoutParams.height = height
+                    binding.graphsContent.pressureChart.layoutParams.height = height
+                    binding.graphsContent.tempChart.requestLayout()
+                    binding.graphsContent.humidChart.requestLayout()
+                    binding.graphsContent.pressureChart.requestLayout()
+                }
+            }
+        }
         binding.tagContainer.isVisible = !showGraph
     }
 
