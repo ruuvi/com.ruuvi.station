@@ -39,8 +39,9 @@ class GraphView (
     private var from: Long = 0
     private var to: Long = 0
     private var storedReadings: MutableList<TagSensorReading>? = null
-    private var graphSetuped = false
+    private var graphSetupCompleted = false
     private var offsetsNormalized = false
+    private var visibilitySet = false
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
@@ -52,6 +53,16 @@ class GraphView (
     ) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
         setupCharts(view)
+
+        val firstReading = inputReadings.firstOrNull()
+        if (firstReading != null) {
+            setupVisibility(
+                view,
+                true,
+                firstReading.humidity != null,
+                firstReading.pressure != null
+            )
+        }
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
@@ -109,15 +120,31 @@ class GraphView (
         }
     }
 
+    private fun setupVisibility(view: View, showTemperature: Boolean, showHumidity: Boolean, showPressure: Boolean) {
+        if (visibilitySet) return
+        tempChart = view.findViewById(R.id.tempChart)
+        humidChart = view.findViewById(R.id.humidChart)
+        pressureChart = view.findViewById(R.id.pressureChart)
+
+        Timber.d("setupVisibility $showTemperature $showHumidity $showPressure")
+
+        tempChart.isVisible = showTemperature
+        humidChart.isVisible = showHumidity
+        pressureChart.isVisible = showPressure
+
+        if (context.resources.configuration.orientation != ORIENTATION_LANDSCAPE) {
+            view.findViewById<View>(R.id.spacerTop).isVisible = !showHumidity && !showPressure
+            view.findViewById<View>(R.id.spacerBottom).isVisible = !showHumidity && !showPressure
+        }
+
+        visibilitySet = true
+    }
+
     private fun setupCharts(view: View) {
-        if (!graphSetuped) {
+        if (!graphSetupCompleted) {
             tempChart = view.findViewById(R.id.tempChart)
             humidChart = view.findViewById(R.id.humidChart)
             pressureChart = view.findViewById(R.id.pressureChart)
-
-            tempChart.isVisible = true
-            humidChart.isVisible = true
-            pressureChart.isVisible = true
 
             tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
             tempChart.axisLeft.granularity = 0.01f
@@ -136,7 +163,7 @@ class GraphView (
             pressureChart.axisRight.isEnabled = false
 
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
-            graphSetuped = true
+            graphSetupCompleted = true
         }
     }
 
@@ -158,11 +185,7 @@ class GraphView (
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        if (context.resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
-            chart.xAxis.setLabelCount(9, false)
-        } else {
-            chart.xAxis.setLabelCount(5, false)
-        }
+        chart.xAxis.setLabelCount(6, false)
         chart.axisLeft.setLabelCount(5, false)
 
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE

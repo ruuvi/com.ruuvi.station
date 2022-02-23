@@ -5,21 +5,34 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <View
+        android:id="@+id/spacerTop"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintVertical_weight="0.25"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tempChart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        />
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/tempChart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="invisible"
+        app:layout_constraintVertical_weight="0.50"
         app:layout_constraintBottom_toTopOf="@id/humidChart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/spacerTop" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/humidChart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="invisible"
+        app:layout_constraintVertical_weight="0.50"
         app:layout_constraintBottom_toTopOf="@id/pressureChart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,10 +44,23 @@
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/gattSyncView"
+        app:layout_constraintVertical_weight="0.50"
+        app:layout_constraintBottom_toTopOf="@id/spacerBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/humidChart" />
+
+    <View
+        android:id="@+id/spacerBottom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintVertical_weight="0.25"
+        app:layout_constraintTop_toBottomOf="@+id/pressureChart"
+        app:layout_constraintBottom_toTopOf="@+id/gattSyncView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        />
 
     <LinearLayout
         android:id="@+id/gattSyncView"
@@ -43,7 +69,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pressureChart"
+        app:layout_constraintTop_toBottomOf="@id/spacerBottom"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout

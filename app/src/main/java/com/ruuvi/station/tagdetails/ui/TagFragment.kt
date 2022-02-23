@@ -116,9 +116,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         {
             setMessage(message)
             setPositiveButton(getString(R.string.yes), positiveButtonClick)
-            setNegativeButton(getString(R.string.no), DialogInterface.OnClickListener { dialogInterface, i ->
+            setNegativeButton(getString(R.string.no)) { dialogInterface, i ->
                 dialogInterface.dismiss()
-            })
+            }
             show()
         }
     }
@@ -146,9 +146,9 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagEntry() {
-        viewModel.tagEntryObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.tagEntryObserve.observe(viewLifecycleOwner) {
             it?.let { updateTagData(it) }
-        })
+        }
     }
 
     private fun observeSync() {
@@ -214,13 +214,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagReadings() {
-        viewModel.tagReadingsObserve.observe(viewLifecycleOwner, Observer { readings ->
+        viewModel.tagReadingsObserve.observe(viewLifecycleOwner) { readings ->
             readings?.let {
                 view?.let { view ->
                     graphView.drawChart(readings, view)
                 }
             }
-        })
+        }
     }
 
     private fun updateTagData(tag: RuuviTag) {
