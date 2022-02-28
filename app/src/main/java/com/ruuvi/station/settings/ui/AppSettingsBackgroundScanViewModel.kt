@@ -33,7 +33,7 @@ class AppSettingsBackgroundScanViewModel(
     )
 
     fun getBatteryOptimizationMessageId(): Int {
-        val deviceManufacturer = Build.MANUFACTURER.toUpperCase(Locale.getDefault())
+        val deviceManufacturer = Build.MANUFACTURER.uppercase(Locale.getDefault())
         val deviceApi = Build.VERSION.SDK_INT
 
         return when (deviceManufacturer) {

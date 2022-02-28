@@ -105,6 +105,7 @@
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
+    <string name="current_version">Nykyinen versio</string>
     <string name="current_version_fw">Nykyinen versio:</string>
     <string name="dashboard">Koontinäyttö</string>
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla</string>
@@ -138,7 +139,7 @@
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite,Liikelaskuri,Mittajärjestysnumero</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
     <string name="firmware">LAITEOHJELMISTO</string>
-    <string name="firmware_update">Päivitä laiteohjelmisto</string>
+    <string name="firmware_update">Päivitä</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>

@@ -106,6 +106,7 @@
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>
+    <string name="current_version">Current Version</string>
     <string name="current_version_fw">Current version:</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
@@ -140,7 +141,7 @@
     <string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number</string>
     <string name="file_not_supported">File type not supported</string>
     <string name="firmware">FIRMWARE</string>
-    <string name="firmware_update">Update Firmware</string>
+    <string name="firmware_update">Update</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>

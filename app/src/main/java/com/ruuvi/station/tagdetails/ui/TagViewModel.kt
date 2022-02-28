@@ -4,7 +4,9 @@ import androidx.lifecycle.*
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
+import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -26,6 +28,7 @@ class TagViewModel(
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
     val sensorId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
@@ -62,6 +65,12 @@ class TagViewModel(
                 Timber.d("syncStatusFlow collected $it")
                 it?.let {
                     if (it.sensorId == sensorId) syncStatusObj.value = it
+
+                    if ((it.syncProgress == SyncProgress.READING_DATA || it.syncProgress == SyncProgress.NOT_SUPPORTED) &&
+                        it.deviceInfoFw.isNotEmpty()
+                    ) {
+                        sensorSettingsRepository.setSensorFirmware(sensorId, it.deviceInfoFw)
+                    }
                 }
             }
         }

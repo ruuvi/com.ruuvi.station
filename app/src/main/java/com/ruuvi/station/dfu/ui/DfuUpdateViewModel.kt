@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
@@ -26,7 +27,8 @@ class DfuUpdateViewModel(
     private val latestFwInteractor: LatestFwInteractor,
     private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
     private val dfuInteractor: DfuInteractor,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository
     ): ViewModel() {
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
@@ -120,7 +122,11 @@ class DfuUpdateViewModel(
         }
 
         getFwJob = viewModelScope.launch {
-            _sensorFwVersion.value = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+            val firmware = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+            _sensorFwVersion.value = firmware
+            if (firmware.isSuccess && firmware.fw.isNotEmpty()) {
+                sensorSettingsRepository.setSensorFirmware(sensorId, firmware.fw)
+            }
         }
     }
 
@@ -273,6 +279,7 @@ class DfuUpdateViewModel(
 
     private fun updateFinished() {
         _stage.value = DfuUpdateStage.UPDATE_FINISHED
+        sensorSettingsRepository.setSensorFirmware(sensorId, latestFwVersion.value)
     }
 
     override fun onCleared() {

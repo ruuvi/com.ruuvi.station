@@ -133,6 +133,8 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                     deleteString = getString(R.string.remove_shared_sensor)
                 }
             }
+
+            binding.firmwareVersionTextView.text = sensorSettings?.firmware
         }
 
         viewModel.userLoggedInObserve.observe(this) {

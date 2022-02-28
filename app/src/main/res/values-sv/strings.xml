@@ -36,6 +36,7 @@
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="back">Tillbaka</string>
     <string name="background_image">BAKGRUNDSBILD</string>
     <string name="background_interval">varje %1$s min</string>
     <string name="background_interval_10sec">varje %1$s sek</string>
@@ -104,6 +105,7 @@
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
+    <string name="current_version">Nuvarande version</string>
     <string name="current_version_fw">Nuvarande version:</string>
     <string name="dashboard">Översikt vy</string>
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång</string>
@@ -135,7 +137,7 @@
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning, Rörelseräknare,Mätningssekvensnummer</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
     <string name="firmware">PROGRAMVARA</string>
-    <string name="firmware_update">Uppdatera Programvara</string>
+    <string name="firmware_update">Uppdatera</string>
     <string name="gallery">Galleri</string>
     <string name="gateway_test_exception">Fel uppstod. Är adressen korrekt?</string>
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
@@ -190,6 +192,7 @@
     <string name="minutes">Minuter</string>
     <string name="more_info">MER INFO</string>
     <string name="movement_counter">Rörelseräknare</string>
+    <string name="movements">rörelser</string>
     <string name="name">NAMN</string>
     <string name="navigation_drawer_close">Stäng navigationslådan</string>
     <string name="navigation_drawer_open">Öppna navigationslådan</string>
@@ -203,6 +206,7 @@
     <string name="network_user">Användare: %1$s</string>
     <string name="never">aldrig</string>
     <string name="no">Nej</string>
+    <string name="no_data">Ingen data</string>
     <string name="no_new_data_points">Inga nya mätningar tillgängliga</string>
     <string name="none">ingen</string>
     <string name="offset_correction">Kalibrering</string>
@@ -249,6 +253,7 @@
     <string name="sec">sek</string>
     <string name="seconds">Sekunder</string>
     <string name="select_picture">Välj bild</string>
+    <string name="select_sensor">Välj sensor</string>
     <string name="send_email">Skicka e-post</string>
     <string name="sensor_already_added">Sensorn har redan lagts till</string>
     <string name="sensor_not_shared">Inte delad</string>
@@ -358,7 +363,13 @@
     <string name="welcome_text_3">Ställ in alarm och få notiser om dem</string>
     <string name="welcome_text_4">Skicka den information som samlas in av applikationen till en extern server</string>
     <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten</string>
+    <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
+    <string name="widgets_loading">laddar...</string>
+    <string name="widgets_missing_sensors">Kan du inte se alla dina sensorer i listan? Se till att du har bekräftat ägandet av alla dina sensorer i applikationen och att de är inom räckhåll för Ruuvi Gateway-routern.</string>
+    <string name="widgets_preview_sensor_name">Bastu</string>
     <string name="widgets_preview_sensor_value">69.50</string>
     <string name="widgets_preview_time">19:45</string>
+    <string name="widgets_select_sensor_value_type">Välj vilken typ av sensor som ska visas i widgeten</string>
+    <string name="widgets_sign_in_first">För att använda widgets måste du först logga in.</string>
     <string name="yes">Ja</string>
 </resources>
