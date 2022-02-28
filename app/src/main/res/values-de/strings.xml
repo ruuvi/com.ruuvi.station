@@ -89,6 +89,7 @@
     <string name="confirm">Bestätige</string>
     <string name="connected_reading_info">Synchronisieren...</string>
     <string name="connecting">Verbinden...</string>
+    <string name="current_version">Aktuelle Version</string>
     <string name="current_version_fw">Aktuelle Version:</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_description">Verwenden Sie die Dashboard-Ansicht, um mehrere Sensoren auf einen Blick zu sehen</string>
@@ -114,7 +115,7 @@
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s), Feuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung,Bewegungszähler,Messsequenznummer</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">FIRMWARE</string>
-    <string name="firmware_update">Firmware aktualisieren</string>
+    <string name="firmware_update">Aktualisiere</string>
     <string name="gallery">Galerie</string>
     <string name="gateway_test_exception">Nein, es hat nicht funktioniert. Ist die URL korrekt?</string>
     <string name="gateway_test_fail">Nein, es hat nicht funktioniert. Antwortcode: %1$d</string>

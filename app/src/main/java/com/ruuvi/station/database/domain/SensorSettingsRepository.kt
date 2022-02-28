@@ -59,7 +59,7 @@ class SensorSettingsRepository {
     }
 
     fun clearPressureCalibration(sensorId: String) {
-        var settings = getSensorSettings(sensorId)
+        val settings = getSensorSettings(sensorId)
         settings?.let {
             it.pressureOffset = null
             it.pressureOffsetDate = null
@@ -68,14 +68,14 @@ class SensorSettingsRepository {
     }
 
     fun setSensorHumidityOffset(sensorId: String, offset: Double) {
-        var settings = getSensorSettingsOrCreate(sensorId)
+        val settings = getSensorSettingsOrCreate(sensorId)
         settings.humidityOffset = offset
         settings.humidityOffsetDate = Date()
         settings.update()
     }
 
     fun clearHumidityCalibration(sensorId: String) {
-        var settings = getSensorSettings(sensorId)
+        val settings = getSensorSettings(sensorId)
         settings?.let {
             it.humidityOffset = null
             it.humidityOffsetDate = null
@@ -105,7 +105,7 @@ class SensorSettingsRepository {
     }
 
     fun setSensorOwner(sensorId: String, owner: String, isNetworkSensor: Boolean) {
-        var settings = getSensorSettingsOrCreate(sensorId)
+        val settings = getSensorSettingsOrCreate(sensorId)
         settings.owner = owner
         settings.networkSensor = isNetworkSensor
         settings.update()
@@ -122,20 +122,20 @@ class SensorSettingsRepository {
     }
 
     fun updateLastSync(sensorId: String, date: Date?) {
-        var settings = getSensorSettingsOrCreate(sensorId)
+        val settings = getSensorSettingsOrCreate(sensorId)
         settings.lastSync = date
         settings.update()
     }
 
     fun clearLastSync(sensorId: String) {
-        var settings = getSensorSettingsOrCreate(sensorId)
+        val settings = getSensorSettingsOrCreate(sensorId)
         settings.lastSync = null
         settings.networkLastSync = null
         settings.update()
     }
 
     fun updateNetworkLastSync(sensorId: String, date: Date) {
-        var settings = getSensorSettingsOrCreate(sensorId)
+        val settings = getSensorSettingsOrCreate(sensorId)
         settings.networkLastSync = date
         settings.update()
     }
@@ -144,5 +144,12 @@ class SensorSettingsRepository {
         SQLite.update(SensorSettings::class.java)
             .set(SensorSettings_Table.lastSync.eq(null))
             .execute()
+    }
+
+    fun setSensorFirmware(sensorId: String, firmware: String?) {
+        getSensorSettings(sensorId)?.let {
+            it.firmware = firmware
+            it.update()
+        }
     }
 }

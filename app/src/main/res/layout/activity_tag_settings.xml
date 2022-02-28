@@ -440,6 +440,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/firmwareVersionTitleTextView"
+                        style="@style/sensorSettingInfoTitleStyle"
+                        android:text="@string/current_version"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/firmwareVersionTextView"
+                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/firmwareVersionTextView"
+                        style="@style/sensorSettingInfoValueStyle"
+                        app:layout_constraintStart_toEndOf="@id/firmwareVersionTitleTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/firmwareUpdateTitleTextView"
                         android:layout_width="0dp"
@@ -449,7 +464,7 @@
                         android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
+                        app:layout_constraintTop_toBottomOf="@id/firmwareVersionTitleTextView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -44,7 +44,9 @@ data class SensorSettings(
     @Column
     var networkLastSync: Date? = null,
     @Column
-    var networkSensor: Boolean = false
+    var networkSensor: Boolean = false,
+    @Column
+    var firmware: String? = null,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
