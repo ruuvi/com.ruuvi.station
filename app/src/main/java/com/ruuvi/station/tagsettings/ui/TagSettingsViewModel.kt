@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
@@ -19,7 +20,8 @@ class TagSettingsViewModel(
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
+    private val sensorFwInteractor: SensorFwVersionInteractor
 ) : ViewModel() {
     var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
@@ -68,6 +70,19 @@ class TagSettingsViewModel(
             withContext(Dispatchers.Main) {
                 tagState.value = tagInfo
                 sensorSettings.value = settings
+            }
+        }
+    }
+
+    fun updateSensorFirmwareVersion() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val tagInfo = getTagById(sensorId)
+            val settings = interactor.getSensorSettings(sensorId)
+            if (settings?.firmware.isNullOrEmpty() && tagInfo?.connectable == true) {
+                val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
+                if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
+                    interactor.setSensorFirmware(sensorId, fwResult.fw)
+                }
             }
         }
     }
