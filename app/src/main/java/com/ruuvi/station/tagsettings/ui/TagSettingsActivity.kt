@@ -134,6 +134,8 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 }
             }
 
+            binding.firmwareVersionTextView.isVisible = sensorSettings?.firmware?.isNotEmpty() == true
+            binding.firmwareVersionTitleTextView.isVisible = sensorSettings?.firmware?.isNotEmpty() == true
             binding.firmwareVersionTextView.text = sensorSettings?.firmware
         }
 
@@ -172,6 +174,8 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 getText(R.string.sensor_not_shared)
             }
         }
+
+        viewModel.updateSensorFirmwareVersion()
     }
 
     private fun setupUI() {
