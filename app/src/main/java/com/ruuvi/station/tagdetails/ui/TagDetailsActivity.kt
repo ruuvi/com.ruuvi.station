@@ -36,6 +36,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -97,6 +103,13 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private var timer: Timer? = null
     private var signedIn = false
 
+    private val appUpdateManager = AppUpdateManagerFactory.create(this)
+    private val listener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            showUpdateSnackbar()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTagDetailsBinding.inflate(layoutInflater)
@@ -117,10 +130,49 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         requestPermission()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        appUpdateManager.registerListener(listener)
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                //&& (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 3
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+            ) {
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    UPDATE_REQUEST_CODE)
+            } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                showUpdateSnackbar()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
             requestPermission()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.unregisterListener(listener)
+    }
+
+    private fun showUpdateSnackbar() {
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            "An update has just been downloaded.",
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction("RESTART") { appUpdateManager.completeUpdate() }
+            show()
         }
     }
 
@@ -512,6 +564,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         private const val WEB_URL = "https://ruuvi.com"
         private const val ALARM_ICON_ALPHA = 128
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
+        private const val UPDATE_REQUEST_CODE = 213
 
         fun start(context: Context, isFromWelcome: Boolean) {
             val intent = Intent(context, TagDetailsActivity::class.java)
