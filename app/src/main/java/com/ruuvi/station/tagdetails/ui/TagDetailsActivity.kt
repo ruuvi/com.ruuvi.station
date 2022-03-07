@@ -13,11 +13,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.SuperscriptSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -37,6 +32,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
@@ -103,7 +99,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private var timer: Timer? = null
     private var signedIn = false
 
-    private val appUpdateManager = AppUpdateManagerFactory.create(this)
+    private val appUpdateManager: AppUpdateManager by lazy {
+        AppUpdateManagerFactory.create(this)
+    }
+
     private val listener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             showUpdateSnackbar()
