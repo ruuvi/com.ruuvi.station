@@ -112,7 +112,7 @@
     <string name="export_csv_failed">CSV-Datei konnte nicht erstellt werden</string>
     <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s), Luftfeuchtigkeit (%2$s), Druck (%3$s),RSSI</string>
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s), Luftfeuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung</string>
-    <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s), Feuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung,Bewegungszähler,Messsequenznummer</string>
+    <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s), Feuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung,Bewegungszähler,Messsequenznummer,TX-Leistung</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">FIRMWARE</string>
     <string name="firmware_update">Aktualisiere</string>
