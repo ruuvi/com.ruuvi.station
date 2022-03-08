@@ -32,10 +32,12 @@ class SimpleWidget: AppWidgetProvider() {
 
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
+        Timber.d("onEnabled")
     }
 
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
+        Timber.d("onDisabled")
     }
 }
 
