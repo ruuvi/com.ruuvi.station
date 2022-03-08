@@ -8,8 +8,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import timber.log.Timber
 import java.util.*
-import com.raizlabs.android.dbflow.annotation.Collate
-import com.raizlabs.android.dbflow.sql.language.OrderBy
+import java.text.Collator
 
 class TagRepository(
     private val sensorSettingsRepository: SensorSettingsRepository,
@@ -54,9 +53,9 @@ class TagRepository(
             .from(SensorSettings::class.java)
             .innerJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
-            .orderBy(OrderBy.fromProperty(SensorSettings_Table.name.withTable()).collate(Collate.LOCALIZED).ascending())
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
+            .sortedWith( compareBy(Collator.getInstance()) {it.displayName} )
     }
 
     fun getFavoriteSensorById(id: String): RuuviTag? {
