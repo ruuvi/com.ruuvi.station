@@ -24,7 +24,7 @@ class UnitsConverter (
 
     fun getTemperatureValue(temperatureCelsius: Double): Double {
         return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> temperatureCelsius
+            TemperatureUnit.CELSIUS -> Utils.round(temperatureCelsius, 2)
             TemperatureUnit.KELVIN-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
             TemperatureUnit.FAHRENHEIT -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
         }

@@ -108,7 +108,7 @@
     <string name="export_csv_failed">Echec de la création du fichier CSV</string>
     <string name="export_csv_header_format2_4">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission</string>
     <string name="export_csv_header_format3">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension</string>
-    <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence</string>
+    <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence,Puissance d\'émission</string>
     <string name="file_not_supported">Format non supporté</string>
     <string name="firmware">FIRMWARE</string>
     <string name="firmware_update">Mettre à jour</string>
