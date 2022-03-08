@@ -353,6 +353,8 @@
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Tuntematon virhe</string>
+    <string name="update_action">KÄYNNISTÄ UUDELLEEN</string>
+    <string name="update_downloaded_message">Päivitys on ladattu.</string>
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>

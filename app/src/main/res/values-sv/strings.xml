@@ -351,6 +351,8 @@
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Okänt fel</string>
+    <string name="update_action">STARTA OM</string>
+    <string name="update_downloaded_message">En uppdatering har laddats ner.</string>
     <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
     <string name="updating">Uppdaterar...</string>

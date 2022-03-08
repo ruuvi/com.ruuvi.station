@@ -199,6 +199,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putLong(PREF_REQUEST_FOR_REVIEW_DATE, requestDate).apply()
         }
 
+    var requestForAppUpdateDate: Long
+        get() = sharedPreferences.getLong(PREF_LAST_APP_UPDATE_REQUEST, DEFAULT_REQUEST_FOR_APP_UPDATE_DATE)
+        set(requestDate) {
+            sharedPreferences.edit().putLong(PREF_LAST_APP_UPDATE_REQUEST, requestDate).apply()
+        }
+
     var cloudModeEnabled: Boolean
         get() = sharedPreferences.getBoolean(PREF_CLOUD_MODE, false)
         set(enabled) {
@@ -238,6 +244,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
         private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
+        private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""
@@ -248,7 +255,8 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
-        private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = Long.MIN_VALUE
+        private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
+        private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
     }
 }
