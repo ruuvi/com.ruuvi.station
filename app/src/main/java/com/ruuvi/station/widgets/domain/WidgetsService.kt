@@ -165,13 +165,20 @@ class WidgetsService(): Service(), KodeinAware {
             val appWidgetManager =
                 AppWidgetManager.getInstance(context)
 
-            val widgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, SimpleWidget::class.java.name ))
+            val widgetIds = getSimpleWidgetsIds(context)
             Timber.d("widgetIds count ${widgetIds.size}")
 
             for (id in widgetIds) {
                 Timber.d("widgetIds $id")
                 updateAppWidget(context, appWidgetManager, id)
             }
+        }
+
+        fun getSimpleWidgetsIds(context: Context): IntArray {
+            val appWidgetManager =
+                AppWidgetManager.getInstance(context)
+
+            return appWidgetManager.getAppWidgetIds(ComponentName(context, SimpleWidget::class.java.name ))
         }
 
         const val APP_WIDGET_ID = "appWidgetId"
