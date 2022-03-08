@@ -354,6 +354,8 @@
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>
     <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="update_action">ПЕРЕЗАПУСК</string>
+    <string name="update_downloaded_message">Обновление готово к установке.</string>
     <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>

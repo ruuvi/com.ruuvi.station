@@ -355,6 +355,8 @@
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="update_action">RESTART</string>
+    <string name="update_downloaded_message">An update has just been downloaded.</string>
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>

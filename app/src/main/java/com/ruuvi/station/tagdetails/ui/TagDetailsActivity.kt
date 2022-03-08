@@ -69,6 +69,8 @@ import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 import com.ruuvi.station.widgets.domain.WidgetsService
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
@@ -131,16 +133,19 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     override fun onStart() {
         super.onStart()
-
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        val previousRequestDate = preferencesRepository.getRequestForAppUpdateDate()
+        val daysSinceRequest = abs(TimeUnit.MILLISECONDS.toDays(Date().time - Date(previousRequestDate).time))
 
         appUpdateManager.registerListener(listener)
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                //&& (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 3
+                && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= UPDATE_STALENESS_DAYS
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                && daysSinceRequest >= UPDATE_REQUEST_REPEAT_DAYS
             ) {
+                preferencesRepository.updateRequestForAppUpdateDate()
                 appUpdateManager.startUpdateFlowForResult(
                     appUpdateInfo,
                     AppUpdateType.FLEXIBLE,
@@ -167,10 +172,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun showUpdateSnackbar() {
         Snackbar.make(
             findViewById(android.R.id.content),
-            "An update has just been downloaded.",
+            getText(R.string.update_downloaded_message),
             Snackbar.LENGTH_INDEFINITE
         ).apply {
-            setAction("RESTART") { appUpdateManager.completeUpdate() }
+            setAction(getText(R.string.update_action)) { appUpdateManager.completeUpdate() }
             show()
         }
     }
@@ -564,6 +569,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         private const val ALARM_ICON_ALPHA = 128
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
         private const val UPDATE_REQUEST_CODE = 213
+        private const val UPDATE_STALENESS_DAYS = 1
+        private const val UPDATE_REQUEST_REPEAT_DAYS = 7
 
         fun start(context: Context, isFromWelcome: Boolean) {
             val intent = Intent(context, TagDetailsActivity::class.java)

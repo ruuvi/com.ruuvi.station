@@ -169,6 +169,12 @@ class PreferencesRepository(
         preferences.requestForReviewDate = Date().time
     }
 
+    fun getRequestForAppUpdateDate() = preferences.requestForAppUpdateDate
+
+    fun updateRequestForAppUpdateDate() {
+        preferences.requestForAppUpdateDate = Date().time
+    }
+
     fun isCloudModeEnabled(): Boolean =
         preferences.cloudModeEnabled
 
