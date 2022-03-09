@@ -76,9 +76,9 @@ class CsvExporter(
                 fileWriter.append(',')
                 fileWriter.append(unitsConverter.getTemperatureValue(reading.temperature).toString())
                 fileWriter.append(',')
-                fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() })
+                fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() } ?: nullValue)
                 fileWriter.append(',')
-                fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() })
+                fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
                 fileWriter.append(reading.rssi.toString())
                 if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
@@ -119,5 +119,9 @@ class CsvExporter(
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, tag?.id)))
+    }
+
+    companion object {
+        private const val nullValue = "-"
     }
 }
