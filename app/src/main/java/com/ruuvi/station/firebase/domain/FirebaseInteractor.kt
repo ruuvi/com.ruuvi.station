@@ -93,6 +93,7 @@ class FirebaseInteractor(
                 firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
                 firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())
 
+                firebaseAnalytics.setUserProperty(USE_DF2, favouriteTags.any { it.dataFormat == 2 }.toString())
                 firebaseAnalytics.setUserProperty(USE_DF3, favouriteTags.any { it.dataFormat == 3 }.toString())
                 firebaseAnalytics.setUserProperty(USE_DF4, favouriteTags.any { it.dataFormat == 4 }.toString())
                 firebaseAnalytics.setUserProperty(USE_DF5, favouriteTags.any { it.dataFormat == 5 }.toString())
@@ -157,6 +158,7 @@ class FirebaseInteractor(
         const val LOGGED_IN = "logged_in"
         const val CLAIMED_TAGS = "claimed_tags"
         const val OFFLINE_TAGS = "offline_tags"
+        const val USE_DF2 = "use_df2"
         const val USE_DF3 = "use_df3"
         const val USE_DF4 = "use_df4"
         const val USE_DF5 = "use_df5"
