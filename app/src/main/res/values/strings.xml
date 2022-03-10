@@ -142,6 +142,7 @@
     <string name="file_not_supported">File type not supported</string>
     <string name="firmware">FIRMWARE</string>
     <string name="firmware_update">Update</string>
+    <string name="firmware_very_old">Very Old</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
