@@ -2,6 +2,7 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
 import androidx.lifecycle.*
+import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
@@ -11,6 +12,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import com.ruuvi.station.util.ui.UiText
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
@@ -49,11 +51,25 @@ class TagSettingsViewModel(
 
     val canCalibrate = MediatorLiveData<Boolean>()
 
+    val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()
+
     init {
         Timber.d("TagSettingsViewModel $sensorId")
         canCalibrate.addSource(sensorOwnedByUserObserve) { canCalibrate.value = getCanCalibrateValue()}
         canCalibrate.addSource(userLoggedIn) { canCalibrate.value = getCanCalibrateValue() }
         canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }
+
+        firmware.addSource(tagState) { firmware.value = getFirmware() }
+        firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
+    }
+
+    private fun getFirmware(): UiText? {
+        val firmware = sensorSettings.value?.firmware
+
+        if (firmware.isNullOrEmpty() && tagState.value?.dataFormat != 5) {
+            return UiText.StringResource(R.string.firmware_very_old)
+        }
+        return firmware?.let { UiText.DynamicString(firmware) }
     }
 
     private fun getCanCalibrateValue(): Boolean {

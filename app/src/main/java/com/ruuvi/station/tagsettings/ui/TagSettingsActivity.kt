@@ -126,17 +126,24 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)
             } else {
                 binding.ownerLayout.isEnabled = false
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    null,
+                    null
+                )
                 if (viewModel.sensorOwnedByUserObserve.value == true) {
                     deleteString = getString(R.string.remove_claimed_sensor)
                 } else {
                     deleteString = getString(R.string.remove_shared_sensor)
                 }
             }
+        }
 
-            binding.firmwareVersionTextView.isVisible = sensorSettings?.firmware?.isNotEmpty() == true
-            binding.firmwareVersionTitleTextView.isVisible = sensorSettings?.firmware?.isNotEmpty() == true
-            binding.firmwareVersionTextView.text = sensorSettings?.firmware
+        viewModel.firmware.observe(this) {
+            binding.firmwareVersionTextView.isVisible = it != null
+            binding.firmwareVersionTitleTextView.isVisible = it != null
+            binding.firmwareVersionTextView.text = it?.asString(this)
         }
 
         viewModel.userLoggedInObserve.observe(this) {
