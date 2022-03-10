@@ -30,7 +30,9 @@ class TagConverter(
             dataFormat = entity.dataFormat,
             connectable = entity.connectable,
             lastSync = sensorSettings.lastSync,
-            networkLastSync = sensorSettings.networkLastSync
+            networkLastSync = sensorSettings.networkLastSync,
+            networkSensor = sensorSettings.networkSensor,
+            owner = sensorSettings.owner
         )
 
     fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag =
@@ -52,6 +54,8 @@ class TagConverter(
             dataFormat = entity.dataFormat,
             connectable = entity.connectable,
             lastSync = entity.lastSync,
-            networkLastSync = entity.networkLastSync
+            networkLastSync = entity.networkLastSync,
+            networkSensor = entity.networkSensor,
+            owner = entity.owner
         )
 }

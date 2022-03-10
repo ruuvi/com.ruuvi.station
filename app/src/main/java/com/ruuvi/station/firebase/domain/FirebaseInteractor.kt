@@ -5,8 +5,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
-import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.widgets.domain.WidgetsService
 import kotlinx.coroutines.*
@@ -17,7 +17,7 @@ class FirebaseInteractor(
     private val context: Context,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val preferences: PreferencesRepository,
-    private val tagInteractor: TagInteractor,
+    private val tagRepository: TagRepository,
     private val sensorSettingsRepository: SensorSettingsRepository
 ) {
     fun saveUserProperties() {
@@ -70,9 +70,9 @@ class FirebaseInteractor(
                     preferences.graphDrawDots().toString()
                 )
 
-                val favouriteTags = tagInteractor.getTagEntities(true)
+                val favouriteTags = tagRepository.getFavoriteSensors()
                 val addedTags = favouriteTags.size
-                val notAddedTags = tagInteractor.getTagEntities(false).size
+                val notAddedTags = tagRepository.getAllTags(false).size
                 val seenTags = addedTags + notAddedTags
 
                 firebaseAnalytics.setUserProperty(SEEN_TAGS, seenTags.toString())
@@ -89,14 +89,15 @@ class FirebaseInteractor(
                     sensorSettings.count { it.networkSensor && it.owner == userEmail }
                 val offlineSensors =
                     sensorSettings.count { !it.networkSensor }
+                val ownedSensors = favouriteTags.filter { !it.networkSensor || it.owner == userEmail }
 
                 firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
                 firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())
 
-                firebaseAnalytics.setUserProperty(USE_DF2, favouriteTags.any { it.dataFormat == 2 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF3, favouriteTags.any { it.dataFormat == 3 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF4, favouriteTags.any { it.dataFormat == 4 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF5, favouriteTags.any { it.dataFormat == 5 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF2, ownedSensors.count { it.dataFormat == 2 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF3, ownedSensors.count { it.dataFormat == 3 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF4, ownedSensors.count { it.dataFormat == 4 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF5, ownedSensors.count { it.dataFormat == 5 }.toString())
 
                 val useSimpleWidget = WidgetsService.getSimpleWidgetsIds(context).isNotEmpty()
                 Timber.d("useSimpleWidget $useSimpleWidget")
@@ -109,8 +110,8 @@ class FirebaseInteractor(
 
     fun logSignIn() {
         CoroutineScope(Dispatchers.IO).launch {
-            val addedTags = tagInteractor.getTagEntities(true).size
-            val notAddedTags = tagInteractor.getTagEntities(false).size
+            val addedTags = tagRepository.getAllTags(true).size
+            val notAddedTags = tagRepository.getAllTags(false).size
             val seenTags = addedTags + notAddedTags
 
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
