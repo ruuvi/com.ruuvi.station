@@ -8,10 +8,42 @@ import java.util.*
 
 @QueryModel(database = LocalDatabase::class)
 data class FavouriteSensorQuery(
+    // SensorSettings
     @Column
     var id: String = "",
     @Column
+    var createDate: Date? = null,
+    @Column
     var name: String? = null,
+    @Column
+    var defaultBackground: Int = 0,
+    @Column
+    var userBackground: String? = null,
+    @Column
+    var networkBackground: String? = null,
+    @Column
+    var humidityOffset: Double? = null,
+    @Column
+    var humidityOffsetDate: Date? = null,
+    @Column
+    var temperatureOffset: Double? = null,
+    @Column
+    var temperatureOffsetDate: Date? = null,
+    @Column
+    var pressureOffset: Double? = null,
+    @Column
+    var pressureOffsetDate: Date? = null,
+    @Column
+    var owner: String? = null,
+    @Column
+    var lastSync: Date? = null,
+    @Column
+    var networkLastSync: Date? = null,
+    @Column
+    var networkSensor: Boolean = false,
+    @Column
+    var firmware: String? = null,
+    // RuuviTagEntity
     @Column
     var rssi: Int = 0,
     @Column
@@ -21,40 +53,58 @@ data class FavouriteSensorQuery(
     @Column
     var pressure: Double? = null,
     @Column
-    var movementCounter: Int = 0,
+    var accelX: Double = 0.0,
     @Column
-    var defaultBackground: Int = 0,
+    var accelY: Double = 0.0,
     @Column
-    var userBackground: String? = null,
+    var accelZ: Double = 0.0,
     @Column
-    var networkBackground: String? = null,
-    @Column
-    var dataFormat: Int = 0,
+    var voltage: Double = 0.0,
     @Column
     var updateAt: Date? = null,
     @Column
-    var lastSync: Date? = null,
+    var dataFormat: Int = 0,
     @Column
-    var networkLastSync: Date? = null,
+    var txPower: Double = 0.0,
+    @Column
+    var movementCounter: Int = 0,
+    @Column
+    var measurementSequenceNumber: Int = 0,
     @Column
     var connectable: Boolean = false,
 ): BaseQueryModel() {
     companion object {
         val queryFields = arrayOf(
             SensorSettings_Table.id.withTable(),
+            SensorSettings_Table.createDate.withTable(),
             SensorSettings_Table.name.withTable(),
+            SensorSettings_Table.defaultBackground.withTable(),
+            SensorSettings_Table.userBackground.withTable(),
+            SensorSettings_Table.networkBackground.withTable(),
+            SensorSettings_Table.humidityOffset.withTable(),
+            SensorSettings_Table.humidityOffsetDate.withTable(),
+            SensorSettings_Table.temperatureOffset.withTable(),
+            SensorSettings_Table.temperatureOffsetDate.withTable(),
+            SensorSettings_Table.pressureOffset.withTable(),
+            SensorSettings_Table.pressureOffsetDate.withTable(),
+            SensorSettings_Table.owner.withTable(),
+            SensorSettings_Table.lastSync.withTable(),
+            SensorSettings_Table.networkLastSync.withTable(),
+            SensorSettings_Table.networkSensor.withTable(),
+            SensorSettings_Table.firmware.withTable(),
             RuuviTagEntity_Table.rssi.withTable(),
             RuuviTagEntity_Table.temperature.withTable(),
             RuuviTagEntity_Table.humidity.withTable(),
             RuuviTagEntity_Table.pressure.withTable(),
-            RuuviTagEntity_Table.movementCounter.withTable(),
-            SensorSettings_Table.defaultBackground.withTable(),
-            SensorSettings_Table.userBackground.withTable(),
-            SensorSettings_Table.networkBackground.withTable(),
-            RuuviTagEntity_Table.dataFormat.withTable(),
+            RuuviTagEntity_Table.accelX.withTable(),
+            RuuviTagEntity_Table.accelY.withTable(),
+            RuuviTagEntity_Table.accelZ.withTable(),
+            RuuviTagEntity_Table.voltage.withTable(),
             RuuviTagEntity_Table.updateAt.withTable(),
-            SensorSettings_Table.lastSync.withTable(),
-            SensorSettings_Table.networkLastSync.withTable(),
+            RuuviTagEntity_Table.dataFormat.withTable(),
+            RuuviTagEntity_Table.txPower.withTable(),
+            RuuviTagEntity_Table.movementCounter.withTable(),
+            RuuviTagEntity_Table.measurementSequenceNumber.withTable(),
             RuuviTagEntity_Table.connectable.withTable()
         )
     }
