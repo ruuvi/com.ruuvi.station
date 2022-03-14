@@ -217,6 +217,7 @@
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended</string>
+    <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>

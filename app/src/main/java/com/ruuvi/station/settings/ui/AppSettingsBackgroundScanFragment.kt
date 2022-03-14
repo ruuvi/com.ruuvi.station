@@ -3,6 +3,7 @@ package com.ruuvi.station.settings.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
@@ -37,6 +38,7 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
     private fun setupViewModel() {
         observeScanMode()
         observeInterval()
+        observeShowOptimizationTips()
     }
 
     private fun setupUI() {
@@ -62,6 +64,10 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
 
             settingsInstructionsTextView.text =
                 getString(viewModel.getBatteryOptimizationMessageId())
+
+            openSettingsButton.setOnClickListener {
+                viewModel.openOptimizationSettings()
+            }
         }
     }
 
@@ -81,6 +87,14 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
                 it?.let { interval ->
                     binding.intervalEdit.setSelectedItem(interval)
                 }
+            }
+        }
+    }
+
+    private fun observeShowOptimizationTips() {
+        lifecycleScope.launch {
+            viewModel.showOptimizationTips.collect {
+                binding.optimizationLayout.isVisible = it
             }
         }
     }

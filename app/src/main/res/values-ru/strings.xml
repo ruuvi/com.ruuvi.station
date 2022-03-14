@@ -216,6 +216,7 @@
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано</string>
+    <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности</string>

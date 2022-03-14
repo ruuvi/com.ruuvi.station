@@ -51,37 +51,51 @@
         />
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/attentionTextView"
-        style="@style/PrefTitleText"
+    <LinearLayout
+        android:id="@+id/optimizationLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings_background_battery_optimization_title"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/intervalEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/intervalEdit" />
+        app:layout_constraintEnd_toEndOf="parent">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/attentionTextView"
+            style="@style/PrefTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_background_battery_optimization_title"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/batteryOptimizationAlertTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_background_battery_optimization"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/batteryOptimizationAlertTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_background_battery_optimization"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/settingsInstructionsTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textSize="16sp"
-        android:text="@string/settings_background_battery_optimization_common_instructions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/batteryOptimizationAlertTextView" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/settingsInstructionsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="16sp"
+            android:text="@string/settings_background_battery_optimization_common_instructions" />
+
+        <Button
+            android:id="@+id/openSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/roundButton"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/open_settings"
+            android:padding="8dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
