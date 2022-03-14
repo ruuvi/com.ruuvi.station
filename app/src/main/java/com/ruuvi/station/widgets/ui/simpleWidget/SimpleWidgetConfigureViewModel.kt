@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.ruuvi.station.app.domain.PowerManagerInterator
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -15,7 +16,8 @@ import timber.log.Timber
 class SimpleWidgetConfigureViewModel(
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val widgetPreferencesInteractor: WidgetPreferencesInteractor
+    private val widgetPreferencesInteractor: WidgetPreferencesInteractor,
+    private val powerManagerInterator: PowerManagerInterator
 ): ViewModel() {
     var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -40,6 +42,8 @@ class SimpleWidgetConfigureViewModel(
     private val _widgetType = MutableLiveData<WidgetType> (DEFAULT_WIDGET_TYPE)
     val widgetType: LiveData<WidgetType> = _widgetType
 
+    val showOptimizationHint: LiveData<Boolean> = MutableLiveData<Boolean> (!powerManagerInterator.isIgnoringBatteryOptimizations())
+
     fun setWidgetId(appWidgetId: Int) {
         this.appWidgetId = appWidgetId
         _sensorId.value = widgetPreferencesInteractor.getSimpleWidgetSensor(appWidgetId)
@@ -61,6 +65,10 @@ class SimpleWidgetConfigureViewModel(
             widgetPreferencesInteractor.saveSimpleWidgetSettings(appWidgetId, sensor, _widgetType.value ?: DEFAULT_WIDGET_TYPE )
             _setupComplete.value = true
         }
+    }
+
+    fun openOptimizationSettings() {
+        powerManagerInterator.openOptimizationSettings()
     }
 
     companion object {

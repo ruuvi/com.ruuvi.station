@@ -371,6 +371,7 @@
     <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
     <string name="welcome_text_4">Let the app act as a gateway</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
+    <string name="widgets_battery_optimisation_hint">For stable widgets work please disable battery optimisation for Ruuvi Station</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>
     <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownerships of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>
