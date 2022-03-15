@@ -133,8 +133,8 @@ class GraphView (
         pressureChart.isVisible = showPressure
 
         if (context.resources.configuration.orientation != ORIENTATION_LANDSCAPE) {
-            view.findViewById<View>(R.id.spacerTop).isVisible = !showHumidity && !showPressure
-            view.findViewById<View>(R.id.spacerBottom).isVisible = !showHumidity && !showPressure
+            view.findViewById<View>(R.id.spacerTop)?.isVisible = !showHumidity && !showPressure
+            view.findViewById<View>(R.id.spacerBottom)?.isVisible = !showHumidity && !showPressure
         }
 
         visibilitySet = true
