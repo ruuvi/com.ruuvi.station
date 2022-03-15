@@ -14,7 +14,7 @@ object WidgetInjectionModule {
     val module = Kodein.Module(WidgetInjectionModule.javaClass.name) {
         bind<SensorWidgetConfigureViewModel>() with provider { SensorWidgetConfigureViewModel(instance(), instance(), instance()) }
 
-        bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance()) }
+        bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance(), instance()) }
 
         bind<WidgetPreferencesInteractor>() with singleton { WidgetPreferencesInteractor(instance()) }
 

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
@@ -31,6 +30,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.dfu.ui.RegularText
+import com.ruuvi.station.dfu.ui.RuuviButton
 import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
 import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
 import com.ruuvi.station.util.extensions.viewModel
@@ -181,6 +181,7 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
     val sensors by viewModel.cloudSensors.observeAsState(listOf())
     val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
     val selectedOption by viewModel.sensorId.observeAsState()
+    val showOptimizationHint by viewModel.showOptimizationHint.observeAsState(initial = false)
 
     Column() {
         if (gotFilteredSensors) {
@@ -190,6 +191,18 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             itemsIndexed(items = sensors) {index, item ->
                 SensorCard(title = item.displayName, sensorId = item.id, viewModel = viewModel, isSelected = item.id == selectedOption)
+            }
+        }
+        
+        if (showOptimizationHint) {
+            RegularText(text = stringResource(id = R.string.widgets_battery_optimisation_hint))
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                RuuviButton(text = stringResource(id = R.string.open_settings)) {
+                    viewModel.openOptimizationSettings()
+                }
             }
         }
     }
