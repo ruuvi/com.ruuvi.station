@@ -73,8 +73,8 @@ data class TagSensorReading(
     constructor(tag: FoundRuuviTag, timestamp: Date): this(
         ruuviTagId = tag.id,
         temperature = tag.temperature ?: 0.0,
-        humidity = tag.humidity ?: 0.0,
-        pressure = tag.pressure ?: 0.0,
+        humidity = tag.humidity,
+        pressure = tag.pressure,
         rssi = tag.rssi ?: 0,
         accelX = tag.accelX ?: 0.0,
         accelY = tag.accelY ?: 0.0,
