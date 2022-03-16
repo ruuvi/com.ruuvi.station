@@ -183,26 +183,34 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
     val selectedOption by viewModel.sensorId.observeAsState()
     val showOptimizationHint by viewModel.showOptimizationHint.observeAsState(initial = false)
 
-    Column() {
-        if (gotFilteredSensors) {
-            RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
-        }
-
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            itemsIndexed(items = sensors) {index, item ->
-                SensorCard(title = item.displayName, sensorId = item.id, viewModel = viewModel, isSelected = item.id == selectedOption)
+    LazyColumn() {
+        item {
+            if (gotFilteredSensors) {
+                RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
             }
         }
-        
-        if (showOptimizationHint) {
-            RegularText(text = stringResource(id = R.string.widgets_battery_optimisation_hint))
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                RuuviButton(text = stringResource(id = R.string.open_settings)) {
-                    viewModel.openOptimizationSettings()
+
+        itemsIndexed(items = sensors) { _, item ->
+            SensorCard(
+                title = item.displayName,
+                sensorId = item.id,
+                viewModel = viewModel,
+                isSelected = item.id == selectedOption
+            )
+        }
+
+        item {
+            if (showOptimizationHint) {
+                RegularText(text = stringResource(id = R.string.widgets_battery_optimisation_hint))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    RuuviButton(text = stringResource(id = R.string.open_settings)) {
+                        viewModel.openOptimizationSettings()
+                    }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -214,6 +222,7 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
