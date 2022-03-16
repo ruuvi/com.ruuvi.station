@@ -18,6 +18,7 @@ import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -27,7 +28,6 @@ import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-
 
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
@@ -45,6 +45,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private lateinit var binding: ViewTagDetailBinding
 
     private val graphView: GraphView by instance()
+
+    private var lastConnectable = Long.MIN_VALUE
 
     init {
         Timber.d("new TagFragment")
@@ -201,7 +203,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                         gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
                     }
                     SyncProgress.DONE -> {
-                        //gattAlertDialog(requireContext().getString(R.string.sync_complete))
+                        lastConnectable = Date().time
                     }
                 }
 
@@ -239,8 +241,11 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             tag.connectable?.let {
                 if (it) {
                     graphsContent.gattSyncView.visibility = View.VISIBLE
+                    lastConnectable = tag.updatedAt?.time ?: Long.MIN_VALUE
                 } else {
-                    graphsContent.gattSyncView.visibility = View.GONE
+                    if (Date(lastConnectable).diffGreaterThan(15000)) {
+                        graphsContent.gattSyncView.visibility = View.GONE
+                    }
                 }
             }
 
