@@ -258,9 +258,9 @@ class DfuUpdateViewModel(
         val tagInfo = tagRepository.getTagById(sensorId)
         if (tagInfo != null) {
             return when {
-                tagInfo.temperature < -20 && tagInfo.voltage < 2 -> true
-                tagInfo.temperature < 0 && tagInfo.voltage < 2.3 -> true
-                tagInfo.temperature >= 0 && tagInfo.voltage < 2.5 -> true
+                tagInfo.temperature < -20 && tagInfo.voltage < 2 && tagInfo.voltage > 0 -> true
+                tagInfo.temperature < 0 && tagInfo.voltage < 2.3 && tagInfo.voltage > 0 -> true
+                tagInfo.temperature >= 0 && tagInfo.voltage < 2.5 && tagInfo.voltage > 0 -> true
                 else -> false
             }
         }
