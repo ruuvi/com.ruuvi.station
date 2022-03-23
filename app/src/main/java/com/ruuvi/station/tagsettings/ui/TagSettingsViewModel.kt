@@ -49,16 +49,14 @@ class TagSettingsViewModel(
         it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
     }
 
-    val canCalibrate = MediatorLiveData<Boolean>()
+    val sensorOwnedOrOfflineObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
+        it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
+    }
 
     val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()
 
     init {
         Timber.d("TagSettingsViewModel $sensorId")
-        canCalibrate.addSource(sensorOwnedByUserObserve) { canCalibrate.value = getCanCalibrateValue()}
-        canCalibrate.addSource(userLoggedIn) { canCalibrate.value = getCanCalibrateValue() }
-        canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }
-
         firmware.addSource(tagState) { firmware.value = getFirmware() }
         firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
     }
@@ -70,13 +68,6 @@ class TagSettingsViewModel(
             return UiText.StringResource(R.string.firmware_very_old)
         }
         return firmware?.let { UiText.DynamicString(firmware) }
-    }
-
-    private fun getCanCalibrateValue(): Boolean {
-        val ownedByUser = sensorOwnedByUserObserve.value ?: false
-        val loggedIn = userLoggedIn.value ?: false
-        val owner: String? = sensorSettings.value?.owner
-        return !loggedIn || ownedByUser || owner.isNullOrEmpty()
     }
 
     fun getTagInfo() {
