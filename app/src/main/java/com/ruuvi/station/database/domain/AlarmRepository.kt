@@ -31,6 +31,14 @@ class AlarmRepository {
         }
     }
 
+    fun getActiveByType(type: Int) : List<Alarm> =
+        SQLite
+            .select()
+            .from(Alarm::class.java)
+            .where(Alarm_Table.type.eq(type))
+            .and(Alarm_Table.enabled.eq(true))
+            .queryList()
+
     fun disableAlarm(alarm: Alarm) {
         alarm.enabled = false
         alarm.update()
