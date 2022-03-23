@@ -162,16 +162,17 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
+        viewModel.sensorOwnedOrOfflineObserve.observe(this) {
+            binding.firmwareLayout.isVisible = it
+            binding.calibrationHeaderTextView.isVisible = it
+            binding.calibrationLayout.isVisible = it
+        }
+
         viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(binding.toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        }
-
-        viewModel.canCalibrate.observe(this) {
-            binding.calibrationHeaderTextView.isVisible = it
-            binding.calibrationLayout.isVisible = it
         }
 
         viewModel.sensorSharedObserve.observe(this) { isShared ->
