@@ -33,7 +33,7 @@ class CustomXAxisRenderer(
         val range = abs(max - min).toDouble()
 
         if (labelCount == 0 || range <=0) {
-            mAxis.mEntries = floatArrayOf()
+            mAxis.mEntries = doubleArrayOf()
             mAxis.mCenteredEntries = floatArrayOf()
             mAxis.mEntryCount = 0
         }
@@ -42,6 +42,7 @@ class CustomXAxisRenderer(
         val interval = getClosestPredefinedInterval(rawInterval)
 
         val timeZoneOffset = if (interval > 10800000) TimeZone.getDefault().rawOffset else 0
+        Timber.d("computeAxisValues timeZoneOffset = $timeZoneOffset")
 
         var firstPoint = ((from + min).toLong() / interval) * interval - from - timeZoneOffset - 2 * interval
         var lastPoint =  ((from + max).toLong() / interval) * interval - from - timeZoneOffset + 2 * interval
@@ -61,11 +62,11 @@ class CustomXAxisRenderer(
         }
 
         mAxis.mEntryCount = numberOfPoints
-        mAxis.mEntries = FloatArray(numberOfPoints)
+        mAxis.mEntries = DoubleArray(numberOfPoints)
 
         for ((i, value) in ((firstPoint..lastPoint) step interval).withIndex()) {
-            mAxis.mEntries[i] = value.toFloat()
-            Timber.d("computeAxisValues Axis value: $value")
+            mAxis.mEntries[i] = value.toDouble()
+            Timber.d("computeAxisValues Axis value: ${from + value}")
         }
     }
 

@@ -210,7 +210,7 @@ class GraphView (
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+            override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
                 val timeText = getTimeInstance(DateFormat.SHORT).format(date)
 
@@ -317,7 +317,7 @@ class GraphView (
     }
 
     class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
-        override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+        override fun getFormattedValue(value: Double, p1: AxisBase?): String {
             return formatPattern.format(value)
         }
     }
