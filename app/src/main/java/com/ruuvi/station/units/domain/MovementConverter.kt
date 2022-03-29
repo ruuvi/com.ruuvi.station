@@ -1,8 +1,15 @@
 package com.ruuvi.station.units.domain
 
-class MovementConverter() {
+import android.content.Context
+import com.ruuvi.station.R
+
+class MovementConverter(val context: Context) {
     fun getMovementString(movement: Int?): String {
-        return movement?.toString() ?: NO_VALUE_AVAILABLE
+        return if (movement != null) {
+            "$movement ${context.getText(R.string.movements)}"
+        } else {
+            NO_VALUE_AVAILABLE
+        }
     }
 
     companion object {

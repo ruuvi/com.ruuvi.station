@@ -235,7 +235,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
             tagHumidityTextView.text = tag.humidityString
             tagPressureTextView.text = tag.pressureString
-            tagMovementTextView.text = tag.movementCounter.toString()
+            tagMovementTextView.text = tag.movementCounterString
             tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
             val unit = viewModel.getTemperatureUnitString()
