@@ -39,7 +39,7 @@ class RuuviTagAdapter(
             binding.temperature.text = it.temperatureString
             binding.humidity.text = it.humidityString
             binding.pressure.text = it.pressureString
-            binding.movement.text = it.movementCounter.toString()
+            binding.movement.text =   it.movementCounterString
         }
 
         val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight

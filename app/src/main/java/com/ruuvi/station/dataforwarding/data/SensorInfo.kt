@@ -22,7 +22,7 @@ data class SensorInfo(
     var updateAt: Date? = null,
     var dataFormat: Int = 0,
     var txPower: Double = 0.0,
-    var movementCounter: Int = 0,
+    var movementCounter: Int? = null,
     var measurementSequenceNumber: Int = 0,
     var createDate: Date? = null,
     var connectable: Boolean = false
