@@ -154,7 +154,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeSync() {
-        viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.syncStatusObserve.observe(viewLifecycleOwner) {
             with(binding.graphsContent) {
                 when (it.syncProgress) {
                     SyncProgress.STILL -> {
@@ -212,7 +212,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
                 gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
             }
-        })
+        }
     }
 
     private fun observeTagReadings() {
@@ -228,6 +228,10 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun updateTagData(tag: RuuviTag) {
         with(binding) {
             Timber.d("updateTagData for ${tag.id}")
+            tagHumidityLayout.isVisible = tag.humidity != null
+            tagPressureLayout.isVisible = tag.pressure != null
+            tagMovementLayout.isVisible = tag.movementCounter != null
+
             tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
             tagHumidityTextView.text = tag.humidityString
             tagPressureTextView.text = tag.pressureString
