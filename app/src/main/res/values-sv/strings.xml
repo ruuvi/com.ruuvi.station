@@ -111,6 +111,9 @@
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång</string>
     <string name="dashboard_empty">Översikt vyn är tom</string>
     <string name="data_format">Dataformat</string>
+    <string name="data_forwarding_background_location_message_bloked">Aktivera platsbehörighet i Inställningar för att inkludera koordinater</string>
+    <string name="data_forwarding_background_location_message_first">Den här funktionen kräver platsbehörighet. För att inkludera dina platskoordinater, välj om du vill ha exakt eller ungefärlig plats och tillåt åtkomst medan du använder appen när du uppmanas till det i nästa dialogruta.</string>
+    <string name="data_forwarding_background_location_message_second">För att kunna inkludera platskoordinater när appen körs i bakgrunden, låt appen använda din plats \'hela tiden\' när du uppmanas till det i nästa dialogruta.</string>
     <string name="data_forwarding_disabled">Inaktiverad</string>
     <string name="data_forwarding_location_enable">Skicka även platskoordinater för denna enhet</string>
     <string name="data_forwarding_url">Proxy URL</string>
@@ -138,6 +141,7 @@
     <string name="file_not_supported">Filformatet stöds inte</string>
     <string name="firmware">PROGRAMVARA</string>
     <string name="firmware_update">Uppdatera</string>
+    <string name="firmware_very_old">Väldigt gammal</string>
     <string name="gallery">Galleri</string>
     <string name="gateway_test_exception">Fel uppstod. Är adressen korrekt?</string>
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
@@ -212,6 +216,7 @@
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas</string>
+    <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
@@ -365,6 +370,7 @@
     <string name="welcome_text_3">Ställ in alarm och få notiser om dem</string>
     <string name="welcome_text_4">Skicka den information som samlas in av applikationen till en extern server</string>
     <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten</string>
+    <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
     <string name="widgets_loading">laddar...</string>
     <string name="widgets_missing_sensors">Kan du inte se alla dina sensorer i listan? Se till att du har bekräftat ägandet av alla dina sensorer i applikationen och att de är inom räckhåll för Ruuvi Gateway-routern.</string>
