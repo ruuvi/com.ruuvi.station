@@ -176,6 +176,7 @@ class GraphView (
         set.circleRadius = 1f
         chart.setXAxisRenderer(
             CustomXAxisRenderer(
+                from,
                 chart.viewPortHandler,
                 chart.xAxis,
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
@@ -196,7 +197,7 @@ class GraphView (
         chart.description.textSize = context.resources.getDimension(R.dimen.graph_description_size)
         chart.dragDecelerationFrictionCoef = 0.8f
         chart.setNoDataTextColor(Color.WHITE)
-        chart.viewPortHandler.setMaximumScaleX(20000f)
+        chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
         try {
             chart.description.typeface = ResourcesCompat.getFont(context, R.font.montserrat)
@@ -209,7 +210,7 @@ class GraphView (
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+            override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
                 val timeText = getTimeInstance(DateFormat.SHORT).format(date)
 
@@ -316,7 +317,7 @@ class GraphView (
     }
 
     class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
-        override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+        override fun getFormattedValue(value: Double, p1: AxisBase?): String {
             return formatPattern.format(value)
         }
     }

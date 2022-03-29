@@ -50,6 +50,10 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
                 }
             }
         }
+
+        viewModel.claimInProgress.observe(this) {
+            binding.claimButton.isEnabled = !it
+        }
     }
 
     private fun setupUI() {

@@ -26,6 +26,7 @@
     <string name="alert_subtitle_on">Warnung bei weniger als %1$,d oder mehr als %2$,d</string>
     <string name="alerts">WARNUNGEN</string>
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
+    <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_image">HINTERGRUND BILD</string>
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
@@ -116,6 +117,7 @@
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">FIRMWARE</string>
     <string name="firmware_update">Aktualisiere</string>
+    <string name="firmware_very_old">Sehr alt</string>
     <string name="gallery">Galerie</string>
     <string name="gateway_test_exception">Nein, es hat nicht funktioniert. Ist die URL korrekt?</string>
     <string name="gateway_test_fail">Nein, es hat nicht funktioniert. Antwortcode: %1$d</string>

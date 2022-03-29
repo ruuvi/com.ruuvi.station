@@ -4,8 +4,10 @@ import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.widgets.domain.WidgetsService
@@ -18,7 +20,8 @@ class FirebaseInteractor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val preferences: PreferencesRepository,
     private val tagRepository: TagRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val alarmRepository: AlarmRepository
 ) {
     fun saveUserProperties() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -99,6 +102,8 @@ class FirebaseInteractor(
                 firebaseAnalytics.setUserProperty(USE_DF4, ownedSensors.count { it.dataFormat == 4 }.toString())
                 firebaseAnalytics.setUserProperty(USE_DF5, ownedSensors.count { it.dataFormat == 5 }.toString())
 
+                registerAlarmStats()
+
                 val useSimpleWidget = WidgetsService.getSimpleWidgetsIds(context).isNotEmpty()
                 Timber.d("useSimpleWidget $useSimpleWidget")
                 firebaseAnalytics.setUserProperty(USE_SIMPLE_WIDGET, useSimpleWidget.toString())
@@ -106,6 +111,20 @@ class FirebaseInteractor(
                 Timber.e(e)
             }
         }
+    }
+
+    private fun registerAlarmStats() {
+        val temperatureAlarms = alarmRepository.getActiveByType(Alarm.TEMPERATURE)
+        val humidityAlarms = alarmRepository.getActiveByType(Alarm.HUMIDITY)
+        val pressureAlarms = alarmRepository.getActiveByType(Alarm.PRESSURE)
+        val rssiAlarms = alarmRepository.getActiveByType(Alarm.RSSI)
+        val movementAlarms = alarmRepository.getActiveByType(Alarm.MOVEMENT)
+
+        firebaseAnalytics.setUserProperty(ALERT_TEMPERATURE, temperatureAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_HUMIDITY, humidityAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_PRESSURE, pressureAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_RSSI, rssiAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_MOVEMENT, movementAlarms.count().toString())
     }
 
     fun logSignIn() {
@@ -164,6 +183,11 @@ class FirebaseInteractor(
         const val USE_DF4 = "use_df4"
         const val USE_DF5 = "use_df5"
         const val USE_SIMPLE_WIDGET = "use_simple_widget"
+        const val ALERT_TEMPERATURE = "alert_temperature"
+        const val ALERT_HUMIDITY = "alert_humidity"
+        const val ALERT_PRESSURE = "alert_pressure"
+        const val ALERT_RSSI = "alert_rssi"
+        const val ALERT_MOVEMENT = "alert_movement"
 
         const val SENSORS_ADDED = "sensors_added"
         const val SENSORS_SEEN = "sensors_seen"
