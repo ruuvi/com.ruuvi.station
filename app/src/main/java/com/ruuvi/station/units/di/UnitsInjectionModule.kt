@@ -6,7 +6,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
-import kotlin.math.sin
 
 object UnitsInjectionModule {
     val module = Kodein.Module(UnitsInjectionModule.javaClass.name) {
@@ -16,7 +15,7 @@ object UnitsInjectionModule {
         }
 
         bind<MovementConverter>() with singleton {
-            MovementConverter()
+            MovementConverter(instance())
         }
     }
 }
