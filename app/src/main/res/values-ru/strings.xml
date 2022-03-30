@@ -190,7 +190,8 @@
     <string name="menu_about_help">О Приложении</string>
     <string name="menu_add_new_sensor">Добавить Сенсор</string>
     <string name="menu_app_settings">Настройки</string>
-    <string name="menu_get_more_sensors">Больше Сенсоров</string>
+    <string name="menu_buy_gateway">Купить Ruuvi Gateway</string>
+    <string name="menu_buy_sensors">Купить датчики Ruuvi</string>
     <string name="menu_send_feedback">Отправить Отзыв</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
