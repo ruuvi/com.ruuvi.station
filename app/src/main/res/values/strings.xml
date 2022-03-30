@@ -191,7 +191,8 @@
     <string name="menu_about_help">About / Help</string>
     <string name="menu_add_new_sensor">Add a New Sensor</string>
     <string name="menu_app_settings">App Settings</string>
-    <string name="menu_get_more_sensors">Get More Sensors</string>
+    <string name="menu_buy_gateway">Buy Ruuvi Gateway</string>
+    <string name="menu_buy_sensors">Buy Ruuvi Sensors</string>
     <string name="menu_send_feedback">Send Feedback</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
