@@ -228,10 +228,11 @@
     <string name="permission_location_needed_api31">Please allow to discover nearby devices in Settings to see sensors.</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
-    <string name="prepare_your_sensor_instructions_2">2. Set the sensor to updating mode</string>
-    <string name="prepare_your_sensor_instructions_3">If your sensor has two buttons, press the R button while also pressing the B button</string>
-    <string name="prepare_your_sensor_instructions_4">If your sensor has one button, keep the button pressed for ten seconds</string>
-    <string name="prepare_your_sensor_instructions_5">3. When successfully completed you will see a continuous red light</string>
+    <string name="prepare_your_sensor_instructions_2">2. Locate small round black buttons on white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button with no label.</string>
+    <string name="prepare_your_sensor_instructions_3">3. Set the sensor to updating mode:</string>
+    <string name="prepare_your_sensor_instructions_4">3.1. If your sensor has 2 buttons: keep “B” button pressed while tapping button “R” momentarily. Release button “B”.</string>
+    <string name="prepare_your_sensor_instructions_5">3.2. If your sensor has single button: keep button pressed for 10 seconds.</string>
+    <string name="prepare_your_sensor_instructions_6">4. If set successfully, you will see solid red light lit on circuit board and button in app changes to “Start the update”.</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
