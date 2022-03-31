@@ -227,10 +227,6 @@
     <string name="permission_location_needed_api31">Разрешите доступ к устройствам поблизости, чтобы увидеть датчики.</string>
     <string name="prepare_your_sensor">Подготовьте ваш сенсор</string>
     <string name="prepare_your_sensor_instructions_1">1. Откройте крышку вашего сенсора Ruuvi</string>
-    <string name="prepare_your_sensor_instructions_2">2. Переведите сенсор в режим обновления</string>
-    <string name="prepare_your_sensor_instructions_3">Если вы видите две кнопки на сенсоре, зажмите кнопку B и после коротко нажмите кнопку R</string>
-    <string name="prepare_your_sensor_instructions_4">Если вы видите только одну кнопку на сенсоре, зажмите кнопку на десять секунд</string>
-    <string name="prepare_your_sensor_instructions_5">3. Если все получилось, вы увидите непрерывный красный цвет индикатора</string>
     <string name="press_to_add">Нет добавленных датчиков,\nнажмите чтобы добавить</string>
     <string name="pressure">Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>

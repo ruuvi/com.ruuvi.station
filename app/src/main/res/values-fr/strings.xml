@@ -225,10 +225,6 @@
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
     <string name="prepare_your_sensor">Configuration de l\'appareil pour la mise à jour</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrir le boitier du capteur Ruuvi</string>
-    <string name="prepare_your_sensor_instructions_2">2. Configuration de l\'appareil pour la mise à jour</string>
-    <string name="prepare_your_sensor_instructions_3">Sur un appareil à deux boutons, enfoncez le bouton B, tout en le gardant enfoncé, appuyez sur le bouton R</string>
-    <string name="prepare_your_sensor_instructions_4">Si l\'appareil n\'a qu\'un seul bouton, maintenez le enfoncé pendant 10 secondes</string>
-    <string name="prepare_your_sensor_instructions_5">3. Une led rouge s\'allume lorsque l\'appareil est configuré</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
     <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
