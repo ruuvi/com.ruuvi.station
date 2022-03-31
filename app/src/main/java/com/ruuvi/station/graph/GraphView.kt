@@ -186,8 +186,7 @@ class GraphView (
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.xAxis.setLabelCount(6, false)
-        chart.axisLeft.setLabelCount(5, false)
+        setLabelCount(chart)
 
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
@@ -222,6 +221,13 @@ class GraphView (
         }
         chart.notifyDataSetChanged()
         chart.invalidate()
+    }
+
+    private fun setLabelCount(chart: LineChart) {
+        val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
+        val labelCount = if (timeText.length > 5) 5 else 6
+        chart.xAxis.setLabelCount(labelCount, false)
+        chart.axisLeft.setLabelCount(6, false)
     }
 
     /**
