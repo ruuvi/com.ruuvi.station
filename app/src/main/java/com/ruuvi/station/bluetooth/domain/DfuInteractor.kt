@@ -48,14 +48,15 @@ class DfuInteractor(val context: Context) {
 
         override fun onProgressChanged(
             p0: String,
-            p1: Int,
+            percent: Int,
             p2: Float,
             p3: Float,
-            p4: Int,
-            p5: Int
+            currentPart: Int,
+            partsTotal: Int
         ) {
-            Timber.d("onProgressChanged $p0, $p1, $p2, $p3, $p4, $p5")
-            statusCallback?.invoke(DfuUpdateStatus.Progress(p1))
+            Timber.d("onProgressChanged $p0, $percent, $p2, $p3, $currentPart, $partsTotal")
+            val progress = (percent + (100 * currentPart - 100)).toDouble()/(100 * partsTotal) * 100
+            statusCallback?.invoke(DfuUpdateStatus.Progress(progress.toInt()))
         }
 
         override fun onFirmwareValidating(p0: String) {
