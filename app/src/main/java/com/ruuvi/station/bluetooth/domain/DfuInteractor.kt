@@ -15,14 +15,14 @@ class DfuInteractor(val context: Context) {
     fun startDfuUpdate(sensorId: String, fwFile: File, status: (DfuUpdateStatus)->Unit) {
         statusCallback = status
 
-        val initiator = DfuServiceInitiator(sensorId)
+        val dfuServiceInitiator = DfuServiceInitiator(sensorId)
             .setKeepBond(true)
+            .setZip(fwFile.absolutePath)
+            .setDisableNotification(true)
+            .setForeground(false)
+            .setNumberOfRetries(2)
 
-        initiator.setZip(fwFile.absolutePath)
-        initiator.setDisableNotification(true)
-        initiator.setForeground(false)
-
-        val controller = initiator.start(context, DfuService::class.java)
+        val controller = dfuServiceInitiator.start(context, DfuService::class.java)
     }
 
     val dfuProgressListener = object : DfuProgressListener {
