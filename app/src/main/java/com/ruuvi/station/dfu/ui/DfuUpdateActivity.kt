@@ -146,7 +146,7 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
             painter = painterResource(id = R.drawable.ruuvitag_button_location),
             contentDescription = "",
             modifier = Modifier
-                .width(screenWidth / 2)
+                .width(screenWidth * 4 / 5)
                 .padding(top = 16.dp)
         )
     }
