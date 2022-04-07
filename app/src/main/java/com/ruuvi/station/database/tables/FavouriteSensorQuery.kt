@@ -67,7 +67,7 @@ data class FavouriteSensorQuery(
     @Column
     var txPower: Double = 0.0,
     @Column
-    var movementCounter: Int = 0,
+    var movementCounter: Int? = null,
     @Column
     var measurementSequenceNumber: Int = 0,
     @Column

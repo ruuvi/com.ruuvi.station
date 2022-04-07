@@ -190,7 +190,6 @@
     <string name="menu_about_help">Om / Hjälp</string>
     <string name="menu_add_new_sensor">Lägg till en ny Sensor</string>
     <string name="menu_app_settings">App Inställningar</string>
-    <string name="menu_get_more_sensors">Köp fler Sensorer</string>
     <string name="menu_send_feedback">Skicka Feedback</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
@@ -226,10 +225,6 @@
     <string name="permission_location_needed_api31">Tillåt att enheter i närheten visas i Inställningar.</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
-    <string name="prepare_your_sensor_instructions_2">2. Lägg sensorn i uppdateringsläge</string>
-    <string name="prepare_your_sensor_instructions_3">Om din sensor har två knappar, tryck på R-knappen medan du håller ned B-knappen</string>
-    <string name="prepare_your_sensor_instructions_4">Om din sensor har en knapp, håll knappen intryckt i tio sekunder</string>
-    <string name="prepare_your_sensor_instructions_5">3. När sensor är i uppdateringsläge så lyser den röda lysdioden lyser</string>
     <string name="press_to_add">Inga sensorer har lags till,\ntryck här för att lägga till sensorer</string>
     <string name="pressure">Lufttryck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>

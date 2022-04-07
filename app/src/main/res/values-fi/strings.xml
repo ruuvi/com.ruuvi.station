@@ -189,7 +189,8 @@
     <string name="menu_about_help">Tietoa / Apua</string>
     <string name="menu_add_new_sensor">Lisää uusi anturi</string>
     <string name="menu_app_settings">Asetukset</string>
-    <string name="menu_get_more_sensors">Osta lisää antureita</string>
+    <string name="menu_buy_gateway">Osta Ruuvi Gateway</string>
+    <string name="menu_buy_sensors">Osta Ruuvi-antureita</string>
     <string name="menu_send_feedback">Lähetä palautetta</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
@@ -224,11 +225,12 @@
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
-    <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-laitteen suojakotelo</string>
-    <string name="prepare_your_sensor_instructions_2">2. Aseta anturi päivitystilaan</string>
-    <string name="prepare_your_sensor_instructions_3">Aseta kaksipainikkeinen anturi päivitystilaan pitämällä painiketta B alaspainettuna ja painamalla samalla nollauspainiketta R</string>
-    <string name="prepare_your_sensor_instructions_4">Pidä painiketta alaspainettuna 10 sekunnin ajan, mikäli laitteessa on vain yksi painike</string>
-    <string name="prepare_your_sensor_instructions_5">3. Laite on päivitystilassa punaisen LED-valon ollessa aktivoituna</string>
+    <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
+    <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
+    <string name="prepare_your_sensor_instructions_3">3. Aseta anturi päivitystilaan:</string>
+    <string name="prepare_your_sensor_instructions_4">3.1. Anturissasi on kaksi painiketta: pidä painike “B” alaspainettuna ja napauta samalla painiketta “R”. Vapauta painike “B”.</string>
+    <string name="prepare_your_sensor_instructions_5">3.2. Anturissasi on yksi painike: pidä painiketta alaspainettuna 10 sekunnin ajan.</string>
+    <string name="prepare_your_sensor_instructions_6">4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
     <string name="pressure">Paine</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>

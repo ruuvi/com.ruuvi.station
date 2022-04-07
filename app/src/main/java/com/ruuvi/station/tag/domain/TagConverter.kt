@@ -1,14 +1,14 @@
 package com.ruuvi.station.tag.domain
 
-import android.content.Context
 import com.ruuvi.station.database.tables.FavouriteSensorQuery
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 
 class TagConverter(
-    private val context: Context,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val movementConverter: MovementConverter
 ) {
 
     fun fromDatabase(entity: RuuviTagEntity, sensorSettings: SensorSettings): RuuviTag =
@@ -25,6 +25,7 @@ class TagConverter(
             temperatureString = unitsConverter.getTemperatureString(entity.temperature),
             humidityString = unitsConverter.getHumidityString(entity.humidity, entity.temperature),
             pressureString = unitsConverter.getPressureString(entity.pressure),
+            movementCounterString = movementConverter.getMovementString(entity.movementCounter),
             defaultBackground = sensorSettings.defaultBackground,
             userBackground = sensorSettings.userBackground,
             dataFormat = entity.dataFormat,
@@ -49,6 +50,7 @@ class TagConverter(
             temperatureString = unitsConverter.getTemperatureString(entity.temperature),
             humidityString = unitsConverter.getHumidityString(entity.humidity, entity.temperature),
             pressureString = unitsConverter.getPressureString(entity.pressure),
+            movementCounterString = movementConverter.getMovementString(entity.movementCounter),
             defaultBackground = entity.defaultBackground,
             userBackground = entity.userBackground,
             dataFormat = entity.dataFormat,

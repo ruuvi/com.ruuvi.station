@@ -388,6 +388,10 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
+        binding.alarmHumidity.isVisible = tag.humidity != null
+        binding.alarmPressure.isVisible = tag.pressure != null
+        binding.alarmMovement.isVisible = tag.movementCounter != null
+
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
             binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))

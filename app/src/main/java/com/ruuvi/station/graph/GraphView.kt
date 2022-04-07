@@ -29,6 +29,7 @@ import com.ruuvi.station.units.model.PressureUnit
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
+import java.text.DecimalFormat
 import java.util.*
 
 class GraphView (
@@ -146,15 +147,15 @@ class GraphView (
             humidChart = view.findViewById(R.id.humidChart)
             pressureChart = view.findViewById(R.id.pressureChart)
 
-            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
             tempChart.axisLeft.granularity = 0.01f
-            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
             humidChart.axisLeft.granularity = 0.01f
             if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
-                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.0f")
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
                 pressureChart.axisLeft.granularity = 1f
             } else {
-                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
                 pressureChart.axisLeft.granularity = 0.01f
             }
 
@@ -324,7 +325,8 @@ class GraphView (
 
     class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
-            return formatPattern.format(value)
+            val decimalFormat = DecimalFormat(formatPattern)
+            return decimalFormat.format(value)
         }
     }
 }

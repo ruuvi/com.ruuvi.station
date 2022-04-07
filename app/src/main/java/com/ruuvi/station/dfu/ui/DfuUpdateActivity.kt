@@ -7,8 +7,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -90,11 +91,13 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
         val activity = LocalContext.current as Activity
 
         // A surface container using the 'background' color from the theme
-        Surface(color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()) {
-            Column {
+        Surface(
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column (modifier = Modifier.verticalScroll(rememberScrollState()))
+            {
                 MyTopAppBar(activity.title.toString())
                 when (stage) {
                     DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(viewModel)
@@ -132,21 +135,43 @@ fun ErrorScreen(viewModel: DfuUpdateViewModel) {
 @Composable
 fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
     val deviceDiscovered by viewModel.deviceDiscovered.observeAsState()
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ruuvitag_button_location),
+            contentDescription = "",
+            modifier = Modifier
+                .width(screenWidth * 4 / 5)
+                .padding(top = 16.dp)
+        )
+    }
+
     HeaderText(text = stringResource(id = R.string.prepare_your_sensor))
     RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_1))
     RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_2))
     RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_3))
     RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_4))
     RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_5))
+    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_6))
 
     val buttonCaption = if (deviceDiscovered == true) {
         stringResource(id = R.string.start_the_update)
     } else {
         stringResource(id = R.string.searching_for_sensor)
     }
-    Row(horizontalArrangement = Arrangement.Center,
+    Row(
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    )
+    {
         RuuviButton(text = buttonCaption, deviceDiscovered == true, deviceDiscovered != true) {
             viewModel.startUpdateProcess()
         }

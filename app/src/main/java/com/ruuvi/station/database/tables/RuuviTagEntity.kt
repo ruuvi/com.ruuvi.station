@@ -48,7 +48,7 @@ data class RuuviTagEntity(
     @Column
     var txPower: Double = 0.0,
     @Column
-    var movementCounter: Int = 0,
+    var movementCounter: Int? = null,
     @Column
     var measurementSequenceNumber: Int = 0,
     @Column
@@ -67,7 +67,7 @@ data class RuuviTagEntity(
         voltage = tag.voltage ?: 0.0,
         dataFormat = tag.dataFormat ?: 0,
         txPower = tag.txPower ?: 0.0,
-        movementCounter = tag.movementCounter ?: 0,
+        movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber ?: 0,
         connectable = tag.connectable ?: false
     )

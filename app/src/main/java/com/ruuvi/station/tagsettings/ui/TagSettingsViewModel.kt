@@ -50,7 +50,7 @@ class TagSettingsViewModel(
     }
 
     val sensorOwnedOrOfflineObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
-        it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
+        it?.networkSensor == false || it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
     }
 
     val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()

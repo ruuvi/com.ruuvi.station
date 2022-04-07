@@ -166,7 +166,6 @@
     <string name="menu_about_help">Über / Hilfe</string>
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
     <string name="menu_app_settings">App Einstellungen</string>
-    <string name="menu_get_more_sensors">Mehr Sensoren kaufen</string>
     <string name="menu_send_feedback">Feedback schicken</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
@@ -198,10 +197,6 @@
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
     <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie die Abdeckung Ihres Ruuvi-Sensors</string>
-    <string name="prepare_your_sensor_instructions_2">2. Stellen Sie den Sensor in den Aktualisierungsmodus</string>
-    <string name="prepare_your_sensor_instructions_3">Wenn Ihr Sensor über zwei Tasten verfügt, drücken Sie die R-Taste und gleichzeitig die B-Taste</string>
-    <string name="prepare_your_sensor_instructions_4">Wenn Ihr Sensor über eine Taste verfügt, halten Sie die Taste zehn Sekunden lang gedrückt</string>
-    <string name="prepare_your_sensor_instructions_5">3. Nach erfolgreichem Abschluss sehen Sie ein kontinuierliches rotes Licht</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt, klicken Sie hier, um Sensoren hinzuzufügen</string>
     <string name="pressure">Druck</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
