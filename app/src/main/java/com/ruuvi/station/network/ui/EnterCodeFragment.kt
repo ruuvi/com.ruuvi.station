@@ -5,10 +5,11 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.ruuvi.station.R
 import com.ruuvi.station.databinding.FragmentEnterCodeBinding
 import com.ruuvi.station.startup.ui.StartupActivity
+import com.ruuvi.station.util.extensions.hideKeyboard
+import com.ruuvi.station.util.extensions.showKeyboard
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import com.ruuvi.station.util.extensions.viewModel
@@ -30,28 +31,35 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
     }
 
     private fun setupViewModel() {
-        viewModel.errorTextObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.errorTextObserve.observe(viewLifecycleOwner) {
             binding.errorTextView.text = it
-        })
+            if (it.isNotEmpty()) {
+                binding.codeEdit.clear()
+            }
+        }
 
-        viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.successfullyVerifiedObserve.observe(viewLifecycleOwner) {
             if (it) {
                 StartupActivity.start(requireContext(), false)
                 requireActivity().finish()
             }
-        })
+        }
 
-        viewModel.requestInProcessObserve.observe(viewLifecycleOwner, Observer { inProcess ->
-            binding.submitCodeButton.isEnabled = !inProcess
+        viewModel.requestInProcessObserve.observe(viewLifecycleOwner) { inProcess ->
+            binding.codeEdit.isEnabled = !inProcess
             binding.progressIndicator.isVisible = inProcess
             binding.syncingTextView.isVisible = inProcess
-        })
+        }
     }
 
     private fun setupUI() {
-        binding.submitCodeButton.setOnClickListener {
-            val code = binding.enterCodeManuallyEditText.text.toString()
+        binding.skipTextView.setOnClickListener {
+            requireActivity().finish()
+        }
+
+        binding.codeEdit.onCodeEntered = { code ->
             viewModel.verifyCode(code.trim())
+            requireActivity().hideKeyboard()
         }
 
         val token = arguments?.getString("token")
@@ -67,13 +75,11 @@ class EnterCodeFragment : Fragment(R.layout.fragment_enter_code), KodeinAware {
                 }
                 messageDialog.show()
             } else {
-                binding.enterCodeManuallyEditText.setText(token)
-                binding.submitCodeButton.performClick()
+                binding.codeEdit.handlePaste(token)
             }
-        }
-
-        binding.skipTextView.setOnClickListener {
-            requireActivity().finish()
+        } else {
+            binding.codeEdit.binding.code1EditText.requestFocus()
+            requireActivity().showKeyboard(binding.codeEdit.binding.code1EditText)
         }
     }
 
