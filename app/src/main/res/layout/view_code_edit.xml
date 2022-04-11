@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/code1EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="X"
+        style="@style/CodeEditStyle"
+        />
+    <EditText
+        android:id="@+id/code2EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="X"
+        style="@style/CodeEditStyle"
+        />
+    <EditText
+        android:id="@+id/code3EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="X"
+        style="@style/CodeEditStyle"
+        />
+    <EditText
+        android:id="@+id/code4EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="X"
+        style="@style/CodeEditStyle"
+        />
+</merge>
