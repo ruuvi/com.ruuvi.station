@@ -314,7 +314,7 @@
     <string name="share_sensor_title">Jaa anturi</string>
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="sign_in">Kirjaudu sisään</string>
-    <string name="sign_in_benefits_description">Sinut merkitään lähelläsi olevien Ruuvi-anturien omistajaksi sisäänkirjautumisen yhteydessä. Kaikki omistajan vaatimat anturit palautetaan verkosta sovelluksen uudelleenasennuksen yhteydessä.\n\nRuuvi Gatewayn avulla voit tarkastella omistamiasi antureita etänä ja jakaa niitä ystävillesi verkossa.</string>
+    <string name="sign_in_benefits_description">Hyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
     <string name="sign_in_check_email">Tarkasta aktivointikoodi saamastasi sähköpostista.</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
@@ -369,7 +369,6 @@
     <string name="welcome_text_1">Mittaa ympäristösi olosuhteita: lämpötilaa, ilmankosteutta ja ilmanpainetta</string>
     <string name="welcome_text_2">Tarkastele anturitietoja reaaliaikaisesti tai tutki laitteelle tallennettuja historiatietoja</string>
     <string name="welcome_text_3">Aseta hälytyksiä ja ilmoituksia haluamallasi tavalla</string>
-    <string name="welcome_text_4">Lähetä sovelluksen keräämät tiedot ulkoiselle palvelimelle</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
