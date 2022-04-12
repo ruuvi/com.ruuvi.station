@@ -5,11 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.databinding.ActivityWelcomeBinding
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import org.kodein.di.KodeinAware
@@ -37,6 +40,21 @@ class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAwar
             val welcomeAdapter = WelcomePager()
             welcomePager.adapter = welcomeAdapter
             welcomePager.offscreenPageLimit = 100 // just keep them all in memory
+            welcomePager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {}
+
+                override fun onPageSelected(position: Int) {
+                    if (position == 5 && !preferencesRepository.signedIn()) {
+                        showGetBackDialog()
+                    }
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {}
+            })
 
             tabLayout.setupWithViewPager(welcomePager)
 
@@ -44,7 +62,44 @@ class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAwar
                 preferencesRepository.setFirstStart(false)
                 StartupActivity.start(this@WelcomeActivity, true)
             }
+
+            signInButton.setDebouncedOnClickListener {
+                openSignInActivity()
+            }
+
+            detailsButton.setDebouncedOnClickListener {
+                showDetailsDialog()
+            }
+
+            if (preferencesRepository.signedIn()) welcomePager.currentItem = 5
         }
+    }
+
+    private fun showDetailsDialog() {
+        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        alertDialog.setTitle(getString(R.string.ruuvi_cloud))
+        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEUTRAL, getString(R.string.close)
+        ) { _, _ ->  }
+        alertDialog.show()
+    }
+
+    private fun showGetBackDialog() {
+        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        alertDialog.setTitle(getString(R.string.sign_in_skip_confirm_title))
+        alertDialog.setMessage(getString(R.string.sign_in_benefits_description))
+        alertDialog.setButton(
+            AlertDialog.BUTTON_POSITIVE, getString(R.string.sign_in_skip_confirm_yes)
+        ) { _, _ -> }
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE, getString(R.string.sign_in_skip_confirm_go_back)
+        ) { _, _ ->  openSignInActivity() }
+        alertDialog.show()
+    }
+
+    private fun openSignInActivity() {
+        SignInActivity.start(this@WelcomeActivity)
     }
 
     companion object{
@@ -65,7 +120,8 @@ class WelcomePager : PagerAdapter() {
             1 -> resId = R.id.welcomeLayout1
             2 -> resId = R.id.welcomeLayout2
             3 -> resId = R.id.welcomeLayout3
-            4 -> resId = R.id.welcomeLayout5
+            4 -> resId = R.id.welcomeLayout4
+            5 -> resId = R.id.welcomeLayout5
         }
 
         return container.findViewById(resId)
@@ -76,6 +132,6 @@ class WelcomePager : PagerAdapter() {
     }
 
     override fun getCount(): Int {
-        return 5
+        return 6
     }
 }
