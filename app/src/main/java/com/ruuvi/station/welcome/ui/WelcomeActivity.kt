@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.ruuvi.station.R
@@ -71,7 +72,14 @@ class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAwar
                 showDetailsDialog()
             }
 
-            if (preferencesRepository.signedIn()) welcomePager.currentItem = 5
+            if (preferencesRepository.signedIn()) {
+                welcomePager.currentItem = 5
+                welcome42TextView.setText(R.string.already_signed_in)
+                signInButton.isVisible = false
+            } else {
+                welcome42TextView.setText(R.string.welcome_text_4_2)
+                signInButton.isVisible = true
+            }
         }
     }
 
