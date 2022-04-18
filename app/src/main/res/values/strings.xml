@@ -35,6 +35,7 @@
     <string name="alerts">ALERTS</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
+    <string name="already_signed_in">Great! You already signed in!</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="back">Back</string>
     <string name="background_image">BACKGROUND\nIMAGE</string>
@@ -326,7 +327,7 @@
     <string name="sign_in_manual_code">Enter code manually</string>
     <string name="sign_in_request_code">Request a code</string>
     <string name="sign_in_skip_confirm_go_back">Go back</string>
-    <string name="sign_in_skip_confirm_title">Are you sure want to skip sign in?</string>
+    <string name="sign_in_skip_confirm_title">Are you sure you want to skip sign in?</string>
     <string name="sign_in_skip_confirm_yes">Yes, skip</string>
     <string name="sign_in_submit_button">Submit</string>
     <string name="sign_out">Sign out</string>
@@ -372,13 +373,13 @@
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>
-    <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you</string>
-    <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure</string>
-    <string name="welcome_text_2">Access data for each linked sensor in real time and explore history graphs</string>
-    <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit</string>
+    <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>
+    <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure.</string>
+    <string name="welcome_text_2">Access data for each linked sensor in real time and explore history graphs.</string>
+    <string name="welcome_text_3">Set alerts and get notified whenever your limits are hit.</string>
     <string name="welcome_text_4">Sign in to use the full potential of the app.</string>
     <string name="welcome_text_4_2">Claim ownership of your sensors with a free Ruuvi Cloud account.</string>
-    <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station</string>
+    <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station.</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>

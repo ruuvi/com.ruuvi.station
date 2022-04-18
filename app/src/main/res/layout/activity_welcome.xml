@@ -158,15 +158,15 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/welcomeImage4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="276dp"
+                android:layout_height="200dp"
                 android:layout_marginBottom="150dp"
                 android:padding="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_icon_intro_4" />
+                app:srcCompat="@drawable/ruuvi_cloud" />
 
             <TextView
                 android:id="@+id/welcome4TextView"

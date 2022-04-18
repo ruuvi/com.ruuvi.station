@@ -355,11 +355,11 @@
     <string name="version">Version: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>
-    <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig</string>
-    <string name="welcome_text_1">Mät förhållandena i din miljö: temperatur, luftfuktighet och lufttryck</string>
-    <string name="welcome_text_2">Visa sensordata i realtid eller granska historisk data som är lagrad på enheten</string>
-    <string name="welcome_text_3">Ställ in alarm och få notiser om dem</string>
-    <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten</string>
+    <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>
+    <string name="welcome_text_1">Mät förhållandena i din miljö: temperatur, luftfuktighet och lufttryck.</string>
+    <string name="welcome_text_2">Visa sensordata i realtid eller granska historisk data som är lagrad på enheten.</string>
+    <string name="welcome_text_3">Ställ in alarm och få notiser om dem.</string>
+    <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten.</string>
     <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
     <string name="widgets_loading">laddar...</string>

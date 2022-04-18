@@ -315,6 +315,9 @@
     <string name="sign_in_login_button">Войти</string>
     <string name="sign_in_manual_code">Ввести код вручную</string>
     <string name="sign_in_request_code">Запросить код</string>
+    <string name="sign_in_skip_confirm_go_back">Назад</string>
+    <string name="sign_in_skip_confirm_title">Точно хотите пропустить вход?</string>
+    <string name="sign_in_skip_confirm_yes">Пропустить</string>
     <string name="sign_in_submit_button">Отправить</string>
     <string name="sign_out">Выйти из сети</string>
     <string name="sign_out_confirm">После выхода все датчики, которые зарегистрованы на вас, будут удалены из приложения. Если вы повторно войдете с тем же email адресом, список ваших датчиков будет загружен из облака. \n\nВы хотите выйти из сети?</string>
@@ -358,11 +361,11 @@
     <string name="version">Версия: %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">В</string>
-    <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам</string>
-    <string name="welcome_text_1">Измеряйте параметры окружающей среды: температуру, влажность и атмосферное давление</string>
-    <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках</string>
-    <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление</string>
-    <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station</string>
+    <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>
+    <string name="welcome_text_1">Измеряйте параметры окружающей среды: температуру, влажность и атмосферное давление.</string>
+    <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках.</string>
+    <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление.</string>
+    <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>
     <string name="widgets_preview_sensor_value">69.50</string>
