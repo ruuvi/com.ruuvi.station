@@ -34,16 +34,14 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="24dp"
-        android:fontFamily="@font/montserrat_bold"
         android:lineSpacingExtra="16dp"
         android:singleLine="false"
         android:text="@string/sign_in_check_email"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        style="@style/WelcomeText"
+        />
 
     <com.ruuvi.station.network.ui.CodeEditView
         android:id="@+id/codeEdit"
@@ -61,9 +59,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="32dp"
         android:gravity="center"
-        android:fontFamily="@font/montserrat"
-        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/codeEdit"
+        style="@style/WelcomeText"
         tools:text="error text" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -72,11 +69,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/synchronizing"
-        android:fontFamily="@font/montserrat"
-        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/errorTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        style="@style/WelcomeText"
         />
 
     <ProgressBar
