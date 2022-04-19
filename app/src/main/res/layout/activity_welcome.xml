@@ -190,7 +190,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/signInButton"
                 android:layout_marginBottom="75dp"
-                android:text="@string/sign_in"
+                android:text="@string/sign_in_login_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/detailsButton"
                 app:layout_constraintStart_toStartOf="parent"
