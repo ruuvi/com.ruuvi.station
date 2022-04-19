@@ -2,9 +2,13 @@ package com.ruuvi.station.network.ui
 
 import android.content.Context
 import android.text.Editable
+import android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
 import android.text.TextWatcher
+import android.text.method.KeyListener
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import com.ruuvi.station.databinding.ViewCodeEditBinding
@@ -30,10 +34,16 @@ class CodeEditView @JvmOverloads
     var onCodeEntered: CodeEnteredHandler? = null
 
     private fun setupUI() {
-        binding.code1EditText.addTextChangedListener(CodeEditTextWatcher(binding.code2EditText))
-        binding.code2EditText.addTextChangedListener(CodeEditTextWatcher(binding.code3EditText))
-        binding.code3EditText.addTextChangedListener(CodeEditTextWatcher(binding.code4EditText))
-        binding.code4EditText.addTextChangedListener(CodeEditTextWatcher(null))
+        with(binding) {
+            code1EditText.addTextChangedListener(CodeEditTextWatcher(code2EditText))
+            code2EditText.addTextChangedListener(CodeEditTextWatcher(code3EditText))
+            code3EditText.addTextChangedListener(CodeEditTextWatcher(code4EditText))
+            code4EditText.addTextChangedListener(CodeEditTextWatcher(null))
+
+            code2EditText.keyListener = CodeEditKeyListener(code1EditText)
+            code3EditText.keyListener = CodeEditKeyListener(code2EditText)
+            code4EditText.keyListener = CodeEditKeyListener(code3EditText)
+        }
     }
 
     fun handlePaste(input: String) {
@@ -70,7 +80,7 @@ class CodeEditView @JvmOverloads
         }
     }
 
-    inner class CodeEditTextWatcher(val nextControl: EditText?) : TextWatcher {
+    inner class CodeEditTextWatcher(private val nextControl: EditText?) : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -95,5 +105,39 @@ class CodeEditView @JvmOverloads
                 }
             }
         }
+    }
+
+    inner class CodeEditKeyListener(private val nextControl: EditText) : KeyListener {
+        override fun getInputType(): Int {
+            return TYPE_TEXT_FLAG_CAP_CHARACTERS
+        }
+
+        override fun onKeyDown(
+            view: View?,
+            text: Editable?,
+            keyCode: Int,
+            event: KeyEvent?
+        ): Boolean {
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+                nextControl.text.clear()
+                nextControl.requestFocus()
+            }
+            return false
+        }
+
+        override fun onKeyUp(
+            view: View?,
+            text: Editable?,
+            keyCode: Int,
+            event: KeyEvent?
+        ): Boolean {
+            return false
+        }
+
+        override fun onKeyOther(view: View?, text: Editable?, event: KeyEvent?): Boolean {
+            return false
+        }
+
+        override fun clearMetaKeyState(view: View?, content: Editable?, states: Int) {}
     }
 }
