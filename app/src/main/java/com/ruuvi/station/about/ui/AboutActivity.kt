@@ -9,12 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
-import com.ruuvi.station.databinding.ActivityClaimSensorBinding
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -32,8 +31,21 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
         super.onCreate(savedInstanceState)
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
+        setupUI()
+        setupViewModel()
+    }
+
+    private fun setupViewModel() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.appStats.collect { appStats ->
+                showAppStats(appStats)
+            }
+        }
+    }
+
+    private fun setupUI() {
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_2021)
@@ -45,23 +57,15 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
             openText.movementMethod = LinkMovementMethod.getInstance()
             moreText.movementMethod = LinkMovementMethod.getInstance()
         }
-
-        lifecycleScope.launch {
-            viewModel.tagsSizesFlow.collect {
-                drawDebugInfo(it)
-            }
-        }
     }
 
-    private fun drawDebugInfo(sizes: Pair<Int, Int>?) {
-        val readingCount = viewModel.getHistoryLength()
+    private fun showAppStats(appStats: AppStats?) {
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
 
-        sizes?.let {
-            val addedTags = it.first
-            debugText += getString(R.string.help_seen_tags, addedTags + it.second) + "\n"
-            debugText += getString(R.string.help_added_tags, addedTags) + "\n"
-            debugText += getString(R.string.help_db_data_points, readingCount) + "\n"
+        appStats?.let {
+            debugText += getString(R.string.help_seen_tags, it.seenTags) + "\n"
+            debugText += getString(R.string.help_added_tags, it.favouriteTags) + "\n"
+            debugText += getString(R.string.help_db_data_points, it.measurementsCount) + "\n"
         }
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
