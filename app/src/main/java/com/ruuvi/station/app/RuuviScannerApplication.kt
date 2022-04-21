@@ -20,9 +20,6 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
-import com.ruuvi.station.util.extensions.diffGreaterThan
-import com.ruuvi.station.util.test.FakeScanResultsSender
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.conf.ConfigurableKodein
@@ -30,14 +27,11 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
-import java.util.*
 
-@ExperimentalCoroutinesApi
 class RuuviScannerApplication : Application(), KodeinAware {
     override val kodein = ConfigurableKodein()
 
     val defaultOnTagFoundListener: DefaultOnTagFoundListener by instance()
-    private val fakesSender: FakeScanResultsSender by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
     private val foreground: Foreground by instance()
     private val networkInteractor: RuuviNetworkInteractor by instance()
@@ -76,13 +70,12 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         setupDependencyInjection()
 
-        //Lingver.init(this, Locale(preferencesRepository.getLocale()))
-
         FlowManager.init(this)
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
             //turn on for debug if you don't have real ruuvi tag
+            //declare first: private val fakesSender: FakeScanResultsSender by instance()
             //fakesSender.startSendFakes()
         }
 
