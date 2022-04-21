@@ -7,23 +7,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.FragmentCalibrateBinding
 import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
-import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
 
 abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(contentLayoutId) {
     abstract val viewModel: ICalibrationViewModel
 
     lateinit var binding: FragmentCalibrateBinding
-
-    private var timer: Timer? = null
 
     abstract val calibrationType: CalibrationType
 
@@ -36,25 +33,12 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
         setupCalibrationMessage()
     }
 
-    override fun onResume() {
-        super.onResume()
-        timer = Timer("CalibrationTimer", false)
-        timer?.scheduleAtFixedRate(0, 500) {
-            viewModel.refreshSensorData()
-        }
-    }
-
     fun setupCalibrationMessage() {
         binding.calibrationInstructionsTextView.text = getString(R.string.calibration_description)
         binding.calibrationInstructionsTextView.makeWebLinks(
             requireContext(),
             Pair(getString(R.string.calibration_description_link), getString(R.string.calibration_description_link_url))
         )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        timer?.cancel()
     }
 
     fun setupUI() {
@@ -85,18 +69,20 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
     }
 
     fun setupViewModel() {
-        viewModel.calibrationInfoObserve.observe(viewLifecycleOwner) {info ->
-            with(binding) {
-                originalValueTextView.text = viewModel.getStringForValue(info.rawValue)
-                originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
-                correctedlValueTextView.text = viewModel.getStringForValue(info.calibratedValue)
-                correctedOffsetTextView.text = getString(R.string.calibration_offset, info.currentOffsetString)
+        lifecycleScope.launchWhenStarted {
+            viewModel.calibrationInfoFlow.collect { info ->
+                with(binding) {
+                    originalValueTextView.text = viewModel.getStringForValue(info.rawValue)
+                    originalUpdatedTextView.text = "(${info.updateAt?.describingTimeSince(requireContext())})"
+                    correctedlValueTextView.text = viewModel.getStringForValue(info.calibratedValue)
+                    correctedOffsetTextView.text = getString(R.string.calibration_offset, info.currentOffsetString)
 
-                correctedTitleTextView.isInvisible = !info.isCalibrated
-                correctedlValueTextView.isInvisible = !info.isCalibrated
-                correctedOffsetTextView.isInvisible = !info.isCalibrated
-                clearButton.isEnabled = info.isCalibrated
-                separatorView.isInvisible = !info.isCalibrated
+                    correctedTitleTextView.isInvisible = !info.isCalibrated
+                    correctedlValueTextView.isInvisible = !info.isCalibrated
+                    correctedOffsetTextView.isInvisible = !info.isCalibrated
+                    clearButton.isEnabled = info.isCalibrated
+                    separatorView.isInvisible = !info.isCalibrated
+                }
             }
         }
     }
