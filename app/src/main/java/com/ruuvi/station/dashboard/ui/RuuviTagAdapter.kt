@@ -15,14 +15,12 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.describingTimeSince
 
 class RuuviTagAdapter(
     private val activity: AppCompatActivity,
-    items: List<RuuviTag>,
-    private val converter: UnitsConverter
+    items: List<RuuviTag>
 ) : ArrayAdapter<RuuviTag>(activity, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
