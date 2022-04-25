@@ -14,13 +14,11 @@ import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.TimeUtils
 import com.ruuvi.station.util.test.FakeScanResultsSender
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
-@ExperimentalCoroutinesApi
 object BluetoothScannerInjectionModule {
 
     val module = Kodein.Module(BluetoothScannerInjectionModule.javaClass.name) {

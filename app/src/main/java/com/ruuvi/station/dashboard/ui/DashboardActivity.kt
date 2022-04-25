@@ -3,25 +3,18 @@ package com.ruuvi.station.dashboard.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.SuperscriptSpan
-import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -30,12 +23,11 @@ import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.util.extensions.*
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
-import java.util.*
 import kotlin.collections.MutableList
-import kotlin.concurrent.scheduleAtFixedRate
 
 class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
 
@@ -43,14 +35,13 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
 
     private val viewModel: DashboardActivityViewModel by viewModel()
 
-    private val runtimeBehavior: RuntimeBehavior by instance()
+    private lateinit var binding: ActivityDashboardBinding
+
     private var tags: MutableList<RuuviTag> = arrayListOf()
-    private lateinit var adapter: RuuviTagAdapter
-    private var getTagsTimer :Timer? = null
+    private val adapter: RuuviTagAdapter by lazy { RuuviTagAdapter(this@DashboardActivity, tags) }
     private var signedIn = false
     private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
-    private lateinit var binding: ActivityDashboardBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,31 +80,18 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getTagsTimer = Timer("DashboardActivityTimer", false)
-        getTagsTimer?.scheduleAtFixedRate(0, 1000) {
-            viewModel.updateTags()
-            viewModel.updateNetworkStatus()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        getTagsTimer?.cancel()
-    }
-
     private fun setupViewModel() {
-        viewModel.observeTags.observe(this) {
-            tags.clear()
-            tags.addAll(it)
-            binding.content.noTagsTextView.isVisible = tags.isEmpty()
-            adapter.notifyDataSetChanged()
+        lifecycleScope.launchWhenStarted {
+            viewModel.tagsFlow.collectLatest {
+                tags.clear()
+                tags.addAll(it)
+                binding.content.noTagsTextView.isVisible = tags.isEmpty()
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 
     private fun setupListView() {
-        adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
         binding.content.dashboardListView.adapter = adapter
         binding.content.dashboardListView.onItemClickListener = tagClick
     }

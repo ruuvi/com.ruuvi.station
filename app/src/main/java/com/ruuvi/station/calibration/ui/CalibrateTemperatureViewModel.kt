@@ -1,30 +1,25 @@
 package com.ruuvi.station.calibration.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.calibration.model.CalibrationInfo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class CalibrateTemperatureViewModel (
     val sensorId: String,
     val calibrationInteractor: CalibrationInteractor
 ) : ViewModel(), ICalibrationViewModel {
-    private val calibrationInfo = MutableLiveData<CalibrationInfo>()
-    override val calibrationInfoObserve: LiveData<CalibrationInfo> = calibrationInfo
-
-    override fun refreshSensorData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val data = calibrationInteractor.getTemperatureCalibrationInfo(sensorId)
-            withContext(Dispatchers.Main) {
-                calibrationInfo.value = data
+    override val calibrationInfoFlow: Flow<CalibrationInfo>
+        get() = flow {
+            while (true) {
+                val data = calibrationInteractor.getTemperatureCalibrationInfo(sensorId)
+                if (data != null) emit(data)
+                delay(500)
             }
-        }
-    }
+        }.flowOn(Dispatchers.IO)
 
     override fun getStringForValue(value: Double): String  = calibrationInteractor.getTemperatureString(value)
 

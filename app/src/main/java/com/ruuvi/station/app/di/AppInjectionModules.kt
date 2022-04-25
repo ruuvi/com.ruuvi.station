@@ -21,10 +21,8 @@ import com.ruuvi.station.tagdetails.di.TagDetailsInjectionModule
 import com.ruuvi.station.tagsettings.di.TagSettingsInjectionModule
 import com.ruuvi.station.units.di.UnitsInjectionModule
 import com.ruuvi.station.widgets.di.WidgetInjectionModule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Kodein
 
-@ExperimentalCoroutinesApi
 object AppInjectionModules {
     val module = Kodein.Module(AppInjectionModules.javaClass.name) {
         import(AppInjectionModule.module)
