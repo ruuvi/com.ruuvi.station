@@ -6,6 +6,7 @@ import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
 import com.ruuvi.station.dfu.data.ReleaseAssets
@@ -256,15 +257,7 @@ class DfuUpdateViewModel(
 
     private fun isLowBattery(): Boolean {
         val tagInfo = tagRepository.getTagById(sensorId)
-        if (tagInfo != null) {
-            return when {
-                tagInfo.temperature < -20 && tagInfo.voltage < 2 && tagInfo.voltage > 0 -> true
-                tagInfo.temperature < 0 && tagInfo.voltage < 2.3 && tagInfo.voltage > 0 -> true
-                tagInfo.temperature >= 0 && tagInfo.voltage < 2.5 && tagInfo.voltage > 0 -> true
-                else -> false
-            }
-        }
-        return false
+        return tagInfo?.isLowBattery() ?: false
     }
 
     private fun error(message: String?) {

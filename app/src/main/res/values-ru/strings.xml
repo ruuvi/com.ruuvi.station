@@ -43,8 +43,10 @@
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
     <string name="background_notification_scanning_every">Сканирование каждые</string>
     <string name="background_scanning">Фоновое сканирование</string>
+    <string name="battery_ok">Батарея OK</string>
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -247,6 +249,7 @@
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
+    <string name="replace_battery">Замените батарею!</string>
     <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>

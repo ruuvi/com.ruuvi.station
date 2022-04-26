@@ -9,6 +9,7 @@ import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -44,6 +45,10 @@ class TagSettingsViewModel(
 
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
+
+    val isLowBattery = Transformations.map(tagState) {
+        it?.isLowBattery() ?: false
+    }
 
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
         it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()

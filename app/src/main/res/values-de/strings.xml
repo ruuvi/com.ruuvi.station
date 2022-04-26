@@ -33,6 +33,7 @@
     <string name="background_notification_scanning_every">Alles Scannen</string>
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Kalibrieren</string>
     <string name="calibrated">Kalibriert: %1$s</string>
     <string name="calibration_clear_confirm">Kalibrierungseinstellungen löschen?</string>
