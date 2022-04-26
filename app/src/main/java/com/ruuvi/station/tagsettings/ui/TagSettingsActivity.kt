@@ -183,6 +183,16 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
+        viewModel.isLowBattery.observe(this) { lowBattery ->
+            if (lowBattery) {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
+                binding.batteryTextView.setTextColor(getColor(R.color.activeAlarm))
+            } else {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
+                binding.batteryTextView.setTextColor(getColor(R.color.black))
+            }
+        }
+
         viewModel.updateSensorFirmwareVersion()
     }
 

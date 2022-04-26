@@ -44,8 +44,10 @@
     <string name="background_notification_message">You can disable background scanning in Settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>
     <string name="background_scanning">Background scanning</string>
+    <string name="battery_ok">Battery OK</string>
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrated">Calibrated: %1$s</string>
     <string name="calibration_clear_confirm">Clear calibration settings?</string>
@@ -256,6 +258,7 @@
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you cannot access the sensor anymore.</string>
     <string name="remove_this_sensor">Remove this sensor</string>
     <string name="rename_sensor_message">Your sensors will be in alphabetical order.</string>
+    <string name="replace_battery">Replace battery!</string>
     <string name="rssi">Signal strength (RSSI)</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

@@ -44,8 +44,10 @@
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
     <string name="background_notification_scanning_every">Skannataan joka</string>
     <string name="background_scanning">Taustaskannaus</string>
+    <string name="battery_ok">Paristo OK</string>
     <string name="battery_voltage">Paristojännite</string>
     <string name="beta">beta</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Kalibroi</string>
     <string name="calibrated">Kalibroitu: %1$s</string>
     <string name="calibration_clear_confirm">Poista kalibrointiasetuset?</string>
@@ -254,6 +256,7 @@
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen lukuoikeus päättyy.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
+    <string name="replace_battery">Vaihda paristo!</string>
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

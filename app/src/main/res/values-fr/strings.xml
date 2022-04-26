@@ -45,6 +45,7 @@
     <string name="background_scanning">Balayage en arrière plan</string>
     <string name="battery_voltage">Tension de la pile</string>
     <string name="beta">beta</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Calibrer</string>
     <string name="calibrated">Calibré : %1$s</string>
     <string name="calibration_clear_confirm">Supprimer la calibration</string>

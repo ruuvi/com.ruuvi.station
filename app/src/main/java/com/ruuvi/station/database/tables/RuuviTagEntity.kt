@@ -118,3 +118,12 @@ data class RuuviTagEntity(
         pressureOffset = reading.pressureOffset
     }
 }
+
+fun RuuviTagEntity.isLowBattery(): Boolean {
+    return when {
+        this.temperature < -20 && this.voltage < 2 && this.voltage > 0 -> true
+        this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
+        this.temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
+        else -> false
+    }
+}
