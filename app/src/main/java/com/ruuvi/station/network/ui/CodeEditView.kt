@@ -2,7 +2,7 @@ package com.ruuvi.station.network.ui
 
 import android.content.Context
 import android.text.Editable
-import android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+import android.text.InputType.*
 import android.text.TextWatcher
 import android.text.method.KeyListener
 import android.util.AttributeSet
@@ -109,7 +109,7 @@ class CodeEditView @JvmOverloads
 
     inner class CodeEditKeyListener(private val nextControl: EditText) : KeyListener {
         override fun getInputType(): Int {
-            return TYPE_TEXT_FLAG_CAP_CHARACTERS
+            return TYPE_CLASS_TEXT or TYPE_TEXT_FLAG_CAP_CHARACTERS
         }
 
         override fun onKeyDown(
