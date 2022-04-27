@@ -114,6 +114,7 @@
     <string name="data_forwarding_background_location_message_second">Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin sovelluksen ollessa tausta-ajossa, anna oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>
     <string name="data_forwarding_location_enable">Lähetä myös tämän laitteen paikkatietokoordinaatit</string>
+    <string name="data_forwarding_during_sync_enable">Välitä mittaustiedot synkronoitaessa (beta)</string>
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>

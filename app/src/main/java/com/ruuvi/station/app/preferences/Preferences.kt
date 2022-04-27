@@ -91,6 +91,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_BACKEND_LOCATION, locationEnabled).apply()
         }
 
+    var dataForwardingDuringSyncEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BACKEND_FORWARDING_DURING_SYNC, false)
+        set(forwardingDuringSyncEnabled) {
+            sharedPreferences.edit().putBoolean(PREF_BACKEND_FORWARDING_DURING_SYNC, forwardingDuringSyncEnabled).apply()
+        }
+
     var deviceId: String
         get() = sharedPreferences.getString(PREF_DEVICE_ID, DEFAULT_DEVICE_ID) ?: DEFAULT_DEVICE_ID
         set(id) {
@@ -222,6 +228,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
         private const val PREF_BACKEND = "pref_backend"
         private const val PREF_BACKEND_LOCATION = "pref_backend_location"
+        private const val PREF_BACKEND_FORWARDING_DURING_SYNC = "pref_backend_forwarding_during_sync"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_DASHBOARD_ENABLED = "DASHBOARD_ENABLED_PREF"

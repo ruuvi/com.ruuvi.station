@@ -45,6 +45,13 @@ class PreferencesRepository(
         preferences.dataForwardingLocationEnabled = locationEnabled
     }
 
+    fun getDataForwardingDuringSyncEnabled(): Boolean =
+            preferences.dataForwardingDuringSyncEnabled
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        preferences.dataForwardingDuringSyncEnabled = forwardingDuringSyncEnabled
+    }
+
     fun getDeviceId(): String {
         var deviceId = preferences.deviceId
         if (deviceId.isEmpty()) {

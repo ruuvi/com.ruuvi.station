@@ -45,6 +45,7 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
         observeDeviceId()
         observeTestGatewayResult()
         observeLocationEnabled()
+        observeDataForwardingDuringSyncEnabled()
     }
 
     val requestLocationPermissionLauncher =
@@ -91,6 +92,10 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
                 if (isChecked) {
                     permissionsInteractor?.requestLocationPermissionApi31(requestLocationPermissionLauncher, requestBackgroundLocationPermission)
                 }
+            }
+
+            forwardingDuringSyncSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setDataForwardingDuringSyncEnabled(isChecked)
             }
 
             deviceIdEditText.addTextChangedListener(object : TextWatcher {
@@ -144,6 +149,14 @@ class AppSettingsGatewayFragment : Fragment(R.layout.fragment_app_settings_gatew
         lifecycleScope.launch {
             viewModel.observeDataForwardingLocationEnabled.collect { isEnabled ->
                 binding.locationSwitch.isChecked = isEnabled
+            }
+        }
+    }
+
+    private fun observeDataForwardingDuringSyncEnabled() {
+        lifecycleScope.launch {
+            viewModel.observeDataForwardingDuringSyncEnabled.collect { isEnabled ->
+                binding.forwardingDuringSyncSwitch.isChecked = isEnabled
             }
         }
     }

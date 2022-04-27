@@ -52,6 +52,13 @@ class AppSettingsInteractor(
         preferencesRepository.setDataForwardingLocationEnabled(locationEnabled)
     }
 
+    fun getDataForwardingDuringSyncEnabled():Boolean =
+        preferencesRepository.getDataForwardingDuringSyncEnabled()
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDurinSyncEnabled: Boolean) {
+        preferencesRepository.setDataForwardingDuringSyncEnabled(forwardingDurinSyncEnabled)
+    }
+
     fun getDeviceId(): String =
         preferencesRepository.getDeviceId()
 
