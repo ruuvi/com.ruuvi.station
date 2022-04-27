@@ -45,6 +45,7 @@
     <string name="background_scanning">Balayage en arrière plan</string>
     <string name="battery_voltage">Tension de la pile</string>
     <string name="beta">beta</string>
+    <string name="brackets_text">(%1$s)</string>
     <string name="calibrate">Calibrer</string>
     <string name="calibrated">Calibré : %1$s</string>
     <string name="calibration_clear_confirm">Supprimer la calibration</string>
@@ -181,7 +182,7 @@
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Dernière version du Ruuvi Firmware :</string>
     <string name="logged_in">Connecté :</string>
-    <string name="login_description">Profitez de tous les avantages du Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
+    <string name="login_description">Profitez de tous les avantages de Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
     <string name="login_to_ruuvi_network">Connexion \nRuuvi\nStation</string>
     <string name="mac_address">Adresse MAC</string>
     <string name="mac_copied">Adreesse MAC copiée dans le presse-papiers</string>
@@ -196,7 +197,7 @@
     <string name="minutes">Minutes</string>
     <string name="more_info">PLUS D\'INFOS</string>
     <string name="movement_counter">Compteur de mouvements</string>
-    <string name="movements">Mouvements</string>
+    <string name="movements">mouvements</string>
     <string name="name">NOM</string>
     <string name="navigation_drawer_close">Fermer le menu</string>
     <string name="navigation_drawer_open">Ouvrir le menu</string>
@@ -223,8 +224,6 @@
     <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
-    <string name="prepare_your_sensor">Configuration de l\'appareil pour la mise à jour</string>
-    <string name="prepare_your_sensor_instructions_1">1. Ouvrir le boitier du capteur Ruuvi</string>
     <string name="press_to_add">Pas de capteurs. Ajoutez-en en cliquant ici</string>
     <string name="pressure">Pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -249,7 +248,6 @@
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="s">s</string>
     <string name="scan">BALAYAGE EN COURS</string>
-    <string name="searching_for_sensor">Recherche de capteur</string>
     <string name="sec">sec</string>
     <string name="seconds">Secondes</string>
     <string name="select_picture">Choisissez une photo</string>
@@ -303,12 +301,12 @@
     <string name="share">Partager</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Le capteur est déjà partagé %1$,d/%2$,d</string>
-    <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mail; si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
+    <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
     <string name="share_sensor_send_button">Envoyer</string>
     <string name="share_sensor_title">Partager le capteur</string>
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
     <string name="sign_in">Connexion</string>
-    <string name="sign_in_benefits_description">Après la connexion, vous serez automatiquement propriétaire des RuuviTags à proximité. Les capteurs couplés seront réinitialisés si vous réinstallez l\'application.\n\ Avec un routeur Ruuvi Gateway vous pourrez contrôlez vos capteurs à distance et partager vos données avec vos amis.</string>
+    <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="sign_in_check_email">Le code d\'activation vous a été envoyé par mail.</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">Email envoyé</string>
@@ -323,7 +321,6 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
-    <string name="start_the_update">Commencer la mise à jour</string>
     <string name="start_update_process">Début de la mise à jour</string>
     <string name="successfully_claimed">Appropriation confirmée</string>
     <string name="successfully_shared">Capteur partagé avec succès</string>
@@ -359,12 +356,11 @@
     <string name="version">Version : %1$s</string>
     <string name="voltage_reading">%1$s %2$s</string>
     <string name="voltage_unit">V</string>
-    <string name="welcome_text_0">Découvrez l\'application Ruuvi Station</string>
-    <string name="welcome_text_1">Mesurer votre environnement : température, humidité, et pression de l\'air</string>
-    <string name="welcome_text_2">Vérifier les données en temps réels ou consultez les histogrammes</string>
-    <string name="welcome_text_3">Définir des alarmes et des notifications comme vous le souhaitez</string>
-    <string name="welcome_text_4">Exporter les données mesurées vers un autre support</string>
-    <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE</string>
+    <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>
+    <string name="welcome_text_1">Mesurer votre environnement : température, humidité, et pression de l\'air.</string>
+    <string name="welcome_text_2">Vérifier les données en temps réels ou consultez les histogrammes.</string>
+    <string name="welcome_text_3">Définir des alarmes et des notifications comme vous le souhaitez.</string>
+    <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE.</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur</string>
     <string name="widgets_loading">Chargement...</string>

@@ -24,7 +24,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
 
 class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
 
@@ -33,9 +32,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
     private val viewModel: AddTagActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()
     private val tags: ArrayList<RuuviTagEntity> = arrayListOf()
-    private var adapter: AddTagAdapter? = null
+    private val adapter: AddTagAdapter by lazy { AddTagAdapter(this, tags) }
     private lateinit var permissionsInteractor: PermissionsInteractor
-    private var timer :Timer? = null
     lateinit var binding: ActivityAddTagBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,21 +71,17 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
     }
 
     private fun setupViewmodel() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagsFlow.collect { ruuviTags ->
-
+        lifecycleScope.launchWhenStarted {
+            viewModel.sensorFlow.collect { ruuviTags ->
                 tags.clear()
                 tags.addAll(ruuviTags)
-
                 binding.content.noTagsFoundTextView.isVisible = tags.isEmpty()
-                adapter?.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
             }
         }
     }
 
     private fun setupUI() {
-        adapter = AddTagAdapter(this, tags)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.content.tagListView.adapter = adapter
@@ -102,22 +96,6 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
             viewModel.makeSensorFavorite(tag)
             TagSettingsActivity.startForResult(this, 1, tag.id)
         }
-
-        adapter?.notifyDataSetChanged()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        timer = Timer("AddTagActivityTimer", true)
-        timer?.scheduleAtFixedRate(0, 3000) {
-            viewModel.updateTags()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        timer?.cancel()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -128,7 +106,9 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+        permissionsInteractor.requestPermissions(
+            preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
+        )
     }
 
     companion object {

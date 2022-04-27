@@ -79,7 +79,6 @@ package="com.ruuvi.station">
 
     <activity
         android:name=".welcome.ui.WelcomeActivity"
-        android:noHistory="true"
         android:exported="false"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
@@ -195,18 +194,6 @@ package="com.ruuvi.station">
             <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
         </intent-filter>
     </receiver>
-
-<!--    <receiver-->
-<!--        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidget"-->
-<!--        android:exported="false">-->
-<!--        <intent-filter>-->
-<!--            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-<!--        </intent-filter>-->
-
-<!--        <meta-data-->
-<!--            android:name="android.appwidget.provider"-->
-<!--            android:resource="@xml/sensor_widget_info" />-->
-<!--    </receiver>-->
 
     <receiver
         android:name=".widgets.ui.simpleWidget.SimpleWidget"

@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.domain.CalibrationViewModelArgs
 import com.ruuvi.station.calibration.model.CalibrationType
-import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware

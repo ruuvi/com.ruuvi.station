@@ -10,7 +10,7 @@ class MacAddressUtils {
             val inputHex = mac.replace(":","")
             val incrementedValue = inputHex.toLong(16) + 1
             val list = Regex(MAC_VALUE_GROUPS_PATTERN).findAll(incrementedValue.toString(16)).map { it.value }
-            return list.joinToString(separator = ":", transform = { it.toUpperCase(Locale.ROOT) })
+            return list.joinToString(separator = ":", transform = { it.uppercase(Locale.ROOT) })
         }
 
         fun macIsValid(mac: String) = Regex(MAC_PATTERN).matches(mac)

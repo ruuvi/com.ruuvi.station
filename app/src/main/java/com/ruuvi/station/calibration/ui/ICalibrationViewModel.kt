@@ -1,13 +1,12 @@
 package com.ruuvi.station.calibration.ui
 
-import androidx.lifecycle.LiveData
 import com.ruuvi.station.calibration.model.CalibrationInfo
+import kotlinx.coroutines.flow.Flow
 
 interface ICalibrationViewModel {
-    val calibrationInfoObserve: LiveData<CalibrationInfo>
+    val calibrationInfoFlow: Flow<CalibrationInfo>
     fun getUnit(): String
-    fun calibrateTo(value: Double)
+    fun calibrateTo(targetValue: Double)
     fun clearCalibration()
     fun getStringForValue(value: Double): String
-    fun refreshSensorData()
 }

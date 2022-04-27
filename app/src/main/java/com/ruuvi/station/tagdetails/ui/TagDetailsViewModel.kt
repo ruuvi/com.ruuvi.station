@@ -50,7 +50,7 @@ class TagDetailsViewModel(
     private var prevTag: RuuviTag? = null
     fun getPrevTag() = prevTag
 
-    var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView
+    var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView && interactor.getTagEntities(true).isEmpty()
     var desiredTag: String? = tagDetailsArguments.desiredTag
 
     private val syncResult = MutableLiveData<NetworkSyncResult>(NetworkSyncResult(NetworkSyncResultType.NONE))

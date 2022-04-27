@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
@@ -39,22 +38,22 @@ class EmailEnterFragment: Fragment(R.layout.fragment_email_enter), KodeinAware {
     }
 
     private fun setupViewModel() {
-        viewModel.errorTextObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.errorTextObserve.observe(viewLifecycleOwner) {
             binding.errorTextView.text = it
-        })
+        }
 
-        viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.successfullyRegisteredObserve.observe(viewLifecycleOwner) {
             if (it == true) {
                 viewModel.successfullyRegisteredFinished()
                 val action = EmailEnterFragmentDirections.actionEmailEnterFragmentToEnterCodeFragment(null)
                 this.findNavController().navigate(action)
             }
-        })
+        }
 
-        viewModel.requestInProcessObserve.observe(viewLifecycleOwner, Observer {inProcess ->
+        viewModel.requestInProcessObserve.observe(viewLifecycleOwner) {inProcess ->
             binding.submitButton.isEnabled = !inProcess
             binding.progressIndicator.isVisible = inProcess
-        })
+        }
     }
 
     companion object {
