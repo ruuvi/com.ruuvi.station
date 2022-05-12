@@ -9,5 +9,6 @@
         <item name="colorSurface">@color/dark_emerald</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorOnSecondary">@color/grayNew</item>
+        <item name="colorControlHighlight">@color/grayNew5</item>
     </style>
 </resources>
