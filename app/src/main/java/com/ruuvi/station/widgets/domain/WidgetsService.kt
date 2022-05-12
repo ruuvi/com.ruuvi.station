@@ -22,8 +22,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WidgetsService(): Service(), KodeinAware {
 
@@ -34,7 +32,7 @@ class WidgetsService(): Service(), KodeinAware {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val updateAll = intent?.getBooleanExtra(UPDATE_ALL,false) ?: false
+        val updateAll = intent?.getBooleanExtra(UPDATE_ALL, false) ?: false
         Timber.d("Update all $updateAll")
 
         if (updateAll) {
@@ -43,27 +41,26 @@ class WidgetsService(): Service(), KodeinAware {
             return super.onStartCommand(intent, flags, startId)
         }
 
-        val appWidgetId = intent?.getIntExtra(APP_WIDGET_ID,-1)
+        val appWidgetId = intent?.getIntExtra(APP_WIDGET_ID, -1)
         Timber.d("WidgetsService onStartCommand $appWidgetId")
 
-        if (appWidgetId == null || appWidgetId == -1) return super.onStartCommand(intent, flags, startId)
+        if (appWidgetId == null || appWidgetId == -1) return super.onStartCommand(
+            intent,
+            flags,
+            startId
+        )
 
         val context = this@WidgetsService
 
         val preferences = WidgetPreferencesInteractor(context)
 
-        var sensorId = preferences.getWidgetSensor(appWidgetId)
+
+        val sensorId = preferences.getSimpleWidgetSensor(appWidgetId)
+        val widgetType = preferences.getSimpleWidgetType(appWidgetId)
+
         if (sensorId != null) {
-            updateFirstWidget(appWidgetId, sensorId)
-        } else {
-            sensorId = preferences.getSimpleWidgetSensor(appWidgetId)
-            val widgetType = preferences.getSimpleWidgetType(appWidgetId)
-
-            if (sensorId != null) {
-                updateSimpleWidget(appWidgetId, sensorId, widgetType)
-            }
+            updateSimpleWidget(appWidgetId, sensorId, widgetType)
         }
-
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -95,51 +92,6 @@ class WidgetsService(): Service(), KodeinAware {
             )
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
-        }
-    }
-
-    private fun updateFirstWidget(appWidgetId: Int, sensorId: String) {
-        val context = this@WidgetsService
-        val widgetInteractor: WidgetInteractor by kodein.instance()
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-
-
-        CoroutineScope(Dispatchers.Main).launch {
-            val views = RemoteViews(context.packageName, R.layout.sensor_widget)
-
-            if (sensorId != null) {
-                val widgetData = widgetInteractor.getSensorData(sensorId)
-                // Construct the RemoteViews object
-                val time = if (widgetData.updatedAt != null) {
-                    SimpleDateFormat("HH:mm", Locale.getDefault()).format(widgetData.updatedAt)
-                } else {
-                    "none"
-                }
-
-                val sensorName = if (widgetData.displayName.isEmpty()) widgetData.sensorId else widgetData.displayName
-
-                views.setTextViewText(R.id.widgetHeaderTextView, sensorName)
-                views.setTextViewText(R.id.temperatureTextView, widgetData.temperature)
-                views.setTextViewText(R.id.humidityTextView, widgetData.humidity)
-                views.setTextViewText(R.id.pressureTextView, widgetData.pressure)
-                views.setTextViewText(R.id.motionTextView, widgetData.movement)
-                views.setTextViewText(R.id.lastUpdateTextView, getString(R.string.updated,time))
-
-                views.setOnClickPendingIntent(R.id.widgetLayout, TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId))
-            }
-
-            val tagDetailsPendingIntent =
-                TagDetailsActivity.createPendingIntent(
-                    context,
-                    sensorId ?: "0",
-                    0
-                )
-
-            views.setOnClickPendingIntent(R.id.refreshButton, getPendingIntent(context, appWidgetId))
-
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-            Timber.d("WidgetsService FINISHED")
-
         }
     }
 
