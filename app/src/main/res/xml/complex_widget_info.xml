@@ -6,7 +6,10 @@
     android:previewLayout="@layout/widget_complex"
     android:resizeMode="horizontal|vertical"
     android:targetCellHeight="3"
-    android:targetCellWidth="3"
+    android:targetCellWidth="4"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
-    />
+    android:configure="com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureActivity"
+    android:widgetFeatures="reconfigurable"
+    android:initialKeyguardLayout="@layout/widget_complex"
+/>
