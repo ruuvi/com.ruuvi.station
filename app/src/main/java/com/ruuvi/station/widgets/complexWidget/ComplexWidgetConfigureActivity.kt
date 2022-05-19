@@ -1,6 +1,7 @@
 package com.ruuvi.station.widgets.complexWidget
 
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -78,14 +79,17 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        //TODO UPDATE WIDGET
+        val updateIntent = Intent(this, ComplexWidgetProvider::class.java).apply {
+            action = ACTION_APPWIDGET_UPDATE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+        }
+        sendBroadcast(updateIntent)
 
         val resultValue =
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(RESULT_OK, resultValue)
         finish()
     }
-
 }
 
 @Composable
@@ -117,7 +121,7 @@ fun WidgetSetupScreen(viewModel: ComplexWidgetConfigureViewModel) {
 
 @Composable
 fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
-    val sensors = viewModel.widgetItems
+    val sensors by viewModel.widgetItems.observeAsState(listOf())
 
     val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
 
@@ -152,7 +156,7 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = (item.checked.value),
+                    checked = (item.checked),
                     onCheckedChange = { checked -> viewModel.selectSensor(item, checked)},
                 )
 
@@ -161,12 +165,12 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
                         .fillMaxWidth(),
                     text = AnnotatedString(item.sensorName),
                     onClick = {
-                        viewModel.selectSensor(item, !item.checked.value)
+                        viewModel.selectSensor(item, !item.checked)
                     })
             }
 
         }
-        if (item.checked.value) {
+        if (item.checked) {
             WidgetTypeList(viewModel, item)
         }
     }
@@ -195,7 +199,9 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
             modifier = Modifier.wrapContentHeight()
         )
         {
-            Spacer(modifier = Modifier.width(16.dp).height(0.dp))
+            Spacer(modifier = Modifier
+                .width(16.dp)
+                .height(0.dp))
 
             Checkbox(
                 checked = item.getStateForType(widgetType),

@@ -9,13 +9,16 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.widgets.data.WidgetType
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferenceItem
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.ui.ICloudWidgetViewModel
 import timber.log.Timber
 
 class ComplexWidgetConfigureViewModel(
     private val appWidgetId: Int,
     private val tagRepository: TagRepository,
-    private val networkInteractor: RuuviNetworkInteractor
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val preferencesInteractor: ComplexWidgetPreferencesInteractor
     ): ViewModel(), ICloudWidgetViewModel {
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
@@ -28,10 +31,10 @@ class ComplexWidgetConfigureViewModel(
         allSensors.any { it.networkLastSync == null }
     }
 
-    private val _widgetItems = getSensorsForWidgetId(appWidgetId).toMutableStateList()
-    val widgetItems: List<ComplexWidgetSensorItem> = _widgetItems
+    private val _widgetItems = MutableLiveData(getSensorsForWidgetId(appWidgetId))
+    val widgetItems: LiveData<List<ComplexWidgetSensorItem>> = _widgetItems
 
-    private val _canBeSaved = MutableLiveData<Boolean> (false)
+    private val _canBeSaved = MutableLiveData(false)
     override val canBeSaved: LiveData<Boolean> = _canBeSaved
 
     override val userLoggedIn: LiveData<Boolean> = MutableLiveData<Boolean> (networkInteractor.signedIn)
@@ -43,27 +46,36 @@ class ComplexWidgetConfigureViewModel(
     private val _setupComplete = MutableLiveData<Boolean> (false)
     val setupComplete: LiveData<Boolean> = _setupComplete
 
+    init {
+        recalcCanBeSaved()
+    }
+
     override fun save() {
-        _setupComplete.value = true
+        _widgetItems.value?.let {
+            preferencesInteractor.saveComplexWidgetSettings(appWidgetId, it)
+            _setupComplete.value = true
+        }
     }
 
     fun getSensorsForWidgetId(appWidgetId: Int): List<ComplexWidgetSensorItem> {
+        val saved = preferencesInteractor.getComplexWidgetSettings(appWidgetId)
         return tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }.map { cloudSensor ->
-            ComplexWidgetSensorItem(cloudSensor.id, cloudSensor.displayName, mutableStateOf(false)).also {
-                it.sensorTypes.addAll(ComplexWidgetSensorItem.defaultSet)
+            ComplexWidgetSensorItem(cloudSensor.id, cloudSensor.displayName).also {
+                it.restoreSettings(saved.firstOrNull { it.sensorId == cloudSensor.id })
             }
         }
     }
 
     fun selectSensor(item: ComplexWidgetSensorItem, checked: Boolean) {
         Timber.d("selectSensor ${item.sensorId}")
-        widgetItems.find { it.sensorId == item.sensorId }?.let {
-            it.checked = mutableStateOf(checked)
+        _widgetItems.value?.find { it.sensorId == item.sensorId }?.let {
+            it.checked = checked
         }
+        recalcCanBeSaved()
     }
 
     fun selectWidgetType(item: ComplexWidgetSensorItem, widgetType: WidgetType, checked: Boolean) {
-        widgetItems.find { it.sensorId == item.sensorId }?.let {
+        _widgetItems.value?.find { it.sensorId == item.sensorId }?.let {
             when (widgetType) {
                 WidgetType.TEMPERATURE -> it.checkedTemperature = checked
                 WidgetType.HUMIDITY -> it.checkedHumidity = checked
@@ -76,17 +88,19 @@ class ComplexWidgetConfigureViewModel(
                 WidgetType.ACCELERATION_Z -> it.checkedAccelerationZ = checked
             }
         }
+        recalcCanBeSaved()
+    }
+
+    private fun recalcCanBeSaved() {
+        _canBeSaved.value = _widgetItems?.value?.any { item -> item.checked && item.anySensorChecked() } ?: false
     }
 }
 
 class ComplexWidgetSensorItem(
     val sensorId: String,
-    var sensorName: String,
-    selected: MutableState<Boolean>,
-    sensorTypes: MutableSet<WidgetType> = mutableSetOf()
+    var sensorName: String
 ) {
-    var checked by mutableStateOf(selected)
-    var sensorTypes by mutableStateOf(sensorTypes)
+    var checked by mutableStateOf(false)
 
     var checkedTemperature by mutableStateOf(false)
     var checkedHumidity by mutableStateOf(false)
@@ -112,15 +126,33 @@ class ComplexWidgetSensorItem(
         }
     }
 
+    fun anySensorChecked(): Boolean = checkedTemperature || checkedHumidity || checkedPressure ||
+                checkedMovement || checkedVoltage || checkedSignalStrength ||
+                checkedAccelerationX || checkedAccelerationY || checkedAccelerationZ
+
+    fun restoreSettings(savedState: ComplexWidgetPreferenceItem?) {
+        checked = savedState != null
+        checkedTemperature = savedState?.checkedTemperature ?: checkedTemperatureDefault
+        checkedHumidity = savedState?.checkedHumidity ?: checkedHumidityDefault
+        checkedPressure = savedState?.checkedPressure ?: checkedPressureDefault
+        checkedMovement = savedState?.checkedMovement ?: checkedMovementDefault
+        checkedVoltage = savedState?.checkedVoltage ?: checkedVoltageDefault
+        checkedSignalStrength = savedState?.checkedSignalStrength ?: checkedSignalStrengthDefault
+        checkedAccelerationX = savedState?.checkedAccelerationX ?: checkedAccelerationXDefault
+        checkedAccelerationY = savedState?.checkedAccelerationY ?: checkedAccelerationYDefault
+        checkedAccelerationZ = savedState?.checkedAccelerationZ ?: checkedAccelerationZDefault
+    }
+
     companion object {
-        val defaultSet = setOf<WidgetType>(
-            WidgetType.TEMPERATURE,
-            WidgetType.HUMIDITY,
-            WidgetType.PRESSURE,
-            WidgetType.MOVEMENT,
-            WidgetType.VOLTAGE,
-            WidgetType.SIGNAL_STRENGTH
-        )
+        const val checkedTemperatureDefault = true
+        const val checkedHumidityDefault = true
+        const val checkedPressureDefault = true
+        const val checkedMovementDefault = true
+        const val checkedVoltageDefault = true
+        const val checkedSignalStrengthDefault = true
+        const val checkedAccelerationXDefault = false
+        const val checkedAccelerationYDefault = false
+        const val checkedAccelerationZDefault = false
     }
 }
 

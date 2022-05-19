@@ -9,6 +9,8 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.ruuvi.station.R
 import com.ruuvi.station.widgets.data.ComplexWidgetData
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferenceItem
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -36,9 +38,13 @@ class CollectionWidgetService : RemoteViewsService() {
 
         private val interactor: WidgetInteractor by instance()
 
+        private val preferencesInteractor: ComplexWidgetPreferencesInteractor by instance()
+
         data class WidgetItem(val text: String, val sensorId: String)
 
         private var widgetItems: List<WidgetItem> = emptyList()
+
+        private var widgetSettings: List<ComplexWidgetPreferenceItem> = emptyList()
 
         override fun onCreate() {}
 
@@ -46,7 +52,11 @@ class CollectionWidgetService : RemoteViewsService() {
 
         override fun onDataSetChanged() {
             Timber.d("onDataSetChanged")
-            widgetItems = interactor.getCloudSensorsList().map { WidgetItem(it.displayName, it.id) }
+            widgetSettings = preferencesInteractor.getComplexWidgetSettings(widgetAppId)
+            Timber.d("$widgetSettings")
+            widgetItems = interactor.getCloudSensorsList()
+                .filter { cloudSensor -> widgetSettings.any { it.sensorId ==  cloudSensor.id} }
+                .map { WidgetItem(it.displayName, it.id) }
         }
 
         override fun getCount(): Int {
@@ -56,9 +66,12 @@ class CollectionWidgetService : RemoteViewsService() {
         override fun getViewAt(position: Int): RemoteViews {
             // Construct a remote views item based on the widget item XML file,
             // and set the text based on the position.
+            Timber.d("getViewAt $position")
+            val sensorId = widgetItems[position].sensorId
             var data: ComplexWidgetData
+            val widgetSettings = widgetSettings.firstOrNull { it.sensorId == sensorId }
             runBlocking(Dispatchers.Main){
-                data = interactor.getComplexWidgetData(widgetItems[position].sensorId)
+                data = interactor.getComplexWidgetData(sensorId, widgetSettings)
             }
 
             return RemoteViews(context.packageName, R.layout.widget_complex_item).apply {
@@ -69,12 +82,20 @@ class CollectionWidgetService : RemoteViewsService() {
                     setInt(R.id.rootLayout, "setBackgroundResource", Color.TRANSPARENT)
                 }
 
-                for ((index,sensorValue) in data.sensorValues.withIndex()) {
-                    val controls = valuesControls.elementAtOrNull(index)
-                    if (controls != null) {
+                var lastFilledIndex = 0
+                for ((index, controls) in valuesControls.withIndex()) {
+                    val sensorValue = data.sensorValues.elementAtOrNull(index)
+                    if (sensorValue != null) {
                         setViewVisibility(controls.first, View.VISIBLE)
                         setTextViewText(controls.second, sensorValue.sensorValue)
                         setTextViewText(controls.third, sensorValue.unit)
+                        lastFilledIndex = index
+                    } else {
+                        if ((lastFilledIndex >= 0 && index <= 2) || (lastFilledIndex > 2 && index <= 5) || (lastFilledIndex > 5 && index <=8)) {
+                            setViewVisibility(controls.first, View.INVISIBLE)
+                        } else {
+                            setViewVisibility(controls.first, View.GONE)
+                        }
                     }
                 }
             }

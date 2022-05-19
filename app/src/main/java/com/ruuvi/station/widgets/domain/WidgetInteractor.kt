@@ -21,7 +21,7 @@ class WidgetInteractor (
 ) {
     fun getCloudSensorsList() = tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }
 
-    suspend fun getComplexWidgetData(sensorId: String): ComplexWidgetData {
+    suspend fun getComplexWidgetData(sensorId: String, settings: ComplexWidgetPreferenceItem?): ComplexWidgetData {
         val sensorFav = tagRepository.getFavoriteSensorById(sensorId)
 
         if (sensorFav == null || !canReturnData(sensorFav)) {
@@ -100,17 +100,17 @@ class WidgetInteractor (
                 lastMeasurement.updatedAt.localizedTime(context)
             }
 
-            result.sensorValues = mutableListOf(
-                temperatureValue,
-                humidityValue,
-                pressureValue,
-                movementsValue,
-                voltageValue,
-                signalStrengthValue,
-                accelerationXValue,
-                accelerationYValue,
-                accelerationZValue
-            )
+            val sensorValues: MutableList<SensorValue> = mutableListOf()
+            if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
+            if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
+            if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
+            if (settings?.checkedMovement == true) sensorValues.add(movementsValue)
+            if (settings?.checkedVoltage == true) sensorValues.add(voltageValue)
+            if (settings?.checkedSignalStrength == true) sensorValues.add(signalStrengthValue)
+            if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
+            if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
+            if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
+            result.sensorValues = sensorValues
         }
 
         return result
