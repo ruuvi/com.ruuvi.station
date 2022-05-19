@@ -31,12 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.R
-import com.ruuvi.station.dfu.ui.RegularText
 import com.ruuvi.station.tag.domain.RuuviTag
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.widgets.ui.ForNetworkSensorsOnlyScreen
+import com.ruuvi.station.widgets.ui.LogInFirstScreen
 import timber.log.Timber
 
 class SensorWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
@@ -99,27 +100,12 @@ fun WidgetSetupScreen(viewModel: SensorWidgetConfigureViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         if (!userLoggedIn) {
-            LogInFirstScreen(viewModel)
+            LogInFirstScreen()
         } else if (sensors.isNullOrEmpty()) {
-            ForNetworkSensorsOnlyScreen(viewModel)
+            ForNetworkSensorsOnlyScreen()
         } else {
             SelectSensorScreen(viewModel)
         }
-    }
-}
-
-@Composable
-fun LogInFirstScreen(viewModel: SensorWidgetConfigureViewModel) {
-    Column() {
-        RegularText(text = stringResource(id = R.string.widgets_sign_in_first))
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
-    }
-}
-
-@Composable
-fun ForNetworkSensorsOnlyScreen(viewModel: SensorWidgetConfigureViewModel) {
-    Column() {
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
     }
 }
 

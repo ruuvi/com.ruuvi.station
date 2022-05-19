@@ -35,6 +35,8 @@ import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
 import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
+import com.ruuvi.station.widgets.ui.ForNetworkSensorsOnlyScreen
+import com.ruuvi.station.widgets.ui.LogInFirstScreen
 import com.ruuvi.station.widgets.ui.firstWidget.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -145,9 +147,9 @@ fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
         color = MaterialTheme.colors.background
     ) {
         if (!userLoggedIn) {
-            LogInFirstScreen(viewModel)
+            LogInFirstScreen()
         } else if (sensors.isNullOrEmpty()) {
-            ForNetworkSensorsOnlyScreen(viewModel)
+            ForNetworkSensorsOnlyScreen()
         } else {
             SelectSensorScreen(viewModel)
         }
@@ -158,21 +160,6 @@ fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
             color = LightColorPalette.surface,
             darkIcons = false
         )
-    }
-}
-
-@Composable
-fun LogInFirstScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    Column() {
-        RegularText(text = stringResource(id = R.string.widgets_sign_in_first))
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
-    }
-}
-
-@Composable
-fun ForNetworkSensorsOnlyScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    Column() {
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
     }
 }
 
@@ -222,19 +209,15 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp),
                     selected = (isSelected),
                     onClick = { viewModel.selectSensor(sensorId) }
                 )
 
                 ClickableText(
                     modifier = Modifier
-                        .padding(8.dp)
                         .fillMaxWidth(),
                     text = AnnotatedString(title),
                     onClick = {
@@ -270,18 +253,15 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
         .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Spacer(modifier = Modifier.width(32.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             RadioButton(
-                modifier = Modifier
-                    .padding(vertical = 8.dp),
                 selected = (isSelected),
                 onClick = { viewModel.selectWidgetType(widgetType) })
 
             ClickableText(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                    .fillMaxWidth(),
                 text = AnnotatedString(stringResource(id = widgetType.titleResId)),
                 onClick = {
                     viewModel.selectWidgetType(widgetType)
