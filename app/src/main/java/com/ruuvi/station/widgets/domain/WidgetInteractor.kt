@@ -28,92 +28,100 @@ class WidgetInteractor (
             return emptyComplexResult(sensorId)
         }
 
-        val lastMeasurement = getSensorLatestValues(sensorId)
-        val result = ComplexWidgetData(
-            sensorId = sensorId,
-            displayName = sensorFav?.displayName ?: sensorId,
-            sensorValues = listOf(),
-            updated = null
-        )
-
-        if (lastMeasurement != null) {
-            val temperatureValue = SensorValue(
-                type = WidgetType.TEMPERATURE,
-                sensorValue = unitsConverter.getTemperatureStringWithoutUnit(lastMeasurement.temperature),
-                unit = context.getString(unitsConverter.getTemperatureUnit().unit)
+        try {
+            val lastMeasurement = getSensorLatestValues(sensorId)
+            val result = ComplexWidgetData(
+                sensorId = sensorId,
+                displayName = sensorFav?.displayName ?: sensorId,
+                sensorValues = listOf(),
+                updated = null
             )
 
-            val humidityValue = SensorValue(
-                type = WidgetType.HUMIDITY,
-                sensorValue = unitsConverter.getHumidityStringWithoutUnit(
-                    lastMeasurement.humidity,
-                    lastMeasurement.temperature ?: 0.0
-                ),
-                unit = context.getString(unitsConverter.getHumidityUnit().unit)
-            )
+            if (lastMeasurement != null) {
+                val temperatureValue = SensorValue(
+                    type = WidgetType.TEMPERATURE,
+                    sensorValue = unitsConverter.getTemperatureStringWithoutUnit(lastMeasurement.temperature),
+                    unit = context.getString(unitsConverter.getTemperatureUnit().unit)
+                )
 
-            val pressureValue = SensorValue(
-                type = WidgetType.PRESSURE,
-                sensorValue = unitsConverter.getPressureStringWithoutUnit(lastMeasurement.pressure),
-                unit = context.getString(unitsConverter.getPressureUnit().unit)
-            )
+                val humidityValue = SensorValue(
+                    type = WidgetType.HUMIDITY,
+                    sensorValue = unitsConverter.getHumidityStringWithoutUnit(
+                        lastMeasurement.humidity,
+                        lastMeasurement.temperature ?: 0.0
+                    ),
+                    unit = context.getString(unitsConverter.getHumidityUnit().unit)
+                )
 
-            val movementsValue = SensorValue(
-                type = WidgetType.MOVEMENT,
-                sensorValue = lastMeasurement.movementCounter.toString(),
-                unit = context.getString(R.string.movements)
-            )
+                val pressureValue = SensorValue(
+                    type = WidgetType.PRESSURE,
+                    sensorValue = unitsConverter.getPressureStringWithoutUnit(lastMeasurement.pressure),
+                    unit = context.getString(unitsConverter.getPressureUnit().unit)
+                )
 
-            val voltageValue = SensorValue(
-                type = WidgetType.VOLTAGE,
-                sensorValue = context.getString(R.string.voltage_reading, lastMeasurement.voltage.toString(), "").trim(),
-                unit = context.getString(R.string.voltage_unit)
-            )
+                val movementsValue = SensorValue(
+                    type = WidgetType.MOVEMENT,
+                    sensorValue = lastMeasurement.movementCounter.toString(),
+                    unit = context.getString(R.string.movements)
+                )
 
-            val signalStrengthValue = SensorValue(
-                type = WidgetType.SIGNAL_STRENGTH,
-                sensorValue = lastMeasurement.rssi.toString(),
-                unit = context.getString(R.string.signal_unit)
-            )
+                val voltageValue = SensorValue(
+                    type = WidgetType.VOLTAGE,
+                    sensorValue = context.getString(
+                        R.string.voltage_reading,
+                        lastMeasurement.voltage.toString(),
+                        ""
+                    ).trim(),
+                    unit = context.getString(R.string.voltage_unit)
+                )
 
-            val accelerationXValue = SensorValue(
-                type = WidgetType.ACCELERATION_X,
-                sensorValue = String.format("%1\$,.3f", lastMeasurement.accelX),
-                unit = context.getString(R.string.acceleration_unit)+" (x)" //TODO LOCALIZE
-            )
+                val signalStrengthValue = SensorValue(
+                    type = WidgetType.SIGNAL_STRENGTH,
+                    sensorValue = lastMeasurement.rssi.toString(),
+                    unit = context.getString(R.string.signal_unit)
+                )
 
-            val accelerationYValue = SensorValue(
-                type = WidgetType.ACCELERATION_Y,
-                sensorValue = String.format("%1\$,.3f", lastMeasurement.accelY),
-                unit = context.getString(R.string.acceleration_unit)+" (y)" //TODO LOCALIZE
-            )
+                val accelerationXValue = SensorValue(
+                    type = WidgetType.ACCELERATION_X,
+                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelX),
+                    unit = context.getString(R.string.acceleration_unit) + " (x)" //TODO LOCALIZE
+                )
 
-            val accelerationZValue = SensorValue(
-                type = WidgetType.ACCELERATION_Z,
-                sensorValue = String.format("%1\$,.3f", lastMeasurement.accelZ),
-                unit = context.getString(R.string.acceleration_unit)+" (z)" //TODO LOCALIZE
-            )
+                val accelerationYValue = SensorValue(
+                    type = WidgetType.ACCELERATION_Y,
+                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelY),
+                    unit = context.getString(R.string.acceleration_unit) + " (y)" //TODO LOCALIZE
+                )
 
-            result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
-                lastMeasurement.updatedAt.localizedDate(context)
-            } else {
-                lastMeasurement.updatedAt.localizedTime(context)
+                val accelerationZValue = SensorValue(
+                    type = WidgetType.ACCELERATION_Z,
+                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelZ),
+                    unit = context.getString(R.string.acceleration_unit) + " (z)" //TODO LOCALIZE
+                )
+
+                result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
+                    lastMeasurement.updatedAt.localizedDate(context)
+                } else {
+                    lastMeasurement.updatedAt.localizedTime(context)
+                }
+
+                val sensorValues: MutableList<SensorValue> = mutableListOf()
+                if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
+                if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
+                if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
+                if (settings?.checkedMovement == true) sensorValues.add(movementsValue)
+                if (settings?.checkedVoltage == true) sensorValues.add(voltageValue)
+                if (settings?.checkedSignalStrength == true) sensorValues.add(signalStrengthValue)
+                if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
+                if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
+                if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
+                result.sensorValues = sensorValues
             }
 
-            val sensorValues: MutableList<SensorValue> = mutableListOf()
-            if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
-            if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
-            if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
-            if (settings?.checkedMovement == true) sensorValues.add(movementsValue)
-            if (settings?.checkedVoltage == true) sensorValues.add(voltageValue)
-            if (settings?.checkedSignalStrength == true) sensorValues.add(signalStrengthValue)
-            if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
-            if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
-            if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
-            result.sensorValues = sensorValues
+            return result
+        } catch (e: Exception) {
+            return emptyComplexResult(sensorId)
         }
-
-        return result
     }
 
     suspend fun getSensorLatestValues(sensorId: String): DecodedSensorData? {

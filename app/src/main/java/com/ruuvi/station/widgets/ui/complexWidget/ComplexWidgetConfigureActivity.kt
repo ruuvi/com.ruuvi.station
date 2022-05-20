@@ -1,7 +1,10 @@
-package com.ruuvi.station.widgets.complexWidget
+package com.ruuvi.station.widgets.ui.complexWidget
 
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,12 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.core.app.TaskStackBuilder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.dfu.ui.RegularText
 import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
 import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModel
+import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelArgs
+import com.ruuvi.station.widgets.complexWidget.ComplexWidgetSensorItem
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.*
 import org.kodein.di.Kodein
@@ -89,6 +100,14 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(RESULT_OK, resultValue)
         finish()
+    }
+
+    companion object {
+        fun createPendingIntent(context: Context, appWidgetId: Int): PendingIntent? {
+            val intent = Intent(context, ComplexWidgetConfigureActivity::class.java)
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            return PendingIntent.getActivity(context, appWidgetId, intent, FLAG_IMMUTABLE)
+        }
     }
 }
 

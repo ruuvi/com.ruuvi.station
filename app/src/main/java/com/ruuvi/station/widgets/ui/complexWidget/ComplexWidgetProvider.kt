@@ -1,4 +1,4 @@
-package com.ruuvi.station.widgets.complexWidget
+package com.ruuvi.station.widgets.ui.complexWidget
 
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
@@ -54,6 +54,8 @@ class ComplexWidgetProvider: AppWidgetProvider() {
             }
 
             views.setOnClickPendingIntent(R.id.refreshButton, getUpdatePendingIntent(context, appWidgetId))
+
+            views.setOnClickPendingIntent(R.id.addButton, ComplexWidgetConfigureActivity.createPendingIntent(context, appWidgetId))
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)

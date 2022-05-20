@@ -1,10 +1,9 @@
-package com.ruuvi.station.widgets.complexWidget
+package com.ruuvi.station.widgets.ui.complexWidget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService

@@ -135,7 +135,7 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
-        android:name="com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureActivity"
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetConfigureActivity"
         android:exported="true"
         android:theme="@style/AppTheme.NoActionBar">
         <intent-filter>
@@ -203,12 +203,12 @@ package="com.ruuvi.station">
     </receiver>
 
     <service
-        android:name="com.ruuvi.station.widgets.complexWidget.CollectionWidgetService"
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.CollectionWidgetService"
         android:exported="true"
         android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     <receiver
-        android:name="com.ruuvi.station.widgets.complexWidget.ComplexWidgetProvider"
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider"
         android:exported="true">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
