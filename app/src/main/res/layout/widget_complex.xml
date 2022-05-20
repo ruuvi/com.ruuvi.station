@@ -61,6 +61,8 @@
             android:layout_below="@+id/logoImageView"
             android:gravity="center"
             android:loopViews="true"
+            android:dividerHeight="0dp"
+            android:divider="@color/ap_transparent"
             tools:listitem="@layout/widget_complex_item" />
 
         <TextView

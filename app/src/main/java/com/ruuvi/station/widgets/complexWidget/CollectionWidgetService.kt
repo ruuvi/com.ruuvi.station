@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -78,9 +79,17 @@ class CollectionWidgetService : RemoteViewsService() {
                 setTextViewText(R.id.sensorNameTextView, data.displayName)
                 setTextViewText(R.id.updatedTextView, data.updated)
 
+                //TODO FIX HIGHLIGHT ISSUE
+                //Resources.Theme(R.style.AppTheme_AppWidgetContainer)
+//                var typedValue = TypedValue()
+//                context.theme.resolveAttribute(R.attr.colorControlHighlight, typedValue, true)
+//                Timber.d("typedValue $typedValue")
                 if (position.mod(2) == 0) {
                     setInt(R.id.rootLayout, "setBackgroundResource", Color.TRANSPARENT)
                 }
+//                else {
+//                    setInt(R.id.rootLayout, "setBackgroundResource", typedValue.data)
+//                }
 
                 var lastFilledIndex = 0
                 for ((index, controls) in valuesControls.withIndex()) {

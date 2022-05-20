@@ -68,7 +68,6 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import com.ruuvi.station.widgets.domain.WidgetsService
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -499,7 +498,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         super.onResume()
 
         //TODO REMOVE TESTING UPDATE
-        WidgetsService.updateAllWidgets(this)
+        //WidgetsService.updateAllWidgets(this)
 
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)

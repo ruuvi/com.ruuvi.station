@@ -66,11 +66,6 @@ package="com.ruuvi.station">
         android:permission="android.permission.BIND_JOB_SERVICE" />
 
     <service
-        android:name=".widgets.domain.WidgetsService"
-        android:enabled="true"
-        android:exported="false"></service>
-
-    <service
         android:name=".bluetooth.BluetoothForegroundService"
         android:enabled="true"
         android:exported="true"
@@ -138,15 +133,6 @@ package="com.ruuvi.station">
         android:exported="true"
         android:label="@string/title_activity_dfu_update"
         android:theme="@style/AppTheme.NoActionBar" />
-
-    <activity
-        android:name="com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureActivity"
-        android:exported="true"
-        android:theme="@style/AppTheme.NoActionBar">
-        <intent-filter>
-            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-        </intent-filter>
-    </activity>
 
     <activity
         android:name="com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureActivity"

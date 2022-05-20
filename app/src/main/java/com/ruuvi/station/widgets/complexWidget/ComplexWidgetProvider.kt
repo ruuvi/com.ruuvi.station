@@ -20,25 +20,7 @@ class ComplexWidgetProvider: AppWidgetProvider() {
     ) {
         Timber.d("onUpdate $appWidgetIds")
         appWidgetIds.forEach { appWidgetId ->
-            val adapterIntent = Intent(context, CollectionWidgetService::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-            }
-
-            val views = RemoteViews(context.packageName, R.layout.widget_complex).apply{
-                setRemoteAdapter(R.id.sensorsListView, adapterIntent)
-                setEmptyView(R.id.sensorsListView, R.id.emptyView)
-            }
-
-            val updateIntent = Intent(context, ComplexWidgetProvider::class.java).apply {
-                action = MANUAL_REFRESH
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-            val updatePendingIntent = PendingIntent.getBroadcast(context, appWidgetId, updateIntent, FLAG_IMMUTABLE)
-            views.setOnClickPendingIntent(R.id.refreshButton, updatePendingIntent)
-
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+            updateComplexWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
@@ -55,5 +37,34 @@ class ComplexWidgetProvider: AppWidgetProvider() {
 
     companion object {
         const val MANUAL_REFRESH = "com.ruuvi.station.widgets.complexWidget.MANUAL_REFRESH"
+
+        private fun updateComplexWidget(
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetId: Int
+        ) {
+            val adapterIntent = Intent(context, CollectionWidgetService::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            }
+
+            val views = RemoteViews(context.packageName, R.layout.widget_complex).apply{
+                setRemoteAdapter(R.id.sensorsListView, adapterIntent)
+                setEmptyView(R.id.sensorsListView, R.id.emptyView)
+            }
+
+            views.setOnClickPendingIntent(R.id.refreshButton, getUpdatePendingIntent(context, appWidgetId))
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+        }
+
+        private fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
+            val updateIntent = Intent(context, ComplexWidgetProvider::class.java).apply {
+                action = MANUAL_REFRESH
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
+            return PendingIntent.getBroadcast(context, appWidgetId, updateIntent, FLAG_IMMUTABLE)
+        }
     }
 }

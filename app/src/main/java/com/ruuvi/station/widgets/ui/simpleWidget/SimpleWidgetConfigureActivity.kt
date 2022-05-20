@@ -37,7 +37,6 @@ import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.ForNetworkSensorsOnlyScreen
 import com.ruuvi.station.widgets.ui.LogInFirstScreen
-import com.ruuvi.station.widgets.ui.firstWidget.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -89,7 +88,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         val appWidgetManager =
             AppWidgetManager.getInstance(this)
 
-        updateAppWidget(this, appWidgetManager, appWidgetId)
+        SimpleWidget.updateSimpleWidget(this, appWidgetManager, appWidgetId)
 
         val resultValue =
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
