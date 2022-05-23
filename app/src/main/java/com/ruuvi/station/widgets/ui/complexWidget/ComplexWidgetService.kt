@@ -1,6 +1,7 @@
 package com.ruuvi.station.widgets.ui.complexWidget
 
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,6 +13,7 @@ import com.ruuvi.station.widgets.data.ComplexWidgetData
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferenceItem
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetInteractor
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider.Companion.EXTRA_SENSOR_ID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.Kodein
@@ -20,18 +22,18 @@ import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
-class CollectionWidgetService : RemoteViewsService() {
+class ComplexWidgetService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
         val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
         Timber.d("CollectionWidgetService $this $appWidgetId")
 
-        return CollectionRemoteViewsFactory(applicationContext, appWidgetId)
+        return ComplexWidgetCollectionRemoteViewsFactory(applicationContext, appWidgetId)
     }
 
-    class CollectionRemoteViewsFactory (
+    class ComplexWidgetCollectionRemoteViewsFactory (
         private val context: Context,
-        private val widgetAppId: Int
+        private val appWidgetId: Int
     ): RemoteViewsFactory, KodeinAware {
 
         override val kodein: Kodein by kodein(context)
@@ -52,7 +54,7 @@ class CollectionWidgetService : RemoteViewsService() {
 
         override fun onDataSetChanged() {
             Timber.d("onDataSetChanged")
-            widgetSettings = preferencesInteractor.getComplexWidgetSettings(widgetAppId)
+            widgetSettings = preferencesInteractor.getComplexWidgetSettings(appWidgetId)
             Timber.d("$widgetSettings")
             widgetItems = interactor.getCloudSensorsList()
                 .filter { cloudSensor -> widgetSettings.any { it.sensorId ==  cloudSensor.id} }
@@ -89,6 +91,13 @@ class CollectionWidgetService : RemoteViewsService() {
 //                else {
 //                    setInt(R.id.rootLayout, "setBackgroundResource", typedValue.data)
 //                }
+
+
+                val itemClickFillIntent = Intent().apply {
+                    putExtra(EXTRA_SENSOR_ID, data.sensorId)
+                    putExtra(EXTRA_APPWIDGET_ID, appWidgetId)
+                }
+                setOnClickFillInIntent(R.id.rootLayout, itemClickFillIntent)
 
                 var lastFilledIndex = 0
                 for ((index, controls) in valuesControls.withIndex()) {
