@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.view.View
 import android.widget.RemoteViews
@@ -80,18 +81,18 @@ class ComplexWidgetService : RemoteViewsService() {
                 setTextViewText(R.id.sensorNameTextView, data.displayName)
                 setTextViewText(R.id.updatedTextView, data.updated)
 
-                //TODO FIX HIGHLIGHT ISSUE
-                //Resources.Theme(R.style.AppTheme_AppWidgetContainer)
-//                var typedValue = TypedValue()
-//                context.theme.resolveAttribute(R.attr.colorControlHighlight, typedValue, true)
-//                Timber.d("typedValue $typedValue")
-                if (position.mod(2) == 0) {
-                    setInt(R.id.rootLayout, "setBackgroundResource", Color.TRANSPARENT)
+                val highlightColor = when (context.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                    Configuration.UI_MODE_NIGHT_YES -> context.getColor(R.color.grayNew5)
+                    Configuration.UI_MODE_NIGHT_NO -> context.getColor(R.color.grayNew30)
+                    Configuration.UI_MODE_NIGHT_UNDEFINED -> context.getColor(R.color.grayNew30)
+                    else -> context.getColor(R.color.grayNew5)
                 }
-//                else {
-//                    setInt(R.id.rootLayout, "setBackgroundResource", typedValue.data)
-//                }
 
+                if (position.mod(2) == 0) {
+                    setInt(R.id.rootLayout, "setBackgroundColor", Color.TRANSPARENT)
+                } else {
+                    setInt(R.id.rootLayout, "setBackgroundColor", highlightColor)
+                }
 
                 val itemClickFillIntent = Intent().apply {
                     putExtra(EXTRA_SENSOR_ID, data.sensorId)
