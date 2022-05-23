@@ -61,6 +61,8 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -68,7 +70,6 @@ import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import com.ruuvi.station.widgets.domain.WidgetsService
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -498,8 +499,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     override fun onResume() {
         super.onResume()
 
-        //TODO REMOVE TESTING UPDATE
-        WidgetsService.updateAllWidgets(this)
+        //TODO REMOVE TESTING UPDATE?
+        SimpleWidget.updateAll(this)
+        ComplexWidgetProvider.updateAll(this)
 
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)

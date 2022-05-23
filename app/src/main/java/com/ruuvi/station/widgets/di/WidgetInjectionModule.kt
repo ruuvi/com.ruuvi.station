@@ -5,14 +5,12 @@ import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelAr
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
-import com.ruuvi.station.widgets.ui.firstWidget.SensorWidgetConfigureViewModel
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureViewModel
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
 
 object WidgetInjectionModule {
     val module = Kodein.Module(WidgetInjectionModule.javaClass.name) {
-        bind<SensorWidgetConfigureViewModel>() with provider { SensorWidgetConfigureViewModel(instance(), instance(), instance()) }
 
         bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance(), instance()) }
 

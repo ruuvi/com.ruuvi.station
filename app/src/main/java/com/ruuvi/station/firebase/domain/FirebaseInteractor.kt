@@ -10,7 +10,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.widgets.domain.WidgetsService
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Exception
@@ -104,7 +104,7 @@ class FirebaseInteractor(
 
                 registerAlarmStats()
 
-                val useSimpleWidget = WidgetsService.getSimpleWidgetsIds(context).isNotEmpty()
+                val useSimpleWidget = SimpleWidget.getSimpleWidgetsIds(context).isNotEmpty()
                 Timber.d("useSimpleWidget $useSimpleWidget")
                 firebaseAnalytics.setUserProperty(USE_SIMPLE_WIDGET, useSimpleWidget.toString())
             } catch (e: Exception) {

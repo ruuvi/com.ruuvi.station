@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:background="?attr/colorControlHighlight"
     android:theme="@style/AppTheme.AppWidgetContainer"
     xmlns:tools="http://schemas.android.com/tools">
 
