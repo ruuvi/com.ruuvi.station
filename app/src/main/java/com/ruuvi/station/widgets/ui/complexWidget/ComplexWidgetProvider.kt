@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.*
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -82,6 +83,23 @@ class ComplexWidgetProvider: AppWidgetProvider() {
                 action = ITEM_CLICK
             }
             return PendingIntent.getBroadcast(context, appWidgetId, itemClickIntent, FLAG_UPDATE_CURRENT or FLAG_MUTABLE)
+        }
+
+        fun updateAll(context: Context) {
+            val ids = getWidgetsIds(context)
+            val appWidgetManager =
+                AppWidgetManager.getInstance(context)
+
+            for (appWidgetId in ids) {
+                updateComplexWidget(context, appWidgetManager, appWidgetId)
+            }
+        }
+
+        private fun getWidgetsIds(context: Context): IntArray {
+            val appWidgetManager =
+                AppWidgetManager.getInstance(context)
+
+            return appWidgetManager.getAppWidgetIds(ComponentName(context, ComplexWidgetProvider::class.java.name ))
         }
     }
 }

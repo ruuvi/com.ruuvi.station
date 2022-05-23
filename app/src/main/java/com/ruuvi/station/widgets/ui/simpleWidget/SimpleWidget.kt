@@ -112,6 +112,16 @@ class SimpleWidget: AppWidgetProvider() {
             )
         }
 
+        fun updateAll(context: Context) {
+            val ids = getSimpleWidgetsIds(context)
+            val appWidgetManager =
+                AppWidgetManager.getInstance(context)
+
+            for (appWidgetId in ids) {
+                updateSimpleWidget(context, appWidgetManager, appWidgetId)
+            }
+        }
+
         fun getSimpleWidgetsIds(context: Context): IntArray {
             val appWidgetManager =
                 AppWidgetManager.getInstance(context)
