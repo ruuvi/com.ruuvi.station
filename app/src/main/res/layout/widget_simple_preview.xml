@@ -68,10 +68,10 @@
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
             android:lineSpacingMultiplier="1"
+            android:text="@string/widgets_preview_sensor_value"
             android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:text="@string/widgets_preview_sensor_value" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/unitTextView"
