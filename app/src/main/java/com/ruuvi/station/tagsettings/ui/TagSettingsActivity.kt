@@ -32,6 +32,7 @@ import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
@@ -66,6 +67,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     private val imageInteractor: ImageInteractor by instance()
     private val sensorHistoryRepository: SensorHistoryRepository by instance()
     private val sensorSettingsRepository: SensorSettingsRepository by instance()
+    private val accelerationConverter: AccelerationConverter by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +100,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     private fun setupViewModel() {
         viewModel.setupAlarmElements()
 
-        viewModel.tagObserve.observe(this) { tag ->
+        viewModel.tagState.observe(this) { tag ->
             tag?.let {
                 setupCalibration(it)
                 updateReadings(it)
@@ -311,7 +313,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
-            viewModel.tagObserve.value?.id?.let {
+            viewModel.tagState.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -405,9 +407,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
             binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            binding.accelerationXTextView.text = getString(R.string.acceleration_reading, tag.accelX)
-            binding.accelerationYTextView.text = getString(R.string.acceleration_reading, tag.accelY)
-            binding.accelerationZTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
+            binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
+            binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
+            binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)
             binding.dataFormatTextView.text = tag.dataFormat.toString()
             binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
             binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
@@ -428,7 +430,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             for (alarm in viewModel.alarmElements) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
-            viewModel.tagObserve.value?.let { viewModel.deleteTag(it) }
+            viewModel.tagState.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 

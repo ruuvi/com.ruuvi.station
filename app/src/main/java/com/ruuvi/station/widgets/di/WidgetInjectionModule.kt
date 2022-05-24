@@ -20,6 +20,6 @@ object WidgetInjectionModule {
 
         bind<ComplexWidgetPreferencesInteractor>() with singleton { ComplexWidgetPreferencesInteractor(instance()) }
 
-        bind<WidgetInteractor>() with singleton { WidgetInteractor(instance(),instance(), instance(), instance()) }
+        bind<WidgetInteractor>() with singleton { WidgetInteractor(instance(),instance(), instance(), instance(), instance()) }
     }
 }

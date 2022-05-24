@@ -6,6 +6,8 @@ import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.AccelerationAxis
+import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.widgets.data.*
@@ -17,7 +19,8 @@ class WidgetInteractor (
     val context: Context,
     val tagRepository: TagRepository,
     val cloudInteractor: RuuviNetworkInteractor,
-    val unitsConverter: UnitsConverter
+    val unitsConverter: UnitsConverter,
+    val accelerationConverter: AccelerationConverter
 ) {
     fun getCloudSensorsList() = tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }
 
@@ -83,20 +86,20 @@ class WidgetInteractor (
 
                 val accelerationXValue = SensorValue(
                     type = WidgetType.ACCELERATION_X,
-                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelX),
-                    unit = context.getString(R.string.acceleration_unit) + " (x)" //TODO LOCALIZE
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelX),
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
                 )
 
                 val accelerationYValue = SensorValue(
                     type = WidgetType.ACCELERATION_Y,
-                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelY),
-                    unit = context.getString(R.string.acceleration_unit) + " (y)" //TODO LOCALIZE
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelY),
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
                 )
 
                 val accelerationZValue = SensorValue(
                     type = WidgetType.ACCELERATION_Z,
-                    sensorValue = String.format("%1\$,.3f", lastMeasurement.accelZ),
-                    unit = context.getString(R.string.acceleration_unit) + " (z)" //TODO LOCALIZE
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelZ),
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                 )
 
                 result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
@@ -211,16 +214,16 @@ class WidgetInteractor (
                         sensorValue = decoded.rssi.toString()
                     }
                     WidgetType.ACCELERATION_X -> {
-                        unit = context.getString(R.string.acceleration_unit)
-                        sensorValue = String.format("%1\$,.3f", decoded.accelX)
+                        unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
+                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelX)
                     }
                     WidgetType.ACCELERATION_Y -> {
-                        unit = context.getString(R.string.acceleration_unit)
-                        sensorValue = String.format("%1\$,.3f", decoded.accelY)
+                        unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
+                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelY)
                     }
                     WidgetType.ACCELERATION_Z -> {
-                        unit = context.getString(R.string.acceleration_unit)
-                        sensorValue = String.format("%1\$,.3f", decoded.accelZ)
+                        unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
+                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelZ)
                     }
                 }
 

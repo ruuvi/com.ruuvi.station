@@ -71,7 +71,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Widget Empty"
-            android:textColor="#ffffff"
+            android:textColor="?attr/colorOnSecondary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
