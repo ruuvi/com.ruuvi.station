@@ -8,7 +8,6 @@ import com.ruuvi.station.bluetooth.BluetoothForegroundService
 import com.ruuvi.station.bluetooth.ScanningPeriodicReceiver
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.widgets.domain.WidgetsService
 import timber.log.Timber
 
 class RebootSchedulerReceiver : BroadcastReceiver() {
@@ -25,7 +24,6 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
             } else {
                 Timber.d("Background scan disabled")
             }
-            WidgetsService.updateAllWidgets(context)
         }
     }
 

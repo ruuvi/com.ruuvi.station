@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
+    <string name="acceleration_unit_x">g (x)</string>
+    <string name="acceleration_unit_y">g (y)</string>
+    <string name="acceleration_unit_z">g (z)</string>
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
@@ -381,6 +384,7 @@
     <string name="welcome_text_4">Kirjaudu sisään käyttääksesi kaikkia sovelluksen ominaisuuksia.</string>
     <string name="welcome_text_4_2">Vahvista anturiesi omistajuudet ilmaisen Ruuvi Cloud -tilin avulla.</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA.</string>
+    <string name="widget_empty">Paina + lisääksesi antureita</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
     <string name="widgets_loading">ladataan...</string>

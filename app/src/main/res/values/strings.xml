@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="acceleration_reading">%1$,.3f g</string>
+    <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
+    <string name="acceleration_unit_x">g (x)</string>
+    <string name="acceleration_unit_y">g (y)</string>
+    <string name="acceleration_unit_z">g (z)</string>
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
@@ -383,6 +386,7 @@
     <string name="welcome_text_4">Sign in to use the full potential of the app.</string>
     <string name="welcome_text_4_2">Claim ownership of your sensors with a free Ruuvi Cloud account.</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station.</string>
+    <string name="widget_empty">Press + to add sensors</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>
