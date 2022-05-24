@@ -29,6 +29,17 @@ class EventFactory (
         return scanEvent
     }
 
+    fun createEvents(tagEntities: List<RuuviTagEntity>, sensorSettings: SensorSettings): ScanEvent {
+        val deviceId = preferences.getDeviceId()
+        val shouldIncludeLocation = preferences.getDataForwardingLocationEnabled()
+        val location = if (shouldIncludeLocation) locationInteractor.getLocation() else null
+        val scanEvent = ScanEvent(deviceId, location, getBatteryLevel())
+        tagEntities.forEach { tagEntity ->
+            scanEvent.tags.add(SensorInfo.createEvent(tagEntity, sensorSettings))
+        }
+        return scanEvent
+    }
+
     fun createTestEvent(): ScanEvent {
         val deviceId = preferences.getDeviceId()
         val shouldIncludeLocation = preferences.getDataForwardingLocationEnabled()

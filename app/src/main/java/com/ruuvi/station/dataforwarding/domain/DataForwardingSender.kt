@@ -47,6 +47,49 @@ class DataForwardingSender(
         }
     }
 
+    fun sendBulkData(tags: List<RuuviTagEntity>, sensorSettings: SensorSettings) {
+        val forwardDuringSync = preferences.getDataForwardingDuringSyncEnabled()
+        if (forwardDuringSync){
+            val backendUrl = preferences.getDataForwardingUrl()
+            if (backendUrl.isNotEmpty()) {
+                Timber.d("sendBulkData for ${sensorSettings.id}")
+                val events: MutableList<RuuviTagEntity> = ArrayList()
+                var i = 0
+                for (tag in tags) {
+                    events.add(tag)
+                    i++
+                    if (i >= 100) {
+                        sendBatch(events, sensorSettings)
+                        events.clear()
+                        i = 0
+                    }
+                }
+                if (events.isNotEmpty()) {
+                    sendBatch(events, sensorSettings)
+                }
+            }
+        }
+    }
+
+    private fun sendBatch(tags: List<RuuviTagEntity>, sensorSettings: SensorSettings) {
+        val backendUrl = preferences.getDataForwardingUrl()
+        val event = eventFactory.createEvents(tags, sensorSettings)
+        try {
+            Ion.with(context)
+                    .load(backendUrl)
+                    .setLogging("HTTP_LOGS", Log.DEBUG)
+                    .setJsonPojoBody(event)
+                    .asJsonObject()
+                    .setCallback { e, _ ->
+                        if (e != null) {
+                            Timber.e(e, "Batch sending failed to $backendUrl")
+                        }
+                    }
+        } catch (e: Exception) {
+            Timber.e(e, "Batch sending failed to $backendUrl")
+        }
+    }
+
     fun test(url: String, deviceId: String, callback: FutureCallback<Response<JsonObject>>) {
         try {
             val scanEvent = eventFactory.createTestEvent()

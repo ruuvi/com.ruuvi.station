@@ -8,7 +8,9 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,8 @@ class BluetoothGattInteractor (
     private val tagRepository: TagRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
-    private val firebaseInteractor: FirebaseInteractor
+    private val firebaseInteractor: FirebaseInteractor,
+    private val dataForwardingSender: DataForwardingSender
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
@@ -56,6 +59,7 @@ class BluetoothGattInteractor (
                     readDataSize = data.size
                 ))
                 saveGattReadings(sensorId, data)
+                forwardGattReadings(sensorId, data)
             }
 
             override fun syncProgress(syncedDataPoints: Int) {
@@ -103,6 +107,26 @@ class BluetoothGattInteractor (
         }
         sensorHistoryRepository.bulkInsert(sensorId, tagReadingList)
         updateLastSync(sensorId, Date())
+    }
+
+    fun forwardGattReadings(sensorId: String, data: List<LogReading>) {
+        Timber.d("forwardGattReadings")
+        val tagEntityList = mutableListOf<RuuviTagEntity>()
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings != null) {
+            data.forEach { logReading ->
+                val reading = TagSensorReading()
+                reading.ruuviTagId = sensorId
+                reading.temperature = logReading.temperature
+                reading.humidity = logReading.humidity
+                reading.pressure = logReading.pressure
+                reading.createdAt = logReading.date
+                sensorSettings?.calibrateSensor(reading)
+                val tag = RuuviTagEntity(reading)
+                tagEntityList.add(tag)
+            }
+            dataForwardingSender.sendBulkData(tagEntityList, sensorSettings)
+        }
     }
 
     fun updateLastSync(sensorId: String, date: Date?) =

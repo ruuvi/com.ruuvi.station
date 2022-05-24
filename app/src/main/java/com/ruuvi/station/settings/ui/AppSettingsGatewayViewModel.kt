@@ -17,6 +17,9 @@ class AppSettingsGatewayViewModel(
     private val dataForwardingLocationEnabled = MutableStateFlow(interactor.getDataForwardingLocationEnabled())
     val observeDataForwardingLocationEnabled: StateFlow<Boolean> = dataForwardingLocationEnabled
 
+    private val dataForwardingDuringSyncEnabled = MutableStateFlow(interactor.getDataForwardingDuringSyncEnabled())
+    val observeDataForwardingDuringSyncEnabled: StateFlow<Boolean> = dataForwardingDuringSyncEnabled
+
     private val deviceId = MutableStateFlow(interactor.getDeviceId())
     val observeDeviceId: StateFlow<String> = deviceId
 
@@ -29,6 +32,10 @@ class AppSettingsGatewayViewModel(
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
         interactor.setDataForwardingLocationEnabled(locationEnabled)
+    }
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        interactor.setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled)
     }
 
     fun setDeviceId(newDeviceId: String) {

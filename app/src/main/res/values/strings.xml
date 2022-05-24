@@ -123,6 +123,7 @@
     <string name="data_forwarding_background_location_message_second">To be able to include location when app is running in background please allow the app to use your location \'all the time\' when prompted in the next dialog.</string>
     <string name="data_forwarding_disabled">Disabled</string>
     <string name="data_forwarding_location_enable">Send also location coordinates of this device</string>
+    <string name="data_forwarding_during_sync_enable">Forward data while syncing (beta)</string>
     <string name="data_forwarding_url">Data Forwarding URL</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
