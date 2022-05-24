@@ -149,7 +149,7 @@ class ComplexWidgetSensorItem(
         const val checkedPressureDefault = true
         const val checkedMovementDefault = true
         const val checkedVoltageDefault = true
-        const val checkedSignalStrengthDefault = true
+        const val checkedSignalStrengthDefault = false
         const val checkedAccelerationXDefault = false
         const val checkedAccelerationYDefault = false
         const val checkedAccelerationZDefault = false
