@@ -372,6 +372,7 @@
     <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках.</string>
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление.</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
+    <string name="widget_empty">Нажмите + чтобы добавить датчики</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>
     <string name="widgets_preview_sensor_value">69.50</string>

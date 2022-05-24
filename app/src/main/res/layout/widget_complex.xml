@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Widget Empty"
+            android:text="@string/widget_empty"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="20sp"
             android:textStyle="bold" />
