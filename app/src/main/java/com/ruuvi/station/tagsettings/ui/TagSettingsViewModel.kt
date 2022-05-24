@@ -31,8 +31,8 @@ class TagSettingsViewModel(
 
     private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
 
-    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
-    val tagObserve: LiveData<RuuviTagEntity?> = tagState
+    private val _tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
+    val tagState: LiveData<RuuviTagEntity?> = _tagState
 
     private val sensorSettings = MutableLiveData<SensorSettings?>()
     val sensorSettingsObserve: LiveData<SensorSettings?> = sensorSettings
@@ -46,7 +46,7 @@ class TagSettingsViewModel(
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    val isLowBattery = Transformations.map(tagState) {
+    val isLowBattery = Transformations.map(_tagState) {
         it?.isLowBattery() ?: false
     }
 
@@ -62,14 +62,14 @@ class TagSettingsViewModel(
 
     init {
         Timber.d("TagSettingsViewModel $sensorId")
-        firmware.addSource(tagState) { firmware.value = getFirmware() }
+        firmware.addSource(_tagState) { firmware.value = getFirmware() }
         firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
     }
 
     private fun getFirmware(): UiText? {
         val firmware = sensorSettings.value?.firmware
 
-        if (firmware.isNullOrEmpty() && tagState.value?.dataFormat != 5) {
+        if (firmware.isNullOrEmpty() && _tagState.value?.dataFormat != 5) {
             return UiText.StringResource(R.string.firmware_very_old)
         }
         return firmware?.let { UiText.DynamicString(firmware) }
@@ -80,7 +80,7 @@ class TagSettingsViewModel(
             val tagInfo = getTagById(sensorId)
             val settings = interactor.getSensorSettings(sensorId)
             withContext(Dispatchers.Main) {
-                tagState.value = tagInfo
+                _tagState.value = tagInfo
                 sensorSettings.value = settings
             }
         }

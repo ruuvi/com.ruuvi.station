@@ -34,11 +34,11 @@ data class TagSensorReading(
     @Column
     var rssi: Int = 0,
     @Column
-    var accelX: Double = 0.0,
+    var accelX: Double? = null,
     @Column
-    var accelY: Double = 0.0,
+    var accelY: Double? = null,
     @Column
-    var accelZ: Double = 0.0,
+    var accelZ: Double? = null,
     @Column
     var voltage: Double = 0.0,
     @Column
@@ -76,9 +76,9 @@ data class TagSensorReading(
         humidity = tag.humidity,
         pressure = tag.pressure,
         rssi = tag.rssi ?: 0,
-        accelX = tag.accelX ?: 0.0,
-        accelY = tag.accelY ?: 0.0,
-        accelZ = tag.accelZ ?: 0.0,
+        accelX = tag.accelX,
+        accelY = tag.accelY,
+        accelZ = tag.accelZ,
         voltage = tag.voltage ?: 0.0,
         dataFormat = tag.dataFormat ?: 0,
         txPower = tag.txPower ?: 0.0,

@@ -263,9 +263,15 @@ class AlarmCheckInteractor(
         }
 
         private fun hasTagMoved(one: TagSensorReading, two: TagSensorReading): Boolean {
-            return one.accelZ.diff(two.accelZ) > MOVEMENT_THRESHOLD ||
-                one.accelY.diff(two.accelY) > MOVEMENT_THRESHOLD ||
-                one.accelX.diff(two.accelX) > MOVEMENT_THRESHOLD
+            val accelX1 = one.accelX ?: 0.0
+            val accelY1 = one.accelY ?: 0.0
+            val accelZ1 = one.accelZ ?: 0.0
+            val accelX2 = two.accelX ?: 0.0
+            val accelY2 = two.accelY ?: 0.0
+            val accelZ2 = two.accelZ ?: 0.0
+            return accelZ1.diff(accelZ2) > MOVEMENT_THRESHOLD ||
+                    accelY1.diff(accelY2) > MOVEMENT_THRESHOLD ||
+                    accelX1.diff(accelX2) > MOVEMENT_THRESHOLD
         }
     }
 
