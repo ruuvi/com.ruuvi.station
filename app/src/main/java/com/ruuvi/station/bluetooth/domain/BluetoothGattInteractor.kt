@@ -1,5 +1,6 @@
 package com.ruuvi.station.bluetooth.domain
 
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
@@ -23,7 +24,8 @@ class BluetoothGattInteractor (
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val firebaseInteractor: FirebaseInteractor,
-    private val dataForwardingSender: DataForwardingSender
+    private val dataForwardingSender: DataForwardingSender,
+    private val preferencesRepository: PreferencesRepository
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
@@ -59,7 +61,7 @@ class BluetoothGattInteractor (
                     readDataSize = data.size
                 ))
                 saveGattReadings(sensorId, data)
-                forwardGattReadings(sensorId, data)
+                if (shouldForwardData()) forwardGattReadings(sensorId, data)
             }
 
             override fun syncProgress(syncedDataPoints: Int) {
@@ -134,5 +136,10 @@ class BluetoothGattInteractor (
 
     fun resetGattStatus(sensorId: String) {
         setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL))
+    }
+
+    private fun shouldForwardData(): Boolean {
+        return preferencesRepository.getDataForwardingDuringSyncEnabled() &&
+                preferencesRepository.getDataForwardingUrl().isNotEmpty()
     }
 }
