@@ -9,7 +9,6 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
@@ -76,8 +75,7 @@ class BluetoothGattInteractor (
                 Timber.d("Error: $errorMessage")
             }
 
-            override fun heartbeat(raw: String) {
-            }
+            override fun heartbeat(raw: String) { }
         })
         if (!found)
             setSyncStatus(GattSyncStatus(sensorId, SyncProgress.NOT_FOUND))
@@ -113,21 +111,9 @@ class BluetoothGattInteractor (
 
     fun forwardGattReadings(sensorId: String, data: List<LogReading>) {
         Timber.d("forwardGattReadings")
-        val tagEntityList = mutableListOf<RuuviTagEntity>()
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         if (sensorSettings != null) {
-            data.forEach { logReading ->
-                val reading = TagSensorReading()
-                reading.ruuviTagId = sensorId
-                reading.temperature = logReading.temperature
-                reading.humidity = logReading.humidity
-                reading.pressure = logReading.pressure
-                reading.createdAt = logReading.date
-                sensorSettings?.calibrateSensor(reading)
-                val tag = RuuviTagEntity(reading)
-                tagEntityList.add(tag)
-            }
-            dataForwardingSender.sendBulkData(tagEntityList, sensorSettings)
+            dataForwardingSender.sendGattSyncData(data, sensorSettings)
         }
     }
 

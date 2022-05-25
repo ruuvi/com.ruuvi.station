@@ -8,6 +8,7 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import timber.log.Timber
@@ -46,34 +47,31 @@ class DataForwardingSender(
             }
         }
     }
-
-    fun sendBulkData(tags: List<RuuviTagEntity>, sensorSettings: SensorSettings) {
+    fun sendGattSyncData(readings: List<LogReading>, sensorSettings: SensorSettings) {
         val forwardDuringSync = preferences.getDataForwardingDuringSyncEnabled()
-        if (forwardDuringSync){
-            val backendUrl = preferences.getDataForwardingUrl()
-            if (backendUrl.isNotEmpty()) {
-                Timber.d("sendBulkData for ${sensorSettings.id}")
-                val events: MutableList<RuuviTagEntity> = ArrayList()
-                var i = 0
-                for (tag in tags) {
-                    events.add(tag)
-                    i++
-                    if (i >= 100) {
-                        sendBatch(events, sensorSettings)
-                        events.clear()
-                        i = 0
-                    }
-                }
-                if (events.isNotEmpty()) {
+        val backendUrl = preferences.getDataForwardingUrl()
+        if (forwardDuringSync && backendUrl.isNotEmpty() && readings.isNotEmpty()) {
+            Timber.d("sendBulkData for ${sensorSettings.id}")
+            val events: MutableList<LogReading> = ArrayList()
+            var i = 0
+            for (reading in readings) {
+                events.add(reading)
+                i++
+                if (i >= 100) {
                     sendBatch(events, sensorSettings)
+                    events.clear()
+                    i = 0
                 }
+            }
+            if (events.isNotEmpty()) {
+                sendBatch(events, sensorSettings)
             }
         }
     }
 
-    private fun sendBatch(tags: List<RuuviTagEntity>, sensorSettings: SensorSettings) {
+    private fun sendBatch(tags: List<LogReading>, sensorSettings: SensorSettings) {
         val backendUrl = preferences.getDataForwardingUrl()
-        val event = eventFactory.createEvents(tags, sensorSettings)
+        val event = eventFactory.createGattEvents(tags, sensorSettings)
         try {
             Ion.with(context)
                     .load(backendUrl)

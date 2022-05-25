@@ -2,8 +2,8 @@ package com.ruuvi.station.dataforwarding.domain
 
 import android.content.Context
 import android.os.BatteryManager
-import android.os.Build
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
@@ -25,17 +25,17 @@ class EventFactory (
         val shouldIncludeLocation = preferences.getDataForwardingLocationEnabled()
         val location = if (shouldIncludeLocation) locationInteractor.getLocation() else null
         val scanEvent = ScanEvent(deviceId, location, getBatteryLevel())
-        scanEvent.tags.add(SensorInfo.createEvent(tagEntity, sensorSettings))
+        scanEvent.tags.add(SensorInfo(tagEntity, sensorSettings))
         return scanEvent
     }
 
-    fun createEvents(tagEntities: List<RuuviTagEntity>, sensorSettings: SensorSettings): ScanEvent {
+    fun createGattEvents(tagEntities: List<LogReading>, sensorSettings: SensorSettings): ScanEvent {
         val deviceId = preferences.getDeviceId()
         val shouldIncludeLocation = preferences.getDataForwardingLocationEnabled()
         val location = if (shouldIncludeLocation) locationInteractor.getLocation() else null
         val scanEvent = ScanEvent(deviceId, location, getBatteryLevel())
         tagEntities.forEach { tagEntity ->
-            scanEvent.tags.add(SensorInfo.createEvent(tagEntity, sensorSettings))
+            scanEvent.tags.add(SensorInfo.fromGattLogReading(tagEntity, sensorSettings))
         }
         return scanEvent
     }
@@ -48,12 +48,10 @@ class EventFactory (
     }
 
     private fun getBatteryLevel(): Int? {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                return batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        try {
+            return batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        } catch (e: Exception) {
+            Timber.e(e)
         }
         return null
     }
