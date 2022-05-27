@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/black</item>
+        <item name="actionMenuTextColor">@color/white</item>
+
+        <item name="colorPrimary">@color/main</item>
+        <item name="colorPrimaryDark">@color/darkGray</item>
+        <item name="colorAccent">@color/gray</item>
+    </style>
+
     <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
         <item name="appWidgetRadius">8dp</item>
         <item name="appWidgetPadding">4dp</item>

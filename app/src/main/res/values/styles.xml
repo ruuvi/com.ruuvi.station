@@ -1,14 +1,4 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/main</item>
-        <item name="colorPrimaryDark">@color/darkGray</item>
-        <item name="colorAccent">@color/gray</item>
-        <item name="actionMenuTextColor">@color/white</item>
-    </style>
-
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
