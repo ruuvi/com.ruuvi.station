@@ -80,7 +80,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -99,6 +99,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/colorDisabled</item>
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -106,11 +107,11 @@
     </style>
 
     <style name="sensorSettingGroupHeaderStyle">
-        <item name="android:background">@color/backgroundLight</item>
+        <item name="android:background">?attr/colorHeaderSurface</item>
         <item name="android:fontFamily">@font/montserrat_bold</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/mainDark</item>
+        <item name="android:textColor">?attr/colorOnHeaderSurface</item>
         <item name="android:textSize">16sp</item>
     </style>
 

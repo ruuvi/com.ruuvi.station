@@ -8,6 +8,8 @@
         <item name="actionMenuTextColor">@color/black</item>
         <item name="colorSurfaceVariant">@color/grayNew</item>
         <item name="colorOnSurfaceVariant">@color/black</item>
+        <item name="colorHeaderSurface">@color/backgroundLight</item>
+        <item name="colorOnHeaderSurface">@color/mainDark</item>
 
         <item name="colorPrimary">@color/main</item>
         <item name="colorPrimaryDark">@color/darkGray</item>
