@@ -11,7 +11,7 @@
         android:id="@+id/background"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/backgroundLight"
+        android:background="?attr/colorSurfaceVariant"
         app:layout_constraintBottom_toBottomOf="@+id/deviceId"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,8 +28,7 @@
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
         android:textAllCaps="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/mainDark"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/bell"
         app:layout_constraintHorizontal_bias="0.0"
@@ -87,7 +86,7 @@
                 android:layout_toEndOf="@id/row_main_temp_icon"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/temperature_reading"
-                android:textColor="@color/mainDark"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -118,7 +117,7 @@
                 android:layout_toEndOf="@id/row_main_humid_icon"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/humidity_reading"
-                android:textColor="@color/mainDark"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -150,7 +149,7 @@
                 android:layout_toEndOf="@id/row_main_pres_icon"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/pressure_reading"
-                android:textColor="@color/mainDark"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -181,7 +180,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_toEndOf="@id/row_main_movement_icon"
                 android:fontFamily="@font/montserrat"
-                android:textColor="@color/mainDark"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 tools:text="124" />
 
@@ -195,7 +194,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="8dp"
         android:paddingBottom="8dp"
-        android:textColor="@color/lastSeenColor"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="15sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

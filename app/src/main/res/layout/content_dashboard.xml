@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="?attr/colorSurface"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
@@ -14,7 +14,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/dashboard_empty"
         android:textAllCaps="true"
-        android:textColor="@color/noTagsColor"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="@dimen/title_font_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

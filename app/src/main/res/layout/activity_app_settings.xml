@@ -13,7 +13,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ap_transparent"
+        android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
             android:id="@+id/settings_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white" />
+            android:background="?attr/colorSurface" />
 
     </ScrollView>
 
