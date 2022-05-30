@@ -1,7 +1,6 @@
 package com.ruuvi.station.addtag.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,11 +37,7 @@ class AddTagAdapter(
                 else -> signalIcon.setImageResource(R.drawable.icon_connection_3)
             }
 
-            if (item?.updateAt?.diffGreaterThan(10000) == true) {
-                address.setTextColor(Color.GRAY)
-            } else {
-                address.setTextColor(Color.BLACK)
-            }
+            address.isEnabled = item?.updateAt?.diffGreaterThan(10000) != true
 
             return root
         }
