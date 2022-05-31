@@ -11,7 +11,7 @@
 
   <com.google.android.material.appbar.AppBarLayout
       android:id="@+id/appBarLayout"
-      android:background="@color/ap_transparent"
+      android:background="@android:color/transparent"
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       android:theme="@style/AppTheme.AppBarOverlay"
@@ -43,7 +43,7 @@
         android:id="@+id/calibration_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"/>
+        android:background="?attr/colorSurface"/>
   </ScrollView>
 
   </androidx.constraintlayout.widget.ConstraintLayout>

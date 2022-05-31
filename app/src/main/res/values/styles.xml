@@ -102,8 +102,13 @@
         <item name="android:textColor">?attr/colorDisabled</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowBackground">@drawable/dialog_inset</item>
+        <item name="android:windowTitleStyle">@style/CustomDialogTitleStyle</item>
+    </style>
+
+    <style name="CustomDialogTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="sensorSettingGroupHeaderStyle">
