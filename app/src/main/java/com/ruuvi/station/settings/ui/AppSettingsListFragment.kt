@@ -65,10 +65,6 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
                 (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_pressure_unit)
             }
 
-            localeSettingsLayout.setDebouncedOnClickListener {
-                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_language)
-            }
-
             experimentalSettingsLayout.setDebouncedOnClickListener {
                 (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_experimental)
             }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorDisabled" format="color"/>
+    <attr name="colorSurfaceVariant" format="color"/>
+    <attr name="colorOnSurfaceVariant" format="color"/>
+    <attr name="colorHeaderSurface" format="color"/>
+    <attr name="colorOnHeaderSurface" format="color"/>
+</resources>

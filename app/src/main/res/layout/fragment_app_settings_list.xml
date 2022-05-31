@@ -258,33 +258,6 @@
             android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/localeSettingsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/localeSettingsTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_language" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/localeSettingsDescriptionTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLength="64"
-                android:maxLines="1" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/experimentalSettingsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="?attr/colorSurface"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     tools:context="com.ruuvi.station.tagsettings.ui.TagSettingsActivity">
@@ -34,7 +34,7 @@
 
         <ScrollView
             android:id="@+id/scrollView"
-            android:background="@color/white"
+            android:background="?attr/colorSurface"
             android:layout_below="@id/appBarLayout"
             android:layout_height="match_parent"
             android:layout_width="match_parent">

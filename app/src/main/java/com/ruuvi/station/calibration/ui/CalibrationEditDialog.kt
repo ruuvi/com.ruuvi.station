@@ -11,6 +11,7 @@ import com.ruuvi.station.databinding.DialogCalibrationEditBinding
 import java.lang.Exception
 import java.lang.IllegalStateException
 
+//TODO implement a custom FragmentFactory
 class CalibrationEditDialog(
     private val calibrationType: CalibrationType,
     private var unit: String = "",
