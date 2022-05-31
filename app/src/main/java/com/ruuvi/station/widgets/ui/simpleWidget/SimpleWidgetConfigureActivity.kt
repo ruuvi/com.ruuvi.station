@@ -167,7 +167,6 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
     val sensors by viewModel.cloudSensors.observeAsState(listOf())
     val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
     val selectedOption by viewModel.sensorId.observeAsState()
-    val showOptimizationHint by viewModel.showOptimizationHint.observeAsState(initial = false)
 
     LazyColumn() {
         item {
@@ -183,21 +182,6 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
                 viewModel = viewModel,
                 isSelected = item.id == selectedOption
             )
-        }
-
-        item {
-            if (showOptimizationHint) {
-                RegularText(text = stringResource(id = R.string.widgets_battery_optimisation_hint))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    RuuviButton(text = stringResource(id = R.string.open_settings)) {
-                        viewModel.openOptimizationSettings()
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
         }
     }
 }
