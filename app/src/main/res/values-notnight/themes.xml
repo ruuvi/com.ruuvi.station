@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/white</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/darkGray</item>
         <item name="colorDisabled">@color/gray</item>
@@ -11,9 +12,9 @@
         <item name="colorHeaderSurface">@color/backgroundLight</item>
         <item name="colorOnHeaderSurface">@color/mainDark</item>
 
-        <item name="colorPrimary">@color/main</item>
+        <item name="colorPrimary">@color/titan80</item>
         <item name="colorPrimaryDark">@color/darkGray</item>
-        <item name="colorAccent">@color/main</item>
+        <item name="colorAccent">@color/ruuviNew</item>
 
         <item name="android:autofilledHighlight" tools:targetApi="26">@android:color/transparent</item>
     </style>

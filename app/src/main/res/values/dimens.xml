@@ -1,6 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="textSubtitleSize">16sp</dimen>
+    <dimen name="textParagraphSize">16sp</dimen>
+    <dimen name="textParagraphSmallSize">12sp</dimen>
+
+    <dimen name="textLineHeight">22sp</dimen>
+    <dimen name="textLineSmallHeight">18sp</dimen>
+
+    <dimen name="tiny">2dp</dimen>
+    <dimen name="small">4dp</dimen>
+    <dimen name="normal">8dp</dimen>
+    <dimen name="extended">16dp</dimen>
+    <dimen name="big">24dp</dimen>
+    <dimen name="extraBig">32dp</dimen>
+    <dimen name="huge">64dp</dimen>
+
+    <dimen name="screenStart">@dimen/extended</dimen>
+    <dimen name="screenEnd">@dimen/extended</dimen>
+    <dimen name="screenTop">@dimen/extended</dimen>
+    <dimen name="screenBottom">@dimen/extended</dimen>
+
     <dimen name="title_font_size">16sp</dimen>
     <dimen name="tag_settings_text_padding">8dp</dimen>
 

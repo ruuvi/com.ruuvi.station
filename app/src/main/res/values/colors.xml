@@ -4,6 +4,9 @@
     <color name="ruuviLight50">#8000CCBA</color>
     <color name="titan">#083c3d</color>
     <color name="titan70">#B3083C3D</color>
+    <color name="titan80">#CC083C3D</color>
+    <color name="ruuviNew">#4bc9ba</color>
+
     <color name="dark_emerald">#E6001C1B</color>
     <color name="grayNew">#B3D9EFEB</color>
     <color name="grayNew5">#0DD9EFEB</color>
@@ -21,7 +24,7 @@
     <color name="settingsTitleColor">#030303</color>
     <color name="settingsParagraphColor">#808080</color>
     <color name="lastSeenColor">#829fa5</color>
-    <color name="inactive">#b3b3b3</color>
+    <color name="inactive">#e7ebeb</color>
     <color name="noTagsColor">#bbbbbb</color>
     <color name="divider">#D6D6D6</color>
     <color name="href">#6aeae1</color>
