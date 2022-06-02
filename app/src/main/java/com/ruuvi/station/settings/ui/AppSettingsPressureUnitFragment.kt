@@ -30,7 +30,7 @@ class AppSettingsPressureUnitFragment : Fragment(R.layout.fragment_app_settings_
         val current = viewModel.getPressureUnit()
 
         items.forEachIndexed { index, option ->
-            val radioButton = RadioButton(activity)
+            val radioButton = RadioButton(activity, null, 0, R.style.RadioButton)
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option == current

@@ -9,9 +9,9 @@
     android:layout_height="wrap_content">
     <TextView
         android:id="@+id/captionTextView"
+        style="@style/Paragraph"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
         android:gravity="start|center_vertical"
         android:layout_marginRight="4dp"
         android:layout_gravity="center_vertical"
@@ -22,10 +22,9 @@
         android:id="@+id/minusButton"
         android:layout_width="64dp"
         android:layout_height="36dp"
-        android:textSize="16sp"
-        android:textColor="@color/white"
         android:layout_gravity="center_vertical|end"
         android:background="@drawable/button_rounded_left"
+        style="@style/Button"
         android:text="-"/>
     <View
         android:layout_width="1dp"
@@ -34,9 +33,8 @@
         android:id="@+id/plusButton"
         android:layout_width="64dp"
         android:layout_height="36dp"
-        android:textSize="16sp"
-        android:textColor="@color/white"
         android:layout_gravity="center_vertical|end"
         android:background="@drawable/button_rounded_right"
+        style="@style/Button"
         android:text="+"/>
 </merge>

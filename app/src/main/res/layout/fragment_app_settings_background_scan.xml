@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
-    android:layout_marginStart="16dp"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:paddingBottom="12dp"
-    android:paddingTop="12dp">
+    android:paddingEnd="@dimen/screenEnd"
+    android:paddingStart="@dimen/screenStart"
+    android:paddingBottom="@dimen/screenBottom"
+    android:paddingTop="@dimen/screenTop">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/titleTextView"
-        style="@style/PrefTitleText"
+        style="@style/Subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/settings_background_scan"
@@ -25,18 +25,17 @@
         android:id="@+id/backgroundSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:textSize="16sp"
+        style="@style/SwitchStyle.WithPadding"
         android:text="@string/background_scanning"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
         />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/backgroundIntervalTitleTextView"
-        style="@style/PrefTitleText"
+        style="@style/Subtitle.WithPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:textSize="16sp"
         android:layout_marginBottom="16dp"
         android:text="@string/settings_background_scan_interval"
@@ -59,21 +58,22 @@
         app:layout_constraintTop_toBottomOf="@+id/intervalEdit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/attentionTextView"
-            style="@style/PrefTitleText"
+            style="@style/Subtitle.WithPadding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal"
             android:text="@string/settings_background_battery_optimization_title"
-            android:textSize="16sp"
-            android:layout_marginTop="16dp" />
+            android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/batteryOptimizationAlertTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_background_battery_optimization"
-            android:textSize="16sp"
+            style="@style/Paragraph.WithPadding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
@@ -82,19 +82,17 @@
             android:id="@+id/settingsInstructionsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textSize="16sp"
+            style="@style/Paragraph.WithPadding"
             android:text="@string/settings_background_battery_optimization_common_instructions" />
 
         <Button
             android:id="@+id/openSettingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/roundButton"
+            style="@style/RoundButton"
             android:layout_gravity="center_horizontal"
-            android:text="@string/open_settings"
-            android:padding="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="@dimen/big"
+            android:text="@string/open_settings" />
     </LinearLayout>
 
 
