@@ -30,7 +30,7 @@ class AppSettingsTemperatureUnitFragment : Fragment(R.layout.fragment_app_settin
         val current = viewModel.getTemperatureUnit()
 
         items.forEachIndexed { index, option ->
-            val radioButton = RadioButton(activity)
+            val radioButton = RadioButton(activity, null, 0, R.style.RadioButton)
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option == current

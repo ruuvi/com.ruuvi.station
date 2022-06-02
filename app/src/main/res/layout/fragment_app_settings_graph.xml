@@ -24,7 +24,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/graphAllPointsTitleTextView"
-            style="@style/PrefTitleText"
+            style="@style/PreferencesListItemSubtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/settings_chart_all_points"
@@ -52,7 +52,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/graphDrawDotsTitleTextView"
-            style="@style/PrefTitleText"
+            style="@style/PreferencesListItemSubtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -82,7 +82,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/intervalTitleTextView"
-            style="@style/PrefTitleText"
+            style="@style/PreferencesListItemSubtitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
@@ -134,7 +134,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/viewPeriodTitleTextView"
-            style="@style/PrefTitleText"
+            style="@style/PreferencesListItemSubtitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="16dp"

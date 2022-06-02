@@ -11,6 +11,7 @@
     <dimen name="tiny">2dp</dimen>
     <dimen name="small">4dp</dimen>
     <dimen name="normal">8dp</dimen>
+    <dimen name="normalPlus">12dp</dimen>
     <dimen name="extended">16dp</dimen>
     <dimen name="big">24dp</dimen>
     <dimen name="extraBig">32dp</dimen>
@@ -20,6 +21,8 @@
     <dimen name="screenEnd">@dimen/extended</dimen>
     <dimen name="screenTop">@dimen/extended</dimen>
     <dimen name="screenBottom">@dimen/extended</dimen>
+
+    <dimen name="preferencesListItemPadding">@dimen/normalPlus</dimen>
 
     <dimen name="title_font_size">16sp</dimen>
     <dimen name="tag_settings_text_padding">8dp</dimen>

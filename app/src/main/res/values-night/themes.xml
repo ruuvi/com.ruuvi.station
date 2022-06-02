@@ -12,7 +12,7 @@
         <item name="colorHeaderSurface">@color/dark_emerald</item>
         <item name="colorOnHeaderSurface">@color/backgroundLight</item>
 
-        <item name="colorPrimary">@color/titan80</item>
+        <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/darkGray</item>
         <item name="colorAccent">@color/ruuviNew</item>
 

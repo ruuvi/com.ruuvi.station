@@ -18,6 +18,7 @@
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
         <item name="fontFamily">@font/mulish_bold</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
 
     <style name="Subtitle.WithPadding">
@@ -51,16 +52,10 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="PrefTitleText">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
+    <style name="PreferencesListItemSubtitle" parent="Subtitle">
     </style>
 
-    <style name="PrefSecondaryText">
-        <item name="android:fontFamily">@font/montserrat</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
+    <style name="PreferencesListItemDescription" parent="ParagraphSmall">
     </style>
 
     <style name="PrefSecondaryTextState">
@@ -116,6 +111,15 @@
     <style name="SwitchStyle.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/textParagraphSize</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+        <item name="android:paddingTop">@dimen/normalPlus</item>
+        <item name="android:paddingBottom">@dimen/normalPlus</item>
     </style>
 
     <style name="sensorSettingInfoTitleStyle">
