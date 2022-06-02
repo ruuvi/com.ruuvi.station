@@ -8,7 +8,7 @@ import com.ruuvi.station.settings.domain.GatewayTestResultType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class AppSettingsGatewayViewModel(
+class AppSettingsDataForwardingViewModel(
         private val interactor: AppSettingsInteractor
 ) : ViewModel() {
     private val dataForwardingUrl = MutableStateFlow(interactor.getDataForwardingUrl())

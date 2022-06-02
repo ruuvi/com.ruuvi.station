@@ -76,7 +76,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/submitButton"
-        style="@style/roundButton"
+        style="@style/RoundButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"

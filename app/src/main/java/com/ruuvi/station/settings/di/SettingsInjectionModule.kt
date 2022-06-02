@@ -15,15 +15,13 @@ object SettingsInjectionModule {
 
         bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
 
-        bind<AppSettingsGatewayViewModel>() with provider { AppSettingsGatewayViewModel(instance()) }
+        bind<AppSettingsDataForwardingViewModel>() with provider { AppSettingsDataForwardingViewModel(instance()) }
 
         bind<AppSettingsPressureUnitViewModel>() with provider { AppSettingsPressureUnitViewModel(instance()) }
 
         bind<AppSettingsTemperatureUnitViewModel>() with provider { AppSettingsTemperatureUnitViewModel(instance()) }
 
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
-
-        bind<AppSettingsLocaleViewModel>() with provider { AppSettingsLocaleViewModel(instance(), instance()) }
 
         bind<AppSettingsExperimentalViewModel>() with provider { AppSettingsExperimentalViewModel(instance()) }
 
