@@ -4,18 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.ui.AppSettingsDataForwardingFragment">
+    tools:context=".settings.ui.AppSettingsDataForwardingFragment"
+    android:paddingEnd="@dimen/screenEnd"
+    android:paddingStart="@dimen/screenStart"
+    android:paddingBottom="@dimen/screenBottom"
+    android:paddingTop="@dimen/screenTop">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+            android:orientation="vertical">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/gatewayUrlTitleTextView"
-                    style="@style/PreferencesListItemSubtitle"
+                    style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/data_forwarding_url" />
@@ -25,28 +26,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/data_forwarding_url_hint"
-                    android:maxLength="255" />
+                    android:maxLength="255"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
+                    style="@style/Input" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/deviceIdTitleTextView"
-                    style="@style/PreferencesListItemSubtitle"
+                    style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:text="@string/settings_gateway_device_identifier" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/deviceIdEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="32" />
+                    android:maxLength="32"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
+                    style="@style/Input"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/locationSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp"
+                    style="@style/SwitchStyle.WithPadding"
                     android:text="@string/data_forwarding_location_enable"
                     />
                 
@@ -54,8 +59,7 @@
                     android:id="@+id/forwardingDuringSyncSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp"
+                    style="@style/SwitchStyle.WithPadding"
                     android:text="@string/data_forwarding_during_sync_enable"
                     />
 
@@ -64,14 +68,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_data_forwarding_test"
-                    android:layout_marginTop="8dp"/>
+                    style="@style/RoundButton"
+                    android:layout_marginTop="@dimen/extended"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/gatewayTestResultTextView"
-                    style="@style/PreferencesListItemSubtitle"
+                    style="@style/ParagraphSmall.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
                     android:visibility="gone"/>
 
                 <View
@@ -84,6 +88,7 @@
                     android:id="@+id/settingsInfoTextView"
                     android:text="@string/settings_gateway_details"
                     android:layout_marginTop="16dp"
+                    style="@style/Paragraph.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
         </LinearLayout>
