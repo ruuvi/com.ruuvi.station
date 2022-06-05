@@ -25,18 +25,18 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
-import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
@@ -83,53 +83,123 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
 @Composable
 fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
-    ComruuvistationTheme {
-        val systemUiController = rememberSystemUiController()
-
+    RuuviTheme {
         val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
-
         val activity = LocalContext.current as Activity
 
-        // A surface container using the 'background' color from the theme
-        Surface(
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column (modifier = Modifier.verticalScroll(rememberScrollState()))
-            {
-                MyTopAppBar(activity.title.toString())
-                when (stage) {
-                    DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(viewModel)
-                    DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
-                    DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(viewModel)
-                    DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
-                    DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
-                    DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
-                    DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
-                }
+        Body(activity.title.toString()) {
+            when (stage) {
+                DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(
+                    viewModel
+                )
+                DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
+                DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(
+                    viewModel
+                )
+                DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
+                DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
+                DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
+                DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
             }
-        }
-
-        SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = LightColorPalette.surface,
-                darkIcons = false
-            )
         }
     }
 }
 
 @Composable
-fun ErrorScreen(viewModel: DfuUpdateViewModel) {
-    val errorMessage by viewModel.error.observeAsState()
-    val errorMessageId by viewModel.errorCode.observeAsState()
-    HeaderText(text = stringResource(id = R.string.error))
-    if (errorMessageId != null) {
-        RegularText(text = stringResource(id = errorMessageId ?: R.string.unknown_error))
-    } else {
-        RegularText(text = errorMessage ?: stringResource(id = R.string.unknown_error))
+fun Body(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    val systemUiController = rememberSystemUiController()
+
+    Surface(
+        color = RuuviStationTheme.colors.background,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column() {
+            MyTopAppBar(title)
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(RuuviStationTheme.dimensions.screenPadding)
+            ) {
+                content()
+            }
+        }
     }
+
+    val systemBarsColor = RuuviStationTheme.colors.systemBars
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = systemBarsColor,
+            darkIcons = false
+        )
+    }
+}
+
+@Composable
+fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
+    val sensorFW by viewModel.sensorFwVersion.observeAsState()
+    val latestFW by viewModel.latestFwVersion.observeAsState()
+    val canUpdate by viewModel.canStartUpdate.observeAsState()
+    val lowBattery by viewModel.lowBattery.observeAsState()
+
+    SubtitleWithPadding(stringResource(R.string.latest_available_fw))
+    if (latestFW.isNullOrEmpty()) {
+        LoadingStatus(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.textTopPadding))
+    } else {
+        ParagraphWithPadding("${latestFW}")
+    }
+    SubtitleWithPadding(stringResource(R.string.current_version_fw))
+    if (sensorFW == null) {
+        LoadingStatus(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.textTopPadding))
+    } else {
+        if (sensorFW?.isSuccess == true) {
+            ParagraphWithPadding("${sensorFW?.fw}")
+        } else {
+            ParagraphWithPadding(stringResource(id = R.string.old_sensor_fw))
+        }
+    }
+    val context = LocalContext.current as Activity
+
+    if (lowBattery == true) {
+        WarningWithPadding(text = stringResource(id = R.string.dfu_low_battery_warning))
+    }
+
+    if (canUpdate == true) {
+        Row(horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()) {
+            RuuviButton(
+                text = stringResource(id = R.string.start_update_process),
+                modifier = Modifier
+                    .padding(top = RuuviStationTheme.dimensions.extended)
+            ) {
+                viewModel.startDownloadProcess(context.cacheDir)
+            }
+        }
+    }
+}
+
+@Composable
+fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
+    val downloadPercent by viewModel.downloadFwProgress.observeAsState()
+    SubtitleWithPadding(text = stringResource(id = R.string.downloading_latest_firmware))
+    LinearProgressIndicator(
+        modifier = Modifier
+            .fillMaxWidth(),
+        progress = (downloadPercent?.toFloat() ?: 0f) / 100f
+    )
+    Row(horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ParagraphWithPadding(text = "$downloadPercent %")
+    }
+}
+
+@Composable
+fun AlreadyLatestVersionScreen(viewModel: DfuUpdateViewModel) {
+    ParagraphWithPadding(text = stringResource(id = R.string.already_latest_version))
 }
 
 @Composable
@@ -147,17 +217,17 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
             contentDescription = "",
             modifier = Modifier
                 .width(screenWidth * 4 / 5)
-                .padding(top = 16.dp)
+                .padding(vertical = RuuviStationTheme.dimensions.extended)
         )
     }
 
-    HeaderText(text = stringResource(id = R.string.prepare_your_sensor))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_1))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_2))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_3))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_4))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_5))
-    RegularText(text = stringResource(id = R.string.prepare_your_sensor_instructions_6))
+    SubtitleWithPadding(text = stringResource(id = R.string.prepare_your_sensor))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_1))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_2))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_3))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_4))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_5))
+    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_6))
 
     val buttonCaption = if (deviceDiscovered == true) {
         stringResource(id = R.string.start_the_update)
@@ -169,10 +239,16 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp)
+            .padding(bottom = RuuviStationTheme.dimensions.medium)
     )
     {
-        RuuviButton(text = buttonCaption, deviceDiscovered == true, deviceDiscovered != true) {
+        RuuviButton(
+            text = buttonCaption,
+            enabled = deviceDiscovered == true,
+            loading = deviceDiscovered != true,
+            modifier = Modifier
+                .padding(top = RuuviStationTheme.dimensions.extended)
+        ) {
             viewModel.startUpdateProcess()
         }
     }
@@ -180,63 +256,7 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
 
 @Composable
 fun UpdateSuccessfulScreen(viewModel: DfuUpdateViewModel) {
-    HeaderText(text = stringResource(id = R.string.update_successful))
-}
-
-@Composable
-fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
-    val sensorFW by viewModel.sensorFwVersion.observeAsState()
-    val latestFW by viewModel.latestFwVersion.observeAsState()
-    val canUpdate by viewModel.canStartUpdate.observeAsState()
-    val lowBattery by viewModel.lowBattery.observeAsState()
-
-    HeaderText(stringResource(R.string.latest_available_fw))
-    if (latestFW.isNullOrEmpty()) {
-        LoadingStatus(modifier = Modifier.padding(top = 16.dp))
-    } else {
-        RegularText("${latestFW}")
-    }
-    HeaderText(stringResource(R.string.current_version_fw))
-    
-    if (sensorFW == null) {
-        LoadingStatus(modifier = Modifier.padding(top = 16.dp))
-    } else {
-        if (sensorFW?.isSuccess == true) {
-            RegularText("${sensorFW?.fw}")
-        } else {
-            RegularText(stringResource(id = R.string.old_sensor_fw))
-        }
-    }
-    val context = LocalContext.current as Activity
-
-    if (lowBattery == true) {
-        WarningText(stringResource(id = R.string.dfu_low_battery_warning))
-    }
-    
-    if (canUpdate == true) {
-        Row(horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()) {
-            RuuviButton(stringResource(id = R.string.start_update_process)) {
-                viewModel.startDownloadProcess(context.cacheDir)
-            }
-        }
-    }
-}
-
-@Composable
-fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
-    val downloadPercent by viewModel.downloadFwProgress.observeAsState()
-    HeaderText(text = stringResource(id = R.string.downloading_latest_firmware))
-    LinearProgressIndicator(
-        modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-            .fillMaxWidth(),
-        progress = (downloadPercent?.toFloat() ?: 0f) / 100f
-    )
-    Row(horizontalArrangement = Arrangement.Center,
-    modifier = Modifier.fillMaxWidth()) {
-        RegularText(text = "$downloadPercent %")
-    }
+    SubtitleWithPadding(text = stringResource(id = R.string.update_successful))
 }
 
 @Composable
@@ -246,22 +266,28 @@ fun UpdatingFwStageScreen(viewModel: DfuUpdateViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        HeaderText(text = stringResource(id = R.string.updating))
+        SubtitleWithPadding(text = stringResource(id = R.string.updating))
         LinearProgressIndicator(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 .fillMaxWidth(),
             progress = (updatePercent?.toFloat() ?: 0f) / 100f
         )
 
-        RegularText(text = "$updatePercent %")
-        HeaderText(text = stringResource(id = R.string.dfu_update_do_not_close_app))
+        ParagraphWithPadding(text = "$updatePercent %")
+        SubtitleWithPadding(text = stringResource(id = R.string.dfu_update_do_not_close_app))
     }
 }
 
 @Composable
-fun AlreadyLatestVersionScreen(viewModel: DfuUpdateViewModel) {
-    RegularText(text = stringResource(id = R.string.already_latest_version))
+fun ErrorScreen(viewModel: DfuUpdateViewModel) {
+    val errorMessage by viewModel.error.observeAsState()
+    val errorMessageId by viewModel.errorCode.observeAsState()
+    SubtitleWithPadding(text = stringResource(id = R.string.error))
+    if (errorMessageId != null) {
+        ParagraphWithPadding(text = stringResource(id = errorMessageId ?: R.string.unknown_error))
+    } else {
+        ParagraphWithPadding(text = errorMessage ?: stringResource(id = R.string.unknown_error))
+    }
 }
 
 @Composable
@@ -283,51 +309,13 @@ fun MyTopAppBar(
             }
         },
         backgroundColor = Color.Transparent,
-        contentColor = Color.White,
+        contentColor = RuuviStationTheme.colors.background,
         elevation = 0.dp
     )
 }
 
 @Composable
-fun HeaderText(text: String) {
-    Text(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-        fontWeight = FontWeight.Bold,
-        text = text)
-}
-
-@Composable
-fun RegularText(text: String) {
-    Text(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-        text = text)
-}
-
-@Composable
-fun WarningText(text: String) {
-    Text(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-        color = Color.Red,
-        text = text)
-}
-
-@Composable
-fun RuuviButton(text: String, enabled: Boolean = true, loading: Boolean = false, onClick: () -> Unit) {
-    Button(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-        enabled = enabled,
-        shape = RoundedCornerShape(50),
-        onClick = { onClick() }) {
-        Row(horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(text = text)
-            if (loading) LoadingStatus(Modifier.clickable {  })
-        }
-    }
-}
-
-@Composable
-fun LoadingStatus(modifier: Modifier) {
+fun LoadingStatus(modifier: Modifier = Modifier, color: Color = RuuviStationTheme.colors.accent) {
     var currentRotation by remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation) }
 
@@ -343,11 +331,10 @@ fun LoadingStatus(modifier: Modifier) {
 
     Icon(
         Icons.Default.Refresh,
-        contentDescription = "Localized description",
+        contentDescription = "",
         modifier = modifier
-            .padding(start = 16.dp)
             .size(24.dp)
             .rotate(rotation.value),
-        tint = Color.Black
+        tint = color
     )
 }

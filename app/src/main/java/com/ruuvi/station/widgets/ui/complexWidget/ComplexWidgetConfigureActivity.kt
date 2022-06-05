@@ -21,16 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.core.app.TaskStackBuilder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.dfu.ui.RegularText
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
 import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelArgs
@@ -149,7 +144,7 @@ fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
     LazyColumn() {
         item {
             if (gotFilteredSensors) {
-                RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
+                Paragraph(text = stringResource(id = R.string.widgets_missing_sensors))
             }
         }
 

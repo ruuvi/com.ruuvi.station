@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import com.ruuvi.station.R
-import com.ruuvi.station.dfu.ui.RegularText
+import com.ruuvi.station.app.ui.components.Paragraph
 
 @Composable
 fun WidgetConfigTopAppBar(
@@ -60,15 +60,15 @@ fun WidgetConfigTopAppBar(
 @Composable
 fun LogInFirstScreen() {
     Column() {
-        RegularText(text = stringResource(id = R.string.widgets_sign_in_first))
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
+        Paragraph(text = stringResource(id = R.string.widgets_sign_in_first))
+        Paragraph(text = stringResource(id = R.string.widgets_gateway_only))
     }
 }
 
 @Composable
 fun ForNetworkSensorsOnlyScreen() {
     Column() {
-        RegularText(text = stringResource(id = R.string.widgets_gateway_only))
+        Paragraph(text = stringResource(id = R.string.widgets_gateway_only))
     }
 }
 

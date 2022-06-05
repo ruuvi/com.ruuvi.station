@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.dfu.ui.RegularText
-import com.ruuvi.station.dfu.ui.RuuviButton
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
 import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
 import com.ruuvi.station.util.extensions.viewModel
@@ -171,7 +170,7 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
     LazyColumn() {
         item {
             if (gotFilteredSensors) {
-                RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
+                Paragraph(text = stringResource(id = R.string.widgets_missing_sensors))
             }
         }
 
