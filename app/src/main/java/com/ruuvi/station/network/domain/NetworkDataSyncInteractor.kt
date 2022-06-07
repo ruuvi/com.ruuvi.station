@@ -260,6 +260,12 @@ class NetworkDataSyncInteractor (
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
 
+            val tagEntry = tagRepository.getTagById(sensor.sensor)
+            if (tagEntry?.favorite == false) {
+                tagEntry.favorite = true
+                tagEntry.update()
+            }
+
             if (!ecoMode && !sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)
             }
