@@ -116,7 +116,16 @@
         <item name="android:minWidth">120dp</item>
     </style>
 
-    <style name="SwitchStyle" parent="Subtitle"/>
+    <style name="SwitchStyle">
+        <item name="thumbTint">@color/color_switch_thumb</item>
+        <item name="trackTint">@color/color_switch_track</item>
+        <item name="thumbElevation">0dp</item>
+        <item name="elevation">0dp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/textSubtitleSize</item>
+        <item name="fontFamily">@font/mulish_bold</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
 
     <style name="SwitchStyle.WithPadding">
         <item name="android:paddingTop">8dp</item>
@@ -182,7 +191,7 @@
     </style>
 
     <style name="progressStyle">
-        <item name="colorAccent">@color/main</item>
+        <item name="colorAccent">?attr/colorAccent</item>
     </style>
 
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">

@@ -15,24 +15,21 @@
 
     <color name="success">#FF35AD9F</color>
     <color name="error">#FFF15A24</color>
-
     <color name="pastelGray">#9dafaf</color>
+
+    <color name="track">#FFDFEFEC</color>
+    <color name="trackInactive">#FF9DAFAF</color>
 
     <color name="disabledText">#8DA09F</color>
     <color name="gray">#707070</color>
     <color name="darkGray">#202020</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="clear">#00000000</color>
     <color name="main">#158ea5</color>
     <color name="mainLight">#5DCEC6</color>
     <color name="mainDark">#003a58</color>
     <color name="backgroundLight">#f2f4f5</color>
-    <color name="settingsTitleColor">#030303</color>
-    <color name="settingsParagraphColor">#808080</color>
-    <color name="lastSeenColor">#829fa5</color>
     <color name="inactive">#e7ebeb</color>
-    <color name="noTagsColor">#bbbbbb</color>
     <color name="divider">#D6D6D6</color>
     <color name="href">#6aeae1</color>
     <color name="activeAlarm">#FF5555</color>

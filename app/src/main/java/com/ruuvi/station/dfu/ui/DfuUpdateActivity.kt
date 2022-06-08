@@ -185,11 +185,7 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
 fun DownloadingFwStageScreen(viewModel: DfuUpdateViewModel) {
     val downloadPercent by viewModel.downloadFwProgress.observeAsState()
     SubtitleWithPadding(text = stringResource(id = R.string.downloading_latest_firmware))
-    LinearProgressIndicator(
-        modifier = Modifier
-            .fillMaxWidth(),
-        progress = (downloadPercent?.toFloat() ?: 0f) / 100f
-    )
+    Progress(progress = (downloadPercent?.toFloat() ?: 0f) / 100f)
     Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -267,11 +263,7 @@ fun UpdatingFwStageScreen(viewModel: DfuUpdateViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         SubtitleWithPadding(text = stringResource(id = R.string.updating))
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth(),
-            progress = (updatePercent?.toFloat() ?: 0f) / 100f
-        )
+        Progress(progress = (updatePercent?.toFloat() ?: 0f) / 100f)
 
         ParagraphWithPadding(text = "$updatePercent %")
         SubtitleWithPadding(text = stringResource(id = R.string.dfu_update_do_not_close_app))
@@ -297,9 +289,8 @@ fun MyTopAppBar(
     val context = LocalContext.current as Activity
 
     TopAppBar(
-        modifier = Modifier.background(Brush.horizontalGradient(listOf(Color(0xFF168EA7), Color(0xFF2B486A)))),
         title = {
-            Text(text = title)
+            Text(text = title, color = RuuviStationTheme.colors.topBarText)
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -308,7 +299,7 @@ fun MyTopAppBar(
                 Icon(Icons.Default.ArrowBack, "Back")
             }
         },
-        backgroundColor = Color.Transparent,
+        backgroundColor = RuuviStationTheme.colors.topBar,
         contentColor = RuuviStationTheme.colors.background,
         elevation = 0.dp
     )
