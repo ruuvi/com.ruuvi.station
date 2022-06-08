@@ -20,12 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
-import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
-import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelArgs
@@ -67,7 +65,7 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         setupViewModel()
 
         setContent {
-            ComruuvistationTheme {
+            RuuviTheme {
                 Column() {
                     WidgetConfigTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
@@ -108,13 +106,12 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
 @Composable
 fun WidgetSetupScreen(viewModel: ComplexWidgetConfigureViewModel) {
-    val systemUiController = rememberSystemUiController()
     val userHasCloudSensors by viewModel.userHasCloudSensors.observeAsState(false)
     val userLoggedIn by viewModel.userLoggedIn.observeAsState(false)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
+        color = RuuviStationTheme.colors.background
     ) {
         if (!userLoggedIn) {
             LogInFirstScreen()
@@ -124,27 +121,20 @@ fun WidgetSetupScreen(viewModel: ComplexWidgetConfigureViewModel) {
             ForNetworkSensorsOnlyScreen()
         }
     }
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = LightColorPalette.surface,
-            darkIcons = false
-        )
-    }
 }
 
 @Composable
 fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
     val sensors by viewModel.widgetItems.observeAsState(listOf())
-
     val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
-
-    Timber.d("sensors = $sensors")
 
     LazyColumn() {
         item {
             if (gotFilteredSensors) {
-                Paragraph(text = stringResource(id = R.string.widgets_missing_sensors))
+                Paragraph(
+                    text = stringResource(id = R.string.widgets_missing_sensors),
+                    modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
+                )
             }
         }
 
@@ -178,6 +168,7 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = AnnotatedString(item.sensorName),
+                    style = RuuviStationTheme.typography.paragraph,
                     onClick = {
                         viewModel.selectSensor(item, !item.checked)
                     })
@@ -193,12 +184,13 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
 @Composable
 fun WidgetTypeList(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidgetSensorItem) {
     Timber.d("WidgetTypeList")
-    Column() {
+    Column(modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extraBig)) {
         Row() {
-            Spacer(modifier = Modifier.width(32.dp))
-            Text(text = stringResource(id = R.string.widgets_select_sensor_value_type))
+            Paragraph(
+                text = stringResource(id = R.string.widgets_select_sensor_value_type),
+                modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
+            )
         }
-
 
         for (widgetType in WidgetType.values()) {
             WidgetTypeItem(viewModel, item, widgetType)
@@ -213,10 +205,6 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
             modifier = Modifier.wrapContentHeight()
         )
         {
-            Spacer(modifier = Modifier
-                .width(16.dp)
-                .height(0.dp))
-
             Checkbox(
                 checked = item.getStateForType(widgetType),
                 onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
@@ -225,8 +213,8 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = AnnotatedString(stringResource(id = widgetType.titleResId)),
+                style = RuuviStationTheme.typography.paragraph,
                 onClick = { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) }
             )
         }
-
 }

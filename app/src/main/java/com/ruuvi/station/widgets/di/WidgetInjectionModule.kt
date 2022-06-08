@@ -12,7 +12,7 @@ import org.kodein.di.generic.*
 object WidgetInjectionModule {
     val module = Kodein.Module(WidgetInjectionModule.javaClass.name) {
 
-        bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance(), instance()) }
+        bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance()) }
 
         bind<ComplexWidgetConfigureViewModel>() with factory { args: ComplexWidgetConfigureViewModelArgs -> ComplexWidgetConfigureViewModel(args.appWidgetId, instance(), instance(), instance()) }
 
