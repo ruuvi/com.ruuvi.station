@@ -40,11 +40,22 @@
     <style name="ParagraphSmall">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/textParagraphSmallSize</item>
-        <item name="lineHeight">@dimen/textLineSmallHeight</item>
+        <item name="lineHeight">@dimen/textSmallLineHeight</item>
         <item name="fontFamily">@font/mulish_regular</item>
     </style>
 
     <style name="ParagraphSmall.WithPadding">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="Status">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/textStatusSize</item>
+        <item name="fontFamily">@font/mulish_semibolditalic</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
+    <style name="Status.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
     </style>
@@ -91,7 +102,7 @@
     </style>
 
     <style name="Button" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/color_button_text</item>
         <item name="android:paddingLeft">@dimen/big</item>
         <item name="android:paddingRight">@dimen/big</item>
         <item name="android:paddingBottom">@dimen/tiny</item>

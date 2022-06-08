@@ -10,6 +10,8 @@ val RuuviNew = Color(0xFF4BC9BA)
 val Red = Color.Red
 val Inactive = Color(0xFFE7EBEB)
 val OnInactive = Color(0xFF8DA09F)
+val Success = Color(0xFF35AD9F)
+val Error = Color(0xFFF15A24)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -19,7 +21,9 @@ data class RuuviStationColors(
     val accent: Color,
     val inactive: Color,
     val onInactive: Color,
-    val buttonText: Color
+    val buttonText: Color,
+    val successText: Color,
+    val errorText: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -30,7 +34,9 @@ val lightPalette = RuuviStationColors(
     accent = RuuviNew,
     inactive = Inactive,
     onInactive = OnInactive,
-    buttonText = White
+    buttonText = White,
+    successText = Success,
+    errorText = Error
 )
 
 val darkPalette = RuuviStationColors(
@@ -41,5 +47,7 @@ val darkPalette = RuuviStationColors(
     accent = RuuviNew,
     inactive = Inactive,
     onInactive = OnInactive,
-    buttonText = White
+    buttonText = White,
+    successText = Success,
+    errorText = Error
 )

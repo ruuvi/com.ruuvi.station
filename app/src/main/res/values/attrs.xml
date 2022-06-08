@@ -5,4 +5,8 @@
     <attr name="colorOnSurfaceVariant" format="color"/>
     <attr name="colorHeaderSurface" format="color"/>
     <attr name="colorOnHeaderSurface" format="color"/>
+    <attr name="colorInactiveSurface" format="color"/>
+    <attr name="colorErrorText" format="color"/>
+    <attr name="colorSuccessText" format="color"/>
+    <attr name="colorButtonText" format="color"/>
 </resources>

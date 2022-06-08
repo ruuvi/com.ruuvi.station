@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/tag_layout"
-    android:background="?attr/colorSurface"
+    android:background="?android:attr/colorBackground"
     tools:context="com.ruuvi.station.addtag.ui.AddTagActivity"
     tools:showIn="@layout/activity_add_tag">
 

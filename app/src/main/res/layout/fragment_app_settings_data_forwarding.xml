@@ -75,9 +75,10 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/gatewayTestResultTextView"
-                    style="@style/ParagraphSmall.WithPadding"
+                    style="@style/Status.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="center"
                     android:visibility="gone"
                     tools:visibility="visible"
                     tools:text="@string/gateway_test_success"/>
