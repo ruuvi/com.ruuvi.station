@@ -6,6 +6,7 @@
     <color name="titan70">#B3083C3D</color>
     <color name="titan80">#CC083C3D</color>
     <color name="titan50">#80083C3D</color>
+    <color name="titan30">#4D083C3D</color>
     <color name="ruuviNew">#4bc9ba</color>
 
     <color name="dark_emerald">#E6001C1B</color>
@@ -19,7 +20,11 @@
 
     <color name="track">#FFDFEFEC</color>
     <color name="trackInactive">#FF9DAFAF</color>
+    <color name="white80">#CCFFFFFF</color>
+    <color name="white50">#80FFFFFF</color>
+    <color name="white30">#4DFFFFFF</color>
 
+    <color name="dark">#001D1B</color>
     <color name="disabledText">#8DA09F</color>
     <color name="gray">#707070</color>
     <color name="darkGray">#202020</color>

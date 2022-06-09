@@ -15,7 +15,7 @@
         <item name="colorPrimary">@color/titan80</item>
         <item name="colorPrimaryDark">@color/darkGray</item>
         <item name="colorAccent">@color/ruuviNew</item>
-        <item name="android:textColorHint">@color/titan50</item>
+        <item name="android:textColorHint">@color/titan30</item>
         <item name="colorButtonText">@color/white</item>
 
         <item name="colorErrorText">@color/error</item>

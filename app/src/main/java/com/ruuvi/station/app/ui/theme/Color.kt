@@ -3,6 +3,7 @@ package com.ruuvi.station.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val White = Color.White
+val White80 = Color(0xCCFFFFFF)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan80 = Color(0xCC083C3D)
@@ -14,6 +15,7 @@ val OnInactive = Color(0xFF8DA09F)
 val Success = Color(0xFF35AD9F)
 val Error = Color(0xFFF15A24)
 val Track = Color(0xFFDFEFEC)
+val Dark = Color(0xFF001D1B)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -36,7 +38,7 @@ val lightPalette = RuuviStationColors(
     background = White,
     systemBars = Titan,
     warning = Red,
-    accent = RuuviNew,
+    accent = Success,
     inactive = Inactive,
     onInactive = OnInactive,
     buttonText = White,
@@ -48,8 +50,8 @@ val lightPalette = RuuviStationColors(
 )
 
 val darkPalette = RuuviStationColors(
-    primary = White,
-    background = Black,
+    primary = White80,
+    background = Dark,
     systemBars = Titan,
     warning = Red,
     accent = RuuviNew,
