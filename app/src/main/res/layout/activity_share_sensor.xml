@@ -41,7 +41,7 @@
         android:paddingStart="@dimen/screenStart"
         android:paddingEnd="@dimen/screenEnd"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/shareSensorDisabledTitleTextView"

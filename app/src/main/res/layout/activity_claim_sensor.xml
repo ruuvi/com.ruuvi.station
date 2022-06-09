@@ -7,18 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".network.ui.ClaimSensorActivity">
-  <RelativeLayout
-      android:background="?attr/colorToolbar"
-      android:fitsSystemWindows="true"
-      android:id="@+id/toolbarContainer"
-      android:layout_height="match_parent"
-      android:layout_width="match_parent">
+
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
   <com.google.android.material.appbar.AppBarLayout
       android:id="@+id/appBarLayout"
-      android:background="@android:color/transparent"
+      android:background="?attr/colorToolbar"
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
+      android:fitsSystemWindows="true"
       android:theme="@style/AppTheme.AppBarOverlay"
       app:elevation="0dp">
 
@@ -31,20 +31,20 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bodyLayout"
+        android:background="?android:attr/colorBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/appBarLayout"
-        android:paddingBottom="24dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/screenTop"
+        android:paddingBottom="@dimen/screenBottom"
+        android:paddingStart="@dimen/screenStart"
+        android:paddingEnd="@dimen/screenEnd">
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/claimSensorTitleTextView"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="8dp"
-          android:layout_marginTop="16dp"
-          android:layout_marginRight="8dp"
           android:text="@string/claim_description"
+          style="@style/Paragraph.WithPadding"
           app:layout_constraintLeft_toLeftOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,16 +52,14 @@
       <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/claimButton"
           style="@style/RoundButton"
-          android:layout_width="0dp"
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="48dp"
-          android:layout_marginTop="24dp"
-          android:layout_marginRight="48dp"
+          android:layout_marginTop="@dimen/extended"
           android:text="@string/claim_ownership"
           app:layout_constraintLeft_toLeftOf="parent"
           app:layout_constraintRight_toRightOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/claimSensorTitleTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-  </RelativeLayout>
+    </LinearLayout>
   </ScrollView>
