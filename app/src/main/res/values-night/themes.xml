@@ -4,7 +4,7 @@
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/dark</item>
         <item name="colorSurface">@color/gray</item>
-        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSurface">@color/white80</item>
         <item name="colorDisabled">@color/disabledText</item>
         <item name="actionMenuTextColor">@color/white</item>
         <item name="colorSurfaceVariant">@color/black</item>
