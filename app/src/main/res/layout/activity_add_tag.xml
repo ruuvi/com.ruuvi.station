@@ -5,13 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="?android:attr/colorBackground"
     tools:context="com.ruuvi.station.addtag.ui.AddTagActivity">
 
     <LinearLayout
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/header"
+        android:background="?attr/colorToolbar"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 

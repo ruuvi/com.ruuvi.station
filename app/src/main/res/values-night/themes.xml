@@ -11,6 +11,7 @@
         <item name="colorOnSurfaceVariant">@color/white</item>
         <item name="colorHeaderSurface">@color/dark_emerald</item>
         <item name="colorOnHeaderSurface">@color/backgroundLight</item>
+        <item name="colorToolbar">@color/titan</item>
 
         <item name="colorPrimary">@color/white80</item>
         <item name="colorPrimaryDark">@color/darkGray</item>

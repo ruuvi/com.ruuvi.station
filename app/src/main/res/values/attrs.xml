@@ -9,4 +9,5 @@
     <attr name="colorErrorText" format="color"/>
     <attr name="colorSuccessText" format="color"/>
     <attr name="colorButtonText" format="color"/>
+    <attr name="colorToolbar" format="color"/>
 </resources>
