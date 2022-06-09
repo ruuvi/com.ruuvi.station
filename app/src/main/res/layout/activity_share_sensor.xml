@@ -25,52 +25,47 @@
         app:popupTheme="@style/AppTheme.PopupOverlay" />
   </com.google.android.material.appbar.AppBarLayout>
 
-  <androidx.core.widget.NestedScrollView
+  <ScrollView
       android:id="@+id/scrollView"
       android:layout_width="match_parent"
       android:layout_height="0dp"
+      style="@style/Scrollbars"
       app:layout_constraintBottom_toTopOf="@+id/guideline2"
       app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/shareSensorLayout"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/screenTop"
+        android:paddingBottom="@dimen/screenBottom"
+        android:paddingStart="@dimen/screenStart"
+        android:paddingEnd="@dimen/screenEnd"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="match_parent">
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/shareSensorDisabledTitleTextView"
+          style="@style/ParagraphLink"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/network_sharing_disabled"
+          android:textStyle="bold"/>
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/shareSensorTitleTextView"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="8dp"
-          android:layout_marginTop="16dp"
-          android:layout_marginRight="8dp"
-          android:text="@string/share_sensor_description"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
+          style="@style/Paragraph.WithPadding"
+          android:text="@string/share_sensor_description"/>
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/shareSensorDisabledTitleTextView"
-          style="@style/TextViewLink"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="8dp"
-          android:layout_marginTop="16dp"
-          android:layout_marginRight="8dp"
-          android:text="@string/network_sharing_disabled"
-          android:textStyle="bold"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/shareSensorTitleTextView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-  </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+  </ScrollView>
 
   <View
       android:layout_width="match_parent"
       android:layout_height="1dp"
       android:background="@color/ap_gray"
       app:layout_constraintBottom_toTopOf="@+id/guideline2"
-
       />
   <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline2"
@@ -83,6 +78,10 @@
       android:id="@+id/sharingLayout"
       android:layout_width="match_parent"
       android:layout_height="0dp"
+      android:paddingTop="@dimen/screenTop"
+      android:paddingBottom="@dimen/screenBottom"
+      android:paddingStart="@dimen/screenStart"
+      android:paddingEnd="@dimen/screenEnd"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/guideline2"
       app:layout_constraintVertical_bias="1.0"
@@ -92,11 +91,8 @@
         android:id="@+id/addFriendTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="8dp"
         android:text="@string/share_sensor_add_friend"
-        android:textStyle="bold"
+        style="@style/Subtitle.WithPadding"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -104,22 +100,19 @@
         android:id="@+id/friendEmailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="8dp"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
+        style="@style/Input"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addFriendTextView" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/shareButton"
         style="@style/RoundButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
         android:text="@string/share"
+        android:layout_marginTop="@dimen/extended"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/friendEmailEditText" />
@@ -128,11 +121,10 @@
         android:id="@+id/sharedTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginRight="8dp"
         android:text="@string/share_sensor_already_shared"
         android:textStyle="bold"
+        android:layout_marginTop="@dimen/extended"
+        style="@style/Subtitle.WithPadding"
         android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shareButton"
