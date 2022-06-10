@@ -14,6 +14,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Title">
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/textTitleSize</item>
+        <item name="fontFamily">@font/mulish_extrabold</item>
+        <item name="lineHeight">@dimen/titleLineHeight</item>
+    </style>
+
     <style name="Subtitle">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
@@ -32,6 +39,7 @@
         <item name="fontFamily">@font/mulish_regular</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
+
     <style name="Paragraph.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -40,7 +48,7 @@
     <style name="ParagraphSmall">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/textParagraphSmallSize</item>
-        <item name="lineHeight">@dimen/textLineSmallHeight</item>
+        <item name="lineHeight">@dimen/textSmallLineHeight</item>
         <item name="fontFamily">@font/mulish_regular</item>
     </style>
 
@@ -49,6 +57,22 @@
         <item name="android:paddingBottom">8dp</item>
     </style>
 
+    <style name="ParagraphLink" parent="Paragraph.WithPadding">
+        <item name="android:autoLink">web</item>
+        <item name="android:linksClickable">true</item>
+        <item name="android:textColorLink">?colorAccent</item>
+    </style>
+
+    <style name="Status">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/textStatusSize</item>
+        <item name="fontFamily">@font/mulish_semibolditalic</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
+    <style name="Status.WithPadding">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
 
     <style name="PagerTabStripText">
         <item name="android:textSize">18sp</item>
@@ -85,14 +109,8 @@
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
-    <style name="TextViewLink">
-        <item name="android:autoLink">web</item>
-        <item name="android:linksClickable">true</item>
-        <item name="android:textColorLink">@color/href</item>
-    </style>
-
     <style name="Button" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/color_button_text</item>
         <item name="android:paddingLeft">@dimen/big</item>
         <item name="android:paddingRight">@dimen/big</item>
         <item name="android:paddingBottom">@dimen/tiny</item>
@@ -106,15 +124,29 @@
         <item name="android:minWidth">120dp</item>
     </style>
 
-    <style name="SwitchStyle" parent="Subtitle"/>
+    <style name="SwitchStyle">
+        <item name="thumbTint">@color/color_switch_thumb</item>
+        <item name="trackTint">@color/color_switch_track</item>
+        <item name="thumbElevation">0dp</item>
+        <item name="elevation">0dp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/textSubtitleSize</item>
+        <item name="fontFamily">@font/mulish_bold</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
 
     <style name="SwitchStyle.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
     </style>
 
-    <style name="Input" parent="Subtitle">
+    <style name="Input" parent="Paragraph">
+    </style>
 
+    <style name="Scrollbars">
+        <item name="android:scrollbarStyle">insideOverlay</item>
+        <item name="android:fadeScrollbars">false</item>
+        <item name="android:scrollbarThumbVertical">?colorAccent</item>
     </style>
 
     <style name="RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
@@ -126,31 +158,45 @@
         <item name="android:paddingBottom">@dimen/normalPlus</item>
     </style>
 
-    <style name="sensorSettingInfoTitleStyle">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dp</item>
+    <style name="SensorSettingTitleStyle" parent="Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sensorSettingsHeaderHeight</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="sensorSettingWarningStyle">
+    <style name="SensorSettingSubtitleStyle" parent="Subtitle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemHeight</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+    </style>
+
+    <style name="SensorSettingSubtitleSmallStyle" parent="SensorSettingSubtitleStyle">
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemSmall</item>
+    </style>
+
+    <style name="SensorSettingValueStyle" parent="Paragraph">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemHeight</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical|end</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+    </style>
+
+    <style name="SensorSettingValueSmallStyle" parent="SensorSettingValueStyle">
+        <item name="android:minHeight">@dimen/sensorSettingsItemSmall</item>
+    </style>
+
+    <style name="SensorSettingWarningStyle">
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:gravity">end</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="sensorSettingInfoValueStyle">
-        <item name="android:gravity">end</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">?attr/colorDisabled</item>
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
@@ -160,19 +206,21 @@
 
     <style name="CustomDialogTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
         <item name="android:textColor">?attr/colorOnSurface</item>
-    </style>
-
-    <style name="sensorSettingGroupHeaderStyle">
-        <item name="android:background">?attr/colorHeaderSurface</item>
-        <item name="android:fontFamily">@font/montserrat_bold</item>
-        <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">?attr/colorOnHeaderSurface</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/textSubtitleSize</item>
+        <item name="fontFamily">@font/mulish_bold</item>
     </style>
 
     <style name="progressStyle">
-        <item name="colorAccent">@color/main</item>
+        <item name="colorAccent">?attr/colorAccent</item>
+    </style>
+
+    <style name="RangeSeekStyle">
+        <item name="bar_color">?colorDivider</item>
+        <item name="bar_highlight_color">?colorAccent</item>
+        <item name="right_thumb_color">?colorAccent</item>
+        <item name="left_thumb_color">?colorAccent</item>
+        <item name="right_thumb_color_pressed">?colorPrimaryDark</item>
+        <item name="left_thumb_color_pressed">?colorPrimaryDark</item>
     </style>
 
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
@@ -201,5 +249,11 @@
         <item name="android:layout_height">50dp</item>
         <item name="android:layout_width">150dp</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="DividerHorizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider</item>
+        <item name="android:background">?attr/colorDivider</item>
     </style>
 </resources>

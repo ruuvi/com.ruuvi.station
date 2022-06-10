@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="Enter temperature value expected from sensor in current conditions:" />
+        style="@style/Paragraph"
+        tools:text="Enter temperature value expected from sensor in current conditions:" />
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/calibrationValueEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal|numberSigned"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        style="@style/Input"/>
 </androidx.appcompat.widget.LinearLayoutCompat>

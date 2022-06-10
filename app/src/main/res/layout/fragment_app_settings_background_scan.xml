@@ -10,7 +10,7 @@
     android:paddingBottom="@dimen/screenBottom"
     android:paddingTop="@dimen/screenTop">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/titleTextView"
         style="@style/Subtitle"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
         />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/backgroundIntervalTitleTextView"
         style="@style/Subtitle.WithPadding"
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/attentionTextView"
             style="@style/Subtitle.WithPadding"
             android:layout_width="match_parent"
@@ -68,7 +68,7 @@
             android:text="@string/settings_background_battery_optimization_title"
             android:textSize="16sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/batteryOptimizationAlertTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/settingsInstructionsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

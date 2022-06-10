@@ -27,7 +27,7 @@ val LightColorPalette = lightColors(
     primaryVariant = Purple700,
     secondary = Teal200,
     background = Color.White,
-    surface = Color(0xFF168EA7),
+    surface = Color(0xFF158ea5),
     onPrimary = Color.White,
     onSecondary = Color.DarkGray,
     onBackground = Color.DarkGray,
@@ -35,7 +35,10 @@ val LightColorPalette = lightColors(
 )
 
 @Composable
-fun ComruuvistationTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
+fun ComruuvistationTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
+) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {

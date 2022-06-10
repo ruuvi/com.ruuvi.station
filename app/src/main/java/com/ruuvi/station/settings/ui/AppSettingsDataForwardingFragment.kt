@@ -14,6 +14,7 @@ import com.ruuvi.station.databinding.FragmentAppSettingsDataForwardingBinding
 import com.ruuvi.station.dataforwarding.domain.LocationPermissionsInteractor
 import com.ruuvi.station.settings.domain.GatewayTestResultType
 import com.ruuvi.station.util.extensions.makeWebLinks
+import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -161,31 +162,34 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     private fun observeTestGatewayResult() {
         lifecycleScope.launch {
+            val regularColor = requireActivity().resolveColorAttr(R.attr.colorPrimary)
+            val errorColor = requireActivity().resolveColorAttr(R.attr.colorErrorText)
+            val successColor = requireActivity().resolveColorAttr(R.attr.colorSuccessText)
             viewModel.observeTestGatewayResult.collect{
                 with(binding) {
                     when (it.type) {
                         GatewayTestResultType.NONE -> {
                             gatewayTestResultTextView.text = ""
-                            gatewayTestResultTextView.setTextColor(Color.DKGRAY)
+                            gatewayTestResultTextView.setTextColor(regularColor)
                         }
                         GatewayTestResultType.TESTING -> {
                             gatewayTestResultTextView.text = getString(R.string.gateway_testing)
-                            gatewayTestResultTextView.setTextColor(Color.DKGRAY)
+                            gatewayTestResultTextView.setTextColor(regularColor)
                         }
                         GatewayTestResultType.SUCCESS -> {
                             gatewayTestResultTextView.text =
                                 getString(R.string.gateway_test_success, it.code)
-                            gatewayTestResultTextView.setTextColor(Color.GREEN)
+                            gatewayTestResultTextView.setTextColor(successColor)
                         }
                         GatewayTestResultType.FAIL -> {
                             gatewayTestResultTextView.text =
                                 getString(R.string.gateway_test_fail, it.code)
-                            gatewayTestResultTextView.setTextColor(Color.RED)
+                            gatewayTestResultTextView.setTextColor(errorColor)
                         }
                         GatewayTestResultType.EXCEPTION -> {
                             gatewayTestResultTextView.text =
                                 getString(R.string.gateway_test_exception)
-                            gatewayTestResultTextView.setTextColor(Color.RED)
+                            gatewayTestResultTextView.setTextColor(errorColor)
                         }
                     }
                 }

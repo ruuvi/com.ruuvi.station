@@ -36,6 +36,7 @@ import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -143,8 +144,8 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         }
 
         viewModel.firmware.observe(this) {
-            binding.firmwareVersionTextView.isVisible = it != null
-            binding.firmwareVersionTitleTextView.isVisible = it != null
+            binding.firmwareVersionLayout.isVisible = it != null
+            binding.firmwareVersionDivider.isVisible = it != null
             binding.firmwareVersionTextView.text = it?.asString(this)
         }
 
@@ -185,13 +186,15 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
+        val errorColor = resolveColorAttr(R.attr.colorErrorText)
+        val successColor = resolveColorAttr(R.attr.colorSuccessText)
         viewModel.isLowBattery.observe(this) { lowBattery ->
             if (lowBattery) {
                 binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
-                binding.batteryTextView.setTextColor(getColor(R.color.activeAlarm))
+                binding.batteryTextView.setTextColor(errorColor)
             } else {
                 binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
-                binding.batteryTextView.setTextColor(getColor(R.color.black))
+                binding.batteryTextView.setTextColor(successColor)
             }
         }
 

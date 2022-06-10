@@ -35,7 +35,7 @@
     <string name="alert_notification_temperature_low_threshold">La température est inférieure à %1$s</string>
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$,d ou supérieure à %2$,d</string>
-    <string name="alerts">NOTIFICATIONS</string>
+    <string name="alerts">Notifications</string>
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>
     <string name="app_name">Ruuvi Station</string>
@@ -143,7 +143,7 @@
     <string name="export_csv_header_format3">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension</string>
     <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence,Puissance d\'émission</string>
     <string name="file_not_supported">Format non supporté</string>
-    <string name="firmware">FIRMWARE</string>
+    <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>
     <string name="gallery">Gallerie</string>
     <string name="gateway_test_exception">Erreur. L\'adresse est-elle correcte ?</string>
@@ -198,7 +198,7 @@
     <string name="menu_send_feedback">Donnez-nous votre avis!</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
-    <string name="more_info">PLUS D\'INFOS</string>
+    <string name="more_info">Plus d\'infos</string>
     <string name="movement_counter">Compteur de mouvements</string>
     <string name="movements">mouvements</string>
     <string name="name">NOM</string>

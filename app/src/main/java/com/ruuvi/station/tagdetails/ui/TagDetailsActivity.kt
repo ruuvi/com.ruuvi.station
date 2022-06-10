@@ -21,7 +21,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -204,7 +203,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         binding.content.noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
         binding.imageSwitcher.setFactory {
-            val imageView = AppCompatImageView(applicationContext)
+            val imageView = ImageView(applicationContext)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,

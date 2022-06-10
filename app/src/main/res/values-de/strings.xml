@@ -27,7 +27,7 @@
     <string name="alert_notification_temperature_low">Temperatur zu niedrig!</string>
     <string name="alert_subtitle_off">Aus</string>
     <string name="alert_subtitle_on">Warnung bei weniger als %1$,d oder mehr als %2$,d</string>
-    <string name="alerts">WARNUNGEN</string>
+    <string name="alerts">Warnungen</string>
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="app_name">Ruuvi Station</string>
@@ -119,7 +119,7 @@
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s), Luftfeuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s), Feuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung,Bewegungszähler,Messsequenznummer,TX-Leistung</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
-    <string name="firmware">FIRMWARE</string>
+    <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>
     <string name="firmware_very_old">Sehr alt</string>
     <string name="gallery">Galerie</string>
@@ -173,7 +173,7 @@
     <string name="menu_send_feedback">Feedback schicken</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
-    <string name="more_info">MEHR INFO</string>
+    <string name="more_info">Mehr info</string>
     <string name="movement_counter">Bewegungszähler</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Schließen der Navigation</string>

@@ -19,7 +19,7 @@
         android:text="@string/settings_chart_all_points"
         style="@style/SwitchStyle.WithPadding" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/graphAllPointsSecondaryTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:text="@string/settings_chart_draw_dots"
         style="@style/SwitchStyle.WithPadding"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/graphDrawDotsSecondaryTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         android:paddingTop="0dp"
         style="@style/Paragraph.WithPadding"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/viewPeriodTitleTextView"
         style="@style/Subtitle.WithPadding"
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
         android:text="@string/settings_chart_view_period" />
 
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/viewPeriodDescriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
