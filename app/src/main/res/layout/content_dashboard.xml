@@ -14,7 +14,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/dashboard_empty"
         android:textAllCaps="true"
-        android:textColor="?attr/colorOnSurface"
+        android:textColor="?attr/colorPrimary"
         android:textSize="@dimen/title_font_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
