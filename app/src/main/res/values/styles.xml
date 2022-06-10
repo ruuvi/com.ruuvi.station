@@ -14,6 +14,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Title">
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/textTitleSize</item>
+        <item name="fontFamily">@font/mulish_extrabold</item>
+        <item name="lineHeight">@dimen/titleLineHeight</item>
+    </style>
+
     <style name="Subtitle">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
@@ -32,6 +39,7 @@
         <item name="fontFamily">@font/mulish_regular</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
+
     <style name="Paragraph.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -151,31 +159,45 @@
         <item name="android:paddingBottom">@dimen/normalPlus</item>
     </style>
 
-    <style name="sensorSettingInfoTitleStyle">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dp</item>
+    <style name="SensorSettingTitleStyle" parent="Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sensorSettingsHeaderHeight</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="sensorSettingWarningStyle">
+    <style name="SensorSettingSubtitleStyle" parent="Subtitle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemHeight</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+    </style>
+
+    <style name="SensorSettingSubtitleSmallStyle" parent="SensorSettingSubtitleStyle">
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemSmall</item>
+    </style>
+
+    <style name="SensorSettingValueStyle" parent="Paragraph">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/sensorSettingsItemHeight</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical|end</item>
+        <item name="android:padding">@dimen/tag_settings_text_padding</item>
+    </style>
+
+    <style name="SensorSettingValueSmallStyle" parent="SensorSettingValueStyle">
+        <item name="android:minHeight">@dimen/sensorSettingsItemSmall</item>
+    </style>
+
+    <style name="SensorSettingWarningStyle">
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:gravity">end</item>
         <item name="android:padding">@dimen/tag_settings_text_padding</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="sensorSettingInfoValueStyle">
-        <item name="android:gravity">end</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">?attr/colorDisabled</item>
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
@@ -187,15 +209,6 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
         <item name="fontFamily">@font/mulish_bold</item>
-    </style>
-
-    <style name="sensorSettingGroupHeaderStyle">
-        <item name="android:background">?attr/colorHeaderSurface</item>
-        <item name="android:fontFamily">@font/montserrat_bold</item>
-        <item name="android:padding">@dimen/tag_settings_text_padding</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">?attr/colorOnHeaderSurface</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="progressStyle">
@@ -228,5 +241,11 @@
         <item name="android:layout_height">50dp</item>
         <item name="android:layout_width">150dp</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="DividerHorizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider</item>
+        <item name="android:background">?attr/colorDivider</item>
     </style>
 </resources>

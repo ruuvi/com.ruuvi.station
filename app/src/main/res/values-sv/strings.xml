@@ -35,7 +35,7 @@
     <string name="alert_notification_temperature_low_threshold">Temperaturen är under %1$s</string>
     <string name="alert_subtitle_off">Av</string>
     <string name="alert_subtitle_on">Alarmera när mindre än %1$,d eller mer än %2$,d</string>
-    <string name="alerts">ALARM</string>
+    <string name="alerts">Alarm</string>
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
@@ -146,7 +146,7 @@
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning, Rörelseräknare,Mätningssekvensnummer,Sändningseffekt</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
-    <string name="firmware">PROGRAMVARA</string>
+    <string name="firmware">Programvara</string>
     <string name="firmware_update">Uppdatera</string>
     <string name="firmware_very_old">Väldigt gammal</string>
     <string name="gallery">Galleri</string>
@@ -202,7 +202,7 @@
     <string name="menu_send_feedback">Skicka Feedback</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
-    <string name="more_info">MER INFO</string>
+    <string name="more_info">Mer info</string>
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
     <string name="name">NAMN</string>

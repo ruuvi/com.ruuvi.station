@@ -35,7 +35,7 @@
     <string name="alert_notification_temperature_low_threshold">Lämpötila on alle %1$s</string>
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
-    <string name="alerts">HÄLYTYKSET</string>
+    <string name="alerts">Hälytykset</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
@@ -120,8 +120,8 @@
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
     <string name="data_forwarding_background_location_message_second">Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin sovelluksen ollessa tausta-ajossa, anna oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>
-    <string name="data_forwarding_location_enable">Lähetä myös tämän laitteen paikkatietokoordinaatit</string>
     <string name="data_forwarding_during_sync_enable">Välitä mittaustiedot synkronoitaessa (beta)</string>
+    <string name="data_forwarding_location_enable">Lähetä myös tämän laitteen paikkatietokoordinaatit</string>
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
@@ -146,7 +146,7 @@
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite,Liikelaskuri,Mittajärjestysnumero,Lähetysteho</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
-    <string name="firmware">LAITEOHJELMISTO</string>
+    <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
     <string name="firmware_very_old">Hyvin vanha</string>
     <string name="gallery">Galleria</string>
@@ -202,7 +202,7 @@
     <string name="menu_send_feedback">Lähetä palautetta</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
-    <string name="more_info">LISÄTIETOA</string>
+    <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
     <string name="name">NIMI</string>

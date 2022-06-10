@@ -1,11 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="textTitleSize">18sp</dimen>
     <dimen name="textSubtitleSize">16sp</dimen>
     <dimen name="textParagraphSize">16sp</dimen>
     <dimen name="textStatusSize">16sp</dimen>
     <dimen name="textParagraphSmallSize">14sp</dimen>
 
+    <dimen name="titleLineHeight">24sp</dimen>
     <dimen name="textLineHeight">22sp</dimen>
     <dimen name="textSmallLineHeight">18sp</dimen>
 
@@ -18,10 +20,16 @@
     <dimen name="extraBig">32dp</dimen>
     <dimen name="huge">64dp</dimen>
 
+    <dimen name="divider">1dp</dimen>
+
     <dimen name="screenStart">@dimen/extended</dimen>
     <dimen name="screenEnd">@dimen/extended</dimen>
     <dimen name="screenTop">@dimen/extended</dimen>
     <dimen name="screenBottom">@dimen/extended</dimen>
+
+    <dimen name="sensorSettingsHeaderHeight">40dp</dimen>
+    <dimen name="sensorSettingsItemHeight">48dp</dimen>
+    <dimen name="sensorSettingsItemSmall">36dp</dimen>
 
     <dimen name="preferencesListItemPadding">@dimen/normalPlus</dimen>
 

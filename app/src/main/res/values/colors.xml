@@ -15,8 +15,12 @@
     <color name="grayNew30">#4DD9EFEB</color>
 
     <color name="success">#FF35AD9F</color>
+    <color name="success25">#4035AD9F</color>
     <color name="error">#FFF15A24</color>
     <color name="pastelGray">#9dafaf</color>
+
+    <color name="lines">#E5EAE9</color>
+    <color name="lines10">#1AE5EAE9</color>
 
     <color name="track">#FFDFEFEC</color>
     <color name="trackInactive">#FF9DAFAF</color>
