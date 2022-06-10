@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

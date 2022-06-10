@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toTopOf="@+id/valuesLayout"
         android:layout_margin="16dp"
         style="@style/Scrollbars">
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/calibrationInstructionsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toTopOf="@+id/calibrateButton"
         android:layout_marginBottom="@dimen/extended">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalValueTextView"
             style="@style/Subtitle.WithPadding"
             android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
             app:layout_constraintTop_toBottomOf="@+id/originalTitleTextView"
             tools:text="28.53 °C" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalUpdatedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             app:layout_constraintTop_toTopOf="@+id/correctedTitleTextView"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/correctedTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
             style="@style/Subtitle"
             app:layout_constraintTop_toBottomOf="@id/originalValueTextView" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/correctedlValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/correctedOffsetTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -12,7 +12,7 @@
     android:paddingBottom="@dimen/screenBottom"
     android:paddingTop="@dimen/screenTop">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/radioSettingTitleTextView"
         android:text="@string/settings_pressure_unit"
         style="@style/Subtitle.WithPadding"

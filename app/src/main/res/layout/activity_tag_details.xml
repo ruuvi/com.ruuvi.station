@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context="com.ruuvi.station.tagdetails.ui.TagDetailsActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/tagBackgroundView"
         android:src="@drawable/gradient_background"
         android:scaleType="centerCrop"

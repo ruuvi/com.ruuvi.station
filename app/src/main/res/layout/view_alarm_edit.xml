@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/alertSubtitleTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/alertSwitch" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/mutedTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="@+id/alertSwitch"
         />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/alertMinValueTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
         app:layout_constraintEnd_toEndOf="@id/alertMaxValueTextView"
         app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/alertMaxValueTextView"
         android:fontFamily="@font/roboto"
         android:layout_height="wrap_content"

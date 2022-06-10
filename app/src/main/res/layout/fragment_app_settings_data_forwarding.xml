@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/gatewayUrlTitleTextView"
                     style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                     android:inputType="textNoSuggestions"
                     style="@style/Input" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/deviceIdTitleTextView"
                     style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                     android:text="@string/data_forwarding_during_sync_enable"
                     />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/gatewayTestButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                     android:layout_marginTop="@dimen/extended"
                     android:layout_marginBottom="@dimen/extended" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/gatewayTestResultTextView"
                     style="@style/Status.WithPadding"
                     android:layout_width="match_parent"

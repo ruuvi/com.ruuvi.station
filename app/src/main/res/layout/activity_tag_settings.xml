@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:paddingBottom="24dp">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/tagImageView"
                     android:adjustViewBounds="true"
                     android:layout_height="200dp"
@@ -53,7 +53,7 @@
                     android:src="@drawable/bg3"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:adjustViewBounds="true"
                     android:layout_height="200dp"
                     android:layout_width="match_parent"
@@ -61,7 +61,7 @@
                     android:src="@drawable/tag_bg_layer"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/tagImageSelectButton"
                     android:alpha="0.7"
                     android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                     app:layout_constraintTop_toTopOf="@id/tagImageView"
                     app:srcCompat="@drawable/icon_bg_refresh" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/tagImageCameraButton"
                     android:alpha="0.7"
                     android:layout_height="32dp"
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@+id/tagNameTitleTextView">
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/ownerTitleTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                         android:layout_gravity="start"
                         style="@style/sensorSettingInfoTitleStyle"/>
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/ownerValueTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -157,7 +157,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/ownerLayout"
                     tools:layout_editor_absoluteX="1dp">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/shareTitleTextView"
                         style="@style/sensorSettingInfoTitleStyle"
                         android:layout_gravity="start"
@@ -165,7 +165,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/share" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/shareValueTextView"
                         style="@style/sensorSettingInfoValueStyle"
                         android:layout_width="match_parent"
@@ -438,7 +438,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/rawValuesLayout">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/firmwareTitleTextView"
                         style="@style/sensorSettingGroupHeaderStyle"
                         android:layout_width="0dp"
@@ -463,7 +463,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/firmwareUpdateTitleTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -482,7 +482,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/firmwareLayout">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/removeTitleTextView"
                         style="@style/sensorSettingGroupHeaderStyle"
                         android:layout_width="0dp"
@@ -492,7 +492,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/removeSensorTitleTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

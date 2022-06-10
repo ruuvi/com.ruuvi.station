@@ -27,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="0dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/networkStatusTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -36,7 +36,7 @@
                 android:text="@string/logged_in"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/loggedUserTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

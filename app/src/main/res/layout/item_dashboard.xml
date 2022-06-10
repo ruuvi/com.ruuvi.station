@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/deviceId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="01:01:01:01:01:01" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/bell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_notifications_off_24px" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/letterImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="@+id/guideline3"
             app:layout_columnWeight="1">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/row_main_temp_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_columnWeight="1">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/row_main_humid_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
             app:layout_constraintEnd_toEndOf="@+id/guideline3"
             app:layout_columnWeight="1">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/row_main_pres_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -165,7 +165,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_columnWeight="1">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/row_main_movement_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

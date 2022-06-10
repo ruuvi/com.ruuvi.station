@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="32dp">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/ruuvi_image"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
