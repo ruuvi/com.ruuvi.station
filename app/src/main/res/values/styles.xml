@@ -141,7 +141,6 @@
     </style>
 
     <style name="Input" parent="Paragraph">
-
     </style>
 
     <style name="Scrollbars">
@@ -213,6 +212,15 @@
 
     <style name="progressStyle">
         <item name="colorAccent">?attr/colorAccent</item>
+    </style>
+
+    <style name="RangeSeekStyle">
+        <item name="bar_color">?colorDivider</item>
+        <item name="bar_highlight_color">?colorAccent</item>
+        <item name="right_thumb_color">?colorAccent</item>
+        <item name="left_thumb_color">?colorAccent</item>
+        <item name="right_thumb_color_pressed">?colorPrimaryDark</item>
+        <item name="left_thumb_color_pressed">?colorPrimaryDark</item>
     </style>
 
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">

@@ -456,6 +456,7 @@
                         app:drawableEndCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
                 </LinearLayout>
 
+                <!--REMOVE-->
                 <LinearLayout
                     android:id="@+id/removeLayout"
                     android:layout_width="match_parent"
