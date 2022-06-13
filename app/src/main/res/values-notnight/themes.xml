@@ -28,4 +28,12 @@
 
         <item name="android:autofilledHighlight" tools:targetApi="26">@android:color/transparent</item>
     </style>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/titan80</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="android:windowBackground">@drawable/dialog_inset</item>
+        <item name="android:windowTitleStyle">@style/CustomDialogTitleStyle</item>
+        <item name="android:textAppearanceMedium">@style/Paragraph</item>
+    </style>
 </resources>

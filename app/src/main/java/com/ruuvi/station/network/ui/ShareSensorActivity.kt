@@ -101,7 +101,7 @@ class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , 
     }
 
     private fun confirmUnshareSensor(email: String) {
-        val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
+        val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
         simpleAlert.setTitle(getString(R.string.confirm))
         simpleAlert.setMessage(getString(R.string.share_sensor_unshare_confirm, email))
         simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->

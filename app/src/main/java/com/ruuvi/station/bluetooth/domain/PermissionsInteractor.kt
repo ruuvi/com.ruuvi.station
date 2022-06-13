@@ -66,7 +66,7 @@ class PermissionsInteractor(private val activity: Activity) {
 
     fun requestBackgroundPermission() {
         if (arePermissionsGranted() && backgroundLocationNeeded()) {
-            val alertDialog = AlertDialog.Builder(activity).create()
+            val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.permission_dialog_background_request_message))
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
@@ -95,7 +95,7 @@ class PermissionsInteractor(private val activity: Activity) {
         if (isApi31Behaviour) {
             action.run()
         } else {
-            val alertDialog = AlertDialog.Builder(activity).create()
+            val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.permission_dialog_request_message))
             alertDialog.setButton(

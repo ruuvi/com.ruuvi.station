@@ -308,15 +308,16 @@
 
                         <TextView
                             android:id="@+id/batteryTextView"
-                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
                             android:layout_gravity="center_horizontal|center_vertical"
+                            android:gravity="end"
                             style="@style/SensorSettingWarningStyle"
                             tools:text="@string/battery_ok" />
 
                         <TextView
                             android:id="@+id/voltageTextView"
                             android:layout_width="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_gravity="end|center"
                             style="@style/SensorSettingValueSmallStyle"
                             tools:text="2.976 V"/>
                     </LinearLayout>

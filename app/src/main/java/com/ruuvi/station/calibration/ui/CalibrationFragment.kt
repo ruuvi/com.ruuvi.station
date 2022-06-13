@@ -57,7 +57,7 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
         }
 
         binding.clearButton.setDebouncedOnClickListener {
-            val alertDialog = AlertDialog.Builder(requireContext()).create()
+            val alertDialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).create()
             alertDialog.setTitle(getString(R.string.confirm))
             alertDialog.setMessage(getString(R.string.calibration_clear_confirm))
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes)

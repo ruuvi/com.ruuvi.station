@@ -140,7 +140,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
 
     private fun login(signedIn: Boolean) {
         if (signedIn) {
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))

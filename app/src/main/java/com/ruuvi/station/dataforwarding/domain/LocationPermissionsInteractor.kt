@@ -29,7 +29,7 @@ class LocationPermissionsInteractor(private val activity: Activity) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             val neededPermissions = getRequiredPermissions(requiredLocationPermissions)
             if (neededPermissions.size > 1) {
-                val alertDialog = AlertDialog.Builder(activity).create()
+                val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
                 alertDialog.setMessage(activity.getString(R.string.data_forwarding_background_location_message_first))
                 alertDialog.setButton(
                     AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
@@ -49,7 +49,7 @@ class LocationPermissionsInteractor(private val activity: Activity) {
             ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )) {
-            val alertDialog = AlertDialog.Builder(activity).create()
+            val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.data_forwarding_background_location_message_second))
             alertDialog.setButton(
