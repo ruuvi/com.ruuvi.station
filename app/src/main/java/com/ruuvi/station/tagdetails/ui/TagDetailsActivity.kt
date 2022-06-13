@@ -364,7 +364,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     private fun login(signedIn: Boolean) {
         if (signedIn) {
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
@@ -466,7 +466,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
-                            val simpleAlert = AlertDialog.Builder(this).create()
+                            val simpleAlert = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
                             simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
                             simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 

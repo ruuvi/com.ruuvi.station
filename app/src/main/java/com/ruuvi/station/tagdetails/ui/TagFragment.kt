@@ -113,7 +113,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun confirm(message: String, positiveButtonClick: DialogInterface.OnClickListener) {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
         with(builder)
         {
             setMessage(message)

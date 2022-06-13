@@ -3,6 +3,7 @@ package com.ruuvi.station.tagsettings.ui
 import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
@@ -423,7 +424,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun delete() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
 
         builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
@@ -449,7 +450,10 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
+        val dividerColor = resolveColorAttr(R.attr.colorDivider)
+        listView.divider = ColorDrawable(dividerColor)
+        listView.dividerHeight = 1
+        listView.adapter = ArrayAdapter(this, R.layout.bottom_sheet_select_image_source, menu)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
                 0 -> dispatchTakePictureIntent()

@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/dark</item>
-        <item name="colorSurface">@color/gray</item>
+        <item name="colorSurface">@color/dark</item>
         <item name="colorOnSurface">@color/white80</item>
         <item name="colorDisabled">@color/disabledText</item>
         <item name="actionMenuTextColor">@color/white</item>
@@ -40,4 +40,13 @@
         <item name="colorOnSecondary">@color/grayNew</item>
         <item name="colorControlHighlight">@color/grayNew5</item>
     </style>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/white80</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="android:windowBackground">@drawable/dialog_inset</item>
+        <item name="android:windowTitleStyle">@style/CustomDialogTitleStyle</item>
+        <item name="android:textAppearanceMedium">@style/Paragraph</item>
+    </style>
+
 </resources>
