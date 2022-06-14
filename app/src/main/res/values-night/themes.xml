@@ -18,6 +18,7 @@
         <item name="colorAccent">@color/ruuviNew</item>
         <item name="android:textColorHint">@color/white30</item>
         <item name="colorButtonText">@color/white</item>
+        <item name="colorButtonPressed">@color/emerald</item>
 
         <item name="colorDivider">@color/lines10</item>
         <item name="colorErrorText">@color/error</item>

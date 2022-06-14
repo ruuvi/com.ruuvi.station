@@ -18,6 +18,7 @@
         <item name="colorAccent">@color/ruuviNew</item>
         <item name="android:textColorHint">@color/titan30</item>
         <item name="colorButtonText">@color/white</item>
+        <item name="colorButtonPressed">@color/success</item>
 
         <item name="colorDivider">@color/lines</item>
         <item name="colorErrorText">@color/error</item>
