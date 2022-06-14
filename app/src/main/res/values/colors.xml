@@ -8,21 +8,21 @@
     <color name="titan50">#80083C3D</color>
     <color name="titan30">#4D083C3D</color>
     <color name="ruuviNew">#4bc9ba</color>
+    <color name="emerald">#20746A</color>
+    <color name="success">#FF35AD9F</color>
+    <color name="success25">#4035AD9F</color>
 
     <color name="dark_emerald">#E6001C1B</color>
     <color name="grayNew">#B3D9EFEB</color>
     <color name="grayNew5">#0DD9EFEB</color>
     <color name="grayNew30">#4DD9EFEB</color>
 
-    <color name="success">#FF35AD9F</color>
-    <color name="success25">#4035AD9F</color>
     <color name="error">#FFF15A24</color>
     <color name="pastelGray">#9dafaf</color>
 
     <color name="lines">#FFE5EAE9</color>
     <color name="lines10">#1AE5EAE9</color>
 
-    <color name="emerald">#20746A</color>
     <color name="track">#FFDFEFEC</color>
     <color name="trackInactive">#FF9DAFAF</color>
     <color name="white80">#CCFFFFFF</color>

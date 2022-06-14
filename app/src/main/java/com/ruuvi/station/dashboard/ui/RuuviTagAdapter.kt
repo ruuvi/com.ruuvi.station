@@ -1,6 +1,5 @@
 package com.ruuvi.station.dashboard.ui
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
@@ -63,9 +61,6 @@ class RuuviTagAdapter(
             }
         binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
         binding.bell.setImageResource(iconResource)
-
-        val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main))
-        ImageViewCompat.setImageTintList(binding.bell, colorStateList)
 
         return binding.root
     }
