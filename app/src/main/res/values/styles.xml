@@ -1,5 +1,9 @@
 <resources>
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
+    <style name="AppTheme.Animated" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme.Animated">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -250,5 +254,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/divider</item>
         <item name="android:background">?attr/colorDivider</item>
+    </style>
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/enter_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/exit_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/enter_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/exit_right</item>
     </style>
 </resources>
