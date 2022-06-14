@@ -3,259 +3,113 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:fillViewport="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
     tools:context="com.ruuvi.station.about.ui.AboutActivity"
     tools:showIn="@layout/activity_about">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="32dp">
+        android:orientation="vertical"
+        android:padding="@dimen/screenPadding">
 
-        <ImageView
-            android:id="@+id/ruuvi_image"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="50dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_title_ruuvi" />
 
         <TextView
             android:id="@+id/infoTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
-            android:text="@string/help_about_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ruuvi_image" />
+            android:text="@string/menu_about_help"
+            style="@style/Subtitle.WithPadding" />
 
         <TextView
             android:id="@+id/infoText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_about_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/infoTitle" />
+            style="@style/ParagraphLink" />
 
         <TextView
             android:id="@+id/operationsTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_operations_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/infoText" />
+            style="@style/Subtitle.WithPadding"/>
 
         <TextView
             android:id="@+id/operationsText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_operations_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/operationsTitle" />
+            style="@style/ParagraphLink"/>
 
         <TextView
             android:id="@+id/troubleshootingTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_troubleshooting_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/operationsText" />
+            style="@style/Subtitle.WithPadding" />
 
         <TextView
             android:id="@+id/troubleshootingText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_troubleshooting_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/troubleshootingTitle" />
+            style="@style/ParagraphLink" />
 
         <TextView
             android:id="@+id/openTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_opensource_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/troubleshootingText" />
+            style="@style/Subtitle.WithPadding"/>
 
         <TextView
             android:id="@+id/openText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_opensource_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/openTitle" />
+            style="@style/ParagraphLink" />
 
         <TextView
             android:id="@+id/moreTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_more_to_read_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/openText" />
+            style="@style/Subtitle.WithPadding"/>
 
         <TextView
             android:id="@+id/moreText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_more_to_read_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/moreTitle" />
+            style="@style/ParagraphLink"/>
 
         <TextView
             android:id="@+id/privacyTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_privacy_policy_title"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/moreText" />
+            style="@style/Subtitle.WithPadding"/>
 
         <TextView
             android:id="@+id/privacyText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/muli"
-            android:lineSpacingExtra="6dp"
-            android:paddingStart="40dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
             android:text="@string/help_privacy_policy_text"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            style="@style/ParagraphLink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/privacyTitle" />
+            style="@style/ParagraphLink" />
 
         <TextView
             android:id="@+id/debugInfo"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fontFamily="@font/roboto"
-            android:paddingStart="40dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="40dp"
-            android:textAlignment="textStart"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/privacyText"
+            style="@style/ParagraphSmall.WithPadding"
             tools:text="Version: ..." />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </ScrollView>
