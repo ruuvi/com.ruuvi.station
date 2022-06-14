@@ -22,6 +22,7 @@
 
     <dimen name="divider">1dp</dimen>
 
+    <dimen name="screenPadding">@dimen/extended</dimen>
     <dimen name="screenStart">@dimen/extended</dimen>
     <dimen name="screenEnd">@dimen/extended</dimen>
     <dimen name="screenTop">@dimen/extended</dimen>
