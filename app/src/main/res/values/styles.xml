@@ -218,8 +218,8 @@
         <item name="bar_highlight_color">?colorAccent</item>
         <item name="right_thumb_color">?colorAccent</item>
         <item name="left_thumb_color">?colorAccent</item>
-        <item name="right_thumb_color_pressed">?colorPrimaryDark</item>
-        <item name="left_thumb_color_pressed">?colorPrimaryDark</item>
+        <item name="right_thumb_color_pressed">?attr/colorButtonPressed</item>
+        <item name="left_thumb_color_pressed">?attr/colorButtonPressed</item>
     </style>
 
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
