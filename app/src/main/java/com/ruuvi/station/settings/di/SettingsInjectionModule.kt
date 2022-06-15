@@ -28,5 +28,7 @@ object SettingsInjectionModule {
         bind<AppSettingsInteractor>() with singleton {
             AppSettingsInteractor(instance(), instance(), instance(), instance(), instance())
         }
+
+        bind<AppSettingsAppearanceViewModel>() with provider { AppSettingsAppearanceViewModel(instance()) }
     }
 }

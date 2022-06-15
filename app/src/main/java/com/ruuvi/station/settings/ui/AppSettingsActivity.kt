@@ -75,6 +75,7 @@ class AppSettingsActivity : AppCompatActivity(R.layout.activity_app_settings), A
         } else {
             transaction.setCustomAnimations(R.anim.enter_right, R.anim.exit_left)
             fragment = when (resourceId) {
+                R.string.settings_appearance -> AppSettingsAppearanceFragment.newInstance()
                 R.string.settings_background_scan -> AppSettingsBackgroundScanFragment.newInstance()
                 R.string.settings_chart -> AppSettingsGraphFragment.newInstance()
                 R.string.settings_data_forwarding -> AppSettingsDataForwardingFragment.newInstance()

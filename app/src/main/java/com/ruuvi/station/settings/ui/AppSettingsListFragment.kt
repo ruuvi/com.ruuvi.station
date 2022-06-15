@@ -41,6 +41,10 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
     private fun setupUI() {
         with(binding) {
+            appearanceLayout.setDebouncedOnClickListener {
+                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_appearance)
+            }
+
             scanLayout.setDebouncedOnClickListener {
                 (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_background_scan)
             }

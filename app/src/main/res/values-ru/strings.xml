@@ -266,6 +266,7 @@
     <string name="sensor_settings">Настройки датчика</string>
     <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
+    <string name="settings_appearance">Настройки внешнего вида</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
     <string name="settings_background_battery_optimization_common_instructions">Перейдите в настройки Android -> Приложения -> Ruuvi Station -> Батарея -> укажите, что не нужно экономить заряд</string>
     <string name="settings_background_battery_optimization_huawei_instructions">Для устройств Huawei перейдите в настройки Android -> Приложения -> Ruuvi Station -> Сведения энергопотребления -> Запуск приложений -> отключите Автоматическое Управление и включите Автозапуск, Косвенный запуск и Работу в фоновом режиме</string>

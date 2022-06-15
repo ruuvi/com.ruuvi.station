@@ -13,7 +13,8 @@
         <item name="colorOnHeaderSurface">@color/mainDark</item>
         <item name="colorToolbar">@color/titan</item>
 
-        <item name="colorPrimary">@color/titan80</item>
+        <item name="colorPrimaryText">@color/titan80</item>
+        <item name="colorPrimary">@color/titan</item>
         <item name="colorPrimaryDark">@color/titan</item>
         <item name="colorAccent">@color/ruuviNew</item>
         <item name="android:textColorHint">@color/titan30</item>

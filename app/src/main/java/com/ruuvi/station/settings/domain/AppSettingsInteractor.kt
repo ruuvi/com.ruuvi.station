@@ -8,6 +8,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -175,4 +176,10 @@ class AppSettingsInteractor(
     fun getAllLocales(): Array<LocaleType> = LocaleType.values()
 
     fun clearLastSync() = sensorSettingsRepository.clearLastSyncGatt()
+
+    fun getDarkMode(): DarkModeState = preferencesRepository.getDarkMode()
+
+    fun updateDarkMode(darkModeState: DarkModeState) {
+        preferencesRepository.updateDarkMode(darkModeState)
+    }
 }

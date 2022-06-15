@@ -12,4 +12,5 @@
     <attr name="colorToolbar" format="color"/>
     <attr name="colorDivider" format="color"/>
     <attr name="colorButtonPressed" format="color"/>
+    <attr name="colorPrimaryText" format="color" />
 </resources>
