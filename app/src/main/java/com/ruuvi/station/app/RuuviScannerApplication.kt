@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.IntentFilter
 import android.os.PowerManager
+import androidx.appcompat.app.AppCompatDelegate
 import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
@@ -85,6 +86,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
         foreground.addListener(listener)
 
         setupExperimentalFeatures()
+
+        applyDarkModeSettings()
     }
 
     private fun setupDependencyInjection() {
@@ -104,5 +107,10 @@ class RuuviScannerApplication : Application(), KodeinAware {
         if (networkInteractor.signedIn) {
             runtimeFeatureFlagProvider.setFeatureEnabled(FeatureFlag.RUUVI_NETWORK, true)
         }
+    }
+
+    private fun applyDarkModeSettings() {
+        val mode = preferencesRepository.getDarkMode()
+        AppCompatDelegate.setDefaultNightMode(mode.code)
     }
 }

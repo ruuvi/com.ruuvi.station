@@ -16,6 +16,28 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/appearanceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/preferencesListItemPadding">
+
+            <TextView
+                android:id="@+id/appearanceTitleTextView"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_appearance" />
+
+            <TextView
+                android:id="@+id/appearanceDescriptionTextView"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Theme settings. And dashboard too!!" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/scanLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -117,6 +139,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:paddingTop="@dimen/preferencesListItemPadding"
             android:paddingBottom="@dimen/preferencesListItemPadding">
 
@@ -153,7 +176,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include layout="@layout/divider" />
+<!--        <include layout="@layout/divider" />-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cloudModeLayout"
