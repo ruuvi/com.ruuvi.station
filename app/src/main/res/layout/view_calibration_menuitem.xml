@@ -16,5 +16,5 @@
         android:id="@+id/itemValueTextView"
         style="@style/SensorSettingValueStyle"
         tools:text="-0.52 °C"
-        app:drawableEndCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+        app:drawableEndCompat="@drawable/arrow_forward_16" />
 </merge>

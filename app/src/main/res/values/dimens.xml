@@ -30,12 +30,13 @@
 
     <dimen name="sensorSettingsHeaderHeight">40dp</dimen>
     <dimen name="sensorSettingsItemHeight">48dp</dimen>
-    <dimen name="sensorSettingsItemSmall">36dp</dimen>
+    <dimen name="sensorSettingsItemSmall">28dp</dimen>
 
     <dimen name="preferencesListItemPadding">@dimen/normalPlus</dimen>
 
     <dimen name="title_font_size">16sp</dimen>
     <dimen name="tag_settings_text_padding">8dp</dimen>
+    <dimen name="tag_settings_text_padding_small">4dp</dimen>
 
     <dimen name="letter_ball_radius">26sp</dimen>
     <dimen name="tag_details_name">5sp</dimen>

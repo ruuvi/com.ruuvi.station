@@ -127,7 +127,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
                 binding.ownerLayout.isEnabled = true
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
             } else {
                 binding.ownerLayout.isEnabled = false
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
