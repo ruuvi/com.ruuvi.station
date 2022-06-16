@@ -41,7 +41,7 @@
     <string name="already_signed_in">Great! You already signed in!</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="back">Back</string>
-    <string name="background_image">BACKGROUND\nIMAGE</string>
+    <string name="background_image">Background\nimage</string>
     <string name="background_interval">every %1$s min</string>
     <string name="background_interval_10sec">every %1$s sec</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>

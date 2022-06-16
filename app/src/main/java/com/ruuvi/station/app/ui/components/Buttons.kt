@@ -26,17 +26,10 @@ fun RuuviButton(
         colors = ruuviButtonColors(),
         elevation = ruuviButtonElevation(),
         onClick = { onClick() }) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = text, style = RuuviStationTheme.typography.buttonText)
-            if (loading) {
-                Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-                LoadingStatus(color = RuuviStationTheme.colors.onInactive)
-            }
+        Text(text = text, style = RuuviStationTheme.typography.buttonText)
+        if (loading) {
+            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+            LoadingStatus(color = RuuviStationTheme.colors.onInactive)
         }
     }
 }

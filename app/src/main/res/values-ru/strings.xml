@@ -40,7 +40,7 @@
     <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="back">Назад</string>
-    <string name="background_image">ФОНОВОЕ\nИЗОБРАЖЕНИЕ</string>
+    <string name="background_image">Фоновое\nизображение</string>
     <string name="background_interval">каждые %1$s мин</string>
     <string name="background_interval_10sec">каждые %1$s сек</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>

@@ -41,7 +41,7 @@
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="back">Takaisin</string>
-    <string name="background_image">TAUSTAKUVA</string>
+    <string name="background_image">Taustakuva</string>
     <string name="background_interval">joka %1$s min</string>
     <string name="background_interval_10sec">joka %1$s sek</string>
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>

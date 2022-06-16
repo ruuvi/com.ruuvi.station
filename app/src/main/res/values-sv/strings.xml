@@ -41,7 +41,7 @@
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="back">Tillbaka</string>
-    <string name="background_image">BAKGRUNDSBILD</string>
+    <string name="background_image">Bakgrundsbild</string>
     <string name="background_interval">varje %1$s min</string>
     <string name="background_interval_10sec">varje %1$s sek</string>
     <string name="background_notification_message">Avaktivera bakgrundsskanning i inställningar</string>
