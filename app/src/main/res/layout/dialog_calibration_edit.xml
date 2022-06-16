@@ -4,20 +4,27 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="@dimen/screenPadding">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/calibration_setup"
+        style="@style/Subtitle.WithPadding"/>
 
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        style="@style/Paragraph"
+        style="@style/Paragraph.WithPadding"
         tools:text="Enter temperature value expected from sensor in current conditions:" />
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/calibrationValueEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal|numberSigned"
         android:imeOptions="actionDone"
+        android:paddingTop="@dimen/extended"
         style="@style/Input"/>
 </androidx.appcompat.widget.LinearLayoutCompat>

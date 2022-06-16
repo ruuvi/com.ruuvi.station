@@ -26,7 +26,6 @@ class CalibrationEditDialog(
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
             builder
                 .setView(binding.root)
-                .setTitle(getString(R.string.calibration_setup))
                 .setPositiveButton(R.string.ok) {_,_->
                     listener?.onDialogPositiveClick(this, binding.calibrationValueEditText.text.toString().toDouble())
                 }
