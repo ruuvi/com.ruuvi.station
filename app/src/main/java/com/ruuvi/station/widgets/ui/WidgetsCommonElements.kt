@@ -31,7 +31,7 @@ fun WidgetConfigTopAppBar(
 
     TopAppBar(
         title = {
-            Text(text = title, color = RuuviStationTheme.colors.topBarText)
+            Text(text = title, style = RuuviStationTheme.typography.topBarText)
         },
         navigationIcon = {
             IconButton(onClick = {

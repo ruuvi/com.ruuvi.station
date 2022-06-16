@@ -97,6 +97,14 @@
         <item name="android:textColor">@color/mainDark</item>
     </style>
 
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="fontFamily">@font/mulish_bold</item>
+    </style>
+
+    <style name="Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
+    </style>
+
     <style name="WelcomeText">
         <item name="android:fontFamily">@font/muli</item>
         <item name="android:textSize">@dimen/title_font_size</item>
