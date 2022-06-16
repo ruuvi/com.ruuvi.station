@@ -13,6 +13,7 @@
         android:maxLength="32"
         android:layout_marginStart="@dimen/dialog_margin"
         android:layout_marginEnd="@dimen/dialog_margin"
+        style="@style/Input"
         android:imeOptions="actionDone" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -290,17 +290,17 @@ fun MyTopAppBar(
 
     TopAppBar(
         title = {
-            Text(text = title, color = RuuviStationTheme.colors.topBarText)
+            Text(text = title, style = RuuviStationTheme.typography.topBarText)
         },
         navigationIcon = {
             IconButton(onClick = {
                 context.onBackPressed()
             }) {
-                Icon(Icons.Default.ArrowBack, "Back")
+                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
             }
         },
         backgroundColor = RuuviStationTheme.colors.topBar,
-        contentColor = RuuviStationTheme.colors.background,
+        contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
     )
 }
