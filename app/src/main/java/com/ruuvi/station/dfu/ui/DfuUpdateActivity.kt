@@ -173,7 +173,7 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
             RuuviButton(
                 text = stringResource(id = R.string.start_update_process),
                 modifier = Modifier
-                    .padding(top = RuuviStationTheme.dimensions.extended)
+                    .padding(top = RuuviStationTheme.dimensions.extraBig)
             ) {
                 viewModel.startDownloadProcess(context.cacheDir)
             }
