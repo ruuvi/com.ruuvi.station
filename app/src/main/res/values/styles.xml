@@ -26,7 +26,7 @@
     </style>
 
     <style name="Subtitle">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
         <item name="fontFamily">@font/mulish_bold</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
@@ -38,7 +38,7 @@
     </style>
 
     <style name="Paragraph">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textParagraphSize</item>
         <item name="fontFamily">@font/mulish_regular</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
@@ -50,7 +50,7 @@
     </style>
 
     <style name="ParagraphSmall">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textParagraphSmallSize</item>
         <item name="lineHeight">@dimen/textSmallLineHeight</item>
         <item name="fontFamily">@font/mulish_regular</item>
@@ -68,7 +68,7 @@
     </style>
 
     <style name="Status">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textStatusSize</item>
         <item name="fontFamily">@font/mulish_semibolditalic</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
@@ -95,6 +95,14 @@
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/mainDark</item>
+    </style>
+
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="fontFamily">@font/mulish_bold</item>
+    </style>
+
+    <style name="Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
     </style>
 
     <style name="WelcomeText">
@@ -133,7 +141,7 @@
         <item name="trackTint">@color/color_switch_track</item>
         <item name="thumbElevation">0dp</item>
         <item name="elevation">0dp</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textSubtitleSize</item>
         <item name="fontFamily">@font/mulish_bold</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
@@ -154,7 +162,7 @@
     </style>
 
     <style name="RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimaryText</item>
         <item name="android:textSize">@dimen/textParagraphSize</item>
         <item name="fontFamily">@font/mulish_regular</item>
         <item name="lineHeight">@dimen/textLineHeight</item>
