@@ -13,11 +13,13 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.describingTimeSince
 
 class RuuviTagAdapter(
     private val activity: AppCompatActivity,
+    private val unitsConverter: UnitsConverter,
     items: List<RuuviTag>
 ) : ArrayAdapter<RuuviTag>(activity, 0, items) {
 
@@ -32,21 +34,25 @@ class RuuviTagAdapter(
 
         item?.let {
             binding.deviceId.text = it.displayName
-            binding.temperature.text = it.temperatureString
-            binding.humidity.text = it.humidityString
-            binding.pressure.text = it.pressureString
-            binding.movement.text =   it.movementCounterString
+            binding.temperature.text = unitsConverter.getTemperatureStringWithoutUnit(it.temperature)
+            binding.temperatureUnit.text = activity.getText(unitsConverter.getTemperatureUnit().unit)
+            binding.humidity.text = unitsConverter.getHumidityStringWithoutUnit(it.humidity, it.temperature)
+            binding.humidityUnit.text = if (it.humidity != null) activity.getText(unitsConverter.getHumidityUnit().unit) else ""
+            binding.pressure.text = unitsConverter.getPressureStringWithoutUnit(it.pressure)
+            binding.pressureUnit.text = if (it.pressure != null) activity.getText(unitsConverter.getPressureUnit().unit) else ""
+            binding.movement.text =   it.movementCounter.toString()
+            binding.movementUnit.text = if (it.movementCounter != null) activity.getText(R.string.movements) else ""
         }
 
-        val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight
+        val ballColorRes = if (position % 2 == 0) R.color.success else R.color.emerald
         val ballRadius = context.resources.getDimension(R.dimen.letter_ball_radius).toInt()
         val ballColor = ContextCompat.getColor(context, ballColorRes)
 
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val letterSize = 33 * displayMetrics.scaledDensity
+        val letterSize = 28 * displayMetrics.scaledDensity
 
-        val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, binding.deviceId.text.toString(), letterSize)
+        val ballBitmap = Utils.createBall(activity, ballRadius, ballColor, Color.WHITE, binding.deviceId.text.toString(), letterSize)
         binding.letterImage.setImageBitmap(ballBitmap)
 
         val updatedAt = item?.updatedAt?.describingTimeSince(activity)

@@ -18,6 +18,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Digits">
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/textTitleSize</item>
+        <item name="fontFamily">@font/montserrat_semibold</item>
+        <item name="lineHeight">@dimen/titleLineHeight</item>
+    </style>
+
     <style name="Title">
         <item name="android:textColor">?attr/colorPrimaryDark</item>
         <item name="android:textSize">@dimen/textTitleSize</item>
@@ -194,6 +201,7 @@
         <item name="android:minHeight">@dimen/sensorSettingsItemHeight</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">center_vertical|end</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding</item>
         <item name="android:paddingStart">@dimen/tag_settings_text_padding</item>
         <item name="android:paddingEnd">@dimen/tag_settings_text_padding</item>
         <item name="android:paddingTop">@dimen/tag_settings_text_padding</item>

@@ -128,7 +128,8 @@
                         android:clickable="true"
                         android:focusable="true"
                         tools:text="Ruuvi AA:BB"
-                        app:drawableEndCompat="@drawable/arrow_forward_16" />
+                        android:drawablePadding="@dimen/drawable_padding"
+                        app:drawableEndCompat="@drawable/edit_16" />
                 </LinearLayout>
 
                 <!--OWNER-->
@@ -173,6 +174,7 @@
                             <TextView
                                 android:id="@+id/shareValueTextView"
                                 style="@style/SensorSettingValueStyle"
+                                android:drawablePadding="@dimen/drawable_padding"
                                 app:drawableEndCompat="@drawable/arrow_forward_16" />
                         </LinearLayout>
                 </LinearLayout>

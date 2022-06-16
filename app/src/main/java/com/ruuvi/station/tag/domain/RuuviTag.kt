@@ -8,7 +8,7 @@ data class RuuviTag(
     val name: String,
     val displayName: String,
     val rssi: Int,
-    val temperature: Double?,
+    val temperature: Double,
     val humidity: Double?,
     val pressure: Double?,
     val movementCounter: Int?,
