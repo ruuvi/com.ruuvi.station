@@ -22,6 +22,7 @@ import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
+import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.KodeinAware
@@ -37,8 +38,10 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
 
     private lateinit var binding: ActivityDashboardBinding
 
+    private val unitsConverter: UnitsConverter by instance()
+
     private var tags: MutableList<RuuviTag> = arrayListOf()
-    private val adapter: RuuviTagAdapter by lazy { RuuviTagAdapter(this@DashboardActivity, tags) }
+    private val adapter: RuuviTagAdapter by lazy { RuuviTagAdapter(this@DashboardActivity, unitsConverter, tags) }
     private var signedIn = false
     private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
