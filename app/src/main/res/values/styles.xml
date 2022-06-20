@@ -40,8 +40,8 @@
     </style>
 
     <style name="Subtitle.WithPadding">
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
     <style name="Paragraph">
