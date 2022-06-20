@@ -28,7 +28,7 @@
     <dimen name="screenTop">@dimen/extended</dimen>
     <dimen name="screenBottom">@dimen/extended</dimen>
 
-    <dimen name="sensorSettingsHeaderHeight">40dp</dimen>
+    <dimen name="sensorSettingsHeaderHeight">48dp</dimen>
     <dimen name="sensorSettingsItemHeight">48dp</dimen>
     <dimen name="sensorSettingsItemSmall">28dp</dimen>
 

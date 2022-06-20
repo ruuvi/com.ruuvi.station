@@ -24,12 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/letter_ball_radius"
         android:paddingStart="48dp"
-        android:paddingTop="8dp"
+        android:paddingTop="@dimen/normal"
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
         style="@style/Title"
         app:layout_constraintEnd_toStartOf="@id/bell"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/background"
         tools:text="01:01:01:01:01:01" />
@@ -84,7 +83,6 @@
                 style="@style/ParagraphSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:text=""
                 tools:text="unit"/>
         </LinearLayout>
@@ -114,7 +112,6 @@
                 style="@style/ParagraphSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:text=""
                 tools:text="unit"/>
         </LinearLayout>
@@ -136,7 +133,6 @@
                 style="@style/Digits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_marginStart="4dp"
                 android:text="@string/pressure_reading" />
             <View
@@ -147,7 +143,6 @@
                 style="@style/ParagraphSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:text=""
                 tools:text="unit"/>
         </LinearLayout>
@@ -168,7 +163,6 @@
                 android:id="@+id/movement"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_marginStart="4dp"
                 style="@style/Digits"
                 tools:text="124" />
@@ -180,7 +174,6 @@
                 style="@style/ParagraphSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:text="@string/movements"/>
         </LinearLayout>
 
