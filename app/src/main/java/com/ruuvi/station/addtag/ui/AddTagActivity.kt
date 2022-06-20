@@ -18,6 +18,8 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.util.extensions.openUrl
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -75,7 +77,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
             viewModel.sensorFlow.collect { ruuviTags ->
                 tags.clear()
                 tags.addAll(ruuviTags)
-                binding.content.noTagsFoundTextView.isVisible = tags.isEmpty()
+                binding.content.noSensorsLayout.isVisible = tags.isEmpty()
+                binding.content.buySensorsButton2.isVisible = tags.isNotEmpty()
                 adapter.notifyDataSetChanged()
             }
         }
@@ -95,6 +98,14 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
             }
             viewModel.makeSensorFavorite(tag)
             TagSettingsActivity.startForResult(this, 1, tag.id)
+        }
+
+        binding.content.buySensorsButton.setOnClickListener {
+            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
+        }
+
+        binding.content.buySensorsButton2.setOnClickListener {
+            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
         }
     }
 

@@ -20,19 +20,43 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/noTagsFoundTextView"
+    <LinearLayout
+        android:id="@+id/noSensorsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+    <TextView
+        android:id="@+id/noTagsFoundTextView"
         android:text="@string/add_tag_not_found"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="@dimen/title_font_size"
-        android:textAllCaps="true"
         android:textAlignment="center"
-        android:fontFamily="@font/montserrat_bold"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Title"/>
+
+        <Button
+            android:id="@+id/buySensorsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_buy_sensors"
+            android:layout_marginTop="@dimen/button_bottom_padding"
+            android:layout_gravity="center"
+            style="@style/RoundButton" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buySensorsButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_buy_sensors"
+        android:layout_marginBottom="@dimen/button_bottom_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/RoundButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
