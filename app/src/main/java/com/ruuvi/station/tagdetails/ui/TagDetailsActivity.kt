@@ -333,6 +333,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
         drawerToggle.syncState()
 
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
+
         updateMenu(signedIn)
 
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
