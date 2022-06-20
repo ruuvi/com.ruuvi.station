@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.ui.theme
 
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 
 data class RuuviStationTypography(
     val subtitle: TextStyle,
@@ -35,7 +36,8 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         buttonText = TextStyle(
             fontFamily = ruuviStationFonts.extraBold,
-            fontSize = ruuviStationFontsSizes.normal
+            fontSize = ruuviStationFontsSizes.normal,
+            textAlign = TextAlign.Center
         ),
         topBarText = TextStyle(
             color = colors.topBarText,
