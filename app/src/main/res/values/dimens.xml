@@ -28,7 +28,7 @@
     <dimen name="screenTop">@dimen/extended</dimen>
     <dimen name="screenBottom">@dimen/extended</dimen>
 
-    <dimen name="sensorSettingsHeaderHeight">40dp</dimen>
+    <dimen name="sensorSettingsHeaderHeight">48dp</dimen>
     <dimen name="sensorSettingsItemHeight">48dp</dimen>
     <dimen name="sensorSettingsItemSmall">28dp</dimen>
 
@@ -44,9 +44,13 @@
     <dimen name="graph_description_size">4sp</dimen>
     <dimen name="dialog_margin">20dp</dimen>
 
+    <dimen name="button_bottom_padding">32dp</dimen>
+
     <dimen name="drawable_padding">16dp</dimen>
 
     <dimen name="design_navigation_separator_vertical_padding" tools:override="true">0dp</dimen>
 
     <dimen name="widget_margin">0dp</dimen>
+
+    <dimen name="listItemHeight">48dp</dimen>
 </resources>

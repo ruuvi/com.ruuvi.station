@@ -1,12 +1,15 @@
 package com.ruuvi.station.alarm.ui
 
+import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
@@ -15,6 +18,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.databinding.ViewAlarmEditBinding
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -91,15 +95,33 @@ class AlarmEditView @JvmOverloads
             }
         }
 
-        with(binding.customDescriptionEditText) {
-            setText(alarm.customDescription)
-            addTextChangedListener {
-                alarm.customDescription = it.toString()
-                scheduleSaving()
+        with(binding.customDescriptionTextView) {
+            updateCustomeDescriptionText(alarm)
+
+            setDebouncedOnClickListener {
+                val customDescriptionEditDialog = CustomDescriptionEditDialog.new_instance(alarm.customDescription, object: CustomDescriptionEditListener {
+                    override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
+                        alarm.customDescription = value ?: ""
+                        updateCustomeDescriptionText(alarm)
+                        scheduleSaving()
+                    }
+
+                    override fun onDialogNegativeClick(dialog: DialogFragment) {}
+                })
+
+                customDescriptionEditDialog.show((ctx as AppCompatActivity).supportFragmentManager, "customDescription")
             }
         }
 
         updateUI()
+    }
+
+    private fun updateCustomeDescriptionText(alarm: AlarmElement) {
+        binding.customDescriptionTextView.text = if (alarm.customDescription.isNullOrEmpty()) {
+            ctx.getString(R.string.alarm_custom_title_hint)
+        } else {
+            alarm.customDescription
+        }
     }
 
     private fun updateUI() {
@@ -126,7 +148,7 @@ class AlarmEditView @JvmOverloads
             ctx.getString(R.string.alert_subtitle_off)
         }
 
-        binding.customDescriptionEditText.isGone = !alarmElement.isEnabled
+        binding.customDescriptionLayout.isGone = !alarmElement.isEnabled
 
         if (useSeekBar) {
             binding.alertSeekBar.isGone = !alarmElement.isEnabled

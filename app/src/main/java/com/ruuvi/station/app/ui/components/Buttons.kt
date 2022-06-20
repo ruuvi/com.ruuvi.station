@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dfu.ui.LoadingStatus
@@ -26,7 +26,11 @@ fun RuuviButton(
         colors = ruuviButtonColors(),
         elevation = ruuviButtonElevation(),
         onClick = { onClick() }) {
-        Text(text = text, style = RuuviStationTheme.typography.buttonText)
+        Text(
+            text = text,
+            style = RuuviStationTheme.typography.buttonText,
+            textAlign = TextAlign.Center
+        )
         if (loading) {
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
             LoadingStatus(color = RuuviStationTheme.colors.onInactive)

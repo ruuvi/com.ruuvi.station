@@ -15,20 +15,23 @@ import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
-import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.disableNavigationViewScrollbars
+import com.ruuvi.station.util.extensions.openUrl
+import com.ruuvi.station.util.extensions.sendFeedback
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
-import kotlin.collections.MutableList
+
 
 class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
 
@@ -109,6 +112,8 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         binding.mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
+
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
 
         drawerToggle.syncState()
 

@@ -8,6 +8,8 @@ import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.internal.NavigationMenuView
+import com.google.android.material.navigation.NavigationView
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 
@@ -40,4 +42,11 @@ fun Activity.hideKeyboard() {
 fun Activity.showKeyboard(view: View) {
     val inputManager = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun Activity.disableNavigationViewScrollbars(navigationView: NavigationView) {
+    val navigationMenuView = navigationView.getChildAt(0) as NavigationMenuView
+    if (navigationMenuView != null) {
+        navigationMenuView.isVerticalScrollBarEnabled = false
+    }
 }

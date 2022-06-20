@@ -333,6 +333,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
         drawerToggle.syncState()
 
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
+
         updateMenu(signedIn)
 
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
@@ -567,8 +569,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
-        private const val BUY_SENSORS_URL = "http://ruuvi.com/products"
-        private const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
+        const val BUY_SENSORS_URL = "http://ruuvi.com/products"
+        const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
         private const val ALARM_ICON_ALPHA = 128
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
         private const val UPDATE_REQUEST_CODE = 213

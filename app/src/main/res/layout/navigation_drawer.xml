@@ -8,9 +8,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:fitsSystemWindows="true"
-    app:headerLayout="@layout/drawer_header"
     app:menu="@menu/menu_main"
-    app:itemTextAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
+    app:itemTextAppearance="@style/MenuItemStyle"
     android:background="?android:attr/colorBackground" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,7 +33,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:text="@string/logged_in"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                style="@style/Subtitle"/>
 
             <TextView
                 android:id="@+id/loggedUserTextView"
@@ -42,6 +42,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
+                style="@style/Paragraph.WithPadding"
                 tools:text="@string/network_user" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <resources>
     <style name="AppTheme.Animated" parent="AppTheme">
+        <item name="listPreferredItemHeightSmall">@dimen/listItemHeight</item>
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
     </style>
 
@@ -40,8 +41,8 @@
     </style>
 
     <style name="Subtitle.WithPadding">
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
     <style name="Paragraph">
@@ -288,5 +289,12 @@
         <item name="android:activityOpenExitAnimation">@anim/exit_left</item>
         <item name="android:activityCloseEnterAnimation">@anim/enter_left</item>
         <item name="android:activityCloseExitAnimation">@anim/exit_right</item>
+    </style>
+
+    <style name="MenuItemStyle">
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/textSubtitleSize</item>
+        <item name="fontFamily">@font/mulish_bold</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
 </resources>

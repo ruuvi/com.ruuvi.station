@@ -189,8 +189,7 @@
                     android:id="@+id/alertsContainerLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                    android:orientation="vertical">
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmTemperature"
                         android:layout_width="match_parent"

@@ -16,7 +16,7 @@
         <item name="colorPrimaryText">@color/white80</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/ruuviNew</item>
+        <item name="colorAccent">@color/success</item>
         <item name="android:textColorHint">@color/white30</item>
         <item name="colorButtonText">@color/white</item>
         <item name="colorButtonPressed">@color/emerald</item>
