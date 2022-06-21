@@ -7,7 +7,7 @@
         <item name="colorOnSurface">@color/titan80</item>
         <item name="colorDisabled">@color/disabledText</item>
         <item name="actionMenuTextColor">@color/black</item>
-        <item name="colorSurfaceVariant">@color/success15</item>
+        <item name="colorSurfaceVariant">@color/keppel15</item>
         <item name="colorOnSurfaceVariant">@color/black</item>
         <item name="colorHeaderSurface">@color/backgroundLight</item>
         <item name="colorOnHeaderSurface">@color/mainDark</item>
@@ -16,14 +16,14 @@
         <item name="colorPrimaryText">@color/titan80</item>
         <item name="colorPrimary">@color/titan</item>
         <item name="colorPrimaryDark">@color/titan</item>
-        <item name="colorAccent">@color/ruuviNew</item>
+        <item name="colorAccent">@color/keppel</item>
         <item name="android:textColorHint">@color/titan30</item>
         <item name="colorButtonText">@color/white</item>
-        <item name="colorButtonPressed">@color/success</item>
+        <item name="colorButtonPressed">@color/elm</item>
 
         <item name="colorDivider">@color/lines</item>
         <item name="colorErrorText">@color/error</item>
-        <item name="colorSuccessText">@color/success</item>
+        <item name="colorSuccessText">@color/keppel</item>
 
         <item name="colorControlNormal">@color/pastelGray</item>
         <item name="colorControlActivated">?attr/colorAccent</item>

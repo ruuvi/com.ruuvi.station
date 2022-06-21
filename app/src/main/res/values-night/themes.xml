@@ -16,14 +16,14 @@
         <item name="colorPrimaryText">@color/white80</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/success</item>
+        <item name="colorAccent">@color/keppel</item>
         <item name="android:textColorHint">@color/white30</item>
         <item name="colorButtonText">@color/white</item>
-        <item name="colorButtonPressed">@color/emerald</item>
+        <item name="colorButtonPressed">@color/elm</item>
 
         <item name="colorDivider">@color/lines10</item>
         <item name="colorErrorText">@color/error</item>
-        <item name="colorSuccessText">@color/success</item>
+        <item name="colorSuccessText">@color/keppel</item>
 
         <item name="colorControlNormal">@color/pastelGray</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
