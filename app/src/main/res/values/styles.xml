@@ -68,6 +68,10 @@
         <item name="fontFamily">@font/mulish_regular</item>
     </style>
 
+    <style name="ParagraphSmall.Secondary" parent="ParagraphSmall">
+        <item name="android:alpha">0.5</item>
+    </style>
+
     <style name="ParagraphSmall.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>

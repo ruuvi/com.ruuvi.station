@@ -185,7 +185,7 @@
         android:paddingTop="@dimen/normal"
         android:paddingStart="0dp"
         android:paddingEnd="@dimen/extended"
-        style="@style/ParagraphSmall"
+        style="@style/ParagraphSmall.Secondary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pressureLayout"
