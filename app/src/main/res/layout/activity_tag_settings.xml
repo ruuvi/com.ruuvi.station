@@ -129,7 +129,7 @@
                         android:focusable="true"
                         tools:text="Ruuvi AA:BB"
                         android:drawablePadding="@dimen/drawable_padding"
-                        app:drawableEndCompat="@drawable/edit_16" />
+                        app:drawableEndCompat="@drawable/edit_20" />
                 </LinearLayout>
 
                 <!--OWNER-->

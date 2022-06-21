@@ -52,6 +52,10 @@
         <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
 
+    <style name="Paragraph.Secondary" parent="Paragraph">
+        <item name="android:alpha">0.5</item>
+    </style>
+
     <style name="Paragraph.WithPadding">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
