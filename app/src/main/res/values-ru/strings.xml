@@ -11,6 +11,7 @@
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="ago">назад</string>
+    <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
     <string name="alarm_mute_for_hour">Отключить на час</string>
     <string name="alarm_notification_disable">Отключить это уведомление</string>

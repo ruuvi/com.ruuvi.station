@@ -422,7 +422,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             NO_TRIGGERED -> {
                 // on
                 item.setIcon(R.drawable.ic_notifications_on_24px)
-                item.icon?.alpha = ALARM_ICON_ALPHA
+                item.icon?.alpha = ALARM_ICON_ALPHA_OPAQUE
             }
             TRIGGERED -> {
                 // triggered
@@ -430,7 +430,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 val drawable = item.icon
                 if (drawable != null) {
                     drawable.mutate()
-                    drawable.alpha = ALARM_ICON_ALPHA
+                    drawable.alpha = ALARM_ICON_ALPHA_OPAQUE
                     val anim = ValueAnimator()
                     anim.setIntValues(1, 0)
                     anim.setEvaluator(IntEvaluator())
@@ -572,6 +572,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         const val BUY_SENSORS_URL = "http://ruuvi.com/products"
         const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
         private const val ALARM_ICON_ALPHA = 128
+        private const val ALARM_ICON_ALPHA_OPAQUE = 255
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
         private const val UPDATE_REQUEST_CODE = 213
         private const val UPDATE_STALENESS_DAYS = 1
