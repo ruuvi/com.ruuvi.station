@@ -31,6 +31,7 @@
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="background_image">Hintergrund bild</string>
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
     <string name="background_notification_scanning_every">Alles Scannen</string>

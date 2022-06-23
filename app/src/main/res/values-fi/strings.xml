@@ -41,6 +41,8 @@
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="app_theme">Sovelluksen teema</string>
+    <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Takaisin</string>
     <string name="background_image">Taustakuva</string>
     <string name="background_interval">joka %1$s min</string>
@@ -114,9 +116,14 @@
     <string name="connecting">Yhdistetään...</string>
     <string name="current_version">Nykyinen versio</string>
     <string name="current_version_fw">Nykyinen versio:</string>
+    <string name="dark_theme">Tumma teema</string>
+    <string name="darktheme_disabled">Tumma teema ei käytössä.</string>
+    <string name="darktheme_enabled">Tumma teema käytössä.</string>
     <string name="dashboard">Koontinäyttö</string>
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla</string>
+    <string name="dashboard_disabled">Koontinäyttö ei käytössä. </string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
+    <string name="dashboard_enabled">Koontinäyttö käytössä. </string>
     <string name="data_format">Dataformaatti</string>
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
     <string name="data_forwarding_background_location_message_second">Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin sovelluksen ollessa tausta-ajossa, anna oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
@@ -150,6 +157,7 @@
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
     <string name="firmware_very_old">Hyvin vanha</string>
+    <string name="follow_system_theme">Käytä järjestelmän oletusta</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
@@ -189,6 +197,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Uusin saatavilla oleva Ruuvi-laiteohjelmisto</string>
+    <string name="light_theme">Vaalea teema</string>
     <string name="logged_in">Kirjautunut:</string>
     <string name="login_description">Hyödyntääksesi kaikkia sovelluksen ominaisuuksia, kirjaudu sisään tai luo uusi ilmainen Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
     <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nStationiin</string>
@@ -277,6 +286,7 @@
     <string name="sensor_settings">Asetukset</string>
     <string name="sensor_shared">Jaettu</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
     <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
     <string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Akku -> Virransäästö ja valitse \'Älä käytä\'</string>
     <string name="settings_background_battery_optimization_huawei_instructions">Huawei-laitteet: mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Virrankulutustiedot -> Sovelluksen käynnistys -> poista käytöstä \'Hallitse automaattisesti\' ja varmista, että kaikki manuaalisen hallinnan alla olevat vaihtoehdot ovat käytössä.</string>

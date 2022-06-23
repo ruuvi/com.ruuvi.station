@@ -28,7 +28,7 @@
         android:id="@+id/darkModeTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="App theme"
+        android:text="@string/app_theme"
         android:paddingTop="@dimen/big"
         style="@style/Subtitle.WithPadding"
         />
@@ -43,21 +43,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Paragraph.WithPadding"
-            android:text="Follow system theme" />
+            android:text="@string/follow_system_theme" />
 
         <RadioButton
             android:id="@+id/darkThemeRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Paragraph.WithPadding"
-            android:text="Dark theme" />
+            android:text="@string/dark_theme" />
 
         <RadioButton
             android:id="@+id/lightThemeRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Paragraph.WithPadding"
-            android:text="Light theme" />
+            android:text="@string/light_theme" />
 
     </RadioGroup>
 

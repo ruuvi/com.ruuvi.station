@@ -34,7 +34,7 @@
                 style="@style/PreferencesListItemDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Theme settings. And dashboard too!!" />
+                tools:text="Dashboard view is enabled. Dark theme is enabled." />
         </LinearLayout>
 
         <include layout="@layout/divider" />

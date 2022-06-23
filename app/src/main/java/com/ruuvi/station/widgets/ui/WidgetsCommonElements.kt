@@ -50,6 +50,7 @@ fun WidgetConfigTopAppBar(
                 ) {
                     Text(
                         color = RuuviStationTheme.colors.topBarText,
+                        style = RuuviStationTheme.typography.topBarText,
                         text = stringResource(id = R.string.done)
                     )
                 }
