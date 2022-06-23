@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/colorToolbar"
-        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:fitsSystemWindows="true"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:elevation="0dp">
 
