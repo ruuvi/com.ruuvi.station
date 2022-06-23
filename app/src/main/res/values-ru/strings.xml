@@ -11,6 +11,7 @@
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="ago">назад</string>
+    <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
     <string name="alarm_mute_for_hour">Отключить на час</string>
     <string name="alarm_notification_disable">Отключить это уведомление</string>
@@ -39,6 +40,7 @@
     <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
     <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое\nизображение</string>
     <string name="background_interval">каждые %1$s мин</string>

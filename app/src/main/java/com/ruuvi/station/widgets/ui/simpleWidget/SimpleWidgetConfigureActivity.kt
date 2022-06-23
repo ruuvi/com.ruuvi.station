@@ -20,6 +20,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -143,6 +144,7 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = (isSelected),
+                    colors = ruuviRadioButtonColors(),
                     onClick = { viewModel.selectSensor(sensorId) }
                 )
 
@@ -188,6 +190,7 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
                 selected = (isSelected),
+                colors = ruuviRadioButtonColors(),
                 onClick = { viewModel.selectWidgetType(widgetType) })
 
             ClickableText(

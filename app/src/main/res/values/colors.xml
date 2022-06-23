@@ -9,9 +9,10 @@
     <color name="titan30">#4D083C3D</color>
     <color name="ruuviNew">#4bc9ba</color>
     <color name="emerald">#20746A</color>
-    <color name="success">#FF35AD9F</color>
-    <color name="success25">#4035AD9F</color>
-    <color name="success15">#2635AD9F</color>
+    <color name="keppel">#FF35AD9F</color>
+    <color name="keppel25">#4035AD9F</color>
+    <color name="keppel15">#2635AD9F</color>
+    <color name="elm">#1F9385</color>
 
     <color name="dark_emerald">#E6001C1B</color>
     <color name="grayNew">#B3D9EFEB</color>
@@ -30,6 +31,8 @@
     <color name="white50">#80FFFFFF</color>
     <color name="white30">#4DFFFFFF</color>
 
+    <color name="darkBg">#4D001D1B</color>
+
     <color name="dark">#001D1B</color>
     <color name="disabledText">#8DA09F</color>
     <color name="gray">#707070</color>
@@ -46,4 +49,5 @@
     <color name="activeAlarm">#FF5555</color>
     <color name="ap_gray">#888</color>
     <color name="ap_transparent">#00000000</color>
+    <color name="buttonInactive">#1A35AD9F</color>
 </resources>

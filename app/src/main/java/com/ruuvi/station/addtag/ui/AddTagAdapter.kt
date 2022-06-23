@@ -37,8 +37,6 @@ class AddTagAdapter(
                 else -> signalIcon.setImageResource(R.drawable.icon_connection_3)
             }
 
-            address.isEnabled = item?.updateAt?.diffGreaterThan(10000) != true
-
             return root
         }
     }

@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.ruuviCheckboxColors
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -161,6 +162,7 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = (item.checked),
+                    colors = ruuviCheckboxColors(),
                     onCheckedChange = { checked -> viewModel.selectSensor(item, checked)},
                 )
 
@@ -207,6 +209,7 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
         {
             Checkbox(
                 checked = item.getStateForType(widgetType),
+                colors = ruuviCheckboxColors(),
                 onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
 
             ClickableText(

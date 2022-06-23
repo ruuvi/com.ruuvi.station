@@ -44,7 +44,7 @@ class RuuviTagAdapter(
             binding.movementUnit.text = if (it.movementCounter != null) activity.getText(R.string.movements) else ""
         }
 
-        val ballColorRes = if (position % 2 == 0) R.color.success else R.color.emerald
+        val ballColorRes = if (position % 2 == 0) R.color.keppel else R.color.elm
         val ballRadius = context.resources.getDimension(R.dimen.letter_ball_radius).toInt()
         val ballColor = ContextCompat.getColor(context, ballColorRes)
 
@@ -59,14 +59,15 @@ class RuuviTagAdapter(
         binding.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM
-        val (isVisible, iconResource) =
+        val (isVisible, iconResource, alpha) =
             when (status) {
-                AlarmStatus.NO_ALARM -> true to R.drawable.ic_notifications_off_24px
-                AlarmStatus.NO_TRIGGERED -> true to R.drawable.ic_notifications_on_24px
-                AlarmStatus.TRIGGERED -> !binding.bell.isVisible to R.drawable.ic_notifications_active_24px
+                AlarmStatus.NO_ALARM -> Triple(true, R.drawable.ic_notifications_off_24px, 0.5f)
+                AlarmStatus.NO_TRIGGERED -> Triple(true, R.drawable.ic_notifications_on_24px, 1f)
+                AlarmStatus.TRIGGERED -> Triple(!binding.bell.isVisible, R.drawable.ic_notifications_active_24px, 1f)
             }
         binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
         binding.bell.setImageResource(iconResource)
+        binding.bell.alpha = alpha
 
         return binding.root
     }

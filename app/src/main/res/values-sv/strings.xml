@@ -40,6 +40,7 @@
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Tillbaka</string>
     <string name="background_image">Bakgrundsbild</string>
     <string name="background_interval">varje %1$s min</string>
