@@ -21,6 +21,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <View
+        android:id="@+id/darkerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:background="@color/darkBg"/>
+
     <LinearLayout
         android:fitsSystemWindows="true"
         android:orientation="vertical"

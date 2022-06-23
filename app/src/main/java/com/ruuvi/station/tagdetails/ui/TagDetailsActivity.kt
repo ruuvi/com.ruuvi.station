@@ -265,6 +265,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun listenToShowGraph() {
         viewModel.isShowGraphObserve.observe(this) {
             animateGraphTransition(it)
+            binding.darkerBackground.isVisible = it
         }
     }
 
