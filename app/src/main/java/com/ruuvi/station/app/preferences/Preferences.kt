@@ -2,6 +2,7 @@ package com.ruuvi.station.app.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.model.HumidityUnit
@@ -310,7 +311,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_LOCALE = "en"
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
-        private const val DEFAULT_DARKMODE = -1
+        private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
     }
 }
