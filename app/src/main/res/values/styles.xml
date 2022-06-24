@@ -138,6 +138,8 @@
     </style>
 
     <style name="Button" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/color_button_text</item>
         <item name="android:paddingLeft">@dimen/big</item>
         <item name="android:paddingRight">@dimen/big</item>
