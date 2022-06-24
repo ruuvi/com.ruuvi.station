@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingEnd="@dimen/screenEnd"
-    android:paddingStart="@dimen/screenStart"
-    android:paddingBottom="@dimen/screenBottom"
-    android:paddingTop="@dimen/screenTop"
     tools:context=".settings.ui.AppSettingsListFragment">
 
     <LinearLayout
@@ -20,7 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/appearanceTitleTextView"
@@ -44,8 +43,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/bgScanTitleTextView"
@@ -69,8 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/temperatureUnitTitleTextView"
@@ -94,8 +97,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/humidityUnitTitleTextView"
@@ -119,8 +124,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/pressureUnitTitleTextView"
@@ -143,8 +150,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <LinearLayout
                 android:id="@+id/dashboardLayout"
@@ -185,8 +194,10 @@
             android:id="@+id/cloudModeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <LinearLayout
                 android:id="@+id/cloudModeTextLayout"
@@ -232,8 +243,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/gatewayTitleTextView"
@@ -260,8 +273,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/preferencesListItemPadding"
-            android:paddingBottom="@dimen/preferencesListItemPadding">
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <TextView
                 android:id="@+id/graphSettingsTitleTextView"
@@ -296,8 +311,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/preferencesListItemPadding"
+                android:paddingEnd="@dimen/screenEnd"
+                android:paddingStart="@dimen/screenStart"
                 android:paddingBottom="@dimen/preferencesListItemPadding"
+                android:paddingTop="@dimen/preferencesListItemPadding"
                 tools:visibility="visible">
 
                 <TextView
