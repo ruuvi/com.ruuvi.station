@@ -25,6 +25,7 @@ fun RuuviButton(
         shape = RoundedCornerShape(50),
         colors = ruuviButtonColors(),
         elevation = ruuviButtonElevation(),
+        contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
         onClick = { onClick() }) {
         Text(
             text = text,
