@@ -35,7 +35,7 @@ data class RuuviStationColors(
 )
 
 val lightPalette = RuuviStationColors(
-    primary = Titan80,
+    primary = Titan,
     background = White,
     systemBars = Titan,
     warning = Red,

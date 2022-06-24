@@ -6,7 +6,7 @@
     android:id="@+id/alarm_layout"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:paddingTop="@dimen/screenTop"
+    android:paddingTop="@dimen/normalPlus"
     android:paddingBottom="@dimen/screenBottom"
     android:animateLayoutChanges="true">
     <androidx.appcompat.widget.SwitchCompat
@@ -40,7 +40,7 @@
         android:id="@+id/alertSubtitleTextView"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:paddingBottom="@dimen/small"
+        android:paddingBottom="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingEnd="@dimen/normal"
         android:text="@string/alert_subtitle_off"
@@ -53,7 +53,6 @@
         android:id="@+id/alertMinValueTextView"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:text="-"
         android:paddingStart="@dimen/normal"
         style="@style/ParagraphSmall"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +79,6 @@
         android:id="@+id/alertMaxValueTextView"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:text="-"
         android:gravity="end"
         android:paddingEnd="@dimen/normal"
         style="@style/ParagraphSmall"

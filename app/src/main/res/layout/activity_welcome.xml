@@ -194,7 +194,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/detailsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
             <Button
                 android:id="@+id/detailsButton"
@@ -203,7 +203,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/signInButton"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -241,7 +241,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

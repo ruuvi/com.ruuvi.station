@@ -259,6 +259,7 @@
                     android:id="@+id/macLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/normal"
                     android:orientation="horizontal">
                     <TextView
                         android:id="@+id/macTitleTextView"
@@ -277,6 +278,7 @@
                     android:id="@+id/rawValuesLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
+                    android:paddingBottom="@dimen/normal"
                     android:orientation="vertical">
 
                     <!--DATA FORMAT-->
