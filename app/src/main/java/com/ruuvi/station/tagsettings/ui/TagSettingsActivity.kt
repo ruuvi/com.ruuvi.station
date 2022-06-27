@@ -7,11 +7,13 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.graphics.alpha
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -445,14 +447,19 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
     private fun showImageSourceSheet() {
         val sheetDialog = BottomSheetDialog(this)
-        val listView = ListView(this)
+        val listView = ListView(this, null, R.style.AppTheme)
         val menu = arrayOf(
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
         val dividerColor = resolveColorAttr(R.attr.colorDivider)
-        listView.divider = ColorDrawable(dividerColor)
-        listView.dividerHeight = 1
+        listView.divider = ColorDrawable(dividerColor).mutate()
+        listView.dividerHeight = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1f,
+            resources.displayMetrics
+        ).toInt()
+
         listView.adapter = ArrayAdapter(this, R.layout.bottom_sheet_select_image_source, menu)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
