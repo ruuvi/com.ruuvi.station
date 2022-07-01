@@ -4,6 +4,7 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.network.data.response.SensorDenseResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.AccelerationAxis
@@ -11,9 +12,11 @@ import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.widgets.data.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
-import java.lang.Exception
 import java.util.*
+import kotlin.Exception
 
 class WidgetInteractor (
     val context: Context,
@@ -123,8 +126,28 @@ class WidgetInteractor (
 
             return result
         } catch (e: Exception) {
+            Timber.e(e)
             return emptyComplexResult(sensorId)
         }
+    }
+
+    private var sensorDenseResponse: SensorDenseResponse? = null
+    private var lastSyncDate: Date? = null
+    private val mutex = Mutex()
+
+    private suspend fun getSensorDataFromCloud(): SensorDenseResponse? = mutex.withLock {
+        if (sensorDenseResponse == null ||
+            lastSyncDate == null ||
+            lastSyncDate?.diffGreaterThan(60 * 1000L) == true
+        ) {
+            try {
+                sensorDenseResponse = cloudInteractor.getSensorDenseLastData()
+                lastSyncDate = Date()
+            } catch (e: Exception) {
+                return sensorDenseResponse ?: throw e
+            }
+        }
+        sensorDenseResponse
     }
 
     suspend fun getSensorLatestValues(sensorId: String): DecodedSensorData? {
@@ -133,18 +156,19 @@ class WidgetInteractor (
             return null
         }
 
-        val lastDataResponse = cloudInteractor.getSensorLastData(sensorId)
-        val lastMeasurement = lastDataResponse?.data?.measurements?.maxByOrNull { it.timestamp }
+        val lastDataResponse = getSensorDataFromCloud()
+        val sensorInfo = lastDataResponse?.data?.sensors?.first{it.sensor == sensorId}
+        val lastMeasurement = sensorInfo?.measurements?.maxByOrNull { it.timestamp }
         if (lastDataResponse?.isSuccess() == true && lastMeasurement != null) {
             val decoded =  BluetoothLibrary.decode(sensorId, lastMeasurement.data, lastMeasurement.rssi)
             decoded.temperature?.let { temperature ->
-                decoded.temperature = temperature + (lastDataResponse.data.offsetTemperature ?: 0.0)
+                decoded.temperature = temperature + (sensorInfo.offsetTemperature ?: 0.0)
             }
             decoded.humidity?.let { humidity ->
-                decoded.humidity = humidity + (lastDataResponse.data.offsetHumidity ?: 0.0)
+                decoded.humidity = humidity + (sensorInfo.offsetHumidity ?: 0.0)
             }
             decoded.pressure?.let { pressure ->
-                decoded.pressure = pressure + (lastDataResponse.data.offsetPressure ?: 0.0)
+                decoded.pressure = pressure + (sensorInfo.offsetPressure ?: 0.0)
             }
             val updatedDate = Date(lastMeasurement.timestamp * 1000)
 
@@ -161,21 +185,22 @@ class WidgetInteractor (
         }
 
         try {
-            val lastData = cloudInteractor.getSensorLastData(sensorId)
+            val sensorsData = getSensorDataFromCloud()
+            val lastData = sensorsData?.data?.sensors?.firstOrNull{it.sensor == sensorId}
 
             Timber.d(lastData.toString())
 
-            val measurement = lastData?.data?.measurements?.maxByOrNull { it.timestamp }
-            if (lastData?.isSuccess() == true && measurement != null) {
+            val measurement = lastData?.measurements?.maxByOrNull { it.timestamp }
+            if (measurement != null) {
                 val decoded = BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi)
                 decoded.temperature?.let { temperature ->
-                    decoded.temperature = temperature + (lastData.data.offsetTemperature ?: 0.0)
+                    decoded.temperature = temperature + (lastData.offsetTemperature ?: 0.0)
                 }
                 decoded.humidity?.let { humidity ->
-                    decoded.humidity = humidity + (lastData.data.offsetHumidity ?: 0.0)
+                    decoded.humidity = humidity + (lastData.offsetHumidity ?: 0.0)
                 }
                 decoded.pressure?.let { pressure ->
-                    decoded.pressure = pressure + (lastData.data.offsetPressure ?: 0.0)
+                    decoded.pressure = pressure + (lastData.offsetPressure ?: 0.0)
                 }
 
                 val updatedDate = Date(measurement.timestamp * 1000)

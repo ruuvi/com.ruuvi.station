@@ -175,6 +175,26 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun getSensorDenseData(token: String, request: SensorDenseRequest): SensorDenseResponse? = withContext(dispatcher) {
+        val response = retrofitService.getSensorsDense(
+            auth = getAuth(token),
+            sensor = request.sensor,
+            sharedToMe = request.sharedToMe,
+            sharedToOthers = request.sharedToOthers,
+            alerts = request.alerts,
+            measurements = request.measurements
+        )
+        val result: SensorDenseResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<SensorDenseResponse>() {}.type
+            val errorResponse: SensorDenseResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
     suspend fun updateSensor(request: UpdateSensorRequest, token: String): UpdateSensorResponse? = withContext(dispatcher) {
         Timber.d("updateSensor.request: $request")
         val response = retrofitService.updateSensor(getAuth(token), request)
