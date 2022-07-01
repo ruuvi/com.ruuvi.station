@@ -271,6 +271,21 @@ class RuuviNetworkInteractor (
         return getSensorData(request)
     }
 
+    suspend fun getSensorDenseLastData(): SensorDenseResponse? = withContext(Dispatchers.IO) {
+        val token = getToken()?.token
+
+        token?.let {
+            val request = SensorDenseRequest(
+                sensor = null,
+                measurements = true,
+                alerts = false,
+                sharedToOthers = false,
+                sharedToMe = true
+            )
+            return@withContext networkRepository.getSensorDenseData(token, request)
+        }
+    }
+
     fun updateUserSetting(name: String, value: String) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,
