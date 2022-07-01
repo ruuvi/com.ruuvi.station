@@ -12,6 +12,7 @@
         <item name="colorHeaderSurface">@color/backgroundLight</item>
         <item name="colorOnHeaderSurface">@color/mainDark</item>
         <item name="colorToolbar">@color/titan</item>
+        <item name="android:navigationBarColor">@color/titan</item>
 
         <item name="colorPrimaryText">@color/titan</item>
         <item name="colorPrimary">@color/titan</item>
