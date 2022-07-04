@@ -1,34 +1,36 @@
 package com.ruuvi.station.dashboard.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
-    val converter: UnitsConverter
+    val converter: UnitsConverter,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    val preferencesRepository: PreferencesRepository,
+    private val tokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 
-    private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
-    val observeTags: LiveData<List<RuuviTag>> = tags
-
-    init {
-        updateTags()
-    }
-
-    fun updateTags() {
-        viewModelScope.launch {
-            val getTags = tagInteractor.getTags()
-            withContext(Dispatchers.Main) {
-                tags.value = getTags
-            }
+    val tagsFlow: Flow<List<RuuviTag>> = flow {
+        while (true) {
+            emit(tagInteractor.getTags())
+            delay(1000)
         }
+    }.flowOn(Dispatchers.IO)
+
+    val userEmail = preferencesRepository.getUserEmailLiveData()
+
+    fun signOut() {
+        networkDataSyncInteractor.stopSync()
+        tokenRepository.signOut { }
     }
 }

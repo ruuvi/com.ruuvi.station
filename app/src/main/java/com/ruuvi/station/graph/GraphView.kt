@@ -1,6 +1,7 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Color
 import android.graphics.Matrix
 import android.text.format.DateUtils
@@ -22,11 +23,13 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.model.GraphEntry
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
+import java.text.DecimalFormat
 import java.util.*
 
 class GraphView (
@@ -37,8 +40,9 @@ class GraphView (
     private var from: Long = 0
     private var to: Long = 0
     private var storedReadings: MutableList<TagSensorReading>? = null
-    private var graphSetuped = false
+    private var graphSetupCompleted = false
     private var offsetsNormalized = false
+    private var visibilitySet = false
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
@@ -50,6 +54,16 @@ class GraphView (
     ) {
         Timber.d("drawChart pointsCount = ${inputReadings.size}")
         setupCharts(view)
+
+        val firstReading = inputReadings.firstOrNull()
+        if (firstReading != null) {
+            setupVisibility(
+                view,
+                true,
+                firstReading.humidity != null,
+                firstReading.pressure != null
+            )
+        }
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
@@ -96,9 +110,9 @@ class GraphView (
                 pressureData.add(Entry(timestamp, 0f))
             }
 
-            addDataToChart(tempData, tempChart, context.getString(R.string.temperature, unitsConverter.getTemperatureUnitString()))
-            addDataToChart(humidData, humidChart, context.getString(R.string.humidity, unitsConverter.getHumidityUnitString()))
-            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure, unitsConverter.getPressureUnitString()))
+            addDataToChart(tempData, tempChart, context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString()))
+            addDataToChart(humidData, humidChart, context.getString(R.string.humidity_with_unit, unitsConverter.getHumidityUnitString()))
+            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString()))
 
             if (!offsetsNormalized) {
                 normalizeOffsets(tempChart, humidChart, pressureChart)
@@ -107,25 +121,41 @@ class GraphView (
         }
     }
 
+    private fun setupVisibility(view: View, showTemperature: Boolean, showHumidity: Boolean, showPressure: Boolean) {
+        if (visibilitySet) return
+        tempChart = view.findViewById(R.id.tempChart)
+        humidChart = view.findViewById(R.id.humidChart)
+        pressureChart = view.findViewById(R.id.pressureChart)
+
+        Timber.d("setupVisibility $showTemperature $showHumidity $showPressure")
+
+        tempChart.isVisible = showTemperature
+        humidChart.isVisible = showHumidity
+        pressureChart.isVisible = showPressure
+
+        if (context.resources.configuration.orientation != ORIENTATION_LANDSCAPE) {
+            view.findViewById<View>(R.id.spacerTop)?.isVisible = !showHumidity && !showPressure
+            view.findViewById<View>(R.id.spacerBottom)?.isVisible = !showHumidity && !showPressure
+        }
+
+        visibilitySet = true
+    }
+
     private fun setupCharts(view: View) {
-        if (!graphSetuped) {
+        if (!graphSetupCompleted) {
             tempChart = view.findViewById(R.id.tempChart)
             humidChart = view.findViewById(R.id.humidChart)
             pressureChart = view.findViewById(R.id.pressureChart)
 
-            tempChart.isVisible = true
-            humidChart.isVisible = true
-            pressureChart.isVisible = true
-
-            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            tempChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
             tempChart.axisLeft.granularity = 0.01f
-            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+            humidChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
             humidChart.axisLeft.granularity = 0.01f
             if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
-                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.0f")
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
                 pressureChart.axisLeft.granularity = 1f
             } else {
-                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("%.2f")
+                pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
                 pressureChart.axisLeft.granularity = 0.01f
             }
 
@@ -134,7 +164,7 @@ class GraphView (
             pressureChart.axisRight.isEnabled = false
 
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
-            graphSetuped = true
+            graphSetupCompleted = true
         }
     }
 
@@ -147,6 +177,7 @@ class GraphView (
         set.circleRadius = 1f
         chart.setXAxisRenderer(
             CustomXAxisRenderer(
+                from,
                 chart.viewPortHandler,
                 chart.xAxis,
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
@@ -156,8 +187,7 @@ class GraphView (
         chart.xAxis.axisMinimum = 0f
         chart.xAxis.textColor = Color.WHITE
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.xAxis.setLabelCount(5, false)
-        chart.axisLeft.setLabelCount(5, false)
+        setLabelCount(chart)
 
         chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
         chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
@@ -167,7 +197,7 @@ class GraphView (
         chart.description.textSize = context.resources.getDimension(R.dimen.graph_description_size)
         chart.dragDecelerationFrictionCoef = 0.8f
         chart.setNoDataTextColor(Color.WHITE)
-        chart.viewPortHandler.setMaximumScaleX(20000f)
+        chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
         try {
             chart.description.typeface = ResourcesCompat.getFont(context, R.font.montserrat)
@@ -180,7 +210,7 @@ class GraphView (
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, p1: AxisBase?): String {
+            override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
                 val timeText = getTimeInstance(DateFormat.SHORT).format(date)
 
@@ -192,6 +222,13 @@ class GraphView (
         }
         chart.notifyDataSetChanged()
         chart.invalidate()
+    }
+
+    private fun setLabelCount(chart: LineChart) {
+        val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
+        val labelCount = if (timeText.length > 5) 5 else 6
+        chart.xAxis.setLabelCount(labelCount, false)
+        chart.axisLeft.setLabelCount(6, false)
     }
 
     /**
@@ -287,8 +324,9 @@ class GraphView (
     }
 
     class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
-        override fun getFormattedValue(value: Float, p1: AxisBase?): String {
-            return formatPattern.format(value)
+        override fun getFormattedValue(value: Double, p1: AxisBase?): String {
+            val decimalFormat = DecimalFormat(formatPattern)
+            return decimalFormat.format(value)
         }
     }
 }

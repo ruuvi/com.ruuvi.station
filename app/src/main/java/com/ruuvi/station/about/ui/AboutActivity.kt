@@ -9,72 +9,72 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.database.LocalDatabase
-import com.ruuvi.station.database.tables.TagSensorReading
-import kotlinx.android.synthetic.main.activity_about.toolbar
-import kotlinx.android.synthetic.main.content_about.debugInfo
-import kotlinx.android.synthetic.main.content_about.infoText
-import kotlinx.android.synthetic.main.content_about.moreText
-import kotlinx.android.synthetic.main.content_about.openText
-import kotlinx.android.synthetic.main.content_about.operationsText
-import kotlinx.android.synthetic.main.content_about.troubleshootingText
+import com.ruuvi.station.about.model.AppStats
+import com.ruuvi.station.database.domain.LocalDatabase
+import com.ruuvi.station.databinding.ActivityAboutBinding
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import java.io.File
 
-@ExperimentalCoroutinesApi
-class AboutActivity : AppCompatActivity(), KodeinAware {
+class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AboutActivityViewModel by viewModel()
 
+    lateinit var binding: ActivityAboutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
-        setSupportActionBar(toolbar)
+        binding = ActivityAboutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_white)
+        setupUI()
+        setupViewModel()
+    }
 
-        infoText.movementMethod = LinkMovementMethod.getInstance()
-        operationsText.movementMethod = LinkMovementMethod.getInstance()
-        troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
-        openText.movementMethod = LinkMovementMethod.getInstance()
-        moreText.movementMethod = LinkMovementMethod.getInstance()
-
-        lifecycleScope.launch {
-            viewModel.tagsSizesFlow.collect {
-                drawDebugInfo(it)
+    private fun setupViewModel() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.appStats.collect { appStats ->
+                showAppStats(appStats)
             }
         }
     }
 
-    private fun drawDebugInfo(sizes: Pair<Int, Int>?) {
-        val readingCount = TagSensorReading.countAll()
+    private fun setupUI() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        with(binding.content) {
+            infoText.movementMethod = LinkMovementMethod.getInstance()
+            operationsText.movementMethod = LinkMovementMethod.getInstance()
+            troubleshootingText.movementMethod = LinkMovementMethod.getInstance()
+            openText.movementMethod = LinkMovementMethod.getInstance()
+            moreText.movementMethod = LinkMovementMethod.getInstance()
+        }
+    }
+
+    private fun showAppStats(appStats: AppStats?) {
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
 
-        sizes?.let {
-            val addedTags = it.first
-            debugText += getString(R.string.help_seen_tags, addedTags + it.second) + "\n"
-            debugText += getString(R.string.help_added_tags, addedTags) + "\n"
-            debugText += getString(R.string.help_db_data_points, readingCount) + "\n"
+        appStats?.let {
+            debugText += getString(R.string.help_seen_tags, it.seenTags) + "\n"
+            debugText += getString(R.string.help_added_tags, it.favouriteTags) + "\n"
+            debugText += getString(R.string.help_db_data_points, it.measurementsCount) + "\n"
         }
 
         val dbPath = application.filesDir.path + "/../databases/" + LocalDatabase.NAME + ".db"
         val dbFile = File(dbPath)
         debugText += getString(R.string.help_db_size, dbFile.length() / 1024)
-        debugInfo.text = debugText
+        binding.content.debugInfo.text = debugText
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return true

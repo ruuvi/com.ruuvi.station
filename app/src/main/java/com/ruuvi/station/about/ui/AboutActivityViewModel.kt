@@ -1,32 +1,32 @@
 package com.ruuvi.station.about.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.tag.domain.TagInteractor
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
-@ExperimentalCoroutinesApi
-class AboutActivityViewModel(private val tagInteractor: TagInteractor) : ViewModel() {
+class AboutActivityViewModel(
+    private val tagInteractor: TagInteractor
+) : ViewModel() {
 
-    private val tagsSizes = MutableStateFlow<Pair<Int, Int>?>(null)
-    val tagsSizesFlow: StateFlow<Pair<Int, Int>?> = tagsSizes
+    private val _appStats = MutableStateFlow<AppStats?>(null)
+    val appStats = _appStats.asStateFlow()
 
     init {
-        CoroutineScope(Dispatchers.IO)
-            .launch { tagsSizes.value = Pair(getAllFavouriteTagsSize(), getAllNonFavouriteTagsSize()) }
-    }
+        viewModelScope.launch(Dispatchers.IO) {
+            val favouriteTags = tagInteractor.getTagEntities(true).size
+            val notFavouriteTags = tagInteractor.getTagEntities(false).size
+            val measurementsCount = tagInteractor.getHistoryLength()
 
-    private suspend fun getAllFavouriteTagsSize(): Int {
-        return suspendCoroutine { it.resume(tagInteractor.getTagEntities(true).size) }
-    }
-
-    private suspend fun getAllNonFavouriteTagsSize(): Int {
-        return suspendCoroutine { it.resume(tagInteractor.getTagEntities(false).size) }
+            _appStats.value = AppStats(
+                favouriteTags = favouriteTags,
+                seenTags = favouriteTags + notFavouriteTags,
+                measurementsCount = measurementsCount
+            )
+        }
     }
 }

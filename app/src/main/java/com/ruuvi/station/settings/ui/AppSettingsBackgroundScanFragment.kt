@@ -3,89 +3,80 @@ package com.ruuvi.station.settings.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.RadioButton
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.FragmentAppSettingsBackgroundScanBinding
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.PermissionsHelper
-import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.*
-import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationMinutesPicker
-import kotlinx.android.synthetic.main.fragment_app_settings_background_scan.durationSecondsPicker
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.ruuvi.station.util.ui.CustomNumberEdit
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
-@ExperimentalCoroutinesApi
 class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_settings_background_scan), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AppSettingsBackgroundScanViewModel by viewModel()
 
-    private lateinit var permissionsHelper: PermissionsHelper
+    private lateinit var permissionsInteractor: PermissionsInteractor
+
+    private lateinit var binding: FragmentAppSettingsBackgroundScanBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        permissionsHelper = PermissionsHelper(requireActivity())
-
-        setupViews()
-        observeScanMode()
-        observeInterval()
+        binding = FragmentAppSettingsBackgroundScanBinding.bind(view)
+        permissionsInteractor = PermissionsInteractor(requireActivity())
+        setupUI()
+        setupViewModel()
     }
 
-    private fun setupViews() {
-        durationMinutesPicker.minValue = 0
-        durationMinutesPicker.maxValue = 59
-        durationSecondsPicker.maxValue = 59
+    private fun setupViewModel() {
+        observeScanMode()
+        observeInterval()
+        observeShowOptimizationTips()
+    }
 
-        viewModel.getPossibleScanModes().forEach { mode ->
-            val radioButton = RadioButton(activity)
-            radioButton.id = mode.value
-            radioButton.text = getString(mode.label)
-            optionsRadioGroup.addView(radioButton)
-        }
-
-        var permissionAsked = false
-        optionsRadioGroup.setOnCheckedChangeListener { _, i ->
-            val selection = BackgroundScanModes.fromInt(i)
-
-            selection?.let {
-                viewModel.setBackgroundMode(selection)
-                settingsDescriptionTextView.text = getString(selection.description)
-                if (selection == BackgroundScanModes.BACKGROUND && permissionAsked == false) {
-                    permissionsHelper.requestBackgroundPermission()
+    private fun setupUI() {
+        with(binding) {
+            var permissionAsked = false
+            backgroundSwitch.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setBackgroundScanEnabled(isChecked)
+                if (isChecked && !permissionAsked) {
+                    permissionsInteractor.requestBackgroundPermission()
                     permissionAsked = true
                 }
             }
-        }
 
-        durationMinutesPicker.setOnValueChangedListener { _, _, new ->
-            if (new == 0) {
-                durationSecondsPicker.minValue = 10
-                if (durationSecondsPicker.value < 10) durationSecondsPicker.value = 10
-            } else {
-                durationSecondsPicker.minValue = 0
+            val list: MutableList<CustomNumberEdit.SelectionElement> = mutableListOf()
+            list.add(CustomNumberEdit.SelectionElement(10, 10, R.string.background_interval_10sec))
+            for (i in 1..60) {
+                list.add(CustomNumberEdit.SelectionElement(60 * i, i, R.string.background_interval))
             }
-            viewModel.setBackgroundScanInterval(new * 60 + durationSecondsPicker.value)
-        }
+            intervalEdit.elements = list
+            intervalEdit.setOnValueChangedListener { value ->
+                viewModel.setBackgroundScanInterval(value)
+            }
 
-        durationSecondsPicker.setOnValueChangedListener { _, _, new ->
-            viewModel.setBackgroundScanInterval(durationMinutesPicker.value * 60 + new)
-        }
+            settingsInstructionsTextView.text =
+                getString(viewModel.getBatteryOptimizationMessageId())
 
-        settingsInstructionsTextView.text = getString(viewModel.getBatteryOptimizationMessageId())
+            openSettingsButton.setOnClickListener {
+                viewModel.openOptimizationSettings()
+            }
+        }
     }
 
     private fun observeScanMode() {
         lifecycleScope.launch {
             viewModel.scanModeFlow.collect { mode ->
-                mode?.let {
-                    optionsRadioGroup.check(it.value)
-                }
+                val isEnabled = mode == BackgroundScanModes.BACKGROUND
+                binding.backgroundSwitch.isChecked = isEnabled
+                binding.intervalEdit.isEnabled = isEnabled
             }
         }
     }
@@ -94,14 +85,16 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
         lifecycleScope.launch {
             viewModel.intervalFlow.collect {
                 it?.let { interval ->
-                    val min = interval / 60
-                    val sec = interval - min * 60
-
-                    if (min == 0) durationSecondsPicker.minValue = 10
-
-                    durationMinutesPicker.value = min
-                    durationSecondsPicker.value = sec
+                    binding.intervalEdit.setSelectedItem(interval)
                 }
+            }
+        }
+    }
+
+    private fun observeShowOptimizationTips() {
+        lifecycleScope.launch {
+            viewModel.showOptimizationTips.collect {
+                binding.optimizationLayout.isVisible = it
             }
         }
     }
@@ -110,5 +103,3 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
         fun newInstance() = AppSettingsBackgroundScanFragment()
     }
 }
-
-

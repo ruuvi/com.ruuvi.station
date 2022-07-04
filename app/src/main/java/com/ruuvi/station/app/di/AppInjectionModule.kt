@@ -1,6 +1,8 @@
 package com.ruuvi.station.app.di
 
 import androidx.lifecycle.ViewModelProvider
+import com.ruuvi.station.app.domain.PowerManagerInterator
+import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.app.ui.ViewModelFactory
 import com.ruuvi.station.util.Foreground
 import org.kodein.di.Kodein
@@ -13,5 +15,9 @@ object AppInjectionModule {
         bind<ViewModelProvider.Factory>() with singleton { ViewModelFactory(dkodein) }
 
         bind<Foreground>() with singleton { Foreground.createInstance(instance()) }
+
+        bind<ReviewManagerInteractor>() with  singleton { ReviewManagerInteractor(instance(), instance(), instance()) }
+
+        bind<PowerManagerInterator>() with singleton { PowerManagerInterator(instance(), instance()) }
     }
 }

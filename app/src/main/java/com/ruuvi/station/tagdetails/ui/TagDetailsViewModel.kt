@@ -1,25 +1,34 @@
 package com.ruuvi.station.tagdetails.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.network.data.NetworkSyncResult
+import com.ruuvi.station.network.data.NetworkSyncResultType
+import com.ruuvi.station.network.data.NetworkSyncStatus
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
     private val interactor: TagInteractor,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    private val preferencesRepository: PreferencesRepository,
+    private val tokenRepository: NetworkTokenRepository,
+    private val networkApplicationSettings: NetworkApplicationSettings
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -41,8 +50,45 @@ class TagDetailsViewModel(
     private var prevTag: RuuviTag? = null
     fun getPrevTag() = prevTag
 
-    var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView
+    var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView && interactor.getTagEntities(true).isEmpty()
     var desiredTag: String? = tagDetailsArguments.desiredTag
+
+    private val syncResult = MutableLiveData<NetworkSyncResult>(NetworkSyncResult(NetworkSyncResultType.NONE))
+    val syncResultObserve: LiveData<NetworkSyncResult> = syncResult
+
+    private val syncInProgress = MutableLiveData<Boolean>(false)
+    val syncInProgressObserve: LiveData<Boolean> = syncInProgress
+
+    val userEmail = preferencesRepository.getUserEmailLiveData()
+
+    val lastSync = preferencesRepository.getLastSyncDateLiveData()
+
+    val syncStatus:MediatorLiveData<NetworkSyncStatus>  = MediatorLiveData<NetworkSyncStatus>()
+
+    private val trigger = MutableLiveData<Int>(1)
+
+    init {
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncResultFlow.collect {
+                syncResult.value = it
+            }
+        }
+        viewModelScope.launch {
+            networkDataSyncInteractor.syncInProgressFlow.collect{
+                syncInProgress.value = it
+                if (it == false) refreshTags()
+            }
+        }
+
+        syncStatus.addSource(syncInProgress) { syncStatus.value = getSyncStatus() }
+        syncStatus.addSource(lastSync) { syncStatus.value = getSyncStatus() }
+        syncStatus.addSource(trigger) { syncStatus.value = getSyncStatus() }
+    }
+
+    private fun getSyncStatus(): NetworkSyncStatus = NetworkSyncStatus(
+        syncInProgress.value ?: false,
+        lastSync.value ?: Long.MIN_VALUE
+    )
 
     fun pageSelected(pageIndex: Int) {
         viewModelScope.launch {
@@ -62,8 +108,12 @@ class TagDetailsViewModel(
     fun refreshTags() {
         ioScope.launch {
             val list = interactor.getTags()
-            withContext(Dispatchers.Main) {
-                tags.value = list
+            val sensorListChanged = sensorListChanged(tags.value ?: listOf(), list)
+            Timber.d("sensorListChanged = $sensorListChanged")
+            if (sensorListChanged) {
+                withContext(Dispatchers.Main) {
+                    tags.value = list
+                }
             }
         }
     }
@@ -71,8 +121,10 @@ class TagDetailsViewModel(
     fun getBackgroundScanMode(): BackgroundScanModes =
         interactor.getBackgroundScanMode()
 
-    fun setBackgroundScanMode(mode: BackgroundScanModes) =
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
         interactor.setBackgroundScanMode(mode)
+        networkApplicationSettings.updateBackgroundScanMode()
+    }
 
     fun isFirstGraphVisit(): Boolean =
         interactor.isFirstGraphVisit()
@@ -98,4 +150,34 @@ class TagDetailsViewModel(
             }
         }
     }
+
+    fun syncResultShowed() {
+        networkDataSyncInteractor.syncStatusShowed()
+    }
+
+    fun updateNetworkStatus() {
+        CoroutineScope(Dispatchers.Main).launch {
+            trigger.value = -1
+        }
+    }
+
+    fun signOut() {
+        networkDataSyncInteractor.stopSync()
+        tokenRepository.signOut {
+            refreshTags()
+        }
+    }
+
+    private fun sensorListChanged(old: List<RuuviTag>, new: List<RuuviTag>): Boolean {
+        return old.any { oldTag -> new.none { it.id == oldTag.id} } ||
+            new.any{ newTag -> old.none{ it.id == newTag.id}} ||
+            new.any { newTag -> old.any { it.sensorListSpecificChange(newTag) } }
+    }
+}
+
+fun RuuviTag.sensorListSpecificChange(newTag: RuuviTag): Boolean {
+    return this.id == newTag.id &&
+            (this.displayName != newTag.displayName ||
+            this.defaultBackground != newTag.defaultBackground ||
+            this.userBackground != newTag.userBackground)
 }

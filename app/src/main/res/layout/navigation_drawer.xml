@@ -2,45 +2,49 @@
 <com.google.android.material.navigation.NavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigationView"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@android:color/white" >
+    android:fitsSystemWindows="true"
+    app:menu="@menu/menu_main"
+    app:itemTextAppearance="@style/MenuItemStyle"
+    android:background="?android:attr/colorBackground" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="24dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/backgroundImageView"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:scaleType="matrix"
-            android:scrollY="150dp"
-            android:src="@drawable/gradient_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/networkLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/logo" />
-
-        <ListView
-            android:id="@+id/navigationDrawerListView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backgroundImageView" />
+            tools:layout_editor_absoluteX="0dp">
 
+            <TextView
+                android:id="@+id/networkStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/logged_in"
+                android:textStyle="bold"
+                style="@style/Subtitle"/>
+
+            <TextView
+                android:id="@+id/loggedUserTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                style="@style/Paragraph.WithPadding"
+                tools:text="@string/network_user" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.navigation.NavigationView>

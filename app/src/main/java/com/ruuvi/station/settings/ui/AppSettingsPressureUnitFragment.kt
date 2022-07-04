@@ -6,10 +6,10 @@ import android.view.View
 import android.widget.RadioButton
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import kotlinx.android.synthetic.main.fragment_app_settings_pressure.*
+import com.ruuvi.station.databinding.FragmentAppSettingsPressureBinding
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class AppSettingsPressureUnitFragment : Fragment(R.layout.fragment_app_settings_pressure), KodeinAware {
 
@@ -17,8 +17,11 @@ class AppSettingsPressureUnitFragment : Fragment(R.layout.fragment_app_settings_
 
     private val viewModel: AppSettingsPressureUnitViewModel by viewModel()
 
+    private lateinit var binding: FragmentAppSettingsPressureBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentAppSettingsPressureBinding.bind(view)
         setupUI()
     }
 
@@ -27,14 +30,14 @@ class AppSettingsPressureUnitFragment : Fragment(R.layout.fragment_app_settings_
         val current = viewModel.getPressureUnit()
 
         items.forEachIndexed { index, option ->
-            val radioButton = RadioButton(activity)
+            val radioButton = RadioButton(activity, null, 0, R.style.RadioButton)
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option == current
-            radioGroup.addView(radioButton)
+            binding.radioGroup.addView(radioButton)
         }
 
-        radioGroup.setOnCheckedChangeListener { _, i ->
+        binding.radioGroup.setOnCheckedChangeListener { _, i ->
             viewModel.setPressureUnit(items[i])
         }
     }

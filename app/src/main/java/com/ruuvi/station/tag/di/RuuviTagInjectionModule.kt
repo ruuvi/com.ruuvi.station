@@ -16,7 +16,7 @@ object RuuviTagInjectionModule {
         }
 
         bind<TagConverter>() with singleton {
-            TagConverter(instance(), instance(), instance())
+            TagConverter(instance(), instance())
         }
     }
 }

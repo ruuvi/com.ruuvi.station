@@ -5,13 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="?android:attr/colorBackground"
     tools:context="com.ruuvi.station.addtag.ui.AddTagActivity">
 
     <LinearLayout
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/header"
+        android:background="?attr/colorToolbar"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
@@ -19,7 +20,7 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/ap_transparent"
+            android:background="@android:color/transparent"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:elevation="0dp">
 
@@ -27,11 +28,14 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                style="@style/Toolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_add_tag" />
+        <include
+            android:id="@+id/content"
+            layout="@layout/content_add_tag" />
 
     </LinearLayout>
 

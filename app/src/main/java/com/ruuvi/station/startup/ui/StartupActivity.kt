@@ -7,22 +7,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.feature.ui.WelcomeActivity
-import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
-import com.ruuvi.station.firebase.domain.FirebasePropertiesSaver
+import com.ruuvi.station.welcome.ui.WelcomeActivity
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
-@ExperimentalCoroutinesApi
 class StartupActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val viewModel: StartupActivityViewModel by viewModel()
-    private val firebasePropertySaver: FirebasePropertiesSaver by instance()
+    private val firebasePropertySaver: FirebaseInteractor by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +48,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         fun start(context: Context, isFromWelcome: Boolean) {
-            val intent = Intent(context, StartupActivity::class.java)
+            val intent = createIntentForNotification(context)
             intent.putExtra(ARGUMENT_FROM_WELCOME, isFromWelcome)
             context.startActivity(intent)
         }

@@ -5,7 +5,10 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.gateway.GatewaySender
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -14,27 +17,47 @@ import com.ruuvi.station.util.BackgroundScanModes
 
 class AppSettingsInteractor(
     private val preferencesRepository: PreferencesRepository,
-    private val gatewaySender: GatewaySender,
-    private val unitsConverter: UnitsConverter
+    private val dataForwardingSender: DataForwardingSender,
+    private val unitsConverter: UnitsConverter,
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val sensorSettingsRepository: SensorSettingsRepository
 ) {
 
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun setTemperatureUnit(unit: TemperatureUnit) =
+    fun setTemperatureUnit(unit: TemperatureUnit) {
         preferencesRepository.setTemperatureUnit(unit)
+        networkApplicationSettings.updateTemperatureUnit()
+    }
 
     fun getHumidityUnit(): HumidityUnit =
         preferencesRepository.getHumidityUnit()
 
-    fun setHumidityUnit(unit: HumidityUnit) =
+    fun setHumidityUnit(unit: HumidityUnit) {
         preferencesRepository.setHumidityUnit(unit)
+        networkApplicationSettings.updateHumidityUnit()
+    }
 
-    fun getGatewayUrl(): String =
-        preferencesRepository.getGatewayUrl()
+    fun getDataForwardingUrl(): String =
+        preferencesRepository.getDataForwardingUrl()
 
-    fun setGatewayUrl(gatewayUrl: String) {
-        preferencesRepository.setGatewayUrl(gatewayUrl)
+    fun setDataForwardingUrl(url: String) {
+        preferencesRepository.setDataForwardingUrl(url)
+    }
+
+    fun getDataForwardingLocationEnabled():Boolean =
+        preferencesRepository.getDataForwardingLocationEnabled()
+
+    fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
+        preferencesRepository.setDataForwardingLocationEnabled(locationEnabled)
+    }
+
+    fun getDataForwardingDuringSyncEnabled():Boolean =
+        preferencesRepository.getDataForwardingDuringSyncEnabled()
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDurinSyncEnabled: Boolean) {
+        preferencesRepository.setDataForwardingDuringSyncEnabled(forwardingDurinSyncEnabled)
     }
 
     fun getDeviceId(): String =
@@ -56,32 +79,64 @@ class AppSettingsInteractor(
     fun getBackgroundScanMode(): BackgroundScanModes =
         preferencesRepository.getBackgroundScanMode()
 
-    fun setBackgroundScanMode(mode: BackgroundScanModes) =
-        preferencesRepository.setBackgroundScanMode(mode)
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
+        if (mode != preferencesRepository.getBackgroundScanMode()) {
+            preferencesRepository.setBackgroundScanMode(mode)
+            networkApplicationSettings.updateBackgroundScanMode()
+        }
+    }
 
     fun isDashboardEnabled(): Boolean =
         preferencesRepository.isDashboardEnabled()
 
-    fun setIsDashboardEnabled(isEnabled: Boolean) =
+    fun setIsDashboardEnabled(isEnabled: Boolean) {
         preferencesRepository.setIsDashboardEnabled(isEnabled)
+        networkApplicationSettings.updateDashboardEnabled()
+    }
+
+    fun isCloudModeEnabled(): Boolean =
+        preferencesRepository.isCloudModeEnabled()
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) {
+        preferencesRepository.setIsCloudModeEnabled(isEnabled)
+        networkApplicationSettings.updateCloudModeEnabled()
+    }
+
+    fun shouldShowCloudMode(): Boolean {
+        return preferencesRepository.signedIn()
+            && sensorSettingsRepository.getSensorSettings()
+            .any { it.networkSensor && it.networkLastSync != null }
+    }
 
     fun getBackgroundScanInterval(): Int =
         preferencesRepository.getBackgroundScanInterval()
 
-    fun setBackgroundScanInterval(interval: Int) =
-        preferencesRepository.setBackgroundScanInterval(interval)
+    fun setBackgroundScanInterval(interval: Int) {
+        if (interval != preferencesRepository.getBackgroundScanInterval()) {
+            preferencesRepository.setBackgroundScanInterval(interval)
+            networkApplicationSettings.updateBackgroundScanInterval()
+        }
+    }
 
     fun isShowAllGraphPoint(): Boolean =
         preferencesRepository.isShowAllGraphPoint()
 
-    fun setIsShowAllGraphPoint(isShow: Boolean) =
-        preferencesRepository.setIsShowAllGraphPoint(isShow)
+    fun setIsShowAllGraphPoint(isShowAll: Boolean) {
+        if (isShowAll != preferencesRepository.isShowAllGraphPoint()) {
+            preferencesRepository.setIsShowAllGraphPoint(isShowAll)
+            networkApplicationSettings.updateChartShowAllPoints()
+        }
+    }
 
     fun graphDrawDots(): Boolean =
         preferencesRepository.graphDrawDots()
 
-    fun setGraphDrawDots(isDrawDots: Boolean) =
-        preferencesRepository.setGraphDrawDots(isDrawDots)
+    fun setGraphDrawDots(isDrawDots: Boolean) {
+        if (isDrawDots != preferencesRepository.graphDrawDots()) {
+            preferencesRepository.setGraphDrawDots(isDrawDots)
+            networkApplicationSettings.updateChartDrawDots()
+        }
+    }
 
     fun getGraphPointInterval(): Int =
         preferencesRepository.getGraphPointInterval()
@@ -90,16 +145,20 @@ class AppSettingsInteractor(
         preferencesRepository.setGraphPointInterval(newInterval)
 
     fun getGraphViewPeriod(): Int =
-        preferencesRepository.getGraphViewPeriod()
+        preferencesRepository.getGraphViewPeriodDays()
 
-    fun setGraphViewPeriod(newPeriod: Int) =
-        preferencesRepository.setGraphViewPeriod(newPeriod)
+    fun setGraphViewPeriod(newPeriod: Int) {
+        if (newPeriod != preferencesRepository.getGraphViewPeriodDays()) {
+            preferencesRepository.setGraphViewPeriodDays(newPeriod)
+            networkApplicationSettings.updateChartViewPeriod()
+        }
+    }
 
     fun testGateway(
         gatewayUrl: String,
         deviceId: String,
         callback: FutureCallback<Response<JsonObject>>
-    ) = gatewaySender.test(gatewayUrl, deviceId, callback)
+    ) = dataForwardingSender.test(gatewayUrl, deviceId, callback)
 
     fun getAllPressureUnits(): Array<PressureUnit> = unitsConverter.getAllPressureUnits()
 
@@ -107,6 +166,7 @@ class AppSettingsInteractor(
 
     fun setPressureUnit(unit: PressureUnit) {
         preferencesRepository.setPressureUnit(unit)
+        networkApplicationSettings.updatePressureUnit()
     }
 
     fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
@@ -114,4 +174,12 @@ class AppSettingsInteractor(
     fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 
     fun getAllLocales(): Array<LocaleType> = LocaleType.values()
+
+    fun clearLastSync() = sensorSettingsRepository.clearLastSyncGatt()
+
+    fun getDarkMode(): DarkModeState = preferencesRepository.getDarkMode()
+
+    fun updateDarkMode(darkModeState: DarkModeState) {
+        preferencesRepository.updateDarkMode(darkModeState)
+    }
 }

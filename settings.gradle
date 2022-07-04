@@ -1,3 +1,5 @@
-include ':default_bluetooth_library', ':MPChartLib'
+include ':default_bluetooth_library', ':MPChartLib', ':bluetooth_library'
 project(':default_bluetooth_library').projectDir=new File('../com.ruuvi.bluetooth.default/default_bluetooth_library')
+project (':bluetooth_library').projectDir=new File('../com.ruuvi.bluetooth/bluetooth_library')
+//project (':mpchart_local').projectDir=new File('../MPAndroidChart/MPChartLib')
 include ':app'

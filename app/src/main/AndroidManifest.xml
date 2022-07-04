@@ -1,109 +1,223 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.ruuvi.station">
+<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+package="com.ruuvi.station">
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-feature android:name="android.hardware.bluetooth"/>
+<uses-permission
+    android:name="android.permission.BLUETOOTH"
+    android:maxSdkVersion="30" />
+<uses-permission
+    android:name="android.permission.BLUETOOTH_ADMIN"
+    android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission
+    android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <application
-        android:name=".app.RuuviScannerApplication"
-        android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:largeHeap="true"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
-        <activity
-            android:name=".tagdetails.ui.TagDetailsActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
-            android:name=".tagsettings.ui.TagSettingsActivity"
-            android:configChanges="orientation|screenSize|locale"
-            android:label="@string/sensor_settings"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-            android:windowSoftInputMode="adjustResize" />
+<uses-feature android:name="android.hardware.bluetooth" />
 
-        <service
-            android:name="com.ruuvi.station.bluetooth.ScanForDevicesService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+<queries>
+    <intent>
+        <action android:name="android.media.action.IMAGE_CAPTURE" />
+    </intent>
+</queries>
 
-        <service android:name=".bluetooth.BluetoothForegroundService"
-            android:enabled="true"
-            android:foregroundServiceType="location"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+<application
+    android:name=".app.RuuviScannerApplication"
+    android:allowBackup="false"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:largeHeap="true"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme"
+    tools:replace="android:allowBackup">
+    <activity
+        android:name=".network.ui.SignInActivity"
+        android:label="@string/sign_in"
+        android:exported="true"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustPan"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
+        <nav-graph android:value="@navigation/sign_in_navigation" />
+    </activity>
+    <activity
+        android:name=".tagdetails.ui.TagDetailsActivity"
+        android:launchMode="singleTop"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <activity
+        android:name=".tagsettings.ui.TagSettingsActivity"
+        android:configChanges="orientation|screenSize|locale"
+        android:exported="false"
+        android:label="@string/sensor_settings"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+        android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".feature.ui.WelcomeActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <service
+        android:name=".bluetooth.ScanForDevicesService"
+        android:exported="false"
+        android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service
+        android:name=".bluetooth.BluetoothForegroundService"
+        android:enabled="true"
+        android:exported="true"
+        android:foregroundServiceType="location"
+        android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <activity
+        android:name=".welcome.ui.WelcomeActivity"
+        android:exported="false"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <meta-data
+        android:name="preloaded_fonts"
+        android:resource="@array/preloaded_fonts" />
+
+    <activity
+        android:name=".about.ui.AboutActivity"
+        android:exported="false"
+        android:label="@string/help_about_title"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <activity
+        android:name=".addtag.ui.AddTagActivity"
+        android:label="@string/add_tag_title"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <activity
+        android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
+        android:label="@string/menu_app_settings"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <activity
+        android:name=".startup.ui.StartupActivity"
+        android:noHistory="true"
+        android:exported="true"
+        android:theme="@style/SplashTheme">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name=".dashboard.ui.DashboardActivity"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name=".network.ui.ShareSensorActivity"
+        android:label="@string/share_sensor_title"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+        android:exported="false" />
+
+    <activity
+        android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
+        android:label="@string/claim_sensor"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+
+    <activity
+        android:name="com.ruuvi.station.dfu.ui.DfuUpdateActivity"
+        android:exported="true"
+        android:label="@string/title_activity_dfu_update"
+        android:theme="@style/AppTheme.NoActionBar" />
+
+    <activity
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
+        android:exported="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+        </intent-filter>
+    </activity>
+
+    <service
+        android:name="com.ruuvi.station.dfu.domain.DfuService"
+        android:exported="false"
+        android:label="Dfu Service">
+        <intent-filter>
+            <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </service>
+
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="com.ruuvi.station.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+    </provider>
+
+    <receiver android:name=".alarm.receiver.CancelAlarmReceiver" />
+    <receiver android:name=".alarm.receiver.MuteAlarmReceiver" />
+    <receiver android:name=".bluetooth.ScanningPeriodicReceiver" />
+    <receiver
+        android:name=".receivers.RebootSchedulerReceiver"
+        android:enabled="true"
+        android:exported="true">
+        <intent-filter>
+            <category android:name="android.intent.category.DEFAULT" />
+
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+        </intent-filter>
+    </receiver>
+
+    <receiver
+        android:name=".widgets.ui.simpleWidget.SimpleWidget"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
 
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+            android:name="android.appwidget.provider"
+            android:resource="@xml/simple_widget_info" />
+    </receiver>
 
-        <activity
-            android:name=".about.ui.AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
-            android:name=".addtag.ui.AddTagActivity"
-            android:label="@string/add_tag_title"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
-            android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
-            android:label="@string/menu_app_settings"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-        <activity
-            android:name=".startup.ui.StartupActivity"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+    <service
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetService"
+        android:exported="true"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".dashboard.ui.DashboardActivity"
-            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+    <receiver
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.ruuvi.station.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-        <receiver android:name=".alarm.receiver.CancelAlarmReceiver" />
-        <receiver android:name=".alarm.receiver.MuteAlarmReceiver" />
-        <receiver android:name=".bluetooth.ScanningPeriodicReceiver" />
-        <receiver
-            android:name=".receivers.RebootSchedulerReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-            </intent-filter>
-        </receiver>
-    </application>
-
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/complex_widget_info" />
+    </receiver>
+</application>
 </manifest>

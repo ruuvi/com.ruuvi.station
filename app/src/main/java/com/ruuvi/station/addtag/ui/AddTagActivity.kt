@@ -1,179 +1,125 @@
 package com.ruuvi.station.addtag.ui
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.Settings
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.PermissionsHelper
-import com.ruuvi.station.util.PermissionsHelper.Companion.REQUEST_CODE_PERMISSIONS
-import kotlinx.android.synthetic.main.activity_add_tag.toolbar
-import kotlinx.android.synthetic.main.content_add_tag.noTagsFoundTextView
-import kotlinx.android.synthetic.main.content_add_tag.tagListView
-import kotlinx.android.synthetic.main.content_add_tag.tag_layout
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.ActivityAddTagBinding
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.util.extensions.openUrl
 import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
 
-@ExperimentalCoroutinesApi
-class AddTagActivity : AppCompatActivity(), KodeinAware {
+class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: AddTagActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()
-
     private val tags: ArrayList<RuuviTagEntity> = arrayListOf()
-    private var adapter: AddTagAdapter? = null
-    private val permissionsHelper = PermissionsHelper(this)
-    private var timer :Timer? = null
+    private val adapter: AddTagAdapter by lazy { AddTagAdapter(this, tags) }
+    private lateinit var permissionsInteractor: PermissionsInteractor
+    lateinit var binding: ActivityAddTagBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_tag)
-        setSupportActionBar(toolbar)
+        binding = ActivityAddTagBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        permissionsInteractor = PermissionsInteractor(this)
 
+        requestPermission()
         setupViewmodel()
         setupUI()
     }
 
-    private fun setupViewmodel() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagsFlow.collect { ruuviTags ->
-
-                tags.clear()
-                tags.addAll(ruuviTags)
-
-                noTagsFoundTextView.isVisible = tags.isEmpty()
-                adapter?.notifyDataSetChanged()
-            }
-        }
-    }
-
-    private fun setupUI() {
-        adapter = AddTagAdapter(this, tags)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        tagListView.adapter = adapter
-
-        tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            val tag = tagListView.getItemAtPosition(i) as RuuviTagEntity
-            if (tag.id?.let { viewModel.getTagById(it)?.isFavorite } == true) {
-                Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
-                        .show()
-                return@OnItemClickListener
-            }
-            tag.defaultBackground = getKindaRandomBackground()
-            // FIXME: Database interaction in the main thread?
-            tag.update()
-            TagSettingsActivity.startForResult(this, 1, tag.id)
-        }
-
-        adapter?.notifyDataSetChanged()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        timer = Timer("AddTagActivityTimer", true)
-        timer?.scheduleAtFixedRate(0, 1000) {
-            viewModel.updateTags()
-        }
-        //FIXME delete as repeated call?
-        permissionsHelper.requestPermissions()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        timer?.cancel()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
+            requestPermission()
+        } else {
             finish()
         }
-        return true
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            REQUEST_CODE_PERMISSIONS -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
-                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-                        permissionsHelper.requestBackgroundPermission()
-                    }
+            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestPermission()
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_COARSE_LOCATION)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
-                        permissionsHelper.requestPermissions()
-                    } else {
-                        showPermissionSnackbar(this)
-                    }
+                    permissionsInteractor.showPermissionSnackbar()
                 }
             }
         }
     }
 
-    private fun showPermissionSnackbar(activity: Activity) {
-        val snackbar = Snackbar.make(tag_layout, getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
-        snackbar.setAction(getString(R.string.settings)) {
-            val intent = Intent()
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.data = uri
-            activity.startActivity(intent)
+    private fun setupViewmodel() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.sensorFlow.collect { ruuviTags ->
+                tags.clear()
+                tags.addAll(ruuviTags)
+                binding.content.noSensorsLayout.isVisible = tags.isEmpty()
+                binding.content.buySensorsButton2.isVisible = tags.isNotEmpty()
+                adapter.notifyDataSetChanged()
+            }
         }
-        snackbar.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != PermissionsHelper.REQUEST_CODE_BLUETOOTH) {
+    private fun setupUI() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.content.tagListView.adapter = adapter
+
+        binding.content.tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            val tag = binding.content.tagListView.getItemAtPosition(i) as RuuviTagEntity
+            if (tag.id?.let { viewModel.getTagById(it)?.favorite } == true) {
+                Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
+                        .show()
+                return@OnItemClickListener
+            }
+            viewModel.makeSensorFavorite(tag)
+            TagSettingsActivity.startForResult(this, 1, tag.id)
+        }
+
+        binding.content.buySensorsButton.setOnClickListener {
+            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
+        }
+
+        binding.content.buySensorsButton2.setOnClickListener {
+            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
+        return true
     }
 
-    private fun getKindaRandomBackground(): Int {
-        val tags = viewModel.getAllTags(true)
-        var background = (Math.random() * 9.0).toInt()
-        for (i in 0..99) {
-            if (!isBackgroundInUse(tags, background)) {
-                return background
-            }
-            background = (Math.random() * 9.0).toInt()
-        }
-        return background
-    }
-
-    private fun isBackgroundInUse(tags: List<RuuviTagEntity>, background: Int): Boolean {
-        for (tag in tags) {
-            if (tag.defaultBackground == background) return true
-        }
-        return false
+    private fun requestPermission() {
+        permissionsInteractor.requestPermissions(
+            preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
+        )
     }
 
     companion object {

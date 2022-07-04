@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alarm_layout"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:paddingTop="@dimen/normalPlus"
+    android:paddingBottom="@dimen/screenBottom"
+    android:animateLayoutChanges="true">
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/alertSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/temperature_with_unit"
+        android:paddingTop="@dimen/extended"
+        android:paddingStart="@dimen/normal"
+        android:paddingEnd="@dimen/normal"
+        style="@style/SwitchStyle.WithPadding"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/mutedTextView"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_marginEnd="64dp"
+        android:drawablePadding="2dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="19:40"
+        style="@style/ParagraphSmall"
+        app:layout_constraintTop_toTopOf="@+id/alertSwitch"
+        app:layout_constraintBottom_toBottomOf="@+id/alertSwitch"
+        app:layout_constraintEnd_toEndOf="@+id/alertSwitch"
+        app:drawableStartCompat="@drawable/ic_muted_notifications" />
+
+    <TextView
+        android:id="@+id/alertSubtitleTextView"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:paddingBottom="@dimen/normal"
+        android:paddingStart="@dimen/normal"
+        android:paddingEnd="@dimen/normal"
+        android:text="@string/alert_subtitle_off"
+        style="@style/ParagraphSmall"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/alertSwitch" />
+
+    <TextView
+        android:id="@+id/alertMinValueTextView"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:paddingStart="@dimen/normal"
+        style="@style/ParagraphSmall"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/alertSeekBar"
+        app:layout_constraintTop_toTopOf="@id/alertSeekBar"
+        app:layout_constraintBottom_toBottomOf="@id/alertSeekBar"
+        tools:text="100" />
+
+    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+        android:id="@+id/alertSeekBar"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="@dimen/extended"
+        android:layout_width="0dp"
+        style="@style/RangeSeekStyle"
+        app:data_type="_integer"
+        app:gap="1"
+        app:layout_constraintStart_toStartOf="@id/alertMinValueTextView"
+        app:layout_constraintEnd_toEndOf="@id/alertMaxValueTextView"
+        app:layout_constraintTop_toBottomOf="@id/alertSubtitleTextView" />
+
+    <TextView
+        android:id="@+id/alertMaxValueTextView"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:gravity="end"
+        android:paddingEnd="@dimen/normal"
+        style="@style/ParagraphSmall"
+        app:layout_constraintStart_toEndOf="@id/alertSeekBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/alertSeekBar"
+        app:layout_constraintBottom_toBottomOf="@id/alertSeekBar"
+        tools:text="1000" />
+
+    <LinearLayout
+        android:id="@+id/customDescriptionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/extended"
+        app:layout_constraintTop_toBottomOf="@id/alertSeekBar">
+        <View style="@style/DividerHorizontal"/>
+        <TextView
+            android:id="@+id/customDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/alarm_custom_title_hint"
+            android:gravity="center_vertical|end"
+            android:paddingStart="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            android:minHeight="@dimen/sensorSettingsItemHeight"
+            android:drawablePadding="@dimen/drawable_padding"
+            style="@style/Paragraph"
+            app:drawableEndCompat="@drawable/edit_20" />
+        <View style="@style/DividerHorizontal"/>
+    </LinearLayout>
+
+</merge>

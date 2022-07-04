@@ -1,49 +1,47 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.*
-import android.graphics.Bitmap
-import android.graphics.Matrix
+import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
-import android.text.InputFilter
-import android.text.InputType
-import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.*
-import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.alpha
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
-import androidx.exifinterface.media.ExifInterface
-import androidx.lifecycle.lifecycleScope
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.database.TagRepository
-import com.ruuvi.station.database.tables.Alarm
+import com.ruuvi.station.calibration.model.CalibrationType
+import com.ruuvi.station.calibration.ui.CalibrationActivity
+import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.databinding.ActivityTagSettingsBinding
+import com.ruuvi.station.dfu.ui.DfuUpdateActivity
+import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.network.ui.ClaimSensorActivity
+import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
-import com.ruuvi.station.tagsettings.domain.HumidityCalibrationInteractor
+import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.CsvExporter
+import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
-import com.ruuvi.station.util.extensions.makeWebLinks
+import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.android.synthetic.main.activity_tag_settings.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -53,16 +51,14 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.text.DateFormat
-import java.text.DateFormat.getTimeInstance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.math.round
 
-@ExperimentalCoroutinesApi
-class TagSettingsActivity : AppCompatActivity(), KodeinAware {
+class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
+
+    private lateinit var binding: ActivityTagSettingsBinding
 
     private val viewModel: TagSettingsViewModel by viewModel {
         intent.getStringExtra(TAG_ID)?.let {
@@ -71,45 +67,176 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val repository: TagRepository by instance()
-    private val humidityCalibrationInteractor: HumidityCalibrationInteractor by instance()
     private val unitsConverter: UnitsConverter by instance()
+    private val imageInteractor: ImageInteractor by instance()
+    private val sensorHistoryRepository: SensorHistoryRepository by instance()
+    private val sensorSettingsRepository: SensorSettingsRepository by instance()
+    private val accelerationConverter: AccelerationConverter by instance()
     private var timer: Timer? = null
-
-    private var alarmCheckboxListener = CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
-        val item = viewModel.alarmItems[buttonView.tag as Int]
-        item.isChecked = isChecked
-        if (!isChecked) item.mutedTill = null
-        item.updateView()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_tag_settings)
+        binding = ActivityTagSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.tagFlow.collect { tag ->
-                tag?.let {
-                    isTagFavorite(it)
-                    setupTagName(it)
-                    setupInputMac(it)
-                    setupTagImage(it)
-                    calibrateHumidity(it)
-                    updateReadings(it)
+        setupViewModel()
+
+        setupUI()
+
+        scrollToAlarms()
+    }
+
+    private fun scrollToAlarms() {
+        val scrollToAlarms = intent.getBooleanExtra(SCROLL_TO_ALARMS, false)
+        Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
+        if (scrollToAlarms) {
+            Handler(Looper.getMainLooper()).post {
+                binding.scrollView.scrollTo(0, binding.alertsHeaderTextView.top-binding.toolbar.height)
+            }
+        }
+    }
+
+    private fun setupViewModel() {
+        viewModel.setupAlarmElements()
+
+        viewModel.tagState.observe(this) { tag ->
+            tag?.let {
+                setupCalibration(it)
+                updateReadings(it)
+            }
+        }
+
+        viewModel.sensorSettingsObserve.observe(this) {sensorSettings ->
+            sensorSettings?.let {
+                setupInputMac(sensorSettings)
+                setupSensorImage(sensorSettings)
+                setupSensorName(sensorSettings)
+            }
+            binding.calibrateTemperature.setItemValue(
+                unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
+            binding.calibratePressure.setItemValue(
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
+            binding.calibrateHumidity.setItemValue(
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+            )
+            binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
+
+            if (sensorSettings?.networkSensor != true) {
+                deleteString = getString(R.string.remove_local_sensor)
+                binding.ownerLayout.isEnabled = true
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
+            } else {
+                binding.ownerLayout.isEnabled = false
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    null,
+                    null
+                )
+                if (viewModel.sensorOwnedByUserObserve.value == true) {
+                    deleteString = getString(R.string.remove_claimed_sensor)
+                } else {
+                    deleteString = getString(R.string.remove_shared_sensor)
                 }
             }
         }
 
-        viewModel.tagAlarms = Alarm.getForTag(viewModel.tagId)
+        viewModel.firmware.observe(this) {
+            binding.firmwareVersionLayout.isVisible = it != null
+            binding.firmwareVersionDivider.isVisible = it != null
+            binding.firmwareVersionTextView.text = it?.asString(this)
+        }
 
+        viewModel.userLoggedInObserve.observe(this) {
+            if (it == true) {
+                binding.ownerLayout.visibility = View.VISIBLE
+            } else {
+                binding.ownerLayout.visibility = View.GONE
+            }
+        }
+
+        viewModel.sensorOwnedByUserObserve.observe(this) {
+            if (it) {
+                binding.shareLayout.visibility = View.VISIBLE
+            } else {
+                binding.shareLayout.visibility = View.GONE
+            }
+        }
+
+        viewModel.sensorOwnedOrOfflineObserve.observe(this) {
+            binding.firmwareLayout.isVisible = it
+            binding.calibrationHeaderTextView.isVisible = it
+            binding.calibrationLayout.isVisible = it
+        }
+
+        viewModel.operationStatusObserve.observe(this) {
+            if (!it.isNullOrEmpty()) {
+                Snackbar.make(binding.toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.statusProcessed()
+            }
+        }
+
+        viewModel.sensorSharedObserve.observe(this) { isShared ->
+            binding.shareValueTextView.text = if (isShared) {
+                getText(R.string.sensor_shared)
+            } else {
+                getText(R.string.sensor_not_shared)
+            }
+        }
+
+        val errorColor = resolveColorAttr(R.attr.colorErrorText)
+        val successColor = resolveColorAttr(R.attr.colorSuccessText)
+        viewModel.isLowBattery.observe(this) { lowBattery ->
+            if (lowBattery) {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
+                binding.batteryTextView.setTextColor(errorColor)
+            } else {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
+                binding.batteryTextView.setTextColor(successColor)
+            }
+        }
+
+        viewModel.updateSensorFirmwareVersion()
+    }
+
+    private fun setupUI() {
         setupAlarmItems()
 
-        removeTagButton.setDebouncedOnClickListener { delete() }
+        binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
+
+        binding.ownerValueTextView.setDebouncedOnClickListener {
+            if (binding.ownerLayout.isEnabled) {
+                ClaimSensorActivity.start(this, viewModel.sensorId)
+            }
+        }
+
+        binding.shareLayout.setDebouncedOnClickListener {
+            ShareSensorActivity.start(this, viewModel.sensorId)
+        }
+
+        binding.calibrateHumidity.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
+        }
+
+        binding.calibrateTemperature.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
+        }
+
+        binding.calibratePressure.setDebouncedOnClickListener {
+            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
+        }
+
+        binding.firmwareUpdateTitleTextView.setDebouncedOnClickListener {
+            DfuUpdateActivity.start(this, viewModel.sensorId)
+        }
     }
+
+    private var deleteString: String = ""
 
     override fun onResume() {
         super.onResume()
@@ -117,12 +244,18 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.getTagInfo()
         }
+        viewModel.checkIfSensorShared()
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveOrUpdateAlarmItems()
         timer?.cancel()
+        binding.alarmTemperature.saveAlarm()
+        binding.alarmHumidity.saveAlarm()
+        binding.alarmPressure.saveAlarm()
+        binding.alarmRssi.saveAlarm()
+        binding.alarmMovement.saveAlarm()
+
     }
 
     @Suppress("NAME_SHADOWING")
@@ -130,18 +263,18 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             if (viewModel.file != null) {
-                val rotation = getCameraPhotoOrientation(viewModel.file)
-                resize(viewModel.file, rotation)
-                viewModel.tagFlow.value?.userBackground = viewModel.file.toString()
+                val rotation = imageInteractor.getCameraPhotoOrientation(viewModel.file)
+                imageInteractor.resize(currentPhotoPath, viewModel.file, rotation)
                 viewModel.updateTagBackground(viewModel.file.toString(), null)
-                val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
-                tagImageView.setImageBitmap(background)
+                val backgroundUri = Uri.parse(viewModel.file.toString())
+                val background = imageInteractor.getImage(backgroundUri)
+                binding.tagImageView.setImageBitmap(background)
             }
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.let {
                 try {
                     val path = data.data ?: return
-                    if (!isImage(path)) {
+                    if (!imageInteractor.isImage(path)) {
                         Toast.makeText(this, getString(R.string.file_not_supported), Toast.LENGTH_SHORT).show()
                         return
                     }
@@ -169,15 +302,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                             output.flush()
                         }
                         val uri = Uri.fromFile(photoFile)
-                        val rotation = getCameraPhotoOrientation(uri)
-                        resize(uri, rotation)
-                        viewModel.tagFlow.value?.userBackground = uri.toString()
+                        val rotation = imageInteractor.getCameraPhotoOrientation(uri)
+                        imageInteractor.resize(currentPhotoPath, uri, rotation)
                         viewModel.updateTagBackground(uri.toString(), null)
-                        val background = Utils.getBackground(applicationContext, viewModel.tagFlow.value)
-                        tagImageView.setImageBitmap(background)
+                        val backgroundUri = Uri.parse(uri.toString())
+                        val background = imageInteractor.getImage(backgroundUri)
+                        binding.tagImageView.setImageBitmap(background)
                     }
                 } catch (e: Exception) {
-                    // ... O.o
                     Timber.e("Could not load photo: $e")
                 }
             }
@@ -186,8 +318,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, repository, unitsConverter)
-            viewModel.tagFlow.value?.id?.let {
+            val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
+            viewModel.tagState.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -197,87 +329,32 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        viewModel.tagFlow.value?.let {
-            if (it.isFavorite) {
-                menuInflater.inflate(R.menu.menu_edit, menu)
-            }
-        }
+        menuInflater.inflate(R.menu.menu_edit, menu)
         return true
     }
 
-    private fun isTagFavorite(tag: RuuviTagEntity) {
-        if (!tag.isFavorite) {
-            tag.isFavorite = true
-            tag.createDate = Date()
-            tag.update()
-        }
-    }
+    private fun setupSensorName(sensorSettings: SensorSettings) {
+        binding.tagNameInputTextView.text = sensorSettings.displayName
 
-    private fun setupTagName(tag: RuuviTagEntity) {
-        tagNameInputTextView.text = tag.displayName
-
-        // TODO: 25/10/17 make this less ugly
-        tagNameInputTextView.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-            builder.setTitle(getString(R.string.tag_name))
-
-            val input = EditText(this@TagSettingsActivity)
-
-            input.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(32))
-
-            input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-
-            input.setText(tag.name)
-
-            val container = FrameLayout(applicationContext)
-
-            val params =
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            input.layoutParams = params
-
-            container.addView(input)
-
-            builder.setView(container)
-
-            builder.setPositiveButton(getString(R.string.ok)) { _: DialogInterface?, _: Int ->
-                val newValue = input.text.toString()
-                if (newValue.isNullOrEmpty()) {
-                    tag.name = null
-                } else {
-                    tag.name = input.text.toString()
+        binding.tagNameInputTextView.setDebouncedOnClickListener {
+            val sensorNameEditDialog = SensorNameEditDialog.new_instance(sensorSettings.name, object: SensorNameEditListener {
+                override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
+                    viewModel.setName(value)
                 }
-                viewModel.updateTagName(tag.name)
-                tagNameInputTextView.text = tag.name
-            }
+                override fun onDialogNegativeClick(dialog: DialogFragment) { }
+            })
 
-            builder.setNegativeButton(getString(R.string.cancel), null)
-
-            val dialog: Dialog = builder.create()
-
-            try {
-                dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            } catch (e: Exception) {
-                Timber.e(e, "Could not open keyboard")
-            }
-            dialog.show()
-
-            input.requestFocus()
+            sensorNameEditDialog.show(this.supportFragmentManager, "sensorName")
         }
     }
 
-    private fun setupInputMac(tag: RuuviTagEntity) {
-        inputMacTextView.text = tag.id
+    private fun setupInputMac(sensorSettings: SensorSettings) {
+        binding.macTextView.text = sensorSettings.id
 
-        inputMacTextView.setOnLongClickListener {
+        binding.macTextView.setOnLongClickListener {
             val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-            val clip = ClipData.newPlainText(getString(R.string.mac_address), tag.id)
+            val clip = ClipData.newPlainText(getString(R.string.mac_address), sensorSettings.id)
 
             try {
                 if (BuildConfig.DEBUG && clipboard == null) {
@@ -294,155 +371,72 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private fun setupTagImage(tag: RuuviTagEntity) {
-        tagImageView.setImageBitmap(Utils.getBackground(this, tag))
+    private fun setupSensorImage(sensorSettings: SensorSettings) {
+        if (sensorSettings.userBackground.isNullOrEmpty() == false) {
+            val backgroundUri = Uri.parse(sensorSettings.userBackground)
+            val background = imageInteractor.getImage(backgroundUri)
+            binding.tagImageView.setImageBitmap(background)
+        } else {
+            binding.tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorSettings.defaultBackground)))
+        }
 
-        tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
+        binding.tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
-        tagImageSelectButton.setDebouncedOnClickListener {
-            val defaultBackground = if (tag.defaultBackground == 8) 0 else tag.defaultBackground + 1
+        binding.tagImageSelectButton.setDebouncedOnClickListener {
+            val defaultBackground = if (sensorSettings.defaultBackground == 8) 0 else sensorSettings.defaultBackground + 1
             viewModel.updateTagBackground(null, defaultBackground)
-            tag.defaultBackground = defaultBackground
-            tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
+            sensorSettings.defaultBackground = defaultBackground
+            binding.tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
     }
 
-    private fun calibrateHumidity(tag: RuuviTagEntity) {
-        calibrateHumidityButton.isGone = tag.humidity == null
-        calibrateHumidityButton.setDebouncedOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(this@TagSettingsActivity, R.style.AppTheme))
-
-            val content = View.inflate(this, R.layout.dialog_humidity_calibration, null)
-
-            val container = FrameLayout(applicationContext)
-
-            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-
-            content.layoutParams = params
-
-            val infoTextView = content.findViewById<View>(R.id.info) as TextView
-            infoTextView?.let {
-                it.makeWebLinks(this, Pair(getString(R.string.calibration_humidity_link), getString(R.string.calibration_humidity_link_url)))
-            }
-
-            (content.findViewById<View>(R.id.calibration) as TextView).text = this.getString(R.string.calibration_hint, Math.round(tag.humidity ?: 0.0))
-
-            builder.setPositiveButton(getString(R.string.calibrate)) { _, _ ->
-                tag.id?.let {
-                    humidityCalibrationInteractor.calibrate(it)
-                    viewModel.getTagInfo()
-                }
-            }
-            if (tag.humidityOffset != 0.0) {
-                builder.setNegativeButton(getString(R.string.clear)) { _, _ ->
-                    tag.id?.let {
-                        humidityCalibrationInteractor.clear(it)
-                        viewModel.getTagInfo()
-                    }
-                }
-                (content.findViewById<View>(R.id.timestamp) as TextView).text = this.getString(R.string.calibrated, tag.humidityOffsetDate.toString())
-            }
-
-            builder.setNeutralButton(getString(R.string.close), null)
-
-            container.addView(content)
-
-            builder.setView(container)
-
-            builder.create().show()
-        }
+    private fun setupCalibration(tag: RuuviTagEntity) {
+        binding.calibrateHumidity.isGone = tag.humidity == null
+        binding.calibratePressure.isGone = tag.pressure == null
+        binding.calibrateHumidityDivider.isGone = tag.humidity == null
+        binding.calibratePressureDivider.isGone = tag.pressure == null
     }
 
     private fun setupAlarmItems() {
-        viewModel.alarmItems.clear()
-        with(viewModel.alarmItems) {
-            add(AlarmItem(
-                getString(R.string.temperature, unitsConverter.getTemperatureUnitString()),
-                Alarm.TEMPERATURE,
-                false,
-                -40,
-                85
-            ))
-            add(AlarmItem(
-                getString(R.string.humidity, unitsConverter.getHumidityUnitString()),
-                Alarm.HUMIDITY,
-                false,
-                0,
-                100
-            ))
-            add(AlarmItem(
-                getString(R.string.pressure, unitsConverter.getPressureUnitString()),
-                Alarm.PRESSURE,
-                false,
-                30000,
-                110000
-            ))
-            add(AlarmItem(getString(R.string.rssi), Alarm.RSSI, false, -105, 0))
-            add(AlarmItem(getString(R.string.alert_movement), Alarm.MOVEMENT, false, 0, 0))
-        }
-
-        for (alarm in viewModel.tagAlarms) {
-            val item = viewModel.alarmItems[alarm.type]
-            item.high = alarm.high
-            item.low = alarm.low
-            item.isChecked = alarm.enabled
-            item.customDescription = alarm.customDescription ?: ""
-            item.mutedTill = alarm.mutedTill
-            item.alarm = alarm
-            item.normalizeValues()
-        }
-
-        for (i in viewModel.alarmItems.indices) {
-            val item = viewModel.alarmItems[i]
-
-            item.view = layoutInflater.inflate(R.layout.view_alarm, alertsContainerLayout, false)
-
-            item.view?.id = View.generateViewId()
-
-            val switch = item.view?.findViewById<SwitchCompat>(R.id.alertSwitch)
-
-            switch?.tag = i
-
-            switch?.setOnCheckedChangeListener(alarmCheckboxListener)
-
-            item.createView()
-
-            alertsContainerLayout.addView(item.view)
-        }
+        binding.alarmTemperature.restoreState(viewModel.alarmElements[0])
+        binding.alarmHumidity.restoreState(viewModel.alarmElements[1])
+        binding.alarmPressure.restoreState(viewModel.alarmElements[2])
+        binding.alarmRssi.restoreState(viewModel.alarmElements[3])
+        binding.alarmMovement.restoreState(viewModel.alarmElements[4])
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
+        binding.alarmHumidity.isVisible = tag.humidity != null
+        binding.alarmPressure.isVisible = tag.pressure != null
+        binding.alarmMovement.isVisible = tag.movementCounter != null
+
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
-            rawValuesLayout.isVisible = true
-            inputVoltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            xInputTextView.text = getString(R.string.acceleration_reading, tag.accelX)
-            yInputTextView.text = getString(R.string.acceleration_reading, tag.accelY)
-            zInputTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
-            dataFormatTextView.text = tag.dataFormat.toString()
-            txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
-            movementCounterTextView.text = tag.movementCounter.toString()
-            sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
+            binding.rawValuesLayout.isVisible = true
+            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
+            binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
+            binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
+            binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)
+            binding.dataFormatTextView.text = tag.dataFormat.toString()
+            binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
+            binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
+            binding.sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
         } else {
-            rawValuesLayout.isVisible = false
+            binding.rawValuesLayout.isVisible = false
         }
     }
 
     private fun delete() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
 
         builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
-        builder.setMessage(this.getString(R.string.tagsettings_sensor_remove_confirm))
+        builder.setMessage(deleteString)
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
-            for (alarm: AlarmItem in viewModel.alarmItems) {
+            for (alarm in viewModel.alarmElements) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
-            viewModel.tagFlow.value?.let { viewModel.deleteTag(it) }
+            viewModel.tagState.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 
@@ -453,16 +447,20 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     private fun showImageSourceSheet() {
         val sheetDialog = BottomSheetDialog(this)
-
-        val listView = ListView(this)
-
+        val listView = ListView(this, null, R.style.AppTheme)
         val menu = arrayOf(
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
+        val dividerColor = resolveColorAttr(R.attr.colorDivider)
+        listView.divider = ColorDrawable(dividerColor).mutate()
+        listView.dividerHeight = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1f,
+            resources.displayMetrics
+        ).toInt()
 
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
-
+        listView.adapter = ArrayAdapter(this, R.layout.bottom_sheet_select_image_source, menu)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
                 0 -> dispatchTakePictureIntent()
@@ -470,17 +468,14 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             }
             sheetDialog.dismiss()
         }
-
         sheetDialog.setContentView(listView)
-
         sheetDialog.show()
     }
 
     private var currentPhotoPath: String? = null
 
-    @Throws(IOException::class)
     private fun createImageFile(): File {
-        val imageFileName = "background_" + viewModel.tagId
+        val imageFileName = "background_" + viewModel.sensorId
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         currentPhotoPath = image.absolutePath
@@ -525,233 +520,18 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture)), REQUEST_GALLERY_PHOTO)
         }
 
-    private fun isImage(uri: Uri?): Boolean {
-        val mime = uri?.let { getMimeType(it) }
-        return mime == "jpeg" || mime == "jpg" || mime == "png"
-    }
-
-    private fun getMimeType(uri: Uri): String? {
-        val contentResolver = applicationContext.contentResolver
-        val mime = MimeTypeMap.getSingleton()
-        return mime.getExtensionFromMimeType(contentResolver.getType(uri))
-    }
-
-    private fun getCameraPhotoOrientation(file: Uri?): Int {
-        var rotate = 0
-        file?.let {
-            try {
-                applicationContext.contentResolver.openInputStream(file).use { inputStream ->
-                    val exif = ExifInterface(inputStream!!)
-
-                    when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                        ExifInterface.ORIENTATION_ROTATE_270 -> rotate = 270
-                        ExifInterface.ORIENTATION_ROTATE_180 -> rotate = 180
-                        ExifInterface.ORIENTATION_ROTATE_90 -> rotate = 90
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Could not get orientation of image")
-            }
-        }
-
-        return rotate
-    }
-
-    private fun resize(uri: Uri?, rotation: Int) {
-        try {
-            val displayMetrics = DisplayMetrics()
-
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-            val targetHeight = 1440
-
-            val targetWidth = 960
-
-            var bitmap = MediaStore.Images.Media.getBitmap(applicationContext.contentResolver, uri)
-
-            bitmap = rotate(bitmap, rotation.toFloat())
-
-            var out: Bitmap
-
-            out = if ((targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt() > targetWidth) {
-                Bitmap.createScaledBitmap(bitmap, (targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt(), targetHeight, false)
-            } else {
-                Bitmap.createScaledBitmap(bitmap, targetWidth, (targetWidth.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt(), false)
-            }
-
-            var x = out.width / 2 - targetWidth / 2
-
-            if (x < 0) x = 0
-
-            out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight)
-
-            val file = currentPhotoPath?.let { File(it) }
-
-            val outputStream = FileOutputStream(file)
-
-            out.compress(Bitmap.CompressFormat.JPEG, 60, outputStream)
-
-            outputStream.flush()
-
-            outputStream.close()
-
-            bitmap.recycle()
-
-            out.recycle()
-        } catch (e: Exception) {
-            Timber.e(e, "Could not resize background image")
-        }
-    }
-
-    inner class AlarmItem(
-        var name: String,
-        var type: Int,
-        var isChecked: Boolean,
-        var min: Int,
-        var max: Int,
-        var customDescription: String = "",
-        var mutedTill: Date? = null,
-        val gap: Int = 1
-    ) {
-        private var subtitle: String? = null
-        var low: Int
-        var high: Int
-        var view: View? = null
-        var alarm: Alarm? = null
-
-        fun createView() {
-            view?.let { view ->
-                val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
-
-                seekBar.setMinValue(min.toFloat())
-
-                seekBar.setMaxValue(max.toFloat())
-
-                seekBar.setMinStartValue(low.toFloat())
-
-                seekBar.setMaxStartValue(high.toFloat())
-
-                seekBar.setGap(gap.toFloat())
-
-                seekBar.apply()
-
-                seekBar.setOnRangeSeekbarChangeListener { minValue: Number, maxValue: Number ->
-                    low = minValue.toInt()
-                    high = maxValue.toInt()
-                    updateView()
-                }
-
-                val customDescriptionEditText = view.findViewById(R.id.customDescriptionEditText) as EditText
-                customDescriptionEditText.setText(customDescription)
-                customDescriptionEditText.addTextChangedListener {
-                    customDescription = it.toString()
-                }
-
-                if (min == 0 && max == 0) {
-                    seekBar.isVisible = false
-                    view.findViewById<View>(R.id.alertMinValueTextView).visibility = View.GONE
-                    view.findViewById<View>(R.id.alertMaxValueTextView).visibility = View.GONE
-                }
-            }
-
-            updateView()
-        }
-
-        fun updateView() {
-            view?.let { view ->
-                val seekBar: CrystalRangeSeekbar = view.findViewById(R.id.alertSeekBar)
-                val minTextView = (view.findViewById<View>(R.id.alertMinValueTextView) as TextView)
-                val maxTextView = (view.findViewById<View>(R.id.alertMaxValueTextView) as TextView)
-                val customDescriptionEditView = (view.findViewById<View>(R.id.customDescriptionEditText) as TextView)
-
-                var lowDisplay = low
-                var highDisplay = high
-
-                val alertSwitch = view.findViewById<View>(R.id.alertSwitch) as SwitchCompat
-                alertSwitch.isChecked = isChecked
-                alertSwitch.text = name
-
-                var setSeekbarColor = R.color.inactive
-                when (type) {
-                    Alarm.TEMPERATURE -> {
-                        lowDisplay = round(unitsConverter.getTemperatureValue(low.toDouble())).toInt()
-                        highDisplay = round(unitsConverter.getTemperatureValue(high.toDouble())).toInt()
-                    }
-                    Alarm.PRESSURE -> {
-                        lowDisplay = round(unitsConverter.getPressureValue(low.toDouble())).toInt()
-                        highDisplay = round(unitsConverter.getPressureValue(high.toDouble())).toInt()
-                    }
-                }
-
-                if (isChecked) {
-                    setSeekbarColor = R.color.main
-                    subtitle = getString(R.string.alert_movement_description)
-                    subtitle = when (type) {
-                        Alarm.MOVEMENT -> getString(R.string.alert_movement_description)
-                        else -> String.format(getString(R.string.alert_subtitle_on), lowDisplay, highDisplay)
-                    }
-                } else {
-                    subtitle = getString(R.string.alert_subtitle_off)
-                }
-
-                seekBar.isGone = !isChecked || type == Alarm.MOVEMENT
-                maxTextView.isGone = !isChecked || type == Alarm.MOVEMENT
-                minTextView.isGone = !isChecked || type == Alarm.MOVEMENT
-                customDescriptionEditView.isGone = !isChecked
-
-                seekBar.setRightThumbColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setRightThumbHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setLeftThumbColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setLeftThumbHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.setBarHighlightColor(ContextCompat.getColor(this@TagSettingsActivity, setSeekbarColor))
-
-                seekBar.isEnabled = isChecked
-
-                val mutedTextView = view.findViewById(R.id.mutedTextView) as TextView
-                if (mutedTill ?: Date(0) > Date()) {
-                    mutedTextView.text = getTimeInstance(DateFormat.SHORT).format(mutedTill)
-                    mutedTextView.isGone = false
-                } else {
-                    mutedTextView.isGone = true
-                }
-
-                (view.findViewById<View>(R.id.alertSubtitleTextView) as TextView).text = subtitle
-
-                minTextView.text = lowDisplay.toString()
-                maxTextView.text = highDisplay.toString()
-            }
-        }
-
-        fun normalizeValues() {
-            if (low < min) low = min
-            if (low >= max) low = max - gap
-            if (high > max) high = max
-            if (high < min) high = min + gap
-            if (low > high) {
-                low = high.also { high = low }
-            }
-        }
-
-        init {
-            low = min
-            high = max
-        }
-    }
-
     companion object {
         private const val TAG_ID = "TAG_ID"
+        private const val SCROLL_TO_ALARMS = "SCROLL_TO_ALARMS"
 
         private const val REQUEST_TAKE_PHOTO = 1
 
         private const val REQUEST_GALLERY_PHOTO = 2
 
-        fun start(context: Context, tagId: String?) {
+        fun start(context: Context, tagId: String?, scrollToAlarms: Boolean = false) {
             val intent = Intent(context, TagSettingsActivity::class.java)
             intent.putExtra(TAG_ID, tagId)
+            intent.putExtra(SCROLL_TO_ALARMS, scrollToAlarms)
             context.startActivity(intent)
         }
 
@@ -759,12 +539,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             val settingsIntent = Intent(context, TagSettingsActivity::class.java)
             settingsIntent.putExtra(TAG_ID, tagId)
             context.startActivityForResult(settingsIntent, requestCode)
-        }
-
-        fun rotate(bitmap: Bitmap, degrees: Float): Bitmap {
-            val matrix = Matrix()
-            matrix.postRotate(degrees)
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         }
     }
 }

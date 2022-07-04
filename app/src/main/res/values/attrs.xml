@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorDisabled" format="color"/>
+    <attr name="colorSurfaceVariant" format="color"/>
+    <attr name="colorOnSurfaceVariant" format="color"/>
+    <attr name="colorHeaderSurface" format="color"/>
+    <attr name="colorOnHeaderSurface" format="color"/>
+    <attr name="colorInactiveSurface" format="color"/>
+    <attr name="colorErrorText" format="color"/>
+    <attr name="colorSuccessText" format="color"/>
+    <attr name="colorButtonText" format="color"/>
+    <attr name="colorToolbar" format="color"/>
+    <attr name="colorDivider" format="color"/>
+    <attr name="colorButtonPressed" format="color"/>
+    <attr name="colorPrimaryText" format="color" />
+</resources>

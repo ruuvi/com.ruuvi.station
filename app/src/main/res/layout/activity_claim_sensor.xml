@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?android:attr/colorBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".network.ui.ClaimSensorActivity">
+
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+  <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/appBarLayout"
+      android:background="?attr/colorToolbar"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:fitsSystemWindows="true"
+      android:theme="@style/AppTheme.AppBarOverlay"
+      app:elevation="0dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        style="@style/Toolbar"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+  </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bodyLayout"
+        android:background="?android:attr/colorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/screenTop"
+        android:paddingBottom="@dimen/screenBottom"
+        android:paddingStart="@dimen/screenStart"
+        android:paddingEnd="@dimen/screenEnd">
+
+      <TextView
+          android:id="@+id/claimSensorTitleTextView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/claim_description"
+          style="@style/Paragraph.WithPadding"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+
+      <Button
+          android:id="@+id/claimButton"
+          style="@style/RoundButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/extended"
+          android:text="@string/claim_ownership"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/claimSensorTitleTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+  </ScrollView>

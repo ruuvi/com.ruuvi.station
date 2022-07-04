@@ -1,213 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".settings.ui.AppSettingsListFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:id="@+id/appearanceLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <LinearLayout
-                android:id="@+id/scanLayout"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/appearanceTitleTextView"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:text="@string/settings_appearance" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/bgScanTitleTextView"
-                    style="@style/PrefTitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_background_scan" />
+            <TextView
+                android:id="@+id/appearanceDescriptionTextView"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Dashboard view is enabled. Dark theme is enabled." />
+        </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/bgScanDescriptionTextView"
-                    style="@style/PrefSecondaryText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Allows for scanning when the app is running in the background and define how often the background scanning will run" />
+        <include layout="@layout/divider" />
 
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/scanIntervalLayout"
+        <LinearLayout
+            android:id="@+id/scanLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/bgScanIntervalTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/bgScanTitleTextView"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_background_scan_interval"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:text="@string/settings_background_scan" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/backgroundScanIntervalSubTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/bgScanDescriptionTextView"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_background_scan_interval_description"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bgScanIntervalTitleTextView" />
+                tools:text="Allows for scanning when the app is running in the background and define how often the background scanning will run" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/divider" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/temperatureUnitLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/temperatureUnitTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_temperature_unit"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:text="@string/settings_temperature_unit" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/temperatureUnitSubTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Celsius / Fahrenheit / Kelvin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperatureUnitTitleTextView" />
+                tools:text="Celsius / Fahrenheit / Kelvin" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/divider" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/humidityUnitLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/humidityUnitTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_humidity_unit"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:text="@string/settings_humidity_unit" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/humidityUnitSubTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Relative / Absolute / Dew Point"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/humidityUnitTitleTextView" />
+                tools:text="Relative / Absolute / Dew Point" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/divider" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/pressureUnitLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/pressureUnitTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_pressure_unit"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:text="@string/settings_pressure_unit" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/pressureUnitSubTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Pascal / Hectopascal / Millimetre of mercury"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pressureUnitTitleTextView" />
+                tools:text="Pascal / Hectopascal / Millimetre of mercury" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
+        <include layout="@layout/divider" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:visibility="gone"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
             <LinearLayout
                 android:id="@+id/dashboardLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/dashboardSwitch"
-                app:layout_constraintTop_toTopOf="parent" >
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/dashboardTitleTextView"
-                    style="@style/PrefTitleText"
+                    style="@style/PreferencesListItemSubtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/dashboard" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/PrefSecondaryText"
+                <TextView
+                    style="@style/PreferencesListItemDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/dashboard_description" />
@@ -217,124 +182,156 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/dashboardSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--        <include layout="@layout/divider" />-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cloudModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
+
+            <LinearLayout
+                android:id="@+id/cloudModeTextLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/cloudModeSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/cloudModeTitleTextView"
+                    style="@style/PreferencesListItemSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cloud_only_mode" />
+
+                <TextView
+                    style="@style/PreferencesListItemDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cloud_only_mode_description" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/cloudModeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                style="@style/SwitchStyle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cloudModeTextLayout"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
+        <include
+            android:id="@+id/networkModeDivider"
+            layout="@layout/divider" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/gatewaySettingsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/gatewayTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_gateway"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:text="@string/settings_data_forwarding" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/gatewayUrlSubTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLength="64"
                 android:maxLines="1"
-                android:text="@string/gateway_url"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gatewayTitleTextView" />
+                android:text="@string/data_forwarding_url" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/divider" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/graphSettingsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/screenEnd"
+            android:paddingStart="@dimen/screenStart"
+            android:paddingBottom="@dimen/preferencesListItemPadding"
+            android:paddingTop="@dimen/preferencesListItemPadding">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/graphSettingsTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+                style="@style/PreferencesListItemSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_chart"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:text="@string/settings_chart" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/graphSettingsDescriptionTextView"
-                style="@style/PrefSecondaryText"
+                style="@style/PreferencesListItemDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="@string/settings_chart_description"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/graphSettingsTitleTextView" />
+                android:text="@string/settings_chart_description" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            layout="@layout/divider"
+            android:visibility="gone" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:visibility="gone"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/localeSettingsLayout"
+        <LinearLayout
+            android:id="@+id/experimentalSettingsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp"
-            android:visibility="gone">
+            android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/localeSettingsTitleTextView"
-                style="@style/PrefTitleText"
-                android:layout_width="0dp"
+            <include
+                layout="@layout/divider" />
+
+            <LinearLayout
+                android:id="@+id/experimentalSettingsLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_language"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/screenEnd"
+                android:paddingStart="@dimen/screenStart"
+                android:paddingBottom="@dimen/preferencesListItemPadding"
+                android:paddingTop="@dimen/preferencesListItemPadding"
+                tools:visibility="visible">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/localeSettingsDescriptionTextView"
-                style="@style/PrefSecondaryText"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:ellipsize="end"
-                android:maxLength="64"
-                android:maxLines="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/localeSettingsTitleTextView" />
+                <TextView
+                    android:id="@+id/experimentalSettingsTitleTextView"
+                    style="@style/PreferencesListItemSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_experimental" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+                <TextView
+                    android:id="@+id/experimentalSettingsDescriptionTextView"
+                    style="@style/PreferencesListItemDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enable experimental features" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>

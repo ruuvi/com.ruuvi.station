@@ -1,13 +1,16 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdGenerator
+import java.util.*
 
-class PreferencesRepository(private val preferences: Preferences) {
-
+class PreferencesRepository(
+    private val preferences: Preferences
+    ) {
     fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
 
@@ -29,16 +32,30 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.pressureUnit = unit
     }
 
-    fun getGatewayUrl(): String =
-        preferences.gatewayUrl
+    fun getDataForwardingUrl(): String =
+        preferences.dataForwardingUrl
 
-    fun setGatewayUrl(gatewayUrl: String) {
-        preferences.gatewayUrl = gatewayUrl
+    fun setDataForwardingUrl(url: String) {
+        preferences.dataForwardingUrl = url
+    }
+
+    fun getDataForwardingLocationEnabled(): Boolean =
+            preferences.dataForwardingLocationEnabled
+
+    fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
+        preferences.dataForwardingLocationEnabled = locationEnabled
+    }
+
+    fun getDataForwardingDuringSyncEnabled(): Boolean =
+            preferences.dataForwardingDuringSyncEnabled
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        preferences.dataForwardingDuringSyncEnabled = forwardingDuringSyncEnabled
     }
 
     fun getDeviceId(): String {
         var deviceId = preferences.deviceId
-        if(deviceId.isEmpty()){
+        if (deviceId.isEmpty()) {
             deviceId = DeviceIdGenerator.generateId()
             setDeviceId(deviceId)
         }
@@ -50,7 +67,7 @@ class PreferencesRepository(private val preferences: Preferences) {
     }
 
     fun saveUrlAndDeviceId(url: String, deviceId: String) {
-        preferences.gatewayUrl = url
+        preferences.dataForwardingUrl = url
         preferences.deviceId = deviceId
     }
 
@@ -102,11 +119,11 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.graphPointInterval = newInterval
     }
 
-    fun getGraphViewPeriod(): Int =
-        preferences.graphViewPeriod
+    fun getGraphViewPeriodDays(): Int =
+        preferences.graphViewPeriodDays
 
-    fun setGraphViewPeriod(newPeriod: Int) {
-        preferences.graphViewPeriod = newPeriod
+    fun setGraphViewPeriodDays(newPeriod: Int) {
+        preferences.graphViewPeriodDays = newPeriod
     }
 
     fun isFirstGraphVisit(): Boolean =
@@ -116,17 +133,66 @@ class PreferencesRepository(private val preferences: Preferences) {
         preferences.isFirstGraphVisit = isFirst
     }
 
+    fun isExperimentalFeaturesEnabled(): Boolean =
+        preferences.experimentalFeatures
+
+    fun setIsExperimentalFeaturesEnabled(experimentalEnabled: Boolean) {
+        preferences.experimentalFeatures = experimentalEnabled
+    }
+
     fun isFirstStart(): Boolean =
         preferences.isFirstStart
 
-    fun setFirstStart(isFirstStart: Boolean){
+    fun setFirstStart(isFirstStart: Boolean) {
         preferences.isFirstStart = isFirstStart
     }
+
+    fun getLastSyncDate(): Long =
+        preferences.lastSyncDate
+
+    fun setLastSyncDate(lastSyncDate: Long) {
+        preferences.lastSyncDate = lastSyncDate
+    }
+
+    fun getUserEmailLiveData() = preferences.getUserEmailLiveData()
+
+    fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
+
+    fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
 
     fun getLocale(): String =
         preferences.locale
 
     fun setLocale(locale: String) {
         preferences.locale = locale
+    }
+
+    fun getUserEmail() = preferences.networkEmail
+
+    fun signedIn() = preferences.networkEmail.isNotEmpty() && preferences.networkToken.isNotEmpty()
+
+    fun getRequestForReviewDate() = preferences.requestForReviewDate
+
+    fun updateRequestForReviewDate() {
+        preferences.requestForReviewDate = Date().time
+    }
+
+    fun getRequestForAppUpdateDate() = preferences.requestForAppUpdateDate
+
+    fun updateRequestForAppUpdateDate() {
+        preferences.requestForAppUpdateDate = Date().time
+    }
+
+    fun isCloudModeEnabled(): Boolean =
+        preferences.cloudModeEnabled
+
+    fun setIsCloudModeEnabled(isEnabled: Boolean) {
+        preferences.cloudModeEnabled = isEnabled
+    }
+
+    fun getDarkMode(): DarkModeState = preferences.darkMode
+
+    fun updateDarkMode(darkMode: DarkModeState) {
+        preferences.darkMode = darkMode
     }
 }

@@ -5,7 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
-import com.ruuvi.station.database.tables.Alarm
+import com.ruuvi.station.database.domain.AlarmRepository
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.generic.instance
@@ -13,18 +14,22 @@ import org.kodein.di.generic.instance
 class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
 
     override lateinit var kodein: Kodein
+    private val alarmRepository: AlarmRepository by instance()
+    private val networkInteractor: RuuviNetworkInteractor by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
-        kodein = (context?.applicationContext as KodeinAware).kodein
+        kodein = (context.applicationContext as KodeinAware).kodein
         val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
 
         val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)
         val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
         if (alarmId != -1) {
-            val alarm = Alarm.get(alarmId)
+            val alarm = alarmRepository.getById(alarmId)
             if (alarm != null) {
-                alarm.enabled = false
-                alarm.update()
+                alarmRepository.disableAlarm(alarm)
+                if (networkInteractor.signedIn) {
+                    networkInteractor.setAlert(alarm)
+                }
             }
         }
         alarmCheckInteractor.removeNotificationById(notificationId)
@@ -37,7 +42,7 @@ class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
             val cancelIntent = Intent(context, CancelAlarmReceiver::class.java)
             cancelIntent.putExtra("alarmId", alarmId)
             cancelIntent.putExtra("notificationId", alarmId)
-            return PendingIntent.getBroadcast(context, alarmId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            return PendingIntent.getBroadcast(context, alarmId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

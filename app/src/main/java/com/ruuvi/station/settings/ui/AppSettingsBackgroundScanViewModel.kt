@@ -3,15 +3,16 @@ package com.ruuvi.station.settings.ui
 import androidx.lifecycle.ViewModel
 import android.os.Build
 import com.ruuvi.station.R
+import com.ruuvi.station.app.domain.PowerManagerInterator
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.*
 
-@ExperimentalCoroutinesApi
 class AppSettingsBackgroundScanViewModel(
-    private val interactor: AppSettingsInteractor
+    private val interactor: AppSettingsInteractor,
+    private val powerManagerInterator: PowerManagerInterator
 ) : ViewModel() {
 
     private val scanMode = MutableStateFlow<BackgroundScanModes?>(null)
@@ -20,13 +21,13 @@ class AppSettingsBackgroundScanViewModel(
     private val interval = MutableStateFlow(0)
     val intervalFlow: StateFlow<Int?> = interval
 
+    val showOptimizationTips: StateFlow<Boolean> =
+        MutableStateFlow(!powerManagerInterator.isIgnoringBatteryOptimizations())
+
     init {
         scanMode.value = interactor.getBackgroundScanMode()
         interval.value = interactor.getBackgroundScanInterval()
     }
-
-    fun setBackgroundMode(mode: BackgroundScanModes) =
-        interactor.setBackgroundScanMode(mode)
 
     fun setBackgroundScanInterval(newInterval: Int) =
         interactor.setBackgroundScanInterval(newInterval)
@@ -37,7 +38,7 @@ class AppSettingsBackgroundScanViewModel(
     )
 
     fun getBatteryOptimizationMessageId(): Int {
-        val deviceManufacturer = Build.MANUFACTURER.toUpperCase()
+        val deviceManufacturer = Build.MANUFACTURER.uppercase(Locale.getDefault())
         val deviceApi = Build.VERSION.SDK_INT
 
         return when (deviceManufacturer) {
@@ -51,6 +52,14 @@ class AppSettingsBackgroundScanViewModel(
             HUAWEI_MANUFACTURER -> R.string.settings_background_battery_optimization_huawei_instructions
             else -> R.string.settings_background_battery_optimization_common_instructions
         }
+    }
+
+    fun setBackgroundScanEnabled(enabled: Boolean) {
+        interactor.setBackgroundScanMode(if (enabled) BackgroundScanModes.BACKGROUND else BackgroundScanModes.DISABLED)
+    }
+
+    fun openOptimizationSettings() {
+        powerManagerInterator.openOptimizationSettings()
     }
 
     companion object {

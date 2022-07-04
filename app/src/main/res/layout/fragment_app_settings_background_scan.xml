@@ -3,145 +3,97 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
-    android:layout_marginStart="16dp"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:paddingBottom="12dp"
-    android:paddingTop="12dp">
+    android:paddingEnd="@dimen/screenEnd"
+    android:paddingStart="@dimen/screenStart"
+    android:paddingBottom="@dimen/screenBottom"
+    android:paddingTop="@dimen/screenTop">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/titleTextView"
-        style="@style/PrefTitleText"
+        style="@style/Subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/settings_background_scan"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/optionsRadioGroup"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/backgroundSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+        android:textSize="16sp"
+        style="@style/SwitchStyle.WithPadding"
+        android:text="@string/background_scanning"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/settingsDescriptionTextView"
+    <TextView
+        android:id="@+id/backgroundIntervalTitleTextView"
+        style="@style/Subtitle.WithPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/settings_background_scan_interval"
+        app:layout_constraintTop_toBottomOf="@+id/backgroundSwitch"
+        />
+
+    <com.ruuvi.station.util.ui.CustomNumberEdit
+        android:id="@+id/intervalEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/backgroundIntervalTitleTextView"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/optimizationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/intervalEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/optionsRadioGroup"
-        tools:text="@string/settings_background_scan_details_continuous" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/duration_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingTop="12dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settingsDescriptionTextView">
-
-        <LinearLayout
-            android:id="@+id/duration_info_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/PrefTitleText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/settings_background_scan_interval" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/duration_container"
+        <TextView
+            android:id="@+id/attentionTextView"
+            style="@style/Subtitle.WithPadding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/duration_info_layout"
-            android:baselineAligned="false">
+            android:layout_marginTop="@dimen/normal"
+            android:text="@string/settings_background_battery_optimization_title"
+            android:textSize="16sp" />
 
-            <LinearLayout
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/batteryOptimizationAlertTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_background_battery_optimization"
+            style="@style/Paragraph.WithPadding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/minutes" />
+        <TextView
+            android:id="@+id/settingsInstructionsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Paragraph.WithPadding"
+            android:text="@string/settings_background_battery_optimization_common_instructions" />
 
-                <NumberPicker
-                    android:id="@+id/durationMinutesPicker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/minutes"
-                    android:tooltipText="Minutes" />
-            </LinearLayout>
+        <Button
+            android:id="@+id/openSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/RoundButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/big"
+            android:text="@string/open_settings" />
+    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/seconds" />
-
-                <NumberPicker
-                    android:id="@+id/durationSecondsPicker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:tooltipText="@string/seconds" />
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/attentionTextView"
-        style="@style/PrefTitleText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_background_battery_optimization_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/duration_picker" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/batteryOptimizationAlertTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_background_battery_optimization"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attentionTextView" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/settingsInstructionsTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/settings_background_battery_optimization_common_instructions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/batteryOptimizationAlertTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

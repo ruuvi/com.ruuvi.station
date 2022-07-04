@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme.AppWidgetContainer"
+    tools:layout_height="200dp"
+    tools:layout_width="350dp">
+
+    <RelativeLayout
+        android:id="@+id/complexWidgetLayout"
+        style="@style/Widget.Comruuvistation.AppWidget.InnerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_height="200dp"
+        tools:layout_width="350dp">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="2dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_2021"
+            android:tint="?attr/colorPrimary"
+            android:tintMode="src_in"
+            tools:ignore="UseAppTint" />
+
+        <ImageView
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_widget_d_update"
+            android:tint="?attr/colorOnSecondary"
+            android:tintMode="src_in"
+            tools:ignore="UseAppTint" />
+
+        <ImageView
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/refreshButton"
+            android:padding="8dp"
+            android:src="@drawable/ic_widget_d_add"
+            android:tint="?attr/colorOnSecondary"
+            android:tintMode="src_in"
+            tools:ignore="UseAppTint" />
+
+        <ListView
+            android:id="@+id/sensorsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/logoImageView"
+            android:gravity="center"
+            android:loopViews="true"
+            android:dividerHeight="0dp"
+            android:divider="@color/ap_transparent"
+            tools:listitem="@layout/widget_complex_item" />
+
+        <TextView
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/widget_empty"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</RelativeLayout>

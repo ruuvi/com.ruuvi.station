@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/itemTitleTextView"
+        tools:text="Temperature"
+        style="@style/SensorSettingSubtitleStyle" />
+
+    <TextView
+        android:id="@+id/itemValueTextView"
+        style="@style/SensorSettingValueStyle"
+        tools:text="-0.52 °C"
+        android:drawablePadding="@dimen/drawable_padding"
+        app:drawableEndCompat="@drawable/arrow_forward_16" />
+</merge>

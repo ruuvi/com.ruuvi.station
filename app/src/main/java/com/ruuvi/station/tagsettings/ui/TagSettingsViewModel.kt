@@ -1,87 +1,177 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
-import com.ruuvi.station.database.tables.Alarm
+import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.database.tables.isLowBattery
+import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import java.util.ArrayList
+import com.ruuvi.station.util.ui.UiText
+import kotlinx.coroutines.*
+import timber.log.Timber
+import java.util.*
 
-@ExperimentalCoroutinesApi
 class TagSettingsViewModel(
-    val tagId: String,
+    val sensorId: String,
     private val interactor: TagSettingsInteractor,
-    private val alarmCheckInteractor: AlarmCheckInteractor
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val alarmRepository: AlarmRepository,
+    private val sensorFwInteractor: SensorFwVersionInteractor
 ) : ViewModel() {
-
-    var tagAlarms: List<Alarm> = Alarm.getForTag(tagId)
-    var alarmItems: MutableList<TagSettingsActivity.AlarmItem> = ArrayList()
+    var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
 
-    private val tagState = MutableStateFlow<RuuviTagEntity?>(null)
-    val tagFlow: StateFlow<RuuviTagEntity?> = tagState
+    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
+
+    private val _tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
+    val tagState: LiveData<RuuviTagEntity?> = _tagState
+
+    private val sensorSettings = MutableLiveData<SensorSettings?>()
+    val sensorSettingsObserve: LiveData<SensorSettings?> = sensorSettings
+
+    private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
+    val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
+
+    private val sensorShared = MutableLiveData<Boolean> (false)
+    val sensorSharedObserve: LiveData<Boolean> = sensorShared
+
+    private val operationStatus = MutableLiveData<String> ("")
+    val operationStatusObserve: LiveData<String> = operationStatus
+
+    val isLowBattery = Transformations.map(_tagState) {
+        it?.isLowBattery() ?: false
+    }
+
+    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
+        it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
+    }
+
+    val sensorOwnedOrOfflineObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
+        it?.networkSensor == false || it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
+    }
+
+    val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()
 
     init {
-        getTagInfo()
+        Timber.d("TagSettingsViewModel $sensorId")
+        firmware.addSource(_tagState) { firmware.value = getFirmware() }
+        firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
+    }
+
+    private fun getFirmware(): UiText? {
+        val firmware = sensorSettings.value?.firmware
+
+        if (firmware.isNullOrEmpty() && _tagState.value?.dataFormat != 5) {
+            return UiText.StringResource(R.string.firmware_very_old)
+        }
+        return firmware?.let { UiText.DynamicString(firmware) }
     }
 
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
-            tagState.value = getTagById(tagId)
+            val tagInfo = getTagById(sensorId)
+            val settings = interactor.getSensorSettings(sensorId)
+            withContext(Dispatchers.Main) {
+                _tagState.value = tagInfo
+                sensorSettings.value = settings
+            }
+        }
+    }
+
+    fun updateSensorFirmwareVersion() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val tagInfo = getTagById(sensorId)
+            val settings = interactor.getSensorSettings(sensorId)
+            if (settings?.firmware.isNullOrEmpty() && tagInfo?.connectable == true) {
+                val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
+                if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
+                    interactor.setSensorFirmware(sensorId, fwResult.fw)
+                }
+            }
+        }
+    }
+
+    fun checkIfSensorShared() {
+        getSensorSharedEmails()
+
+    }
+
+    private val handler = CoroutineExceptionHandler() { _, exception ->
+        CoroutineScope(Dispatchers.Main).launch {
+            operationStatus.value = exception.message
+            Timber.d("CoroutineExceptionHandler: ${exception.message}")
+        }
+    }
+
+    fun getSensorSharedEmails() {
+        networkInteractor.getSharedInfo(sensorId, handler) { response ->
+            Timber.d("getSensorSharedEmails ${response.toString()}")
+            sensorShared.value = response?.sharedTo?.isNotEmpty() == true
         }
     }
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun updateTag(tag: RuuviTagEntity) =
-        interactor.updateTag(tag)
+    fun updateNetworkStatus() {
+        networkStatus.value = networkInteractor.getSensorNetworkStatus(sensorId)
+    }
 
-    fun deleteTag(tag: RuuviTagEntity) =
+    fun deleteTag(tag: RuuviTagEntity) {
         interactor.deleteTagsAndRelatives(tag)
+    }
 
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagName(name: String?) = CoroutineScope(Dispatchers.IO).launch {
-        interactor.updateTagName(tagId, name)
+    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
+        interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
+        if (userBackground.isNullOrEmpty() == false) {
+            networkInteractor.uploadImage(sensorId, userBackground)
+        } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
+            networkInteractor.resetImage(sensorId)
+        }
     }
 
-    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) = CoroutineScope(Dispatchers.IO).launch {
-        interactor.updateTagBackground(tagId, userBackground, defaultBackground)
+    fun statusProcessed() { operationStatus.value = "" }
+
+    fun setName(name: String?) {
+        interactor.updateTagName(sensorId, name)
+        getTagInfo()
+        networkInteractor.updateSensorName(sensorId)
     }
 
-    fun saveOrUpdateAlarmItems() {
-        for (alarmItem in alarmItems) {
-            if (alarmItem.isChecked || alarmItem.low != alarmItem.min || alarmItem.high != alarmItem.max) {
-                if (alarmItem.alarm == null) {
-                    alarmItem.alarm = Alarm(alarmItem.low, alarmItem.high, alarmItem.type, tagId, alarmItem.customDescription, alarmItem.mutedTill)
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
-                    alarmItem.alarm?.save()
-                } else {
-                    alarmItem.alarm?.enabled = alarmItem.isChecked
-                    alarmItem.alarm?.low = alarmItem.low
-                    alarmItem.alarm?.high = alarmItem.high
-                    alarmItem.alarm?.customDescription = alarmItem.customDescription
-                    alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                    alarmItem.alarm?.update()
-                }
-            } else if (alarmItem.alarm != null) {
-                alarmItem.alarm?.enabled = false
-                alarmItem.alarm?.mutedTill = alarmItem.mutedTill
-                alarmItem.alarm?.update()
-            }
-            if (!alarmItem.isChecked) {
-                val notificationId = alarmItem.alarm?.id ?: -1
-                removeNotificationById(notificationId)
+    fun setupAlarmElements() {
+        alarmElements.clear()
+
+        with(alarmElements) {
+            add(AlarmElement.getTemperatureAlarmElement(sensorId))
+            add(AlarmElement.getHumidityAlarmElement(sensorId))
+            add(AlarmElement.getPressureAlarmElement(sensorId))
+            add(AlarmElement.getRssiAlarmElement(sensorId))
+            add(AlarmElement.getMovementAlarmElement(sensorId))
+        }
+
+        val dbAlarms = alarmRepository.getForSensor(sensorId)
+        for (alarm in dbAlarms) {
+            val item = alarmElements.firstOrNull { it.type.value == alarm.type }
+            item?.let {
+                item.high = alarm.high
+                item.low = alarm.low
+                item.isEnabled = alarm.enabled
+                item.customDescription = alarm.customDescription
+                item.mutedTill = alarm.mutedTill
+                item.alarm = alarm
+                item.normalizeValues()
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.ruuvi.station.dashboard.ui
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -10,72 +9,68 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.describingTimeSince
-import kotlinx.android.synthetic.main.item_dashboard.view.bell
-import kotlinx.android.synthetic.main.item_dashboard.view.dashboardContainer
-import kotlinx.android.synthetic.main.item_dashboard.view.deviceId
-import kotlinx.android.synthetic.main.item_dashboard.view.humidity
-import kotlinx.android.synthetic.main.item_dashboard.view.lastSeenTextView
-import kotlinx.android.synthetic.main.item_dashboard.view.letterImage
-import kotlinx.android.synthetic.main.item_dashboard.view.pressure
-import kotlinx.android.synthetic.main.item_dashboard.view.signal
-import kotlinx.android.synthetic.main.item_dashboard.view.temperature
 
 class RuuviTagAdapter(
     private val activity: AppCompatActivity,
-    items: List<RuuviTag>,
-    private val converter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val movementConverter: MovementConverter,
+    items: List<RuuviTag>
 ) : ArrayAdapter<RuuviTag>(activity, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val item = getItem(position)
-        val view =
-            convertView ?: LayoutInflater.from(context).inflate(R.layout.item_dashboard, parent, false)
-
-        view.dashboardContainer.tag = item
+        val binding = if (convertView != null) {
+            ItemDashboardBinding.bind(convertView)
+        } else {
+            ItemDashboardBinding.inflate(LayoutInflater.from(context), parent, false)
+        }
+        binding.dashboardContainer.tag = item
 
         item?.let {
-            view.deviceId.text = it.displayName
-            view.temperature.text = it.temperatureString
-            view.humidity.text = converter.getHumidityString(it.humidity, it.temperature)
-            view.pressure.text = converter.getPressureString(it.pressure)
-            view.signal.text = converter.getSignalString(it.rssi)
+            binding.deviceId.text = it.displayName
+            binding.temperature.text = unitsConverter.getTemperatureStringWithoutUnit(it.temperature)
+            binding.temperatureUnit.text = activity.getText(unitsConverter.getTemperatureUnit().unit)
+            binding.humidity.text = unitsConverter.getHumidityStringWithoutUnit(it.humidity, it.temperature)
+            binding.humidityUnit.text = if (it.humidity != null) activity.getText(unitsConverter.getHumidityUnit().unit) else ""
+            binding.pressure.text = unitsConverter.getPressureStringWithoutUnit(it.pressure)
+            binding.pressureUnit.text = if (it.pressure != null) activity.getText(unitsConverter.getPressureUnit().unit) else ""
+            binding.movement.text =   movementConverter.getMovementStringWithoutUnit(it.movementCounter)
+            binding.movementUnit.text = if (it.movementCounter != null) activity.getText(R.string.movements) else ""
         }
 
-        val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight
+        val ballColorRes = if (position % 2 == 0) R.color.keppel else R.color.elm
         val ballRadius = context.resources.getDimension(R.dimen.letter_ball_radius).toInt()
         val ballColor = ContextCompat.getColor(context, ballColorRes)
 
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val letterSize = 33 * displayMetrics.scaledDensity
+        val letterSize = 28 * displayMetrics.scaledDensity
 
-        val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, view.deviceId.text.toString(), letterSize)
-        view.letterImage.setImageBitmap(ballBitmap)
+        val ballBitmap = Utils.createBall(activity, ballRadius, ballColor, Color.WHITE, binding.deviceId.text.toString(), letterSize)
+        binding.letterImage.setImageBitmap(ballBitmap)
 
-        val updatedAt =
-            context.getString(R.string.updated, item?.updatedAt?.describingTimeSince(activity))
-        view.lastSeenTextView.text = updatedAt
+        val updatedAt = item?.updatedAt?.describingTimeSince(activity)
+        binding.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM
-        val (isVisible, iconResource) =
+        val (isVisible, iconResource, alpha) =
             when (status) {
-                AlarmStatus.NO_ALARM -> true to R.drawable.ic_notifications_off_24px
-                AlarmStatus.NO_TRIGGERED -> true to R.drawable.ic_notifications_on_24px
-                AlarmStatus.TRIGGERED -> !view.bell.isVisible to R.drawable.ic_notifications_active_24px
+                AlarmStatus.NO_ALARM -> Triple(true, R.drawable.ic_notifications_off_24px, 0.5f)
+                AlarmStatus.NO_TRIGGERED -> Triple(true, R.drawable.ic_notifications_on_24px, 1f)
+                AlarmStatus.TRIGGERED -> Triple(!binding.bell.isVisible, R.drawable.ic_notifications_active_24px, 1f)
             }
-        view.bell.isVisible = isVisible
-        view.bell.setImageResource(iconResource)
+        binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
+        binding.bell.setImageResource(iconResource)
+        binding.bell.alpha = alpha
 
-        val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main))
-        ImageViewCompat.setImageTintList(view.bell, colorStateList)
-
-        return view
+        return binding.root
     }
 }

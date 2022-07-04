@@ -11,7 +11,7 @@ import java.util.*
  * The one and only constructor
  * @param minimumIntervalMilliseconds The minimum allowed time between clicks - any click sooner than this after a previous click will be rejected
  */
-abstract class DebouncedOnClickListener(private val minimumIntervalMilliseconds: Long = 300) : View.OnClickListener {
+abstract class DebouncedOnClickListener(private val minimumIntervalMilliseconds: Long = 500) : View.OnClickListener {
 
     private val lastClickMap: MutableMap<View, Long> = WeakHashMap()
 

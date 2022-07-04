@@ -22,6 +22,8 @@ class AppSettingsGraphViewModel(
     private val drawDots = MutableStateFlow(interactor.graphDrawDots())
     val drawDotsFlow: StateFlow<Boolean> = drawDots
 
+    private var graphViewPeriodPreviousValue: Int = -1
+
     init {
         viewModelScope.launch {
             pointInterval.send(interactor.getGraphPointInterval())
@@ -36,16 +38,25 @@ class AppSettingsGraphViewModel(
     fun setPointInterval(newInterval: Int) =
         interactor.setGraphPointInterval(newInterval)
 
-    fun setViewPeriod(newPeriod: Int) =
+    fun setViewPeriod(newPeriod: Int) {
         interactor.setGraphViewPeriod(newPeriod)
+    }
 
     fun setShowAllPoints(isChecked: Boolean) {
         interactor.setIsShowAllGraphPoint(isChecked)
-        showAllPoints.value = isChecked
     }
 
     fun setDrawDots(isChecked: Boolean) {
         interactor.setGraphDrawDots(isChecked)
-        drawDots.value = isChecked
+    }
+
+    fun startEdit() {
+        graphViewPeriodPreviousValue = interactor.getGraphViewPeriod()
+    }
+
+    fun stopEdit() {
+        if (graphViewPeriodPreviousValue < interactor.getGraphViewPeriod()) {
+            interactor.clearLastSync()
+        }
     }
 }

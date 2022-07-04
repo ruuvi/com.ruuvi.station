@@ -2,7 +2,9 @@ package com.ruuvi.station.app.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -11,7 +13,11 @@ import java.util.*
 
 class Preferences constructor(val context: Context) {
 
-    private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val sharedPreferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(
+            context
+        )
+    }
 
     var backgroundScanInterval: Int
         get() = sharedPreferences.getInt(PREF_BACKGROUND_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
@@ -20,7 +26,12 @@ class Preferences constructor(val context: Context) {
         }
 
     var backgroundScanMode: BackgroundScanModes
-        get() = BackgroundScanModes.fromInt(sharedPreferences.getInt(PREF_BACKGROUND_SCAN_MODE, BackgroundScanModes.DISABLED.value))
+        get() = BackgroundScanModes.fromInt(
+            sharedPreferences.getInt(
+                PREF_BACKGROUND_SCAN_MODE,
+                BackgroundScanModes.DISABLED.value
+            )
+        )
             ?: BackgroundScanModes.DISABLED
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
@@ -40,7 +51,10 @@ class Preferences constructor(val context: Context) {
 
     var temperatureUnit: TemperatureUnit
         get() {
-            return when (sharedPreferences.getString(PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)) {
+            return when (sharedPreferences.getString(
+                PREF_TEMPERATURE_UNIT,
+                DEFAULT_TEMPERATURE_UNIT
+            )) {
                 "C" -> TemperatureUnit.CELSIUS
                 "F" -> TemperatureUnit.FAHRENHEIT
                 "K" -> TemperatureUnit.KELVIN
@@ -78,11 +92,25 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
         }
 
-    var gatewayUrl: String
-        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_GATEWAY_URL)
-            ?: DEFAULT_GATEWAY_URL
+    var dataForwardingUrl: String
+        get() = sharedPreferences.getString(PREF_BACKEND, DEFAULT_DATA_FORWARDING_URL)
+            ?: DEFAULT_DATA_FORWARDING_URL
         set(url) {
             sharedPreferences.edit().putString(PREF_BACKEND, url).apply()
+        }
+
+    var dataForwardingLocationEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BACKEND_LOCATION, false)
+        set(locationEnabled) {
+            sharedPreferences.edit().putBoolean(PREF_BACKEND_LOCATION, locationEnabled).apply()
+        }
+
+    var dataForwardingDuringSyncEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BACKEND_FORWARDING_DURING_SYNC, false)
+        set(forwardingDuringSyncEnabled) {
+            sharedPreferences.edit()
+                .putBoolean(PREF_BACKEND_FORWARDING_DURING_SYNC, forwardingDuringSyncEnabled)
+                .apply()
         }
 
     var deviceId: String
@@ -123,8 +151,22 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
 
+    // chart view period (in days)
+    var graphViewPeriodDays: Int
+        get() = sharedPreferences.getInt(
+            PREF_GRAPH_VIEW_PERIOD_DAYS,
+            DEFAULT_GRAPH_VIEW_PERIOD_DAYS
+        )
+        set(period) {
+            sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD_DAYS, period).apply()
+        }
+
+
     var graphShowAllPoint: Boolean
-        get() = sharedPreferences.getBoolean(PREF_GRAPH_SHOW_ALL_POINTS, DEFAULT_GRAPH_SHOW_ALL_POINTS)
+        get() = sharedPreferences.getBoolean(
+            PREF_GRAPH_SHOW_ALL_POINTS,
+            DEFAULT_GRAPH_SHOW_ALL_POINTS
+        )
         set(showAllPoints) {
             sharedPreferences.edit().putBoolean(PREF_GRAPH_SHOW_ALL_POINTS, showAllPoints).apply()
         }
@@ -145,7 +187,7 @@ class Preferences constructor(val context: Context) {
                 } else {
                     preferenceLocale = DEFAULT_LOCALE
                 }
-                preferenceLocale?.let{
+                preferenceLocale?.let {
                     locale = preferenceLocale
                 }
             }
@@ -155,8 +197,79 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_LOCALE, locale).apply()
         }
 
+    var networkEmail: String
+        get() = sharedPreferences.getString(PREF_NETWORK_EMAIL, "") ?: ""
+        set(email) {
+            sharedPreferences.edit().putString(PREF_NETWORK_EMAIL, email).apply()
+        }
+
+    var networkToken: String
+        get() = sharedPreferences.getString(PREF_NETWORK_TOKEN, "") ?: ""
+        set(token) {
+            sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
+        }
+
+    var lastSyncDate: Long
+        get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+        set(syncDate) {
+            sharedPreferences.edit().putLong(PREF_LAST_SYNC_DATE, syncDate).apply()
+        }
+
+    var experimentalFeatures: Boolean
+        get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
+        set(experimentalFeatures) {
+            sharedPreferences.edit().putBoolean(PREF_EXPERIMENTAL_FEATURES, experimentalFeatures)
+                .apply()
+        }
+
+    var requestForReviewDate: Long
+        get() = sharedPreferences.getLong(
+            PREF_REQUEST_FOR_REVIEW_DATE,
+            DEFAULT_REQUEST_FOR_REVIEW_DATE
+        )
+        set(requestDate) {
+            sharedPreferences.edit().putLong(PREF_REQUEST_FOR_REVIEW_DATE, requestDate).apply()
+        }
+
+    var requestForAppUpdateDate: Long
+        get() = sharedPreferences.getLong(
+            PREF_LAST_APP_UPDATE_REQUEST,
+            DEFAULT_REQUEST_FOR_APP_UPDATE_DATE
+        )
+        set(requestDate) {
+            sharedPreferences.edit().putLong(PREF_LAST_APP_UPDATE_REQUEST, requestDate).apply()
+        }
+
+    var cloudModeEnabled: Boolean
+        get() = sharedPreferences.getBoolean(PREF_CLOUD_MODE, false)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_CLOUD_MODE, enabled).apply()
+        }
+
+    var darkMode: DarkModeState
+        get() {
+            return when (sharedPreferences.getInt(PREF_DARKMODE, DEFAULT_DARKMODE)) {
+                DarkModeState.SYSTEM_THEME.code -> DarkModeState.SYSTEM_THEME
+                DarkModeState.DARK_THEME.code -> DarkModeState.DARK_THEME
+                DarkModeState.LIGHT_THEME.code -> DarkModeState.LIGHT_THEME
+                else -> DarkModeState.SYSTEM_THEME
+            }
+        }
+    set(darkMode) {
+        sharedPreferences.edit().putInt(PREF_DARKMODE, darkMode.code).apply()
+    }
+
+    fun getUserEmailLiveData() =
+        SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
+
+    fun getLastSyncDateLiveData() =
+        SharedPreferenceLongLiveData(sharedPreferences, PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
+
+    fun getExperimentalFeaturesLiveData() =
+        SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
+
     companion object {
-        private const val DEFAULT_SCAN_INTERVAL = 15 * 60
+        private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
         private const val PREF_FIRST_START = "FIRST_START_PREF"
@@ -165,24 +278,40 @@ class Preferences constructor(val context: Context) {
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
         private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
         private const val PREF_BACKEND = "pref_backend"
+        private const val PREF_BACKEND_LOCATION = "pref_backend_location"
+        private const val PREF_BACKEND_FORWARDING_DURING_SYNC =
+            "pref_backend_forwarding_during_sync"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_DASHBOARD_ENABLED = "DASHBOARD_ENABLED_PREF"
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
         private const val PREF_LOCALE = "pref_locale"
+        private const val PREF_NETWORK_EMAIL = "pref_network_email"
+        private const val PREF_NETWORK_TOKEN = "pref_network_token"
+        private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
+        private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
+        private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
+        private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
+        private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
+        private const val PREF_DARKMODE = "pref_darkmode"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
-        private const val DEFAULT_GATEWAY_URL = ""
+        private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
         private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
-        private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = true
+        private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
+        private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
+        private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
+        private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
+        private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
     }
 }

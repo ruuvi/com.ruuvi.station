@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.Manifest
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.app.PendingIntent
@@ -12,31 +11,32 @@ import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.TaskStackBuilder
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -44,33 +44,39 @@ import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
 import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
 import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.feature.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.app.review.ReviewManagerInteractor
+import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.util.PermissionsHelper
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
-import kotlinx.android.synthetic.main.activity_tag_details.imageSwitcher
-import kotlinx.android.synthetic.main.activity_tag_details.mainDrawerLayout
-import kotlinx.android.synthetic.main.activity_tag_details.tag_background_view
-import kotlinx.android.synthetic.main.activity_tag_details.toolbar
-import kotlinx.android.synthetic.main.content_tag_details.noTagsTextView
-import kotlinx.android.synthetic.main.content_tag_details.pagerTitleStrip
-import kotlinx.android.synthetic.main.content_tag_details.tagPager
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
-class TagDetailsActivity : AppCompatActivity(), KodeinAware {
+class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
+
+    private lateinit var binding: ActivityTagDetailsBinding
 
     private val viewModel: TagDetailsViewModel by viewModel {
         TagDetailsArguments(
@@ -83,17 +89,33 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         TagsFragmentPagerAdapter(supportFragmentManager)
     }
 
+    private val runtimeBehavior: RuntimeBehavior by instance()
     private val preferencesRepository: PreferencesRepository by instance()
+    private val reviewManagerInteractor: ReviewManagerInteractor by instance()
+
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private val permissionsHelper = PermissionsHelper(this)
+    private lateinit var permissionsInteractor: PermissionsInteractor
+
     private var tagPagerScrolling = false
     private var timer: Timer? = null
+    private var signedIn = false
 
+    private val appUpdateManager: AppUpdateManager by lazy {
+        AppUpdateManagerFactory.create(this)
+    }
+
+    private val listener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            showUpdateSnackbar()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tag_details)
+        binding = ActivityTagDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        permissionsInteractor = PermissionsInteractor(this)
 
         setupViewModel()
         setupUI()
@@ -102,24 +124,86 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             AddTagActivity.start(this)
             viewModel.openAddView = false
             return
-        }
-        if (permissionsHelper.arePermissionsGranted() && preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-            permissionsHelper.requestBackgroundPermission()
         } else {
-            permissionsHelper.requestPermissions()
+            reviewManagerInteractor.requestReview(this)
+        }
+
+        requestPermission()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        val previousRequestDate = preferencesRepository.getRequestForAppUpdateDate()
+        val daysSinceRequest = abs(TimeUnit.MILLISECONDS.toDays(Date().time - Date(previousRequestDate).time))
+
+        appUpdateManager.registerListener(listener)
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= UPDATE_STALENESS_DAYS
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                && daysSinceRequest >= UPDATE_REQUEST_REPEAT_DAYS
+            ) {
+                preferencesRepository.updateRequestForAppUpdateDate()
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    UPDATE_REQUEST_CODE)
+            } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                showUpdateSnackbar()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
+            requestPermission()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.unregisterListener(listener)
+    }
+
+    private fun showUpdateSnackbar() {
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            getText(R.string.update_downloaded_message),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getText(R.string.update_action)) { appUpdateManager.completeUpdate() }
+            show()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestPermission()
+                    if (viewModel.openAddView) binding.content.noTagsTextView.callOnClick()
+                } else {
+                    permissionsInteractor.showPermissionSnackbar()
+                }
+            }
         }
     }
 
     private fun setupUI() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_white)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
-        noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
+        binding.content.noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
-        imageSwitcher.setFactory {
-            val imageView = AppCompatImageView(applicationContext)
+        binding.imageSwitcher.setFactory {
+            val imageView = ImageView(applicationContext)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -129,14 +213,14 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
         if (viewModel.dashboardEnabled) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         } else {
             setupDrawer()
         }
 
-        tagPager.adapter = adapter
-        tagPager.offscreenPageLimit = 1
-        tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.content.tagPager.adapter = adapter
+        binding.content.tagPager.offscreenPageLimit = 1
+        binding.content.tagPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(position: Int, offset: Float, offsetPixels: Int) {
@@ -160,75 +244,78 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun observeTags() {
-        viewModel.tagsObserve.observe(this, Observer {
+        viewModel.tagsObserve.observe(this) {
             setupTags(it)
-        })
+        }
     }
 
     private fun observeAlarmStatus() {
-        viewModel.alarmStatusObserve.observe(this, Observer {
+        viewModel.alarmStatusObserve.observe(this) {
             alarmStatus = it
             invalidateOptionsMenu()
-        })
+        }
     }
 
     private fun observeSelectedTag() {
-        viewModel.selectedTagObserve.observe(this, Observer {
+        viewModel.selectedTagObserve.observe(this) {
             it?.let { setupSelectedTag(it) }
-        })
+        }
     }
 
     private fun listenToShowGraph() {
-        viewModel.isShowGraphObserve.observe(this, Observer {
+        viewModel.isShowGraphObserve.observe(this) {
             animateGraphTransition(it)
-        })
+            binding.darkerBackground.isVisible = it
+        }
     }
 
     private fun setupTags(tags: List<RuuviTag>) {
-        val previousTagsSize = adapter.count
+        val newSensorId = getNewSensor(adapter.getTags(), tags)
+        Timber.d("newSensorId = $newSensorId desiredTag = ${viewModel.desiredTag}")
+        if (newSensorId != null) viewModel.desiredTag = newSensorId
         adapter.setTags(tags)
 
-        val isSizeChanged = previousTagsSize > 0 && tags.size != previousTagsSize
         setupVisibility(tags.isNullOrEmpty())
         if (tags.isNotEmpty()) {
-            if (!viewModel.desiredTag.isNullOrEmpty() && !isSizeChanged) {
-                val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
-                scrollOrCacheCurrentPosition(tagPager.currentItem != index, index)
-            } else {
-                scrollOrCacheCurrentPosition(isSizeChanged, tags.size - 1)
-            }
+            val index = tags.indexOfFirst { tag -> tag.id == viewModel.desiredTag }
+            scrollOrCacheCurrentPosition(binding.content.tagPager.currentItem != index, index)
         }
+    }
+
+    private fun getNewSensor(previousSensors: List<RuuviTag>, newSensors: List<RuuviTag>): String? {
+        if (previousSensors.isNullOrEmpty()) return null
+        return newSensors.firstOrNull { newSens -> previousSensors.none { it.id == newSens.id } }?.id
     }
 
     private fun scrollOrCacheCurrentPosition(shouldScroll: Boolean, scrollToPosition: Int) {
         if (shouldScroll) {
-            tagPager.setCurrentItem(scrollToPosition, false)
+            binding.content.tagPager.setCurrentItem(scrollToPosition, false)
         }
-        viewModel.pageSelected(tagPager.currentItem)
+        viewModel.pageSelected(binding.content.tagPager.currentItem)
     }
 
     private fun setupSelectedTag(selectedTag: RuuviTag) {
         val previousBitmapDrawable = backgrounds[viewModel.getPrevTag()?.id]
         if (previousBitmapDrawable != null) {
-            tag_background_view.setImageDrawable(previousBitmapDrawable)
+            binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
         }
         val bitmap = Utils.getBackground(applicationContext, selectedTag)
         val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
         backgrounds[selectedTag.id] = bitmapDrawable
-        imageSwitcher.setImageDrawable(bitmapDrawable)
+        binding.imageSwitcher.setImageDrawable(bitmapDrawable)
     }
 
     private fun animateGraphTransition(isShowGraph: Boolean) {
-        tagPager.isSwipeEnabled = !isShowGraph
-        pagerTitleStrip.isTabSwitchEnabled = !isShowGraph
+        binding.content.tagPager.isSwipeEnabled = !isShowGraph
+        binding.content.pagerTitleStrip.isTabSwitchEnabled = !isShowGraph
         val textSpacing = if (isShowGraph) MAX_TEXT_SPACING else MIN_TEXT_SPACING
         val (animateFrom, animateTo) =
             if (isShowGraph) MIN_TEXT_SPACING to MAX_TEXT_SPACING else MAX_TEXT_SPACING to MIN_TEXT_SPACING
 
-        if (pagerTitleStrip.textSpacing != textSpacing) {
+        if (binding.content.pagerTitleStrip.textSpacing != textSpacing) {
             val animator = ValueAnimator.ofInt(animateFrom, animateTo)
             animator.addUpdateListener {
-                pagerTitleStrip.textSpacing = animator.animatedValue as Int
+                binding.content.pagerTitleStrip.textSpacing = animator.animatedValue as Int
             }
             animator.start()
         }
@@ -236,38 +323,79 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     private fun setupDrawer() {
         val drawerToggle = ActionBarDrawerToggle(
-            this, mainDrawerLayout, toolbar,
+            this, binding.mainDrawerLayout, binding.toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
 
-        mainDrawerLayout.addDrawerListener(drawerToggle)
+        binding.mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
 
-        drawerListView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            getMainMenuItems()
-        )
+        updateMenu(signedIn)
 
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            mainDrawerLayout.closeDrawers()
-            when (i) {
-                0 -> AddTagActivity.start(this)
-                1 -> AppSettingsActivity.start(this)
-                2 -> AboutActivity.start(this)
-                3 -> SendFeedback()
-                4 -> OpenUrl(WEB_URL)
+        binding.navigationContent.navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
+                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.aboutMenuItem -> AboutActivity.start(this)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(BUY_SENSORS_URL)
+                R.id.getGatewayMenuItem -> openUrl(BUY_GATEWAY_URL)
+                R.id.loginMenuItem -> login(signedIn)
+            }
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
+        }
+
+        viewModel.userEmail.observe(this) {
+            var user = it
+            if (user.isNullOrEmpty()) {
+                user = getString(R.string.none)
+                signedIn = false
+            } else {
+                signedIn = true
+            }
+            updateMenu(signedIn)
+            binding.navigationContent.loggedUserTextView.text = user
+        }
+    }
+
+    private fun login(signedIn: Boolean) {
+        if (signedIn) {
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+            with(builder)
+            {
+                setMessage(getString(R.string.sign_out_confirm))
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    viewModel.signOut()
+                }
+                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                show()
+            }
+        } else {
+            SignInActivity.start(this)
+        }
+    }
+
+    private fun updateMenu(signed: Boolean) {
+        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
+        val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
+        loginMenuItem?.let {
+            it.title = if (signed) {
+                getString(R.string.sign_out)
+            } else {
+                getString(R.string.sign_in)
             }
         }
     }
 
-    @Suppress("DEPRECATION")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (adapter.count > 0) {
             menuInflater.inflate(R.menu.menu_details, menu)
@@ -295,7 +423,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             NO_TRIGGERED -> {
                 // on
                 item.setIcon(R.drawable.ic_notifications_on_24px)
-                item.icon?.alpha = ALARM_ICON_ALPHA
+                item.icon?.alpha = ALARM_ICON_ALPHA_OPAQUE
             }
             TRIGGERED -> {
                 // triggered
@@ -303,7 +431,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                 val drawable = item.icon
                 if (drawable != null) {
                     drawable.mutate()
-                    drawable.alpha = ALARM_ICON_ALPHA
+                    drawable.alpha = ALARM_ICON_ALPHA_OPAQUE
                     val anim = ValueAnimator()
                     anim.setIntValues(1, 0)
                     anim.setEvaluator(IntEvaluator())
@@ -332,8 +460,8 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_graph -> {
                 if (!tagPagerScrolling) {
                     invalidateOptionsMenu()
@@ -341,15 +469,15 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                     val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
-                            val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this).create()
+                            val simpleAlert = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
                             simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
                             simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
-                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
+                            simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
                                 viewModel.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
-                                permissionsHelper.requestBackgroundPermission()
+                                permissionsInteractor.requestBackgroundPermission()
                             }
-                            simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
+                            simpleAlert.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ ->
                             }
                             simpleAlert.setOnDismissListener {
                                 viewModel.setIsFirstGraphVisit(false)
@@ -358,6 +486,9 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
                         }
                     }
                 }
+            }
+            R.id.action_alarm -> {
+                if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.selectedTagObserve.value?.id, true)
             }
             R.id.action_settings -> {
                 if (!tagPagerScrolling) TagSettingsActivity.start(this, viewModel.selectedTagObserve.value?.id)
@@ -369,10 +500,16 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onResume() {
         super.onResume()
+
+        //TODO REMOVE TESTING UPDATE?
+        SimpleWidget.updateAll(this)
+        ComplexWidgetProvider.updateAll(this)
+
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.checkForAlarm()
+            viewModel.updateNetworkStatus()
         }
     }
 
@@ -381,47 +518,19 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         timer?.cancel()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            10 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND) {
-                        permissionsHelper.requestBackgroundPermission()
-                    }
-                    if (viewModel.openAddView) noTagsTextView.callOnClick()
-                } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        permissionsHelper.requestPermissions()
-                    } else {
-                        showPermissionSnackbar()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showPermissionSnackbar() {
-        val snackbar = Snackbar.make(mainDrawerLayout, getString(R.string.permission_location_needed), Snackbar.LENGTH_LONG)
-        snackbar.setAction(getString(R.string.settings)) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            startActivity(intent)
-        }
-        snackbar.show()
-    }
-
     private fun setupVisibility(isEmptyTags: Boolean) {
-        pagerTitleStrip.isVisible = !isEmptyTags
-        tagPager.isVisible = !isEmptyTags
-        noTagsTextView.isVisible = isEmptyTags
+        binding.content.pagerTitleStrip.isVisible = !isEmptyTags
+        binding.content.tagPager.isVisible = !isEmptyTags
+        binding.content.noTagsTextView.isVisible = isEmptyTags
         invalidateOptionsMenu()
 
         if (isEmptyTags) {
-            val bitmap = Utils.getDefaultBackground(8, applicationContext)
-            imageSwitcher.setImageDrawable(bitmap)
+            binding.imageSwitcher.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.gradient_background
+                )
+            )
         }
     }
 
@@ -438,7 +547,7 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
         }
 
         override fun getPageTitle(position: Int): String {
-            return tags[position].displayName.toUpperCase(Locale.getDefault())
+            return tags.elementAtOrNull(position)?.displayName?.toUpperCase(Locale.getDefault()) ?: ""
         }
 
         override fun getItemPosition(`object`: Any): Int {
@@ -449,15 +558,26 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             this.tags = tags
             notifyDataSetChanged()
         }
+
+        fun getTags() = tags
+    }
+
+    private fun requestPermission() {
+        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
     }
 
     companion object {
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
-        private const val WEB_URL = "https://ruuvi.com"
+        const val BUY_SENSORS_URL = "http://ruuvi.com/products"
+        const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
         private const val ALARM_ICON_ALPHA = 128
+        private const val ALARM_ICON_ALPHA_OPAQUE = 255
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
+        private const val UPDATE_REQUEST_CODE = 213
+        private const val UPDATE_STALENESS_DAYS = 1
+        private const val UPDATE_REQUEST_REPEAT_DAYS = 7
 
         fun start(context: Context, isFromWelcome: Boolean) {
             val intent = Intent(context, TagDetailsActivity::class.java)
@@ -471,13 +591,20 @@ class TagDetailsActivity : AppCompatActivity(), KodeinAware {
             context.startActivity(intent)
         }
 
-        fun createPendingIntent(context: Context, tagId: String, alarmId: Int): PendingIntent? {
+        fun createPendingIntent(context: Context, tagId: String, requestCode: Int): PendingIntent? {
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            return TaskStackBuilder.create(context)
-                .addNextIntent(intent)
-                .getPendingIntent(alarmId, PendingIntent.FLAG_UPDATE_CURRENT)
+            val preferencesRepository = PreferencesRepository(Preferences(context))
+            val stackBuilder = TaskStackBuilder.create(context)
+            if (preferencesRepository.isDashboardEnabled()) {
+                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+                stackBuilder.addNextIntent(intentDashboardActivity)
+            }
+            stackBuilder.addNextIntent(intent)
+
+            return stackBuilder
+                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }

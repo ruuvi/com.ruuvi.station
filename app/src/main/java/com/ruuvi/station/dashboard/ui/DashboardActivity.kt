@@ -2,117 +2,182 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
-import com.ruuvi.station.util.extensions.viewModel
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.databinding.ActivityDashboardBinding
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.util.PermissionsHelper
-import com.ruuvi.station.util.extensions.OpenUrl
-import com.ruuvi.station.util.extensions.SendFeedback
-import com.ruuvi.station.util.extensions.getMainMenuItems
-import kotlinx.android.synthetic.main.activity_tag_details.*
-import kotlinx.android.synthetic.main.content_dashboard.*
+import com.ruuvi.station.units.domain.MovementConverter
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.disableNavigationViewScrollbars
+import com.ruuvi.station.util.extensions.openUrl
+import com.ruuvi.station.util.extensions.sendFeedback
+import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import java.util.*
-import kotlin.collections.MutableList
-import kotlin.concurrent.scheduleAtFixedRate
+import org.kodein.di.generic.instance
 
-class DashboardActivity : AppCompatActivity(), KodeinAware {
+
+class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val viewModel: DashboardActivityViewModel by viewModel()
 
-    private lateinit var permissionsHelper: PermissionsHelper
+    private lateinit var binding: ActivityDashboardBinding
+
+    private val unitsConverter: UnitsConverter by instance()
+    private val movementConverter: MovementConverter by instance()
+
     private var tags: MutableList<RuuviTag> = arrayListOf()
-    private lateinit var adapter: RuuviTagAdapter
-    private var getTagsTimer :Timer? = null
+    private val adapter: RuuviTagAdapter by lazy {
+        RuuviTagAdapter(this@DashboardActivity, unitsConverter, movementConverter, tags)
+    }
+    private var signedIn = false
+    private lateinit var permissionsInteractor: PermissionsInteractor
+    private val preferencesRepository: PreferencesRepository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
-        setSupportActionBar(toolbar)
+        binding = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo)
+        supportActionBar?.setIcon(R.drawable.logo_2021)
 
         setupViewModel()
         setupDrawer()
         setupListView()
 
-        permissionsHelper = PermissionsHelper(this)
-        permissionsHelper.requestPermissions()
+        requestPermission()
     }
 
-    override fun onResume() {
-        super.onResume()
-        getTagsTimer = Timer("DashboardActivityTimer", false)
-        getTagsTimer?.scheduleAtFixedRate(0, 1000) {
-            viewModel.updateTags()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
+            requestPermission()
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        getTagsTimer?.cancel()
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestPermission()
+                } else {
+                    permissionsInteractor.showPermissionSnackbar()
+                }
+            }
+        }
     }
 
     private fun setupViewModel() {
-        viewModel.observeTags.observe( this, Observer {
-            tags.clear()
-            tags.addAll(it)
-            noTagsTextView.isVisible = tags.isEmpty()
-            adapter.notifyDataSetChanged()
-        })
+        lifecycleScope.launchWhenStarted {
+            viewModel.tagsFlow.collectLatest {
+                tags.clear()
+                tags.addAll(it)
+                binding.content.noTagsTextView.isVisible = tags.isEmpty()
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun setupListView() {
-        adapter = RuuviTagAdapter(this@DashboardActivity, tags, viewModel.converter)
-        dashboardListView.adapter = adapter
-        dashboardListView.onItemClickListener = tagClick
+        binding.content.dashboardListView.adapter = adapter
+        binding.content.dashboardListView.onItemClickListener = tagClick
     }
 
     private fun setupDrawer() {
         val drawerToggle =
             ActionBarDrawerToggle(
-                this, mainDrawerLayout, toolbar,
+                this, binding.mainDrawerLayout, binding.toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
             )
 
-        mainDrawerLayout.addDrawerListener(drawerToggle)
+        binding.mainDrawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
+
         drawerToggle.syncState()
 
-        val drawerListView = findViewById<ListView>(R.id.navigationDrawerListView)
+        updateMenu(signedIn)
 
-        drawerListView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            getMainMenuItems()
-        )
+        binding.navigationContent.navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
+                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.aboutMenuItem -> AboutActivity.start(this)
+                R.id.sendFeedbackMenuItem -> sendFeedback()
+                R.id.getMoreSensorsMenuItem -> openUrl(BUY_SENSORS_URL)
+                R.id.getGatewayMenuItem -> openUrl(BUY_GATEWAY_URL)
+                R.id.loginMenuItem -> login(signedIn)
+            }
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
+        }
 
-        drawerListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            mainDrawerLayout.closeDrawers()
-            when (position) {
-                0 -> AddTagActivity.start(this)
-                1 -> AppSettingsActivity.start(this)
-                2 -> AboutActivity.start(this)
-                3 -> SendFeedback()
-                4 -> OpenUrl(WEB_URL)
+        viewModel.userEmail.observe(this) {
+            var user = it
+            if (user.isNullOrEmpty()) {
+                user = getString(R.string.none)
+                signedIn = false
+            } else {
+                signedIn = true
+            }
+            updateMenu(signedIn)
+            binding.navigationContent.loggedUserTextView.text = user
+        }
+    }
+
+    private fun login(signedIn: Boolean) {
+        if (signedIn) {
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+            with(builder)
+            {
+                setMessage(getString(R.string.sign_out_confirm))
+                setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    viewModel.signOut()
+                }
+                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                show()
+            }
+        } else {
+            SignInActivity.start(this)
+
+        }
+    }
+
+    private fun updateMenu(signed: Boolean) {
+        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
+        val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
+        loginMenuItem?.let {
+            it.title = if (signed) {
+                getString(R.string.sign_out)
+            } else {
+                getString(R.string.sign_in)
             }
         }
     }
@@ -122,8 +187,13 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         TagDetailsActivity.start(this, tag.id)
     }
 
+    private fun requestPermission() {
+        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+    }
+
     companion object {
-        private const val WEB_URL = "https://ruuvi.com"
+        private const val BUY_SENSORS_URL = "http://ruuvi.com/products"
+        private const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
 
         fun start(context: Context) {
             val intent = Intent(context, DashboardActivity::class.java)

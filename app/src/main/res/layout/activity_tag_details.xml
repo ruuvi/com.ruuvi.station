@@ -8,9 +8,9 @@
     android:layout_height="match_parent"
     tools:context="com.ruuvi.station.tagdetails.ui.TagDetailsActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/tag_background_view"
-        android:src="@drawable/bg9"
+    <ImageView
+        android:id="@+id/tagBackgroundView"
+        android:src="@drawable/gradient_background"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -21,16 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <ImageView
-        android:id="@+id/background_fader"
-        android:animateLayoutChanges="true"
-        android:alpha="0"
-        android:background="@color/black"
+    <View
+        android:id="@+id/darkerBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:background="@color/darkBg"/>
 
     <LinearLayout
-        android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:background="@drawable/tag_bg_layer"
         android:layout_width="match_parent"
@@ -39,6 +37,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
             android:background="@null"
             app:elevation="0dp"
             android:theme="@style/AppTheme.AppBarOverlay">
@@ -48,15 +47,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@null"
+                style="@style/Toolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_tag_details" />
+        <include
+            android:id="@+id/content"
+            layout="@layout/content_tag_details" />
 
     </LinearLayout>
 
     <include
+        android:id="@+id/navigationContent"
         layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

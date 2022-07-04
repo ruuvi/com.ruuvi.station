@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:theme="@style/AppTheme.AppWidgetContainer"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sensorNameTextView"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14dp"
+            tools:text="Ruuvi 6910" />
+
+        <TextView
+            android:id="@+id/updatedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14dp"
+            tools:text="18:15" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/valuesLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+
+        <LinearLayout
+            android:id="@+id/layout1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="20.54" />
+
+            <TextView
+                android:id="@+id/unitTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="℃" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="39.27" />
+
+            <TextView
+                android:id="@+id/unitTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="%" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="1000.27" />
+
+            <TextView
+                android:id="@+id/unitTextView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="hPa" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/valuesLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+
+        <LinearLayout
+            android:id="@+id/layout4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="20.54" />
+
+            <TextView
+                android:id="@+id/unitTextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="℃" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="39.27" />
+
+            <TextView
+                android:id="@+id/unitTextView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="%" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="1000.27" />
+
+            <TextView
+                android:id="@+id/unitTextView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="hPa" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/valuesLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+
+        <LinearLayout
+            android:id="@+id/layout7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="20.54" />
+
+            <TextView
+                android:id="@+id/unitTextView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="℃" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="39.27" />
+
+            <TextView
+                android:id="@+id/unitTextView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="%" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/valueTextView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="4dp"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="1000.27" />
+
+            <TextView
+                android:id="@+id/unitTextView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSecondary"
+                tools:text="hPa" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
