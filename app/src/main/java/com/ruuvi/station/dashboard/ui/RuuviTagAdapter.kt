@@ -13,6 +13,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -20,6 +21,7 @@ import com.ruuvi.station.util.extensions.describingTimeSince
 class RuuviTagAdapter(
     private val activity: AppCompatActivity,
     private val unitsConverter: UnitsConverter,
+    private val movementConverter: MovementConverter,
     items: List<RuuviTag>
 ) : ArrayAdapter<RuuviTag>(activity, 0, items) {
 
@@ -40,7 +42,7 @@ class RuuviTagAdapter(
             binding.humidityUnit.text = if (it.humidity != null) activity.getText(unitsConverter.getHumidityUnit().unit) else ""
             binding.pressure.text = unitsConverter.getPressureStringWithoutUnit(it.pressure)
             binding.pressureUnit.text = if (it.pressure != null) activity.getText(unitsConverter.getPressureUnit().unit) else ""
-            binding.movement.text =   it.movementCounter.toString()
+            binding.movement.text =   movementConverter.getMovementStringWithoutUnit(it.movementCounter)
             binding.movementUnit.text = if (it.movementCounter != null) activity.getText(R.string.movements) else ""
         }
 

@@ -21,6 +21,7 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.extensions.disableNavigationViewScrollbars
@@ -42,9 +43,12 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
     private lateinit var binding: ActivityDashboardBinding
 
     private val unitsConverter: UnitsConverter by instance()
+    private val movementConverter: MovementConverter by instance()
 
     private var tags: MutableList<RuuviTag> = arrayListOf()
-    private val adapter: RuuviTagAdapter by lazy { RuuviTagAdapter(this@DashboardActivity, unitsConverter, tags) }
+    private val adapter: RuuviTagAdapter by lazy {
+        RuuviTagAdapter(this@DashboardActivity, unitsConverter, movementConverter, tags)
+    }
     private var signedIn = false
     private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
