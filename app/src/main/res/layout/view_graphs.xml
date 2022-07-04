@@ -81,18 +81,18 @@
 
             <Button
                 android:id="@+id/clearDataButton"
-                style="@style/roundButton"
+                style="@style/RoundButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="@dimen/normal"
                 android:text="@string/clear" />
 
             <Button
                 android:id="@+id/gattSyncButton"
-                style="@style/roundButton"
+                style="@style/RoundButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="@dimen/normal"
                 android:text="@string/sync" />
 
         </LinearLayout>
@@ -120,7 +120,7 @@
 
         <Button
             android:id="@+id/gattSyncCancel"
-            style="@style/roundButton"
+            style="@style/RoundButton"
             android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

@@ -85,6 +85,7 @@ package="com.ruuvi.station">
     <activity
         android:name=".about.ui.AboutActivity"
         android:exported="false"
+        android:label="@string/help_about_title"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".addtag.ui.AddTagActivity"

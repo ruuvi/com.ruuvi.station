@@ -5,20 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.ruuvi.station.app.domain.PowerManagerInterator
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
+import com.ruuvi.station.widgets.ui.ICloudWidgetViewModel
 import timber.log.Timber
 
 class SimpleWidgetConfigureViewModel(
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val widgetPreferencesInteractor: WidgetPreferencesInteractor,
-    private val powerManagerInterator: PowerManagerInterator
-): ViewModel() {
+): ViewModel(), ICloudWidgetViewModel {
     var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
@@ -30,8 +29,7 @@ class SimpleWidgetConfigureViewModel(
         allSensors.any { it.networkLastSync == null }
     }
 
-    private val _userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
-    val userLoggedIn: LiveData<Boolean> = _userLoggedIn
+    override val userLoggedIn: LiveData<Boolean> = MutableLiveData<Boolean> (networkInteractor.signedIn)
 
     private val _setupComplete = MutableLiveData<Boolean> (false)
     val setupComplete: LiveData<Boolean> = _setupComplete
@@ -42,7 +40,13 @@ class SimpleWidgetConfigureViewModel(
     private val _widgetType = MutableLiveData<WidgetType> (DEFAULT_WIDGET_TYPE)
     val widgetType: LiveData<WidgetType> = _widgetType
 
-    val showOptimizationHint: LiveData<Boolean> = MutableLiveData<Boolean> (!powerManagerInterator.isIgnoringBatteryOptimizations())
+    override val userHasCloudSensors: LiveData<Boolean> = Transformations.map(cloudSensors) {
+        it.isNotEmpty()
+    }
+
+    override val canBeSaved: LiveData<Boolean> = Transformations.map(_sensorId) {
+        it != null
+    }
 
     fun setWidgetId(appWidgetId: Int) {
         this.appWidgetId = appWidgetId
@@ -59,16 +63,12 @@ class SimpleWidgetConfigureViewModel(
         _widgetType.value = widgetType
     }
 
-    fun saveSettings() {
+    override fun save() {
         val sensor = sensorId.value
         if (!sensor.isNullOrEmpty()) {
             widgetPreferencesInteractor.saveSimpleWidgetSettings(appWidgetId, sensor, _widgetType.value ?: DEFAULT_WIDGET_TYPE )
             _setupComplete.value = true
         }
-    }
-
-    fun openOptimizationSettings() {
-        powerManagerInterator.openOptimizationSettings()
     }
 
     companion object {

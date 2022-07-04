@@ -7,7 +7,7 @@
     <path
         android:pathData="M28.5 14.5a14 14 0 0 1 -14 14 14 14 0 0 1 -14 -14 14 14 0 0 1 14 -14 14 14 0 0 1 14 14z"
         android:strokeWidth="1"
-        android:fillColor="#ffffff"
+        android:fillColor="#00ffffff"
         android:strokeMiterLimit="10"
         android:strokeColor="#158ea5" />
     <group

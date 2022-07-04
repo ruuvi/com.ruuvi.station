@@ -8,7 +8,7 @@ import com.ruuvi.station.settings.domain.GatewayTestResultType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class AppSettingsGatewayViewModel(
+class AppSettingsDataForwardingViewModel(
         private val interactor: AppSettingsInteractor
 ) : ViewModel() {
     private val dataForwardingUrl = MutableStateFlow(interactor.getDataForwardingUrl())
@@ -16,6 +16,9 @@ class AppSettingsGatewayViewModel(
 
     private val dataForwardingLocationEnabled = MutableStateFlow(interactor.getDataForwardingLocationEnabled())
     val observeDataForwardingLocationEnabled: StateFlow<Boolean> = dataForwardingLocationEnabled
+
+    private val dataForwardingDuringSyncEnabled = MutableStateFlow(interactor.getDataForwardingDuringSyncEnabled())
+    val observeDataForwardingDuringSyncEnabled: StateFlow<Boolean> = dataForwardingDuringSyncEnabled
 
     private val deviceId = MutableStateFlow(interactor.getDeviceId())
     val observeDeviceId: StateFlow<String> = deviceId
@@ -29,6 +32,10 @@ class AppSettingsGatewayViewModel(
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
         interactor.setDataForwardingLocationEnabled(locationEnabled)
+    }
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        interactor.setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled)
     }
 
     fun setDeviceId(newDeviceId: String) {

@@ -1,42 +1,33 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.dfu.ui.RegularText
-import com.ruuvi.station.dfu.ui.RuuviButton
-import com.ruuvi.station.dfu.ui.ui.theme.ComruuvistationTheme
-import com.ruuvi.station.dfu.ui.ui.theme.LightColorPalette
+import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.ForNetworkSensorsOnlyScreen
 import com.ruuvi.station.widgets.ui.LogInFirstScreen
+import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -66,9 +57,9 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         setupViewModel()
 
         setContent {
-            ComruuvistationTheme {
+            RuuviTheme {
                 Column() {
-                    MyTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
+                    WidgetConfigTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
                 }
             }
@@ -98,52 +89,13 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 }
 
 @Composable
-fun MyTopAppBar(
-    viewModel: SimpleWidgetConfigureViewModel,
-    title: String
-) {
-    val context = LocalContext.current as Activity
-    val selectedOption by viewModel.sensorId.observeAsState()
-
-    TopAppBar(
-        modifier = Modifier.background(Brush.horizontalGradient(listOf(Color(0xFF168EA7), Color(0xFF2B486A)))),
-        title = {
-            Text(text = title)
-        },
-        navigationIcon = {
-            IconButton(onClick = {
-                context.onBackPressed()
-            }) {
-                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
-            }
-        },
-        backgroundColor = Color.Transparent,
-        contentColor = Color.White,
-        elevation = 0.dp,
-        actions = {
-            if (selectedOption != null) {
-                TextButton(
-                    onClick = { viewModel.saveSettings() }
-                ) {
-                    Text(
-                        color = Color.White,
-                        text = stringResource(id = R.string.done)
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
 fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    val systemUiController = rememberSystemUiController()
     val sensors by viewModel.cloudSensors.observeAsState(listOf())
     val userLoggedIn by viewModel.userLoggedIn.observeAsState(false)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
+        color = RuuviStationTheme.colors.background,
     ) {
         if (!userLoggedIn) {
             LogInFirstScreen()
@@ -152,13 +104,6 @@ fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
         } else {
             SelectSensorScreen(viewModel)
         }
-    }
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = LightColorPalette.surface,
-            darkIcons = false
-        )
     }
 }
 
@@ -171,7 +116,10 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
     LazyColumn() {
         item {
             if (gotFilteredSensors) {
-                RegularText(text = stringResource(id = R.string.widgets_missing_sensors))
+                Paragraph(
+                    text = stringResource(id = R.string.widgets_missing_sensors),
+                    modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
+                )
             }
         }
 
@@ -196,6 +144,7 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = (isSelected),
+                    colors = ruuviRadioButtonColors(),
                     onClick = { viewModel.selectSensor(sensorId) }
                 )
 
@@ -203,6 +152,7 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = AnnotatedString(title),
+                    style = RuuviStationTheme.typography.paragraph,
                     onClick = {
                         viewModel.selectSensor(sensorId)
                     })
@@ -219,10 +169,12 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
 fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
     val selectedOption by viewModel.widgetType.observeAsState()
 
-    Column() {
+    Column(modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extraBig)) {
         Row() {
-            Spacer(modifier = Modifier.width(32.dp))
-            Text(text = stringResource(id = R.string.widgets_select_sensor_value_type))
+            Paragraph(
+                text = stringResource(id = R.string.widgets_select_sensor_value_type),
+                modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
+            )
         }
         for (item in WidgetType.values()) {
             WidgetTypeItem(viewModel, item ,selectedOption == item)
@@ -236,16 +188,16 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
         .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Spacer(modifier = Modifier.width(16.dp))
-
             RadioButton(
                 selected = (isSelected),
+                colors = ruuviRadioButtonColors(),
                 onClick = { viewModel.selectWidgetType(widgetType) })
 
             ClickableText(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = AnnotatedString(stringResource(id = widgetType.titleResId)),
+                style = RuuviStationTheme.typography.paragraph,
                 onClick = {
                     viewModel.selectWidgetType(widgetType)
                 })

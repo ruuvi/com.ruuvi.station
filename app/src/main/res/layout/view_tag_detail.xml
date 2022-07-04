@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/tagTemperatureTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="21.72" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/tagTempUnitTextView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -48,13 +48,13 @@
             app:layout_constraintBottom_toTopOf="@id/tagPressureLayout"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/tagHumidityIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_measure_humidity" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/tagHumidityTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,13 +77,13 @@
             app:layout_constraintBottom_toTopOf="@id/tagMovementLayout"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/tagPressureIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_measure_pressure" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/tagPressureTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -106,13 +106,13 @@
             app:layout_constraintBottom_toBottomOf="@id/bottomGuideline"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/tagMovementIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_icon_measure_movement" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/tagMovementTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_end="40dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/tagSynchronizingTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Synchronizing" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/sourceTypeImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
             app:layout_constraintEnd_toEndOf="@+id/tagUpdatedTextView"
             tools:src="@drawable/ic_icon_bluetooth" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/tagUpdatedTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

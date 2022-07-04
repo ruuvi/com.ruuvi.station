@@ -1,9 +1,9 @@
 name: Android Release Build
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ master, dev, 'milestone/**' ]
   workflow_dispatch:
-    branches: [ master, dev ]
+    branches: [ master, dev, 'milestone/**' ]
        
 jobs:
   build:

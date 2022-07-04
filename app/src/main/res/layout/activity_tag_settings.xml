@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="?android:attr/colorBackground"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     tools:context="com.ruuvi.station.tagsettings.ui.TagSettingsActivity">
 
     <RelativeLayout
-        android:background="@drawable/header"
+        android:background="?attr/colorToolbar"
         android:fitsSystemWindows="true"
         android:id="@+id/toolbarContainer"
         android:layout_height="match_parent"
@@ -25,27 +25,33 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:background="@drawable/header"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
+                style="@style/Toolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
             android:id="@+id/scrollView"
-            android:background="@color/white"
+            android:background="?android:attr/colorBackground"
             android:layout_below="@id/appBarLayout"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/tagSettingsLayout"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:orientation="vertical"
                 android:paddingBottom="24dp">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <!--BACKGROUND IMAGE-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/backgroundImageLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <ImageView
                     android:id="@+id/tagImageView"
                     android:adjustViewBounds="true"
                     android:layout_height="200dp"
@@ -54,7 +60,7 @@
                     android:src="@drawable/bg3"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:adjustViewBounds="true"
                     android:layout_height="200dp"
                     android:layout_width="match_parent"
@@ -62,7 +68,7 @@
                     android:src="@drawable/tag_bg_layer"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/tagImageSelectButton"
                     android:alpha="0.7"
                     android:layout_height="wrap_content"
@@ -75,7 +81,7 @@
                     app:layout_constraintTop_toTopOf="@id/tagImageView"
                     app:srcCompat="@drawable/icon_bg_refresh" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/tagImageCameraButton"
                     android:alpha="0.7"
                     android:layout_height="32dp"
@@ -95,417 +101,384 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/background_image"
                     android:textAlignment="center"
-                    android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    style="@style/Title"
                     app:layout_constraintTop_toBottomOf="@id/tagImageSelectButton" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/generalHeaderTextView"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
                     android:text="@string/general"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tagImageView"
-                    style="@style/sensorSettingGroupHeaderStyle" />
+                    style="@style/SensorSettingTitleStyle" />
 
-                <TextView
-                    android:id="@+id/tagNameTitleTextView"
-                    style="@style/sensorSettingInfoTitleStyle"
-                    android:text="@string/tag_name"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tagNameInputTextView"
-                    app:layout_constraintTop_toBottomOf="@id/generalHeaderTextView" />
+                <!--NAME-->
+                <LinearLayout
+                    android:id="@+id/sensorNameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tagNameTitleTextView"
+                        style="@style/SensorSettingSubtitleStyle"
+                        android:text="@string/tag_name" />
 
-                <TextView
-                    android:id="@+id/tagNameInputTextView"
-                    style="@style/sensorSettingInfoValueStyle"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:layout_constraintStart_toEndOf="@id/tagNameTitleTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/generalHeaderTextView"
-                    tools:text="00:00:00:00:00:00"
-                    app:drawableEndCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
-                <androidx.appcompat.widget.LinearLayoutCompat
+                    <TextView
+                        android:id="@+id/tagNameInputTextView"
+                        style="@style/SensorSettingValueStyle"
+                        android:clickable="true"
+                        android:focusable="true"
+                        tools:text="Ruuvi AA:BB"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        app:drawableEndCompat="@drawable/edit_20" />
+                </LinearLayout>
+
+                <!--OWNER-->
+                <LinearLayout
                     android:id="@+id/ownerLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/tagNameTitleTextView">
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ownerTitleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tagsettings_owner"
-                        android:layout_gravity="start"
-                        style="@style/sensorSettingInfoTitleStyle"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ownerValueTextView"
+                    android:orientation="vertical">
+                    <View style="@style/DividerHorizontal"/>
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        style="@style/sensorSettingInfoValueStyle" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/ownerTitleTextView"
+                            android:text="@string/tagsettings_owner"
+                            style="@style/SensorSettingSubtitleStyle"/>
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+                        <TextView
+                            android:id="@+id/ownerValueTextView"
+                            style="@style/SensorSettingValueStyle" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!--SHARE-->
+                <LinearLayout
                     android:id="@+id/shareLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/ownerLayout"
-                    tools:layout_editor_absoluteX="1dp">
+                    android:orientation="vertical">
+                        <View style="@style/DividerHorizontal"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            tools:layout_editor_absoluteX="1dp">
+                            <TextView
+                                android:id="@+id/shareTitleTextView"
+                                style="@style/SensorSettingSubtitleStyle"
+                                android:text="@string/share" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/shareTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:layout_gravity="start"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/share" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/shareValueTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"/>
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                            <TextView
+                                android:id="@+id/shareValueTextView"
+                                style="@style/SensorSettingValueStyle"
+                                android:drawablePadding="@dimen/drawable_padding"
+                                app:drawableEndCompat="@drawable/arrow_forward_16" />
+                        </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/alertsHeaderTextView"
-                    style="@style/sensorSettingGroupHeaderStyle"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:text="@string/alerts"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/shareLayout" />
+                    style="@style/SensorSettingTitleStyle"
+                    android:text="@string/alerts" />
 
+                <!--ALERTS-->
                 <LinearLayout
                     android:id="@+id/alertsContainerLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alertsHeaderTextView">
+                    android:orientation="vertical">
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmTemperature"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmHumidity"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmPressure"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmRssi"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                     <com.ruuvi.station.alarm.ui.AlarmEditView
                         android:id="@+id/alarmMovement"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/calibrationHeaderTextView"
-                    style="@style/sensorSettingGroupHeaderStyle"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:text="@string/offset_correction"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/alertsContainerLayout" />
+                    style="@style/SensorSettingTitleStyle"
+                    android:text="@string/offset_correction"/>
+
+                <!--CALIBRATION-->
                 <LinearLayout
                     android:id="@+id/calibrationLayout"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/calibrationHeaderTextView" >
+                    android:layout_height="wrap_content" >
                     <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibrateTemperature"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:itemTitle="@string/temperature"
-                        app:itemValue="0.0"
-                        />
+                        app:itemValue="0.0" />
                     <View
                         android:id="@+id/calibrateHumidityDivider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/divider" />
+                        style="@style/DividerHorizontal" />
                     <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibrateHumidity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:itemTitle="@string/humidity"
-                        app:itemValue="0.0"
-                        />
+                        app:itemValue="0.0" />
                     <View
                         android:id="@+id/calibratePressureDivider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/divider" />
+                        style="@style/DividerHorizontal" />
                     <com.ruuvi.station.calibration.ui.CalibrationMenuItem
                         android:id="@+id/calibratePressure"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:itemTitle="@string/pressure"
-                        app:itemValue="0.0"
-                        />
-
+                        app:itemValue="0.0" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/moreInfoHeaderTextView"
-                    style="@style/sensorSettingGroupHeaderStyle"
+                    style="@style/SensorSettingTitleStyle"
+                    android:text="@string/more_info"/>
+
+                <!--MAC-->
+                <LinearLayout
+                    android:id="@+id/macLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:text="@string/more_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/calibrationLayout" />
+                    android:paddingTop="@dimen/normal"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/macTitleTextView"
+                        android:text="@string/mac_address"
+                        style="@style/SensorSettingSubtitleSmallStyle" />
 
-                <TextView
-                    android:id="@+id/macTitleTextView"
-                    android:text="@string/mac_address"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/macTextView"
-                    app:layout_constraintTop_toBottomOf="@id/moreInfoHeaderTextView"
-                    style="@style/sensorSettingInfoTitleStyle" />
+                    <TextView
+                        android:id="@+id/macTextView"
+                        android:focusable="true"
+                        android:longClickable="true"
+                        style="@style/SensorSettingValueSmallStyle" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/macTextView"
-                    android:focusable="true"
-                    android:longClickable="true"
-                    app:layout_constraintStart_toEndOf="@id/macTitleTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/moreInfoHeaderTextView"
-                    style="@style/sensorSettingInfoValueStyle" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!--RAW VALUES-->
+                <LinearLayout
                     android:id="@+id/rawValuesLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    app:layout_constraintTop_toBottomOf="@id/macTitleTextView">
-                    <TextView
-                        android:id="@+id/dataFormatTitleTextView"
-                        android:text="@string/data_format"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/dataFormatTextView"
-                        app:layout_constraintTop_toTopOf="parent"
-                        style="@style/sensorSettingInfoTitleStyle" />
+                    android:paddingBottom="@dimen/normal"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/dataFormatTextView"
-                        app:layout_constraintStart_toEndOf="@id/dataFormatTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        style="@style/sensorSettingInfoValueStyle" />
+                    <!--DATA FORMAT-->
+                    <LinearLayout
+                        android:id="@+id/dataFormatLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/dataFormatTitleTextView"
+                            android:text="@string/data_format"
+                            style="@style/SensorSettingSubtitleSmallStyle" />
 
-                    <TextView
-                        android:id="@+id/voltageTitleTextView"
-                        android:text="@string/battery_voltage"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/batteryTextView"
-                        app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
+                        <TextView
+                            android:id="@+id/dataFormatTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/batteryTextView"
-                        style="@style/sensorSettingWarningStyle"
-                        app:layout_constraintStart_toEndOf="@id/voltageTitleTextView"
-                        app:layout_constraintEnd_toStartOf="@+id/voltageTextView"
-                        app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView"
-                        tools:text="@string/battery_ok" />
+                    <!--VOLTAGE-->
+                    <LinearLayout
+                        android:id="@+id/voltageLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/voltageTitleTextView"
+                            android:text="@string/battery_voltage"
+                            android:layout_weight="1"
+                            style="@style/SensorSettingSubtitleSmallStyle" />
 
-                    <TextView
-                        android:id="@+id/voltageTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/batteryTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/dataFormatTitleTextView" />
+                        <TextView
+                            android:id="@+id/batteryTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            android:gravity="end"
+                            style="@style/SensorSettingWarningStyle"
+                            tools:text="@string/battery_ok" />
 
-                    <TextView
-                        android:id="@+id/accelerationXTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/acceleration_x"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/accelerationXTextView"
-                        app:layout_constraintTop_toBottomOf="@id/voltageTitleTextView" />
+                        <TextView
+                            android:id="@+id/voltageTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="end|center"
+                            style="@style/SensorSettingValueSmallStyle"
+                            tools:text="2.976 V"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/accelerationXTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/accelerationXTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/voltageTitleTextView" />
+                    <!--ACCELERATION X-->
+                    <LinearLayout
+                        android:id="@+id/accelerationXLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/accelerationXTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/acceleration_x"/>
 
-                    <TextView
-                        android:id="@+id/accelerationYTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/acceleration_y"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/accelerationYTextView"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationXTitleTextView" />
+                        <TextView
+                            android:id="@+id/accelerationXTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/accelerationYTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/accelerationYTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationXTitleTextView" />
+                    <!--ACCELERATION Y-->
+                    <LinearLayout
+                        android:id="@+id/accelerationYLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/accelerationYTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/acceleration_y" />
 
-                    <TextView
-                        android:id="@+id/accelerationZTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/acceleration_z"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/accelerationZTextView"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationYTitleTextView" />
+                        <TextView
+                            android:id="@+id/accelerationYTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/accelerationZTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/accelerationZTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationYTitleTextView" />
+                    <!--ACCELERATION Z-->
+                    <LinearLayout
+                        android:id="@+id/accelerationZLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/accelerationZTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/acceleration_z" />
 
-                    <TextView
-                        android:id="@+id/txPowerTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/tx_power"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/txPowerTextView"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationZTitleTextView" />
+                        <TextView
+                            android:id="@+id/accelerationZTextView"
+                            style="@style/SensorSettingValueSmallStyle"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/txPowerTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/txPowerTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/accelerationZTitleTextView" />
+                    <!--TX POWER-->
+                    <LinearLayout
+                        android:id="@+id/txPowerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/txPowerTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/tx_power" />
 
-                    <TextView
-                        android:id="@+id/rssiTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/rssi"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rssiTextView"
-                        app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
+                        <TextView
+                            android:id="@+id/txPowerTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/rssiTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/rssiTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txPowerTitleTextView" />
+                    <!--RSSI-->
+                    <LinearLayout
+                        android:id="@+id/rssiLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/rssiTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/rssi" />
 
-                    <TextView
-                        android:id="@+id/sequenceNumberTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/measurement_sequence_number"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/sequenceNumberTextView"
-                        app:layout_constraintTop_toBottomOf="@id/rssiTitleTextView" />
+                        <TextView
+                            android:id="@+id/rssiTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/sequenceNumberTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/sequenceNumberTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rssiTitleTextView" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    <!--MEASUREMENT SEQUENCE NUMBER-->
+                    <LinearLayout
+                        android:id="@+id/sequenceNumberLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/sequenceNumberTitleTextView"
+                            style="@style/SensorSettingSubtitleSmallStyle"
+                            android:text="@string/measurement_sequence_number"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                        <TextView
+                            android:id="@+id/sequenceNumberTextView"
+                            style="@style/SensorSettingValueSmallStyle" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!--FIRMWARE-->
+                <LinearLayout
                     android:id="@+id/firmwareLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     app:layout_constraintTop_toBottomOf="@id/rawValuesLayout">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/firmwareTitleTextView"
-                        style="@style/sensorSettingGroupHeaderStyle"
-                        android:layout_width="0dp"
+                        style="@style/SensorSettingTitleStyle"
+                        android:text="@string/firmware"/>
+
+                    <LinearLayout
+                        android:id="@+id/firmwareVersionLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/firmware"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:orientation="horizontal" >
+                        <TextView
+                            android:id="@+id/firmwareVersionTitleTextView"
+                            style="@style/SensorSettingSubtitleStyle"
+                            android:text="@string/current_version" />
 
+                        <TextView
+                            android:id="@+id/firmwareVersionTextView"
+                            style="@style/SensorSettingValueStyle" />
+                    </LinearLayout>
+                    <View
+                        android:id="@+id/firmwareVersionDivider"
+                        style="@style/DividerHorizontal"/>
                     <TextView
-                        android:id="@+id/firmwareVersionTitleTextView"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:text="@string/current_version"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/firmwareVersionTextView"
-                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
-
-                    <TextView
-                        android:id="@+id/firmwareVersionTextView"
-                        style="@style/sensorSettingInfoValueStyle"
-                        app:layout_constraintStart_toEndOf="@id/firmwareVersionTitleTextView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/firmwareTitleTextView" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/firmwareUpdateTitleTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:text="@string/firmware_update"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/firmwareVersionTitleTextView" />
+                        android:layout_width="match_parent"
+                        style="@style/SensorSettingSubtitleStyle"
+                        app:drawableEndCompat="@drawable/arrow_forward_16" />
+                </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!--REMOVE-->
+                <LinearLayout
                     android:id="@+id/removeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/firmwareLayout">
-
-                    <androidx.appcompat.widget.AppCompatTextView
+                    android:orientation="vertical">
+                    <TextView
                         android:id="@+id/removeTitleTextView"
-                        style="@style/sensorSettingGroupHeaderStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/remove"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        style="@style/SensorSettingTitleStyle"
+                        android:text="@string/remove"/>
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <TextView
                         android:id="@+id/removeSensorTitleTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
                         android:text="@string/remove_this_sensor"
-                        style="@style/sensorSettingInfoTitleStyle"
-                        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/removeTitleTextView" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        style="@style/SensorSettingSubtitleStyle"
+                        app:drawableEndCompat="@drawable/arrow_forward_16" />
+                </LinearLayout>
+            </LinearLayout>
         </ScrollView>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

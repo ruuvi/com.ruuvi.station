@@ -10,6 +10,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.databinding.FragmentAppSettingsListBinding
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -41,6 +42,10 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
     private fun setupUI() {
         with(binding) {
+            appearanceLayout.setDebouncedOnClickListener {
+                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_appearance)
+            }
+
             scanLayout.setDebouncedOnClickListener {
                 (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_background_scan)
             }
@@ -63,10 +68,6 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
 
             pressureUnitLayout.setDebouncedOnClickListener {
                 (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_pressure_unit)
-            }
-
-            localeSettingsLayout.setDebouncedOnClickListener {
-                (activity as? AppSettingsDelegate)?.openFragment(R.string.settings_language)
             }
 
             experimentalSettingsLayout.setDebouncedOnClickListener {
@@ -117,6 +118,22 @@ class AppSettingsListFragment : Fragment(R.layout.fragment_app_settings_list), K
             humidityUnitSubTextView.text = getString(humidity.title)
             val pressure = viewModel.getPressureUnit()
             pressureUnitSubTextView.text = getString(pressure.title)
+
+            val darkModeString = if (requireContext().isDarkMode()) {
+                getString(R.string.darktheme_enabled)
+            } else {
+                getString(R.string.darktheme_disabled)
+            }
+            val dashBoardSting = if (viewModel.isDashboardEnabled()) {
+                getString(R.string.dashboard_enabled)
+            } else {
+                getString(R.string.dashboard_disabled)
+            }
+            appearanceDescriptionTextView.text = getString(
+                R.string.appearance_settings_description,
+                dashBoardSting,
+                darkModeString
+            )
         }
     }
 }

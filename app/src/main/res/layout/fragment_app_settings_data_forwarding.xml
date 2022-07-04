@@ -4,18 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.ui.AppSettingsGatewayFragment">
+    tools:context=".settings.ui.AppSettingsDataForwardingFragment"
+    android:paddingEnd="@dimen/screenEnd"
+    android:paddingStart="@dimen/screenStart"
+    android:paddingBottom="@dimen/screenBottom"
+    android:paddingTop="@dimen/screenTop">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
-                <androidx.appcompat.widget.AppCompatTextView
+            android:orientation="vertical">
+                <TextView
                     android:id="@+id/gatewayUrlTitleTextView"
-                    style="@style/PrefTitleText"
+                    style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/data_forwarding_url" />
@@ -25,56 +26,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/data_forwarding_url_hint"
-                    android:maxLength="255" />
+                    android:maxLength="255"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
+                    style="@style/Input" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/deviceIdTitleTextView"
-                    style="@style/PrefTitleText"
+                    style="@style/Subtitle.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:text="@string/settings_gateway_device_identifier" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/deviceIdEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="32" />
+                    android:maxLength="32"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
+                    style="@style/Input"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/locationSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp"
+                    style="@style/SwitchStyle.WithPadding"
                     android:text="@string/data_forwarding_location_enable"
                     />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/gatewayTestButton"
+                
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/forwardingDuringSyncSwitch"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/SwitchStyle.WithPadding"
+                    android:text="@string/data_forwarding_during_sync_enable"
+                    />
+
+                <Button
+                    android:id="@+id/gatewayTestButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_data_forwarding_test"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_gravity="center"
+                    style="@style/RoundButton"
+                    android:layout_marginTop="@dimen/extended"
+                    android:layout_marginBottom="@dimen/extended" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/gatewayTestResultTextView"
-                    style="@style/PrefTitleText"
+                    style="@style/Status.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:visibility="gone"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/divider" />
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="@string/gateway_test_success"/>
 
                 <TextView
                     android:id="@+id/settingsInfoTextView"
                     android:text="@string/settings_gateway_details"
-                    android:layout_marginTop="16dp"
+                    style="@style/ParagraphSmall.WithPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
         </LinearLayout>

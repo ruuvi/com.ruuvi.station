@@ -30,7 +30,7 @@ class AppSettingsHumidityFragment : Fragment(R.layout.fragment_app_settings_humi
         val current = viewModel.getHumidityUnit()
 
         items.forEachIndexed { index, option ->
-            val radioButton = RadioButton(activity)
+            val radioButton = RadioButton(activity, null, 0, R.style.RadioButton)
             radioButton.id = index
             radioButton.text = getString(option.title)
             radioButton.isChecked = option == current

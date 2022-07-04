@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/dark</item>
+        <item name="colorSurface">@color/dark</item>
+        <item name="colorOnSurface">@color/white80</item>
+        <item name="colorDisabled">@color/disabledText</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="colorSurfaceVariant">@color/titan50</item>
+        <item name="colorOnSurfaceVariant">@color/white</item>
+        <item name="colorHeaderSurface">@color/dark_emerald</item>
+        <item name="colorOnHeaderSurface">@color/backgroundLight</item>
+        <item name="colorToolbar">@color/titan</item>
+        <item name="android:navigationBarColor">@color/titan</item>
+
+        <item name="colorPrimaryText">@color/white80</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/keppel</item>
+        <item name="android:textColorHint">@color/white30</item>
+        <item name="colorButtonText">@color/white</item>
+        <item name="colorButtonPressed">@color/elm</item>
+
+        <item name="colorDivider">@color/lines10</item>
+        <item name="colorErrorText">@color/error</item>
+        <item name="colorSuccessText">@color/keppel</item>
+
+        <item name="colorControlNormal">@color/pastelGray</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+
+        <item name="android:autofilledHighlight" tools:targetApi="26">@android:color/transparent</item>
+    </style>
+
     <style name="AppTheme.AppWidgetContainerParent" parent="AppTheme">
         <item name="appWidgetRadius">8dp</item>
         <item name="appWidgetPadding">4dp</item>
@@ -11,4 +43,13 @@
         <item name="colorOnSecondary">@color/grayNew</item>
         <item name="colorControlHighlight">@color/grayNew5</item>
     </style>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/white80</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="android:windowBackground">@drawable/dialog_inset</item>
+        <item name="android:windowTitleStyle">@style/CustomDialogTitleStyle</item>
+        <item name="android:textAppearanceMedium">@style/Paragraph</item>
+    </style>
+
 </resources>

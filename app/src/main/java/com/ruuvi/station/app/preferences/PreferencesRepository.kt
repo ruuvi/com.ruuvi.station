@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -43,6 +44,13 @@ class PreferencesRepository(
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
         preferences.dataForwardingLocationEnabled = locationEnabled
+    }
+
+    fun getDataForwardingDuringSyncEnabled(): Boolean =
+            preferences.dataForwardingDuringSyncEnabled
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        preferences.dataForwardingDuringSyncEnabled = forwardingDuringSyncEnabled
     }
 
     fun getDeviceId(): String {
@@ -180,5 +188,11 @@ class PreferencesRepository(
 
     fun setIsCloudModeEnabled(isEnabled: Boolean) {
         preferences.cloudModeEnabled = isEnabled
+    }
+
+    fun getDarkMode(): DarkModeState = preferences.darkMode
+
+    fun updateDarkMode(darkMode: DarkModeState) {
+        preferences.darkMode = darkMode
     }
 }

@@ -12,54 +12,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/valuesLayout"
-        android:layout_margin="16dp">
-        <androidx.appcompat.widget.AppCompatTextView
+        android:layout_margin="16dp"
+        style="@style/Scrollbars">
+        <TextView
             android:id="@+id/calibrationInstructionsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text=""/>
+            android:text=""
+            style="@style/ParagraphLink"
+            tools:text="@string/calibration_description"/>
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/valuesLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/screenTop"
+        android:paddingBottom="@dimen/screenBottom"
+        android:paddingStart="@dimen/screenStart"
+        android:paddingEnd="@dimen/screenEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/calibrateButton"
-        android:layout_marginBottom="16dp"
-        >
+        android:layout_marginBottom="@dimen/extended">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="@string/calibration_original_value"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            style="@style/Subtitle.WithPadding"
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalValueTextView"
+            style="@style/Subtitle.WithPadding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            tools:text="28.53 °C"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/originalTitleTextView"
-            app:layout_constraintStart_toStartOf="parent"/>
+            tools:text="28.53 °C" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/originalUpdatedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:layout_marginStart="@dimen/normal"
             tools:text="(2 sec ago)"
+            style="@style/ParagraphSmall.WithPadding"
             app:layout_constraintBaseline_toBaselineOf="@+id/originalValueTextView"
             app:layout_constraintStart_toEndOf="@+id/originalValueTextView"
             />
@@ -69,40 +69,36 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/divider"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             app:layout_constraintTop_toTopOf="@+id/correctedTitleTextView"
             />
-        <androidx.appcompat.widget.AppCompatTextView
+
+        <TextView
             android:id="@+id/correctedTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:paddingTop="@dimen/small"
+            android:paddingBottom="@dimen/small"
             android:text="@string/calibration_corrected_value"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            style="@style/Subtitle"
             app:layout_constraintTop_toBottomOf="@id/originalValueTextView" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/correctedlValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
             tools:text="28.00 °C"
+            style="@style/Subtitle.WithPadding"
             app:layout_constraintTop_toBottomOf="@+id/correctedTitleTextView"
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/correctedOffsetTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:layout_marginStart="@dimen/normal"
             tools:text="(Offset -0.53 °C)"
+            style="@style/ParagraphSmall.WithPadding"
             app:layout_constraintBaseline_toBaselineOf="@id/correctedlValueTextView"
             app:layout_constraintStart_toEndOf="@+id/correctedlValueTextView"
             />
@@ -112,10 +108,10 @@
         android:id="@+id/calibrateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/roundButton"
+        style="@style/RoundButton"
         android:text="@string/calibrate"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="@dimen/button_bottom_padding"
+        android:layout_marginEnd="@dimen/normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clearButton"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -126,10 +122,10 @@
         android:id="@+id/clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/roundButton"
+        style="@style/RoundButton"
         android:text="@string/clear"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginBottom="@dimen/button_bottom_padding"
+        android:layout_marginStart="@dimen/normal"
         app:layout_constraintStart_toEndOf="@+id/calibrateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

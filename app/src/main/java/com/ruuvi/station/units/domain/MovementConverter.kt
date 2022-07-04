@@ -12,6 +12,14 @@ class MovementConverter(val context: Context) {
         }
     }
 
+    fun getMovementStringWithoutUnit (movement: Int?): String {
+        return if (movement != null) {
+            "$movement"
+        } else {
+            NO_VALUE_AVAILABLE
+        }
+    }
+
     companion object {
         const val NO_VALUE_AVAILABLE = "-"
     }

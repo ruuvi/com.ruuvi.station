@@ -2,9 +2,9 @@ name: Android Test Build
 
 on:
   pull_request:
-    branches: [ dev, master ]
+    branches: [ dev, master, 'milestone/**' ]
   workflow_dispatch:
-    branches: [ dev, master ]
+    branches: [ dev, master, 'milestone/**' ]
     
 jobs:
   build:

@@ -3,20 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:padding="8dp"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/screenPadding"
+    android:paddingEnd="@dimen/screenPadding"
+    android:minHeight="@dimen/listItemHeight"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/mainDark"
         tools:text="10:10:10:10:10:10"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/color_enable_disable"
+        style="@style/Title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,7 +23,7 @@
         />
 
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/signalIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         tools:text="-15 db"
-        android:textSize="16sp"
+        style="@style/Paragraph.Secondary"
         app:layout_constraintRight_toLeftOf="@id/signalIcon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

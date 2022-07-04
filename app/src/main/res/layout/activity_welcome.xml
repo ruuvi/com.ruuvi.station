@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     tools:context="com.ruuvi.station.welcome.ui.WelcomeActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:fitsSystemWindows="true"
         android:id="@+id/logoImage"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,7 +129,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage4"
                 android:layout_width="276dp"
                 android:layout_height="200dp"
@@ -182,28 +182,28 @@
                 style="@style/WelcomeText"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_text_4_2"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/extended"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/welcome4TextView" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/signInButton"
                 android:layout_marginBottom="75dp"
                 android:text="@string/sign_in_login_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/detailsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/detailsButton"
                 android:layout_marginBottom="75dp"
                 android:text="@string/details"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/signInButton"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -212,7 +212,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/welcomeImage5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -234,14 +234,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/welcomeImage5" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/startButton"
                 android:layout_marginBottom="75dp"
                 android:text="@string/scan"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                style="@style/onboardingButtonStyle" />
+                style="@style/RoundButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

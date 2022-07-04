@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -8,30 +9,13 @@
 
     <TextView
         android:id="@+id/itemTitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
         tools:text="Temperature"
-        style="@style/sensorSettingInfoTitleStyle"
-        android:padding="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        />
+        style="@style/SensorSettingSubtitleStyle" />
 
     <TextView
         android:id="@+id/itemValueTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/sensorSettingInfoValueStyle"
+        style="@style/SensorSettingValueStyle"
         tools:text="-0.52 °C"
-        android:textAlignment="viewEnd"
-        android:padding="0dp"
-        android:textColor="@color/gray"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:drawablePadding="4dp"
-        android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-        />
+        android:drawablePadding="@dimen/drawable_padding"
+        app:drawableEndCompat="@drawable/arrow_forward_16" />
 </merge>

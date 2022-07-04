@@ -21,7 +21,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -204,7 +203,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         binding.content.noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
         binding.imageSwitcher.setFactory {
-            val imageView = AppCompatImageView(applicationContext)
+            val imageView = ImageView(applicationContext)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -266,6 +265,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun listenToShowGraph() {
         viewModel.isShowGraphObserve.observe(this) {
             animateGraphTransition(it)
+            binding.darkerBackground.isVisible = it
         }
     }
 
@@ -334,6 +334,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
         drawerToggle.syncState()
 
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
+
         updateMenu(signedIn)
 
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
@@ -365,7 +367,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     private fun login(signedIn: Boolean) {
         if (signedIn) {
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
@@ -421,7 +423,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             NO_TRIGGERED -> {
                 // on
                 item.setIcon(R.drawable.ic_notifications_on_24px)
-                item.icon?.alpha = ALARM_ICON_ALPHA
+                item.icon?.alpha = ALARM_ICON_ALPHA_OPAQUE
             }
             TRIGGERED -> {
                 // triggered
@@ -429,7 +431,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 val drawable = item.icon
                 if (drawable != null) {
                     drawable.mutate()
-                    drawable.alpha = ALARM_ICON_ALPHA
+                    drawable.alpha = ALARM_ICON_ALPHA_OPAQUE
                     val anim = ValueAnimator()
                     anim.setIntValues(1, 0)
                     anim.setEvaluator(IntEvaluator())
@@ -467,7 +469,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
-                            val simpleAlert = AlertDialog.Builder(this).create()
+                            val simpleAlert = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
                             simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
                             simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
@@ -568,9 +570,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
-        private const val BUY_SENSORS_URL = "http://ruuvi.com/products"
-        private const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
+        const val BUY_SENSORS_URL = "http://ruuvi.com/products"
+        const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
         private const val ALARM_ICON_ALPHA = 128
+        private const val ALARM_ICON_ALPHA_OPAQUE = 255
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
         private const val UPDATE_REQUEST_CODE = 213
         private const val UPDATE_STALENESS_DAYS = 1

@@ -3,14 +3,17 @@ package com.ruuvi.station.tagsettings.ui
 import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.graphics.alpha
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -36,6 +39,7 @@ import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -125,7 +129,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
                 binding.ownerLayout.isEnabled = true
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
             } else {
                 binding.ownerLayout.isEnabled = false
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
@@ -143,8 +147,8 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         }
 
         viewModel.firmware.observe(this) {
-            binding.firmwareVersionTextView.isVisible = it != null
-            binding.firmwareVersionTitleTextView.isVisible = it != null
+            binding.firmwareVersionLayout.isVisible = it != null
+            binding.firmwareVersionDivider.isVisible = it != null
             binding.firmwareVersionTextView.text = it?.asString(this)
         }
 
@@ -185,13 +189,15 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
+        val errorColor = resolveColorAttr(R.attr.colorErrorText)
+        val successColor = resolveColorAttr(R.attr.colorSuccessText)
         viewModel.isLowBattery.observe(this) { lowBattery ->
             if (lowBattery) {
                 binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
-                binding.batteryTextView.setTextColor(getColor(R.color.activeAlarm))
+                binding.batteryTextView.setTextColor(errorColor)
             } else {
                 binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
-                binding.batteryTextView.setTextColor(getColor(R.color.black))
+                binding.batteryTextView.setTextColor(successColor)
             }
         }
 
@@ -420,7 +426,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun delete() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
 
         builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
@@ -441,12 +447,20 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
     private fun showImageSourceSheet() {
         val sheetDialog = BottomSheetDialog(this)
-        val listView = ListView(this)
+        val listView = ListView(this, null, R.style.AppTheme)
         val menu = arrayOf(
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
+        val dividerColor = resolveColorAttr(R.attr.colorDivider)
+        listView.divider = ColorDrawable(dividerColor).mutate()
+        listView.dividerHeight = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1f,
+            resources.displayMetrics
+        ).toInt()
+
+        listView.adapter = ArrayAdapter(this, R.layout.bottom_sheet_select_image_source, menu)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
                 0 -> dispatchTakePictureIntent()
