@@ -52,6 +52,8 @@
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -375,6 +377,7 @@
     <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках.</string>
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление.</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
     <string name="widget_empty">Нажмите + чтобы добавить датчики</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>
