@@ -412,7 +412,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
-            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
+            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage, getString(R.string.voltage_unit))
             binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
             binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
             binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)

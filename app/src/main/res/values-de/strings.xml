@@ -328,7 +328,7 @@
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
     <string name="version">Version: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>
     <string name="welcome_text_1">Umweltdaten messen: Temperatur, relative Luftfeuchtigkeit und Luftdruck.</string>

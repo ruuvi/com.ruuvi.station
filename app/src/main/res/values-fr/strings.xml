@@ -360,7 +360,7 @@
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
     <string name="version">Version : %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>
     <string name="welcome_text_1">Mesurer votre environnement : température, humidité, et pression de l\'air.</string>

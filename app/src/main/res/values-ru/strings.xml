@@ -370,7 +370,7 @@
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
     <string name="version">Версия: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>
     <string name="welcome_text_1">Измеряйте параметры окружающей среды: температуру, влажность и атмосферное давление.</string>

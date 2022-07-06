@@ -392,7 +392,7 @@
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
     <string name="version">Version: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure.</string>

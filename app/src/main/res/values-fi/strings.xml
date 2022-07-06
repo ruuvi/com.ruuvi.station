@@ -390,7 +390,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="version">Versio: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>
     <string name="welcome_text_1">Mittaa ympäristösi olosuhteita: lämpötilaa, ilmankosteutta ja ilmanpainetta.</string>
