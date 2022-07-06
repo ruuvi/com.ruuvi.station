@@ -50,6 +50,8 @@
     <string name="battery_voltage">Tension de la pile</string>
     <string name="beta">beta</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products</string>
     <string name="calibrate">Calibrer</string>
     <string name="calibrated">Calibré : %1$s</string>
     <string name="calibration_clear_confirm">Supprimer la calibration</string>
@@ -365,6 +367,7 @@
     <string name="welcome_text_2">Vérifier les données en temps réels ou consultez les histogrammes.</string>
     <string name="welcome_text_3">Définir des alarmes et des notifications comme vous le souhaitez.</string>
     <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur</string>
     <string name="widgets_loading">Chargement...</string>

@@ -129,8 +129,9 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
                 R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> sendFeedback()
-                R.id.getMoreSensorsMenuItem -> openUrl(BUY_SENSORS_URL)
-                R.id.getGatewayMenuItem -> openUrl(BUY_GATEWAY_URL)
+                R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
+                R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
+                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
                 R.id.loginMenuItem -> login(signedIn)
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -192,9 +193,6 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
     }
 
     companion object {
-        private const val BUY_SENSORS_URL = "http://ruuvi.com/products"
-        private const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
-
         fun start(context: Context) {
             val intent = Intent(context, DashboardActivity::class.java)
             context.startActivity(intent)
