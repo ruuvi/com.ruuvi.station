@@ -17,14 +17,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dfu.ui.MyTopAppBar
 import com.ruuvi.station.util.extensions.navigate
+import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.collect
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein by closestKodein()
+
+    private val appSettingsListViewModel: AppSettingsListViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -55,7 +62,7 @@ class SettingsActivity : AppCompatActivity() {
 
                     NavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
                         composable(SettingsRoutes.LIST) {
-                            SettingsList(scaffoldState, navController::navigate)
+                            SettingsList(scaffoldState, navController::navigate, appSettingsListViewModel)
                         }
                         composable(SettingsRoutes.TEMPERATURE) {
                             TemperatureSettings(scaffoldState = scaffoldState)
@@ -85,18 +92,6 @@ class SettingsActivity : AppCompatActivity() {
             val settingsIntent = Intent(context, SettingsActivity::class.java)
             context.startActivity(settingsIntent)
         }
-    }
-}
-
-@Composable
-fun SettingsList(
-    scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit
-) {
-    Text(text = "SettingsList")
-    Button(onClick = { onNavigate(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }) {
-        Text(text = "goto temp")
-        
     }
 }
 

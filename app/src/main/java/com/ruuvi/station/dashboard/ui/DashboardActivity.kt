@@ -18,6 +18,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.settings.ui.AppSettingsActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
@@ -126,7 +127,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
-                R.id.appSettingsMenuItem -> SettingsActivity.start(this)
+                R.id.appSettingsMenuItem -> SettingsActivity.start(this) //AppSettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> sendFeedback()
                 R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
