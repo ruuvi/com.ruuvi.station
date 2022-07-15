@@ -96,13 +96,6 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
 }
 
 @Composable
-fun TemperatureSettings(
-    scaffoldState: ScaffoldState
-) {
-    Text(text = "TemperatureSettings")
-}
-
-@Composable
 fun PressureSettings(
     scaffoldState: ScaffoldState
 ) {

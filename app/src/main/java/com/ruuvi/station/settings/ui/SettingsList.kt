@@ -98,7 +98,7 @@ fun SettingsElement(
             )
             if (description != null) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                    Paragraph(text = description, textAlign = TextAlign.End)
+                    Paragraph(text = description)
                     Text(text = "", )
                 }
             }
