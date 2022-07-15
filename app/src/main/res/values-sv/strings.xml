@@ -8,6 +8,9 @@
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="add_tag_not_found">Inga sensorer hittades</string>
     <string name="add_tag_title">Ruuvi sensorer i närheten</string>
     <string name="ago">sedan</string>

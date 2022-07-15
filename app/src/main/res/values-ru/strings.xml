@@ -8,6 +8,9 @@
     <string name="acceleration_x">Ускорение по X</string>
     <string name="acceleration_y">Ускорение по Y</string>
     <string name="acceleration_z">Ускорение по Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="ago">назад</string>
