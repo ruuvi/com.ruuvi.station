@@ -55,7 +55,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
-                description = null,
+                description = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
         }

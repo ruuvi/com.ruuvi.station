@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.PageSurfaceWithPadding
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.TemperatureUnit
 
 @Composable
@@ -66,11 +68,30 @@ fun TemperatureUnitElement(
 @Composable
 fun TemperatureAccuracy() {
     Column(modifier = Modifier.fillMaxWidth()) {
-        SubtitleWithPadding(text = stringResource(id = R.string.settings_temperature_unit))
+        SubtitleWithPadding(text = stringResource(id = R.string.temperature_accuracy_title))
 
-        for (item in TemperatureUnit.values()) {
-            TemperatureUnitElement(temperatureUnit = item, false)
+        for (item in Accuracy.values()) {
+            AccuracyElement(accuracy = item, false)
         }
+    }
+}
+
+@Composable
+fun AccuracyElement(accuracy: Accuracy, isSelected: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.clickable {  }
+    ) {
+        RadioButton(
+            selected = (isSelected),
+            colors = ruuviRadioButtonColors(),
+            onClick = {  })
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = stringResource(id = accuracy.nameTemplateId, accuracy.value, stringResource(id = R.string.temperature_celsius_unit)),
+            style = RuuviStationTheme.typography.paragraph)
     }
 }
 
