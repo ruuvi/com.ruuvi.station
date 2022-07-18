@@ -50,14 +50,16 @@ class UnitsConverter (
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), getTemperatureUnitString())
+            context.getString(getTemperatureAccuracy().nameTemplateId, getTemperatureValue(temperature), getTemperatureUnitString())
         }
+
+    fun getTemperatureAccuracy() = preferences.getTemperatureAccuracy()
 
     fun getTemperatureStringWithoutUnit(temperature: Double?): String =
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.temperature_reading, getTemperatureValue(temperature), "").trim()
+            context.getString(getTemperatureAccuracy().nameTemplateId, getTemperatureValue(temperature), "").trim()
         }
 
     fun getTemperatureOffsetString(offset: Double): String =
