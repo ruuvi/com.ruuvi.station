@@ -16,7 +16,8 @@ data class RuuviDimensions(
     val textTopPadding: Dp = medium,
     val textBottomPadding: Dp = medium,
     val buttonHeight: Dp = 48.dp,
-    val buttonInnerPadding: Dp = big
+    val buttonInnerPadding: Dp = big,
+    val settingsListHeight: Dp = 40.dp,
 )
 
 val ruuviDimensions = RuuviDimensions()

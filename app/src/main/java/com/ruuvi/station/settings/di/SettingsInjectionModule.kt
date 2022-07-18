@@ -32,5 +32,7 @@ object SettingsInjectionModule {
         bind<AppSettingsAppearanceViewModel>() with provider { AppSettingsAppearanceViewModel(instance()) }
 
         bind<TemperatureSettingsViewModel>() with provider { TemperatureSettingsViewModel(instance()) }
+
+        bind<HumiditySettingsViewModel>() with provider { HumiditySettingsViewModel(instance()) }
     }
 }

@@ -9,49 +9,52 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.PageSurfaceWithPadding
+import com.ruuvi.station.app.ui.components.ParagraphWithPadding
+import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
+import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.HumidityUnit
 
 @Composable
-fun TemperatureSettings(
+fun HumiditySettings(
     scaffoldState: ScaffoldState,
-    viewModel: TemperatureSettingsViewModel
+    viewModel: HumiditySettingsViewModel
 ) {
-    val unit = viewModel.temperatureUnit.observeAsState(TemperatureUnit.CELSIUS)
-    val accuracy = viewModel.temperatureAccuracy.observeAsState(Accuracy.Accuracy2)
+    val unit = viewModel.humidityUnit.observeAsState(HumidityUnit.PERCENT)
+    val accuracy = viewModel.humidityAccuracy.observeAsState(Accuracy.Accuracy2)
     PageSurfaceWithPadding {
         Column() {
-            TemperatureUnit(
-                allUnits = viewModel.getAllTemperatureUnits(),
+            HumidityUnit(
+                allUnits = viewModel.getAllHumidityUnits(),
                 selectedUnit = unit,
-                onUnitSelected = viewModel::setTemperatureUnit
+                onUnitSelected = viewModel::setHumidityUnit
             )
-            TemperatureAccuracy(
+            HumidityAccuracy(
                 accuracyList = viewModel.getAccuracyList(),
                 accuracy = accuracy,
                 selectedUnit = unit,
-                onAccuracySelected = viewModel::setTemperatureAccuracy
+                onAccuracySelected = viewModel::setHumidityAccuracy
             )
         }
     }
 }
 
 @Composable
-fun TemperatureUnit(
-    allUnits: Array<TemperatureUnit>,
-    selectedUnit: State<TemperatureUnit>,
-    onUnitSelected: (TemperatureUnit) -> Unit
+fun HumidityUnit(
+    allUnits: Array<HumidityUnit>,
+    selectedUnit: State<HumidityUnit>,
+    onUnitSelected: (HumidityUnit) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        SubtitleWithPadding(text = stringResource(id = R.string.settings_temperature_unit))
+        SubtitleWithPadding(text = stringResource(id = R.string.settings_humidity_unit))
 
-        ParagraphWithPadding(text = stringResource(id = R.string.settings_temperature_unit_details))
+        ParagraphWithPadding(text = stringResource(id = R.string.settings_humidity_unit_details))
 
         for (item in allUnits) {
-            TemperatureUnitElement(
+            HumidityUnitElement(
                 unit = item,
-                selectedUnit.value == item,
+                isSelected = selectedUnit.value == item,
                 onUnitSelected = onUnitSelected
             )
         }
@@ -59,10 +62,10 @@ fun TemperatureUnit(
 }
 
 @Composable
-fun TemperatureUnitElement(
-    unit: TemperatureUnit,
+fun HumidityUnitElement(
+    unit: HumidityUnit,
     isSelected: Boolean,
-    onUnitSelected: (TemperatureUnit) -> Unit
+    onUnitSelected: (HumidityUnit) -> Unit
 ) {
     RadioButtonRuuvi(
         text = stringResource(id = unit.title),
@@ -72,10 +75,10 @@ fun TemperatureUnitElement(
 }
 
 @Composable
-fun TemperatureAccuracy(
+fun HumidityAccuracy(
     accuracyList: Array<Accuracy>,
     accuracy: State<Accuracy>,
-    selectedUnit: State<TemperatureUnit>,
+    selectedUnit: State<HumidityUnit>,
     onAccuracySelected: (Accuracy) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -92,18 +95,4 @@ fun TemperatureAccuracy(
             )
         }
     }
-}
-
-@Composable
-fun AccuracyElement(
-    accuracy: Accuracy,
-    isSelected: Boolean,
-    unit: String,
-    onAccuracyChange: (Accuracy) -> Unit
-) {
-    RadioButtonRuuvi(
-        text = stringResource(id = accuracy.nameTemplateId, accuracy.value, unit),
-        isSelected = isSelected,
-        onClick = {onAccuracyChange.invoke(accuracy)}
-    )
 }

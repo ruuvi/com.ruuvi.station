@@ -40,7 +40,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
                 description = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.APPEARANCE)) }
             )
         }
 
@@ -64,7 +64,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
                 description = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
 
@@ -72,7 +72,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
                 description = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
         }
     }
@@ -88,7 +88,9 @@ fun SettingsElement(
         modifier = Modifier
             .clickable { onClick() }
             .padding(RuuviStationTheme.dimensions.medium)
-            .fillMaxWidth()
+            .height(RuuviStationTheme.dimensions.settingsListHeight)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

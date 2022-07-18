@@ -8,9 +8,11 @@ object SettingsRoutes {
     const val TEMPERATURE = "temperature"
     const val HUMIDITY = "humidity"
     const val PRESSURE = "pressure"
+    const val APPEARANCE = "appearance"
 
     fun getTitleByRoute(context: Context, route: String): String {
         return when (route) {
+            APPEARANCE -> context.getString(R.string.settings_appearance)
             LIST -> context.getString(R.string.menu_app_settings)
             TEMPERATURE -> context.getString(R.string.settings_temperature_unit)
             HUMIDITY -> context.getString(R.string.settings_humidity_unit)
