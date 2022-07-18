@@ -56,6 +56,8 @@ class AppSettingsInteractor(
         networkApplicationSettings.updateHumidityAccuracy()
     }
 
+    fun getHumidityUnitString(): String = unitsConverter.getHumidityUnitString()
+
     fun getDataForwardingUrl(): String =
         preferencesRepository.getDataForwardingUrl()
 

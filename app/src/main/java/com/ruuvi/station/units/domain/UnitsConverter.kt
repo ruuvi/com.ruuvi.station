@@ -98,7 +98,7 @@ class UnitsConverter (
             if (getPressureUnit() == PressureUnit.PA) {
                 context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())
             } else {
-                context.getString(R.string.pressure_reading, getPressureValue(pressure), getPressureUnitString())
+                context.getString(getPressureAccuracy().nameTemplateId, getPressureValue(pressure), getPressureUnitString())
             }
         }
     }
@@ -110,9 +110,11 @@ class UnitsConverter (
             if (getPressureUnit() == PressureUnit.PA) {
                 context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), "").trim()
             } else {
-                context.getString(R.string.pressure_reading, getPressureValue(pressure), "").trim()
+                context.getString(getPressureAccuracy().nameTemplateId, getPressureValue(pressure), "").trim()
             }
         }
+
+    fun getPressureAccuracy() = preferences.getPressureAccuracy()
 
     // Humidity
 
@@ -120,7 +122,13 @@ class UnitsConverter (
 
     fun getAllHumidityUnits(): Array<HumidityUnit> = HumidityUnit.values()
 
-    fun getHumidityUnitString(humidityUnit: HumidityUnit = getHumidityUnit()): String = context.getString(humidityUnit.unit)
+    fun getHumidityUnitString(humidityUnit: HumidityUnit = getHumidityUnit()): String {
+        return if (humidityUnit != HumidityUnit.DEW) {
+            context.getString(humidityUnit.unit)
+        } else {
+            getTemperatureUnitString()
+        }
+    }
 
     fun getHumidityValue(humidity: Double, temperature: Double, humidityUnit: HumidityUnit = getHumidityUnit()): Double {
         val converter = HumidityConverter(temperature, humidity/100)
@@ -142,20 +150,18 @@ class UnitsConverter (
         if (humidity == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature), "").trim()
+            context.getString(getHumidityAccuracy().nameTemplateId, getHumidityValue(humidity, temperature), "").trim()
         }
 
     fun getHumidityString(humidity: Double?, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): String {
         return if (humidity == null || temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            if (humidityUnit == HumidityUnit.DEW) {
-                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getTemperatureUnitString())
-            } else {
-                context.getString(R.string.humidity_reading, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString(humidityUnit))
-            }
+            context.getString(getHumidityAccuracy().nameTemplateId, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString(humidityUnit))
         }
     }
+
+    fun getHumidityAccuracy() = preferences.getHumidityAccuracy()
 
     fun getSignalString(rssi: Int): String =
         if (rssi != 0) {

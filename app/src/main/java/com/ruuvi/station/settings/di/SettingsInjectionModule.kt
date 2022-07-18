@@ -34,5 +34,7 @@ object SettingsInjectionModule {
         bind<TemperatureSettingsViewModel>() with provider { TemperatureSettingsViewModel(instance()) }
 
         bind<HumiditySettingsViewModel>() with provider { HumiditySettingsViewModel(instance()) }
+
+        bind<PressureSettingsViewModel>() with provider { PressureSettingsViewModel(instance()) }
     }
 }

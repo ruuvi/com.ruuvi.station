@@ -73,8 +73,8 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             HumiditySettings(scaffoldState = scaffoldState, humiditySettingsViewModel)
                         }
                         composable(SettingsRoutes.PRESSURE) {
-                            PressureSettings(scaffoldState = scaffoldState)
-                        }
+                            val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
+                            PressureSettings(scaffoldState = scaffoldState, pressureSettingsViewModel)                        }
                     }
                 }
 

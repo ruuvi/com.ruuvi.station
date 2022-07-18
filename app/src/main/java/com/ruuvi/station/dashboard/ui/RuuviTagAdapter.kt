@@ -39,7 +39,7 @@ class RuuviTagAdapter(
             binding.temperature.text = unitsConverter.getTemperatureStringWithoutUnit(it.temperature)
             binding.temperatureUnit.text = activity.getText(unitsConverter.getTemperatureUnit().unit)
             binding.humidity.text = unitsConverter.getHumidityStringWithoutUnit(it.humidity, it.temperature)
-            binding.humidityUnit.text = if (it.humidity != null) activity.getText(unitsConverter.getHumidityUnit().unit) else ""
+            binding.humidityUnit.text = if (it.humidity != null) unitsConverter.getHumidityUnitString() else ""
             binding.pressure.text = unitsConverter.getPressureStringWithoutUnit(it.pressure)
             binding.pressureUnit.text = if (it.pressure != null) activity.getText(unitsConverter.getPressureUnit().unit) else ""
             binding.movement.text =   movementConverter.getMovementStringWithoutUnit(it.movementCounter)
