@@ -2,6 +2,7 @@ package com.ruuvi.station.app.ui.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,4 +30,9 @@ fun PageSurfaceWithPadding(
     PageSurface(modifier.padding(RuuviStationTheme.dimensions.screenPadding)) {
         content.invoke()
     }
+}
+
+@Composable
+fun DividerRuuvi() {
+    Divider(color = RuuviStationTheme.colors.divider)
 }

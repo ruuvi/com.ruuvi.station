@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.util.BackgroundScanModes
@@ -55,7 +56,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
-                description = stringResource(id = viewModel.getTemperatureUnit().unit),
+                description = stringResource(id = viewModel.getTemperatureUnit().title),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
         }
@@ -63,7 +64,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
-                description = null,
+                description = stringResource(id = viewModel.getPressureUnit().title),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
@@ -71,7 +72,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
-                description = null,
+                description = stringResource(id = viewModel.getHumidityUnit().title),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
         }
@@ -84,32 +85,46 @@ fun SettingsElement(
     description: String?,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .clickable { onClick() }
-            .padding(RuuviStationTheme.dimensions.medium)
-            .height(RuuviStationTheme.dimensions.settingsListHeight)
-            .fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column() {
+        Row(
+            modifier = Modifier
+                .clickable { onClick() }
+                .padding(RuuviStationTheme.dimensions.medium)
+                .height(RuuviStationTheme.dimensions.settingsListHeight)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
             Text(
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .fillMaxWidth(),
                 style = RuuviStationTheme.typography.subtitle,
                 text = name,
                 textAlign = TextAlign.Left
             )
-            if (description != null) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                    Paragraph(text = description)
-                    Text(text = "", )
+
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                if (description != null) {
+                    Paragraph(
+                        text = description,
+                        modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended)
+                    )
                 }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
+
                 Image(
                     painter = painterResource(id = R.drawable.arrow_forward_16),
-                    contentDescription = "")
+                    contentDescription = ""
+                )
             }
         }
+        DividerRuuvi()
     }
 
 }
