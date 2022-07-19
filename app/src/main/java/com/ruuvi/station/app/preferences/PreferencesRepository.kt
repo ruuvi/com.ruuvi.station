@@ -1,6 +1,6 @@
 package com.ruuvi.station.app.preferences
 
-import com.ruuvi.station.settings.ui.DarkModeState
+import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit

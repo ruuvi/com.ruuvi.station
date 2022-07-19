@@ -16,6 +16,7 @@ val Keppel = Color(0xFF35AD9F)
 val Elm = Color(0xFF1F9385)
 val Error = Color(0xFFF15A24)
 val Track = Color(0xFFDFEFEC)
+val TrackInactive = Color(0xFF9DAFAF)
 val Dark = Color(0xFF001D1B)
 val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
@@ -32,6 +33,7 @@ data class RuuviStationColors(
     val successText: Color,
     val errorText: Color,
     val trackColor: Color,
+    val trackInactive: Color,
     val topBar: Color,
     val topBarText: Color,
     val divider: Color
@@ -49,6 +51,7 @@ val lightPalette = RuuviStationColors(
     successText = Keppel,
     errorText = Error,
     trackColor = Track,
+    trackInactive = TrackInactive,
     topBar = Titan,
     topBarText = White,
     divider = Lines
@@ -66,6 +69,7 @@ val darkPalette = RuuviStationColors(
     successText = Keppel,
     errorText = Error,
     trackColor = Track,
+    trackInactive = TrackInactive,
     topBar = Titan,
     topBarText = White,
     divider = Lines10

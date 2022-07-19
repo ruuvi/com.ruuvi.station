@@ -29,7 +29,7 @@ object SettingsInjectionModule {
             AppSettingsInteractor(instance(), instance(), instance(), instance(), instance())
         }
 
-        bind<AppSettingsAppearanceViewModel>() with provider { AppSettingsAppearanceViewModel(instance()) }
+        bind<AppearanceSettingsViewModel>() with provider { AppearanceSettingsViewModel(instance()) }
 
         bind<TemperatureSettingsViewModel>() with provider { TemperatureSettingsViewModel(instance()) }
 

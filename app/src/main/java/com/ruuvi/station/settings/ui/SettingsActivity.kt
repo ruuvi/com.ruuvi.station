@@ -62,19 +62,40 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
 
                     NavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
                         composable(SettingsRoutes.LIST) {
-                            SettingsList(scaffoldState, navController::navigate, appSettingsListViewModel)
+                            SettingsList(
+                                scaffoldState = scaffoldState,
+                                onNavigate = navController::navigate,
+                                viewModel = appSettingsListViewModel
+                            )
                         }
                         composable(SettingsRoutes.TEMPERATURE) {
                             val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
-                            TemperatureSettings(scaffoldState = scaffoldState, temperatureSettingsViewModel)
+                            TemperatureSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = temperatureSettingsViewModel
+                            )
                         }
                         composable(SettingsRoutes.HUMIDITY) {
                             val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
-                            HumiditySettings(scaffoldState = scaffoldState, humiditySettingsViewModel)
+                            HumiditySettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = humiditySettingsViewModel
+                            )
                         }
                         composable(SettingsRoutes.PRESSURE) {
                             val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
-                            PressureSettings(scaffoldState = scaffoldState, pressureSettingsViewModel)                        }
+                            PressureSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = pressureSettingsViewModel
+                            )
+                        }
+                        composable(SettingsRoutes.APPEARANCE) {
+                            val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
+                            AppearanceSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = appearanceSettingsViewModel
+                            )
+                        }
                     }
                 }
 

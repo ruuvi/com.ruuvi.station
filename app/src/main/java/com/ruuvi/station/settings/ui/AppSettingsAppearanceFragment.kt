@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.databinding.FragmentAppSettingsAppearanceBinding
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -14,7 +15,7 @@ class AppSettingsAppearanceFragment: Fragment(R.layout.fragment_app_settings_app
 
     override val kodein: Kodein by closestKodein()
 
-    private val viewModel: AppSettingsAppearanceViewModel by viewModel()
+    private val viewModel: AppearanceSettingsViewModel by viewModel()
 
     private lateinit var binding: FragmentAppSettingsAppearanceBinding
 

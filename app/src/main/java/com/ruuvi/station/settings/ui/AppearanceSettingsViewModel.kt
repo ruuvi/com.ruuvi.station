@@ -4,9 +4,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 
-class AppSettingsAppearanceViewModel (
+class AppearanceSettingsViewModel (
     private val interactor: AppSettingsInteractor,
 ) : ViewModel() {
 
@@ -16,17 +17,16 @@ class AppSettingsAppearanceViewModel (
     private  val _dashboardEnabled = MutableLiveData<Boolean> (interactor.isDashboardEnabled())
     val dashboardEnabled: LiveData<Boolean> = _dashboardEnabled
 
-    fun setIsDashboardEnabled(isEnabled: Boolean) =
+    fun getThemeOptions(): Array<DarkModeState> = DarkModeState.values()
+
+    fun setIsDashboardEnabled(isEnabled: Boolean) {
         interactor.setIsDashboardEnabled(isEnabled)
+        _dashboardEnabled.value = interactor.isDashboardEnabled()
+    }
 
     fun setDarkMode(mode: DarkModeState) {
         interactor.updateDarkMode(mode)
+        _darkMode.value = interactor.getDarkMode()
         AppCompatDelegate.setDefaultNightMode(mode.code)
     }
-}
-
-enum class DarkModeState(val code: Int) {
-    SYSTEM_THEME(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM),
-    DARK_THEME(AppCompatDelegate.MODE_NIGHT_YES),
-    LIGHT_THEME(AppCompatDelegate.MODE_NIGHT_NO)
 }
