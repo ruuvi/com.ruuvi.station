@@ -5,9 +5,9 @@ buildscript {
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
         coroutines_version = "1.4.0"
-        lifecycle_version = "2.2.0"
+        lifecycle_version = "2.4.1"
         retrofit_version = "2.9.0"
-        navigation_version = '2.3.0'
+        navigation_version = '2.4.0'
         compose_version = '1.1.1'
     }
     repositories {

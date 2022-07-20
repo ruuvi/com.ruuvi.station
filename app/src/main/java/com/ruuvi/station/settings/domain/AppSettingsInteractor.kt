@@ -5,11 +5,12 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
-import com.ruuvi.station.settings.ui.DarkModeState
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -31,6 +32,14 @@ class AppSettingsInteractor(
         networkApplicationSettings.updateTemperatureUnit()
     }
 
+    fun getTemperatureAccuracy(): Accuracy =
+        preferencesRepository.getTemperatureAccuracy()
+
+    fun setTemperatureAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setTemperatureAccuracy(accuracy)
+        networkApplicationSettings.updateTemperatureAccuracy()
+    }
+
     fun getHumidityUnit(): HumidityUnit =
         preferencesRepository.getHumidityUnit()
 
@@ -38,6 +47,16 @@ class AppSettingsInteractor(
         preferencesRepository.setHumidityUnit(unit)
         networkApplicationSettings.updateHumidityUnit()
     }
+
+    fun getHumidityAccuracy(): Accuracy =
+        preferencesRepository.getHumidityAccuracy()
+
+    fun setHumidityAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setHumidityAccuracy(accuracy)
+        networkApplicationSettings.updateHumidityAccuracy()
+    }
+
+    fun getHumidityUnitString(): String = unitsConverter.getHumidityUnitString()
 
     fun getDataForwardingUrl(): String =
         preferencesRepository.getDataForwardingUrl()
@@ -169,9 +188,19 @@ class AppSettingsInteractor(
         networkApplicationSettings.updatePressureUnit()
     }
 
+    fun getPressureAccuracy(): Accuracy =
+        preferencesRepository.getPressureAccuracy()
+
+    fun setPressureAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setPressureAccuracy(accuracy)
+        networkApplicationSettings.updatePressureAccuracy()
+    }
+
     fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
 
     fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
+
+    fun getAccuracyList(): Array<Accuracy> = Accuracy.values()
 
     fun getAllLocales(): Array<LocaleType> = LocaleType.values()
 

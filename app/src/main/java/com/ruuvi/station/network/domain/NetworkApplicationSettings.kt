@@ -172,12 +172,32 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateTemperatureAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateTemperatureAccuracy: ${preferencesRepository.getTemperatureAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_TEMPERATURE,
+                preferencesRepository.getTemperatureAccuracy().code.toString()
+            )
+        }
+    }
+
     fun updateHumidityUnit() {
         if (networkInteractor.signedIn) {
             Timber.d("NetworkApplicationSettings-updateHumidityUnit: ${unitsConverter.getHumidityUnit().code}")
             networkInteractor.updateUserSetting(
                 UNIT_HUMIDITY,
                 unitsConverter.getHumidityUnit().code.toString()
+            )
+        }
+    }
+
+    fun updateHumidityAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateHumidityAccuracy: ${preferencesRepository.getHumidityAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_HUMIDITY,
+                preferencesRepository.getHumidityAccuracy().code.toString()
             )
         }
     }
@@ -252,12 +272,25 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updatePressureAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updatePressureAccuracy: ${preferencesRepository.getPressureAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_PRESSURE,
+                preferencesRepository.getPressureAccuracy().code.toString()
+            )
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
         val UNIT_TEMPERATURE = "UNIT_TEMPERATURE"
         val UNIT_HUMIDITY = "UNIT_HUMIDITY"
         val UNIT_PRESSURE = "UNIT_PRESSURE"
+        val ACCURACY_TEMPERATURE = "ACCURACY_TEMPERATURE"
+        val ACCURACY_HUMIDITY = "ACCURACY_HUMIDITY"
+        val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
         val DASHBOARD_ENABLED = "DASHBOARD_ENABLED"
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"

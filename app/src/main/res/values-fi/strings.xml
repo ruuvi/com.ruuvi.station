@@ -8,6 +8,9 @@
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="ago">sitten</string>

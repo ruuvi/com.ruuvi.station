@@ -21,7 +21,7 @@ class AppSettingsBackgroundScanFragment : Fragment(R.layout.fragment_app_setting
 
     override val kodein: Kodein by closestKodein()
 
-    private val viewModel: AppSettingsBackgroundScanViewModel by viewModel()
+    private val viewModel: BackgroundScanSettingsViewModel by viewModel()
 
     private lateinit var permissionsInteractor: PermissionsInteractor
 

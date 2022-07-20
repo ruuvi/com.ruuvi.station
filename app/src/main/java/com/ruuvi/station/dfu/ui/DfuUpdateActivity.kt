@@ -112,11 +112,7 @@ fun Body(
 ) {
     val systemUiController = rememberSystemUiController()
 
-    Surface(
-        color = RuuviStationTheme.colors.background,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    PageSurface {
         Column() {
             MyTopAppBar(title)
             Column(
