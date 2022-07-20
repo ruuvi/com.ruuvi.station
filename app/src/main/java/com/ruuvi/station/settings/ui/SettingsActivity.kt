@@ -103,6 +103,13 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = backgroundScanSettingsViewModel
                             )
                         }
+                        composable(SettingsRoutes.CHARTS) {
+                            val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
+                            ChartSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = chartSettingsViewModel
+                            )
+                        }
                     }
                 }
 
@@ -123,19 +130,4 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
             context.startActivity(settingsIntent)
         }
     }
-}
-
-@Composable
-fun PressureSettings(
-    scaffoldState: ScaffoldState
-) {
-    Text(text = "PressureSettings")
-}
-
-
-@Composable
-fun HumiditySettings(
-    scaffoldState: ScaffoldState
-) {
-    Text(text = "HumiditySettings")
 }

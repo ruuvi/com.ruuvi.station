@@ -77,6 +77,14 @@ fun SettingsList(
             )
         }
 
+        item {
+            SettingsElement(
+                name = stringResource(id = R.string.settings_chart),
+                description = null,
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CHARTS)) }
+            )
+        }
+
     }
 }
 

@@ -58,7 +58,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
     private fun observePeriod() {
         lifecycleScope.launch {
-            viewModel.observeViewPeriod().collect {
+            viewModel.viewPeriod.collect {
                 binding.chartViewPeriodEdit.selectedValue = it
             }
         }
@@ -66,7 +66,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
     private fun observeShowAllPoints() {
         lifecycleScope.launch {
-            viewModel.showAllPointsFlow.collect {
+            viewModel.showAllPoints.collect {
                 with(binding) {
                     graphAllPointsSwitch.isChecked = it
                 }
@@ -76,7 +76,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
     private fun observeDrawDots() {
         lifecycleScope.launch {
-            viewModel.drawDotsFlow.collect {
+            viewModel.drawDots.collect {
                 binding.graphDrawDotsSwitch.isChecked = it
             }
         }
