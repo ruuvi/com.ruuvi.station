@@ -36,5 +36,7 @@ object SettingsInjectionModule {
         bind<HumiditySettingsViewModel>() with provider { HumiditySettingsViewModel(instance()) }
 
         bind<PressureSettingsViewModel>() with provider { PressureSettingsViewModel(instance()) }
+
+        bind<CloudSettingsViewModel>() with provider { CloudSettingsViewModel(instance()) }
     }
 }

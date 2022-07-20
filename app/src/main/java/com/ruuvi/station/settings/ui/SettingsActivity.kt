@@ -68,6 +68,20 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = appSettingsListViewModel
                             )
                         }
+                        composable(SettingsRoutes.APPEARANCE) {
+                            val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
+                            AppearanceSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = appearanceSettingsViewModel
+                            )
+                        }
+                        composable(SettingsRoutes.BACKGROUNDSCAN) {
+                            val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
+                            BackgroundScanSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = backgroundScanSettingsViewModel
+                            )
+                        }
                         composable(SettingsRoutes.TEMPERATURE) {
                             val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
                             TemperatureSettings(
@@ -89,18 +103,11 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = pressureSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.APPEARANCE) {
-                            val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
-                            AppearanceSettings(
+                        composable(SettingsRoutes.CLOUD) {
+                            val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
+                            CloudSettings(
                                 scaffoldState = scaffoldState,
-                                viewModel = appearanceSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.BACKGROUNDSCAN) {
-                            val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
-                            BackgroundScanSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = backgroundScanSettingsViewModel
+                                viewModel = cloudSettingsViewModel
                             )
                         }
                         composable(SettingsRoutes.CHARTS) {

@@ -77,6 +77,16 @@ fun SettingsList(
             )
         }
 
+        if (viewModel.shouldShowCloudMode()) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.ruuvi_cloud),
+                    description = null,
+                    onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CLOUD)) }
+                )
+            }
+        }
+
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_chart),
