@@ -49,7 +49,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_background_scan),
                 description = intervalText,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.BACKGROUNDSCAN)) }
             )
         }
 
@@ -63,19 +63,20 @@ fun SettingsList(
 
         item {
             SettingsElement(
+                name = stringResource(id = R.string.settings_humidity_unit),
+                description = stringResource(id = viewModel.getHumidityUnit().title),
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
+            )
+        }
+
+        item {
+            SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
                 description = stringResource(id = viewModel.getPressureUnit().title),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
 
-        item {
-            SettingsElement(
-                name = stringResource(id = R.string.settings_humidity_unit),
-                description = stringResource(id = viewModel.getHumidityUnit().title),
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
-            )
-        }
     }
 }
 

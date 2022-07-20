@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class AppSettingsGraphViewModel(
+class ChartSettingsViewModel(
     private val interactor: AppSettingsInteractor
 ) : ViewModel() {
     private val pointInterval = Channel<Int>(1)

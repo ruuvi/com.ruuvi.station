@@ -1,11 +1,13 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -25,8 +27,10 @@ fun SwitchRuuvi (
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Subtitle(text = text, modifier = Modifier
             .width(IntrinsicSize.Max)

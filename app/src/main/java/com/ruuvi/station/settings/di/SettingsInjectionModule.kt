@@ -9,9 +9,9 @@ object SettingsInjectionModule {
     val module = Kodein.Module(SettingsInjectionModule.javaClass.name) {
         bind<AppSettingsViewModel>() with provider { AppSettingsViewModel(instance()) }
 
-        bind<AppSettingsBackgroundScanViewModel>() with provider { AppSettingsBackgroundScanViewModel(instance(), instance()) }
+        bind<BackgroundScanSettingsViewModel>() with provider { BackgroundScanSettingsViewModel(instance(), instance()) }
 
-        bind<AppSettingsGraphViewModel>() with provider { AppSettingsGraphViewModel(instance()) }
+        bind<ChartSettingsViewModel>() with provider { ChartSettingsViewModel(instance()) }
 
         bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
 

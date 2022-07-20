@@ -17,7 +17,7 @@ class AppSettingsGraphFragment : Fragment(R.layout.fragment_app_settings_graph),
 
     override val kodein: Kodein by closestKodein()
 
-    private val viewModel: AppSettingsGraphViewModel by viewModel()
+    private val viewModel: ChartSettingsViewModel by viewModel()
 
     private lateinit var binding: FragmentAppSettingsGraphBinding
 

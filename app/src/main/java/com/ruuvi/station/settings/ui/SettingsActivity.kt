@@ -96,6 +96,13 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = appearanceSettingsViewModel
                             )
                         }
+                        composable(SettingsRoutes.BACKGROUNDSCAN) {
+                            val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
+                            BackgroundScanSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = backgroundScanSettingsViewModel
+                            )
+                        }
                     }
                 }
 
