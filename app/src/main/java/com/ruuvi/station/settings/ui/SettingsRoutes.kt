@@ -12,6 +12,7 @@ object SettingsRoutes {
     const val BACKGROUNDSCAN = "backgroundscan"
     const val CHARTS = "charts"
     const val CLOUD = "cloud"
+    const val DATAFORWARDING = "dataforwarding"
 
     fun getTitleByRoute(context: Context, route: String): String {
         return when (route) {
@@ -23,6 +24,7 @@ object SettingsRoutes {
             BACKGROUNDSCAN -> context.getString(R.string.background_scanning)
             CHARTS -> context.getString(R.string.settings_chart)
             CLOUD -> context.getString(R.string.ruuvi_cloud)
+            DATAFORWARDING -> context.getString(R.string.settings_data_forwarding)
             else -> context.getString(R.string.menu_app_settings)
         }
     }

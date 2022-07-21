@@ -8,26 +8,27 @@ import com.ruuvi.station.settings.domain.GatewayTestResultType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class AppSettingsDataForwardingViewModel(
+class DataForwardingSettingsViewModel(
         private val interactor: AppSettingsInteractor
 ) : ViewModel() {
-    private val dataForwardingUrl = MutableStateFlow(interactor.getDataForwardingUrl())
-    val observeDataForwardingUrl: StateFlow<String> = dataForwardingUrl
+    private val _dataForwardingUrl = MutableStateFlow(interactor.getDataForwardingUrl())
+    val dataForwardingUrl: StateFlow<String> = _dataForwardingUrl
 
-    private val dataForwardingLocationEnabled = MutableStateFlow(interactor.getDataForwardingLocationEnabled())
-    val observeDataForwardingLocationEnabled: StateFlow<Boolean> = dataForwardingLocationEnabled
+    private val _dataForwardingLocationEnabled = MutableStateFlow(interactor.getDataForwardingLocationEnabled())
+    val dataForwardingLocationEnabled: StateFlow<Boolean> = _dataForwardingLocationEnabled
 
-    private val dataForwardingDuringSyncEnabled = MutableStateFlow(interactor.getDataForwardingDuringSyncEnabled())
-    val observeDataForwardingDuringSyncEnabled: StateFlow<Boolean> = dataForwardingDuringSyncEnabled
+    private val _dataForwardingDuringSyncEnabled = MutableStateFlow(interactor.getDataForwardingDuringSyncEnabled())
+    val dataForwardingDuringSyncEnabled: StateFlow<Boolean> = _dataForwardingDuringSyncEnabled
 
-    private val deviceId = MutableStateFlow(interactor.getDeviceId())
-    val observeDeviceId: StateFlow<String> = deviceId
+    private val _deviceId = MutableStateFlow(interactor.getDeviceId())
+    val deviceId: StateFlow<String> = _deviceId
 
-    private val testGatewayResult = MutableStateFlow(GatewayTestResult(GatewayTestResultType.NONE))
-    val observeTestGatewayResult: StateFlow<GatewayTestResult> = testGatewayResult
+    private val _testGatewayResult = MutableStateFlow(GatewayTestResult(GatewayTestResultType.NONE))
+    val testGatewayResult: StateFlow<GatewayTestResult> = _testGatewayResult
 
     fun setDataForwardingUrl(url: String) {
         interactor.setDataForwardingUrl(url)
+        _dataForwardingUrl.value = interactor.getDataForwardingUrl()
     }
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
@@ -43,20 +44,20 @@ class AppSettingsDataForwardingViewModel(
     }
 
     fun testGateway() {
-        testGatewayResult.value = GatewayTestResult(GatewayTestResultType.TESTING)
+        _testGatewayResult.value = GatewayTestResult(GatewayTestResultType.TESTING)
         interactor.testGateway(
                 interactor.getDataForwardingUrl(),
                 interactor.getDeviceId(),
                 FutureCallback { e, result ->
                     when {
                         e != null -> {
-                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.EXCEPTION)
+                            _testGatewayResult.value = GatewayTestResult(GatewayTestResultType.EXCEPTION)
                         }
                         result.headers.code() != 200 -> {
-                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.FAIL, result.headers.code())
+                            _testGatewayResult.value = GatewayTestResult(GatewayTestResultType.FAIL, result.headers.code())
                         }
                         else -> {
-                            testGatewayResult.value = GatewayTestResult(GatewayTestResultType.SUCCESS, result.headers.code())
+                            _testGatewayResult.value = GatewayTestResult(GatewayTestResultType.SUCCESS, result.headers.code())
                         }
                     }
                 }

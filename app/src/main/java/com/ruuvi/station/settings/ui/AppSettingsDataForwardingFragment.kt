@@ -1,6 +1,5 @@
 package com.ruuvi.station.settings.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,7 +26,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     override val kodein: Kodein by closestKodein()
 
-    private val viewModel: AppSettingsDataForwardingViewModel by viewModel()
+    private val viewModel: DataForwardingSettingsViewModel by viewModel()
 
     private lateinit var binding: FragmentAppSettingsDataForwardingBinding
 
@@ -130,7 +129,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     private fun observeDataForwardingUrl() {
         lifecycleScope.launch {
-            viewModel.observeDataForwardingUrl.collect {
+            viewModel.dataForwardingUrl.collect {
                 binding.gatewayUrlEditText.setText(it)
             }
         }
@@ -138,7 +137,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     private fun observeDeviceId() {
         lifecycleScope.launch {
-            viewModel.observeDeviceId.collect {
+            viewModel.deviceId.collect {
                 binding.deviceIdEditText.setText(it)
             }
         }
@@ -146,7 +145,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     private fun observeLocationEnabled() {
         lifecycleScope.launch {
-            viewModel.observeDataForwardingLocationEnabled.collect { isEnabled ->
+            viewModel.dataForwardingLocationEnabled.collect { isEnabled ->
                 binding.locationSwitch.isChecked = isEnabled
             }
         }
@@ -154,7 +153,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
 
     private fun observeDataForwardingDuringSyncEnabled() {
         lifecycleScope.launch {
-            viewModel.observeDataForwardingDuringSyncEnabled.collect { isEnabled ->
+            viewModel.dataForwardingDuringSyncEnabled.collect { isEnabled ->
                 binding.forwardingDuringSyncSwitch.isChecked = isEnabled
             }
         }
@@ -165,7 +164,7 @@ class AppSettingsDataForwardingFragment : Fragment(R.layout.fragment_app_setting
             val regularColor = requireActivity().resolveColorAttr(R.attr.colorPrimary)
             val errorColor = requireActivity().resolveColorAttr(R.attr.colorErrorText)
             val successColor = requireActivity().resolveColorAttr(R.attr.colorSuccessText)
-            viewModel.observeTestGatewayResult.collect{
+            viewModel.testGatewayResult.collect{
                 with(binding) {
                     when (it.type) {
                         GatewayTestResultType.NONE -> {
