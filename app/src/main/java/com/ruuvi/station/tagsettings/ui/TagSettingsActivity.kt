@@ -37,6 +37,7 @@ import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.resolveColorAttr
@@ -120,9 +121,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             binding.calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
             binding.calibratePressure.setItemValue(
-                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0, Accuracy.Accuracy2))
             binding.calibrateHumidity.setItemValue(
-                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
 

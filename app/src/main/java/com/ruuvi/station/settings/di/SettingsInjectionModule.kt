@@ -15,7 +15,7 @@ object SettingsInjectionModule {
 
         bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
 
-        bind<AppSettingsDataForwardingViewModel>() with provider { AppSettingsDataForwardingViewModel(instance()) }
+        bind<DataForwardingSettingsViewModel>() with provider { DataForwardingSettingsViewModel(instance()) }
 
         bind<AppSettingsPressureUnitViewModel>() with provider { AppSettingsPressureUnitViewModel(instance()) }
 

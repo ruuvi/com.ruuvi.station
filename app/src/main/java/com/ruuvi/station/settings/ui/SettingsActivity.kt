@@ -117,6 +117,13 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = chartSettingsViewModel
                             )
                         }
+                        composable(SettingsRoutes.DATAFORWARDING) {
+                            val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
+                            DataForwardingSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = dataForwardingSettingsViewModel
+                            )
+                        }
                     }
                 }
 

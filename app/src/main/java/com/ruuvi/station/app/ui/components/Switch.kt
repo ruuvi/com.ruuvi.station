@@ -32,9 +32,12 @@ fun SwitchRuuvi (
             .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Subtitle(text = text, modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .fillMaxWidth())
+        Subtitle(
+            text = text,
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .fillMaxWidth()
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -95,6 +95,13 @@ fun SettingsList(
             )
         }
 
+        item {
+            SettingsElement(
+                name = stringResource(id = R.string.settings_data_forwarding),
+                description = null,
+                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
+            )
+        }
     }
 }
 
