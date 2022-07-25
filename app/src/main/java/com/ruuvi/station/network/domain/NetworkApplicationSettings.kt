@@ -3,6 +3,7 @@ package com.ruuvi.station.network.domain
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.response.NetworkUserSettings
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -36,6 +37,9 @@ class NetworkApplicationSettings (
                         applyChartShowAllPoints(response.data.settings)
                         applyChartDrawDots(response.data.settings)
                         applyChartViewPeriod(response.data.settings)
+                        applyTemperatureAccuracy(response.data.settings)
+                        applyHumidityAccuracy(response.data.settings)
+                        applyPressureAccuracy(response.data.settings)
                     }
                 }
             }
@@ -56,6 +60,9 @@ class NetworkApplicationSettings (
             updateChartShowAllPoints()
             updateChartDrawDots()
             updateChartViewPeriod()
+            updateTemperatureAccuracy()
+            updateHumidityAccuracy()
+            updatePressureAccuracy()
             false
         } else {
             true
@@ -149,6 +156,36 @@ class NetworkApplicationSettings (
         settings.CHART_VIEW_PERIOD?.toIntOrNull()?.let {
             Timber.d("NetworkApplicationSettings-applyChartViewPeriod: $it")
             preferencesRepository.setGraphViewPeriodDays(it)
+        }
+    }
+
+    private fun applyTemperatureAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_TEMPERATURE?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyTemperatureAccuracy: $accuracy")
+                preferencesRepository.setTemperatureAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyHumidityAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_HUMIDITY?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyHumidityAccuracy: $accuracy")
+                preferencesRepository.setHumidityAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyPressureAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_PRESSURE?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyPressureAccuracy: $accuracy")
+                preferencesRepository.setPressureAccuracy(accuracy)
+            }
         }
     }
 

@@ -33,14 +33,17 @@ class DataForwardingSettingsViewModel(
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
         interactor.setDataForwardingLocationEnabled(locationEnabled)
+        _dataForwardingLocationEnabled.value = interactor.getDataForwardingLocationEnabled()
     }
 
     fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
         interactor.setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled)
+        _dataForwardingDuringSyncEnabled.value = interactor.getDataForwardingDuringSyncEnabled()
     }
 
     fun setDeviceId(newDeviceId: String) {
         interactor.setDeviceId(newDeviceId)
+        _deviceId.value = interactor.getDeviceId()
     }
 
     fun testGateway() {
