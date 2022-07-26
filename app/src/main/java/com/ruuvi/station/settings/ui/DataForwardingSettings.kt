@@ -12,7 +12,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.settings.domain.GatewayTestResultType
-import kotlinx.coroutines.flow.collect
 
 @Composable
 fun DataForwardingSettings(
@@ -49,11 +48,15 @@ fun DataForwardingSettings(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
             SwitchRuuvi(
                 text = stringResource(id = R.string.data_forwarding_location_enable),
                 checked = locationEnabled.value,
                 onCheckedChange = viewModel::setDataForwardingLocationEnabled
             )
+
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
             SwitchRuuvi(
                 text = stringResource(id = R.string.data_forwarding_during_sync_enable),
