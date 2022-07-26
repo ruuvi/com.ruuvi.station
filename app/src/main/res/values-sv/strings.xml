@@ -206,6 +206,7 @@
     <string name="menu_buy_gateway">Köp Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Köp Ruuvi-sensorer</string>
     <string name="menu_send_feedback">Skicka Feedback</string>
+    <string name="menu_what_to_measure">Vad ska man mäta med Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
     <string name="more_info">Mer info</string>

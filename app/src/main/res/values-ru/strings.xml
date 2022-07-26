@@ -43,6 +43,7 @@
     <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
     <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
     <string name="app_name">Ruuvi Station</string>
+    <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое\nизображение</string>
@@ -119,6 +120,7 @@
     <string name="connecting">Соединение...</string>
     <string name="current_version">Текущая версия</string>
     <string name="current_version_fw">Текущая версия:</string>
+    <string name="dark_theme">Темная тема</string>
     <string name="dashboard">Панель датчиков</string>
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
@@ -155,6 +157,7 @@
     <string name="firmware">Прошивка</string>
     <string name="firmware_update">Обновить</string>
     <string name="firmware_very_old">Устаревшая</string>
+    <string name="follow_system_theme">Как в системе</string>
     <string name="gallery">Галерея</string>
     <string name="gateway_test_exception">Произошла ошибка. Адрес правильный?</string>
     <string name="gateway_test_fail">Произошла ошибка. Код ответа: %1$d</string>
@@ -194,6 +197,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Доступная версия прошивки Ruuvi:</string>
+    <string name="light_theme">Светлая тема</string>
     <string name="logged_in">Пользователь:</string>
     <string name="login_description">Чтобы воспользоваться всеми функциями, создайте аккаунт или войдите в существующий. Пожалуйста, введите ваш email.</string>
     <string name="login_to_ruuvi_network">Войти в\nRuuvi\nStation</string>
@@ -206,6 +210,7 @@
     <string name="menu_buy_gateway">Купить Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Купить датчики Ruuvi</string>
     <string name="menu_send_feedback">Отправить Отзыв</string>
+    <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
     <string name="more_info">Дополнительно</string>

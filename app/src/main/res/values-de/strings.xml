@@ -177,6 +177,7 @@
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
     <string name="menu_app_settings">App Einstellungen</string>
     <string name="menu_send_feedback">Feedback schicken</string>
+    <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
     <string name="more_info">Mehr info</string>
