@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -30,9 +31,9 @@ class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAwar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupUI()
     }
 
