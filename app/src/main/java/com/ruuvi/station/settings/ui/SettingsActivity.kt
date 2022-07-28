@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -13,9 +15,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavBackStackEntry
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -26,6 +29,7 @@ import kotlinx.coroutines.flow.collect
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
+@OptIn(ExperimentalAnimationApi::class)
 class SettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -38,7 +42,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme() {
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
@@ -60,64 +64,92 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     scaffoldState = scaffoldState
                 ) {
 
-                    NavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
-                        composable(SettingsRoutes.LIST) {
+                    AnimatedNavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
+                        composable(SettingsRoutes.LIST,
+                            enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
+                            exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                        ) {
                             SettingsList(
                                 scaffoldState = scaffoldState,
                                 onNavigate = navController::navigate,
                                 viewModel = appSettingsListViewModel
                             )
                         }
-                        composable(SettingsRoutes.APPEARANCE) {
+                        composable(
+                            route = SettingsRoutes.APPEARANCE,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
                             AppearanceSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = appearanceSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.BACKGROUNDSCAN) {
+                        composable(SettingsRoutes.BACKGROUNDSCAN,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
                             BackgroundScanSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = backgroundScanSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.TEMPERATURE) {
+                        composable(SettingsRoutes.TEMPERATURE,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
                             TemperatureSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = temperatureSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.HUMIDITY) {
+                        composable(SettingsRoutes.HUMIDITY,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
                             HumiditySettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = humiditySettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.PRESSURE) {
+                        composable(SettingsRoutes.PRESSURE,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
                             PressureSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = pressureSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.CLOUD) {
+                        composable(SettingsRoutes.CLOUD,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
                             CloudSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = cloudSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.CHARTS) {
+                        composable(SettingsRoutes.CHARTS,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
                             ChartSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = chartSettingsViewModel
                             )
                         }
-                        composable(SettingsRoutes.DATAFORWARDING) {
+                        composable(SettingsRoutes.DATAFORWARDING,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
                             val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
                             DataForwardingSettings(
                                 scaffoldState = scaffoldState,
@@ -137,6 +169,17 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
             }
         }
     }
+
+    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+        { slideIntoContainer(
+            towards = AnimatedContentScope.SlideDirection.Left,
+            animationSpec = tween(600)
+        ) }
+    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+        { slideOutOfContainer(
+            towards = AnimatedContentScope.SlideDirection.Right,
+            animationSpec = tween(600)
+        ) }
 
     companion object {
         fun start(context: Context) {

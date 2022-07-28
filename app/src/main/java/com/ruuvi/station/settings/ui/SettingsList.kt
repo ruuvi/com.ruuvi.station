@@ -48,7 +48,7 @@ fun SettingsList(
         intervalText = stringResource(id = R.string.alert_subtitle_off)
     }
 
-    LazyColumn() {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
