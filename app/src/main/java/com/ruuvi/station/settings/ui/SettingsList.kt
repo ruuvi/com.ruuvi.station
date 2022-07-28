@@ -1,5 +1,7 @@
 package com.ruuvi.station.settings.ui
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +20,7 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
 
 @Composable
@@ -25,6 +29,14 @@ fun SettingsList(
     onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: AppSettingsListViewModel
 ) {
+    val context = LocalContext.current
+    BackHandler() {
+        if (viewModel.shouldRestartApp()) {
+            StartupActivity.start(context, false)
+        }
+        (context as Activity).finish()
+    }
+
     var intervalText = ""
     if (viewModel.getBackgroundScanMode() != BackgroundScanModes.DISABLED) {
         val bgScanInterval = viewModel.getBackgroundScanInterval()
@@ -36,7 +48,7 @@ fun SettingsList(
         intervalText = stringResource(id = R.string.alert_subtitle_off)
     }
 
-    LazyColumn() {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),

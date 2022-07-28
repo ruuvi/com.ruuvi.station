@@ -15,8 +15,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 113001
-        versionName "1.13.1"
+        versionCode 113002
+        versionName "1.13.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -94,6 +94,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.activity:activity-compose:1.4.0"
     implementation "androidx.compose.compiler:compiler:$compose_version"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.18.0"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
@@ -177,6 +178,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-compose:$navigation_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.23.1"
 
     implementation("io.coil-kt:coil:1.1.1")
 }

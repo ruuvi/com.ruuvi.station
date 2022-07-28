@@ -4,10 +4,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -26,30 +29,34 @@ fun SwitchRuuvi (
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) },
-        verticalAlignment = Alignment.CenterVertically,
+    ConstraintLayout(modifier = Modifier
+        .fillMaxWidth()
+        .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) }
     ) {
-        Subtitle(
+        val (caption, switch) = createRefs()
+
+        Text(
             text = text,
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .fillMaxWidth()
+            textAlign = TextAlign.Left,
+            style = RuuviStationTheme.typography.subtitle,
+            modifier = Modifier.constrainAs(caption) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.absoluteLeft)
+                end.linkTo(switch.start)
+                width = Dimension.fillToConstraints
+            }
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Switch(
-                checked = checked,
-                colors = ruuviSwitchColors(),
-                onCheckedChange = onCheckedChange,
-                modifier = Modifier.width(IntrinsicSize.Min)
-            )
-        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = ruuviSwitchColors(),
+            modifier = Modifier.constrainAs(switch) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+            }
+        )
     }
 }
