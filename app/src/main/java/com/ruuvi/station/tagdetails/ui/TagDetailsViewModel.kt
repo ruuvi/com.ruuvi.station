@@ -39,7 +39,7 @@ class TagDetailsViewModel(
     private val selectedTag = MutableLiveData<RuuviTag?>(null)
     val selectedTagObserve: LiveData<RuuviTag?> = selectedTag
 
-    private val tags = MutableLiveData<List<RuuviTag>>(arrayListOf())
+    private val tags = MutableLiveData<List<RuuviTag>>(interactor.getTags())
     val tagsObserve: LiveData<List<RuuviTag>> = tags
 
     private val alarmStatus = MutableLiveData(AlarmStatus.NO_ALARM)
