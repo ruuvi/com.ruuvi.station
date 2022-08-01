@@ -79,7 +79,7 @@ fun TemperatureAccuracy(
     onAccuracySelected: (Accuracy) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        SubtitleWithPadding(text = stringResource(id = R.string.humidity_accuracy_title))
+        SubtitleWithPadding(text = stringResource(id = R.string.temperature_accuracy_title))
 
         ParagraphWithPadding(text = stringResource(id = R.string.accuracy_description))
 
