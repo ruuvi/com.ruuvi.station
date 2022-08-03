@@ -250,7 +250,7 @@
     <string name="settings_background_continuous_description">Der kontinuierliche Hintergrundscanmodus ist aktiviert.\nDatenprotokollierungsintervall: %1$s</string>
     <string name="settings_background_disabled">Kein Scannen im Hintergrund</string>
     <string name="settings_background_disabled_description">Es ist kein Hintergrundscanmodus aktiviert</string>
-    <string name="settings_background_scan">Einstellungen für das Scannen im Hintergrund</string>
+    <string name="settings_background_scan">Scannen im Hintergrund</string>
     <string name="settings_background_scan_details">Diese Funktion ermöglicht das Scannen im Hintergrund, was bedeutet, dass Ihr Telefon regelmäßig nach Beacons sucht, auch wenn Sie es nicht verwenden.</string>
     <string name="settings_background_scan_details_continuous">Die App sucht regelmäßig über einen Dienst (mit Benachrichtigungen) nach Beacons, was ein sehr häufiges und zuverlässiges Scannen ermöglicht, auch wenn Sie sie nicht verwenden.</string>
     <string name="settings_background_scan_interval">Datenprotokollierungsintervall</string>
@@ -265,7 +265,7 @@
     <string name="settings_chart_interval_description">Stellen Sie das Intervall zwischen den Punkten für das Diagramm von 1 bis 60 Minuten ein. Kleinere Werte bedeuten ein genaueres Diagramm, aber auch einen höheren Leistungsbedarf für Ihr Gerät</string>
     <string name="settings_chart_view_period">Anzeigezeitraum des Diagrammverlaufs</string>
     <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 10 Tagen</string>
-    <string name="settings_data_forwarding">Einstellungen für die Datenweiterleitung</string>
+    <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>

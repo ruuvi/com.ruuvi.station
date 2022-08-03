@@ -72,7 +72,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
-                description = stringResource(id = viewModel.getTemperatureUnit().title),
+                description = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
         }
@@ -80,7 +80,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
-                description = stringResource(id = viewModel.getHumidityUnit().title),
+                description = stringResource(id = viewModel.getHumidityUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
         }
@@ -88,7 +88,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
-                description = stringResource(id = viewModel.getPressureUnit().title),
+                description = stringResource(id = viewModel.getPressureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
@@ -122,7 +122,7 @@ fun SettingsList(
 }
 
 @Composable
-fun SettingsElement5(
+fun SettingsElement(
     name: String,
     description: String?,
     onClick: () -> Unit
@@ -169,198 +169,6 @@ fun SettingsElement5(
                         },
                     style = RuuviStationTheme.typography.paragraph,
                     textAlign = TextAlign.End,
-                    text = description,
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.arrow_forward_16),
-                contentDescription = "",
-                modifier = Modifier
-                    .constrainAs(arrow) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
-        DividerRuuvi()
-    }
-}
-
-@Composable
-fun SettingsElement(
-    name: String,
-    description: String?,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.settingsListHeight)
-            .padding(RuuviStationTheme.dimensions.medium)
-            .clickable(role = Role.Button) { onClick.invoke() }
-        ) {
-            val (caption, descElement, arrow) = createRefs()
-
-            Text(
-                modifier = Modifier
-                    .constrainAs(caption) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.absoluteLeft)
-                        //end.linkTo(descElement.start)
-                        //width = Dimension.fillToConstraints
-                    },
-                style = RuuviStationTheme.typography.subtitle,
-                text = name,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (description != null) {
-                Text(
-                    modifier = Modifier
-                        .padding(end = RuuviStationTheme.dimensions.mediumPlus)
-                        .constrainAs(descElement) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(caption.end)
-                            end.linkTo(arrow.start)
-                            width = Dimension.fillToConstraints
-
-                        },
-                    style = RuuviStationTheme.typography.paragraph,
-                    textAlign = TextAlign.End,
-                    text = description,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.arrow_forward_16),
-                contentDescription = "",
-                modifier = Modifier
-                    .constrainAs(arrow) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
-        DividerRuuvi()
-    }
-}
-
-@Composable
-fun SettingsElement2(
-    name: String,
-    description: String?,
-    onClick: () -> Unit
-) {
-    Column() {
-        Row(
-            modifier = Modifier
-                .clickable { onClick() }
-                .padding(RuuviStationTheme.dimensions.medium)
-                .height(40.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                modifier = Modifier
-                    .width(IntrinsicSize.Max)
-                    .fillMaxWidth(),
-                style = RuuviStationTheme.typography.subtitle,
-                text = name,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                if (description != null) {
-                    Text(
-                        style = RuuviStationTheme.typography.paragraph,
-                        text = description,
-                        modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended),
-                        maxLines = 1,
-                        //overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Image(
-                    painter = painterResource(id = R.drawable.arrow_forward_16),
-                    contentDescription = ""
-                )
-
-            }
-
-        }
-        DividerRuuvi()
-    }
-}
-
-@Composable
-fun SettingsElement4(
-    name: String,
-    description: String?,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.settingsListHeight)
-            .padding(RuuviStationTheme.dimensions.medium)
-            .clickable(role = Role.Button) { onClick.invoke() }
-        ) {
-            val (caption, descElement, arrow) = createRefs()
-
-            Text(
-                modifier = Modifier
-                    .constrainAs(caption) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.absoluteLeft)
-                        end.linkTo(arrow.start)
-                        width = Dimension.fillToConstraints
-                    },
-                style = RuuviStationTheme.typography.subtitle,
-                text = name,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (description != null) {
-                Text(
-                    modifier = Modifier
-                        .padding(end = RuuviStationTheme.dimensions.mediumPlus)
-                        .constrainAs(descElement) {
-                            top.linkTo(caption.bottom)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(caption.start)
-                            end.linkTo(arrow.start)
-                            width = Dimension.fillToConstraints
-
-                        },
-                    style = RuuviStationTheme.typography.paragraph,
                     text = description,
                     maxLines = 1,
                     overflow = TextOverflow.Visible
