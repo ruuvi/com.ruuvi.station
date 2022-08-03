@@ -52,14 +52,14 @@ class PermissionsInteractor(private val activity: Activity) {
 
     fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
 
-    fun requestPermissions(needBackground: Boolean) {
+    fun requestPermissions(needBackground: Boolean, askForBluetooth: Boolean) {
         val neededPermissions = getRequiredPermissions()
         if (neededPermissions.isNotEmpty()) {
             showLocationPermissionDialog {
                 shouldShowLocationDialog = false
                 showPermissionDialog(neededPermissions)
             }
-        } else if (enableBluetooth() && shouldAskToEnableLocation && enableLocation() && needBackground && backgroundLocationNeeded()) {
+        } else if (enableBluetooth(askForBluetooth) && shouldAskToEnableLocation && enableLocation() && needBackground && backgroundLocationNeeded()) {
             requestBackgroundPermission()
         }
     }
@@ -136,11 +136,11 @@ class PermissionsInteractor(private val activity: Activity) {
 
     private fun isLocationEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-    private fun enableBluetooth(): Boolean {
+    private fun enableBluetooth(askForBluetooth: Boolean): Boolean {
         if (isBluetoothEnabled()) {
             return true
         }
-        if (shouldAskToEnableBluetooth) {
+        if (askForBluetooth && shouldAskToEnableBluetooth) {
             shouldAskToEnableBluetooth = false
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             activity.startActivityForResult(enableBtIntent, REQUEST_CODE_BLUETOOTH)

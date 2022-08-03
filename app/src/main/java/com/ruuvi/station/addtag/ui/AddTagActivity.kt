@@ -118,7 +118,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
 
     private fun requestPermission() {
         permissionsInteractor.requestPermissions(
-            preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = true
         )
     }
 
