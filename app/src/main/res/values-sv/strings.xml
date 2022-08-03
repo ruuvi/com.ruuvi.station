@@ -296,7 +296,7 @@
     <string name="sensor_settings">Sensorinställningar</string>
     <string name="sensor_shared">Delad</string>
     <string name="settings">Inställningar</string>
-    <string name="settings_appearance">Utseendeinställningar</string>
+    <string name="settings_appearance">Utseende</string>
     <string name="settings_background_battery_optimization">Om du har problem med bakgrundsskanningen så kan det hjälpa att stänga av batterioptimering. Denna inställning hittas på olika ställen beroende på telefonens tillverkare, modell och Android version.</string>
     <string name="settings_background_battery_optimization_common_instructions">Gå till operativsystemets Inställningar -> Appar -> Batteri -> Batterioptimering och välj Optimera inte för Ruuvi Station</string>
     <string name="settings_background_battery_optimization_huawei_instructions">Gå till operativsystemets Inställningar -> Appar -> Appar -> Ruuvi Station -> Information om energiförbrukning -> Appstart. Avaktivera Hantera automatiskt och aktivera Autostart, Sekundär start och Kör i bakgrunden.</string>
@@ -308,7 +308,7 @@
     <string name="settings_background_continuous_description">Kontinuerlig bakgrundsskanning är aktiverad\nDataloggningsintervall: %1$s</string>
     <string name="settings_background_disabled">Ingen bakgrundsskanning</string>
     <string name="settings_background_disabled_description">Bakgrundsskanning är avaktiverad</string>
-    <string name="settings_background_scan">Bakgrundsskanningsinställningar</string>
+    <string name="settings_background_scan">Bakgrundsskanning</string>
     <string name="settings_background_scan_details">Den här funktionen gör så att data hämtas regelbundet från närliggande sensorer i bakgrunden, även medan du inte har appen öppen.</string>
     <string name="settings_background_scan_details_continuous">Programmet hämtar regelbundet data från sensorer i närheten medan appen körs i bakgrunden.</string>
     <string name="settings_background_scan_interval">Dataloggningsintervall</string>
@@ -323,7 +323,7 @@
     <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser</string>
     <string name="settings_chart_view_period">Historik</string>
     <string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 10 dagar</string>
-    <string name="settings_data_forwarding">Inställningar för vidarebefordran av data</string>
+    <string name="settings_data_forwarding">Vidarebefordran av data</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
     <string name="settings_experimental">Experimentella funktioner</string>
     <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>

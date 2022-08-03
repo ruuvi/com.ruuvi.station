@@ -290,12 +290,12 @@
     <string name="settings_background_continuous_description">Фоновое сканироваение включено.\nИнтервал сканирования: %1$s</string>
     <string name="settings_background_disabled">Без фонового сканирования</string>
     <string name="settings_background_disabled_description">Фоновое сканироваение выключено</string>
-    <string name="settings_background_scan">Сканирования в фоне</string>
+    <string name="settings_background_scan">Сканирование в фоне</string>
     <string name="settings_background_scan_details">При включении этой функции ваш телефон будет переодически получать сигналы от датчиков в фоновом режиме.</string>
     <string name="settings_background_scan_details_continuous">Приложение будет периодически получать данные от датчиков при помощи службы (с уведомлениями), обеспечивая частое и надежное сканирование даже когда вы не используете приложение</string>
     <string name="settings_background_scan_interval">Интервал сканирования</string>
     <string name="settings_background_scan_interval_description">Установите как часто должно включаться фоновое сканирование</string>
-    <string name="settings_chart">Графики</string>
+    <string name="settings_chart">Настройки графиков</string>
     <string name="settings_chart_all_points">Отображать все данные</string>
     <string name="settings_chart_all_points_description">Это может привести к медленному обновлению графиков</string>
     <string name="settings_chart_description">Установите интервал между точками и диапазон истории для графиков</string>
