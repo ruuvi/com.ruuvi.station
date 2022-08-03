@@ -129,6 +129,15 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
+            } else {
+                if (viewModel.sensorOwnedByUserObserve.value == true) {
+                    deleteString = getString(R.string.remove_claimed_sensor)
+                } else {
+                    deleteString = getString(R.string.remove_shared_sensor)
+                }
+            }
+
+            if (sensorSettings?.owner.isNullOrEmpty()) {
                 binding.ownerLayout.isEnabled = true
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
             } else {
@@ -139,11 +148,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                     null,
                     null
                 )
-                if (viewModel.sensorOwnedByUserObserve.value == true) {
-                    deleteString = getString(R.string.remove_claimed_sensor)
-                } else {
-                    deleteString = getString(R.string.remove_shared_sensor)
-                }
             }
         }
 

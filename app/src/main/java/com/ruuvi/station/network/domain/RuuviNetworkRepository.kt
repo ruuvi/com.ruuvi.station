@@ -315,13 +315,26 @@ class RuuviNetworkRepository
     }
 
     suspend fun getSensors(sensorId: String?, token: String): GetSensorsResponse? = withContext(dispatcher){
-        val response = retrofitService.geSensors(getAuth(token), sensorId)
+        val response = retrofitService.getSensors(getAuth(token), sensorId)
         val result: GetSensorsResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
             val type = object : TypeToken<GetAlertsResponse>() {}.type
             val errorResponse: GetSensorsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun checkSensorOwner(sensorId: String, token: String): CheckSensorResponse? = withContext(dispatcher){
+        val response = retrofitService.checkSensorOwner(getAuth(token), sensorId)
+        val result: CheckSensorResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetAlertsResponse>() {}.type
+            val errorResponse: CheckSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result
