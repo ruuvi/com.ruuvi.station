@@ -307,7 +307,7 @@
     <string name="settings_background_continuous_description">Jatkuva skannaus on käytössä.\nHistorian tallennusväli: %1$s </string>
     <string name="settings_background_disabled">Ei skannausta</string>
     <string name="settings_background_disabled_description">Taustaskannaus pois käytöstä</string>
-    <string name="settings_background_scan">Taustaskannauksen asetukset</string>
+    <string name="settings_background_scan">Taustaskannaus</string>
     <string name="settings_background_scan_details">Mahdollistaa historiatietojen tallentamisen taustalla, jolloin laitteesi hakee säännöllisesti tietoja lähellä olevista antureista sovelluksen ollessa taustalla.</string>
     <string name="settings_background_scan_details_continuous">Sovellus hakee säännöllisesti tietoja lähellä olevista antureista sovelluksen ollessa taustalla.</string>
     <string name="settings_background_scan_interval">Historiatietojen tallennusväli</string>

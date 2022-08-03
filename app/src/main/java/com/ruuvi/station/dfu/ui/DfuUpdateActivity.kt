@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -288,7 +289,12 @@ fun MyTopAppBar(
 
     TopAppBar(
         title = {
-            Text(text = title, style = RuuviStationTheme.typography.topBarText)
+            Text(
+                text = title,
+                style = RuuviStationTheme.typography.topBarText,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
         },
         navigationIcon = {
             IconButton(onClick = {
