@@ -64,9 +64,9 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
     }
 
     private fun requestPermission() {
+        permissionsInteractor.requestPermissions(false, true)
         val permissionsGranted = permissionsInteractor.arePermissionsGranted()
         viewModel.permissionsChecked(permissionsGranted)
-        if (!permissionsGranted) permissionsInteractor.showPermissionSnackbar()
     }
 
     companion object {

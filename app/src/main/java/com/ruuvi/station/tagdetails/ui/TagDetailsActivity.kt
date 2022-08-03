@@ -577,7 +577,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+        permissionsInteractor.requestPermissions(
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+        )
     }
 
     companion object {
