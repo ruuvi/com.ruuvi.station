@@ -93,11 +93,6 @@ package="com.ruuvi.station">
         android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
-        android:name="com.ruuvi.station.settings.ui.AppSettingsActivity"
-        android:label="@string/menu_app_settings"
-        android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-    <activity
         android:name="com.ruuvi.station.settings.ui.SettingsActivity"
         android:label="@string/menu_app_settings"
         android:exported="false"

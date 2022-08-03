@@ -79,6 +79,9 @@ class TagSettingsViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             val tagInfo = getTagById(sensorId)
             val settings = interactor.getSensorSettings(sensorId)
+            if (settings?.networkSensor != true && settings?.owner.isNullOrEmpty()) {
+                interactor.checkSensorOwner(sensorId)
+            }
             withContext(Dispatchers.Main) {
                 _tagState.value = tagInfo
                 sensorSettings.value = settings
