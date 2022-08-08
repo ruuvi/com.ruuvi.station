@@ -69,7 +69,7 @@ class CsvExporter(
                     ))
             }
             fileWriter.append('\n')
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
@@ -122,6 +122,6 @@ class CsvExporter(
     }
 
     companion object {
-        private const val nullValue = "-"
+        private const val nullValue = ""
     }
 }

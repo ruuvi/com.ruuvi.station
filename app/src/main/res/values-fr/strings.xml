@@ -145,9 +145,9 @@
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>
     <string name="export_csv_failed">Echec de la création du fichier CSV</string>
-    <string name="export_csv_header_format2_4">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission</string>
-    <string name="export_csv_header_format3">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension</string>
-    <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence,Puissance d\'émission</string>
+    <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
+    <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
+    <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
     <string name="file_not_supported">Format non supporté</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>
