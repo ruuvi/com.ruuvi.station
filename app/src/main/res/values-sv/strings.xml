@@ -157,9 +157,9 @@
     <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
     <string name="export_csv_created">.csv skapad, öppnar dela menyn</string>
     <string name="export_csv_failed">Kunde inte skapa CSV filen</string>
-    <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka</string>
-    <string name="export_csv_header_format3">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning</string>
-    <string name="export_csv_header_format5">Datum,Temperatur (%1$s), Luftfuktighet (%2$s), Lufttryck (%3$s), Signalstyrka, Acceleration X,Acceleration Y,Acceleration Z, Spänning, Rörelseräknare,Mätningssekvensnummer,Sändningseffekt</string>
+    <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
+    <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
+    <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
     <string name="firmware">Programvara</string>
     <string name="firmware_update">Uppdatera</string>

@@ -345,8 +345,15 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 insets.systemWindowInsetTop
             }
 
+            val bottomInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsets.Type.systemBars()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
             binding.navigationContent.navigationView.setMarginTop(topInset)
-            Timber.d("insets $view $insets")
+            binding.navigationContent.navigationView.setMarginBottom(bottomInset)
+            Timber.d("insets $topInset $bottomInset $view $insets")
             return@setOnApplyWindowInsetsListener insets
 
         }

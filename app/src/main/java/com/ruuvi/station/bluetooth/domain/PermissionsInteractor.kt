@@ -134,7 +134,12 @@ class PermissionsInteractor(private val activity: Activity) {
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled
     }
 
-    private fun isLocationEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    private fun isLocationEnabled() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        locationManager.isLocationEnabled
+    } else {
+        locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
 
     private fun enableBluetooth(askForBluetooth: Boolean): Boolean {
         if (isBluetoothEnabled()) {
