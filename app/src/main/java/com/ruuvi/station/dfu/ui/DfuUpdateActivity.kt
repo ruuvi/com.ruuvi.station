@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,12 +18,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -65,9 +64,9 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
     }
 
     private fun requestPermission() {
+        permissionsInteractor.requestPermissions(false, true)
         val permissionsGranted = permissionsInteractor.arePermissionsGranted()
         viewModel.permissionsChecked(permissionsGranted)
-        if (!permissionsGranted) permissionsInteractor.showPermissionSnackbar()
     }
 
     companion object {
@@ -290,7 +289,12 @@ fun MyTopAppBar(
 
     TopAppBar(
         title = {
-            Text(text = title, style = RuuviStationTheme.typography.topBarText)
+            Text(
+                text = title,
+                style = RuuviStationTheme.typography.topBarText,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
         },
         navigationIcon = {
             IconButton(onClick = {

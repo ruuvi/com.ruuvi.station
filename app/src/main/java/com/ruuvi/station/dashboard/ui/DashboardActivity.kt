@@ -18,7 +18,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.network.ui.SignInActivity
-import com.ruuvi.station.settings.ui.AppSettingsActivity
+import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.units.domain.MovementConverter
@@ -126,11 +126,12 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
-                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.appSettingsMenuItem -> SettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> sendFeedback()
-                R.id.getMoreSensorsMenuItem -> openUrl(BUY_SENSORS_URL)
-                R.id.getGatewayMenuItem -> openUrl(BUY_GATEWAY_URL)
+                R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
+                R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
+                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
                 R.id.loginMenuItem -> login(signedIn)
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -188,13 +189,13 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+        permissionsInteractor.requestPermissions(
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+        )
     }
 
     companion object {
-        private const val BUY_SENSORS_URL = "http://ruuvi.com/products"
-        private const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
-
         fun start(context: Context) {
             val intent = Intent(context, DashboardActivity::class.java)
             context.startActivity(intent)

@@ -32,6 +32,13 @@
                 android:title="@string/menu_send_feedback" />
         </group>
         <group
+            android:id="@+id/whatTomeasureGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/whatTomeasureMenuItem"
+                android:title="@string/menu_what_to_measure" />
+        </group>
+        <group
             android:id="@+id/getMoreSensorsGroup"
             android:checkableBehavior="none">
             <item

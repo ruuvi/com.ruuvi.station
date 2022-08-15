@@ -15,8 +15,8 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 112011
-        versionName "1.12.11"
+        versionCode 113005
+        versionName "1.13.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -92,8 +92,9 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation "androidx.activity:activity-compose:1.3.1"
+    implementation "androidx.activity:activity-compose:1.4.0"
     implementation "androidx.compose.compiler:compiler:$compose_version"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.18.0"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
@@ -116,7 +117,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.play:core:1.10.2'
@@ -175,6 +177,8 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-compose:$navigation_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.23.1"
 
     implementation("io.coil-kt:coil:1.1.1")
 }

@@ -101,11 +101,11 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
         }
 
         binding.content.buySensorsButton.setOnClickListener {
-            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
+            openUrl(getString(R.string.buy_sensors_link))
         }
 
         binding.content.buySensorsButton2.setOnClickListener {
-            openUrl(TagDetailsActivity.BUY_SENSORS_URL)
+            openUrl(getString(R.string.buy_sensors_link))
         }
     }
 
@@ -118,7 +118,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
 
     private fun requestPermission() {
         permissionsInteractor.requestPermissions(
-            preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = true
         )
     }
 

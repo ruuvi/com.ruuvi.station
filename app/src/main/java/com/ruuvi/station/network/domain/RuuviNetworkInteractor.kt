@@ -138,6 +138,22 @@ class RuuviNetworkInteractor (
         }
     }
 
+    fun checkSensorOwner(sensorId: String) {
+        val token = getToken()?.token
+        token?.let {
+            CoroutineScope(Dispatchers.IO).launch() {
+                val response = networkRepository.checkSensorOwner(sensorId, token)
+                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
+                    sensorSettingsRepository.setSensorOwner(
+                        sensorId,
+                        response.data.email,
+                        false
+                    )
+                }
+            }
+        }
+    }
+
     fun unclaimSensor(sensorId: String) {
         val networkRequest = NetworkRequest(NetworkRequestType.UNCLAIM, sensorId, UnclaimSensorRequest(sensorId))
         Timber.d("unclaimSensor $networkRequest")

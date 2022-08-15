@@ -5,39 +5,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dfu.ui.LoadingStatus
-
-@Composable
-fun RuuviButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    loading: Boolean = false,
-    onClick: () -> Unit
-) {
-    Button(
-        modifier = modifier
-            .height(RuuviStationTheme.dimensions.buttonHeight),
-        enabled = enabled,
-        shape = RoundedCornerShape(50),
-        colors = ruuviButtonColors(),
-        elevation = ruuviButtonElevation(),
-        contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
-        onClick = { onClick() }) {
-        Text(
-            text = text,
-            style = RuuviStationTheme.typography.buttonText,
-            textAlign = TextAlign.Center
-        )
-        if (loading) {
-            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-            LoadingStatus(color = RuuviStationTheme.colors.onInactive)
-        }
-    }
-}
 
 @Composable
 fun ruuviButtonColors() = ButtonDefaults.buttonColors(
@@ -55,3 +28,34 @@ fun ruuviButtonElevation() = ButtonDefaults.elevation(
     hoveredElevation = 0.dp,
     focusedElevation = 0.dp
 )
+
+@Composable
+fun RuuviButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(50),
+    height: Dp = RuuviStationTheme.dimensions.buttonHeight,
+    enabled: Boolean = true,
+    loading: Boolean = false,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .height(height),
+        enabled = enabled,
+        shape = shape,
+        colors = ruuviButtonColors(),
+        elevation = ruuviButtonElevation(),
+        contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
+        onClick = { onClick() }) {
+        Text(
+            text = text,
+            style = RuuviStationTheme.typography.buttonText,
+            textAlign = TextAlign.Center
+        )
+        if (loading) {
+            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+            LoadingStatus(color = RuuviStationTheme.colors.onInactive)
+        }
+    }
+}

@@ -37,6 +37,7 @@ import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.resolveColorAttr
@@ -120,14 +121,23 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             binding.calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
             binding.calibratePressure.setItemValue(
-                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0, Accuracy.Accuracy2))
             binding.calibrateHumidity.setItemValue(
-                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
 
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
+            } else {
+                if (viewModel.sensorOwnedByUserObserve.value == true) {
+                    deleteString = getString(R.string.remove_claimed_sensor)
+                } else {
+                    deleteString = getString(R.string.remove_shared_sensor)
+                }
+            }
+
+            if (sensorSettings?.owner.isNullOrEmpty()) {
                 binding.ownerLayout.isEnabled = true
                 binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
             } else {
@@ -138,11 +148,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                     null,
                     null
                 )
-                if (viewModel.sensorOwnedByUserObserve.value == true) {
-                    deleteString = getString(R.string.remove_claimed_sensor)
-                } else {
-                    deleteString = getString(R.string.remove_shared_sensor)
-                }
             }
         }
 
@@ -412,7 +417,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
-            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
+            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage, getString(R.string.voltage_unit))
             binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
             binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
             binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)

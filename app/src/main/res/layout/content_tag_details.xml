@@ -31,24 +31,6 @@
     </com.ruuvi.station.app.ui.MultiTouchViewPager>
 
     <TextView
-        android:id="@+id/dummyTextView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fontFamily="@font/oswald_light"
-        android:textSize="76sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/dummyTextViewMontserrat"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fontFamily="@font/montserrat_bold"
-        android:textSize="76sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/noTagsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

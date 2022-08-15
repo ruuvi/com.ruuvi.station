@@ -4,7 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
-import com.ruuvi.station.settings.ui.DarkModeState
+import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -90,6 +91,45 @@ class Preferences constructor(val context: Context) {
         }
         set(value) {
             sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
+        }
+
+    var temperatureAccuracy: Accuracy
+        get() {
+            return when (sharedPreferences.getInt(PREF_ACCURACY_TEMPERATURE, 2)) {
+                0 -> Accuracy.Accuracy0
+                1 -> Accuracy.Accuracy1
+                2 -> Accuracy.Accuracy2
+                else -> Accuracy.Accuracy2
+            }
+        }
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_TEMPERATURE, value.code).apply()
+        }
+
+    var humidityAccuracy: Accuracy
+        get() {
+            return when (sharedPreferences.getInt(PREF_ACCURACY_HUMIDITY, 2)) {
+                0 -> Accuracy.Accuracy0
+                1 -> Accuracy.Accuracy1
+                2 -> Accuracy.Accuracy2
+                else -> Accuracy.Accuracy2
+            }
+        }
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY, value.code).apply()
+        }
+
+    var pressureAccuracy: Accuracy
+        get() {
+            return when (sharedPreferences.getInt(PREF_ACCURACY_PRESSURE, 2)) {
+                0 -> Accuracy.Accuracy0
+                1 -> Accuracy.Accuracy1
+                2 -> Accuracy.Accuracy2
+                else -> Accuracy.Accuracy2
+            }
+        }
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_PRESSURE, value.code).apply()
         }
 
     var dataForwardingUrl: String
@@ -277,6 +317,9 @@ class Preferences constructor(val context: Context) {
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
         private const val PREF_PRESSURE_UNIT = "pref_pressure_unit"
+        private const val PREF_ACCURACY_TEMPERATURE = "pref_accuracy_temperature"
+        private const val PREF_ACCURACY_HUMIDITY = "pref_accuracy_humidity"
+        private const val PREF_ACCURACY_PRESSURE = "pref_accuracy_pressure"
         private const val PREF_BACKEND = "pref_backend"
         private const val PREF_BACKEND_LOCATION = "pref_backend_location"
         private const val PREF_BACKEND_FORWARDING_DURING_SYNC =

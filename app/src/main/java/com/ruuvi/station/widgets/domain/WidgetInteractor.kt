@@ -75,7 +75,7 @@ class WidgetInteractor (
                     type = WidgetType.VOLTAGE,
                     sensorValue = context.getString(
                         R.string.voltage_reading,
-                        lastMeasurement.voltage.toString(),
+                        lastMeasurement.voltage,
                         ""
                     ).trim(),
                     unit = context.getString(R.string.voltage_unit)

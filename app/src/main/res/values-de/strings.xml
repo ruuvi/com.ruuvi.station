@@ -8,6 +8,9 @@
     <string name="acceleration_x">Beschleunigung X</string>
     <string name="acceleration_y">Beschleunigung Y</string>
     <string name="acceleration_z">Beschleunigung Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
     <string name="ago">vor</string>
@@ -38,6 +41,8 @@
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products</string>
     <string name="calibrate">Kalibrieren</string>
     <string name="calibrated">Kalibriert: %1$s</string>
     <string name="calibration_clear_confirm">Kalibrierungseinstellungen löschen?</string>
@@ -116,9 +121,9 @@
     <string name="export_csv_chooser_title">Sensor %1$s CSV-Export</string>
     <string name="export_csv_created">.csv erstellt, Freigabemenü öffnen</string>
     <string name="export_csv_failed">CSV-Datei konnte nicht erstellt werden</string>
-    <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s), Luftfeuchtigkeit (%2$s), Druck (%3$s),RSSI</string>
-    <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s), Luftfeuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung</string>
-    <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s), Feuchtigkeit (%2$s), Druck (%3$s),RSSI,Beschleunigung X,Beschleunigung Y,Beschleunigung Z,Spannung,Bewegungszähler,Messsequenznummer,TX-Leistung</string>
+    <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI(dBm)</string>
+    <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
+    <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>
@@ -172,6 +177,7 @@
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
     <string name="menu_app_settings">App Einstellungen</string>
     <string name="menu_send_feedback">Feedback schicken</string>
+    <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
     <string name="more_info">Mehr info</string>
@@ -244,7 +250,7 @@
     <string name="settings_background_continuous_description">Der kontinuierliche Hintergrundscanmodus ist aktiviert.\nDatenprotokollierungsintervall: %1$s</string>
     <string name="settings_background_disabled">Kein Scannen im Hintergrund</string>
     <string name="settings_background_disabled_description">Es ist kein Hintergrundscanmodus aktiviert</string>
-    <string name="settings_background_scan">Einstellungen für das Scannen im Hintergrund</string>
+    <string name="settings_background_scan">Scannen im Hintergrund</string>
     <string name="settings_background_scan_details">Diese Funktion ermöglicht das Scannen im Hintergrund, was bedeutet, dass Ihr Telefon regelmäßig nach Beacons sucht, auch wenn Sie es nicht verwenden.</string>
     <string name="settings_background_scan_details_continuous">Die App sucht regelmäßig über einen Dienst (mit Benachrichtigungen) nach Beacons, was ein sehr häufiges und zuverlässiges Scannen ermöglicht, auch wenn Sie sie nicht verwenden.</string>
     <string name="settings_background_scan_interval">Datenprotokollierungsintervall</string>
@@ -259,7 +265,7 @@
     <string name="settings_chart_interval_description">Stellen Sie das Intervall zwischen den Punkten für das Diagramm von 1 bis 60 Minuten ein. Kleinere Werte bedeuten ein genaueres Diagramm, aber auch einen höheren Leistungsbedarf für Ihr Gerät</string>
     <string name="settings_chart_view_period">Anzeigezeitraum des Diagrammverlaufs</string>
     <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 10 Tagen</string>
-    <string name="settings_data_forwarding">Einstellungen für die Datenweiterleitung</string>
+    <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
@@ -326,13 +332,14 @@
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
     <string name="version">Version: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>
     <string name="welcome_text_1">Umweltdaten messen: Temperatur, relative Luftfeuchtigkeit und Luftdruck.</string>
     <string name="welcome_text_2">Greifen Sie in Echtzeit auf Daten für jeden verknüpften Sensor zu und erkunden Sie Verlaufsdiagramme.</string>
     <string name="welcome_text_3">Legen Sie Benachrichtigungen fest und lassen Sie sich benachrichtigen, wenn Ihre Grenzen erreicht sind.</string>
     <string name="welcome_text_5">Drücken Sie SCAN, um Sensoren in der Nähe zu finden und zu Ihrer Ruuvi Station hinzuzufügen.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
     <string name="widgets_preview_sensor_value">69.50</string>
     <string name="widgets_preview_time">19:45</string>
     <string name="yes">Ja</string>

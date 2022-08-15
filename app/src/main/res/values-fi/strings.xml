@@ -8,6 +8,10 @@
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="ago">sitten</string>
@@ -54,6 +58,8 @@
     <string name="battery_voltage">Paristojännite</string>
     <string name="beta">beta</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/fi/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet</string>
     <string name="calibrate">Kalibroi</string>
     <string name="calibrated">Kalibroitu: %1$s</string>
     <string name="calibration_clear_confirm">Poista kalibrointiasetuset?</string>
@@ -150,9 +156,9 @@
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
     <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjakoikkuna</string>
     <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
-    <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho</string>
-    <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite</string>
-    <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s), Ilmankosteus (%2$s), Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X,Kiihtyvyys Y,Kiihtyvyys Z,Jännite,Liikelaskuri,Mittajärjestysnumero,Lähetysteho</string>
+    <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
+    <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
+    <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittajärjestysnumero,Lähetysteho (dBm)</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
@@ -185,6 +191,7 @@
     <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
+    <string name="humidity_accuracy_title">Kosteuden resoluutio</string>
     <string name="humidity_dew_point_name">Kastepiste (°)</string>
     <string name="humidity_dew_point_unit">°</string>
     <string name="humidity_reading">%1$,.2f %2$s</string>
@@ -210,6 +217,7 @@
     <string name="menu_buy_gateway">Osta Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Osta Ruuvi-antureita</string>
     <string name="menu_send_feedback">Lähetä palautetta</string>
+    <string name="menu_what_to_measure">Mitä mitata Ruuvilla?</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
     <string name="more_info">Lisätietoa</string>
@@ -251,6 +259,7 @@
     <string name="prepare_your_sensor_instructions_6">4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="press_to_add">Ei antureita. Lisää antureita napauttamalla tästä</string>
     <string name="pressure">Paine</string>
+    <string name="pressure_accuracy_title">Paineen resoluutio</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Elohopeatuuma (inHg)</string>
@@ -298,7 +307,7 @@
     <string name="settings_background_continuous_description">Jatkuva skannaus on käytössä.\nHistorian tallennusväli: %1$s </string>
     <string name="settings_background_disabled">Ei skannausta</string>
     <string name="settings_background_disabled_description">Taustaskannaus pois käytöstä</string>
-    <string name="settings_background_scan">Taustaskannauksen asetukset</string>
+    <string name="settings_background_scan">Taustaskannaus</string>
     <string name="settings_background_scan_details">Mahdollistaa historiatietojen tallentamisen taustalla, jolloin laitteesi hakee säännöllisesti tietoja lähellä olevista antureista sovelluksen ollessa taustalla.</string>
     <string name="settings_background_scan_details_continuous">Sovellus hakee säännöllisesti tietoja lähellä olevista antureista sovelluksen ollessa taustalla.</string>
     <string name="settings_background_scan_interval">Historiatietojen tallennusväli</string>
@@ -368,6 +377,7 @@
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
     <string name="temperature">Lämpötila</string>
+    <string name="temperature_accuracy_title">Lämpötilan resoluutio</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -387,7 +397,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="version">Versio: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>
     <string name="welcome_text_1">Mittaa ympäristösi olosuhteita: lämpötilaa, ilmankosteutta ja ilmanpainetta.</string>
@@ -396,6 +406,7 @@
     <string name="welcome_text_4">Kirjaudu sisään käyttääksesi kaikkia sovelluksen ominaisuuksia.</string>
     <string name="welcome_text_4_2">Vahvista anturiesi omistajuudet ilmaisen Ruuvi Cloud -tilin avulla.</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/fi/ideat</string>
     <string name="widget_empty">Paina + lisääksesi antureita</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>

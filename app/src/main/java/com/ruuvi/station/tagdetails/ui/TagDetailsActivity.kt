@@ -13,8 +13,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -23,7 +22,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -41,35 +42,33 @@ import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
-import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
-import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
-import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.alarm.domain.AlarmStatus.*
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
-import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.ui.SignInActivity
-import com.ruuvi.station.settings.ui.AppSettingsActivity
+import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
-import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import timber.log.Timber
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.scheduleAtFixedRate
 import kotlin.math.abs
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
@@ -116,6 +115,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         binding = ActivityTagDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         permissionsInteractor = PermissionsInteractor(this)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setupViewModel()
         setupUI()
@@ -338,14 +338,35 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
         updateMenu(signedIn)
 
+        binding.navigationContent.navigationView.setOnApplyWindowInsetsListener { view, insets ->
+            val topInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsets.Type.systemBars()).top
+            } else {
+                insets.systemWindowInsetTop
+            }
+
+            val bottomInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsets.Type.systemBars()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
+            binding.navigationContent.navigationView.setMarginTop(topInset)
+            binding.navigationContent.navigationView.setMarginBottom(bottomInset)
+            Timber.d("insets $topInset $bottomInset $view $insets")
+            return@setOnApplyWindowInsetsListener insets
+
+        }
+
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
-                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.appSettingsMenuItem -> SettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> sendFeedback()
-                R.id.getMoreSensorsMenuItem -> openUrl(BUY_SENSORS_URL)
-                R.id.getGatewayMenuItem -> openUrl(BUY_GATEWAY_URL)
+                R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
+                R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
+                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
                 R.id.loginMenuItem -> login(signedIn)
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -563,15 +584,16 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+        permissionsInteractor.requestPermissions(
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+        )
     }
 
     companion object {
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
-        const val BUY_SENSORS_URL = "http://ruuvi.com/products"
-        const val BUY_GATEWAY_URL = "https://ruuvi.com/gateway"
         private const val ALARM_ICON_ALPHA = 128
         private const val ALARM_ICON_ALPHA_OPAQUE = 255
         private const val ALARM_ICON_ANIMATION_DURATION = 500L

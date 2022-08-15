@@ -8,6 +8,10 @@
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="accuracy_description">Select how accurately you\'d like to see sensors live measurement values in the app. This setting doesn\'t affect history charts or alerts.</string>
     <string name="add_tag_not_found">No sensors found</string>
     <string name="add_tag_title">Nearby Ruuvi sensors</string>
     <string name="ago">ago</string>
@@ -54,6 +58,8 @@
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrated">Calibrated: %1$s</string>
     <string name="calibration_clear_confirm">Clear calibration settings?</string>
@@ -152,9 +158,9 @@
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>
     <string name="export_csv_failed">Failed to create CSV file</string>
-    <string name="export_csv_header_format2_4">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI</string>
-    <string name="export_csv_header_format3">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage</string>
-    <string name="export_csv_header_format5">Timestamp,Temperature (%1$s), Humidity (%2$s), Pressure (%3$s),RSSI,Acceleration X,Acceleration Y,Acceleration Z,Voltage,Movement counter,Measurement sequence number,TX Power</string>
+    <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
+    <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
+    <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX Power (dBm)</string>
     <string name="file_not_supported">File type not supported</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Update</string>
@@ -187,6 +193,7 @@
     <string name="humidity">Humidity</string>
     <string name="humidity_absolute_name">Absolute (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
+    <string name="humidity_accuracy_title">Humidity resolution</string>
     <string name="humidity_dew_point_name">Dew point (°)</string>
     <string name="humidity_dew_point_unit">°</string>
     <string name="humidity_reading">%1$,.2f %2$s</string>
@@ -212,6 +219,7 @@
     <string name="menu_buy_gateway">Buy Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Buy Ruuvi Sensors</string>
     <string name="menu_send_feedback">Send Feedback</string>
+    <string name="menu_what_to_measure">What to measure with Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
     <string name="more_info">More info</string>
@@ -253,6 +261,7 @@
     <string name="prepare_your_sensor_instructions_6">4. If set successfully, you will see solid red light lit on circuit board and button in app changes to “Start the update”.</string>
     <string name="press_to_add">No sensors added,\npress here to add sensors</string>
     <string name="pressure">Pressure</string>
+    <string name="pressure_accuracy_title">Pressure resolution</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Inch of mercury (inHg)</string>
@@ -288,7 +297,7 @@
     <string name="sensor_settings">Sensor Settings</string>
     <string name="sensor_shared">Shared</string>
     <string name="settings">Settings</string>
-    <string name="settings_appearance">Appearance Settings</string>
+    <string name="settings_appearance">Appearance</string>
     <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimisation for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
     <string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimisation and select \'Don\'t optimise for Ruuvi Station\'</string>
     <string name="settings_background_battery_optimization_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable \'Manage Automatically\' and enable options: \'Auto-Launch\', \'Secondary Launch\' and \'Run in background\'.</string>
@@ -300,7 +309,7 @@
     <string name="settings_background_continuous_description">Continuous background scanning mode is enabled.\nData logging interval: %1$s</string>
     <string name="settings_background_disabled">No background scanning</string>
     <string name="settings_background_disabled_description">No background scanning mode is enabled</string>
-    <string name="settings_background_scan">Background Scanning Settings</string>
+    <string name="settings_background_scan">Background Scanning</string>
     <string name="settings_background_scan_details">This feature enables background scanning, meaning that your phone will periodically search for beacons, even when you are not using it.</string>
     <string name="settings_background_scan_details_continuous">The app will periodically search for beacons using a service (with notifications), allowing for very frequent and reliable scanning, even when you are not using it.</string>
     <string name="settings_background_scan_interval">Data logging interval</string>
@@ -315,7 +324,7 @@
     <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Smaller values mean a more accurate chart, but also a higher performance requirement for your device</string>
     <string name="settings_chart_view_period">Chart history view period</string>
     <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days</string>
-    <string name="settings_data_forwarding">Data Forwarding Settings</string>
+    <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
@@ -370,6 +379,7 @@
     <string name="tagsettings_owner">Owner</string>
     <string name="tagsettings_sensor_remove">Remove sensor</string>
     <string name="temperature">Temperature</string>
+    <string name="temperature_accuracy_title">Temperature resolution</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>
@@ -389,7 +399,7 @@
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
     <string name="version">Version: %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure.</string>
@@ -398,6 +408,7 @@
     <string name="welcome_text_4">Sign in to use the full potential of the app.</string>
     <string name="welcome_text_4_2">Claim ownership of your sensors with a free Ruuvi Cloud account.</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas/</string>
     <string name="widget_empty">Press + to add sensors</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>

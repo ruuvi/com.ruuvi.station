@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import android.os.Build
 import com.ruuvi.station.R
 import com.ruuvi.station.app.domain.PowerManagerInterator
+import com.ruuvi.station.app.ui.components.SelectionElement
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 
-class AppSettingsBackgroundScanViewModel(
+class BackgroundScanSettingsViewModel(
     private val interactor: AppSettingsInteractor,
     private val powerManagerInterator: PowerManagerInterator
 ) : ViewModel() {
@@ -18,7 +19,12 @@ class AppSettingsBackgroundScanViewModel(
     private val scanMode = MutableStateFlow<BackgroundScanModes?>(null)
     val scanModeFlow: StateFlow<BackgroundScanModes?> = scanMode
 
-    private val interval = MutableStateFlow(0)
+    private val _backgroundScanEnabled = MutableStateFlow<Boolean> (
+        interactor.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
+    )
+    val backgroundScanEnabled: StateFlow<Boolean> = _backgroundScanEnabled
+
+    private val interval = MutableStateFlow(interactor.getBackgroundScanInterval())
     val intervalFlow: StateFlow<Int?> = interval
 
     val showOptimizationTips: StateFlow<Boolean> =
@@ -29,13 +35,19 @@ class AppSettingsBackgroundScanViewModel(
         interval.value = interactor.getBackgroundScanInterval()
     }
 
-    fun setBackgroundScanInterval(newInterval: Int) =
-        interactor.setBackgroundScanInterval(newInterval)
+    fun getIntervalOptions(): List<SelectionElement> {
+        val options: MutableList<SelectionElement> = mutableListOf()
+        options.add(SelectionElement(10, 10, R.string.background_interval_10sec))
+        for (i in 1..60) {
+            options.add(SelectionElement(60 * i, i, R.string.background_interval))
+        }
+        return options
+    }
 
-    fun getPossibleScanModes() = listOf(
-        BackgroundScanModes.DISABLED,
-        BackgroundScanModes.BACKGROUND
-    )
+    fun setBackgroundScanInterval(newInterval: Int) {
+        interactor.setBackgroundScanInterval(newInterval)
+        interval.value = interactor.getBackgroundScanInterval()
+    }
 
     fun getBatteryOptimizationMessageId(): Int {
         val deviceManufacturer = Build.MANUFACTURER.uppercase(Locale.getDefault())
@@ -56,6 +68,7 @@ class AppSettingsBackgroundScanViewModel(
 
     fun setBackgroundScanEnabled(enabled: Boolean) {
         interactor.setBackgroundScanMode(if (enabled) BackgroundScanModes.BACKGROUND else BackgroundScanModes.DISABLED)
+        _backgroundScanEnabled.value = interactor.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
     }
 
     fun openOptimizationSettings() {

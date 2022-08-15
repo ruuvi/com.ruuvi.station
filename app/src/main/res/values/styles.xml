@@ -10,9 +10,15 @@
     </style>
 
     <style name="AppTheme.NoActionBar.TransparentStatusBar" parent="AppTheme.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.TransparentNavigation" parent="AppTheme.NoActionBar.TransparentStatusBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -135,7 +141,7 @@
         <item name="android:lineSpacingExtra">8dp</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme.NoActionBar.TransparentStatusBar">
+    <style name="SplashTheme" parent="AppTheme.NoActionBar.TransparentNavigation">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 

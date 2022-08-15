@@ -8,6 +8,9 @@
     <string name="acceleration_x">Accélération en X</string>
     <string name="acceleration_y">Accélération en Y</string>
     <string name="acceleration_z">Accélération en Z</string>
+    <string name="accuracy0_template">%1$,.0f %2$s</string>
+    <string name="accuracy1_template">%1$,.1f %2$s</string>
+    <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="add_tag_not_found">Aucun capteur détecté</string>
     <string name="add_tag_title">Capteurs Ruuvi à proximité</string>
     <string name="ago"> </string>
@@ -50,6 +53,8 @@
     <string name="battery_voltage">Tension de la pile</string>
     <string name="beta">beta</string>
     <string name="brackets_text">(%1$s)</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products</string>
     <string name="calibrate">Calibrer</string>
     <string name="calibrated">Calibré : %1$s</string>
     <string name="calibration_clear_confirm">Supprimer la calibration</string>
@@ -140,9 +145,9 @@
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>
     <string name="export_csv_failed">Echec de la création du fichier CSV</string>
-    <string name="export_csv_header_format2_4">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission</string>
-    <string name="export_csv_header_format3">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension</string>
-    <string name="export_csv_header_format5">Date, Température (%1$s), Humidité (%2$s), Pression (%3$s), Puissance d\'émission, Accélération en X, Accélération en Y, Accélération en Z, Tension, Compteur de mouvements, Numéro de séquence,Puissance d\'émission</string>
+    <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
+    <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
+    <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
     <string name="file_not_supported">Format non supporté</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>
@@ -197,6 +202,7 @@
     <string name="menu_buy_gateway">Acheter le routeur Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Acheter des capteurs Ruuvi</string>
     <string name="menu_send_feedback">Donnez-nous votre avis!</string>
+    <string name="menu_what_to_measure">Que mesurer avec Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
     <string name="more_info">Plus d\'infos</string>
@@ -358,13 +364,14 @@
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
     <string name="version">Version : %1$s</string>
-    <string name="voltage_reading">%1$s %2$s</string>
+    <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>
     <string name="welcome_text_1">Mesurer votre environnement : température, humidité, et pression de l\'air.</string>
     <string name="welcome_text_2">Vérifier les données en temps réels ou consultez les histogrammes.</string>
     <string name="welcome_text_3">Définir des alarmes et des notifications comme vous le souhaitez.</string>
     <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE.</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur</string>
     <string name="widgets_loading">Chargement...</string>
