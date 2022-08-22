@@ -97,7 +97,7 @@ class CsvExporter(
                     fileWriter.append(',')
                     fileWriter.append(reading.measurementSequenceNumber.toString())
                     fileWriter.append(',')
-                    fileWriter.append(reading.txPower.toString())
+                    fileWriter.append(reading.txPower.toInt().toString())
                 }
                 fileWriter.append('\n')
             }
