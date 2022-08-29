@@ -74,7 +74,7 @@ data class RuuviTagEntity(
 
     constructor(reading: TagSensorReading):this(
         id = reading.ruuviTagId,
-        rssi = reading.rssi,
+        rssi = reading.rssi ?: 0,
         temperature = reading.temperature,
         humidity = reading.humidity,
         pressure = reading.pressure,
@@ -85,7 +85,7 @@ data class RuuviTagEntity(
         dataFormat = reading.dataFormat,
         txPower = reading.txPower ?: 0.0,
         movementCounter = reading.movementCounter,
-        measurementSequenceNumber = reading.measurementSequenceNumber,
+        measurementSequenceNumber = reading.measurementSequenceNumber ?: 0,
         temperatureOffset = reading.temperatureOffset,
         humidityOffset = reading.humidityOffset,
         pressureOffset = reading.pressureOffset,
@@ -100,7 +100,7 @@ data class RuuviTagEntity(
     }
 
     fun updateData(reading: TagSensorReading) {
-        rssi = reading.rssi
+        rssi = reading.rssi ?: 0
         temperature = reading.temperature
         humidity = reading.humidity
         pressure = reading.pressure
@@ -111,7 +111,7 @@ data class RuuviTagEntity(
         dataFormat = reading.dataFormat
         txPower = reading.txPower ?: 0.0
         movementCounter = reading.movementCounter
-        measurementSequenceNumber = reading.measurementSequenceNumber
+        measurementSequenceNumber = reading.measurementSequenceNumber ?: 0
         updateAt = reading.createdAt
         temperatureOffset = reading.temperatureOffset
         humidityOffset = reading.humidityOffset

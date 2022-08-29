@@ -80,7 +80,7 @@ class CsvExporter(
                 fileWriter.append(',')
                 fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
-                fileWriter.append(reading.rssi.toString())
+                fileWriter.append(reading.rssi?.toString() ?: nullValue)
                 if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
                     fileWriter.append(',')
                     fileWriter.append(reading.accelX?.let { reading.accelX.toString() } ?: nullValue)
@@ -89,15 +89,15 @@ class CsvExporter(
                     fileWriter.append(',')
                     fileWriter.append(reading.accelZ?.let { reading.accelZ.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.voltage?.let { it.toString() } ?: nullValue)
+                    fileWriter.append(reading.voltage?.toString() ?: nullValue)
                 }
                 if (tag?.dataFormat == 5) {
                     fileWriter.append(',')
                     fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.measurementSequenceNumber.toString())
+                    fileWriter.append(reading.measurementSequenceNumber?.toString() ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.txPower?.let{ it.toInt().toString() } ?: nullValue)
+                    fileWriter.append(reading.txPower?.toInt()?.toString() ?: nullValue)
                 }
                 fileWriter.append('\n')
             }

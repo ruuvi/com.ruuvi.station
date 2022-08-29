@@ -32,7 +32,7 @@ data class TagSensorReading(
     @Column
     var pressureOffset: Double = 0.0,
     @Column
-    var rssi: Int = 0,
+    var rssi: Int? = null,
     @Column
     var accelX: Double? = null,
     @Column
@@ -48,7 +48,7 @@ data class TagSensorReading(
     @Column
     var movementCounter: Int? = null,
     @Column
-    var measurementSequenceNumber: Int = 0
+    var measurementSequenceNumber: Int? = null
 ): BaseModel() {
     constructor(tag: RuuviTagEntity): this(
         ruuviTagId = tag.id!!,
@@ -79,11 +79,11 @@ data class TagSensorReading(
         accelX = tag.accelX,
         accelY = tag.accelY,
         accelZ = tag.accelZ,
-        voltage = tag.voltage ?: 0.0,
+        voltage = tag.voltage,
         dataFormat = tag.dataFormat ?: 0,
-        txPower = tag.txPower ?: 0.0,
-        movementCounter = tag.movementCounter ?: 0,
-        measurementSequenceNumber = tag.measurementSequenceNumber ?: 0,
+        txPower = tag.txPower,
+        movementCounter = tag.movementCounter,
+        measurementSequenceNumber = tag.measurementSequenceNumber,
         createdAt = timestamp
     )
 }
