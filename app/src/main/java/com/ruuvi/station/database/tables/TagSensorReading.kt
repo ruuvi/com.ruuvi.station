@@ -40,11 +40,11 @@ data class TagSensorReading(
     @Column
     var accelZ: Double? = null,
     @Column
-    var voltage: Double = 0.0,
+    var voltage: Double? = null,
     @Column
     var dataFormat: Int = 0,
     @Column
-    var txPower: Double = 0.0,
+    var txPower: Double? = null,
     @Column
     var movementCounter: Int? = null,
     @Column

@@ -81,9 +81,9 @@ data class RuuviTagEntity(
         accelX = reading.accelX,
         accelY = reading.accelY,
         accelZ = reading.accelZ,
-        voltage = reading.voltage,
+        voltage = reading.voltage ?: 0.0,
         dataFormat = reading.dataFormat,
-        txPower = reading.txPower,
+        txPower = reading.txPower ?: 0.0,
         movementCounter = reading.movementCounter,
         measurementSequenceNumber = reading.measurementSequenceNumber,
         temperatureOffset = reading.temperatureOffset,
@@ -107,9 +107,9 @@ data class RuuviTagEntity(
         accelX = reading.accelX
         accelY = reading.accelY
         accelZ = reading.accelZ
-        voltage = reading.voltage
+        voltage = reading.voltage ?: 0.0
         dataFormat = reading.dataFormat
-        txPower = reading.txPower
+        txPower = reading.txPower ?: 0.0
         movementCounter = reading.movementCounter
         measurementSequenceNumber = reading.measurementSequenceNumber
         updateAt = reading.createdAt
