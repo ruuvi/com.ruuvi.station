@@ -12,8 +12,8 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.FileProvider
-import androidx.core.graphics.alpha
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -21,6 +21,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.ui.AlarmItems
+import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.calibration.ui.CalibrationActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository
@@ -67,6 +70,10 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         }
     }
 
+    private val alarmsViewModel: AlarmItemsViewModel by viewModel {
+        intent.getStringExtra(TAG_ID)
+    }
+
     private val repository: TagRepository by instance()
     private val unitsConverter: UnitsConverter by instance()
     private val imageInteractor: ImageInteractor by instance()
@@ -79,6 +86,14 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         super.onCreate(savedInstanceState)
 
         binding = ActivityTagSettingsBinding.inflate(layoutInflater)
+        binding.alertsCompose.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { 
+                RuuviTheme {
+                    AlarmItems(alarmsViewModel)
+                }
+            }
+        }
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)

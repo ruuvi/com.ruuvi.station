@@ -1,6 +1,5 @@
 package com.ruuvi.station.alarm.ui
 
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
@@ -79,7 +77,6 @@ class AlarmEditView @JvmOverloads
                 setMaxValue(alarm.max.toFloat())
                 setMinStartValue(alarm.low.toFloat())
                 setMaxStartValue(alarm.high.toFloat())
-                setGap(alarm.gap.toFloat())
                 apply()
 
                 setOnRangeSeekbarChangeListener { minValue, maxValue ->

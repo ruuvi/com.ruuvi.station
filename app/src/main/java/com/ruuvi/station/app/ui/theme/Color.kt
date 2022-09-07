@@ -6,6 +6,7 @@ val White = Color.White
 val White80 = Color(0xCCFFFFFF)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
+val Titan50 = Color(0x80083C3D)
 val Titan80 = Color(0xCC083C3D)
 val Ruuvi = Color(0xFF158EA5)
 val RuuviNew = Color(0xFF4BC9BA)
@@ -13,6 +14,8 @@ val Red = Color.Red
 val Inactive = Color(0xFFE7EBEB)
 val OnInactive = Color(0xFF8DA09F)
 val Keppel = Color(0xFF35AD9F)
+val Keppel15 = Color(0x2635AD9F)
+val Keppel30 = Color(0x4D35AD9F)
 val Elm = Color(0xFF1F9385)
 val Error = Color(0xFFF15A24)
 val Track = Color(0xFFDFEFEC)
@@ -36,6 +39,9 @@ data class RuuviStationColors(
     val trackInactive: Color,
     val topBar: Color,
     val topBarText: Color,
+    val settingsTitle: Color,
+    val settingsSubTitle: Color,
+    val settingsTitleText: Color,
     val divider: Color
 )
 
@@ -54,6 +60,9 @@ val lightPalette = RuuviStationColors(
     trackInactive = TrackInactive,
     topBar = Titan,
     topBarText = White,
+    settingsTitle = Keppel30,
+    settingsSubTitle = Keppel15,
+    settingsTitleText = Titan,
     divider = Lines
 )
 
@@ -72,5 +81,8 @@ val darkPalette = RuuviStationColors(
     trackInactive = TrackInactive,
     topBar = Titan,
     topBarText = White,
+    settingsTitle = Titan,
+    settingsSubTitle = Titan50,
+    settingsTitleText = White,
     divider = Lines10
 )

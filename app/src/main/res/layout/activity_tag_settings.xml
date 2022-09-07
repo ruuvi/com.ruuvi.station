@@ -179,6 +179,11 @@
                         </LinearLayout>
                 </LinearLayout>
 
+                <androidx.compose.ui.platform.ComposeView
+                    android:id="@+id/alertsCompose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <TextView
                     android:id="@+id/alertsHeaderTextView"
                     style="@style/SensorSettingTitleStyle"

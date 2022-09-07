@@ -21,6 +21,7 @@ data class RuuviDimensions(
     val buttonHeightSmall: Dp = 40.dp,
     val buttonInnerPadding: Dp = big,
     val settingsListHeight: Dp = 56.dp,
+    val sensorSettingTitleHeight: Dp = 48.dp
 )
 
 val ruuviDimensions = RuuviDimensions()

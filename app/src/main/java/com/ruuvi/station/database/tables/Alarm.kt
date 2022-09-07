@@ -30,7 +30,7 @@ data class Alarm (
     @Column
     var customDescription: String = ""
 ) {
-    val alarmType: AlarmType?
+    val alarmType: AlarmType
         get() = AlarmType.getByDbCode(type)
 
     companion object {
