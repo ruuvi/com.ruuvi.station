@@ -39,3 +39,8 @@ fun PageSurfaceWithPadding(
 fun DividerRuuvi() {
     Divider(color = RuuviStationTheme.colors.divider)
 }
+
+@Composable
+fun DividerSurfaceColor() {
+    Divider(color = RuuviStationTheme.colors.background)
+}

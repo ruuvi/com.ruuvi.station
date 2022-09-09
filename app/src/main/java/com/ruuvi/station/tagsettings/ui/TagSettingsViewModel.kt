@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -157,11 +158,11 @@ class TagSettingsViewModel(
         alarmElements.clear()
 
         with(alarmElements) {
-            add(AlarmElement.getTemperatureAlarmElement(sensorId))
-            add(AlarmElement.getHumidityAlarmElement(sensorId))
-            add(AlarmElement.getPressureAlarmElement(sensorId))
-            add(AlarmElement.getRssiAlarmElement(sensorId))
-            add(AlarmElement.getMovementAlarmElement(sensorId))
+            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.TEMPERATURE))
+            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.HUMIDITY))
+            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.PRESSURE))
+            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.RSSI))
+            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.MOVEMENT))
         }
 
         val dbAlarms = alarmRepository.getForSensor(sensorId)

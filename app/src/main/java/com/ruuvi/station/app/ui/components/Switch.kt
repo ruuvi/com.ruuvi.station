@@ -27,9 +27,10 @@ fun ruuviSwitchColors() = SwitchDefaults.colors(
 fun SwitchRuuvi (
     text: String,
     checked: Boolean,
-    onCheckedChange: ((Boolean) -> Unit)?
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier
 ) {
-    ConstraintLayout(modifier = Modifier
+    ConstraintLayout(modifier = modifier
         .fillMaxWidth()
         .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) }
     ) {
