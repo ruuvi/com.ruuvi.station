@@ -1,6 +1,6 @@
 package com.ruuvi.station.alarm.domain
 
-enum class AlarmType(val value: Int, val networkCode: String?, val range: IntRange) {
+enum class AlarmType(val value: Int, val networkCode: String?, val possibleRange: IntRange) {
     TEMPERATURE(0, "temperature", -40 .. 85),
     HUMIDITY(1, "humidity", 0 .. 100),
     PRESSURE(2, "pressure", 30000 .. 110000),

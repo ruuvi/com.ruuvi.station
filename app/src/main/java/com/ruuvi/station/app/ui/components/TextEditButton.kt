@@ -31,7 +31,7 @@ fun TextEditButton(
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
-            text = value ?: emptyText)
+            text = if (value.isNullOrEmpty()) emptyText else value)
         Image(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = painterResource(id = R.drawable.edit_20),

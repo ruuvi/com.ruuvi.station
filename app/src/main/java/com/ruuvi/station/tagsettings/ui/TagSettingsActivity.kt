@@ -112,13 +112,13 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
         if (scrollToAlarms) {
             Handler(Looper.getMainLooper()).post {
-                binding.scrollView.scrollTo(0, binding.alertsHeaderTextView.top-binding.toolbar.height)
+                binding.scrollView.scrollTo(0, binding.alertsCompose.top-binding.toolbar.height)
             }
         }
     }
 
     private fun setupViewModel() {
-        viewModel.setupAlarmElements()
+        //viewModel.setupAlarmElements()
 
         viewModel.tagState.observe(this) { tag ->
             tag?.let {
@@ -225,7 +225,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun setupUI() {
-        setupAlarmItems()
+//        setupAlarmItems()
+        binding.alertsContainerLayout.isVisible = false
+        binding.alertsHeaderTextView.isVisible = false
 
         binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
 
@@ -270,11 +272,11 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onPause() {
         super.onPause()
         timer?.cancel()
-        binding.alarmTemperature.saveAlarm()
-        binding.alarmHumidity.saveAlarm()
-        binding.alarmPressure.saveAlarm()
-        binding.alarmRssi.saveAlarm()
-        binding.alarmMovement.saveAlarm()
+//        binding.alarmTemperature.saveAlarm()
+//        binding.alarmHumidity.saveAlarm()
+//        binding.alarmPressure.saveAlarm()
+//        binding.alarmRssi.saveAlarm()
+//        binding.alarmMovement.saveAlarm()
 
     }
 
@@ -426,9 +428,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
-        binding.alarmHumidity.isVisible = tag.humidity != null
-        binding.alarmPressure.isVisible = tag.pressure != null
-        binding.alarmMovement.isVisible = tag.movementCounter != null
+//        binding.alarmHumidity.isVisible = tag.humidity != null
+//        binding.alarmPressure.isVisible = tag.pressure != null
+//        binding.alarmMovement.isVisible = tag.movementCounter != null
 
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true

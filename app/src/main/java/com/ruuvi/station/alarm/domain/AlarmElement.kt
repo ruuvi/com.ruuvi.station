@@ -14,8 +14,8 @@ data class AlarmElement(
     var high: Int
     var alarm: Alarm? = null
 
-    val min = type.range.first
-    val max = type.range.last
+    val min = type.possibleRange.first
+    val max = type.possibleRange.last
 
     init {
         low = min
