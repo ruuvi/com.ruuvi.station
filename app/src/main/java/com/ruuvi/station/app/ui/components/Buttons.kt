@@ -21,6 +21,12 @@ fun ruuviButtonColors() = ButtonDefaults.buttonColors(
 )
 
 @Composable
+fun ruuviTextButtonColors() = ButtonDefaults.textButtonColors(
+    contentColor = RuuviStationTheme.colors.accent,
+    disabledContentColor = RuuviStationTheme.colors.onInactive
+)
+
+@Composable
 fun ruuviButtonElevation() = ButtonDefaults.elevation(
     defaultElevation = 0.dp,
     pressedElevation = 0.dp,
@@ -57,5 +63,26 @@ fun RuuviButton(
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
             LoadingStatus(color = RuuviStationTheme.colors.onInactive)
         }
+    }
+}
+
+@Composable
+fun RuuviTextButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    TextButton(
+        modifier = modifier,
+        enabled = enabled,
+        colors = ruuviTextButtonColors(),
+        contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
+        onClick = { onClick() }) {
+        Text(
+            text = text,
+            style = RuuviStationTheme.typography.textButtonText,
+            textAlign = TextAlign.Center
+        )
     }
 }

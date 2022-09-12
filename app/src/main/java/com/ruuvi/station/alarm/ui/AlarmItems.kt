@@ -205,7 +205,7 @@ fun ChangeDescriptionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    RuuviButton(
+                    RuuviTextButton(
                         text = stringResource(id = R.string.cancel),
                         onClick = {
                             onDismissRequest.invoke()
@@ -214,7 +214,7 @@ fun ChangeDescriptionDialog(
                     
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
 
-                    RuuviButton(
+                    RuuviTextButton(
                         text = stringResource(id = R.string.ok),
                         onClick = {
                             setDescription.invoke(alarmState.type, description)
