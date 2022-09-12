@@ -70,7 +70,7 @@ fun AlertEditItem(
     alarmState: AlarmItemState,
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
-    setRange: (AlarmType, IntRange) -> Unit,
+    setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
     saveRange: (AlarmType) -> Unit,
     getDisplayValue: (AlarmType, Int) -> Int
 ) {
@@ -96,8 +96,8 @@ fun AlertEditItem(
         TextEditButton(
             value = stringResource(
                 id = R.string.alert_subtitle_on,
-                getDisplayValue.invoke(alarmState.type, alarmState.low),
-                getDisplayValue.invoke(alarmState.type, alarmState.high)
+                getDisplayValue.invoke(alarmState.type, alarmState.low.toInt()),
+                getDisplayValue.invoke(alarmState.type, alarmState.high.toInt())
             ),
             emptyText = ""
         ) { }
@@ -107,7 +107,7 @@ fun AlertEditItem(
             values = alarmState.low .. alarmState.high,
             valueRange = alarmState.type.possibleRange.first.toFloat() .. alarmState.type.possibleRange.last.toFloat(),
             onValueChange = {
-                setRange.invoke(alarmState.type, it.first..it.last)
+                setRange.invoke(alarmState.type, it)
             },
             onValueChangeFinished = {
                 saveRange.invoke(alarmState.type)

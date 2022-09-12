@@ -1,5 +1,6 @@
 package com.ruuvi.station.alarm.ui
 
+import androidx.annotation.FloatRange
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmItemState
@@ -34,12 +35,11 @@ class AlarmItemsViewModel(
         }
     }
 
-    fun setRange(type: AlarmType, range: IntRange) {
+    fun setRange(type: AlarmType, range: ClosedFloatingPointRange<Float>) {
         val alarmItem = _alarms.firstOrNull { it.type == type }
 
         if (alarmItem != null) {
-            val newAlarm = alarmItem.copy(low = range.first, high = range.last)
-            _alarms[_alarms.indexOf(alarmItem)] = alarmItem.copy(low = range.first, high = range.last)
+            _alarms[_alarms.indexOf(alarmItem)] = alarmItem.copy(low = range.start, high = range.endInclusive)
         }
     }
 

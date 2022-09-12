@@ -22,6 +22,10 @@ data class Alarm (
     @Column
     var high: Int = 0,
     @Column
+    var first: Double = 0.0,
+    @Column
+    var last: Double = 0.0,
+    @Column
     var type: Int = 0,
     @Column
     var enabled: Boolean = false,

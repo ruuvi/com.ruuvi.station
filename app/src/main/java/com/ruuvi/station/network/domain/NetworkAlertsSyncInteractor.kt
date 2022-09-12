@@ -42,6 +42,8 @@ class NetworkAlertsSyncInteractor(
                 sensorId = sensorId,
                 low = low,
                 high = high,
+                first = low.toFloat(),
+                last = high.toFloat(),
                 enabled = alert.enabled,
                 type = type.value,
                 description = alert.description
