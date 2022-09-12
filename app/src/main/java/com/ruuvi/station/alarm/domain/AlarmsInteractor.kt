@@ -70,8 +70,10 @@ class AlarmsInteractor(
     fun saveAlarm(state: AlarmItemState) {
         val alarm = alarmRepository.upsertAlarm(
             sensorId = state.sensorId,
-            low = state.low,
-            high = state.high,
+            low = state.low.toInt(),
+            high = state.high.toInt(),
+            first = state.low,
+            last = state.high,
             type = state.type.value,
             enabled = state.isEnabled,
             description = state.customDescription

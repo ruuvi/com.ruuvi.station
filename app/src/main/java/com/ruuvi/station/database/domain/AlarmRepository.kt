@@ -56,6 +56,8 @@ class AlarmRepository {
         sensorId: String,
         low: Int,
         high: Int,
+        first: Float,
+        last: Float,
         type: Int,
         enabled: Boolean,
         description: String
@@ -67,8 +69,10 @@ class AlarmRepository {
         }
         alarm.ruuviTagId = sensorId
         alarm.enabled = enabled
-        alarm.low = low
-        alarm.high = high
+        alarm.low = first.toInt()
+        alarm.high = last.toInt()
+        alarm.first = first.toDouble()
+        alarm.last = last.toDouble()
         alarm.type = type
         alarm.customDescription = description
         alarm.save()
