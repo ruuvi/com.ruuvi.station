@@ -226,3 +226,10 @@ fun ChangeDescriptionDialog(
         }
     }
 }
+
+@Composable
+fun EditAlertDialog(
+
+) {
+
+}
