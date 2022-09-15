@@ -37,13 +37,10 @@ class NetworkAlertsSyncInteractor(
     private fun saveNetworkAlert(sensorId: String, alert: NetworkAlertItem) {
         val type = AlarmType.getByNetworkCode(alert.type)
         if (type != null) {
-            val (low, high) = Pair(alert.min.toInt(), alert.max.toInt())
             alarmRepository.upsertAlarm(
                 sensorId = sensorId,
-                low = low,
-                high = high,
-                first = low.toFloat(),
-                last = high.toFloat(),
+                min = alert.min,
+                max = alert.max,
                 enabled = alert.enabled,
                 type = type.value,
                 description = alert.description

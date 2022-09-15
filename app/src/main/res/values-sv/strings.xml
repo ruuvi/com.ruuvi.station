@@ -39,7 +39,7 @@
     <string name="alert_notification_temperature_low">För låg temperatur!</string>
     <string name="alert_notification_temperature_low_threshold">Temperaturen är under %1$s</string>
     <string name="alert_subtitle_off">Av</string>
-    <string name="alert_subtitle_on">Alarmera när mindre än %1$,d eller mer än %2$,d</string>
+    <string name="alert_subtitle_on">Alarmera när mindre än %1$s eller mer än %2$s</string>
     <string name="alerts">Alarm</string>
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
@@ -172,7 +172,7 @@
     <string name="gateway_testing">Testar...</string>
     <string name="general">Allmänt</string>
     <string name="h">h</string>
-    <string name="help_about_text">Ruuvi State är en lättanvänt och kraftfullt program för Ruuvi sensorer. Sätt igång genom att lägga till sensorer.</string>
+    <string name="help_about_text">Ruuvi Station är en lättanvänt och kraftfullt program för Ruuvi sensorer. Sätt igång genom att lägga till sensorer.</string>
     <string name="help_about_title">Om / Hjälp</string>
     <string name="help_added_tags">Tillagda sensorer: %1$,d</string>
     <string name="help_db_data_points">Sparade mätningar: %1$,d</string>

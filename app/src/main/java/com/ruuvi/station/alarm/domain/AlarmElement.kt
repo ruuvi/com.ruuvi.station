@@ -34,7 +34,7 @@ data class AlarmElement(
 
     fun shouldBeSaved(): Boolean {
         if (alarm != null) {
-            return isEnabled != alarm?.enabled || low != alarm?.low || high != alarm?.high || customDescription != alarm?.customDescription
+            return isEnabled != alarm?.enabled// || low != alarm?.first || high != alarm?.high || customDescription != alarm?.customDescription
         } else {
             return isEnabled
         }
@@ -51,8 +51,8 @@ data class AlarmElement(
                 customDescription = alarm.customDescription,
                 mutedTill = alarm.mutedTill
             )
-            alarmElement.high = alarm.high
-            alarmElement.low = alarm.low
+            alarmElement.high = alarm.min.toInt()
+            alarmElement.low = alarm.max.toInt()
             alarmElement.alarm = alarm
             alarmElement.normalizeValues()
             return alarmElement

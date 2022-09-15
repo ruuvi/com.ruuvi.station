@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
-import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -152,31 +151,5 @@ class TagSettingsViewModel(
         interactor.updateTagName(sensorId, name)
         getTagInfo()
         networkInteractor.updateSensorName(sensorId)
-    }
-
-    fun setupAlarmElements() {
-        alarmElements.clear()
-
-        with(alarmElements) {
-            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.TEMPERATURE))
-            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.HUMIDITY))
-            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.PRESSURE))
-            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.RSSI))
-            add(AlarmElement.getDefaultAlarmElement(sensorId, AlarmType.MOVEMENT))
-        }
-
-        val dbAlarms = alarmRepository.getForSensor(sensorId)
-        for (alarm in dbAlarms) {
-            val item = alarmElements.firstOrNull { it.type.value == alarm.type }
-            item?.let {
-                item.high = alarm.high
-                item.low = alarm.low
-                item.isEnabled = alarm.enabled
-                item.customDescription = alarm.customDescription
-                item.mutedTill = alarm.mutedTill
-                item.alarm = alarm
-                item.normalizeValues()
-            }
-        }
     }
 }

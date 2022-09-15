@@ -19,7 +19,7 @@ class LocalDatabase {
     @Migration(version = 27, database = LocalDatabase::class)
     class Migration27Data : BaseMigration() {
         override fun migrate(database: DatabaseWrapper) {
-            database.execSQL("UPDATE Alarm SET first = low, last = high")
+            database.execSQL("UPDATE Alarm SET min = low, max = high")
         }
     }
 
@@ -27,8 +27,8 @@ class LocalDatabase {
     class Migration26(table: Class<Alarm?>?) : AlterTableMigration<Alarm?>(table) {
         override fun onPreMigrate() {
             super.onPreMigrate()
-            addColumn(SQLiteType.REAL, "first")
-            addColumn(SQLiteType.REAL, "last")
+            addColumn(SQLiteType.REAL, "min")
+            addColumn(SQLiteType.REAL, "max")
         }
     }
 
