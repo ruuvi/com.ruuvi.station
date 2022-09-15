@@ -18,9 +18,17 @@ data class Alarm (
     @Column
     var ruuviTagId: String = "",
     @Column
-    var low: Int = 0,
+    var low: Int = 0, // Obsolete
     @Column
-    var high: Int = 0,
+    var high: Int = 0, // Obsolete
+    @Column
+    var min: Double = 0.0,
+    @Column
+    var max: Double = 0.0,
+    @Column
+    var first: Double = 0.0,
+    @Column
+    var last: Double = 0.0,
     @Column
     var type: Int = 0,
     @Column

@@ -29,7 +29,7 @@
     <string name="alert_notification_temperature_high">Temperatur ist zu hoch!</string>
     <string name="alert_notification_temperature_low">Temperatur zu niedrig!</string>
     <string name="alert_subtitle_off">Aus</string>
-    <string name="alert_subtitle_on">Warnung bei weniger als %1$,d oder mehr als %2$,d</string>
+    <string name="alert_subtitle_on">Warnung bei weniger als %1$s oder mehr als %2$s</string>
     <string name="alerts">Warnungen</string>
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>

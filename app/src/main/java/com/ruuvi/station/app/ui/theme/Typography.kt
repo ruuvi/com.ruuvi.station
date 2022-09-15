@@ -9,6 +9,7 @@ data class RuuviStationTypography(
     val paragraphSmall: TextStyle,
     val warning: TextStyle,
     val buttonText: TextStyle,
+    val textButtonText: TextStyle,
     val topBarText: TextStyle,
     val title: TextStyle,
  )
@@ -40,6 +41,11 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             fontSize = ruuviStationFontsSizes.normal,
             textAlign = TextAlign.Center
         ),
+        textButtonText = TextStyle(
+            fontFamily = ruuviStationFonts.extraBold,
+            fontSize = ruuviStationFontsSizes.normal,
+            textAlign = TextAlign.Center
+        ),
         topBarText = TextStyle(
             color = colors.topBarText,
             fontFamily = ruuviStationFonts.bold,
@@ -53,4 +59,3 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         )
     )
 }
-

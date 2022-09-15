@@ -2,14 +2,18 @@ package com.ruuvi.station.alarm.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.window.Dialog
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
@@ -39,7 +43,9 @@ fun AlarmItems(viewModel: AlarmItemsViewModel) {
                     setDescription = viewModel::setDescription,
                     setRange = viewModel::setRange,
                     saveRange = viewModel::saveRange,
-                    getDisplayValue = viewModel::getDisplayValue
+                    getPossibleRange = viewModel::getPossibleRange,
+                    validateRange = viewModel::validateRange,
+                    manualRangeSave = viewModel::manualRangeSave
                 )
             }
         }
@@ -70,11 +76,17 @@ fun AlertEditItem(
     alarmState: AlarmItemState,
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
-    setRange: (AlarmType, IntRange) -> Unit,
+    setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
     saveRange: (AlarmType) -> Unit,
-    getDisplayValue: (AlarmType, Int) -> Int
+    getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
+    validateRange: (AlarmType, Double?, Double?) -> Boolean,
+    manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
 ) {
-    var openDialog by remember { mutableStateOf(false) }
+    var openDescriptionDialog by remember { mutableStateOf(false) }
+    var openAlarmEditDialog by remember { mutableStateOf(false) }
+    val possibleRange by remember {
+        mutableStateOf(getPossibleRange.invoke(alarmState.type))
+    }
 
     ExpandableContainer(title) {
         SwitchRuuvi(
@@ -90,24 +102,25 @@ fun AlertEditItem(
             value = alarmState.customDescription,
             emptyText = stringResource(id = R.string.alarm_custom_title_hint)
         ) {
-            openDialog = true
+            openDescriptionDialog = true
         }
         DividerRuuvi()
         TextEditButton(
             value = stringResource(
                 id = R.string.alert_subtitle_on,
-                getDisplayValue.invoke(alarmState.type, alarmState.low),
-                getDisplayValue.invoke(alarmState.type, alarmState.high)
-            ),
+                alarmState.displayLow,
+                alarmState.displayHigh),
             emptyText = ""
-        ) { }
+        ) {
+            openAlarmEditDialog = true
+        }
 
         RuuviRangeSlider(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
-            values = alarmState.low .. alarmState.high,
-            valueRange = alarmState.type.possibleRange.first.toFloat() .. alarmState.type.possibleRange.last.toFloat(),
+            values = alarmState.rangeLow .. alarmState.rangeHigh,
+            valueRange = possibleRange,
             onValueChange = {
-                setRange.invoke(alarmState.type, it.first..it.last)
+                setRange.invoke(alarmState.type, it)
             },
             onValueChangeFinished = {
                 saveRange.invoke(alarmState.type)
@@ -116,12 +129,23 @@ fun AlertEditItem(
     }
     DividerSurfaceColor()
 
-    if (openDialog) {
+    if (openDescriptionDialog) {
         ChangeDescriptionDialog(
             alarmState = alarmState,
             setDescription = setDescription
         ) {
-            openDialog = false
+            openDescriptionDialog = false
+        }
+    }
+
+    if (openAlarmEditDialog) {
+        AlarmEditDialog(
+            alarmState = alarmState,
+            getPossibleRange = getPossibleRange,
+            validateRange = validateRange,
+            manualRangeSave = manualRangeSave
+        ) {
+            openAlarmEditDialog = false
         }
     }
 }
@@ -134,6 +158,8 @@ fun MovementAlertEditItem(
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
 ) {
+    var openDescriptionDialog by remember { mutableStateOf(false) }
+
     ExpandableContainer(title) {
         SwitchRuuvi(
             text = "Alert",
@@ -147,7 +173,9 @@ fun MovementAlertEditItem(
         TextEditButton(
             value = alarmState.customDescription,
             emptyText = stringResource(id = R.string.alarm_custom_title_hint)
-        ) { }
+        ) {
+            openDescriptionDialog = true
+        }
         DividerRuuvi()
         Row(
             modifier = Modifier
@@ -164,6 +192,15 @@ fun MovementAlertEditItem(
         }
     }
     DividerSurfaceColor()
+
+    if (openDescriptionDialog) {
+        ChangeDescriptionDialog(
+            alarmState = alarmState,
+            setDescription = setDescription
+        ) {
+            openDescriptionDialog = false
+        }
+    }
 }
 
 @Composable
@@ -175,54 +212,84 @@ fun ChangeDescriptionDialog(
     var description by remember {
         mutableStateOf(alarmState.customDescription)
     }
+    RuuviDialog(
+        title = stringResource(id = R.string.alarm_custom_description_title),
+        onDismissRequest = onDismissRequest,
+        onOkClickAction = {
+            setDescription.invoke(alarmState.type, description)
+            onDismissRequest.invoke()
+        }
+    ) {
+        TextFieldRuuvi(
+            value = description,
+            onValueChange = {
+                description = it
+            },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        )
+    }
+}
 
-    Dialog(onDismissRequest = onDismissRequest) {
-        Card(
-            modifier = Modifier
-                .systemBarsPadding()
-                .padding(horizontal = RuuviStationTheme.dimensions.extended)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(RuuviStationTheme.dimensions.medium),
-            backgroundColor = RuuviStationTheme.colors.background)
-        {
-            Column(
-                modifier = Modifier
-                    .padding(all = RuuviStationTheme.dimensions.extended)
-            ) {
-                SubtitleWithPadding(text = stringResource(id = R.string.alarm_custom_description_title))
+@Composable
+fun AlarmEditDialog(
+    alarmState: AlarmItemState,
+    getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
+    validateRange: (AlarmType, Double?, Double?) -> Boolean,
+    manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+    onDismissRequest : () -> Unit
+) {
+    val title = when (alarmState.type) {
+        AlarmType.TEMPERATURE -> stringResource(id = R.string.alert_dialog_title_temperature)
+        AlarmType.PRESSURE -> stringResource(id = R.string.alert_dialog_title_pressure)
+        AlarmType.HUMIDITY -> stringResource(id = R.string.alert_dialog_title_humidity)
+        AlarmType.RSSI -> stringResource(id = R.string.alert_dialog_title_rssi)
+        else -> ""
+    }
 
-                TextFieldRuuvi(
-                    value = description,
-                    onValueChange = {
-                        description = it
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+    val possibleRange by remember {
+        mutableStateOf(getPossibleRange.invoke(alarmState.type))
+    }
 
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+    var min by remember {
+        mutableStateOf<Double?>(alarmState.rangeLow.toDouble())
+    }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    RuuviButton(
-                        text = stringResource(id = R.string.cancel),
-                        onClick = {
-                            onDismissRequest.invoke()
-                        }
-                    )
-                    
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
+    var max by remember {
+        mutableStateOf<Double?>(alarmState.rangeHigh.toDouble())
+    }
 
-                    RuuviButton(
-                        text = stringResource(id = R.string.ok),
-                        onClick = {
-                            setDescription.invoke(alarmState.type, description)
-                            onDismissRequest.invoke()
-                        }
-                    )
-                }
-            }
+    val focusRequester = remember { FocusRequester() }
+
+    RuuviDialog(
+        title = title,
+        onDismissRequest = onDismissRequest,
+        onOkClickAction = {
+            manualRangeSave.invoke(alarmState.type, min, max)
+            onDismissRequest.invoke()
+        },
+        validation = {
+            validateRange(alarmState.type, min, max)
+        }
+    ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+        Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleRange.start.toInt().toString()))
+        NumberTextFieldRuuvi(
+            value = min.toString(),
+            keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
+        ) { parsed, value ->
+            min = value
+        }
+
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+        Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleRange.endInclusive.toInt().toString()))
+        NumberTextFieldRuuvi(
+            value = max.toString(),
+            modifier = Modifier.focusRequester(focusRequester),
+        ) { parsed, value ->
+            max = value
         }
     }
 }

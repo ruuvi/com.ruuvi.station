@@ -1,0 +1,66 @@
+package com.ruuvi.station.app.ui.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
+import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+
+@Composable
+fun RuuviDialog(
+    title: String,
+    validation: () -> Boolean = { true },
+    onDismissRequest : () -> Unit,
+    onOkClickAction: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(RuuviStationTheme.dimensions.medium),
+            backgroundColor = RuuviStationTheme.colors.background
+        )
+        {
+            Column(
+                modifier = Modifier
+                    .padding(all = RuuviStationTheme.dimensions.extended)
+            ) {
+                if (title.isNotEmpty()) {
+                    SubtitleWithPadding(text = title)
+                }
+
+                content.invoke()
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    RuuviTextButton(
+                        text = stringResource(id = R.string.cancel),
+                        onClick = {
+                            onDismissRequest.invoke()
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
+
+                    RuuviTextButton(
+                        text = stringResource(id = R.string.ok),
+                        enabled = validation.invoke(),
+                        onClick = {
+                            onOkClickAction.invoke()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}

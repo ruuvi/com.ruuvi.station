@@ -6,7 +6,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.alarm.domain.AlarmElement
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.Alarm_Table
-import timber.log.Timber
 import java.util.*
 
 class AlarmRepository {
@@ -54,49 +53,23 @@ class AlarmRepository {
 
     fun upsertAlarm(
         sensorId: String,
-        low: Int,
-        high: Int,
+        min: Double,
+        max: Double,
         type: Int,
         enabled: Boolean,
         description: String
     ): Alarm {
-        Timber.d("upsertAlarm $sensorId $low-$high ($type) - $enabled")
         var alarm = getForSensor(sensorId).firstOrNull { it.type == type }
         if (alarm == null) {
             alarm = Alarm()
         }
         alarm.ruuviTagId = sensorId
         alarm.enabled = enabled
-        alarm.low = low
-        alarm.high = high
+        alarm.min = min
+        alarm.max = max
         alarm.type = type
         alarm.customDescription = description
         alarm.save()
         return alarm
-    }
-
-    fun saveAlarmElement(alarmElement : AlarmElement) {
-        with(alarmElement) {
-            if (alarm == null) {
-                alarm = Alarm(
-                    ruuviTagId = sensorId,
-                    low = low,
-                    high = high,
-                    type = type.value,
-                    customDescription = customDescription,
-                    mutedTill = mutedTill,
-                    enabled = isEnabled
-                )
-            } else {
-                alarm?.let {
-                    it.enabled = isEnabled
-                    it.low = low
-                    it.high = high
-                    it.customDescription = customDescription
-                    it.mutedTill = mutedTill
-                }
-            }
-            alarm?.save()
-        }
     }
 }

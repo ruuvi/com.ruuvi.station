@@ -156,7 +156,7 @@ class AlarmCheckInteractor(
         val alarm: Alarm
     ) {
         var alarmResource: Int? = null
-        private var thresholdValue: Int = 0
+        private var thresholdValue: Double = 0.0
 
         val triggered: Boolean
             get() = alarmResource != null
@@ -171,15 +171,15 @@ class AlarmCheckInteractor(
                     AlarmType.HUMIDITY ->
                         context.getString(resource, "$thresholdValue ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
                     AlarmType.PRESSURE -> {
-                        val thresholdString = "${unitsConverter.getPressureValue(thresholdValue.toDouble()).toInt()} ${unitsConverter.getPressureUnitString()}"
+                        val thresholdString = "${unitsConverter.getPressureValue(thresholdValue).toInt()} ${unitsConverter.getPressureUnitString()}"
                         context.getString(resource, thresholdString)
                     }
                     AlarmType.TEMPERATURE -> {
-                        val thresholdString = "${unitsConverter.getTemperatureValue(thresholdValue.toDouble()).toInt()}${unitsConverter.getTemperatureUnitString()}"
+                        val thresholdString = "${unitsConverter.getTemperatureValue(thresholdValue).toInt()}${unitsConverter.getTemperatureUnitString()}"
                         context.getString(resource, thresholdString)
                     }
                     AlarmType.RSSI -> {
-                        context.getString(resource, unitsConverter.getSignalString(thresholdValue))
+                        context.getString(resource, unitsConverter.getSignalString(thresholdValue.toInt()))
                     }
                     AlarmType.MOVEMENT -> context.getString(resource)
                     else -> null
@@ -251,13 +251,13 @@ class AlarmCheckInteractor(
         ) {
             val (lowResourceId, highResourceId) = resources
             when {
-                comparedValue.toDouble() < alarm.low -> {
+                comparedValue.toDouble() < alarm.min -> {
                     alarmResource = lowResourceId
-                    thresholdValue = alarm.low
+                    thresholdValue = alarm.min
                 }
-                comparedValue.toDouble() > alarm.high -> {
+                comparedValue.toDouble() > alarm.max -> {
                     alarmResource = highResourceId
-                    thresholdValue = alarm.high
+                    thresholdValue = alarm.max
                 }
             }
         }

@@ -13,7 +13,23 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 25
+        const val VERSION = 27
+    }
+
+    @Migration(version = 27, database = LocalDatabase::class)
+    class Migration27Data : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL("UPDATE Alarm SET min = low, max = high")
+        }
+    }
+
+    @Migration(version = 26, database = LocalDatabase::class)
+    class Migration26(table: Class<Alarm?>?) : AlterTableMigration<Alarm?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.REAL, "min")
+            addColumn(SQLiteType.REAL, "max")
+        }
     }
 
     @Migration(version = 25, database = LocalDatabase::class)

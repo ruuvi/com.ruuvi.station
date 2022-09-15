@@ -7,42 +7,50 @@ data class AlarmItemState(
     val sensorId: String,
     var type: AlarmType,
     var isEnabled: Boolean,
-    var low: Int,
-    var high: Int,
+    var min: Double,
+    var max: Double,
+    var rangeLow: Float,
+    var rangeHigh: Float,
+    var displayLow: String,
+    var displayHigh: String,
     var customDescription: String = "",
     var mutedTill: Date? = null,
 ) {
-    constructor(alarm: Alarm) : this(
-        sensorId = alarm.ruuviTagId,
-        type = alarm.alarmType,
-        isEnabled = alarm.enabled,
-        low = alarm.low,
-        high = alarm.high,
-        customDescription = alarm.customDescription,
-        mutedTill = alarm.mutedTill
-    ) {
-        normalizeValues()
-    }
-
-    constructor(sensorId: String, alarmType: AlarmType) : this(
-        sensorId = sensorId,
-        type = alarmType,
-        isEnabled = false,
-        low = alarmType.possibleRange.first,
-        high = alarmType.possibleRange.last
-    )
-
     fun getPossibleRange() = type.possibleRange
 
-    fun normalizeValues() {
-        val min = getPossibleRange().first
-        val max = getPossibleRange().last
-        if (low < min) low = min
-        if (low >= max) low = max - 1
-        if (high > max) high = max
-        if (high < min) high = min + 1
-        if (low > high) {
-            low = high.also { high = low }
+    companion object {
+        fun getStateForDbAlarm(alarm: Alarm, alarmsInteractor: AlarmsInteractor): AlarmItemState {
+            val rangeLow = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.min.toFloat())
+            val rangeHigh = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.max.toFloat())
+            return AlarmItemState(
+                sensorId = alarm.ruuviTagId,
+                type = alarm.alarmType,
+                isEnabled = alarm.enabled,
+                min = alarm.min,
+                max = alarm.max,
+                rangeLow = rangeLow,
+                rangeHigh = rangeHigh,
+                displayLow = alarmsInteractor.getDisplayValue(rangeLow),
+                displayHigh = alarmsInteractor.getDisplayValue(rangeHigh),
+                customDescription = alarm.customDescription,
+                mutedTill = alarm.mutedTill
+            )
+        }
+
+        fun getDefaultState(sensorId: String, alarmType: AlarmType, alarmsInteractor: AlarmsInteractor): AlarmItemState {
+            val rangeLow = alarmsInteractor.getRangeValue(alarmType, alarmType.possibleRange.first.toFloat())
+            val rangeHigh = alarmsInteractor.getRangeValue(alarmType, alarmType.possibleRange.last.toFloat())
+            return AlarmItemState(
+                sensorId = sensorId,
+                type = alarmType,
+                isEnabled = false,
+                min = alarmType.possibleRange.first.toDouble(),
+                max = alarmType.possibleRange.last.toDouble(),
+                rangeLow = rangeLow,
+                rangeHigh = rangeHigh,
+                displayLow = alarmsInteractor.getDisplayValue(rangeLow),
+                displayHigh = alarmsInteractor.getDisplayValue(rangeHigh),
+            )
         }
     }
 }

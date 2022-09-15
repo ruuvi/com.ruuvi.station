@@ -6,7 +6,8 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
-import kotlin.math.round
+import com.ruuvi.station.util.extensions.isInteger
+import com.ruuvi.station.util.extensions.round
 
 class AlarmsInteractor(
     private val context: Context,
@@ -15,6 +16,54 @@ class AlarmsInteractor(
     private val unitsConverter: UnitsConverter,
     private val networkInteractor: RuuviNetworkInteractor
 ) {
+
+    fun getPossibleRange(type: AlarmType): ClosedFloatingPointRange<Float> {
+        return when (type) {
+            AlarmType.TEMPERATURE -> {
+                val first = unitsConverter.getTemperatureValue(type.possibleRange.first.toDouble()).toFloat()
+                val last = unitsConverter.getTemperatureValue(type.possibleRange.last.toDouble()).toFloat()
+                first..last
+            }
+            AlarmType.PRESSURE -> {
+                val first = unitsConverter.getPressureValue(type.possibleRange.first.toDouble()).toFloat()
+                val last = unitsConverter.getPressureValue(type.possibleRange.last.toDouble()).toFloat()
+                first..last
+            }
+            else -> type.possibleRange.first.toFloat()..type.possibleRange.last.toFloat()
+        }
+    }
+
+    fun getRangeValue(type: AlarmType, value: Float): Float {
+        return when (type) {
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureValue(value.toDouble()).toFloat()
+            AlarmType.PRESSURE -> unitsConverter.getPressureValue(value.toDouble()).toFloat()
+            else -> value
+        }
+    }
+
+    fun getSavableValue(type: AlarmType, value: Float): Double {
+        return when (type) {
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureCelsiusValue(value.toDouble())
+            AlarmType.PRESSURE -> unitsConverter.getPressurePascalValue(value.toDouble())
+            else -> value.toDouble()
+        }
+    }
+
+    fun getDisplayValue(value: Float): String {
+        if (value.isInteger(0.1f)) {
+            return getDisplayApproximateValue(value)
+        } else {
+            return getDisplayPreciseValue(value)
+        }
+    }
+
+    fun getDisplayPreciseValue(value: Float): String {
+        return String.format("%1$,.1f", value)
+    }
+
+    fun getDisplayApproximateValue(value: Float): String {
+        return value.round(0).toInt().toString()
+    }
 
     fun getAvailableAlarmTypesForSensor(sensorId: String): Set<AlarmType> {
         val entry = tagRepository.getTagById(sensorId)
@@ -37,9 +86,9 @@ class AlarmsInteractor(
         for (alarmType in alarmTypes) {
             val dbAlarm = dbAlarms.firstOrNull { it.alarmType == alarmType }
             if (dbAlarm != null) {
-                alarmItems.add(AlarmItemState(dbAlarm))
+                alarmItems.add(AlarmItemState.getStateForDbAlarm(dbAlarm, this))
             } else {
-                alarmItems.add(AlarmItemState(sensorId, alarmType))
+                alarmItems.add(AlarmItemState.getDefaultState(sensorId, alarmType, this))
             }
         }
         return alarmItems
@@ -55,23 +104,11 @@ class AlarmsInteractor(
         }
     }
 
-    fun getDisplayValue(alarmType: AlarmType, value: Int): Int {
-        return when (alarmType) {
-            AlarmType.TEMPERATURE -> {
-                round(unitsConverter.getTemperatureValue(value.toDouble())).toInt()
-            }
-            AlarmType.PRESSURE -> {
-                round(unitsConverter.getPressureValue(value.toDouble())).toInt()
-            }
-            else -> value
-        }
-    }
-
     fun saveAlarm(state: AlarmItemState) {
         val alarm = alarmRepository.upsertAlarm(
             sensorId = state.sensorId,
-            low = state.low,
-            high = state.high,
+            min = state.min,
+            max = state.max,
             type = state.type.value,
             enabled = state.isEnabled,
             description = state.customDescription
