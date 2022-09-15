@@ -90,7 +90,6 @@ class AlarmItemsViewModel(
 
             if (editHigh == true) {
                 var high = alarmItem.rangeHigh.round(0)
-                if (high.diff(alarmItem.rangeLow) < 1) high = (alarmItem.rangeLow + 1).round(0)
 
                 val savableHigh = alarmsInteractor.getSavableValue(type, high)
                 val newAlarm = alarmItem.copy(
@@ -103,7 +102,6 @@ class AlarmItemsViewModel(
 
             } else if (editLow == true) {
                 var low = alarmItem.rangeLow.round(0)
-                if (low.diff(alarmItem.rangeHigh) < 1) low = (alarmItem.rangeHigh - 1).round(0)
 
                 val savableLow = alarmsInteractor.getSavableValue(type, low)
 
@@ -119,6 +117,37 @@ class AlarmItemsViewModel(
             editLow = null
             editHigh = null
         }
+    }
+
+    fun manualRangeSave(type: AlarmType, min: Double?, max: Double?) {
+        val alarmItem = _alarms.firstOrNull { it.type == type }
+
+
+        if (validateRange(type, min, max) && alarmItem != null && min != null && max != null) {
+            val savableHigh = alarmsInteractor.getSavableValue(type, max.toFloat())
+            val savableLow = alarmsInteractor.getSavableValue(type, min.toFloat())
+
+            val newAlarm = alarmItem.copy(
+                min = savableLow,
+                max = savableHigh,
+                rangeLow = alarmsInteractor.getRangeValue(type, savableLow.toFloat()),
+                displayLow = alarmsInteractor.getDisplayValue(min.toFloat()),
+                rangeHigh = alarmsInteractor.getRangeValue(type, savableHigh.toFloat()),
+                displayHigh = alarmsInteractor.getDisplayValue(max.toFloat()),
+            )
+            _alarms[_alarms.indexOf(alarmItem)] = newAlarm
+            saveAlarm(newAlarm)
+        }
+    }
+
+    fun validateRange(type: AlarmType, min: Double?, max: Double?): Boolean {
+        val possibleRange = getPossibleRange(type)
+        val result = if (min != null && max !=null) {
+            min >= possibleRange.start && max <= possibleRange.endInclusive && min < max
+        } else {
+            false
+        }
+        return result
     }
 
     fun getTitle(alarmType: AlarmType): String = alarmsInteractor.getAlarmTitle(alarmType)

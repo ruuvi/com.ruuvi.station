@@ -180,7 +180,7 @@ class AlarmEditView @JvmOverloads
         timer.cancel()
         if (alarmElement.shouldBeSaved()) {
             Timber.d("saveAlarm-shouldBeSaved")
-            alarmRepository.saveAlarmElement(alarmElement)
+            //alarmRepository.saveAlarmElement(alarmElement)
             alarmElement.alarm?.let {
                 networkInteractor.setAlert(it)
             }

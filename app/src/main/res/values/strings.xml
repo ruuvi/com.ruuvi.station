@@ -19,6 +19,12 @@
     <string name="alarm_custom_title_hint">Set custom description...</string>
     <string name="alarm_mute_for_hour">Mute for an hour</string>
     <string name="alarm_notification_disable">Disable this alarm</string>
+    <string name="alert_dialog_max">Max (%1$s)</string>
+    <string name="alert_dialog_min">Min (%1$s)</string>
+    <string name="alert_dialog_title_humidity">Set humidity alert</string>
+    <string name="alert_dialog_title_pressure">Set pressure alert</string>
+    <string name="alert_dialog_title_rssi">Set signal strength alert</string>
+    <string name="alert_dialog_title_temperature">Set temperature alert</string>
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Alert when sensor is moved</string>
     <string name="alert_notification_humidity_high">Air Humidity is too high!</string>
@@ -207,7 +213,7 @@
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Latest available Ruuvi Firmware version:</string>
     <string name="light_theme">Light theme</string>
-    <string name="logged_in">Logged in:</string>
+    <string name="logged_in">Signed in:</string>
     <string name="login_description">To enjoy all the features, create a free account or sign in to your existing Ruuvi account by entering your email address.</string>
     <string name="login_to_ruuvi_network">Sign in to\nRuuvi\nStation</string>
     <string name="mac_address">MAC Address</string>

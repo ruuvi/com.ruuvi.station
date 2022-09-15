@@ -13,14 +13,14 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 @Composable
 fun RuuviDialog(
     title: String,
+    validation: () -> Boolean = { true },
     onDismissRequest : () -> Unit,
-    onClickAction: () -> Unit,
+    onOkClickAction: () -> Unit,
     content: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
-                .systemBarsPadding()
                 .padding(horizontal = RuuviStationTheme.dimensions.extended)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(RuuviStationTheme.dimensions.medium),
@@ -54,9 +54,9 @@ fun RuuviDialog(
 
                     RuuviTextButton(
                         text = stringResource(id = R.string.ok),
+                        enabled = validation.invoke(),
                         onClick = {
-                            onClickAction.invoke()
-                            onDismissRequest.invoke()
+                            onOkClickAction.invoke()
                         }
                     )
                 }
