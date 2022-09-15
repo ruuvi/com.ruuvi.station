@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.annotation.FloatRange
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
 import androidx.compose.material.SliderDefaults
