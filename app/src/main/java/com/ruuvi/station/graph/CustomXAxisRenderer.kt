@@ -41,7 +41,7 @@ class CustomXAxisRenderer(
         val rawInterval = range / labelCount
         val interval = getClosestPredefinedInterval(rawInterval)
 
-        val timeZoneOffset = if (interval > 10800000) TimeZone.getDefault().rawOffset else 0
+          val timeZoneOffset = if (interval > 3600000) TimeZone.getDefault().getOffset(Date().time) else 0
         Timber.d("computeAxisValues timeZoneOffset = $timeZoneOffset")
 
         var firstPoint = ((from + min).toLong() / interval) * interval - from - timeZoneOffset - 2 * interval
