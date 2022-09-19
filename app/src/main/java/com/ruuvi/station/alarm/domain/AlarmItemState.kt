@@ -15,6 +15,7 @@ data class AlarmItemState(
     var displayHigh: String,
     var customDescription: String = "",
     var mutedTill: Date? = null,
+    var triggered: Boolean = false
 ) {
     fun getPossibleRange() = type.possibleRange
 

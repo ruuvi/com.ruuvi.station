@@ -14,7 +14,7 @@ object AlarmModule {
     val module = Kodein.Module(this.javaClass.name) {
         bind<AlarmCheckInteractor>() with singleton { AlarmCheckInteractor(instance(), instance(), instance(), instance(), instance()) }
 
-        bind<AlarmsInteractor>() with singleton { AlarmsInteractor(instance(), instance(), instance(), instance(), instance()) }
+        bind<AlarmsInteractor>() with singleton { AlarmsInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<AlarmItemsViewModel>() with factory { sensorId: String ->
             AlarmItemsViewModel(sensorId, instance())

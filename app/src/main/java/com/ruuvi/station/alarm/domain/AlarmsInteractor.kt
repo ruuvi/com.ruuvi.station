@@ -5,6 +5,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
@@ -14,8 +15,9 @@ class AlarmsInteractor(
     private val tagRepository: TagRepository,
     private val alarmRepository: AlarmRepository,
     private val unitsConverter: UnitsConverter,
-    private val networkInteractor: RuuviNetworkInteractor
-) {
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val alarmCheckInteractor: AlarmCheckInteractor,
+    ) {
 
     fun getPossibleRange(type: AlarmType): ClosedFloatingPointRange<Float> {
         return when (type) {
@@ -65,13 +67,12 @@ class AlarmsInteractor(
         return value.round(0).toInt().toString()
     }
 
-    fun getAvailableAlarmTypesForSensor(sensorId: String): Set<AlarmType> {
-        val entry = tagRepository.getTagById(sensorId)
-        return if (entry != null) {
+    fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
+        return if (sensor != null) {
             val alarmTypes = mutableSetOf(AlarmType.TEMPERATURE, AlarmType.RSSI)
-            if (entry.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
-            if (entry.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (entry.movementCounter != null) alarmTypes.add(AlarmType.MOVEMENT)
+            if (sensor.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
+            if (sensor.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
+            if (sensor.movementCounter != null) alarmTypes.add(AlarmType.MOVEMENT)
             alarmTypes
         } else {
             emptySet()
@@ -79,14 +80,17 @@ class AlarmsInteractor(
     }
 
     fun getAlarmsForSensor(sensorId: String): List<AlarmItemState> {
-        val alarmTypes = getAvailableAlarmTypesForSensor(sensorId)
+        val sensor = tagRepository.getFavoriteSensorById(sensorId)
+        val alarmTypes = getAvailableAlarmTypesForSensor(sensor)
         val dbAlarms = alarmRepository.getForSensor(sensorId)
         val alarmItems: MutableList<AlarmItemState> = mutableListOf()
 
         for (alarmType in alarmTypes) {
             val dbAlarm = dbAlarms.firstOrNull { it.alarmType == alarmType }
-            if (dbAlarm != null) {
-                alarmItems.add(AlarmItemState.getStateForDbAlarm(dbAlarm, this))
+            if (dbAlarm != null && sensor != null) {
+                alarmItems.add(AlarmItemState.getStateForDbAlarm(dbAlarm, this).also {
+                    it.triggered = alarmCheckInteractor.checkAlarm(sensor, dbAlarm)
+                })
             } else {
                 alarmItems.add(AlarmItemState.getDefaultState(sensorId, alarmType, this))
             }

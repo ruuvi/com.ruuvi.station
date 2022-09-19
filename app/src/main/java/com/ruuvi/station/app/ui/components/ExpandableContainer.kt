@@ -18,20 +18,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.tooling.preview.Preview
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @ExperimentalMaterialApi
 @Composable
-fun ExpandableContainer(
+fun ExpandableTextTitleContainer(
     title: String,
+    content: @Composable () -> Unit
+) {
+    ExpandableContainer(
+        header = {
+            Subtitle(
+                    text = title,
+                )
+        },
+        content = content
+    )
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun ExpandableContainer(
+    header: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f
     )
-    
+
     Card (
         backgroundColor = RuuviStationTheme.colors.background,
         modifier = Modifier
@@ -57,14 +72,15 @@ fun ExpandableContainer(
                     .clickable { expandedState = !expandedState },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Subtitle(
-                    text = title,
-                    modifier = Modifier.weight(7f)
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    header()
+                }
 
                 IconButton(
                     modifier = Modifier
-                        .weight(1f)
                         .rotate(rotationState),
                     onClick = {
                         expandedState = !expandedState
@@ -83,11 +99,4 @@ fun ExpandableContainer(
         }
 
     }
-}
-
-@ExperimentalMaterialApi
-@Preview
-@Composable
-fun ExpandableContainerPreview() {
-    ExpandableContainer("Title") { }
 }
