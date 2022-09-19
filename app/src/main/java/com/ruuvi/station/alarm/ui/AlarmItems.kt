@@ -104,8 +104,8 @@ fun AlertEditItem(
     ExpandableContainer(header = {
         AlarmHeader(title, alarmState)
     }) {
-        SwitchRuuvi(
-            text = "Alert",
+        SwitchIndicatorRuuvi(
+            text = stringResource(id = R.string.alert),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -220,8 +220,8 @@ fun MovementAlertEditItem(
     ExpandableContainer(header = {
         AlarmHeader(title, alarmState)
     }) {
-        SwitchRuuvi(
-            text = "Alert",
+        SwitchIndicatorRuuvi(
+            text = stringResource(id = R.string.alert),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
