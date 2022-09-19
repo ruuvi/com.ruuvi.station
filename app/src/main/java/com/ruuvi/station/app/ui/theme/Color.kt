@@ -23,6 +23,7 @@ val TrackInactive = Color(0xFF9DAFAF)
 val Dark = Color(0xFF001D1B)
 val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
+val Orange = Color(0xCCF48021)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -42,7 +43,8 @@ data class RuuviStationColors(
     val settingsTitle: Color,
     val settingsSubTitle: Color,
     val settingsTitleText: Color,
-    val divider: Color
+    val divider: Color,
+    val activeAlert: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -63,7 +65,8 @@ val lightPalette = RuuviStationColors(
     settingsTitle = Keppel30,
     settingsSubTitle = Keppel15,
     settingsTitleText = Titan,
-    divider = Lines
+    divider = Lines,
+    activeAlert = Orange
 )
 
 val darkPalette = RuuviStationColors(
@@ -84,5 +87,6 @@ val darkPalette = RuuviStationColors(
     settingsTitle = Titan,
     settingsSubTitle = Titan50,
     settingsTitleText = White,
-    divider = Lines10
+    divider = Lines10,
+    activeAlert = Orange
 )

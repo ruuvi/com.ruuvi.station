@@ -46,6 +46,7 @@ class AlarmItemsViewModel(
 
     fun setRange(type: AlarmType, range: ClosedFloatingPointRange<Float>) {
         val alarmItem = _alarms.firstOrNull { it.type == type }
+        val itemIndex = _alarms.indexOf(alarmItem)
 
         if (alarmItem != null) {
             Timber.d("setRange ${editLow}")
@@ -78,13 +79,14 @@ class AlarmItemsViewModel(
                     )
                 }
 
-                _alarms[_alarms.indexOf(alarmItem)] = newAlarm
+                _alarms[itemIndex] = newAlarm
             }
         }
     }
 
     fun saveRange(type: AlarmType) {
         val alarmItem = _alarms.firstOrNull { it.type == type }
+        val itemIndex = _alarms.indexOf(alarmItem)
 
         if (alarmItem != null) {
 
@@ -97,7 +99,7 @@ class AlarmItemsViewModel(
                     rangeHigh = alarmsInteractor.getRangeValue(type, savableHigh.toFloat()),
                     displayHigh = alarmsInteractor.getDisplayValue(high),
                 )
-                _alarms[_alarms.indexOf(alarmItem)] = newAlarm
+                _alarms[itemIndex] = newAlarm
                 saveAlarm(newAlarm)
 
             } else if (editLow == true) {
@@ -110,7 +112,7 @@ class AlarmItemsViewModel(
                     rangeLow = alarmsInteractor.getRangeValue(type, savableLow.toFloat()),
                     displayLow = alarmsInteractor.getDisplayValue(low),
                 )
-                _alarms[_alarms.indexOf(alarmItem)] = newAlarm
+                _alarms[itemIndex] = newAlarm
                 saveAlarm(newAlarm)
             }
 
@@ -121,7 +123,7 @@ class AlarmItemsViewModel(
 
     fun manualRangeSave(type: AlarmType, min: Double?, max: Double?) {
         val alarmItem = _alarms.firstOrNull { it.type == type }
-
+        val itemIndex = _alarms.indexOf(alarmItem)
 
         if (validateRange(type, min, max) && alarmItem != null && min != null && max != null) {
             val savableHigh = alarmsInteractor.getSavableValue(type, max.toFloat())
@@ -135,7 +137,7 @@ class AlarmItemsViewModel(
                 rangeHigh = alarmsInteractor.getRangeValue(type, savableHigh.toFloat()),
                 displayHigh = alarmsInteractor.getDisplayValue(max.toFloat()),
             )
-            _alarms[_alarms.indexOf(alarmItem)] = newAlarm
+            _alarms[itemIndex] = newAlarm
             saveAlarm(newAlarm)
         }
     }
@@ -154,5 +156,13 @@ class AlarmItemsViewModel(
 
     fun saveAlarm(alarmItemState: AlarmItemState) {
         alarmsInteractor.saveAlarm(alarmItemState)
+    }
+
+    fun refreshAlarmState() {
+        val alertItems = alarmsInteractor.getAlarmsForSensor(sensorId)
+        for ((index, item) in _alarms.withIndex()) {
+            val updated = alertItems.firstOrNull { it.type == item.type }
+            item.triggered = updated?.triggered ?: false
+        }
     }
 }

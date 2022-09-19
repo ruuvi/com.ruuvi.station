@@ -48,6 +48,10 @@ class AlarmCheckInteractor(
         return AlarmStatus.NO_ALARM
     }
 
+    fun checkAlarm(sensor: RuuviTag, alarm: Alarm): Boolean {
+        return AlarmChecker(sensor, alarm).triggered
+    }
+
     fun checkAlarmsForSensor(sensor: RuuviTagEntity, sensorSettings: SensorSettings) {
         val ruuviTag = tagConverter.fromDatabase(sensor, sensorSettings)
         getEnabledAlarms(ruuviTag)

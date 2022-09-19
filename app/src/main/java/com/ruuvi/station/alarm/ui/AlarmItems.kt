@@ -1,5 +1,7 @@
 package com.ruuvi.station.alarm.ui
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -7,10 +9,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -19,11 +21,14 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import kotlinx.coroutines.delay
+import timber.log.Timber
 
 @Composable
 fun AlarmItems(viewModel: AlarmItemsViewModel) {
     val alarms = viewModel.alarms
 
+    Timber.d("AlarmItems refresh ")
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
@@ -48,6 +53,14 @@ fun AlarmItems(viewModel: AlarmItemsViewModel) {
                     manualRangeSave = viewModel::manualRangeSave
                 )
             }
+        }
+    }
+
+    LaunchedEffect(key1 = 2) {
+        while (true) {
+            Timber.d("AlarmItems refreshAlarmState ")
+            viewModel.refreshAlarmState()
+            delay(3000)
         }
     }
 }
@@ -88,9 +101,11 @@ fun AlertEditItem(
         mutableStateOf(getPossibleRange.invoke(alarmState.type))
     }
 
-    ExpandableContainer(title) {
-        SwitchRuuvi(
-            text = "Alert",
+    ExpandableContainer(header = {
+        AlarmHeader(title, alarmState)
+    }) {
+        SwitchIndicatorRuuvi(
+            text = stringResource(id = R.string.alert),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -150,6 +165,48 @@ fun AlertEditItem(
     }
 }
 
+@Composable
+private fun AlarmHeader(
+    title: String,
+    alarmState: AlarmItemState
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Subtitle(
+            text = title,
+            modifier = Modifier.weight(1f)
+        )
+        if (alarmState.isEnabled) {
+            if (alarmState.triggered) {
+                var imageVisible by remember { mutableStateOf(true) }
+
+                AnimatedVisibility(
+                    visible = imageVisible,
+                    enter = fadeIn(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(300))
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                        contentDescription = null,
+                        tint = RuuviStationTheme.colors.activeAlert
+                    )
+                }
+                LaunchedEffect(key1 = 1) {
+                    while (true) {
+                        delay(800)
+                        imageVisible = !imageVisible
+                    }
+                }
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.accent
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MovementAlertEditItem(
@@ -160,9 +217,11 @@ fun MovementAlertEditItem(
 ) {
     var openDescriptionDialog by remember { mutableStateOf(false) }
 
-    ExpandableContainer(title) {
-        SwitchRuuvi(
-            text = "Alert",
+    ExpandableContainer(header = {
+        AlarmHeader(title, alarmState)
+    }) {
+        SwitchIndicatorRuuvi(
+            text = stringResource(id = R.string.alert),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
