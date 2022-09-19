@@ -105,26 +105,17 @@ class ImageInteractor (
 
     fun resize(filename: String?, uri: Uri?, rotation: Int) {
         try {
-            val targetHeight = 1440
-            val targetWidth = 960
+            val targetWidth = 1080
 
             var bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
 
             bitmap = rotate(bitmap, rotation.toFloat())
 
-            var out: Bitmap
+            Timber.d("Original ${bitmap.width} x ${bitmap.height} rotation = $rotation")
 
-            out = if ((targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt() > targetWidth) {
-                Bitmap.createScaledBitmap(bitmap, (targetHeight.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt(), targetHeight, false)
-            } else {
-                Bitmap.createScaledBitmap(bitmap, targetWidth, (targetWidth.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt(), false)
-            }
+            val out = Bitmap.createScaledBitmap(bitmap, targetWidth, (targetWidth.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt(), false)
 
-            var x = out.width / 2 - targetWidth / 2
-
-            if (x < 0) x = 0
-
-            out = Bitmap.createBitmap(out, x, 0, targetWidth, targetHeight)
+            Timber.d("Scaled ${out.width} x ${out.height}")
 
             val file = filename?.let { File(it) }
 
