@@ -184,38 +184,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/alertsHeaderTextView"
-                    style="@style/SensorSettingTitleStyle"
-                    android:text="@string/alerts" />
-
                 <!--ALERTS-->
                 <LinearLayout
                     android:id="@+id/alertsContainerLayout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:orientation="vertical">
-                    <com.ruuvi.station.alarm.ui.AlarmEditView
-                        android:id="@+id/alarmTemperature"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <com.ruuvi.station.alarm.ui.AlarmEditView
-                        android:id="@+id/alarmHumidity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <com.ruuvi.station.alarm.ui.AlarmEditView
-                        android:id="@+id/alarmPressure"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <com.ruuvi.station.alarm.ui.AlarmEditView
-                        android:id="@+id/alarmRssi"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <com.ruuvi.station.alarm.ui.AlarmEditView
-                        android:id="@+id/alarmMovement"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
                 <TextView
                     android:id="@+id/calibrationHeaderTextView"

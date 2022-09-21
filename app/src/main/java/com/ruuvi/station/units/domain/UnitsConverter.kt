@@ -51,7 +51,7 @@ class UnitsConverter (
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            val displayAccuracy = accuracy ?: getPressureAccuracy()
+            val displayAccuracy = accuracy ?: getTemperatureAccuracy()
             context.getString(displayAccuracy.nameTemplateId, getTemperatureValue(temperature), getTemperatureUnitString())
         }
 

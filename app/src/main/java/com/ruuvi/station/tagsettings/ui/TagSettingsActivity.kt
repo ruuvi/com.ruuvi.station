@@ -21,7 +21,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.ui.AlarmItems
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.calibration.model.CalibrationType
@@ -46,6 +45,10 @@ import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -90,7 +93,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent { 
                 RuuviTheme {
-                    AlarmItems(alarmsViewModel)
+                    SensorSettings(viewModel, alarmsViewModel)
                 }
             }
         }
@@ -142,15 +145,15 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
 
-            if (sensorSettings?.networkSensor != true) {
-                deleteString = getString(R.string.remove_local_sensor)
-            } else {
-                if (viewModel.sensorOwnedByUserObserve.value == true) {
-                    deleteString = getString(R.string.remove_claimed_sensor)
-                } else {
-                    deleteString = getString(R.string.remove_shared_sensor)
-                }
-            }
+//            if (sensorSettings?.networkSensor != true) {
+//                deleteString = getString(R.string.remove_local_sensor)
+//            } else {
+//                if (viewModel.sensorOwnedByUserObserve.value == true) {
+//                    deleteString = getString(R.string.remove_claimed_sensor)
+//                } else {
+//                    deleteString = getString(R.string.remove_shared_sensor)
+//                }
+//            }
 
             if (sensorSettings?.owner.isNullOrEmpty()) {
                 binding.ownerLayout.isEnabled = true
@@ -172,27 +175,39 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             binding.firmwareVersionTextView.text = it?.asString(this)
         }
 
-        viewModel.userLoggedInObserve.observe(this) {
-            if (it == true) {
-                binding.ownerLayout.visibility = View.VISIBLE
-            } else {
-                binding.ownerLayout.visibility = View.GONE
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.userLoggedIn.collectLatest  {
+                if (it == true) {
+                    binding.ownerLayout.visibility = View.VISIBLE
+                } else {
+                    binding.ownerLayout.visibility = View.GONE
+                }
+            }
+
+            viewModel.sensorOwnedByUserObserve.collectLatest {
+                if (it) {
+                    binding.shareLayout.visibility = View.VISIBLE
+                } else {
+                    binding.shareLayout.visibility = View.GONE
+                }
+            }
+
+            viewModel.sensorShared.collectLatest { isShared ->
+                binding.shareValueTextView.text = if (isShared) {
+                    getText(R.string.sensor_shared)
+                } else {
+                    getText(R.string.sensor_not_shared)
+                }
+            }
+
+            viewModel.sensorOwnedOrOfflineObserve.collectLatest {
+                binding.firmwareLayout.isVisible = it
+                binding.calibrationHeaderTextView.isVisible = it
+                binding.calibrationLayout.isVisible = it
             }
         }
 
-        viewModel.sensorOwnedByUserObserve.observe(this) {
-            if (it) {
-                binding.shareLayout.visibility = View.VISIBLE
-            } else {
-                binding.shareLayout.visibility = View.GONE
-            }
-        }
 
-        viewModel.sensorOwnedOrOfflineObserve.observe(this) {
-            binding.firmwareLayout.isVisible = it
-            binding.calibrationHeaderTextView.isVisible = it
-            binding.calibrationLayout.isVisible = it
-        }
 
         viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
@@ -201,13 +216,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
-        viewModel.sensorSharedObserve.observe(this) { isShared ->
-            binding.shareValueTextView.text = if (isShared) {
-                getText(R.string.sensor_shared)
-            } else {
-                getText(R.string.sensor_not_shared)
-            }
-        }
 
         val errorColor = resolveColorAttr(R.attr.colorErrorText)
         val successColor = resolveColorAttr(R.attr.colorSuccessText)
@@ -225,9 +233,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun setupUI() {
-//        setupAlarmItems()
-        binding.alertsContainerLayout.isVisible = false
-        binding.alertsHeaderTextView.isVisible = false
 
         binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
 
@@ -272,12 +277,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onPause() {
         super.onPause()
         timer?.cancel()
-//        binding.alarmTemperature.saveAlarm()
-//        binding.alarmHumidity.saveAlarm()
-//        binding.alarmPressure.saveAlarm()
-//        binding.alarmRssi.saveAlarm()
-//        binding.alarmMovement.saveAlarm()
-
     }
 
     @Suppress("NAME_SHADOWING")
@@ -419,19 +418,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         binding.calibratePressureDivider.isGone = tag.pressure == null
     }
 
-    private fun setupAlarmItems() {
-        binding.alarmTemperature.restoreState(viewModel.alarmElements[0])
-        binding.alarmHumidity.restoreState(viewModel.alarmElements[1])
-        binding.alarmPressure.restoreState(viewModel.alarmElements[2])
-        binding.alarmRssi.restoreState(viewModel.alarmElements[3])
-        binding.alarmMovement.restoreState(viewModel.alarmElements[4])
-    }
-
     private fun updateReadings(tag: RuuviTagEntity) {
-//        binding.alarmHumidity.isVisible = tag.humidity != null
-//        binding.alarmPressure.isVisible = tag.pressure != null
-//        binding.alarmMovement.isVisible = tag.movementCounter != null
-
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
             binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage, getString(R.string.voltage_unit))
@@ -455,9 +442,9 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         builder.setMessage(deleteString)
 
         builder.setPositiveButton(android.R.string.ok) { _, _ ->
-            for (alarm in viewModel.alarmElements) {
-                alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
-            }
+//            for (alarm in viewModel.alarmElements) {
+//                alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
+//            }
             viewModel.tagState.value?.let { viewModel.deleteTag(it) }
             finish()
         }

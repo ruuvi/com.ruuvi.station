@@ -21,6 +21,7 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
@@ -65,22 +66,6 @@ fun AlarmItems(viewModel: AlarmItemsViewModel) {
     }
 }
 
-@Composable
-fun SensorSettingsTitle (title: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-            .background(color = RuuviStationTheme.colors.settingsTitle),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

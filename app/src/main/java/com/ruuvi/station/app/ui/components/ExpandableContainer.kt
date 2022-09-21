@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
@@ -24,6 +25,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 @Composable
 fun ExpandableTextTitleContainer(
     title: String,
+    backgroundColor: Color = RuuviStationTheme.colors.background,
     content: @Composable () -> Unit
 ) {
     ExpandableContainer(
@@ -32,6 +34,7 @@ fun ExpandableTextTitleContainer(
                     text = title,
                 )
         },
+        backgroundColor = backgroundColor,
         content = content
     )
 }
@@ -40,6 +43,7 @@ fun ExpandableTextTitleContainer(
 @Composable
 fun ExpandableContainer(
     header: @Composable () -> Unit,
+    backgroundColor: Color = RuuviStationTheme.colors.settingsSubTitle,
     content: @Composable () -> Unit
 ) {
     var expandedState by remember { mutableStateOf(false) }
@@ -66,7 +70,7 @@ fun ExpandableContainer(
 
             Row(
                 modifier = Modifier
-                    .background(color = RuuviStationTheme.colors.settingsSubTitle)
+                    .background(color = backgroundColor)
                     .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
                     .padding(RuuviStationTheme.dimensions.medium)
                     .clickable { expandedState = !expandedState },
