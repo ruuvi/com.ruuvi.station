@@ -30,10 +30,9 @@ class TagSettingsInteractor(
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun deleteTagsAndRelatives(tag: RuuviTagEntity) {
-        val sensorId = tag.id.toString()
+    fun deleteTagsAndRelatives(sensorId: String) {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        tagRepository.deleteSensorAndRelatives(tag)
+        tagRepository.deleteSensorAndRelatives(sensorId)
         sensorSettings?.owner?.let { owner ->
             if (sensorSettings.owner == networkInteractor.getEmail()) {
                 networkInteractor.unclaimSensor(sensorId)

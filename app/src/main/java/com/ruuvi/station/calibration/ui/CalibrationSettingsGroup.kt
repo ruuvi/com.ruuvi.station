@@ -16,7 +16,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CalibrationSettings(
+fun CalibrationSettingsGroup(
     sensorState: RuuviTag,
     getTemperatureOffsetString: (Double) -> String,
     getHumidityOffsetString: (Double) -> String,

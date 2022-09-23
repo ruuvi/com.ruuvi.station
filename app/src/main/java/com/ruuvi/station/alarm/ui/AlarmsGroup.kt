@@ -2,7 +2,6 @@ package com.ruuvi.station.alarm.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,7 +25,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @Composable
-fun AlarmItems(viewModel: AlarmItemsViewModel) {
+fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
     val alarms = viewModel.alarms
 
     Timber.d("AlarmItems refresh ")
