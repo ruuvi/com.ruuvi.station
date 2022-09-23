@@ -2,7 +2,6 @@ package com.ruuvi.station.alarm.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,11 +20,12 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @Composable
-fun AlarmItems(viewModel: AlarmItemsViewModel) {
+fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
     val alarms = viewModel.alarms
 
     Timber.d("AlarmItems refresh ")
@@ -65,22 +65,6 @@ fun AlarmItems(viewModel: AlarmItemsViewModel) {
     }
 }
 
-@Composable
-fun SensorSettingsTitle (title: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-            .background(color = RuuviStationTheme.colors.settingsTitle),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

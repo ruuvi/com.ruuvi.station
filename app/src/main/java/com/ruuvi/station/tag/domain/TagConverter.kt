@@ -25,15 +25,26 @@ class TagConverter(
             temperatureString = unitsConverter.getTemperatureString(entity.temperature),
             humidityString = unitsConverter.getHumidityString(entity.humidity, entity.temperature),
             pressureString = unitsConverter.getPressureString(entity.pressure),
+            temperatureOffset = sensorSettings.temperatureOffset,
+            humidityOffset = sensorSettings.humidityOffset,
+            pressureOffset = sensorSettings.pressureOffset,
+            voltage = entity.voltage,
+            accelerationX = entity.accelX,
+            accelerationY = entity.accelY,
+            accelerationZ = entity.accelZ,
+            txPower = entity.txPower,
+            measurementSequenceNumber = entity.measurementSequenceNumber,
             movementCounterString = movementConverter.getMovementString(entity.movementCounter),
             defaultBackground = sensorSettings.defaultBackground,
             userBackground = sensorSettings.userBackground,
+            networkBackground = sensorSettings.networkBackground,
             dataFormat = entity.dataFormat,
             connectable = entity.connectable,
             lastSync = sensorSettings.lastSync,
             networkLastSync = sensorSettings.networkLastSync,
             networkSensor = sensorSettings.networkSensor,
-            owner = sensorSettings.owner
+            owner = sensorSettings.owner,
+            firmware = sensorSettings.firmware
         )
 
     fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag =
@@ -50,14 +61,25 @@ class TagConverter(
             temperatureString = unitsConverter.getTemperatureString(entity.temperature),
             humidityString = unitsConverter.getHumidityString(entity.humidity, entity.temperature),
             pressureString = unitsConverter.getPressureString(entity.pressure),
+            temperatureOffset = entity.temperatureOffset,
+            humidityOffset = entity.humidityOffset,
+            pressureOffset = entity.pressureOffset,
+            voltage = entity.voltage,
+            accelerationX = entity.accelX,
+            accelerationY = entity.accelY,
+            accelerationZ = entity.accelZ,
+            txPower = entity.txPower,
+            measurementSequenceNumber = entity.measurementSequenceNumber,
             movementCounterString = movementConverter.getMovementString(entity.movementCounter),
             defaultBackground = entity.defaultBackground,
             userBackground = entity.userBackground,
+            networkBackground = entity.networkBackground,
             dataFormat = entity.dataFormat,
             connectable = entity.connectable,
             lastSync = entity.lastSync,
             networkLastSync = entity.networkLastSync,
             networkSensor = entity.networkSensor,
-            owner = entity.owner
+            owner = entity.owner,
+            firmware = entity.firmware
         )
 }

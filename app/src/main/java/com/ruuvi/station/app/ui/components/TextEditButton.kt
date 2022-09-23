@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.ruuvi.station.R
@@ -35,6 +36,39 @@ fun TextEditButton(
         Image(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = painterResource(id = R.drawable.edit_20),
+            contentDescription = ""
+        )
+    }
+}
+
+@Composable
+fun TextEditWithCaptionButton(
+    value: String?,
+    title: String,
+    icon: Painter = painterResource(id = R.drawable.edit_20),
+    editAction: () -> Unit
+) {
+    Row(modifier = Modifier
+        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .clickable { editAction.invoke() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+            style = RuuviStationTheme.typography.subtitle,
+            textAlign = TextAlign.Start,
+            text = title)
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+            style = RuuviStationTheme.typography.paragraph,
+            textAlign = TextAlign.End,
+            text = value ?: "")
+        Image(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
+            painter = icon,
             contentDescription = ""
         )
     }
