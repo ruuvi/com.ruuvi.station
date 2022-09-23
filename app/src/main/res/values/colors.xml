@@ -32,7 +32,7 @@
     <color name="white50">#80FFFFFF</color>
     <color name="white30">#4DFFFFFF</color>
 
-    <color name="darkBg">#4D001D1B</color>
+    <color name="darkBg">#CC001D1B</color>
 
     <color name="dark">#001D1B</color>
     <color name="disabledText">#8DA09F</color>
@@ -51,4 +51,7 @@
     <color name="ap_gray">#888</color>
     <color name="ap_transparent">#00000000</color>
     <color name="buttonInactive">#1A35AD9F</color>
+
+    <color name="chartLineColor">#34ad9f</color>
+    <color name="chartFillColor">#4D46CAB9</color>
 </resources>
