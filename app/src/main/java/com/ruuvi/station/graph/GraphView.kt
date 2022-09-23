@@ -173,8 +173,10 @@ class GraphView (
         set.setDrawCircles(preferencesRepository.graphDrawDots())
         set.setDrawValues(false)
         set.setDrawFilled(true)
-        set.highLightColor = ContextCompat.getColor(context, R.color.main)
         set.circleRadius = 1f
+        set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+        set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+        set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
         chart.setXAxisRenderer(
             CustomXAxisRenderer(
                 from,
