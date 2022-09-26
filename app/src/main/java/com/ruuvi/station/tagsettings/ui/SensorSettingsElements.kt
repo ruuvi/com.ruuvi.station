@@ -61,7 +61,7 @@ fun SensorSettings(
                 getPressureOffsetString = viewModel::getPressureOffsetString
             )
         }
-        DividerRuuvi()
+        DividerSurfaceColor()
         MoreInfoGroup(
             sensorState = sensorState,
             isLowBattery = isLowBattery,
@@ -69,13 +69,13 @@ fun SensorSettings(
             getSignalString = viewModel::getSignalString
         )
         if (sensorOwnedOrOffline) {
-            DividerRuuvi()
+            DividerSurfaceColor()
             FirmwareGroup(
                 sensorState = sensorState,
                 firmware = firmware
             )
         }
-        DividerRuuvi()
+        DividerSurfaceColor()
         RemoveGroup(
             sensorState = sensorState,
             sensorOwnedByUser = sensorOwnedByUser,
