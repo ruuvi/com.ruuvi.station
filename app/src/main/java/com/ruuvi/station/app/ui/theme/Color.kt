@@ -24,6 +24,7 @@ val Dark = Color(0xFF001D1B)
 val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
 val Orange = Color(0xCCF48021)
+val Milky = Color(0xFFD6EAE7)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -62,7 +63,7 @@ val lightPalette = RuuviStationColors(
     trackInactive = TrackInactive,
     topBar = Titan,
     topBarText = White,
-    settingsTitle = Keppel30,
+    settingsTitle = Milky,
     settingsSubTitle = Keppel15,
     settingsTitleText = Titan,
     divider = Lines,
