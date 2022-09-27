@@ -322,7 +322,7 @@ class GraphView (
             } else {
                 tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2f
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2.35f
         val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
         val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 
