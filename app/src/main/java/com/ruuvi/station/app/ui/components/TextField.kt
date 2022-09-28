@@ -49,6 +49,7 @@ fun NumberTextFieldRuuvi(
     value: String,
     label: String? = null,
     hint: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     keyboardActions: KeyboardActions = KeyboardActions(),
     onValueChange: (Boolean, Double?) -> Unit,
     ) {
@@ -62,7 +63,7 @@ fun NumberTextFieldRuuvi(
     TextField(
         value = text,
         onValueChange = {
-            val parsed = it.toDoubleOrNull()
+            val parsed = it.replace(',','.').toDoubleOrNull()
             if (it.isEmpty()){
                 text = it
             } else {
@@ -76,7 +77,7 @@ fun NumberTextFieldRuuvi(
         colors = RuuviTextFieldColors(),
         modifier = modifier,
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions
     )
 }

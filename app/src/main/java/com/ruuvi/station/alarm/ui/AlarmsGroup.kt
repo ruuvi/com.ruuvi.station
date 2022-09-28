@@ -8,11 +8,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.ruuvi.station.R
@@ -274,6 +277,7 @@ fun ChangeDescriptionDialog(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AlarmEditDialog(
     alarmState: AlarmItemState,
@@ -303,6 +307,7 @@ fun AlarmEditDialog(
     }
 
     val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     RuuviDialog(
         title = title,
@@ -319,7 +324,7 @@ fun AlarmEditDialog(
 
         Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleRange.start.toInt().toString()))
         NumberTextFieldRuuvi(
-            value = min.toString(),
+            value = String.format("%1$,.2f", min),
             keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
         ) { parsed, value ->
             min = value
@@ -329,8 +334,12 @@ fun AlarmEditDialog(
 
         Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleRange.endInclusive.toInt().toString()))
         NumberTextFieldRuuvi(
-            value = max.toString(),
+            value = String.format("%1$,.2f", max),
             modifier = Modifier.focusRequester(focusRequester),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide()
+            })
         ) { parsed, value ->
             max = value
         }
