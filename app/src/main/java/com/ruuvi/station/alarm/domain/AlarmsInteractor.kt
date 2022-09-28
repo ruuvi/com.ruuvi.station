@@ -44,15 +44,19 @@ class AlarmsInteractor(
     }
 
     fun getSavableValue(type: AlarmType, value: Float): Double {
+        return getSavableValue(type, value.toDouble())
+    }
+
+    fun getSavableValue(type: AlarmType, value: Double): Double {
         return when (type) {
-            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureCelsiusValue(value.toDouble())
-            AlarmType.PRESSURE -> unitsConverter.getPressurePascalValue(value.toDouble())
-            else -> value.toDouble()
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureCelsiusValue(value)
+            AlarmType.PRESSURE -> unitsConverter.getPressurePascalValue(value)
+            else -> value
         }
     }
 
     fun getDisplayValue(value: Float): String {
-        if (value.isInteger(0.1f)) {
+        if (value.isInteger(0.09f)) {
             return getDisplayApproximateValue(value)
         } else {
             return getDisplayPreciseValue(value)
@@ -60,7 +64,7 @@ class AlarmsInteractor(
     }
 
     fun getDisplayPreciseValue(value: Float): String {
-        return String.format("%1$,.1f", value)
+        return String.format("%1$,.2f", value)
     }
 
     fun getDisplayApproximateValue(value: Float): String {
