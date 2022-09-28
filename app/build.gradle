@@ -69,10 +69,6 @@ android {
         kotlinCompilerVersion kotlin_version
         kotlinCompilerExtensionVersion compose_version
     }
-
-    buildFeatures {
-        compose true
-    }
 }
 
 dependencies {
