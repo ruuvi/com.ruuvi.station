@@ -251,7 +251,7 @@ class GraphView (
 
     private fun setLabelCount(chart: LineChart) {
         val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
-        val labelCount = if (timeText.length > 5) 5 else 6
+        val labelCount = if (timeText.length > 5) 4 else 6
         chart.xAxis.setLabelCount(labelCount, false)
         chart.axisLeft.setLabelCount(6, false)
     }
