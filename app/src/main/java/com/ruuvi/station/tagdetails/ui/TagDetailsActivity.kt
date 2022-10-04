@@ -13,60 +13,63 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.SuperscriptSpan
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
-import com.ruuvi.station.alarm.domain.AlarmStatus.NO_ALARM
-import com.ruuvi.station.alarm.domain.AlarmStatus.NO_TRIGGERED
-import com.ruuvi.station.alarm.domain.AlarmStatus.TRIGGERED
+import com.ruuvi.station.alarm.domain.AlarmStatus.*
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
+import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
-import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.network.ui.SignInActivity
-import com.ruuvi.station.settings.ui.AppSettingsActivity
+import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
-import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import timber.log.Timber
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.scheduleAtFixedRate
-import com.ruuvi.station.widgets.domain.WidgetsService
+import kotlin.math.abs
 
 class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), KodeinAware {
 
@@ -97,11 +100,22 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private var timer: Timer? = null
     private var signedIn = false
 
+    private val appUpdateManager: AppUpdateManager by lazy {
+        AppUpdateManagerFactory.create(this)
+    }
+
+    private val listener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            showUpdateSnackbar()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTagDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         permissionsInteractor = PermissionsInteractor(this)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setupViewModel()
         setupUI()
@@ -117,10 +131,52 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         requestPermission()
     }
 
+    override fun onStart() {
+        super.onStart()
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        val previousRequestDate = preferencesRepository.getRequestForAppUpdateDate()
+        val daysSinceRequest = abs(TimeUnit.MILLISECONDS.toDays(Date().time - Date(previousRequestDate).time))
+
+        appUpdateManager.registerListener(listener)
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= UPDATE_STALENESS_DAYS
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                && daysSinceRequest >= UPDATE_REQUEST_REPEAT_DAYS
+            ) {
+                preferencesRepository.updateRequestForAppUpdateDate()
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    UPDATE_REQUEST_CODE)
+            } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                showUpdateSnackbar()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
             requestPermission()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.unregisterListener(listener)
+    }
+
+    private fun showUpdateSnackbar() {
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            getText(R.string.update_downloaded_message),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getText(R.string.update_action)) { appUpdateManager.completeUpdate() }
+            show()
         }
     }
 
@@ -147,7 +203,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         binding.content.noTagsTextView.setDebouncedOnClickListener { AddTagActivity.start(this) }
 
         binding.imageSwitcher.setFactory {
-            val imageView = AppCompatImageView(applicationContext)
+            val imageView = ImageView(applicationContext)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -209,6 +265,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun listenToShowGraph() {
         viewModel.isShowGraphObserve.observe(this) {
             animateGraphTransition(it)
+            binding.darkerBackground.isVisible = it
         }
     }
 
@@ -277,15 +334,39 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
         drawerToggle.syncState()
 
+        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
+
         updateMenu(signedIn)
+
+        binding.navigationContent.navigationView.setOnApplyWindowInsetsListener { view, insets ->
+            val topInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsets.Type.systemBars()).top
+            } else {
+                insets.systemWindowInsetTop
+            }
+
+            val bottomInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsets.Type.systemBars()).bottom
+            } else {
+                insets.systemWindowInsetBottom
+            }
+
+            binding.navigationContent.navigationView.setMarginTop(topInset)
+            binding.navigationContent.navigationView.setMarginBottom(bottomInset)
+            Timber.d("insets $topInset $bottomInset $view $insets")
+            return@setOnApplyWindowInsetsListener insets
+
+        }
 
         binding.navigationContent.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
-                R.id.appSettingsMenuItem -> AppSettingsActivity.start(this)
+                R.id.appSettingsMenuItem -> SettingsActivity.start(this)
                 R.id.aboutMenuItem -> AboutActivity.start(this)
                 R.id.sendFeedbackMenuItem -> sendFeedback()
-                R.id.getMoreSensorsMenuItem -> openUrl(WEB_URL)
+                R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
+                R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
+                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
                 R.id.loginMenuItem -> login(signedIn)
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -307,7 +388,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     private fun login(signedIn: Boolean) {
         if (signedIn) {
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
             with(builder)
             {
                 setMessage(getString(R.string.sign_out_confirm))
@@ -331,13 +412,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             it.title = if (signed) {
                 getString(R.string.sign_out)
             } else {
-                val signInText = getString(R.string.sign_in)
-                val betaText = getString(R.string.beta)
-                val spannable = SpannableString (signInText+betaText)
-                spannable.setSpan(ForegroundColorSpan(Color.RED), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(SuperscriptSpan(), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(RelativeSizeSpan(0.75f), signInText.length, signInText.length + betaText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable
+                getString(R.string.sign_in)
             }
         }
     }
@@ -369,7 +444,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             NO_TRIGGERED -> {
                 // on
                 item.setIcon(R.drawable.ic_notifications_on_24px)
-                item.icon?.alpha = ALARM_ICON_ALPHA
+                item.icon?.alpha = ALARM_ICON_ALPHA_OPAQUE
             }
             TRIGGERED -> {
                 // triggered
@@ -377,7 +452,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 val drawable = item.icon
                 if (drawable != null) {
                     drawable.mutate()
-                    drawable.alpha = ALARM_ICON_ALPHA
+                    drawable.alpha = ALARM_ICON_ALPHA_OPAQUE
                     val anim = ValueAnimator()
                     anim.setIntValues(1, 0)
                     anim.setEvaluator(IntEvaluator())
@@ -415,7 +490,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     val bgScanEnabled = viewModel.getBackgroundScanMode()
                     if (bgScanEnabled == BackgroundScanModes.DISABLED) {
                         if (viewModel.isFirstGraphVisit()) {
-                            val simpleAlert = AlertDialog.Builder(this).create()
+                            val simpleAlert = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
                             simpleAlert.setTitle(resources.getText(R.string.charts_background_dialog_title_question))
                             simpleAlert.setMessage(resources.getText(R.string.charts_background_dialog_description))
 
@@ -447,8 +522,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     override fun onResume() {
         super.onResume()
 
-        //TODO REMOVE TESTING UPDATE
-        WidgetsService.updateAllWidgets(this)
+        //TODO REMOVE TESTING UPDATE?
+        SimpleWidget.updateAll(this)
+        ComplexWidgetProvider.updateAll(this)
 
         viewModel.refreshTags()
         timer = Timer("TagDetailsActivityTimer", true)
@@ -508,16 +584,22 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+        permissionsInteractor.requestPermissions(
+            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
+            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+        )
     }
 
     companion object {
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
-        private const val WEB_URL = "https://ruuvi.com"
         private const val ALARM_ICON_ALPHA = 128
+        private const val ALARM_ICON_ALPHA_OPAQUE = 255
         private const val ALARM_ICON_ANIMATION_DURATION = 500L
+        private const val UPDATE_REQUEST_CODE = 213
+        private const val UPDATE_STALENESS_DAYS = 1
+        private const val UPDATE_REQUEST_REPEAT_DAYS = 7
 
         fun start(context: Context, isFromWelcome: Boolean) {
             val intent = Intent(context, TagDetailsActivity::class.java)

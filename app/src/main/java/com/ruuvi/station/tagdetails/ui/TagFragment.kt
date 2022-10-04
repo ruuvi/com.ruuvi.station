@@ -1,11 +1,13 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.content.DialogInterface
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,6 +18,7 @@ import com.ruuvi.station.graph.GraphView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.util.extensions.describingTimeSince
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -25,7 +28,6 @@ import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
-
 
 class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
@@ -43,6 +45,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private lateinit var binding: ViewTagDetailBinding
 
     private val graphView: GraphView by instance()
+
+    private var lastConnectable = Long.MIN_VALUE
 
     init {
         Timber.d("new TagFragment")
@@ -109,14 +113,14 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun confirm(message: String, positiveButtonClick: DialogInterface.OnClickListener) {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
         with(builder)
         {
             setMessage(message)
             setPositiveButton(getString(R.string.yes), positiveButtonClick)
-            setNegativeButton(getString(R.string.no), DialogInterface.OnClickListener { dialogInterface, i ->
+            setNegativeButton(getString(R.string.no)) { dialogInterface, i ->
                 dialogInterface.dismiss()
-            })
+            }
             show()
         }
     }
@@ -144,13 +148,13 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagEntry() {
-        viewModel.tagEntryObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.tagEntryObserve.observe(viewLifecycleOwner) {
             it?.let { updateTagData(it) }
-        })
+        }
     }
 
     private fun observeSync() {
-        viewModel.syncStatusObserve.observe(viewLifecycleOwner, Observer {
+        viewModel.syncStatusObserve.observe(viewLifecycleOwner) {
             with(binding.graphsContent) {
                 when (it.syncProgress) {
                     SyncProgress.STILL -> {
@@ -199,7 +203,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                         gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
                     }
                     SyncProgress.DONE -> {
-                        //gattAlertDialog(requireContext().getString(R.string.sync_complete))
+                        lastConnectable = Date().time
                     }
                 }
 
@@ -208,26 +212,30 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 gattSyncViewProgress.isVisible = !gattSyncViewButtons.isVisible
                 gattSyncCancel.isVisible = it.syncProgress == SyncProgress.READING_DATA
             }
-        })
+        }
     }
 
     private fun observeTagReadings() {
-        viewModel.tagReadingsObserve.observe(viewLifecycleOwner, Observer { readings ->
+        viewModel.tagReadingsObserve.observe(viewLifecycleOwner) { readings ->
             readings?.let {
                 view?.let { view ->
                     graphView.drawChart(readings, view)
                 }
             }
-        })
+        }
     }
 
     private fun updateTagData(tag: RuuviTag) {
         with(binding) {
             Timber.d("updateTagData for ${tag.id}")
+            tagHumidityLayout.isVisible = tag.humidity != null
+            tagPressureLayout.isVisible = tag.pressure != null
+            tagMovementLayout.isVisible = tag.movementCounter != null
+
             tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
             tagHumidityTextView.text = tag.humidityString
             tagPressureTextView.text = tag.pressureString
-            tagMovementTextView.text = tag.movementCounter.toString()
+            tagMovementTextView.text = tag.movementCounterString
             tagUpdatedTextView.text = tag.updatedAt?.describingTimeSince(requireContext())
 
             val unit = viewModel.getTemperatureUnitString()
@@ -237,8 +245,11 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             tag.connectable?.let {
                 if (it) {
                     graphsContent.gattSyncView.visibility = View.VISIBLE
+                    lastConnectable = tag.updatedAt?.time ?: Long.MIN_VALUE
                 } else {
-                    graphsContent.gattSyncView.visibility = View.GONE
+                    if (Date(lastConnectable).diffGreaterThan(15000)) {
+                        graphsContent.gattSyncView.visibility = View.GONE
+                    }
                 }
             }
 
@@ -253,6 +264,20 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     private fun setupViewVisibility(view: View, showGraph: Boolean) {
         val graph = view.findViewById<View>(R.id.graphsContent)
         graph.isVisible = showGraph
+        binding.graphsContent.scrollView?.doOnLayout {
+            if (resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
+                val height = it.height
+                if (height != 0) {
+                    Timber.d("set height $height")
+                    binding.graphsContent.tempChart.layoutParams.height = height
+                    binding.graphsContent.humidChart.layoutParams.height = height
+                    binding.graphsContent.pressureChart.layoutParams.height = height
+                    binding.graphsContent.tempChart.requestLayout()
+                    binding.graphsContent.humidChart.requestLayout()
+                    binding.graphsContent.pressureChart.requestLayout()
+                }
+            }
+        }
         binding.tagContainer.isVisible = !showGraph
     }
 

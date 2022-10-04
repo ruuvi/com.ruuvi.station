@@ -2,14 +2,18 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
 import androidx.lifecycle.*
+import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import com.ruuvi.station.util.ui.UiText
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
@@ -19,15 +23,16 @@ class TagSettingsViewModel(
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
+    private val sensorFwInteractor: SensorFwVersionInteractor
 ) : ViewModel() {
     var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
 
     private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
 
-    private val tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
-    val tagObserve: LiveData<RuuviTagEntity?> = tagState
+    private val _tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
+    val tagState: LiveData<RuuviTagEntity?> = _tagState
 
     private val sensorSettings = MutableLiveData<SensorSettings?>()
     val sensorSettingsObserve: LiveData<SensorSettings?> = sensorSettings
@@ -41,33 +46,58 @@ class TagSettingsViewModel(
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
+    val isLowBattery = Transformations.map(_tagState) {
+        it?.isLowBattery() ?: false
+    }
+
     val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
         it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
     }
 
-    val canCalibrate = MediatorLiveData<Boolean>()
+    val sensorOwnedOrOfflineObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
+        it?.networkSensor == false || it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
+    }
+
+    val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()
 
     init {
         Timber.d("TagSettingsViewModel $sensorId")
-        canCalibrate.addSource(sensorOwnedByUserObserve) { canCalibrate.value = getCanCalibrateValue()}
-        canCalibrate.addSource(userLoggedIn) { canCalibrate.value = getCanCalibrateValue() }
-        canCalibrate.addSource(sensorSettings) { canCalibrate.value = getCanCalibrateValue() }
+        firmware.addSource(_tagState) { firmware.value = getFirmware() }
+        firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
     }
 
-    private fun getCanCalibrateValue(): Boolean {
-        val ownedByUser = sensorOwnedByUserObserve.value ?: false
-        val loggedIn = userLoggedIn.value ?: false
-        val owner: String? = sensorSettings.value?.owner
-        return !loggedIn || ownedByUser || owner.isNullOrEmpty()
+    private fun getFirmware(): UiText? {
+        val firmware = sensorSettings.value?.firmware
+
+        if (firmware.isNullOrEmpty() && _tagState.value?.dataFormat != 5) {
+            return UiText.StringResource(R.string.firmware_very_old)
+        }
+        return firmware?.let { UiText.DynamicString(firmware) }
     }
 
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
             val tagInfo = getTagById(sensorId)
             val settings = interactor.getSensorSettings(sensorId)
+            if (settings?.networkSensor != true && settings?.owner.isNullOrEmpty()) {
+                interactor.checkSensorOwner(sensorId)
+            }
             withContext(Dispatchers.Main) {
-                tagState.value = tagInfo
+                _tagState.value = tagInfo
                 sensorSettings.value = settings
+            }
+        }
+    }
+
+    fun updateSensorFirmwareVersion() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val tagInfo = getTagById(sensorId)
+            val settings = interactor.getSensorSettings(sensorId)
+            if (settings?.firmware.isNullOrEmpty() && tagInfo?.connectable == true) {
+                val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
+                if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
+                    interactor.setSensorFirmware(sensorId, fwResult.fw)
+                }
             }
         }
     }

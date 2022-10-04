@@ -8,6 +8,7 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import timber.log.Timber
@@ -44,6 +45,46 @@ class DataForwardingSender(
             } catch (e: Exception) {
                 Timber.e(e, "Batch sending failed to $backendUrl")
             }
+        }
+    }
+    fun sendGattSyncData(readings: List<LogReading>, sensorSettings: SensorSettings) {
+        val forwardDuringSync = preferences.getDataForwardingDuringSyncEnabled()
+        val backendUrl = preferences.getDataForwardingUrl()
+        if (forwardDuringSync && backendUrl.isNotEmpty() && readings.isNotEmpty()) {
+            Timber.d("sendBulkData for ${sensorSettings.id}")
+            val events: MutableList<LogReading> = ArrayList()
+            var i = 0
+            for (reading in readings) {
+                events.add(reading)
+                i++
+                if (i >= 100) {
+                    sendBatch(events, sensorSettings)
+                    events.clear()
+                    i = 0
+                }
+            }
+            if (events.isNotEmpty()) {
+                sendBatch(events, sensorSettings)
+            }
+        }
+    }
+
+    private fun sendBatch(tags: List<LogReading>, sensorSettings: SensorSettings) {
+        val backendUrl = preferences.getDataForwardingUrl()
+        val event = eventFactory.createGattEvents(tags, sensorSettings)
+        try {
+            Ion.with(context)
+                    .load(backendUrl)
+                    .setLogging("HTTP_LOGS", Log.DEBUG)
+                    .setJsonPojoBody(event)
+                    .asJsonObject()
+                    .setCallback { e, _ ->
+                        if (e != null) {
+                            Timber.e(e, "Batch sending failed to $backendUrl")
+                        }
+                    }
+        } catch (e: Exception) {
+            Timber.e(e, "Batch sending failed to $backendUrl")
         }
     }
 

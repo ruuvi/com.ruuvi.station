@@ -164,12 +164,17 @@ class NetworkDataSyncInteractor (
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
 
         if (sensorSettings != null) {
-            val cal = Calendar.getInstance()
-            cal.time = Date()
-            cal.add(Calendar.HOUR, -period)
+            val calendar = Calendar.getInstance()
+            calendar.time = Date()
+            calendar.add(Calendar.HOUR, -period)
 
-            var since = cal.time
-            if (sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE) > since) since = sensorSettings.networkLastSync
+            var since = calendar.time
+            val lastSync = sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE)
+            if (lastSync > since) {
+                calendar.time = lastSync
+                calendar.add(Calendar.SECOND, 1)
+                since = calendar.time
+            }
 
             // if we have data for recent minute - skipping update
             if (!since.diffGreaterThan(60*1000)) return
@@ -254,6 +259,12 @@ class NetworkDataSyncInteractor (
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
+
+            val tagEntry = tagRepository.getTagById(sensor.sensor)
+            if (tagEntry?.favorite == false) {
+                tagEntry.favorite = true
+                tagEntry.update()
+            }
 
             if (!ecoMode && !sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)

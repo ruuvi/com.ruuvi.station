@@ -1,6 +1,5 @@
 package com.ruuvi.station.dashboard.ui
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -10,19 +9,20 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.describingTimeSince
 
 class RuuviTagAdapter(
     private val activity: AppCompatActivity,
-    items: List<RuuviTag>,
-    private val converter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val movementConverter: MovementConverter,
+    items: List<RuuviTag>
 ) : ArrayAdapter<RuuviTag>(activity, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -36,38 +36,40 @@ class RuuviTagAdapter(
 
         item?.let {
             binding.deviceId.text = it.displayName
-            binding.temperature.text = it.temperatureString
-            binding.humidity.text = it.humidityString
-            binding.pressure.text = it.pressureString
-            binding.movement.text = it.movementCounter.toString()
+            binding.temperature.text = unitsConverter.getTemperatureStringWithoutUnit(it.temperature)
+            binding.temperatureUnit.text = activity.getText(unitsConverter.getTemperatureUnit().unit)
+            binding.humidity.text = unitsConverter.getHumidityStringWithoutUnit(it.humidity, it.temperature)
+            binding.humidityUnit.text = if (it.humidity != null) unitsConverter.getHumidityUnitString() else ""
+            binding.pressure.text = unitsConverter.getPressureStringWithoutUnit(it.pressure)
+            binding.pressureUnit.text = if (it.pressure != null) activity.getText(unitsConverter.getPressureUnit().unit) else ""
+            binding.movement.text =   movementConverter.getMovementStringWithoutUnit(it.movementCounter)
+            binding.movementUnit.text = if (it.movementCounter != null) activity.getText(R.string.movements) else ""
         }
 
-        val ballColorRes = if (position % 2 == 0) R.color.main else R.color.mainLight
+        val ballColorRes = if (position % 2 == 0) R.color.keppel else R.color.elm
         val ballRadius = context.resources.getDimension(R.dimen.letter_ball_radius).toInt()
         val ballColor = ContextCompat.getColor(context, ballColorRes)
 
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val letterSize = 33 * displayMetrics.scaledDensity
+        val letterSize = 28 * displayMetrics.scaledDensity
 
-        val ballBitmap = Utils.createBall(ballRadius, ballColor, Color.WHITE, binding.deviceId.text.toString(), letterSize)
+        val ballBitmap = Utils.createBall(activity, ballRadius, ballColor, Color.WHITE, binding.deviceId.text.toString(), letterSize)
         binding.letterImage.setImageBitmap(ballBitmap)
 
         val updatedAt = item?.updatedAt?.describingTimeSince(activity)
         binding.lastSeenTextView.text = updatedAt
 
         val status = item?.status ?: AlarmStatus.NO_ALARM
-        val (isVisible, iconResource) =
+        val (isVisible, iconResource, alpha) =
             when (status) {
-                AlarmStatus.NO_ALARM -> true to R.drawable.ic_notifications_off_24px
-                AlarmStatus.NO_TRIGGERED -> true to R.drawable.ic_notifications_on_24px
-                AlarmStatus.TRIGGERED -> !binding.bell.isVisible to R.drawable.ic_notifications_active_24px
+                AlarmStatus.NO_ALARM -> Triple(true, R.drawable.ic_notifications_off_24px, 0.5f)
+                AlarmStatus.NO_TRIGGERED -> Triple(true, R.drawable.ic_notifications_on_24px, 1f)
+                AlarmStatus.TRIGGERED -> Triple(!binding.bell.isVisible, R.drawable.ic_notifications_active_24px, 1f)
             }
         binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
         binding.bell.setImageResource(iconResource)
-
-        val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main))
-        ImageViewCompat.setImageTintList(binding.bell, colorStateList)
+        binding.bell.alpha = alpha
 
         return binding.root
     }

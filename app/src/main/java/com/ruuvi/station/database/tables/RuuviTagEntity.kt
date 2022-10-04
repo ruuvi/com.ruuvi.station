@@ -34,11 +34,11 @@ data class RuuviTagEntity(
     @Column
     var favorite: Boolean = false,
     @Column
-    var accelX: Double = 0.0,
+    var accelX: Double? = null,
     @Column
-    var accelY: Double = 0.0,
+    var accelY: Double? = null,
     @Column
-    var accelZ: Double = 0.0,
+    var accelZ: Double? = null,
     @Column
     var voltage: Double = 0.0,
     @Column
@@ -48,7 +48,7 @@ data class RuuviTagEntity(
     @Column
     var txPower: Double = 0.0,
     @Column
-    var movementCounter: Int = 0,
+    var movementCounter: Int? = null,
     @Column
     var measurementSequenceNumber: Int = 0,
     @Column
@@ -61,31 +61,31 @@ data class RuuviTagEntity(
         temperature = tag.temperature ?: 0.0,
         humidity = tag.humidity,
         pressure = tag.pressure,
-        accelX = tag.accelX ?: 0.0,
-        accelY = tag.accelY ?: 0.0,
-        accelZ = tag.accelZ ?: 0.0,
+        accelX = tag.accelX,
+        accelY = tag.accelY,
+        accelZ = tag.accelZ,
         voltage = tag.voltage ?: 0.0,
         dataFormat = tag.dataFormat ?: 0,
         txPower = tag.txPower ?: 0.0,
-        movementCounter = tag.movementCounter ?: 0,
+        movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber ?: 0,
         connectable = tag.connectable ?: false
     )
 
     constructor(reading: TagSensorReading):this(
         id = reading.ruuviTagId,
-        rssi = reading.rssi,
+        rssi = reading.rssi ?: 0,
         temperature = reading.temperature,
         humidity = reading.humidity,
         pressure = reading.pressure,
         accelX = reading.accelX,
         accelY = reading.accelY,
         accelZ = reading.accelZ,
-        voltage = reading.voltage,
+        voltage = reading.voltage ?: 0.0,
         dataFormat = reading.dataFormat,
-        txPower = reading.txPower,
+        txPower = reading.txPower ?: 0.0,
         movementCounter = reading.movementCounter,
-        measurementSequenceNumber = reading.measurementSequenceNumber,
+        measurementSequenceNumber = reading.measurementSequenceNumber ?: 0,
         temperatureOffset = reading.temperatureOffset,
         humidityOffset = reading.humidityOffset,
         pressureOffset = reading.pressureOffset,
@@ -100,21 +100,30 @@ data class RuuviTagEntity(
     }
 
     fun updateData(reading: TagSensorReading) {
-        rssi = reading.rssi
+        rssi = reading.rssi ?: 0
         temperature = reading.temperature
         humidity = reading.humidity
         pressure = reading.pressure
         accelX = reading.accelX
         accelY = reading.accelY
         accelZ = reading.accelZ
-        voltage = reading.voltage
+        voltage = reading.voltage ?: 0.0
         dataFormat = reading.dataFormat
-        txPower = reading.txPower
+        txPower = reading.txPower ?: 0.0
         movementCounter = reading.movementCounter
-        measurementSequenceNumber = reading.measurementSequenceNumber
+        measurementSequenceNumber = reading.measurementSequenceNumber ?: 0
         updateAt = reading.createdAt
         temperatureOffset = reading.temperatureOffset
         humidityOffset = reading.humidityOffset
         pressureOffset = reading.pressureOffset
+    }
+}
+
+fun RuuviTagEntity.isLowBattery(): Boolean {
+    return when {
+        this.temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
+        this.temperature > -20 && this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
+        this.temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
+        else -> false
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.tag.domain.RuuviTag
 import timber.log.Timber
@@ -14,6 +15,7 @@ import java.math.RoundingMode
 
 object Utils {
     fun createBall(
+        context: Context,
         radius: Int,
         ballColor: Int,
         letterColor: Int,
@@ -30,7 +32,7 @@ object Utils {
         val paint = Paint()
         paint.color = letterColor
         paint.textSize = letterSize
-        paint.typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
+        paint.typeface = ResourcesCompat.getFont(context, R.font.mulish_regular)
         val textBounds = Rect()
         paint.getTextBounds(letter, 0, letter.length, textBounds)
         canvas.drawText(

@@ -13,5 +13,6 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/titan</item>
         <item name="colorOnSecondary">@color/titan70</item>
+        <item name="colorControlHighlight">@color/grayNew30</item>
     </style>
 </resources>

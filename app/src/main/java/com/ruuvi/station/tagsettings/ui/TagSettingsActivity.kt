@@ -3,14 +3,17 @@ package com.ruuvi.station.tagsettings.ui
 import android.app.Activity
 import android.content.*
 import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.graphics.alpha
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -32,9 +35,12 @@ import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -66,6 +72,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     private val imageInteractor: ImageInteractor by instance()
     private val sensorHistoryRepository: SensorHistoryRepository by instance()
     private val sensorSettingsRepository: SensorSettingsRepository by instance()
+    private val accelerationConverter: AccelerationConverter by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +105,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     private fun setupViewModel() {
         viewModel.setupAlarmElements()
 
-        viewModel.tagObserve.observe(this) { tag ->
+        viewModel.tagState.observe(this) { tag ->
             tag?.let {
                 setupCalibration(it)
                 updateReadings(it)
@@ -114,25 +121,40 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             binding.calibrateTemperature.setItemValue(
                 unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
             binding.calibratePressure.setItemValue(
-                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0))
+                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0, Accuracy.Accuracy2))
             binding.calibrateHumidity.setItemValue(
-                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT)
+                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
             )
             binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
 
             if (sensorSettings?.networkSensor != true) {
                 deleteString = getString(R.string.remove_local_sensor)
-                binding.ownerLayout.isEnabled = true
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_arrow_forward_ios_24), null)
             } else {
-                binding.ownerLayout.isEnabled = false
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
                 if (viewModel.sensorOwnedByUserObserve.value == true) {
                     deleteString = getString(R.string.remove_claimed_sensor)
                 } else {
                     deleteString = getString(R.string.remove_shared_sensor)
                 }
             }
+
+            if (sensorSettings?.owner.isNullOrEmpty()) {
+                binding.ownerLayout.isEnabled = true
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
+            } else {
+                binding.ownerLayout.isEnabled = false
+                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            }
+        }
+
+        viewModel.firmware.observe(this) {
+            binding.firmwareVersionLayout.isVisible = it != null
+            binding.firmwareVersionDivider.isVisible = it != null
+            binding.firmwareVersionTextView.text = it?.asString(this)
         }
 
         viewModel.userLoggedInObserve.observe(this) {
@@ -151,16 +173,17 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             }
         }
 
+        viewModel.sensorOwnedOrOfflineObserve.observe(this) {
+            binding.firmwareLayout.isVisible = it
+            binding.calibrationHeaderTextView.isVisible = it
+            binding.calibrationLayout.isVisible = it
+        }
+
         viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
                 Snackbar.make(binding.toolbarContainer, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.statusProcessed()
             }
-        }
-
-        viewModel.canCalibrate.observe(this) {
-            binding.calibrationHeaderTextView.isVisible = it
-            binding.calibrationLayout.isVisible = it
         }
 
         viewModel.sensorSharedObserve.observe(this) { isShared ->
@@ -170,6 +193,20 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 getText(R.string.sensor_not_shared)
             }
         }
+
+        val errorColor = resolveColorAttr(R.attr.colorErrorText)
+        val successColor = resolveColorAttr(R.attr.colorSuccessText)
+        viewModel.isLowBattery.observe(this) { lowBattery ->
+            if (lowBattery) {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
+                binding.batteryTextView.setTextColor(errorColor)
+            } else {
+                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
+                binding.batteryTextView.setTextColor(successColor)
+            }
+        }
+
+        viewModel.updateSensorFirmwareVersion()
     }
 
     private fun setupUI() {
@@ -287,7 +324,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
-            viewModel.tagObserve.value?.id?.let {
+            viewModel.tagState.value?.id?.let {
                 exporter.toCsv(it)
             }
         } else {
@@ -374,12 +411,16 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun updateReadings(tag: RuuviTagEntity) {
+        binding.alarmHumidity.isVisible = tag.humidity != null
+        binding.alarmPressure.isVisible = tag.pressure != null
+        binding.alarmMovement.isVisible = tag.movementCounter != null
+
         if (tag.dataFormat == 3 || tag.dataFormat == 5) {
             binding.rawValuesLayout.isVisible = true
-            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage.toString(), getString(R.string.voltage_unit))
-            binding.accelerationXTextView.text = getString(R.string.acceleration_reading, tag.accelX)
-            binding.accelerationYTextView.text = getString(R.string.acceleration_reading, tag.accelY)
-            binding.accelerationZTextView.text = getString(R.string.acceleration_reading, tag.accelZ)
+            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage, getString(R.string.voltage_unit))
+            binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
+            binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
+            binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)
             binding.dataFormatTextView.text = tag.dataFormat.toString()
             binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
             binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
@@ -390,7 +431,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     }
 
     private fun delete() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
 
         builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
 
@@ -400,7 +441,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             for (alarm in viewModel.alarmElements) {
                 alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
             }
-            viewModel.tagObserve.value?.let { viewModel.deleteTag(it) }
+            viewModel.tagState.value?.let { viewModel.deleteTag(it) }
             finish()
         }
 
@@ -411,12 +452,20 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
     private fun showImageSourceSheet() {
         val sheetDialog = BottomSheetDialog(this)
-        val listView = ListView(this)
+        val listView = ListView(this, null, R.style.AppTheme)
         val menu = arrayOf(
             resources.getString(R.string.camera),
             resources.getString(R.string.gallery)
         )
-        listView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menu)
+        val dividerColor = resolveColorAttr(R.attr.colorDivider)
+        listView.divider = ColorDrawable(dividerColor).mutate()
+        listView.dividerHeight = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1f,
+            resources.displayMetrics
+        ).toInt()
+
+        listView.adapter = ArrayAdapter(this, R.layout.bottom_sheet_select_image_source, menu)
         listView.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             when (position) {
                 0 -> dispatchTakePictureIntent()

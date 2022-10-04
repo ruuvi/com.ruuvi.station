@@ -10,6 +10,9 @@ data class NetworkUserSettings(
     val UNIT_TEMPERATURE: String?,
     val UNIT_HUMIDITY: String?,
     val UNIT_PRESSURE: String?,
+    val ACCURACY_TEMPERATURE: String?,
+    val ACCURACY_HUMIDITY: String?,
+    val ACCURACY_PRESSURE: String?,
     val DASHBOARD_ENABLED: String?,
     val CLOUD_MODE_ENABLED: String?,
     val CHART_SHOW_ALL_POINTS: String?,
@@ -17,14 +20,17 @@ data class NetworkUserSettings(
     val CHART_VIEW_PERIOD: String?
 ) {
     fun isEmpty() =
-            BACKGROUND_SCAN_MODE == null &&
-            BACKGROUND_SCAN_INTERVAL == null &&
-            UNIT_TEMPERATURE == null &&
-            UNIT_HUMIDITY == null &&
-            UNIT_PRESSURE == null &&
-            DASHBOARD_ENABLED == null &&
-            CLOUD_MODE_ENABLED == null &&
-            CHART_SHOW_ALL_POINTS == null &&
-            CHART_DRAW_DOTS == null &&
-            CHART_VIEW_PERIOD == null
+                BACKGROUND_SCAN_MODE == null &&
+                BACKGROUND_SCAN_INTERVAL == null &&
+                UNIT_TEMPERATURE == null &&
+                UNIT_HUMIDITY == null &&
+                UNIT_PRESSURE == null &&
+                ACCURACY_TEMPERATURE == null &&
+                ACCURACY_HUMIDITY == null &&
+                ACCURACY_PRESSURE == null &&
+                DASHBOARD_ENABLED == null &&
+                CLOUD_MODE_ENABLED == null &&
+                CHART_SHOW_ALL_POINTS == null &&
+                CHART_DRAW_DOTS == null &&
+                CHART_VIEW_PERIOD == null
 }

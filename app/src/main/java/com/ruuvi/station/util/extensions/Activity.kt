@@ -1,11 +1,15 @@
 package com.ruuvi.station.util.extensions
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.internal.NavigationMenuView
+import com.google.android.material.navigation.NavigationView
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 
@@ -30,17 +34,19 @@ fun AppCompatActivity.openUrl(url: String){
     startActivity(webIntent)
 }
 
-fun AppCompatActivity.hideKeyboard() {
+fun Activity.hideKeyboard() {
     val imm: InputMethodManager = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
 }
 
-fun AppCompatActivity.getMainMenuItems(signed: Boolean) =
-    arrayOf(
-        getString(R.string.menu_add_new_sensor),
-        getString(R.string.menu_app_settings),
-        getString(R.string.menu_about_help),
-        getString(R.string.menu_send_feedback),
-        getString(R.string.menu_get_more_sensors),
-        if (signed) getString(R.string.sign_out) else getString(R.string.sign_in)
-    )
+fun Activity.showKeyboard(view: View) {
+    val inputManager = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun Activity.disableNavigationViewScrollbars(navigationView: NavigationView) {
+    val navigationMenuView = navigationView.getChildAt(0) as NavigationMenuView
+    if (navigationMenuView != null) {
+        navigationMenuView.isVerticalScrollBarEnabled = false
+    }
+}

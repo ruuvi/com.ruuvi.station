@@ -1,5 +1,6 @@
 package com.ruuvi.station.bluetooth.domain
 
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.IRuuviGattListener
 import com.ruuvi.station.bluetooth.LogReading
@@ -9,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,9 @@ class BluetoothGattInteractor (
     private val tagRepository: TagRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
-    private val firebaseInteractor: FirebaseInteractor
+    private val firebaseInteractor: FirebaseInteractor,
+    private val dataForwardingSender: DataForwardingSender,
+    private val preferencesRepository: PreferencesRepository
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
@@ -56,6 +60,7 @@ class BluetoothGattInteractor (
                     readDataSize = data.size
                 ))
                 saveGattReadings(sensorId, data)
+                if (shouldForwardData()) forwardGattReadings(sensorId, data)
             }
 
             override fun syncProgress(syncedDataPoints: Int) {
@@ -70,8 +75,7 @@ class BluetoothGattInteractor (
                 Timber.d("Error: $errorMessage")
             }
 
-            override fun heartbeat(raw: String) {
-            }
+            override fun heartbeat(raw: String) { }
         })
         if (!found)
             setSyncStatus(GattSyncStatus(sensorId, SyncProgress.NOT_FOUND))
@@ -105,10 +109,23 @@ class BluetoothGattInteractor (
         updateLastSync(sensorId, Date())
     }
 
+    fun forwardGattReadings(sensorId: String, data: List<LogReading>) {
+        Timber.d("forwardGattReadings")
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings != null) {
+            dataForwardingSender.sendGattSyncData(data, sensorSettings)
+        }
+    }
+
     fun updateLastSync(sensorId: String, date: Date?) =
         sensorSettingsRepository.updateLastSync(sensorId, date)
 
     fun resetGattStatus(sensorId: String) {
         setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL))
+    }
+
+    private fun shouldForwardData(): Boolean {
+        return preferencesRepository.getDataForwardingDuringSyncEnabled() &&
+                preferencesRepository.getDataForwardingUrl().isNotEmpty()
     }
 }

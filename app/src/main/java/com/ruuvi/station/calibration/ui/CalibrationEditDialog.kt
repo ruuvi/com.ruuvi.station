@@ -11,6 +11,7 @@ import com.ruuvi.station.databinding.DialogCalibrationEditBinding
 import java.lang.Exception
 import java.lang.IllegalStateException
 
+//TODO implement a custom FragmentFactory
 class CalibrationEditDialog(
     private val calibrationType: CalibrationType,
     private var unit: String = "",
@@ -25,7 +26,6 @@ class CalibrationEditDialog(
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
             builder
                 .setView(binding.root)
-                .setTitle(getString(R.string.calibration_setup))
                 .setPositiveButton(R.string.ok) {_,_->
                     listener?.onDialogPositiveClick(this, binding.calibrationValueEditText.text.toString().toDouble())
                 }

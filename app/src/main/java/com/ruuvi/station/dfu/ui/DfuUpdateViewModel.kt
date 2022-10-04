@@ -4,7 +4,9 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
 import com.ruuvi.station.dfu.data.ReleaseAssets
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 import net.swiftzer.semver.SemVer
 import timber.log.Timber
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class DfuUpdateViewModel(
@@ -25,7 +28,8 @@ class DfuUpdateViewModel(
     private val latestFwInteractor: LatestFwInteractor,
     private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
     private val dfuInteractor: DfuInteractor,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository
     ): ViewModel() {
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
@@ -94,16 +98,20 @@ class DfuUpdateViewModel(
         if (!sensorFw.isSuccess) {
             return true
         } else {
-            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
-            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
-            val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
-            val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
+            try {
+                val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+                val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
+                val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
+                val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
 
-            if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
+                if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
+                    return true
+                } else {
+                    _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
+                    return false
+                }
+            } catch (e: IllegalArgumentException) {
                 return true
-            } else {
-                _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
-                return false
             }
         }
     }
@@ -115,7 +123,11 @@ class DfuUpdateViewModel(
         }
 
         getFwJob = viewModelScope.launch {
-            _sensorFwVersion.value = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+            val firmware = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+            _sensorFwVersion.value = firmware
+            if (firmware.isSuccess && firmware.fw.isNotEmpty()) {
+                sensorSettingsRepository.setSensorFirmware(sensorId, firmware.fw)
+            }
         }
     }
 
@@ -170,18 +182,28 @@ class DfuUpdateViewModel(
         val sensorFw = _sensorFwVersion.value
 
         val pattern =
-        if (sensorFw?.isSuccess != true) {
-            PATTERN_2_TO_3
-        } else {
-            val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
-            val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
-            if (sensorFwParsed.major < 3) {
+            if (sensorFw?.isSuccess != true) {
                 PATTERN_2_TO_3
+            } else {
+                try {
+                    val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
+                    if (sensorFwFirstNumberIndex == -1) throw IllegalArgumentException()
+                    val sensorFwParsed = SemVer.parse(
+                        sensorFw.fw.subSequence(
+                            sensorFwFirstNumberIndex,
+                            sensorFw.fw.length
+                        ).toString()
+                    )
+
+                    if (sensorFwParsed.major < 3) {
+                        PATTERN_2_TO_3
+                    } else {
+                        PATTERN_3x
+                    }
+                } catch (e: IllegalArgumentException) {
+                    PATTERN_2_TO_3
+                }
             }
-            else {
-                PATTERN_3x
-            }
-        }
 
         val regex = Regex(pattern)
         return assets.firstOrNull { regex.matches(it.name) }
@@ -235,15 +257,7 @@ class DfuUpdateViewModel(
 
     private fun isLowBattery(): Boolean {
         val tagInfo = tagRepository.getTagById(sensorId)
-        if (tagInfo != null) {
-            return when {
-                tagInfo.temperature < -20 && tagInfo.voltage < 2 -> true
-                tagInfo.temperature < 0 && tagInfo.voltage < 2.3 -> true
-                tagInfo.temperature >= 0 && tagInfo.voltage < 2.5 -> true
-                else -> false
-            }
-        }
-        return false
+        return tagInfo?.isLowBattery() ?: false
     }
 
     private fun error(message: String?) {
@@ -258,6 +272,7 @@ class DfuUpdateViewModel(
 
     private fun updateFinished() {
         _stage.value = DfuUpdateStage.UPDATE_FINISHED
+        sensorSettingsRepository.setSensorFirmware(sensorId, latestFwVersion.value)
     }
 
     override fun onCleared() {

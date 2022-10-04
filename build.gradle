@@ -1,15 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     ext {
-        kotlin_version = '1.5.10'
+        kotlin_version = '1.6.10'
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
         coroutines_version = "1.4.0"
-        lifecycle_version = "2.2.0"
+        lifecycle_version = "2.4.1"
         retrofit_version = "2.9.0"
-        navigation_version = '2.3.0'
-        compose_version = '1.0.0'
+        navigation_version = '2.4.0'
+        compose_version = '1.1.1'
     }
     repositories {
         jcenter()
@@ -27,6 +26,21 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "3.3"
+    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "ruuvi_com.ruuvi.station"
+        property "sonar.organization", "ruuvi"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -34,8 +48,4 @@ allprojects {
         maven { url "https://maven.google.com" }
         google()
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

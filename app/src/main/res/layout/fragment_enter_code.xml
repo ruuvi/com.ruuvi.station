@@ -8,7 +8,7 @@
     tools:context=".network.ui.EnterCodeFragment">
 
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,81 +27,50 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/registerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="24dp"
-        android:fontFamily="@font/montserrat_bold"
-        android:lineSpacingExtra="16dp"
-        android:singleLine="false"
         android:text="@string/sign_in_check_email"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        style="@style/WelcomeText"
+        />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enterCodeLayout"
-        android:layout_width="match_parent"
+    <com.ruuvi.station.network.ui.CodeEditView
+        android:id="@+id/codeEdit"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginRight="32dp"
-        android:textColorHint="@color/white"
-        app:hintTextColor="@color/white"
-        app:layout_constraintTop_toTopOf="@+id/centerGuideline">
+        app:layout_constraintTop_toTopOf="@+id/centerGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/enterCodeManuallyEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat"
-            android:hint="@string/sign_in_code_hint"
-            android:inputType="textCapCharacters"
-            android:textColor="@color/white" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/errorTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="32dp"
-        android:fontFamily="@font/montserrat"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/enterCodeLayout"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/codeEdit"
+        style="@style/WelcomeText"
         tools:text="error text" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/submitCodeButton"
-        style="@style/roundButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="64dp"
-        android:text="@string/sign_in_login_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/errorTextView" />
-
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/syncingTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/synchronizing"
-        android:fontFamily="@font/montserrat"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/submitCodeButton"
+        app:layout_constraintTop_toBottomOf="@+id/errorTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        style="@style/WelcomeText"
         />
 
     <ProgressBar
@@ -116,7 +85,7 @@
         app:layout_constraintTop_toTopOf="@+id/syncingTextView"
         app:layout_constraintBottom_toBottomOf="@+id/syncingTextView"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/skipTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

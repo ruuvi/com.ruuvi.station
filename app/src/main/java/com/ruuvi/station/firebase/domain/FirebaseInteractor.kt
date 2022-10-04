@@ -1,21 +1,27 @@
 package com.ruuvi.station.firebase.domain
 
+import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
-import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Exception
 
 class FirebaseInteractor(
+    private val context: Context,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val preferences: PreferencesRepository,
-    private val tagInteractor: TagInteractor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val tagRepository: TagRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val alarmRepository: AlarmRepository
 ) {
     fun saveUserProperties() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -67,8 +73,9 @@ class FirebaseInteractor(
                     preferences.graphDrawDots().toString()
                 )
 
-                val addedTags = tagInteractor.getTagEntities(true).size
-                val notAddedTags = tagInteractor.getTagEntities(false).size
+                val favouriteTags = tagRepository.getFavoriteSensors()
+                val addedTags = favouriteTags.size
+                val notAddedTags = tagRepository.getAllTags(false).size
                 val seenTags = addedTags + notAddedTags
 
                 firebaseAnalytics.setUserProperty(SEEN_TAGS, seenTags.toString())
@@ -85,19 +92,45 @@ class FirebaseInteractor(
                     sensorSettings.count { it.networkSensor && it.owner == userEmail }
                 val offlineSensors =
                     sensorSettings.count { !it.networkSensor }
+                val ownedSensors = favouriteTags.filter { !it.networkSensor || it.owner == userEmail }
 
                 firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
                 firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())
+
+                firebaseAnalytics.setUserProperty(USE_DF2, ownedSensors.count { it.dataFormat == 2 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF3, ownedSensors.count { it.dataFormat == 3 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF4, ownedSensors.count { it.dataFormat == 4 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF5, ownedSensors.count { it.dataFormat == 5 }.toString())
+
+                registerAlarmStats()
+
+                val useSimpleWidget = SimpleWidget.getSimpleWidgetsIds(context).isNotEmpty()
+                Timber.d("useSimpleWidget $useSimpleWidget")
+                firebaseAnalytics.setUserProperty(USE_SIMPLE_WIDGET, useSimpleWidget.toString())
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
     }
 
+    private fun registerAlarmStats() {
+        val temperatureAlarms = alarmRepository.getActiveByType(Alarm.TEMPERATURE)
+        val humidityAlarms = alarmRepository.getActiveByType(Alarm.HUMIDITY)
+        val pressureAlarms = alarmRepository.getActiveByType(Alarm.PRESSURE)
+        val rssiAlarms = alarmRepository.getActiveByType(Alarm.RSSI)
+        val movementAlarms = alarmRepository.getActiveByType(Alarm.MOVEMENT)
+
+        firebaseAnalytics.setUserProperty(ALERT_TEMPERATURE, temperatureAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_HUMIDITY, humidityAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_PRESSURE, pressureAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_RSSI, rssiAlarms.count().toString())
+        firebaseAnalytics.setUserProperty(ALERT_MOVEMENT, movementAlarms.count().toString())
+    }
+
     fun logSignIn() {
         CoroutineScope(Dispatchers.IO).launch {
-            val addedTags = tagInteractor.getTagEntities(true).size
-            val notAddedTags = tagInteractor.getTagEntities(false).size
+            val addedTags = tagRepository.getAllTags(true).size
+            val notAddedTags = tagRepository.getAllTags(false).size
             val seenTags = addedTags + notAddedTags
 
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
@@ -145,6 +178,16 @@ class FirebaseInteractor(
         const val LOGGED_IN = "logged_in"
         const val CLAIMED_TAGS = "claimed_tags"
         const val OFFLINE_TAGS = "offline_tags"
+        const val USE_DF2 = "use_df2"
+        const val USE_DF3 = "use_df3"
+        const val USE_DF4 = "use_df4"
+        const val USE_DF5 = "use_df5"
+        const val USE_SIMPLE_WIDGET = "use_simple_widget"
+        const val ALERT_TEMPERATURE = "alert_temperature"
+        const val ALERT_HUMIDITY = "alert_humidity"
+        const val ALERT_PRESSURE = "alert_pressure"
+        const val ALERT_RSSI = "alert_rssi"
+        const val ALERT_MOVEMENT = "alert_movement"
 
         const val SENSORS_ADDED = "sensors_added"
         const val SENSORS_SEEN = "sensors_seen"

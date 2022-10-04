@@ -69,33 +69,35 @@ class CsvExporter(
                     ))
             }
             fileWriter.append('\n')
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
                 fileWriter.append(unitsConverter.getTemperatureValue(reading.temperature).toString())
                 fileWriter.append(',')
-                fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() })
+                fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() } ?: nullValue)
                 fileWriter.append(',')
-                fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() })
+                fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
-                fileWriter.append(reading.rssi.toString())
+                fileWriter.append(reading.rssi?.toString() ?: nullValue)
                 if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
                     fileWriter.append(',')
-                    fileWriter.append(reading.accelX.toString())
+                    fileWriter.append(reading.accelX?.let { reading.accelX.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.accelY.toString())
+                    fileWriter.append(reading.accelY?.let { reading.accelY.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.accelZ.toString())
+                    fileWriter.append(reading.accelZ?.let { reading.accelZ.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.voltage.toString())
+                    fileWriter.append(reading.voltage?.toString() ?: nullValue)
                 }
                 if (tag?.dataFormat == 5) {
                     fileWriter.append(',')
-                    fileWriter.append(reading.movementCounter.toString())
+                    fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() } ?: nullValue)
                     fileWriter.append(',')
-                    fileWriter.append(reading.measurementSequenceNumber.toString())
+                    fileWriter.append(reading.measurementSequenceNumber?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.txPower?.toInt()?.toString() ?: nullValue)
                 }
                 fileWriter.append('\n')
             }
@@ -117,5 +119,9 @@ class CsvExporter(
         sendIntent.type = "text/csv"
         sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, tag?.id)))
+    }
+
+    companion object {
+        private const val nullValue = ""
     }
 }

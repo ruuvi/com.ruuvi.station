@@ -32,11 +32,25 @@
                 android:title="@string/menu_send_feedback" />
         </group>
         <group
+            android:id="@+id/whatTomeasureGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/whatTomeasureMenuItem"
+                android:title="@string/menu_what_to_measure" />
+        </group>
+        <group
             android:id="@+id/getMoreSensorsGroup"
             android:checkableBehavior="none">
             <item
                 android:id="@+id/getMoreSensorsMenuItem"
-                android:title="@string/menu_get_more_sensors" />
+                android:title="@string/menu_buy_sensors" />
+        </group>
+        <group
+            android:id="@+id/getGatewayGroup"
+            android:checkableBehavior="none">
+            <item
+                android:id="@+id/getGatewayMenuItem"
+                android:title="@string/menu_buy_gateway" />
         </group>
         <group
             android:id="@+id/loginGroup"

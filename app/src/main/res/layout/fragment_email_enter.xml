@@ -7,7 +7,7 @@
     tools:background="@drawable/gradient_background"
     tools:context=".network.ui.EmailEnterFragment">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,23 +26,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/registerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="24dp"
-        android:fontFamily="@font/montserrat_bold"
-        android:lineSpacingExtra="16dp"
-        android:singleLine="false"
         android:text="@string/login_description"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        style="@style/WelcomeText"
         />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -54,6 +49,7 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="56dp"
         android:textColorHint="@color/white"
+        android:fontFamily="@font/muli"
         app:hintTextColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/centerGuideline">
 
@@ -61,27 +57,26 @@
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat"
+            android:fontFamily="@font/muli"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/errorTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="32dp"
-        android:fontFamily="@font/montserrat"
-        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/emailLayout"
+        style="@style/WelcomeText"
         tools:text="error text" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/submitButton"
-        style="@style/roundButton"
+        style="@style/RoundButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -104,7 +99,7 @@
         app:layout_constraintStart_toStartOf="@+id/submitButton"
         app:layout_constraintTop_toBottomOf="@+id/submitButton" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/skipTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

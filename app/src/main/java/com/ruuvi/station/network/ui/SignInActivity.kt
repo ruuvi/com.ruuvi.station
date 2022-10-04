@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.startup.ui.StartupActivity
@@ -21,6 +22,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     override fun onBackPressed() {

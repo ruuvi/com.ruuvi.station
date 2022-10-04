@@ -8,13 +8,14 @@ data class RuuviTag(
     val name: String,
     val displayName: String,
     val rssi: Int,
-    val temperature: Double?,
+    val temperature: Double,
     val humidity: Double?,
     val pressure: Double?,
-    val movementCounter: Int,
+    val movementCounter: Int?,
     val temperatureString: String,
     val humidityString: String,
     val pressureString: String,
+    val movementCounterString: String,
     val defaultBackground: Int,
     val dataFormat: Int,
     val updatedAt: Date?,
@@ -22,5 +23,7 @@ data class RuuviTag(
     val status: AlarmStatus = AlarmStatus.NO_ALARM,
     val connectable: Boolean?,
     val lastSync: Date?,
-    val networkLastSync: Date?
+    val networkLastSync: Date?,
+    val networkSensor: Boolean,
+    val owner: String?
 )

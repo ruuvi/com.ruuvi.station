@@ -7,15 +7,13 @@ import org.kodein.di.generic.*
 
 object SettingsInjectionModule {
     val module = Kodein.Module(SettingsInjectionModule.javaClass.name) {
-        bind<AppSettingsViewModel>() with provider { AppSettingsViewModel(instance()) }
+        bind<BackgroundScanSettingsViewModel>() with provider { BackgroundScanSettingsViewModel(instance(), instance()) }
 
-        bind<AppSettingsBackgroundScanViewModel>() with provider { AppSettingsBackgroundScanViewModel(instance()) }
-
-        bind<AppSettingsGraphViewModel>() with provider { AppSettingsGraphViewModel(instance()) }
+        bind<ChartSettingsViewModel>() with provider { ChartSettingsViewModel(instance()) }
 
         bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
 
-        bind<AppSettingsGatewayViewModel>() with provider { AppSettingsGatewayViewModel(instance()) }
+        bind<DataForwardingSettingsViewModel>() with provider { DataForwardingSettingsViewModel(instance()) }
 
         bind<AppSettingsPressureUnitViewModel>() with provider { AppSettingsPressureUnitViewModel(instance()) }
 
@@ -23,12 +21,20 @@ object SettingsInjectionModule {
 
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
 
-        bind<AppSettingsLocaleViewModel>() with provider { AppSettingsLocaleViewModel(instance(), instance()) }
-
         bind<AppSettingsExperimentalViewModel>() with provider { AppSettingsExperimentalViewModel(instance()) }
 
         bind<AppSettingsInteractor>() with singleton {
             AppSettingsInteractor(instance(), instance(), instance(), instance(), instance())
         }
+
+        bind<AppearanceSettingsViewModel>() with provider { AppearanceSettingsViewModel(instance()) }
+
+        bind<TemperatureSettingsViewModel>() with provider { TemperatureSettingsViewModel(instance()) }
+
+        bind<HumiditySettingsViewModel>() with provider { HumiditySettingsViewModel(instance()) }
+
+        bind<PressureSettingsViewModel>() with provider { PressureSettingsViewModel(instance()) }
+
+        bind<CloudSettingsViewModel>() with provider { CloudSettingsViewModel(instance()) }
     }
 }

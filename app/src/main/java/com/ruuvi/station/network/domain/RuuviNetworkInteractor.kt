@@ -95,38 +95,60 @@ class RuuviNetworkInteractor (
         return userInfo?.data?.sensors?.firstOrNull {it.sensor == mac}
     }
 
-    fun claimSensor(sensorSettings: SensorSettings, onResult: (ClaimSensorResponse?) -> Unit) {
+    suspend fun claimSensor(sensorSettings: SensorSettings, onResult: (ClaimSensorResponse?) -> Unit) {
         val token = getToken()?.token
         token?.let {
-            CoroutineScope(Dispatchers.IO).launch{
-                val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
-                try {
-                    networkRepository.claimSensor(request, token) { claimResponse ->
-                        networkResponseLocalizer.localizeResponse(claimResponse)
-                        if (claimResponse?.isSuccess() == true) {
+            val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
+            try {
+                networkRepository.claimSensor(request, token) { claimResponse ->
+                    networkResponseLocalizer.localizeResponse(claimResponse)
+                    if (claimResponse?.isSuccess() == true) {
+                        sensorSettingsRepository.setSensorOwner(
+                            sensorSettings.id,
+                            getEmail() ?: "",
+                            true
+                        )
+                    } else {
+                        val maskedEmail =
+                            Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
+                        if (maskedEmail?.isNotEmpty() == true) {
                             sensorSettingsRepository.setSensorOwner(
                                 sensorSettings.id,
-                                getEmail() ?: "",
-                                true
+                                maskedEmail,
+                                false
                             )
-                        } else {
-                            val maskedEmail = Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
-                            if (maskedEmail?.isNotEmpty() == true) {
-                                sensorSettingsRepository.setSensorOwner(
-                                    sensorSettings.id,
-                                    maskedEmail,
-                                    false
-                                )
-                            }
-                        }
-                        getUserInfo {
-                            onResult(claimResponse)
                         }
                     }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        onResult(ClaimSensorResponse(RuuviNetworkResponse.errorResult, e.message.toString(), null, null))
+                    getUserInfo {
+                        onResult(claimResponse)
                     }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onResult(
+                        ClaimSensorResponse(
+                            RuuviNetworkResponse.errorResult,
+                            e.message.toString(),
+                            null,
+                            null
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun checkSensorOwner(sensorId: String) {
+        val token = getToken()?.token
+        token?.let {
+            CoroutineScope(Dispatchers.IO).launch() {
+                val response = networkRepository.checkSensorOwner(sensorId, token)
+                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
+                    sensorSettingsRepository.setSensorOwner(
+                        sensorId,
+                        response.data.email,
+                        false
+                    )
                 }
             }
         }
@@ -263,6 +285,21 @@ class RuuviNetworkInteractor (
             mode = SensorDataMode.MIXED
         )
         return getSensorData(request)
+    }
+
+    suspend fun getSensorDenseLastData(): SensorDenseResponse? = withContext(Dispatchers.IO) {
+        val token = getToken()?.token
+
+        token?.let {
+            val request = SensorDenseRequest(
+                sensor = null,
+                measurements = true,
+                alerts = false,
+                sharedToOthers = false,
+                sharedToMe = true
+            )
+            return@withContext networkRepository.getSensorDenseData(token, request)
+        }
     }
 
     fun updateUserSetting(name: String, value: String) {

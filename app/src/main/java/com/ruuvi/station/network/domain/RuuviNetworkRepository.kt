@@ -175,6 +175,26 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun getSensorDenseData(token: String, request: SensorDenseRequest): SensorDenseResponse? = withContext(dispatcher) {
+        val response = retrofitService.getSensorsDense(
+            auth = getAuth(token),
+            sensor = request.sensor,
+            sharedToMe = request.sharedToMe,
+            sharedToOthers = request.sharedToOthers,
+            alerts = request.alerts,
+            measurements = request.measurements
+        )
+        val result: SensorDenseResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<SensorDenseResponse>() {}.type
+            val errorResponse: SensorDenseResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
     suspend fun updateSensor(request: UpdateSensorRequest, token: String): UpdateSensorResponse? = withContext(dispatcher) {
         Timber.d("updateSensor.request: $request")
         val response = retrofitService.updateSensor(getAuth(token), request)
@@ -295,13 +315,26 @@ class RuuviNetworkRepository
     }
 
     suspend fun getSensors(sensorId: String?, token: String): GetSensorsResponse? = withContext(dispatcher){
-        val response = retrofitService.geSensors(getAuth(token), sensorId)
+        val response = retrofitService.getSensors(getAuth(token), sensorId)
         val result: GetSensorsResponse?
         if (response.isSuccessful) {
             result = response.body()
         } else {
             val type = object : TypeToken<GetAlertsResponse>() {}.type
             val errorResponse: GetSensorsResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        result
+    }
+
+    suspend fun checkSensorOwner(sensorId: String, token: String): CheckSensorResponse? = withContext(dispatcher){
+        val response = retrofitService.checkSensorOwner(getAuth(token), sensorId)
+        val result: CheckSensorResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<GetAlertsResponse>() {}.type
+            val errorResponse: CheckSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         result

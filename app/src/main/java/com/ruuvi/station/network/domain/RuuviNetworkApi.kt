@@ -109,8 +109,26 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @GET("sensors")
-    suspend fun geSensors(
+    suspend fun getSensors(
         @Header("Authorization") auth: String,
         @Query("sensor") sensor: String?
     ): Response<GetSensorsResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("check")
+    suspend fun checkSensorOwner(
+        @Header("Authorization") auth: String,
+        @Query("sensor") sensor: String?
+    ): Response<CheckSensorResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("sensors-dense")
+    suspend fun getSensorsDense(
+        @Header("Authorization") auth: String,
+        @Query("sensor") sensor: String?,
+        @Query("sharedToOthers") sharedToOthers: Boolean = false,
+        @Query("sharedToMe") sharedToMe: Boolean = false,
+        @Query("measurements") measurements: Boolean = false,
+        @Query("alerts") alerts: Boolean = false
+    ): Response<SensorDenseResponse>
 }

@@ -32,23 +32,23 @@ data class TagSensorReading(
     @Column
     var pressureOffset: Double = 0.0,
     @Column
-    var rssi: Int = 0,
+    var rssi: Int? = null,
     @Column
-    var accelX: Double = 0.0,
+    var accelX: Double? = null,
     @Column
-    var accelY: Double = 0.0,
+    var accelY: Double? = null,
     @Column
-    var accelZ: Double = 0.0,
+    var accelZ: Double? = null,
     @Column
-    var voltage: Double = 0.0,
+    var voltage: Double? = null,
     @Column
     var dataFormat: Int = 0,
     @Column
-    var txPower: Double = 0.0,
+    var txPower: Double? = null,
     @Column
-    var movementCounter: Int = 0,
+    var movementCounter: Int? = null,
     @Column
-    var measurementSequenceNumber: Int = 0
+    var measurementSequenceNumber: Int? = null
 ): BaseModel() {
     constructor(tag: RuuviTagEntity): this(
         ruuviTagId = tag.id!!,
@@ -73,17 +73,17 @@ data class TagSensorReading(
     constructor(tag: FoundRuuviTag, timestamp: Date): this(
         ruuviTagId = tag.id,
         temperature = tag.temperature ?: 0.0,
-        humidity = tag.humidity ?: 0.0,
-        pressure = tag.pressure ?: 0.0,
+        humidity = tag.humidity,
+        pressure = tag.pressure,
         rssi = tag.rssi ?: 0,
-        accelX = tag.accelX ?: 0.0,
-        accelY = tag.accelY ?: 0.0,
-        accelZ = tag.accelZ ?: 0.0,
-        voltage = tag.voltage ?: 0.0,
+        accelX = tag.accelX,
+        accelY = tag.accelY,
+        accelZ = tag.accelZ,
+        voltage = tag.voltage,
         dataFormat = tag.dataFormat ?: 0,
-        txPower = tag.txPower ?: 0.0,
-        movementCounter = tag.movementCounter ?: 0,
-        measurementSequenceNumber = tag.measurementSequenceNumber ?: 0,
+        txPower = tag.txPower,
+        movementCounter = tag.movementCounter,
+        measurementSequenceNumber = tag.measurementSequenceNumber,
         createdAt = timestamp
     )
 }

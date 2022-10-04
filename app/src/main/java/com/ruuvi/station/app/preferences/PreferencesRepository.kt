@@ -1,5 +1,7 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -17,6 +19,13 @@ class PreferencesRepository(
         preferences.temperatureUnit = unit
     }
 
+    fun getTemperatureAccuracy(): Accuracy =
+        preferences.temperatureAccuracy
+
+    fun setTemperatureAccuracy(accuracy: Accuracy) {
+        preferences.temperatureAccuracy = accuracy
+    }
+
     fun getHumidityUnit(): HumidityUnit =
         preferences.humidityUnit
 
@@ -24,11 +33,25 @@ class PreferencesRepository(
         preferences.humidityUnit = unit
     }
 
+    fun getHumidityAccuracy(): Accuracy =
+        preferences.humidityAccuracy
+
+    fun setHumidityAccuracy(accuracy: Accuracy) {
+        preferences.humidityAccuracy = accuracy
+    }
+
     fun getPressureUnit(): PressureUnit =
         preferences.pressureUnit
 
     fun setPressureUnit(unit: PressureUnit) {
         preferences.pressureUnit = unit
+    }
+
+    fun getPressureAccuracy(): Accuracy =
+        preferences.pressureAccuracy
+
+    fun setPressureAccuracy(accuracy: Accuracy) {
+        preferences.pressureAccuracy = accuracy
     }
 
     fun getDataForwardingUrl(): String =
@@ -43,6 +66,13 @@ class PreferencesRepository(
 
     fun setDataForwardingLocationEnabled(locationEnabled: Boolean) {
         preferences.dataForwardingLocationEnabled = locationEnabled
+    }
+
+    fun getDataForwardingDuringSyncEnabled(): Boolean =
+            preferences.dataForwardingDuringSyncEnabled
+
+    fun setDataForwardingDuringSyncEnabled(forwardingDuringSyncEnabled: Boolean) {
+        preferences.dataForwardingDuringSyncEnabled = forwardingDuringSyncEnabled
     }
 
     fun getDeviceId(): String {
@@ -169,10 +199,22 @@ class PreferencesRepository(
         preferences.requestForReviewDate = Date().time
     }
 
+    fun getRequestForAppUpdateDate() = preferences.requestForAppUpdateDate
+
+    fun updateRequestForAppUpdateDate() {
+        preferences.requestForAppUpdateDate = Date().time
+    }
+
     fun isCloudModeEnabled(): Boolean =
         preferences.cloudModeEnabled
 
     fun setIsCloudModeEnabled(isEnabled: Boolean) {
         preferences.cloudModeEnabled = isEnabled
+    }
+
+    fun getDarkMode(): DarkModeState = preferences.darkMode
+
+    fun updateDarkMode(darkMode: DarkModeState) {
+        preferences.darkMode = darkMode
     }
 }
