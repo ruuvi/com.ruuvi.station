@@ -19,6 +19,13 @@
     <string name="alarm_custom_title_hint">Set custom description...</string>
     <string name="alarm_mute_for_hour">Mute for an hour</string>
     <string name="alarm_notification_disable">Disable this alarm</string>
+    <string name="alert">Alert</string>
+    <string name="alert_dialog_max">Max (%1$s)</string>
+    <string name="alert_dialog_min">Min (%1$s)</string>
+    <string name="alert_dialog_title_humidity">Set humidity alert</string>
+    <string name="alert_dialog_title_pressure">Set pressure alert</string>
+    <string name="alert_dialog_title_rssi">Set signal strength alert</string>
+    <string name="alert_dialog_title_temperature">Set temperature alert</string>
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Alert when sensor is moved</string>
     <string name="alert_notification_humidity_high">Air Humidity is too high!</string>
@@ -39,7 +46,7 @@
     <string name="alert_notification_temperature_low">Temperature is too low!</string>
     <string name="alert_notification_temperature_low_threshold">Temperature is under %1$s</string>
     <string name="alert_subtitle_off">Off</string>
-    <string name="alert_subtitle_on">Alert when less than %1$,d or more than %2$,d</string>
+    <string name="alert_subtitle_on">Alert when less than %1$s or more than %2$s</string>
     <string name="alerts">Alerts</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
@@ -207,7 +214,7 @@
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Latest available Ruuvi Firmware version:</string>
     <string name="light_theme">Light theme</string>
-    <string name="logged_in">Logged in:</string>
+    <string name="logged_in">Signed in:</string>
     <string name="login_description">To enjoy all the features, create a free account or sign in to your existing Ruuvi account by entering your email address.</string>
     <string name="login_to_ruuvi_network">Sign in to\nRuuvi\nStation</string>
     <string name="mac_address">MAC Address</string>
@@ -234,7 +241,7 @@
     <string name="network_sync_result_not_logged">Synchronisation failed: need to log in first</string>
     <string name="network_sync_result_success">Synchronised successfully!</string>
     <string name="network_synced">Synchronised: %1$s</string>
-    <string name="network_syncing">Syncing...</string>
+    <string name="network_syncing">Loading history from the cloud...</string>
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
     <string name="no">No</string>

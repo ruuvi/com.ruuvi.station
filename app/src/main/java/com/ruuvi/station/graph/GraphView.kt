@@ -110,9 +110,15 @@ class GraphView (
                 pressureData.add(Entry(timestamp, 0f))
             }
 
-            addDataToChart(tempData, tempChart, context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString()))
-            addDataToChart(humidData, humidChart, context.getString(R.string.humidity_with_unit, unitsConverter.getHumidityUnitString()))
-            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString()))
+            val latest = tagReadings.lastOrNull()
+
+            val temperatureLast = if (latest != null) unitsConverter.getTemperatureString(latest.temperature) else unitsConverter.getTemperatureUnitString()
+            val humidityLast = if (latest != null) unitsConverter.getHumidityString(latest.humidity, latest.temperature) else unitsConverter.getHumidityUnitString()
+            val pressureLast = if (latest != null) unitsConverter.getPressureString(latest.pressure) else unitsConverter.getPressureUnitString()
+
+            addDataToChart(tempData, tempChart, context.getString(R.string.temperature_with_unit, temperatureLast))
+            addDataToChart(humidData, humidChart, context.getString(R.string.humidity_with_unit, humidityLast))
+            addDataToChart(pressureData, pressureChart, context.getString(R.string.pressure_with_unit, pressureLast))
 
             if (!offsetsNormalized) {
                 normalizeOffsets(tempChart, humidChart, pressureChart)
@@ -158,23 +164,58 @@ class GraphView (
                 pressureChart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
                 pressureChart.axisLeft.granularity = 0.01f
             }
-
-            tempChart.axisRight.isEnabled = false
-            humidChart.axisRight.isEnabled = false
-            pressureChart.axisRight.isEnabled = false
-
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
             graphSetupCompleted = true
+
+            applyChartStyle(tempChart)
+            applyChartStyle(humidChart)
+            applyChartStyle(pressureChart)
         }
     }
+
+    private fun applyChartStyle(chart: LineChart) {
+        chart.axisRight.isEnabled = false
+
+        chart.xAxis.textColor = Color.WHITE
+        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+
+        chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
+        chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
+        chart.axisLeft.isGranularityEnabled = true
+        chart.description.textColor = Color.WHITE
+        chart.description.yOffset = 5f
+        chart.description.xOffset = 5f
+        chart.dragDecelerationFrictionCoef = 0.8f
+        chart.setNoDataTextColor(Color.WHITE)
+        chart.viewPortHandler.setMaximumScaleX(5000f)
+        chart.viewPortHandler.setMaximumScaleY(30f)
+
+        try {
+            val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
+            chart.description.typeface = font
+            chart.axisLeft.typeface = font
+            chart.xAxis.typeface = font
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+
+        val textSize = context.resources.getDimension(R.dimen.graph_description_size)
+        chart.description.textSize = textSize
+        chart.axisLeft.textSize = textSize
+        chart.xAxis.textSize = textSize
+        chart.legend.isEnabled = false
+    }
+
 
     private fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
         set.setDrawCircles(preferencesRepository.graphDrawDots())
         set.setDrawValues(false)
         set.setDrawFilled(true)
-        set.highLightColor = ContextCompat.getColor(context, R.color.main)
         set.circleRadius = 1f
+        set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+        set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+        set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
         chart.setXAxisRenderer(
             CustomXAxisRenderer(
                 from,
@@ -185,28 +226,12 @@ class GraphView (
         )
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
-        chart.xAxis.textColor = Color.WHITE
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         setLabelCount(chart)
 
-        chart.getAxis(YAxis.AxisDependency.LEFT).textColor = Color.WHITE
-        chart.getAxis(YAxis.AxisDependency.RIGHT).setDrawLabels(false)
-        chart.axisLeft.isGranularityEnabled = true
         chart.description.text = label
-        chart.description.textColor = Color.WHITE
-        chart.description.textSize = context.resources.getDimension(R.dimen.graph_description_size)
-        chart.dragDecelerationFrictionCoef = 0.8f
-        chart.setNoDataTextColor(Color.WHITE)
-        chart.viewPortHandler.setMaximumScaleX(5000f)
-        chart.viewPortHandler.setMaximumScaleY(30f)
-        try {
-            chart.description.typeface = ResourcesCompat.getFont(context, R.font.montserrat)
-        } catch (e: Exception) { /* ¯\_(ツ)_/¯ */
-        }
         chart.axisLeft.axisMinimum = set.yMin - 0.5f
         chart.axisLeft.axisMaximum = set.yMax + 0.5f
 
-        chart.legend.isEnabled = false
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = false
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
@@ -226,7 +251,7 @@ class GraphView (
 
     private fun setLabelCount(chart: LineChart) {
         val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
-        val labelCount = if (timeText.length > 5) 5 else 6
+        val labelCount = if (timeText.length > 5) 4 else 6
         chart.xAxis.setLabelCount(labelCount, false)
         chart.axisLeft.setLabelCount(6, false)
     }
@@ -297,7 +322,7 @@ class GraphView (
             } else {
                 tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2f
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2.35f
         val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
         val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 

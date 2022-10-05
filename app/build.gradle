@@ -8,15 +8,15 @@ apply plugin: "kotlinx-serialization"
 
 android {
 
-    compileSdkVersion 31
+    compileSdkVersion 32
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 113007
-        versionName "1.13.7"
+        versionCode 114006
+        versionName "1.14.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -90,13 +90,14 @@ dependencies {
 
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.material:material:1.2.1"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.2.1"
     implementation "androidx.activity:activity-compose:1.4.0"
     implementation "androidx.compose.compiler:compiler:$compose_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.18.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 

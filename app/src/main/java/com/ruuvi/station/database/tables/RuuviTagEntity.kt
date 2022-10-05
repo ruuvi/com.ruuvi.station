@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.bluetooth.FoundRuuviTag
 import com.ruuvi.station.database.domain.LocalDatabase
+import com.ruuvi.station.tag.domain.RuuviTag
 import java.util.*
 
 @Table(
@@ -120,6 +121,15 @@ data class RuuviTagEntity(
 }
 
 fun RuuviTagEntity.isLowBattery(): Boolean {
+    return when {
+        this.temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
+        this.temperature > -20 && this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
+        this.temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
+        else -> false
+    }
+}
+
+fun RuuviTag.isLowBattery(): Boolean {
     return when {
         this.temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
         this.temperature > -20 && this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true

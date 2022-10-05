@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
-import com.ruuvi.station.alarm.domain.AlarmElement
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
@@ -12,11 +12,18 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import com.ruuvi.station.util.ui.UiText
+import com.ruuvi.station.units.domain.AccelerationConverter
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.HumidityUnit
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.mapNotNull
 import timber.log.Timber
-import java.util.*
 
 class TagSettingsViewModel(
     val sensorId: String,
@@ -24,52 +31,42 @@ class TagSettingsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
     private val alarmRepository: AlarmRepository,
-    private val sensorFwInteractor: SensorFwVersionInteractor
+    private val sensorFwInteractor: SensorFwVersionInteractor,
+    private val unitsConverter: UnitsConverter,
+    private val accelerationConverter: AccelerationConverter
 ) : ViewModel() {
-    var alarmElements: MutableList<AlarmElement> = ArrayList()
     var file: Uri? = null
 
-    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
+    private val _sensorState = MutableStateFlow<RuuviTag>(requireNotNull(interactor.getFavouriteSensorById(sensorId)))
+    val sensorState: StateFlow<RuuviTag> = _sensorState
 
-    private val _tagState = MutableLiveData<RuuviTagEntity?>(getTagById(sensorId))
-    val tagState: LiveData<RuuviTagEntity?> = _tagState
+    private val _userLoggedIn = MutableStateFlow<Boolean> (networkInteractor.signedIn)
+    val userLoggedIn: StateFlow<Boolean> = _userLoggedIn
 
-    private val sensorSettings = MutableLiveData<SensorSettings?>()
-    val sensorSettingsObserve: LiveData<SensorSettings?> = sensorSettings
-
-    private val userLoggedIn = MutableLiveData<Boolean> (networkInteractor.signedIn)
-    val userLoggedInObserve: LiveData<Boolean> = userLoggedIn
-
-    private val sensorShared = MutableLiveData<Boolean> (false)
-    val sensorSharedObserve: LiveData<Boolean> = sensorShared
+    private val _sensorShared = MutableStateFlow<Boolean> (false)
+    val sensorShared: StateFlow<Boolean> = _sensorShared
 
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
-    val isLowBattery = Transformations.map(_tagState) {
-        it?.isLowBattery() ?: false
+    val isLowBattery: Flow<Boolean> = sensorState.mapNotNull {
+        it.isLowBattery()
     }
 
-    val sensorOwnedByUserObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
-        it?.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
+    val sensorOwnedByUser: Flow<Boolean> = sensorState.mapNotNull {
+        it.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
     }
 
-    val sensorOwnedOrOfflineObserve: LiveData<Boolean> = Transformations.map(sensorSettings) {
-        it?.networkSensor == false || it?.owner.isNullOrEmpty() || it?.owner == networkInteractor.getEmail()
+    val sensorOwnedOrOffline: Flow<Boolean> = sensorState.mapNotNull {
+        !it.networkSensor || it.owner.isNullOrEmpty() || it.owner == networkInteractor.getEmail()
     }
 
-    val firmware: MediatorLiveData<UiText?>  = MediatorLiveData<UiText?>()
-
-    init {
-        Timber.d("TagSettingsViewModel $sensorId")
-        firmware.addSource(_tagState) { firmware.value = getFirmware() }
-        firmware.addSource(sensorSettings) { firmware.value = getFirmware() }
+    val firmware: Flow<UiText?>  = sensorState.mapNotNull {
+        getFirmware(it.firmware)
     }
 
-    private fun getFirmware(): UiText? {
-        val firmware = sensorSettings.value?.firmware
-
-        if (firmware.isNullOrEmpty() && _tagState.value?.dataFormat != 5) {
+    private fun getFirmware(firmware: String?): UiText? {
+        if (firmware.isNullOrEmpty() && sensorState.value.dataFormat != 5) {
             return UiText.StringResource(R.string.firmware_very_old)
         }
         return firmware?.let { UiText.DynamicString(firmware) }
@@ -77,23 +74,21 @@ class TagSettingsViewModel(
 
     fun getTagInfo() {
         CoroutineScope(Dispatchers.IO).launch {
-            val tagInfo = getTagById(sensorId)
-            val settings = interactor.getSensorSettings(sensorId)
-            if (settings?.networkSensor != true && settings?.owner.isNullOrEmpty()) {
-                interactor.checkSensorOwner(sensorId)
+            val sensorState = interactor.getFavouriteSensorById(sensorId)
+            if (sensorState != null) {
+                _sensorState.value = sensorState
             }
-            withContext(Dispatchers.Main) {
-                _tagState.value = tagInfo
-                sensorSettings.value = settings
+
+            if (sensorState?.networkSensor != true && sensorState?.owner.isNullOrEmpty()) {
+                interactor.checkSensorOwner(sensorId)
             }
         }
     }
 
     fun updateSensorFirmwareVersion() {
         CoroutineScope(Dispatchers.IO).launch {
-            val tagInfo = getTagById(sensorId)
-            val settings = interactor.getSensorSettings(sensorId)
-            if (settings?.firmware.isNullOrEmpty() && tagInfo?.connectable == true) {
+            val storredFw = sensorState.value.firmware
+            if (storredFw.isNullOrEmpty() && sensorState.value.connectable == true) {
                 val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
                 if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
                     interactor.setSensorFirmware(sensorId, fwResult.fw)
@@ -117,19 +112,15 @@ class TagSettingsViewModel(
     fun getSensorSharedEmails() {
         networkInteractor.getSharedInfo(sensorId, handler) { response ->
             Timber.d("getSensorSharedEmails ${response.toString()}")
-            sensorShared.value = response?.sharedTo?.isNotEmpty() == true
+            _sensorShared.value = response?.sharedTo?.isNotEmpty() == true
         }
     }
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun updateNetworkStatus() {
-        networkStatus.value = networkInteractor.getSensorNetworkStatus(sensorId)
-    }
-
-    fun deleteTag(tag: RuuviTagEntity) {
-        interactor.deleteTagsAndRelatives(tag)
+    fun deleteSensor() {
+        interactor.deleteTagsAndRelatives(sensorId)
     }
 
     fun removeNotificationById(notificationId: Int) {
@@ -140,7 +131,7 @@ class TagSettingsViewModel(
         interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
         if (userBackground.isNullOrEmpty() == false) {
             networkInteractor.uploadImage(sensorId, userBackground)
-        } else if (networkStatus.value?.picture.isNullOrEmpty() == false) {
+        } else if (sensorState.value.networkBackground?.isNotEmpty() == true) {
             networkInteractor.resetImage(sensorId)
         }
     }
@@ -153,29 +144,16 @@ class TagSettingsViewModel(
         networkInteractor.updateSensorName(sensorId)
     }
 
-    fun setupAlarmElements() {
-        alarmElements.clear()
+    fun getTemperatureOffsetString(value: Double) = unitsConverter.getTemperatureOffsetString(value)
 
-        with(alarmElements) {
-            add(AlarmElement.getTemperatureAlarmElement(sensorId))
-            add(AlarmElement.getHumidityAlarmElement(sensorId))
-            add(AlarmElement.getPressureAlarmElement(sensorId))
-            add(AlarmElement.getRssiAlarmElement(sensorId))
-            add(AlarmElement.getMovementAlarmElement(sensorId))
-        }
+    fun getHumidityOffsetString(value: Double) =
+        unitsConverter.getHumidityString(value,0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
 
-        val dbAlarms = alarmRepository.getForSensor(sensorId)
-        for (alarm in dbAlarms) {
-            val item = alarmElements.firstOrNull { it.type.value == alarm.type }
-            item?.let {
-                item.high = alarm.high
-                item.low = alarm.low
-                item.isEnabled = alarm.enabled
-                item.customDescription = alarm.customDescription
-                item.mutedTill = alarm.mutedTill
-                item.alarm = alarm
-                item.normalizeValues()
-            }
-        }
-    }
+    fun getPressureOffsetString(value: Double) =
+        unitsConverter.getPressureString(value, Accuracy.Accuracy2)
+
+    fun getAccelerationString(value: Double?) =
+        accelerationConverter.getAccelerationString(value, null)
+
+    fun getSignalString(rssi: Int) = unitsConverter.getSignalString(rssi)
 }

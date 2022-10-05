@@ -37,7 +37,7 @@
     <string name="alert_notification_temperature_low">Température trop basse !</string>
     <string name="alert_notification_temperature_low_threshold">La température est inférieure à %1$s</string>
     <string name="alert_subtitle_off">Désactivé</string>
-    <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$,d ou supérieure à %2$,d</string>
+    <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$s ou supérieure à %2$s</string>
     <string name="alerts">Notifications</string>
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>

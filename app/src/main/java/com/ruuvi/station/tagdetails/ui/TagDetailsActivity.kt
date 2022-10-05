@@ -353,7 +353,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
             binding.navigationContent.navigationView.setMarginTop(topInset)
             binding.navigationContent.navigationView.setMarginBottom(bottomInset)
-            Timber.d("insets $topInset $bottomInset $view $insets")
             return@setOnApplyWindowInsetsListener insets
 
         }

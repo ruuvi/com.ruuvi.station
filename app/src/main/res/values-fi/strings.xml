@@ -39,7 +39,7 @@
     <string name="alert_notification_temperature_low">Lämpötila liian alhainen!</string>
     <string name="alert_notification_temperature_low_threshold">Lämpötila on alle %1$s</string>
     <string name="alert_subtitle_off">Pois käytöstä</string>
-    <string name="alert_subtitle_on">Hälytä, mikäli alle %1$,d tai yli %2$,d</string>
+    <string name="alert_subtitle_on">Hälytä, mikäli alle %1$s tai yli %2$s</string>
     <string name="alerts">Hälytykset</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
@@ -158,7 +158,7 @@
     <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
-    <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittajärjestysnumero,Lähetysteho (dBm)</string>
+    <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
@@ -232,7 +232,7 @@
     <string name="network_sync_result_not_logged">Synkronointi epäonnistui: kirjaudu ensin</string>
     <string name="network_sync_result_success">Synkronointi onnistui!</string>
     <string name="network_synced">Synkronoitu: %1$s</string>
-    <string name="network_syncing">Synkronoidaan...</string>
+    <string name="network_syncing">Ladataan historiaa pilvestä...</string>
     <string name="network_user">Käyttäjä: %1$s</string>
     <string name="never">ei koskaan</string>
     <string name="no">Ei</string>

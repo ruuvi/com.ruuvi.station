@@ -60,7 +60,7 @@ class RuuviNetworkInteractor (
 
     fun shouldSendSensorDataToNetwork(sensorId: String): Boolean {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        return shouldSendDataToNetwork() && sensorSettings?.owner != null
+        return shouldSendDataToNetwork() && sensorSettings?.networkSensor == true
     }
 
     fun shouldSendSensorDataToNetworkForOwner(sensorId: String): Boolean {

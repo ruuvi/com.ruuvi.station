@@ -10,39 +10,33 @@ import android.provider.MediaStore
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.FileProvider
-import androidx.core.graphics.alpha
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.calibration.model.CalibrationType
-import com.ruuvi.station.calibration.ui.CalibrationActivity
+import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
-import com.ruuvi.station.dfu.ui.DfuUpdateActivity
 import com.ruuvi.station.image.ImageInteractor
-import com.ruuvi.station.network.ui.ClaimSensorActivity
-import com.ruuvi.station.network.ui.ShareSensorActivity
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.resolveColorAttr
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -67,18 +61,29 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         }
     }
 
+    private val alarmsViewModel: AlarmItemsViewModel by viewModel {
+        intent.getStringExtra(TAG_ID)
+    }
+
     private val repository: TagRepository by instance()
     private val unitsConverter: UnitsConverter by instance()
     private val imageInteractor: ImageInteractor by instance()
     private val sensorHistoryRepository: SensorHistoryRepository by instance()
     private val sensorSettingsRepository: SensorSettingsRepository by instance()
-    private val accelerationConverter: AccelerationConverter by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityTagSettingsBinding.inflate(layoutInflater)
+        binding.alertsCompose.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { 
+                RuuviTheme {
+                    SensorSettings(viewModel, alarmsViewModel)
+                }
+            }
+        }
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
@@ -86,8 +91,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         setupViewModel()
-
-        setupUI()
 
         scrollToAlarms()
     }
@@ -97,87 +100,18 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
         if (scrollToAlarms) {
             Handler(Looper.getMainLooper()).post {
-                binding.scrollView.scrollTo(0, binding.alertsHeaderTextView.top-binding.toolbar.height)
+                binding.scrollView.scrollTo(0, binding.alertsCompose.top-binding.toolbar.height)
             }
         }
     }
 
     private fun setupViewModel() {
-        viewModel.setupAlarmElements()
-
-        viewModel.tagState.observe(this) { tag ->
-            tag?.let {
-                setupCalibration(it)
-                updateReadings(it)
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.sensorState.collectLatest { sensorState ->
+                setupSensorImage(sensorState)
             }
         }
 
-        viewModel.sensorSettingsObserve.observe(this) {sensorSettings ->
-            sensorSettings?.let {
-                setupInputMac(sensorSettings)
-                setupSensorImage(sensorSettings)
-                setupSensorName(sensorSettings)
-            }
-            binding.calibrateTemperature.setItemValue(
-                unitsConverter.getTemperatureOffsetString(sensorSettings?.temperatureOffset ?: 0.0))
-            binding.calibratePressure.setItemValue(
-                unitsConverter.getPressureString(sensorSettings?.pressureOffset ?: 0.0, Accuracy.Accuracy2))
-            binding.calibrateHumidity.setItemValue(
-                unitsConverter.getHumidityString(sensorSettings?.humidityOffset ?: 0.0, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
-            )
-            binding.ownerValueTextView.text = sensorSettings?.owner ?: getString(R.string.owner_none)
-
-            if (sensorSettings?.networkSensor != true) {
-                deleteString = getString(R.string.remove_local_sensor)
-            } else {
-                if (viewModel.sensorOwnedByUserObserve.value == true) {
-                    deleteString = getString(R.string.remove_claimed_sensor)
-                } else {
-                    deleteString = getString(R.string.remove_shared_sensor)
-                }
-            }
-
-            if (sensorSettings?.owner.isNullOrEmpty()) {
-                binding.ownerLayout.isEnabled = true
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.arrow_forward_16), null)
-            } else {
-                binding.ownerLayout.isEnabled = false
-                binding.ownerValueTextView.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    null,
-                    null
-                )
-            }
-        }
-
-        viewModel.firmware.observe(this) {
-            binding.firmwareVersionLayout.isVisible = it != null
-            binding.firmwareVersionDivider.isVisible = it != null
-            binding.firmwareVersionTextView.text = it?.asString(this)
-        }
-
-        viewModel.userLoggedInObserve.observe(this) {
-            if (it == true) {
-                binding.ownerLayout.visibility = View.VISIBLE
-            } else {
-                binding.ownerLayout.visibility = View.GONE
-            }
-        }
-
-        viewModel.sensorOwnedByUserObserve.observe(this) {
-            if (it) {
-                binding.shareLayout.visibility = View.VISIBLE
-            } else {
-                binding.shareLayout.visibility = View.GONE
-            }
-        }
-
-        viewModel.sensorOwnedOrOfflineObserve.observe(this) {
-            binding.firmwareLayout.isVisible = it
-            binding.calibrationHeaderTextView.isVisible = it
-            binding.calibrationLayout.isVisible = it
-        }
 
         viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
@@ -185,63 +119,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 viewModel.statusProcessed()
             }
         }
-
-        viewModel.sensorSharedObserve.observe(this) { isShared ->
-            binding.shareValueTextView.text = if (isShared) {
-                getText(R.string.sensor_shared)
-            } else {
-                getText(R.string.sensor_not_shared)
-            }
-        }
-
-        val errorColor = resolveColorAttr(R.attr.colorErrorText)
-        val successColor = resolveColorAttr(R.attr.colorSuccessText)
-        viewModel.isLowBattery.observe(this) { lowBattery ->
-            if (lowBattery) {
-                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.replace_battery))
-                binding.batteryTextView.setTextColor(errorColor)
-            } else {
-                binding.batteryTextView.text = getString(R.string.brackets_text, getString(R.string.battery_ok))
-                binding.batteryTextView.setTextColor(successColor)
-            }
-        }
-
-        viewModel.updateSensorFirmwareVersion()
     }
-
-    private fun setupUI() {
-        setupAlarmItems()
-
-        binding.removeSensorTitleTextView.setDebouncedOnClickListener { delete() }
-
-        binding.ownerValueTextView.setDebouncedOnClickListener {
-            if (binding.ownerLayout.isEnabled) {
-                ClaimSensorActivity.start(this, viewModel.sensorId)
-            }
-        }
-
-        binding.shareLayout.setDebouncedOnClickListener {
-            ShareSensorActivity.start(this, viewModel.sensorId)
-        }
-
-        binding.calibrateHumidity.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.HUMIDITY)
-        }
-
-        binding.calibrateTemperature.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.TEMPERATURE)
-        }
-
-        binding.calibratePressure.setDebouncedOnClickListener {
-            CalibrationActivity.start(this, viewModel.sensorId, CalibrationType.PRESSURE)
-        }
-
-        binding.firmwareUpdateTitleTextView.setDebouncedOnClickListener {
-            DfuUpdateActivity.start(this, viewModel.sensorId)
-        }
-    }
-
-    private var deleteString: String = ""
 
     override fun onResume() {
         super.onResume()
@@ -255,12 +133,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onPause() {
         super.onPause()
         timer?.cancel()
-        binding.alarmTemperature.saveAlarm()
-        binding.alarmHumidity.saveAlarm()
-        binding.alarmPressure.saveAlarm()
-        binding.alarmRssi.saveAlarm()
-        binding.alarmMovement.saveAlarm()
-
     }
 
     @Suppress("NAME_SHADOWING")
@@ -324,9 +196,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
-            viewModel.tagState.value?.id?.let {
-                exporter.toCsv(it)
-            }
+            exporter.toCsv(viewModel.sensorId)
         } else {
             finish()
         }
@@ -338,116 +208,22 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         return true
     }
 
-    private fun setupSensorName(sensorSettings: SensorSettings) {
-        binding.tagNameInputTextView.text = sensorSettings.displayName
-
-        binding.tagNameInputTextView.setDebouncedOnClickListener {
-            val sensorNameEditDialog = SensorNameEditDialog.new_instance(sensorSettings.name, object: SensorNameEditListener {
-                override fun onDialogPositiveClick(dialog: DialogFragment, value: String?) {
-                    viewModel.setName(value)
-                }
-                override fun onDialogNegativeClick(dialog: DialogFragment) { }
-            })
-
-            sensorNameEditDialog.show(this.supportFragmentManager, "sensorName")
-        }
-    }
-
-    private fun setupInputMac(sensorSettings: SensorSettings) {
-        binding.macTextView.text = sensorSettings.id
-
-        binding.macTextView.setOnLongClickListener {
-            val clipboard: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-            val clip = ClipData.newPlainText(getString(R.string.mac_address), sensorSettings.id)
-
-            try {
-                if (BuildConfig.DEBUG && clipboard == null) {
-                    error("Assertion failed")
-                }
-
-                clipboard?.setPrimaryClip(clip)
-
-                Toast.makeText(this@TagSettingsActivity, getString(R.string.mac_copied), Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Timber.e(e, "Could not copy mac to clipboard")
-            }
-            false
-        }
-    }
-
-    private fun setupSensorImage(sensorSettings: SensorSettings) {
-        if (sensorSettings.userBackground.isNullOrEmpty() == false) {
-            val backgroundUri = Uri.parse(sensorSettings.userBackground)
+    private fun setupSensorImage(sensorState: RuuviTag) {
+        if (sensorState.userBackground.isNullOrEmpty() == false) {
+            val backgroundUri = Uri.parse(sensorState.userBackground)
             val background = imageInteractor.getImage(backgroundUri)
             binding.tagImageView.setImageBitmap(background)
         } else {
-            binding.tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorSettings.defaultBackground)))
+            binding.tagImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), Utils.getDefaultBackground(sensorState.defaultBackground)))
         }
 
         binding.tagImageCameraButton.setDebouncedOnClickListener { showImageSourceSheet() }
 
         binding.tagImageSelectButton.setDebouncedOnClickListener {
-            val defaultBackground = if (sensorSettings.defaultBackground == 8) 0 else sensorSettings.defaultBackground + 1
+            val defaultBackground = if (sensorState.defaultBackground == 8) 0 else sensorState.defaultBackground + 1
             viewModel.updateTagBackground(null, defaultBackground)
-            sensorSettings.defaultBackground = defaultBackground
             binding.tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
-    }
-
-    private fun setupCalibration(tag: RuuviTagEntity) {
-        binding.calibrateHumidity.isGone = tag.humidity == null
-        binding.calibratePressure.isGone = tag.pressure == null
-        binding.calibrateHumidityDivider.isGone = tag.humidity == null
-        binding.calibratePressureDivider.isGone = tag.pressure == null
-    }
-
-    private fun setupAlarmItems() {
-        binding.alarmTemperature.restoreState(viewModel.alarmElements[0])
-        binding.alarmHumidity.restoreState(viewModel.alarmElements[1])
-        binding.alarmPressure.restoreState(viewModel.alarmElements[2])
-        binding.alarmRssi.restoreState(viewModel.alarmElements[3])
-        binding.alarmMovement.restoreState(viewModel.alarmElements[4])
-    }
-
-    private fun updateReadings(tag: RuuviTagEntity) {
-        binding.alarmHumidity.isVisible = tag.humidity != null
-        binding.alarmPressure.isVisible = tag.pressure != null
-        binding.alarmMovement.isVisible = tag.movementCounter != null
-
-        if (tag.dataFormat == 3 || tag.dataFormat == 5) {
-            binding.rawValuesLayout.isVisible = true
-            binding.voltageTextView.text = this.getString(R.string.voltage_reading, tag.voltage, getString(R.string.voltage_unit))
-            binding.accelerationXTextView.text = accelerationConverter.getAccelerationString(tag.accelX, null)
-            binding.accelerationYTextView.text = accelerationConverter.getAccelerationString(tag.accelY, null)
-            binding.accelerationZTextView.text = accelerationConverter.getAccelerationString(tag.accelZ, null)
-            binding.dataFormatTextView.text = tag.dataFormat.toString()
-            binding.txPowerTextView.text = getString(R.string.tx_power_reading, tag.txPower)
-            binding.rssiTextView.text = unitsConverter.getSignalString(tag.rssi)
-            binding.sequenceNumberTextView.text = tag.measurementSequenceNumber.toString()
-        } else {
-            binding.rawValuesLayout.isVisible = false
-        }
-    }
-
-    private fun delete() {
-        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
-
-        builder.setTitle(this.getString(R.string.tagsettings_sensor_remove))
-
-        builder.setMessage(deleteString)
-
-        builder.setPositiveButton(android.R.string.ok) { _, _ ->
-            for (alarm in viewModel.alarmElements) {
-                alarm.alarm?.let { viewModel.removeNotificationById(it.id) }
-            }
-            viewModel.tagState.value?.let { viewModel.deleteTag(it) }
-            finish()
-        }
-
-        builder.setNegativeButton(android.R.string.cancel, null)
-
-        builder.show()
     }
 
     private fun showImageSourceSheet() {
