@@ -12,6 +12,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -266,13 +267,16 @@ fun ChangeDescriptionDialog(
             onDismissRequest.invoke()
         }
     ) {
+        val focusManager = LocalFocusManager.current
+
         TextFieldRuuvi(
             value = description,
             onValueChange = {
                 description = it
             },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
         )
     }
 }
@@ -306,9 +310,6 @@ fun AlarmEditDialog(
         mutableStateOf<Double?>(alarmState.rangeHigh.toDouble())
     }
 
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     RuuviDialog(
         title = title,
         onDismissRequest = onDismissRequest,
@@ -320,11 +321,14 @@ fun AlarmEditDialog(
             validateRange(alarmState.type, min, max)
         }
     ) {
+        val focusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
+
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
         Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleRange.start.toInt().toString()))
         NumberTextFieldRuuvi(
-            value = String.format("%1$,.2f", min),
+            value = alarmState.displayLow,
             keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
         ) { parsed, value ->
             min = value
@@ -334,11 +338,11 @@ fun AlarmEditDialog(
 
         Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleRange.endInclusive.toInt().toString()))
         NumberTextFieldRuuvi(
-            value = String.format("%1$,.2f", max),
+            value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                keyboardController?.hide()
+                focusManager.clearFocus()
             })
         ) { parsed, value ->
             max = value

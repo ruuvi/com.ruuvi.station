@@ -27,7 +27,7 @@ class CalibrationEditDialog(
             builder
                 .setView(binding.root)
                 .setPositiveButton(R.string.ok) {_,_->
-                    listener?.onDialogPositiveClick(this, binding.calibrationValueEditText.text.toString().toDouble())
+                    listener?.onDialogPositiveClick(this, binding.calibrationValueEditText.text.toString().replace(",",".").toDouble())
                 }
                 .setNegativeButton(R.string.cancel) {_,_->
                     listener?.onDialogNegativeClick(this)
@@ -50,7 +50,7 @@ class CalibrationEditDialog(
         binding.calibrationValueEditText.addTextChangedListener {
             try {
                 it?.let {
-                    val value = it.toString().toDouble()
+                    val value = it.toString().replace(',','.').toDouble()
                     confirmButton.isEnabled = true
                 }
             } catch (e: Exception) {

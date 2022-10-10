@@ -237,7 +237,7 @@ class GraphView (
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
-                val timeText = getTimeInstance(DateFormat.SHORT).format(date)
+                val timeText = getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
 
                 val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
                 val dateText: String = DateUtils.formatDateTime(context, value.toLong() + from, flags)

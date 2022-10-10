@@ -64,7 +64,7 @@ class AlarmsInteractor(
     }
 
     fun getDisplayPreciseValue(value: Float): String {
-        return String.format("%1$,.2f", value)
+        return String.format("%1$,.1f", value)
     }
 
     fun getDisplayApproximateValue(value: Float): String {

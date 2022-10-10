@@ -309,7 +309,7 @@ class RuuviNetworkInteractor (
             UpdateUserSettingRequest(name, value)
         )
         Timber.d("updateUserSetting $networkRequest")
-        networkRequestExecutor.registerRequest(networkRequest, false)
+        networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
     fun setAlert(alarm: Alarm) {
