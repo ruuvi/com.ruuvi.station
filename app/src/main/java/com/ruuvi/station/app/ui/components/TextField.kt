@@ -25,6 +25,7 @@ fun TextFieldRuuvi(
     label: String? = null,
     hint: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions(),
     onValueChange: (String) -> Unit,
 ) {
     val labelFun: @Composable (() -> Unit)? = if (label != null) { { Paragraph(text = label) } } else null
@@ -39,6 +40,7 @@ fun TextFieldRuuvi(
         colors = RuuviTextFieldColors(),
         modifier = modifier,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         singleLine = true
     )
 }
