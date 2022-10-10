@@ -74,6 +74,15 @@
         <item name="fontFamily">@font/mulish_regular</item>
     </style>
 
+    <style name="SensorScreenParagraphSmall">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:alpha">0.5</item>
+        <item name="android:textSize">@dimen/textParagraphSmallSize</item>
+        <item name="lineHeight">@dimen/textSmallLineHeight</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+    </style>
+
+
     <style name="ParagraphSmall.Secondary" parent="ParagraphSmall">
         <item name="android:alpha">0.5</item>
     </style>
