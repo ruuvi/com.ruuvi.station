@@ -176,7 +176,7 @@ fun SetSensorName(
         TextFieldRuuvi(
             value = name,
             onValueChange = {
-                name = it
+                if (it.length <= 32) name = it
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

@@ -19,6 +19,12 @@
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
     <string name="alarm_mute_for_hour">Pausa alarmet i en timme</string>
     <string name="alarm_notification_disable">Inaktivera alarm</string>
+    <string name="alert_dialog_max">Max (%1$s)</string>
+    <string name="alert_dialog_min">Min (%1$s)</string>
+    <string name="alert_dialog_title_humidity">Ställ in fuktighetsalarm</string>
+    <string name="alert_dialog_title_pressure">Ställ in lufttryckssalarm</string>
+    <string name="alert_dialog_title_rssi">Ställ in signalstyrkealarm</string>
+    <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
     <string name="alert_movement">Rörelse</string>
     <string name="alert_movement_description">Alarmera om rörelse upptäcks</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
