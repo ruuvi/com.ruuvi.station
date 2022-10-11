@@ -272,7 +272,7 @@ fun ChangeDescriptionDialog(
         TextFieldRuuvi(
             value = description,
             onValueChange = {
-                description = it
+                if (it.length <= 32) description = it
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
