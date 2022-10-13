@@ -1,25 +1,27 @@
 package com.ruuvi.station.units.domain
 
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.round
 
 class TemperatureConverter {
     companion object {
-        const val  fahrenheitMultiplier = 1.8
+        const val fahrenheitMultiplier = 1.8
+        const val fahrenheitAddition = 32.0
+        const val kelvinAddition = 273.15
 
         fun celsiusToFahrenheit(celsius: Double): Double {
-            return Utils.round(celsius * fahrenheitMultiplier + 32.0, 2)
+            return (celsius * fahrenheitMultiplier + fahrenheitAddition).round(2)
         }
 
         fun celsiusToKelvin(celsius: Double): Double {
-            return Utils.round(celsius + 273.15, 2)
+            return (celsius + kelvinAddition).round(2)
         }
 
         fun fahrenheitToCelsius(fahrenheit: Double): Double {
-            return Utils.round((fahrenheit-32.0) / fahrenheitMultiplier, 2)
+            return ((fahrenheit - fahrenheitAddition) / fahrenheitMultiplier).round(2)
         }
 
         fun kelvinToCelsius(kelvin: Double): Double {
-            return Utils.round(kelvin - 273.15, 2)
+            return (kelvin - kelvinAddition).round(2)
         }
     }
 }
