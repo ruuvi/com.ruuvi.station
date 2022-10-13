@@ -19,6 +19,13 @@
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
     <string name="alarm_mute_for_hour">Mykistä tunniksi</string>
     <string name="alarm_notification_disable">Poista tämä hälytys käytöstä</string>
+    <string name="alert">Hälytys</string>
+    <string name="alert_dialog_max">Max (%1$s)</string>
+    <string name="alert_dialog_min">Min (%1$s)</string>
+    <string name="alert_dialog_title_humidity">Aseta kosteushälytys</string>
+    <string name="alert_dialog_title_pressure">Aseta painehälytys</string>
+    <string name="alert_dialog_title_rssi">Aseta signaalivoimakkuushälytys</string>
+    <string name="alert_dialog_title_temperature">Aseta lämpötilahälytys</string>
     <string name="alert_movement">Liike</string>
     <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
     <string name="alert_notification_humidity_high">Suhteellinen ilmankosteus liian korkea!</string>
@@ -131,6 +138,7 @@
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="dashboard_enabled">Koontinäyttö käytössä. </string>
     <string name="data_format">Dataformaatti</string>
+    <string name="data_forwarding_background_location_message_bloked">Salli sijaintitietojen käyttö päätelaitteesi asetuksissa sisällyttääksesi koordinaatit lähetykseen</string>
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
     <string name="data_forwarding_background_location_message_second">Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin sovelluksen ollessa tausta-ajossa, anna oikeus paikkatietojen käyttöön seuraavassa kohdassa kysyttäessä \'aina\'.</string>
     <string name="data_forwarding_disabled">Pois käytöstä</string>

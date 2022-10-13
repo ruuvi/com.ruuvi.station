@@ -8,7 +8,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.round
 
 class UnitsConverter (
         private val context: Context,
@@ -25,7 +25,7 @@ class UnitsConverter (
 
     fun getTemperatureValue(temperatureCelsius: Double): Double {
         return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> Utils.round(temperatureCelsius, 2)
+            TemperatureUnit.CELSIUS -> temperatureCelsius.round(2)
             TemperatureUnit.KELVIN-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
             TemperatureUnit.FAHRENHEIT -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
         }
@@ -43,7 +43,7 @@ class UnitsConverter (
         return when (getTemperatureUnit()) {
             TemperatureUnit.CELSIUS -> temperature
             TemperatureUnit.KELVIN-> temperature
-            TemperatureUnit.FAHRENHEIT -> Utils.round(temperature * fahrenheitMultiplier, 2)
+            TemperatureUnit.FAHRENHEIT -> (temperature * fahrenheitMultiplier).round(2)
         }
     }
 
@@ -137,13 +137,13 @@ class UnitsConverter (
         val converter = HumidityConverter(temperature, humidity/100)
 
         return when (humidityUnit) {
-            HumidityUnit.PERCENT -> Utils.round(humidity, 2)
-            HumidityUnit.GM3-> Utils.round(converter.absoluteHumidity, 2)
+            HumidityUnit.PERCENT -> humidity.round(2)
+            HumidityUnit.GM3-> converter.absoluteHumidity.round(2)
             HumidityUnit.DEW -> {
                 when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> Utils.round(converter.toDewCelsius ?: 0.0, 2)
-                    TemperatureUnit.KELVIN-> Utils.round(converter.toDewKelvin ?: 0.0, 2)
-                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.toDewFahrenheit ?: 0.0, 2)
+                    TemperatureUnit.CELSIUS -> (converter.toDewCelsius ?: 0.0).round(2)
+                    TemperatureUnit.KELVIN-> (converter.toDewKelvin ?: 0.0).round(2)
+                    TemperatureUnit.FAHRENHEIT -> (converter.toDewFahrenheit ?: 0.0).round(2)
                 }
             }
         }
