@@ -123,19 +123,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         }
     }
 
-    private fun gattAlertDialog(message: String) {
-        val alertDialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).create()
-        alertDialog.setMessage(message)
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok)
-        ) { dialog, _ -> dialog.dismiss() }
-        alertDialog.setOnDismissListener {
-//            binding.graphsContent.gattSyncViewButtons?.visibility = View.VISIBLE
-//            binding.graphsContent.gattSyncViewProgress?.visibility = View.GONE
-        }
-        viewModel.resetGattStatus()
-        alertDialog.show()
-    }
-
     private fun observeShowGraph() {
         activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer { isShowGraph ->
             view?.let {

@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -30,7 +29,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.util.Days
-import java.util.*
 
 @Composable
 fun ChartControlElement(
@@ -63,16 +61,16 @@ fun ChartControlElement(
         }
         SyncProgress.DISCONNECTED -> {
             syncInProgress = false
-            //R.string.disconnected
+            RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
+                viewModel.resetGattStatus()
+            }
         }
         SyncProgress.NOT_SUPPORTED -> {
-//            gattAlertDialog(
-//                "${it.deviceInfoModel}, ${it.deviceInfoFw}\n${
-//                    context?.getString(
-//                        R.string.reading_history_not_supported
-//                    )
-//                }"
-//            )
+            val message = "${syncStatus?.deviceInfoModel}, ${syncStatus?.deviceInfoFw} \n" +
+                    stringResource(id = R.string.reading_history_not_supported)
+            RuuviMessageDialog(message = message) {
+                viewModel.resetGattStatus()
+            }
         }
         SyncProgress.READING_DATA -> {
             syncInProgress = true
@@ -90,11 +88,15 @@ fun ChartControlElement(
         }
         SyncProgress.NOT_FOUND -> {
             syncInProgress = false
-            //gattAlertDialog(requireContext().getString(R.string.tag_not_in_range))
+            RuuviMessageDialog(message = stringResource(id = R.string.tag_not_in_range)) {
+                viewModel.resetGattStatus()
+            }
         }
         SyncProgress.ERROR -> {
             syncInProgress = false
-            //gattAlertDialog(requireContext().getString(R.string.something_went_wrong))
+            RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
+                viewModel.resetGattStatus()
+            }
         }
         SyncProgress.DONE -> {
             syncInProgress = false
