@@ -153,6 +153,7 @@
     <string name="export_csv_header_format2_4">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V)</string>
     <string name="export_csv_header_format5">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
+    <string name="export_history">Выгрузить историю (csv)</string>
     <string name="file_not_supported">Тип файла не поддерживается</string>
     <string name="firmware">Прошивка</string>
     <string name="firmware_update">Обновить</string>

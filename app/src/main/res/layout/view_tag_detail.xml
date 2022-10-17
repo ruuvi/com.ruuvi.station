@@ -8,139 +8,150 @@
     tools:background="@color/gray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/tagContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/footerLayout">
 
-        <TextView
-            android:id="@+id/tagTemperatureTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:fontFamily="@font/oswald_bold"
-            android:textColor="@color/white"
-            android:textSize="72sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="21.72" />
-
-        <TextView
-            android:id="@+id/tagTempUnitTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="76dp"
-            android:fontFamily="@font/oswald_light"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="36sp"
-            app:layout_constraintBottom_toBottomOf="@id/tagTemperatureTextView"
-            app:layout_constraintLeft_toRightOf="@id/tagTemperatureTextView"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="°С" />
-
-        <LinearLayout
-            android:id="@+id/tagHumidityLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/tagPressureLayout"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:id="@+id/tagHumidityIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_measure_humidity" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tagContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tagHumidityTextView"
+                android:id="@+id/tagTemperatureTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:fontFamily="@font/montserrat"
+                android:layout_marginTop="50dp"
+                android:fontFamily="@font/oswald_bold"
                 android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="@string/humidity_reading" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tagPressureLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/tagMovementLayout"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:id="@+id/tagPressureIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_measure_pressure" />
+                android:textSize="72sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="21.72" />
 
             <TextView
-                android:id="@+id/tagPressureTextView"
+                android:id="@+id/tagTempUnitTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:fontFamily="@font/montserrat"
+                android:layout_height="0dp"
+                android:layout_marginTop="76dp"
+                android:fontFamily="@font/oswald_light"
+                android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="@string/pressure_reading" />
+                android:textSize="36sp"
+                app:layout_constraintBottom_toBottomOf="@id/tagTemperatureTextView"
+                app:layout_constraintLeft_toRightOf="@id/tagTemperatureTextView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="°С" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tagMovementLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/bottomGuideline"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:id="@+id/tagMovementIcon"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/tagHumidityLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_icon_measure_movement" />
-
-            <TextView
-                android:id="@+id/tagMovementTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
-                android:fontFamily="@font/montserrat"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="124" />
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@id/tagPressureLayout"
+                app:layout_constraintStart_toStartOf="parent">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/tagHumidityIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/icon_measure_humidity" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/bottomGuideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="40dp" />
+                <TextView
+                    android:id="@+id/tagHumidityTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="@string/humidity_reading" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tagPressureLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@id/tagMovementLayout"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/tagPressureIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/icon_measure_pressure" />
+
+                <TextView
+                    android:id="@+id/tagPressureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="@string/pressure_reading" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tagMovementLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/tagMovementIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_icon_measure_movement" />
+
+                <TextView
+                    android:id="@+id/tagMovementTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="124" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            android:id="@+id/graphsContent"
+            layout="@layout/view_graphs"
+            android:visibility="invisible" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/footerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/normal"
+        app:layout_constraintBottom_toBottomOf="parent">
         <TextView
             android:id="@+id/tagSynchronizingTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:alpha="0.5"
+            style="@style/SensorScreenParagraphSmall"
             android:textAlignment="textStart"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Synchronizing" />
@@ -149,7 +160,6 @@
             android:id="@+id/sourceTypeImageView"
             android:layout_width="24dp"
             android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
             app:layout_constraintTop_toTopOf="@+id/tagUpdatedTextView"
             app:layout_constraintBottom_toBottomOf="@+id/tagUpdatedTextView"
             app:layout_constraintEnd_toEndOf="parent"
@@ -159,20 +169,12 @@
             android:id="@+id/tagUpdatedTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
-            android:alpha="0.5"
+            style="@style/SensorScreenParagraphSmall"
             android:textAlignment="textEnd"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sourceTypeImageView"
             tools:text="5 sec ago" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <include
-        android:id="@+id/graphsContent"
-        layout="@layout/view_graphs"
-        android:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
