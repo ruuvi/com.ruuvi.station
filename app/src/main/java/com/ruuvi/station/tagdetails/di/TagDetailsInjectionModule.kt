@@ -5,6 +5,7 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.tagdetails.ui.TagDetailsViewModel
 import com.ruuvi.station.tagdetails.ui.TagViewModel
+import com.ruuvi.station.tagsettings.domain.CsvExporter
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.factory
@@ -23,7 +24,9 @@ object TagDetailsInjectionModule {
         }
 
         bind<TagViewModel>() with factory { args: TagViewModelArgs ->
-            TagViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance(), sensorId = args.tagId)
+            TagViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), sensorId = args.tagId)
         }
+
+        bind<CsvExporter>() with singleton { CsvExporter(instance(), instance(), instance(), instance(), instance()) }
     }
 }

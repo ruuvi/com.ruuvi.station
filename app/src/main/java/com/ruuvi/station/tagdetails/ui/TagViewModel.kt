@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
+import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -11,11 +12,13 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
+import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.util.Days
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -29,6 +32,8 @@ class TagViewModel(
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
+    private val appSettingsInteractor: AppSettingsInteractor,
+    private val csvExporter: CsvExporter,
     val sensorId: String
 ) : ViewModel() {
     private val tagEntry = MutableLiveData<RuuviTag?>(null)
@@ -37,8 +42,8 @@ class TagViewModel(
     private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
     val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
-    private val syncStatusObj = MutableLiveData<GattSyncStatus>()
-    val syncStatusObserve: LiveData<GattSyncStatus> = syncStatusObj
+    private val _syncStatus = MutableLiveData<GattSyncStatus>()
+    val syncStatusObserve: LiveData<GattSyncStatus> = _syncStatus
 
     private val networkSyncInProgress = MutableLiveData<Boolean>(false)
 
@@ -49,6 +54,9 @@ class TagViewModel(
     }
 
     val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
+
+    private val _chartViewPeriod = MutableLiveData<Days>(getGraphViewPeriod())
+    val chartViewPeriod: LiveData<Days> = _chartViewPeriod
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -64,7 +72,7 @@ class TagViewModel(
             gattInteractor.syncStatusFlow.collect {
                 Timber.d("syncStatusFlow collected $it")
                 it?.let {
-                    if (it.sensorId == sensorId) syncStatusObj.value = it
+                    if (it.sensorId == sensorId) _syncStatus.value = it
 
                     if ((it.syncProgress == SyncProgress.READING_DATA || it.syncProgress == SyncProgress.NOT_SUPPORTED) &&
                         it.deviceInfoFw.isNotEmpty()
@@ -175,8 +183,22 @@ class TagViewModel(
     fun getSignalString(tag: RuuviTag): String =
         tagDetailsInteractor.getSignalString(tag)
 
+    fun exportToCsv(): Uri? = csvExporter.toCsv(sensorId)
+
+    fun setViewPeriod(periodDays: Int) {
+        appSettingsInteractor.setGraphViewPeriod(periodDays)
+        _chartViewPeriod.value = getGraphViewPeriod()
+    }
+
+    private fun getGraphViewPeriod() = Days.getInstance(appSettingsInteractor.getGraphViewPeriod())
+
     override fun onCleared() {
         super.onCleared()
         Timber.d("TagViewModel cleared!")
+    }
+
+    fun refreshStatus() {
+        Timber.d("refreshStatus")
+        _chartViewPeriod.value = getGraphViewPeriod()
     }
 }
