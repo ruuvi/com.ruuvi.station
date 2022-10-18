@@ -21,12 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.components.RuuviMessageDialog
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.util.Days
 
@@ -36,71 +37,15 @@ fun ChartControlElement(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val viewPeriod by viewModel.chartViewPeriod.observeAsState(Days.Day10())
+    val context = LocalContext.current
 
-    val syncStatus by viewModel.syncStatusObserve.observeAsState()
+    val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
 
-    val canUseGatt by viewModel.canUseGattSync.collectAsState(initial = false)
+    val canUseGatt by viewModel.canUseGattSync.observeAsState(false)
 
-    var syncInProgress = false
-    var syncMessage = ""
+    val syncInProgress by viewModel.gattSyncInProgress.collectAsState(false)
 
-    when (syncStatus?.syncProgress) {
-        SyncProgress.STILL -> {
-            syncInProgress = false
-        }
-        SyncProgress.CONNECTING -> {
-            syncInProgress = true
-            syncMessage = stringResource(id = R.string.connecting)
-        }
-        SyncProgress.CONNECTED, SyncProgress.READING_INFO -> {
-            syncInProgress = true
-            syncMessage = stringResource(id = R.string.connected_reading_info)
-        }
-        SyncProgress.DISCONNECTED -> {
-            syncInProgress = false
-            RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
-                viewModel.resetGattStatus()
-            }
-        }
-        SyncProgress.NOT_SUPPORTED -> {
-            val message = "${syncStatus?.deviceInfoModel}, ${syncStatus?.deviceInfoFw} \n" +
-                    stringResource(id = R.string.reading_history_not_supported)
-            RuuviMessageDialog(message = message) {
-                viewModel.resetGattStatus()
-            }
-        }
-        SyncProgress.READING_DATA -> {
-            syncInProgress = true
-            var status = stringResource(id = R.string.reading_history) + ".. "
-            if ((syncStatus?.syncedDataPoints ?: 0) > 0) status += syncStatus?.syncedDataPoints
-            syncMessage = status
-        }
-        SyncProgress.SAVING_DATA -> {
-            syncInProgress = true
-            syncMessage = if ((syncStatus?.readDataSize ?: 0) > 0) {
-                stringResource(id = R.string.data_points_read, syncStatus?.readDataSize ?: 0)
-            } else {
-                stringResource(id = R.string.no_new_data_points)
-            }
-        }
-        SyncProgress.NOT_FOUND -> {
-            syncInProgress = false
-            RuuviMessageDialog(message = stringResource(id = R.string.tag_not_in_range)) {
-                viewModel.resetGattStatus()
-            }
-        }
-        SyncProgress.ERROR -> {
-            syncInProgress = false
-            RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
-                viewModel.resetGattStatus()
-            }
-        }
-        SyncProgress.DONE -> {
-            syncInProgress = false
-            //lastConnectable = Date().time
-        }
-    }
+    val syncMessage by viewModel.gattSyncStatus.collectAsState(UiText.EmptyString())
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (canUseGatt && !syncInProgress) {
@@ -124,9 +69,9 @@ fun ChartControlElement(
                     tint = RuuviStationTheme.colors.buttonText
                 )
             }
-            Paragraph(text = syncMessage)
+            Paragraph(text = syncMessage.asString(context))
         }
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -145,7 +90,7 @@ fun ChartControlElement(
         }
     }
 
-    DisposableEffect(key1 = lifecycleOwner ) {
+    DisposableEffect( key1 = lifecycleOwner ) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.refreshStatus()
@@ -158,6 +103,23 @@ fun ChartControlElement(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
+    var uiEvent by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.event.collect() { event ->
+            if (event is UiEvent.ShowPopup) {
+                uiEvent = event.message.asString(context)
+            }
+        }
+    }
+     if (uiEvent != null) {
+         RuuviMessageDialog(message = uiEvent ?: "") {
+            uiEvent = null
+         }
+     }
 }
 
 @Composable

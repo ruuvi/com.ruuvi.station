@@ -1,12 +1,10 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.content.DialogInterface
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.SuperscriptSpan
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
@@ -24,8 +22,6 @@ import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -99,8 +95,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         timer = Timer("TagFragmentTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.getTagInfo()
-            binding.tagUpdatedTextView.text =
-                viewModel.tagEntry.value?.updatedAt?.describingTimeSince(requireContext())
         }
     }
 
@@ -115,19 +109,6 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         })
     }
 
-    private fun confirm(message: String, positiveButtonClick: DialogInterface.OnClickListener) {
-        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
-        with(builder)
-        {
-            setMessage(message)
-            setPositiveButton(getString(R.string.yes), positiveButtonClick)
-            setNegativeButton(getString(R.string.no)) { dialogInterface, i ->
-                dialogInterface.dismiss()
-            }
-            show()
-        }
-    }
-
     private fun observeShowGraph() {
         activityViewModel.isShowGraphObserve.observe(viewLifecycleOwner, Observer { isShowGraph ->
             view?.let {
@@ -139,8 +120,10 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private fun observeTagEntry() {
         lifecycleScope.launch {
-            viewModel.tagEntry.collect {
-                it?.let { updateTagData(it) }
+            viewModel.tagEntry.observe(viewLifecycleOwner) {
+                it?.let {
+                    updateTagData(it)
+                }
             }
         }
     }

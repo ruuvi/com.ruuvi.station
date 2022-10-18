@@ -60,7 +60,7 @@
     <string name="background_interval_10sec">every %1$s sec</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>
-    <string name="background_scanning">Background scanning</string>
+    <string name="background_scanning">Background scanning (Bluetooth)</string>
     <string name="battery_ok">Battery OK</string>
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
@@ -135,7 +135,7 @@
     <string name="darktheme_disabled">Dark theme is disabled.</string>
     <string name="darktheme_enabled">Dark theme is enabled.</string>
     <string name="dashboard">Dashboard</string>
-    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance</string>
+    <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance.</string>
     <string name="dashboard_disabled">Dashboard view is disabled. </string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="dashboard_enabled">Dashboard view is enabled. </string>
@@ -159,11 +159,11 @@
     <string name="day_7">7 days</string>
     <string name="day_8">8 days</string>
     <string name="day_9">9 days</string>
-    <string name="day_x">{^%1$s} days</string>
+    <string name="day_x">%1$s days</string>
     <string name="days">Days</string>
     <string name="details">Details</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
-    <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection. </string>
+    <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="done">Done</string>
@@ -265,7 +265,7 @@
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
-    <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended</string>
+    <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended.</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
@@ -281,7 +281,7 @@
     <string name="prepare_your_sensor_instructions_4">3.1. If your sensor has 2 buttons: keep “B” button pressed while tapping button “R” momentarily. Release button “B”.</string>
     <string name="prepare_your_sensor_instructions_5">3.2. If your sensor has single button: keep button pressed for 10 seconds.</string>
     <string name="prepare_your_sensor_instructions_6">4. If set successfully, you will see solid red light lit on circuit board and button in app changes to “Start the update”.</string>
-    <string name="press_to_add">No sensors added,\npress here to add sensors</string>
+    <string name="press_to_add">No sensors added\nPress here to add sensors</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_accuracy_title">Pressure resolution</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
@@ -297,6 +297,7 @@
     <string name="pressure_with_unit">Air Pressure (%1$s)</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
+    <string name="reading_history_x">Reading history.. %1$s</string>
     <string name="remove">Remove</string>
     <string name="remove_claimed_sensor">By removing the sensor, your sensor ownership status will be revoked. After removal, someone else can claim ownership of the sensor. Every Ruuvi sensor can have only one owner.</string>
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
@@ -304,7 +305,7 @@
     <string name="remove_this_sensor">Remove this sensor</string>
     <string name="rename_sensor_message">Your sensors will be in alphabetical order.</string>
     <string name="replace_battery">Replace battery!</string>
-    <string name="rssi">Signal strength (RSSI)</string>
+    <string name="rssi">Signal Strength (RSSI)</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SCAN</string>
@@ -321,7 +322,7 @@
     <string name="settings">Settings</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimisation for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
-    <string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimisation and select \'Don\'t optimise for Ruuvi Station\'</string>
+    <string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimisation and select \'Don\'t optimise for Ruuvi Station\'.</string>
     <string name="settings_background_battery_optimization_huawei_instructions">On Huawei devices go to Android Settings -> Apps -> Ruuvi Station -> Power usage details -> App launch. Disable \'Manage Automatically\' and enable options: \'Auto-Launch\', \'Secondary Launch\' and \'Run in background\'.</string>
     <string name="settings_background_battery_optimization_samsung23_instructions">On Samsung devices go to Android Settings -> Battery -> App power saving detail and set option \'Turned off\' for Ruuvi Station.</string>
     <string name="settings_background_battery_optimization_samsung_instructions">On Samsung devices go to Android Settings -> Device Maintenance (or Device Care) -> Battery. Disable \'Put unused apps to sleep\'. Disable \'Auto-disable unused apps\'. Remove Ruuvi Station from the list of sleeping apps. Disable background restrictions for Ruuvi Station.</string>
@@ -343,9 +344,9 @@
     <string name="settings_chart_draw_dots">Draw dots in chart</string>
     <string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected</string>
     <string name="settings_chart_interval">Chart Interval</string>
-    <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Smaller values mean a more accurate chart, but also a higher performance requirement for your device</string>
+    <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Smaller values mean a more accurate chart, but also a higher performance requirement for your device.</string>
     <string name="settings_chart_view_period">Chart history view period</string>
-    <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days</string>
+    <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days.</string>
     <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
     <string name="settings_experimental">Experimental features</string>
@@ -357,9 +358,9 @@
     <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed</string>
     <string name="settings_language">Language</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
-    <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed</string>
+    <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
     <string name="settings_temperature_unit">Temperature Unit</string>
-    <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed</string>
+    <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="share">Share</string>
     <string name="share_sensor_add_friend">Add friend</string>
     <string name="share_sensor_already_shared">Already shared %1$,d/%2$,d</string>
