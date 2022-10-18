@@ -19,6 +19,7 @@ import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.util.Days
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -36,8 +37,8 @@ class TagViewModel(
     private val csvExporter: CsvExporter,
     val sensorId: String
 ) : ViewModel() {
-    private val tagEntry = MutableLiveData<RuuviTag?>(null)
-    val tagEntryObserve: LiveData<RuuviTag?> = tagEntry
+    private val _tagEntry = MutableStateFlow<RuuviTag?>(null)
+    val tagEntry: StateFlow<RuuviTag?> = _tagEntry
 
     private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
     val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
@@ -52,6 +53,8 @@ class TagViewModel(
     val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
         it != null
     }
+
+    val canUseGattSync: Flow<Boolean> = tagEntry.map { it?.connectable == true }
 
     val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
 
@@ -99,13 +102,13 @@ class TagViewModel(
     }
 
     fun disconnectGatt() {
-        tagEntryObserve.value?.let { tag ->
+        tagEntry.value?.let { tag ->
             gattInteractor.disconnect(tag.id)
         }
     }
 
     fun syncGatt() {
-        tagEntryObserve.value?.let { tag ->
+        tagEntry.value?.let { tag ->
             var syncFrom = tag.lastSync
             val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * preferencesRepository.getGraphViewPeriodDays())
             if (syncFrom == null || syncFrom.before(historyLength)) {
@@ -158,7 +161,7 @@ class TagViewModel(
                 .getTagById(tagId)
                 ?.let {
                     withContext(Dispatchers.Main) {
-                        tagEntry.value = it
+                        _tagEntry.emit(it)
                         networkStatus.value = status
                     }
                 }

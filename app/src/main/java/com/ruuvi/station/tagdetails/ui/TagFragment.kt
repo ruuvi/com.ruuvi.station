@@ -12,9 +12,9 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.databinding.ViewTagDetailBinding
 import com.ruuvi.station.graph.ChartControlElement
 import com.ruuvi.station.graph.GraphView
@@ -24,6 +24,9 @@ import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -96,6 +99,8 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         timer = Timer("TagFragmentTimer", true)
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.getTagInfo()
+            binding.tagUpdatedTextView.text =
+                viewModel.tagEntry.value?.updatedAt?.describingTimeSince(requireContext())
         }
     }
 
@@ -133,8 +138,10 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
     }
 
     private fun observeTagEntry() {
-        viewModel.tagEntryObserve.observe(viewLifecycleOwner) {
-            it?.let { updateTagData(it) }
+        lifecycleScope.launch {
+            viewModel.tagEntry.collect {
+                it?.let { updateTagData(it) }
+            }
         }
     }
 

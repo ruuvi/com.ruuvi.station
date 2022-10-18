@@ -40,9 +40,7 @@ fun ChartControlElement(
 
     val syncStatus by viewModel.syncStatusObserve.observeAsState()
 
-    val sensorData by viewModel.tagEntryObserve.observeAsState()
-
-    val canUseGatt = sensorData?.connectable == true
+    val canUseGatt by viewModel.canUseGattSync.collectAsState(initial = false)
 
     var syncInProgress = false
     var syncMessage = ""
