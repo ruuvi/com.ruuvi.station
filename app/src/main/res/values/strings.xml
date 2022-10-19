@@ -103,6 +103,8 @@
     <string name="claim_sensor">Claim sensor</string>
     <string name="clear">Clear</string>
     <string name="clear_confirm">Clear the local historical data from the app?</string>
+    <string name="clear_local_history">Clear local history</string>
+    <string name="clear_local_history_description">Do you want to clear locally stored historical data from the app? This won\'t clear internally stored history from sensor or historical data stored in Ruuvi Cloud service.</string>
     <string name="clear_view">Clear View</string>
     <string name="close">Close</string>
     <string name="cloud_er_forbidden">Forbidden</string>
