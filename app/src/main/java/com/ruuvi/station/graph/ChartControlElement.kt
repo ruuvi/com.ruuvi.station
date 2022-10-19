@@ -21,13 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.components.RuuviMessageDialog
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.util.Days
 
@@ -109,19 +109,46 @@ fun ChartControlElement(
     }
 
     var uiEvent by remember {
-        mutableStateOf<String?>(null)
+        mutableStateOf<SyncProgress?>(null)
     }
 
     LaunchedEffect(key1 = true) {
         viewModel.event.collect() { event ->
-            if (event is UiEvent.ShowPopup) {
-                uiEvent = event.message.asString(context)
-            }
+            uiEvent = event
         }
     }
      if (uiEvent != null) {
-         RuuviMessageDialog(message = uiEvent ?: "") {
-            uiEvent = null
+         when (uiEvent) {
+             SyncProgress.DISCONNECTED -> {
+                 RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
+                     uiEvent = null
+                 }
+             }
+             SyncProgress.NOT_SUPPORTED -> {
+                 RuuviMessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
+                     uiEvent = null
+                 }
+             }
+             SyncProgress.NOT_FOUND -> {
+                 RuuviConfirmDialog(
+                     title = stringResource(id = R.string.error),
+                     message = stringResource(id = R.string.gatt_not_in_range_description),
+                     noButtonCaption = stringResource(id = R.string.close),
+                     yesButtonCaption = stringResource(id = R.string.try_again),
+                     onDismissRequest = { uiEvent = null }
+                 ) {
+                     uiEvent = null
+                     gattSyncDialogOpened = true
+                 }
+             }
+             SyncProgress.ERROR -> {
+                 RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
+                     uiEvent = null
+                 }
+             }
+             else -> {
+                 uiEvent = null
+             }
          }
      }
 

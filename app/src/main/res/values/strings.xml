@@ -196,6 +196,7 @@
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
     <string name="gateway_test_success">Data forwarding works! Response code: %1$d</string>
     <string name="gateway_testing">Testing...</string>
+    <string name="gatt_not_in_range_description">Bluetooth history download failed. Check that you\'re within Bluetooth range, your sensor has firmware that supports downloading and that sensor is not simultaneously connected to another iOS device. Sensor connection is reserved for Ruuvi Station when using connected mode in iOS.</string>
     <string name="general">General</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your Ruuvi sensors. Simply add some sensors and you\'re ready to go.</string>
@@ -420,6 +421,7 @@
     <string name="temperature_with_unit">Temperature (%1$s)</string>
     <string name="time_since">%1$s ago</string>
     <string name="title_activity_dfu_update">Firmware Update</string>
+    <string name="try_again">Try again</string>
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Unknown error</string>

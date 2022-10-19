@@ -195,6 +195,7 @@
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
     <string name="gateway_test_success">Palvelin vastasi! Palautekoodi: %1$d</string>
     <string name="gateway_testing">Testataan...</string>
+    <string name="gatt_not_in_range_description">Bluetooth-historian lataus epäonnistui. Tarkasta, että olet Bluetooth-kantaman sisällä, että anturissa on latausta tukeva laiteohjelmisto ja ettei anturi ole yhteydessä toiseen iOS-laitteeseen samanaikaisesti. Ruuvi Stationin iOS-versio varaa anturin yhteyden käyttöönsä jatkuvaa yhteystilaa käytettäessä.</string>
     <string name="general">Yleisasetukset</string>
     <string name="h">t</string>
     <string name="help_about_text">Ruuvi Station on helppokäyttöinen sovellus Ruuvin tuotteiden hallinnointiin. Aloita lisäämällä antureita.</string>
@@ -418,6 +419,7 @@
     <string name="temperature_with_unit">Lämpötila (%1$s)</string>
     <string name="time_since">%1$s sitten</string>
     <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
+    <string name="try_again">Yritä uudelleen</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Tuntematon virhe</string>
