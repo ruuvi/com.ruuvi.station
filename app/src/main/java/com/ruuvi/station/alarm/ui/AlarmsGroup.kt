@@ -1,5 +1,6 @@
 package com.ruuvi.station.alarm.ui
 
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -12,8 +13,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -27,6 +28,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import kotlinx.coroutines.delay
 import timber.log.Timber
+import java.text.DateFormat
+import java.util.*
 
 @Composable
 fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
@@ -93,7 +96,7 @@ fun AlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
-            text = stringResource(id = R.string.alert),
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -209,7 +212,7 @@ fun MovementAlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
-            text = stringResource(id = R.string.alert),
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -347,5 +350,13 @@ fun AlarmEditDialog(
         ) { parsed, value ->
             max = value
         }
+    }
+}
+
+fun getMutedText(context: Context, mutedTill: Date?): String {
+    return if (mutedTill != null && mutedTill > Date()) {
+        context.getString(R.string.muted_till, DateFormat.getTimeInstance(DateFormat.SHORT).format(mutedTill))
+    } else {
+        ""
     }
 }

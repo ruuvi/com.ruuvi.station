@@ -28,7 +28,7 @@ class AlarmItemsViewModel(
         val alarmItem = _alarms.firstOrNull { it.type == type }
 
         if (alarmItem != null) {
-            val newAlarm = alarmItem.copy(isEnabled = enabled)
+            val newAlarm = alarmItem.copy(isEnabled = enabled, mutedTill = null)
             _alarms[_alarms.indexOf(alarmItem)] = newAlarm
             saveAlarm(newAlarm)
         }
