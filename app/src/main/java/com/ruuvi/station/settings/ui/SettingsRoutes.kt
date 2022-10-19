@@ -21,7 +21,7 @@ object SettingsRoutes {
             TEMPERATURE -> context.getString(R.string.settings_temperature_unit)
             HUMIDITY -> context.getString(R.string.settings_humidity_unit)
             PRESSURE -> context.getString(R.string.settings_pressure_unit)
-            BACKGROUNDSCAN -> context.getString(R.string.background_scanning)
+            BACKGROUNDSCAN -> context.getString(R.string.settings_background_scan)
             CHARTS -> context.getString(R.string.settings_chart)
             CLOUD -> context.getString(R.string.ruuvi_cloud)
             DATAFORWARDING -> context.getString(R.string.settings_data_forwarding)
