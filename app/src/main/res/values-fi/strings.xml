@@ -64,6 +64,8 @@
     <string name="battery_ok">Paristo OK</string>
     <string name="battery_voltage">Paristojännite</string>
     <string name="beta">beta</string>
+    <string name="bluetooth_download">Bluetooth-lataus</string>
+    <string name="bluetooth_download_description">Voit ladata anturin sisäisen historian ollessasi Bluetooth-kantaman sisällä.</string>
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/fi/gateway</string>
     <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet</string>
@@ -166,6 +168,7 @@
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="done">Valmis</string>
+    <string name="download">Lataa</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="error">Virhe</string>
