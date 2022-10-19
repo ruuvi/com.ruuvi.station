@@ -247,6 +247,7 @@
     <string name="more_info">More info</string>
     <string name="movement_counter">Movement Counter</string>
     <string name="movements">movements</string>
+    <string name="muted_till">Muted till %1$s</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
