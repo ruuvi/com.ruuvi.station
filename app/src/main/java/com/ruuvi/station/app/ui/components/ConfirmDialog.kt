@@ -15,6 +15,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 fun RuuviConfirmDialog(
     title: String = "",
     message: String = "",
+    yesButtonCaption: String = stringResource(id = R.string.yes),
+    noButtonCaption: String = stringResource(id = R.string.no),
     onDismissRequest : () -> Unit,
     onYesClickAction: () -> Unit,
 ) {
@@ -46,7 +48,7 @@ fun RuuviConfirmDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     RuuviTextButton(
-                        text = stringResource(id = R.string.no),
+                        text = noButtonCaption,
                         onClick = {
                             onDismissRequest.invoke()
                         }
@@ -55,7 +57,7 @@ fun RuuviConfirmDialog(
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
 
                     RuuviTextButton(
-                        text = stringResource(id = R.string.yes),
+                        text = yesButtonCaption,
                         onClick = {
                             onYesClickAction.invoke()
                         }

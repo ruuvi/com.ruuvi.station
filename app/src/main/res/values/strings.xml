@@ -64,6 +64,8 @@
     <string name="battery_ok">Battery OK</string>
     <string name="battery_voltage">Battery Voltage</string>
     <string name="beta">beta</string>
+    <string name="bluetooth_download">Bluetooth download</string>
+    <string name="bluetooth_download_description">Local sensor data can be downloaded, when you\'re within its Bluetooth range.</string>
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
     <string name="buy_sensors_link">https://ruuvi.com/products</string>
@@ -167,6 +169,7 @@
     <string name="dfu_update_do_not_close_app">Do not close app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="done">Done</string>
+    <string name="download">Download</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
     <string name="email">Email</string>
     <string name="error">Error</string>

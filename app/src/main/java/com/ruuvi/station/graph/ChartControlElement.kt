@@ -47,10 +47,14 @@ fun ChartControlElement(
 
     val syncMessage by viewModel.gattSyncStatus.collectAsState(UiText.EmptyString())
 
+    var gattSyncDialogOpened by remember {
+        mutableStateOf(false)
+    }
+
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (canUseGatt && !syncInProgress) {
+        if (!syncInProgress) {
             IconButton(onClick = {
-                viewModel.syncGatt()
+                gattSyncDialogOpened = true
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_widget_d_update),
@@ -120,6 +124,15 @@ fun ChartControlElement(
             uiEvent = null
          }
      }
+
+    if (gattSyncDialogOpened) {
+        gattSyncDialog(
+            syncGatt = viewModel::syncGatt,
+            dismissAction = {
+                gattSyncDialogOpened = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -240,6 +253,23 @@ fun ThreeDotsMenu(
             clearHistory.invoke()
             clearConfirmOpened = false
         }
+    }
+}
+
+@Composable
+fun gattSyncDialog(
+    syncGatt: () -> Unit,
+    dismissAction: () -> Unit
+) {
+    RuuviConfirmDialog(
+        title = stringResource(id = R.string.bluetooth_download),
+        message = stringResource(id = R.string.bluetooth_download_description),
+        yesButtonCaption = stringResource(id = R.string.download),
+        noButtonCaption = stringResource(id = R.string.cancel),
+        onDismissRequest = { dismissAction.invoke() }
+    ) {
+        dismissAction.invoke()
+        syncGatt.invoke()
     }
 }
 
