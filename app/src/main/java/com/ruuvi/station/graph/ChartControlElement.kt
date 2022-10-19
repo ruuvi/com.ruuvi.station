@@ -126,7 +126,7 @@ fun ChartControlElement(
      }
 
     if (gattSyncDialogOpened) {
-        gattSyncDialog(
+        GattSyncDialog(
             syncGatt = viewModel::syncGatt,
             dismissAction = {
                 gattSyncDialogOpened = false
@@ -246,18 +246,15 @@ fun ThreeDotsMenu(
     }
 
     if (clearConfirmOpened) {
-        RuuviConfirmDialog(
-            message = stringResource(id = R.string.clear_confirm),
-            onDismissRequest = { clearConfirmOpened = false }
-        ) {
-            clearHistory.invoke()
-            clearConfirmOpened = false
-        }
+        ClearHistoryDialog(
+            clearHistory = clearHistory,
+            dismissAction = { clearConfirmOpened = false }
+        )
     }
 }
 
 @Composable
-fun gattSyncDialog(
+fun GattSyncDialog(
     syncGatt: () -> Unit,
     dismissAction: () -> Unit
 ) {
@@ -270,6 +267,23 @@ fun gattSyncDialog(
     ) {
         dismissAction.invoke()
         syncGatt.invoke()
+    }
+}
+
+@Composable
+fun ClearHistoryDialog(
+    clearHistory: () -> Unit,
+    dismissAction: () -> Unit
+) {
+    RuuviConfirmDialog(
+        title = stringResource(id = R.string.clear_local_history),
+        message = stringResource(id = R.string.clear_local_history_description),
+        yesButtonCaption = stringResource(id = R.string.clear),
+        noButtonCaption = stringResource(id = R.string.cancel),
+        onDismissRequest = { dismissAction.invoke() }
+    ) {
+        dismissAction.invoke()
+        clearHistory.invoke()
     }
 }
 

@@ -102,6 +102,8 @@
     <string name="claim_sensor">Vahvista omistajuus</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen paikallisesti tallennetut historiatiedot?</string>
+    <string name="clear_local_history">Tyhjennä paikallinen historia</string>
+    <string name="clear_local_history_description">Haluatko tyhjentää sovelluksen muistiin tallennetun mittaushistorian? Tämä ei tyhjennä anturin sisäistä historiaa eikä Ruuvi Cloud -pilvipalveluun tallennettua historiaa.</string>
     <string name="clear_view">Tyhjennä kaaviot</string>
     <string name="close">Sulje</string>
     <string name="cloud_er_forbidden">Kielletty</string>
