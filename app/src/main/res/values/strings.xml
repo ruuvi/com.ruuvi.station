@@ -307,6 +307,7 @@
     <string name="rename_sensor_message">Your sensors will be in alphabetical order.</string>
     <string name="replace_battery">Replace battery!</string>
     <string name="rssi">Signal Strength (RSSI)</string>
+    <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use Cloud Mode when you want to record signal strength data only via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SCAN</string>
