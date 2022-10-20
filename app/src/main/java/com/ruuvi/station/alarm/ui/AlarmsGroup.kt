@@ -33,8 +33,17 @@ import java.util.*
 
 @Composable
 fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
-    val alarms = viewModel.alarms
+    LaunchedEffect(key1 = true) {
+        Timber.d("Alarms LaunchedEffect")
+        viewModel.initAlarms()
+        while (true) {
+            Timber.d("AlarmItems refreshAlarmState ")
+            viewModel.refreshAlarmState()
+            delay(3000)
+        }
+    }
 
+    val alarms = viewModel.alarms
     Timber.d("AlarmItems refresh ")
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
@@ -73,14 +82,6 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                         setDescription = viewModel::setDescription,
                     )
             }
-        }
-    }
-
-    LaunchedEffect(key1 = 2) {
-        while (true) {
-            Timber.d("AlarmItems refreshAlarmState ")
-            viewModel.refreshAlarmState()
-            delay(3000)
         }
     }
 }
