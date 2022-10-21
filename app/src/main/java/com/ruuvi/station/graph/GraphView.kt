@@ -18,8 +18,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -189,6 +191,23 @@ class GraphView (
         chart.setNoDataTextColor(Color.WHITE)
         chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
+        chart.setTouchEnabled(true)
+        chart.isHighlightPerTapEnabled = true
+
+        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onValueSelected(p0: Entry?, p1: Highlight?) {
+                Timber.d("chart selection $p0 $p1")
+            }
+
+            override fun onNothingSelected() {
+                Timber.d("chart selection nothing")
+            }
+
+        })
+
+        val markerView = MyMarkerView(context, R.layout.custom_marker_view)
+        markerView.chartView = chart
+        chart.marker = markerView
 
         try {
             val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
@@ -224,6 +243,9 @@ class GraphView (
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
             )
         )
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         setLabelCount(chart)
@@ -233,7 +255,7 @@ class GraphView (
         chart.axisLeft.axisMaximum = set.yMax + 0.5f
 
         chart.data = LineData(set)
-        chart.data.isHighlightEnabled = false
+        chart.data.isHighlightEnabled = true
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
