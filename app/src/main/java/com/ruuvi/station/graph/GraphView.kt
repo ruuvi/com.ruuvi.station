@@ -18,8 +18,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -31,6 +33,7 @@ import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class GraphView (
     private val unitsConverter: UnitsConverter,
@@ -167,13 +170,34 @@ class GraphView (
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
             graphSetupCompleted = true
 
-            applyChartStyle(tempChart)
-            applyChartStyle(humidChart)
-            applyChartStyle(pressureChart)
+            applyChartStyle(tempChart, ChartSensorType.TEMPERATURE)
+            applyChartStyle(humidChart, ChartSensorType.HUMIDITY)
+            applyChartStyle(pressureChart, ChartSensorType.PRESSURE)
+
+            setupHighLighting(arrayListOf(tempChart, humidChart, pressureChart))
         }
     }
 
-    private fun applyChartStyle(chart: LineChart) {
+    private fun setupHighLighting(charts: ArrayList<LineChart>) {
+        for (chart in charts) {
+            val otherCharts = charts.filter { it != chart }
+            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                override fun onValueSelected(entry: Entry, highlight: Highlight) {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                    }
+                }
+
+                override fun onNothingSelected() {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(0f, -1, false)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun applyChartStyle(chart: LineChart, chartSensorType: ChartSensorType) {
         chart.axisRight.isEnabled = false
 
         chart.xAxis.textColor = Color.WHITE
@@ -189,6 +213,19 @@ class GraphView (
         chart.setNoDataTextColor(Color.WHITE)
         chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
+        chart.setTouchEnabled(true)
+        chart.isHighlightPerTapEnabled = true
+
+        val markerView = ChartMarkerView(
+            context = context,
+            layoutResource = R.layout.custom_marker_view,
+            chartSensorType = chartSensorType,
+            unitsConverter = unitsConverter
+        ) {
+            return@ChartMarkerView from
+        }
+        markerView.chartView = chart
+        chart.marker = markerView
 
         try {
             val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
@@ -224,6 +261,10 @@ class GraphView (
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
             )
         )
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         setLabelCount(chart)
@@ -233,7 +274,7 @@ class GraphView (
         chart.axisLeft.axisMaximum = set.yMax + 0.5f
 
         chart.data = LineData(set)
-        chart.data.isHighlightEnabled = false
+        chart.data.isHighlightEnabled = true
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
