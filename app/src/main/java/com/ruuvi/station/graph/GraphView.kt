@@ -33,6 +33,7 @@ import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class GraphView (
     private val unitsConverter: UnitsConverter,
@@ -169,13 +170,34 @@ class GraphView (
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
             graphSetupCompleted = true
 
-            applyChartStyle(tempChart)
-            applyChartStyle(humidChart)
-            applyChartStyle(pressureChart)
+            applyChartStyle(tempChart, ChartSensorType.TEMPERATURE)
+            applyChartStyle(humidChart, ChartSensorType.HUMIDITY)
+            applyChartStyle(pressureChart, ChartSensorType.PRESSURE)
+
+            setupHighLighting(arrayListOf(tempChart, humidChart, pressureChart))
         }
     }
 
-    private fun applyChartStyle(chart: LineChart) {
+    private fun setupHighLighting(charts: ArrayList<LineChart>) {
+        for (chart in charts) {
+            val otherCharts = charts.filter { it != chart }
+            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                override fun onValueSelected(entry: Entry, highlight: Highlight) {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                    }
+                }
+
+                override fun onNothingSelected() {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(0f, -1, false)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun applyChartStyle(chart: LineChart, chartSensorType: ChartSensorType) {
         chart.axisRight.isEnabled = false
 
         chart.xAxis.textColor = Color.WHITE
@@ -194,18 +216,14 @@ class GraphView (
         chart.setTouchEnabled(true)
         chart.isHighlightPerTapEnabled = true
 
-        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-            override fun onValueSelected(p0: Entry?, p1: Highlight?) {
-                Timber.d("chart selection $p0 $p1")
-            }
-
-            override fun onNothingSelected() {
-                Timber.d("chart selection nothing")
-            }
-
-        })
-
-        val markerView = MyMarkerView(context, R.layout.custom_marker_view)
+        val markerView = ChartMarkerView(
+            context = context,
+            layoutResource = R.layout.custom_marker_view,
+            chartSensorType = chartSensorType,
+            unitsConverter = unitsConverter
+        ) {
+            return@ChartMarkerView from
+        }
         markerView.chartView = chart
         chart.marker = markerView
 
@@ -245,6 +263,7 @@ class GraphView (
         )
         set.enableDashedHighlightLine(10f, 5f, 0f)
         set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
 
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
