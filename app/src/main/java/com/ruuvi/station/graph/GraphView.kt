@@ -28,6 +28,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.GraphEntry
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
@@ -278,12 +279,12 @@ class GraphView (
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
-                val timeText = getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
-
-                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-                val dateText: String = DateUtils.formatDateTime(context, value.toLong() + from, flags)
-
-                return "$timeText\n$dateText"
+                return if (date.isStartOfTheDay()) {
+                    val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+                    DateUtils.formatDateTime(context, date.time, flags)
+                } else {
+                    getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
+                }
             }
         }
         chart.notifyDataSetChanged()
@@ -363,7 +364,7 @@ class GraphView (
             } else {
                 tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2.35f
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom()
         val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
         val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 
