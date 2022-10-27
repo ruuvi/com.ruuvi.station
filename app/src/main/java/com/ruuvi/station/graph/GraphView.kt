@@ -215,6 +215,7 @@ class GraphView (
         chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
         chart.setTouchEnabled(true)
+        chart.isDoubleTapToZoomEnabled = false
         chart.isHighlightPerTapEnabled = true
 
         val markerView = ChartMarkerView(
@@ -261,6 +262,11 @@ class GraphView (
                 chart.xAxis,
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
             )
+        )
+        chart.rendererLeftYAxis = CustomYAxisRenderer(
+            chart.viewPortHandler,
+            chart.axisLeft,
+            chart.getTransformer(YAxis.AxisDependency.LEFT)
         )
         set.enableDashedHighlightLine(10f, 5f, 0f)
         set.setDrawHighlightIndicators(true)
@@ -364,7 +370,7 @@ class GraphView (
             } else {
                 tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom()
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 1.2f
         val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
         val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 
