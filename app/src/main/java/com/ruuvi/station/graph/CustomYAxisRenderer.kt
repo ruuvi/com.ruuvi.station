@@ -4,7 +4,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.renderer.YAxisRenderer
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.ViewPortHandler
-import com.ruuvi.station.util.extensions.equalsEpsilon
+import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -15,7 +15,7 @@ class CustomYAxisRenderer(
 ): YAxisRenderer(viewPortHandler, yAxis, trans) {
 
     override fun computeAxisValues(min: Float, max: Float) {
-        if (min.isFinite() || max.isFinite()) {
+        if (min == Float.MAX_VALUE || max == Float.MAX_VALUE) {
             super.computeAxisValues(min, max)
             return
         }
@@ -40,11 +40,19 @@ class CustomYAxisRenderer(
             lastPoint = firstPoint
         }
 
-        var numberOfPoints = if (interval != 0.0 && !lastPoint.equalsEpsilon(firstPoint)) {
+        val numberOfPoints = if (interval != 0.0) {
             round(abs(lastPoint - firstPoint) / interval).toInt() + 1
         } else {
             1
         }
+
+        Timber.d("min $min")
+        Timber.d("max $max")
+        Timber.d("firstPoint $firstPoint")
+        Timber.d("lastPoint $firstPoint")
+        Timber.d("interval $interval")
+        Timber.d("labelCount $labelCount")
+        Timber.d("numberOfPoints $numberOfPoints")
 
         mYAxis.mEntryCount = numberOfPoints
         mYAxis.mEntries = DoubleArray(numberOfPoints)
@@ -63,10 +71,10 @@ class CustomYAxisRenderer(
     companion object {
         val intervals = doubleArrayOf(
             0.01,
+            0.02,
             0.05,
             0.1,
             0.2,
-            0.25,
             0.5,
             1.0,
             2.0,
@@ -87,7 +95,11 @@ class CustomYAxisRenderer(
             20000.0,
             25000.0,
             50000.0,
-            100000.0
+            100000.0,
+            200000.0,
+            250000.0,
+            500000.0,
+            1000000.0
         )
     }
 }
