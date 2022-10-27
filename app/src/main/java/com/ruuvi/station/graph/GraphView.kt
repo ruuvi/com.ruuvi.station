@@ -262,6 +262,11 @@ class GraphView (
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
             )
         )
+        chart.rendererLeftYAxis = CustomYAxisRenderer(
+            chart.viewPortHandler,
+            chart.axisLeft,
+            chart.getTransformer(YAxis.AxisDependency.LEFT)
+        )
         set.enableDashedHighlightLine(10f, 5f, 0f)
         set.setDrawHighlightIndicators(true)
         set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
@@ -364,7 +369,7 @@ class GraphView (
             } else {
                 tempChart.viewPortHandler.offsetLeft() * 1.1f
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom()
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 1.2f
         val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
         val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
 
