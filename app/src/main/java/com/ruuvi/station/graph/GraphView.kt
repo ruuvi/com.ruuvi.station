@@ -215,6 +215,7 @@ class GraphView (
         chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
         chart.setTouchEnabled(true)
+        chart.isDoubleTapToZoomEnabled = false
         chart.isHighlightPerTapEnabled = true
 
         val markerView = ChartMarkerView(
