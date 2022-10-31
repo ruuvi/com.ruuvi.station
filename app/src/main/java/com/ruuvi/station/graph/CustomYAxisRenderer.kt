@@ -46,13 +46,14 @@ class CustomYAxisRenderer(
             1
         }
 
-        Timber.d("min $min")
-        Timber.d("max $max")
-        Timber.d("firstPoint $firstPoint")
-        Timber.d("lastPoint $firstPoint")
-        Timber.d("interval $interval")
-        Timber.d("labelCount $labelCount")
-        Timber.d("numberOfPoints $numberOfPoints")
+//      For debug
+//        Timber.d("min $min")
+//        Timber.d("max $max")
+//        Timber.d("firstPoint $firstPoint")
+//        Timber.d("lastPoint $firstPoint")
+//        Timber.d("interval $interval")
+//        Timber.d("labelCount $labelCount")
+//        Timber.d("numberOfPoints $numberOfPoints")
 
         mYAxis.mEntryCount = numberOfPoints
         mYAxis.mEntries = DoubleArray(numberOfPoints)

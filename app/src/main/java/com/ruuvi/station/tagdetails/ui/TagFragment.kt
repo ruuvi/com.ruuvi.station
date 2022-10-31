@@ -22,6 +22,7 @@ import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.extensions.sharedViewModel
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -72,6 +73,17 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
         observeTagReadings()
         observeSelectedTag()
         observeSyncStatus()
+        observeChartCleared()
+    }
+
+    private fun observeChartCleared() {
+        lifecycleScope.launch {
+            viewModel.clearChart.collectLatest {
+                if (it) {
+                    graphView.clearView()
+                }
+            }
+        }
     }
 
     private fun observeSyncStatus() {

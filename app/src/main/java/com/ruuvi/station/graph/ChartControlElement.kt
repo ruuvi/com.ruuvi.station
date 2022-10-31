@@ -182,7 +182,11 @@ fun ViewPeriodMenu(
             } else {
                 stringResource(id = viewPeriod.stringResourceId)
             }
-            Subtitle(text = daysText)
+            Text(
+                style = RuuviStationTheme.typography.subtitle,
+                text = daysText,
+                color = RuuviStationTheme.colors.buttonText
+            )
 
             Icon(
                 painter = painterResource(id = R.drawable.drop_down_24),

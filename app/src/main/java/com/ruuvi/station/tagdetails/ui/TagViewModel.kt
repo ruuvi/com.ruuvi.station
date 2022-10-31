@@ -66,6 +66,9 @@ class TagViewModel(
     private val _event = MutableSharedFlow<SyncProgress>()
     val event: SharedFlow<SyncProgress> = _event
 
+    private val _clearChart = MutableSharedFlow<Boolean>()
+    val clearChart: SharedFlow<Boolean> = _clearChart
+
     val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
 
     private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
@@ -189,6 +192,9 @@ class TagViewModel(
     fun removeTagData() {
         sensorHistoryRepository.removeForSensor(sensorId)
         tagDetailsInteractor.clearLastSync(sensorId)
+        viewModelScope.launch {
+            _clearChart.emit(true)
+        }
     }
 
     fun tagSelected(selectedTag: RuuviTag?) {
