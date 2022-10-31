@@ -268,15 +268,6 @@
         <item name="colorAccent">?attr/colorAccent</item>
     </style>
 
-    <style name="RangeSeekStyle">
-        <item name="bar_color">?colorDivider</item>
-        <item name="bar_highlight_color">?colorAccent</item>
-        <item name="right_thumb_color">?colorAccent</item>
-        <item name="left_thumb_color">?colorAccent</item>
-        <item name="right_thumb_color_pressed">?attr/colorButtonPressed</item>
-        <item name="left_thumb_color_pressed">?attr/colorButtonPressed</item>
-    </style>
-
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
         <item name="android:id">@android:id/background</item>
         <item name="android:background">?attr/colorSurface</item>

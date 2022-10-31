@@ -11,7 +11,7 @@ buildscript {
         compose_version = '1.1.1'
     }
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
@@ -43,7 +43,7 @@ sonarqube {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url "https://www.jitpack.io" }
         maven { url "https://maven.google.com" }
         google()
