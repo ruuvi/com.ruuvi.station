@@ -7,7 +7,7 @@
         <item name="colorOnSurface">@color/white80</item>
         <item name="colorDisabled">@color/disabledText</item>
         <item name="actionMenuTextColor">@color/white</item>
-        <item name="colorSurfaceVariant">@color/titan50</item>
+        <item name="colorSurfaceVariant">@color/titan</item>
         <item name="colorOnSurfaceVariant">@color/white</item>
         <item name="colorHeaderSurface">@color/dark_emerald</item>
         <item name="colorOnHeaderSurface">@color/backgroundLight</item>

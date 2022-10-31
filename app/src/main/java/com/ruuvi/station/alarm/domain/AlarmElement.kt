@@ -7,15 +7,15 @@ data class AlarmElement(
     val sensorId: String,
     var type: AlarmType,
     var isEnabled: Boolean,
-    var min: Int,
-    var max: Int,
     var customDescription: String = "",
     var mutedTill: Date? = null,
-    val gap: Int = 1
 ) {
     var low: Int
     var high: Int
     var alarm: Alarm? = null
+
+    val min = type.possibleRange.first
+    val max = type.possibleRange.last
 
     init {
         low = min
@@ -34,51 +34,36 @@ data class AlarmElement(
 
     fun shouldBeSaved(): Boolean {
         if (alarm != null) {
-            return isEnabled != alarm?.enabled || low != alarm?.low || high != alarm?.high || customDescription != alarm?.customDescription
+            return isEnabled != alarm?.enabled// || low != alarm?.first || high != alarm?.high || customDescription != alarm?.customDescription
         } else {
             return isEnabled
         }
     }
 
     companion object {
-        fun getTemperatureAlarmElement(sensorId: String) = AlarmElement(
-            sensorId,
-            AlarmType.TEMPERATURE,
-            false,
-            -40,
-            85
-        )
+        const val gap: Int = 1
 
-        fun getHumidityAlarmElement(sensorId: String) = AlarmElement(
-            sensorId,
-            AlarmType.HUMIDITY,
-            false,
-            0,
-            100
-        )
+        fun getDbAlarmElement(alarm: Alarm): AlarmElement {
+            val alarmElement = AlarmElement(
+                sensorId = alarm.ruuviTagId,
+                type = alarm.alarmType,
+                isEnabled = alarm.enabled,
+                customDescription = alarm.customDescription,
+                mutedTill = alarm.mutedTill
+            )
+            alarmElement.high = alarm.min.toInt()
+            alarmElement.low = alarm.max.toInt()
+            alarmElement.alarm = alarm
+            alarmElement.normalizeValues()
+            return alarmElement
+        }
 
-        fun getPressureAlarmElement(sensorId: String) = AlarmElement(
-            sensorId,
-            AlarmType.PRESSURE,
-            false,
-            30000,
-            110000
-        )
-
-        fun getRssiAlarmElement(sensorId: String) = AlarmElement(
-            sensorId,
-            AlarmType.RSSI,
-            false,
-            -105,
-            0
-        )
-
-        fun getMovementAlarmElement(sensorId: String) = AlarmElement(
-            sensorId,
-            AlarmType.MOVEMENT,
-            false,
-            0,
-            0
-        )
+        fun getDefaultAlarmElement(sensorId: String, alarmType: AlarmType): AlarmElement {
+            return AlarmElement(
+                sensorId = sensorId,
+                type = alarmType,
+                isEnabled = false
+            )
+        }
     }
 }

@@ -5,8 +5,8 @@ import com.ruuvi.station.database.tables.Alarm
 data class SetAlertRequest(
     val sensor: String,
     val type: String,
-    val min: Int,
-    val max: Int,
+    val min: Double,
+    val max: Double,
     val enabled: Boolean,
     val description: String
 ) {
@@ -15,8 +15,8 @@ data class SetAlertRequest(
             return SetAlertRequest(
                 sensor = alarm.ruuviTagId,
                 type = alarm.alarmType?.networkCode ?: throw IllegalArgumentException(),
-                min = alarm.low,
-                max = alarm.high,
+                min = alarm.min,
+                max = alarm.max,
                 enabled = alarm.enabled,
                 description = alarm.customDescription
             )

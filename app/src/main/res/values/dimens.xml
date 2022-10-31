@@ -41,7 +41,7 @@
     <dimen name="letter_ball_radius">24dp</dimen>
     <dimen name="tag_details_name">5sp</dimen>
 
-    <dimen name="graph_description_size">4sp</dimen>
+    <dimen name="graph_description_size">3.5sp</dimen>
     <dimen name="dialog_margin">20dp</dimen>
 
     <dimen name="button_bottom_padding">32dp</dimen>

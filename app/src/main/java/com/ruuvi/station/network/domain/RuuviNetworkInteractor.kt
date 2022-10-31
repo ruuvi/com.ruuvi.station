@@ -60,7 +60,7 @@ class RuuviNetworkInteractor (
 
     fun shouldSendSensorDataToNetwork(sensorId: String): Boolean {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        return shouldSendDataToNetwork() && sensorSettings?.owner != null
+        return shouldSendDataToNetwork() && sensorSettings?.networkSensor == true
     }
 
     fun shouldSendSensorDataToNetworkForOwner(sensorId: String): Boolean {
@@ -309,7 +309,7 @@ class RuuviNetworkInteractor (
             UpdateUserSettingRequest(name, value)
         )
         Timber.d("updateUserSetting $networkRequest")
-        networkRequestExecutor.registerRequest(networkRequest, false)
+        networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
     fun setAlert(alarm: Alarm) {
