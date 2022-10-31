@@ -131,6 +131,16 @@ class GraphView (
         }
     }
 
+    fun clearView() {
+        storedReadings = null
+        tempChart.clear()
+        humidChart.clear()
+        pressureChart.clear()
+        tempChart.fitScreen()
+        humidChart.fitScreen()
+        pressureChart.fitScreen()
+    }
+
     private fun setupVisibility(view: View, showTemperature: Boolean, showHumidity: Boolean, showPressure: Boolean) {
         if (visibilitySet) return
         tempChart = view.findViewById(R.id.tempChart)
