@@ -47,6 +47,7 @@ class GraphView (
     private var graphSetupCompleted = false
     private var offsetsNormalized = false
     private var visibilitySet = false
+    private val isTablet = context.resources.getBoolean(R.bool.isTablet)
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
@@ -56,7 +57,7 @@ class GraphView (
             inputReadings: List<TagSensorReading>,
             view: View
     ) {
-        Timber.d("drawChart pointsCount = ${inputReadings.size}")
+        Timber.d("drawChart pointsCount = ${inputReadings.size} isTablet $isTablet")
         setupCharts(view)
 
         val firstReading = inputReadings.firstOrNull()
@@ -309,7 +310,8 @@ class GraphView (
 
     private fun setLabelCount(chart: LineChart) {
         val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
-        val labelCount = if (timeText.length > 5) 4 else 6
+        var labelCount = if (timeText.length > 5) 4 else 6
+        if (isTablet) labelCount += 1
         chart.xAxis.setLabelCount(labelCount, false)
         chart.axisLeft.setLabelCount(6, false)
     }
@@ -374,15 +376,18 @@ class GraphView (
     }
 
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
+        val tabletMultiplier = if (isTablet) 1.5f else 1.0f
+
         val offsetLeft =
             if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
-                pressureChart.viewPortHandler.offsetLeft() * 1.1f
+                pressureChart.viewPortHandler.offsetLeft() * 1.1f * tabletMultiplier
             } else {
-                tempChart.viewPortHandler.offsetLeft() * 1.1f
+                tempChart.viewPortHandler.offsetLeft() * 1.1f * tabletMultiplier
             }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 1.2f
-        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
-        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
+        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 1.2f * tabletMultiplier
+        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f * tabletMultiplier
+        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f * tabletMultiplier
+
 
         tempChart.setViewPortOffsets(
             offsetLeft,
