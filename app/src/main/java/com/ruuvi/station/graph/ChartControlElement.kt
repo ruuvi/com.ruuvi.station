@@ -25,7 +25,6 @@ import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.components.RuuviMessageDialog
-import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.TagViewModel
@@ -253,7 +252,7 @@ fun ThreeDotsMenu(
 
     Box() {
         IconButton(onClick = { threeDotsMenuExpanded = !threeDotsMenuExpanded }) {
-            Icon(painter = painterResource(id = R.drawable.ic_menu_24),
+            Icon(painter = painterResource(id = R.drawable.ic_3dots),
                 contentDescription = null,
                 tint = RuuviStationTheme.colors.buttonText
             )

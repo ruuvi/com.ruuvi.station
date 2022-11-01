@@ -24,7 +24,7 @@ class ChartMarkerView @JvmOverloads
     private var tvContent: TextView = findViewById(R.id.tvContent)
 
     override fun getOffset(): MPPointF {
-        return MPPointF((-(width / 2)).toFloat(), (-height).toFloat())
+        return MPPointF((-(width / 2)).toFloat(), (-height).toFloat() -15)
     }
 
     override fun refreshContent(e: Entry, highlight: Highlight) {
