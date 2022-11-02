@@ -8,6 +8,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
 
 class UnitsConverter (
@@ -195,6 +196,26 @@ class UnitsConverter (
         } else {
             context.getString(R.string.signal_reading_zero, context.getString(R.string.signal_unit))
         }
+
+    fun getSignalUnit(): String {
+        return context.getString(R.string.signal_unit)
+    }
+
+    fun getDisplayValue(value: Float): String {
+        if (value.isInteger(0.09f)) {
+            return getDisplayApproximateValue(value)
+        } else {
+            return getDisplayPreciseValue(value)
+        }
+    }
+
+    fun getDisplayPreciseValue(value: Float): String {
+        return String.format("%1$,.1f", value)
+    }
+
+    fun getDisplayApproximateValue(value: Float): String {
+        return value.round(0).toInt().toString()
+    }
 
     companion object {
         const val NO_VALUE_AVAILABLE = "-"
