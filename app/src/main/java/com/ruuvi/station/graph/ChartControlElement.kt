@@ -229,6 +229,7 @@ fun ViewPeriodMenu(
     
     if (showMoreDialog) {
         RuuviMessageDialog(
+            title = stringResource(id = R.string.longer_history_title),
             message = stringResource(id = R.string.longer_history_message)
         ) {
             showMoreDialog = false
