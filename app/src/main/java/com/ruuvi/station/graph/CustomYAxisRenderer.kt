@@ -1,10 +1,10 @@
 package com.ruuvi.station.graph
 
+import android.graphics.Canvas
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.renderer.YAxisRenderer
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.ViewPortHandler
-import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -13,6 +13,32 @@ class CustomYAxisRenderer(
     yAxis: YAxis?,
     trans: Transformer?
 ): YAxisRenderer(viewPortHandler, yAxis, trans) {
+
+    override fun drawYLabels(
+        c: Canvas,
+        fixedPosition: Float,
+        positions: FloatArray,
+        offset: Float
+    ) {
+        val from = if (mYAxis.isDrawBottomYLabelEntryEnabled) 0 else 1
+        val to =
+            if (mYAxis.isDrawTopYLabelEntryEnabled) mYAxis.mEntryCount else mYAxis.mEntryCount - 1
+        val xOffset = mYAxis.labelXOffset
+
+        for (i in from until to) {
+            val text = mYAxis.getFormattedLabel(i)
+            val x = fixedPosition + xOffset
+            val y = positions[i * 2 + 1] + offset
+            if (y < mViewPortHandler.contentBottom()) {
+                c.drawText(
+                    text,
+                    x,
+                    y,
+                    mAxisLabelPaint
+                )
+            }
+        }
+    }
 
     override fun computeAxisValues(min: Float, max: Float) {
         if (min == Float.MAX_VALUE || max == Float.MAX_VALUE) {
