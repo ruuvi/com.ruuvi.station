@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
 import android.view.View
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -34,7 +36,6 @@ import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class GraphView (
     private val unitsConverter: UnitsConverter,
@@ -375,19 +376,20 @@ class GraphView (
         }
     }
 
+    // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
-        val tabletMultiplier = if (isTablet) 1.5f else 1.0f
+        val computePaint = Paint(1)
+        computePaint.typeface = pressureChart.axisLeft.typeface
+        computePaint.textSize = pressureChart.axisLeft.textSize
+        val computeSize = Utils.calcTextSize(computePaint, "0000.00")
+        val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
 
-        val offsetLeft =
-            if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
-                pressureChart.viewPortHandler.offsetLeft() * 1.1f * tabletMultiplier
-            } else {
-                tempChart.viewPortHandler.offsetLeft() * 1.1f * tabletMultiplier
-            }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 1.2f * tabletMultiplier
-        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f * tabletMultiplier
-        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f * tabletMultiplier
+        val offsetLeft = computeSize.width * 1.1f
+        val offsetBottom = computeHeight * 2
+        val offsetTop = tempChart.viewPortHandler.offsetTop() / 2f
+        val offsetRight = tempChart.viewPortHandler.offsetRight() / 2f
 
+        Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
 
         tempChart.setViewPortOffsets(
             offsetLeft,
