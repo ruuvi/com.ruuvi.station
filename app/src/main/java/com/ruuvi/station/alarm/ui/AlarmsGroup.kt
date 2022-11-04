@@ -39,7 +39,7 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
         while (true) {
             Timber.d("AlarmItems refreshAlarmState ")
             viewModel.refreshAlarmState()
-            delay(3000)
+            delay(1000)
         }
     }
 
