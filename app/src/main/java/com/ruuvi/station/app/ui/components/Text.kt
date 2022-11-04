@@ -27,6 +27,15 @@ fun SubtitleWithPadding(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun SmallerParagraph(text: String, modifier: Modifier = Modifier) {
+    Text(
+        style = RuuviStationTheme.typography.paragraphSmall,
+        text = text,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun Paragraph(text: String, modifier: Modifier = Modifier) {
     Text(
         style = RuuviStationTheme.typography.paragraph,

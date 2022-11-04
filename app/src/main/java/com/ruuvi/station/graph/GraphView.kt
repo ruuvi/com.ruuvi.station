@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
 import android.view.View
@@ -18,14 +19,18 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.GraphEntry
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DateFormat.getTimeInstance
@@ -43,6 +48,7 @@ class GraphView (
     private var graphSetupCompleted = false
     private var offsetsNormalized = false
     private var visibilitySet = false
+    private val isTablet = context.resources.getBoolean(R.bool.isTablet)
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
@@ -52,7 +58,7 @@ class GraphView (
             inputReadings: List<TagSensorReading>,
             view: View
     ) {
-        Timber.d("drawChart pointsCount = ${inputReadings.size}")
+        Timber.d("drawChart pointsCount = ${inputReadings.size} isTablet $isTablet")
         setupCharts(view)
 
         val firstReading = inputReadings.firstOrNull()
@@ -127,6 +133,16 @@ class GraphView (
         }
     }
 
+    fun clearView() {
+        storedReadings = null
+        tempChart.clear()
+        humidChart.clear()
+        pressureChart.clear()
+        tempChart.fitScreen()
+        humidChart.fitScreen()
+        pressureChart.fitScreen()
+    }
+
     private fun setupVisibility(view: View, showTemperature: Boolean, showHumidity: Boolean, showPressure: Boolean) {
         if (visibilitySet) return
         tempChart = view.findViewById(R.id.tempChart)
@@ -167,13 +183,34 @@ class GraphView (
             synchronizeChartGestures(setOf(tempChart, humidChart, pressureChart))
             graphSetupCompleted = true
 
-            applyChartStyle(tempChart)
-            applyChartStyle(humidChart)
-            applyChartStyle(pressureChart)
+            applyChartStyle(tempChart, ChartSensorType.TEMPERATURE)
+            applyChartStyle(humidChart, ChartSensorType.HUMIDITY)
+            applyChartStyle(pressureChart, ChartSensorType.PRESSURE)
+
+            setupHighLighting(arrayListOf(tempChart, humidChart, pressureChart))
         }
     }
 
-    private fun applyChartStyle(chart: LineChart) {
+    private fun setupHighLighting(charts: ArrayList<LineChart>) {
+        for (chart in charts) {
+            val otherCharts = charts.filter { it != chart }
+            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                override fun onValueSelected(entry: Entry, highlight: Highlight) {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                    }
+                }
+
+                override fun onNothingSelected() {
+                    for (otherChart in otherCharts) {
+                        otherChart.highlightValue(0f, -1, false)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun applyChartStyle(chart: LineChart, chartSensorType: ChartSensorType) {
         chart.axisRight.isEnabled = false
 
         chart.xAxis.textColor = Color.WHITE
@@ -189,6 +226,20 @@ class GraphView (
         chart.setNoDataTextColor(Color.WHITE)
         chart.viewPortHandler.setMaximumScaleX(5000f)
         chart.viewPortHandler.setMaximumScaleY(30f)
+        chart.setTouchEnabled(true)
+        chart.isDoubleTapToZoomEnabled = false
+        chart.isHighlightPerTapEnabled = true
+
+        val markerView = ChartMarkerView(
+            context = context,
+            layoutResource = R.layout.custom_marker_view,
+            chartSensorType = chartSensorType,
+            unitsConverter = unitsConverter
+        ) {
+            return@ChartMarkerView from
+        }
+        markerView.chartView = chart
+        chart.marker = markerView
 
         try {
             val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
@@ -224,6 +275,15 @@ class GraphView (
                 chart.getTransformer(YAxis.AxisDependency.LEFT)
             )
         )
+        chart.rendererLeftYAxis = CustomYAxisRenderer(
+            chart.viewPortHandler,
+            chart.axisLeft,
+            chart.getTransformer(YAxis.AxisDependency.LEFT)
+        )
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
         setLabelCount(chart)
@@ -233,16 +293,16 @@ class GraphView (
         chart.axisLeft.axisMaximum = set.yMax + 0.5f
 
         chart.data = LineData(set)
-        chart.data.isHighlightEnabled = false
+        chart.data.isHighlightEnabled = true
         chart.xAxis.valueFormatter = object : IAxisValueFormatter {
             override fun getFormattedValue(value: Double, p1: AxisBase?): String {
                 val date = Date(value.toLong() + from)
-                val timeText = getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
-
-                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-                val dateText: String = DateUtils.formatDateTime(context, value.toLong() + from, flags)
-
-                return "$timeText\n$dateText"
+                return if (date.isStartOfTheDay()) {
+                    val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+                    DateUtils.formatDateTime(context, date.time, flags)
+                } else {
+                    getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
+                }
             }
         }
         chart.notifyDataSetChanged()
@@ -251,7 +311,8 @@ class GraphView (
 
     private fun setLabelCount(chart: LineChart) {
         val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
-        val labelCount = if (timeText.length > 5) 4 else 6
+        var labelCount = if (timeText.length > 5) 4 else 6
+        if (isTablet) labelCount += 1
         chart.xAxis.setLabelCount(labelCount, false)
         chart.axisLeft.setLabelCount(6, false)
     }
@@ -315,16 +376,20 @@ class GraphView (
         }
     }
 
+    // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
     private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
-        val offsetLeft =
-            if (pressureChart.viewPortHandler.offsetLeft() > tempChart.viewPortHandler.offsetLeft()) {
-                pressureChart.viewPortHandler.offsetLeft() * 1.1f
-            } else {
-                tempChart.viewPortHandler.offsetLeft() * 1.1f
-            }
-        val offsetBottom = pressureChart.viewPortHandler.offsetBottom() * 2.35f
-        val offsetTop = pressureChart.viewPortHandler.offsetTop() / 2f
-        val offsetRight = pressureChart.viewPortHandler.offsetRight() / 2f
+        val computePaint = Paint(1)
+        computePaint.typeface = pressureChart.axisLeft.typeface
+        computePaint.textSize = pressureChart.axisLeft.textSize
+        val computeSize = Utils.calcTextSize(computePaint, "0000.00")
+        val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
+
+        val offsetLeft = computeSize.width * 1.1f
+        val offsetBottom = computeHeight * 2
+        val offsetTop = tempChart.viewPortHandler.offsetTop() / 2f
+        val offsetRight = tempChart.viewPortHandler.offsetRight() / 2f
+
+        Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
 
         tempChart.setViewPortOffsets(
             offsetLeft,

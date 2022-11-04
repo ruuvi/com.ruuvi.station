@@ -21,13 +21,11 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
-import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Utils
 import com.ruuvi.station.util.extensions.resolveColorAttr
@@ -196,7 +194,21 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_export) {
             val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
-            exporter.toCsv(viewModel.sensorId)
+            val uri = exporter.toCsv(viewModel.sensorId)
+            if (uri != null) {
+                val sendIntent = Intent()
+                sendIntent.action = Intent.ACTION_SEND
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                sendIntent.type = "text/csv"
+                sendIntent.flags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(
+                    Intent.createChooser(
+                        sendIntent,
+                        getString(R.string.export_csv_chooser_title, viewModel.sensorId)
+                    )
+                )
+            }
         } else {
             finish()
         }

@@ -8,7 +8,8 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
-import com.ruuvi.station.util.Utils
+import com.ruuvi.station.util.extensions.isInteger
+import com.ruuvi.station.util.extensions.round
 
 class UnitsConverter (
         private val context: Context,
@@ -25,7 +26,7 @@ class UnitsConverter (
 
     fun getTemperatureValue(temperatureCelsius: Double): Double {
         return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> Utils.round(temperatureCelsius, 2)
+            TemperatureUnit.CELSIUS -> temperatureCelsius.round(2)
             TemperatureUnit.KELVIN-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
             TemperatureUnit.FAHRENHEIT -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
         }
@@ -43,7 +44,7 @@ class UnitsConverter (
         return when (getTemperatureUnit()) {
             TemperatureUnit.CELSIUS -> temperature
             TemperatureUnit.KELVIN-> temperature
-            TemperatureUnit.FAHRENHEIT -> Utils.round(temperature * fahrenheitMultiplier, 2)
+            TemperatureUnit.FAHRENHEIT -> (temperature * fahrenheitMultiplier).round(2)
         }
     }
 
@@ -51,9 +52,13 @@ class UnitsConverter (
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            val displayAccuracy = accuracy ?: getTemperatureAccuracy()
-            context.getString(displayAccuracy.nameTemplateId, getTemperatureValue(temperature), getTemperatureUnitString())
+            getTemperatureRawString(getTemperatureValue(temperature), accuracy)
         }
+
+    fun getTemperatureRawString(temperature: Double, accuracy: Accuracy? = null): String {
+        val displayAccuracy = accuracy ?: getTemperatureAccuracy()
+        return context.getString(displayAccuracy.nameTemplateId, temperature, getTemperatureUnitString())
+    }
 
     fun getTemperatureAccuracy() = preferences.getTemperatureAccuracy()
 
@@ -97,12 +102,16 @@ class UnitsConverter (
         return if (pressure == null) {
             NO_VALUE_AVAILABLE
         } else {
-            if (getPressureUnit() == PressureUnit.PA) {
-                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), getPressureUnitString())
-            } else {
-                val displayAccuracy = accuracy ?: getPressureAccuracy()
-                context.getString(displayAccuracy.nameTemplateId, getPressureValue(pressure), getPressureUnitString())
-            }
+            getPressureRawString(getPressureValue(pressure), accuracy)
+        }
+    }
+
+    fun getPressureRawString(pressure: Double, accuracy: Accuracy? = null): String {
+        return if (getPressureUnit() == PressureUnit.PA) {
+            context.getString(R.string.pressure_reading_pa, pressure, getPressureUnitString())
+        } else {
+            val displayAccuracy = accuracy ?: getPressureAccuracy()
+            return context.getString(displayAccuracy.nameTemplateId, pressure, getPressureUnitString())
         }
     }
 
@@ -137,13 +146,13 @@ class UnitsConverter (
         val converter = HumidityConverter(temperature, humidity/100)
 
         return when (humidityUnit) {
-            HumidityUnit.PERCENT -> Utils.round(humidity, 2)
-            HumidityUnit.GM3-> Utils.round(converter.absoluteHumidity, 2)
+            HumidityUnit.PERCENT -> humidity.round(2)
+            HumidityUnit.GM3-> converter.absoluteHumidity.round(2)
             HumidityUnit.DEW -> {
                 when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> Utils.round(converter.toDewCelsius ?: 0.0, 2)
-                    TemperatureUnit.KELVIN-> Utils.round(converter.toDewKelvin ?: 0.0, 2)
-                    TemperatureUnit.FAHRENHEIT -> Utils.round(converter.toDewFahrenheit ?: 0.0, 2)
+                    TemperatureUnit.CELSIUS -> (converter.toDewCelsius ?: 0.0).round(2)
+                    TemperatureUnit.KELVIN-> (converter.toDewKelvin ?: 0.0).round(2)
+                    TemperatureUnit.FAHRENHEIT -> (converter.toDewFahrenheit ?: 0.0).round(2)
                 }
             }
         }
@@ -165,9 +174,18 @@ class UnitsConverter (
         return if (humidity == null || temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            val displayAccuracy = accuracy ?: getPressureAccuracy()
-            context.getString(displayAccuracy.nameTemplateId, getHumidityValue(humidity, temperature, humidityUnit), getHumidityUnitString(humidityUnit))
+            getHumidityRawString(getHumidityValue(humidity, temperature, humidityUnit), accuracy, humidityUnit)
         }
+    }
+
+
+    fun getHumidityRawString(
+        hunidity: Double,
+        accuracy: Accuracy? = null,
+        humidityUnit: HumidityUnit = getHumidityUnit()
+    ): String {
+        val displayAccuracy = accuracy ?: getHumidityAccuracy()
+        return context.getString(displayAccuracy.nameTemplateId, hunidity, getHumidityUnitString(humidityUnit))
     }
 
     fun getHumidityAccuracy() = preferences.getHumidityAccuracy()
@@ -178,6 +196,26 @@ class UnitsConverter (
         } else {
             context.getString(R.string.signal_reading_zero, context.getString(R.string.signal_unit))
         }
+
+    fun getSignalUnit(): String {
+        return context.getString(R.string.signal_unit)
+    }
+
+    fun getDisplayValue(value: Float): String {
+        if (value.isInteger(0.09f)) {
+            return getDisplayApproximateValue(value)
+        } else {
+            return getDisplayPreciseValue(value)
+        }
+    }
+
+    fun getDisplayPreciseValue(value: Float): String {
+        return String.format("%1$,.1f", value)
+    }
+
+    fun getDisplayApproximateValue(value: Float): String {
+        return value.round(0).toInt().toString()
+    }
 
     companion object {
         const val NO_VALUE_AVAILABLE = "-"

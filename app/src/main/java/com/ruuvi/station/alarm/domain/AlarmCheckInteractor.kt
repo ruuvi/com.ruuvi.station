@@ -172,18 +172,23 @@ class AlarmCheckInteractor(
         fun getMessage(): String? {
             alarmResource?.let { resource ->
                 return when (alarm.alarmType) {
-                    AlarmType.HUMIDITY ->
-                        context.getString(resource, "$thresholdValue ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
+                    AlarmType.HUMIDITY -> {
+                        val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
+                        context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
+                    }
                     AlarmType.PRESSURE -> {
-                        val thresholdString = "${unitsConverter.getPressureValue(thresholdValue).toInt()} ${unitsConverter.getPressureUnitString()}"
+                        val displayThreshold = unitsConverter.getDisplayValue(unitsConverter.getPressureValue(thresholdValue).toFloat())
+                        val thresholdString = "$displayThreshold ${unitsConverter.getPressureUnitString()}"
                         context.getString(resource, thresholdString)
                     }
                     AlarmType.TEMPERATURE -> {
-                        val thresholdString = "${unitsConverter.getTemperatureValue(thresholdValue).toInt()}${unitsConverter.getTemperatureUnitString()}"
+                        val displayThreshold = unitsConverter.getDisplayValue(unitsConverter.getTemperatureValue(thresholdValue).toFloat())
+                        val thresholdString = "$displayThreshold${unitsConverter.getTemperatureUnitString()}"
                         context.getString(resource, thresholdString)
                     }
                     AlarmType.RSSI -> {
-                        context.getString(resource, unitsConverter.getSignalString(thresholdValue.toInt()))
+                        val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
+                        context.getString(resource, "$displayThreshold ${unitsConverter.getSignalUnit()}")
                     }
                     AlarmType.MOVEMENT -> context.getString(resource)
                     else -> null

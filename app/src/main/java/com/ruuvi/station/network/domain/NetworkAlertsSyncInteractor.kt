@@ -37,13 +37,15 @@ class NetworkAlertsSyncInteractor(
     private fun saveNetworkAlert(sensorId: String, alert: NetworkAlertItem) {
         val type = AlarmType.getByNetworkCode(alert.type)
         if (type != null) {
+            val savedAlert = alarmRepository.getForSensor(sensorId).firstOrNull { it.type == type.value }
             alarmRepository.upsertAlarm(
                 sensorId = sensorId,
                 min = alert.min,
                 max = alert.max,
                 enabled = alert.enabled,
                 type = type.value,
-                description = alert.description
+                description = alert.description,
+                mutedTill = savedAlert?.mutedTill
             )
         } else {
             Timber.d("NetworkAlertsSyncInteractor-unknown alarm type: ${alert.type}")

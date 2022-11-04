@@ -1,5 +1,6 @@
 package com.ruuvi.station.alarm.ui
 
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -12,8 +13,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -27,44 +28,60 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import kotlinx.coroutines.delay
 import timber.log.Timber
+import java.text.DateFormat
+import java.util.*
 
 @Composable
 fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
-    val alarms = viewModel.alarms
+    LaunchedEffect(key1 = true) {
+        Timber.d("Alarms LaunchedEffect")
+        viewModel.initAlarms()
+        while (true) {
+            Timber.d("AlarmItems refreshAlarmState ")
+            viewModel.refreshAlarmState()
+            delay(1000)
+        }
+    }
 
+    val alarms = viewModel.alarms
     Timber.d("AlarmItems refresh ")
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
             val title = viewModel.getTitle(itemState.type)
-            if (itemState.type == AlarmType.MOVEMENT) {
-                MovementAlertEditItem(
-                    title = title,
-                    alarmState = itemState,
-                    changeEnabled = viewModel::setEnabled,
-                    setDescription = viewModel::setDescription,
-                )
-            } else {
-                AlertEditItem(
-                    title = title,
-                    alarmState = itemState,
-                    changeEnabled = viewModel::setEnabled,
-                    setDescription = viewModel::setDescription,
-                    setRange = viewModel::setRange,
-                    saveRange = viewModel::saveRange,
-                    getPossibleRange = viewModel::getPossibleRange,
-                    validateRange = viewModel::validateRange,
-                    manualRangeSave = viewModel::manualRangeSave
-                )
+            when (itemState.type) {
+                AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE ->
+                    AlertEditItem(
+                        title = title,
+                        alarmState = itemState,
+                        changeEnabled = viewModel::setEnabled,
+                        setDescription = viewModel::setDescription,
+                        setRange = viewModel::setRange,
+                        saveRange = viewModel::saveRange,
+                        getPossibleRange = viewModel::getPossibleRange,
+                        validateRange = viewModel::validateRange,
+                        manualRangeSave = viewModel::manualRangeSave
+                    )
+                AlarmType.RSSI ->
+                    RssiAlertEditItem(
+                        title = title,
+                        alarmState = itemState,
+                        changeEnabled = viewModel::setEnabled,
+                        setDescription = viewModel::setDescription,
+                        setRange = viewModel::setRange,
+                        saveRange = viewModel::saveRange,
+                        getPossibleRange = viewModel::getPossibleRange,
+                        validateRange = viewModel::validateRange,
+                        manualRangeSave = viewModel::manualRangeSave
+                    )
+                AlarmType.MOVEMENT ->
+                    MovementAlertEditItem(
+                        title = title,
+                        alarmState = itemState,
+                        changeEnabled = viewModel::setEnabled,
+                        setDescription = viewModel::setDescription,
+                    )
             }
-        }
-    }
-
-    LaunchedEffect(key1 = 2) {
-        while (true) {
-            Timber.d("AlarmItems refreshAlarmState ")
-            viewModel.refreshAlarmState()
-            delay(3000)
         }
     }
 }
@@ -93,7 +110,94 @@ fun AlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
-            text = stringResource(id = R.string.alert),
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
+            checked = alarmState.isEnabled,
+            onCheckedChange = {
+                changeEnabled.invoke(alarmState.type, it)
+            },
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium)
+        )
+        DividerRuuvi()
+        TextEditButton(
+            value = alarmState.customDescription,
+            emptyText = stringResource(id = R.string.alarm_custom_title_hint)
+        ) {
+            openDescriptionDialog = true
+        }
+        DividerRuuvi()
+        TextEditButton(
+            value = stringResource(
+                id = R.string.alert_subtitle_on,
+                alarmState.displayLow,
+                alarmState.displayHigh),
+            emptyText = ""
+        ) {
+            openAlarmEditDialog = true
+        }
+
+        RuuviRangeSlider(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+            values = alarmState.rangeLow .. alarmState.rangeHigh,
+            valueRange = possibleRange,
+            onValueChange = {
+                setRange.invoke(alarmState.type, it)
+            },
+            onValueChangeFinished = {
+                saveRange.invoke(alarmState.type)
+            }
+        )
+    }
+    DividerSurfaceColor()
+
+    if (openDescriptionDialog) {
+        ChangeDescriptionDialog(
+            alarmState = alarmState,
+            setDescription = setDescription
+        ) {
+            openDescriptionDialog = false
+        }
+    }
+
+    if (openAlarmEditDialog) {
+        AlarmEditDialog(
+            alarmState = alarmState,
+            getPossibleRange = getPossibleRange,
+            validateRange = validateRange,
+            manualRangeSave = manualRangeSave
+        ) {
+            openAlarmEditDialog = false
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RssiAlertEditItem(
+    title: String,
+    alarmState: AlarmItemState,
+    changeEnabled: (AlarmType, Boolean) -> Unit,
+    setDescription: (AlarmType, String) -> Unit,
+    setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
+    saveRange: (AlarmType) -> Unit,
+    getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
+    validateRange: (AlarmType, Double?, Double?) -> Boolean,
+    manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+) {
+    var openDescriptionDialog by remember { mutableStateOf(false) }
+    var openAlarmEditDialog by remember { mutableStateOf(false) }
+    val possibleRange by remember {
+        mutableStateOf(getPossibleRange.invoke(alarmState.type))
+    }
+
+    ExpandableContainer(header = {
+        AlarmHeader(title, alarmState)
+    }) {
+        SmallerParagraph(
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium),
+            text = stringResource(id = R.string.rssi_alert_description)
+        )
+        SwitchIndicatorRuuvi(
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -209,7 +313,7 @@ fun MovementAlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
-            text = stringResource(id = R.string.alert),
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
@@ -347,5 +451,13 @@ fun AlarmEditDialog(
         ) { parsed, value ->
             max = value
         }
+    }
+}
+
+fun getMutedText(context: Context, mutedTill: Date?): String {
+    return if (mutedTill != null && mutedTill > Date()) {
+        context.getString(R.string.muted_till, DateFormat.getTimeInstance(DateFormat.SHORT).format(mutedTill))
+    } else {
+        ""
     }
 }

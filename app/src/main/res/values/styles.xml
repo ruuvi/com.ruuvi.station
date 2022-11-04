@@ -74,6 +74,15 @@
         <item name="fontFamily">@font/mulish_regular</item>
     </style>
 
+    <style name="SensorScreenParagraphSmall">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:alpha">0.5</item>
+        <item name="android:textSize">@dimen/textParagraphSmallSize</item>
+        <item name="lineHeight">@dimen/textSmallLineHeight</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+    </style>
+
+
     <style name="ParagraphSmall.Secondary" parent="ParagraphSmall">
         <item name="android:alpha">0.5</item>
     </style>
@@ -257,15 +266,6 @@
 
     <style name="progressStyle">
         <item name="colorAccent">?attr/colorAccent</item>
-    </style>
-
-    <style name="RangeSeekStyle">
-        <item name="bar_color">?colorDivider</item>
-        <item name="bar_highlight_color">?colorAccent</item>
-        <item name="right_thumb_color">?colorAccent</item>
-        <item name="left_thumb_color">?colorAccent</item>
-        <item name="right_thumb_color_pressed">?attr/colorButtonPressed</item>
-        <item name="left_thumb_color_pressed">?attr/colorButtonPressed</item>
     </style>
 
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
