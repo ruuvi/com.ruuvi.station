@@ -8,13 +8,13 @@ apply plugin: "kotlinx-serialization"
 
 android {
 
-    compileSdkVersion 32
+    compileSdkVersion 33
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 115006
         versionName "1.15.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
