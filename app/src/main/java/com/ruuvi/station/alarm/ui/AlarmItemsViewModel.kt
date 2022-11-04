@@ -167,6 +167,7 @@ class AlarmItemsViewModel(
         val alertItems = alarmsInteractor.getAlarmsForSensor(sensorId)
         for ((index, item) in _alarms.withIndex()) {
             val updated = alertItems.firstOrNull { it.type == item.type }
+            item.isEnabled = updated?.isEnabled ?: item.isEnabled
             item.triggered = updated?.triggered ?: false
             item.mutedTill = updated?.mutedTill
         }
