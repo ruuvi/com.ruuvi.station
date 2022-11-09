@@ -50,6 +50,7 @@ import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -366,22 +367,21 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
                 R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
                 R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
-                R.id.loginMenuItem -> login(signedIn)
+                R.id.loginMenuItem -> {
+                    if (signedIn) {
+                        MyAccountActivity.start(this)
+                    } else {
+                        login(signedIn)
+                    }
+                }
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
 
-        viewModel.userEmail.observe(this) {
-            var user = it
-            if (user.isNullOrEmpty()) {
-                user = getString(R.string.none)
-                signedIn = false
-            } else {
-                signedIn = true
-            }
+        viewModel.userEmail.observe(this) { user ->
+            signedIn = !user.isNullOrEmpty()
             updateMenu(signedIn)
-            binding.navigationContent.loggedUserTextView.text = user
         }
     }
 
@@ -405,11 +405,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun updateMenu(signed: Boolean) {
-        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
-                getString(R.string.sign_out)
+                getString(R.string.my_ruuvi_account)
             } else {
                 getString(R.string.sign_in)
             }

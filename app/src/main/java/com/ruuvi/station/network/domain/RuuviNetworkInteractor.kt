@@ -323,4 +323,15 @@ class RuuviNetworkInteractor (
             networkRequestExecutor.registerRequest(networkRequest)
         }
     }
+
+    fun requestDeleteAccount(onResult: (DeleteAccountResponse?) -> Unit) {
+        val token = getToken()
+        if (token != null) {
+            networkRepository.requestDeleteAccount(
+                email = token.email,
+                token = token.token,
+                onResult = onResult
+            )
+        }
+    }
 }

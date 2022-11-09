@@ -26,7 +26,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = '1.8'
     }
 
     lintOptions {
@@ -67,6 +67,11 @@ android {
     composeOptions {
         kotlinCompilerVersion kotlin_version
         kotlinCompilerExtensionVersion compose_version
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
@@ -131,6 +136,7 @@ dependencies {
     implementation 'net.swiftzer.semver:semver:1.1.1'
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     kapt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbflow_version"
     implementation "com.github.Raizlabs.DBFlow:dbflow-core:$dbflow_version"
