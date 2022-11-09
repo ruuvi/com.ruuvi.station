@@ -7,6 +7,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
 
@@ -49,14 +50,14 @@ class AlarmsInteractor(
 
     fun getSavableValue(type: AlarmType, value: Double): Double {
         return when (type) {
-            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureCelsiusValue(value)
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureCelsiusValue(value).round(4)
             AlarmType.PRESSURE -> unitsConverter.getPressurePascalValue(value)
             else -> value
         }
     }
 
     fun getDisplayValue(value: Float): String {
-        if (value.isInteger(0.09f)) {
+        if (value.isInteger(0.009f)) {
             return getDisplayApproximateValue(value)
         } else {
             return getDisplayPreciseValue(value)
@@ -64,7 +65,11 @@ class AlarmsInteractor(
     }
 
     fun getDisplayPreciseValue(value: Float): String {
-        return String.format("%1$,.1f", value)
+        if (value.equalsEpsilon(value.round(1), 0.0001f)) {
+            return String.format("%1$,.1f", value)
+        } else {
+            return String.format("%1$,.2f", value)
+        }
     }
 
     fun getDisplayApproximateValue(value: Float): String {
