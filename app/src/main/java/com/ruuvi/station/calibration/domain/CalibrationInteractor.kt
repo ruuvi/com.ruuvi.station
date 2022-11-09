@@ -10,6 +10,7 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.util.extensions.round
 
 class CalibrationInteractor (
     val tagRepository: TagRepository,
@@ -28,7 +29,7 @@ class CalibrationInteractor (
         val data = getSensorData(sensorId)
         data?.let {
             val fromTemperature = data.temperature - data.temperatureOffset
-            val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue)
+            val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue).round(2)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset)
             saveCalibrationToNetwork(sensorId)

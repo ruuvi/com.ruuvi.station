@@ -8,6 +8,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
 
@@ -208,9 +209,12 @@ class UnitsConverter (
             return getDisplayPreciseValue(value)
         }
     }
-
     fun getDisplayPreciseValue(value: Float): String {
-        return String.format("%1$,.1f", value)
+        if (value.equalsEpsilon(value.round(1), 0.0001f)) {
+            return String.format("%1$,.1f", value)
+        } else {
+            return String.format("%1$,.2f", value)
+        }
     }
 
     fun getDisplayApproximateValue(value: Float): String {
