@@ -130,6 +130,13 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
+        android:name="com.ruuvi.station.network.ui.MyAccountActivity"
+        android:exported="false"
+        android:label="@string/my_ruuvi_account"
+        android:theme="@style/AppTheme.NoActionBar"
+        android:windowSoftInputMode="adjustResize" />
+
+    <activity
         android:name="com.ruuvi.station.dfu.ui.DfuUpdateActivity"
         android:exported="true"
         android:label="@string/title_activity_dfu_update"

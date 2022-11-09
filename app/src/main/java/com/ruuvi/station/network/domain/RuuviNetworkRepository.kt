@@ -340,6 +340,28 @@ class RuuviNetworkRepository
         result
     }
 
+    fun requestDeleteAccount(email: String, token: String, onResult: (DeleteAccountResponse?) -> Unit) {
+        ioScope.launch {
+            var result: DeleteAccountResponse?
+            try {
+                val response = retrofitService.deleteAccount(getAuth(token), DeleteAccountRequest(email))
+                if (response.isSuccessful) {
+                    result = response.body()
+                } else {
+                    val type = object : TypeToken<UserRegisterResponse>() {}.type
+                    val errorResponse: DeleteAccountResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                    result = errorResponse
+                }
+            } catch (e: Exception) {
+                result = DeleteAccountResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null, code = null)
+            }
+
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
+    }
+
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/"
 

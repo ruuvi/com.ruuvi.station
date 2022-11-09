@@ -11,40 +11,4 @@
     app:menu="@menu/menu_main"
     app:itemTextAppearance="@style/MenuItemStyle"
     android:background="?android:attr/colorBackground" >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/networkLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:layout_editor_absoluteX="0dp">
-
-            <TextView
-                android:id="@+id/networkStatusTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/logged_in"
-                android:textStyle="bold"
-                style="@style/Subtitle"/>
-
-            <TextView
-                android:id="@+id/loggedUserTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                style="@style/Paragraph.WithPadding"
-                tools:text="@string/network_user" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
 </com.google.android.material.navigation.NavigationView>

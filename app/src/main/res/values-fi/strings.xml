@@ -8,6 +8,7 @@
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
+    <string name="account_delete_confirmation_description">Vahvistussähköposti lähetetty. Poista tili noudattamalla sähköpostissa annettuja ohjeita.</string>
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
@@ -164,6 +165,7 @@
     <string name="day_9">9 päivää</string>
     <string name="day_x">%1$s päivää</string>
     <string name="days">päivää</string>
+    <string name="delete_account">Poista tili</string>
     <string name="details">Tiedot</string>
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
@@ -253,6 +255,7 @@
     <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
+    <string name="my_ruuvi_account">Minun Ruuvi-tili</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>

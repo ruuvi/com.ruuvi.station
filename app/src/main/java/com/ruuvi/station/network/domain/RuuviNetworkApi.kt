@@ -131,4 +131,11 @@ interface RuuviNetworkApi{
         @Query("measurements") measurements: Boolean = false,
         @Query("alerts") alerts: Boolean = false
     ): Response<SensorDenseResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("request-delete")
+    suspend fun deleteAccount(
+        @Header("Authorization") auth: String,
+        @Body request: DeleteAccountRequest
+    ): Response<DeleteAccountResponse>
 }
