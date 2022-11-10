@@ -12,8 +12,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.image.ImageInteractor
-import com.ruuvi.station.network.data.NetworkSyncResult
-import com.ruuvi.station.network.data.NetworkSyncResultType
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SortMode
@@ -24,7 +23,9 @@ import com.ruuvi.station.network.data.response.UserInfoResponseBody
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import java.io.File
@@ -50,21 +51,21 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var autoRefreshJob: Job? = null
 
-    private val syncResult = MutableStateFlow<NetworkSyncResult> (NetworkSyncResult(NetworkSyncResultType.NONE))
-    val syncResultFlow: StateFlow<NetworkSyncResult> = syncResult
+    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> ()
+    val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
 
     fun startAutoRefresh() {
-        Timber.d("startAutoRefresh")
+        Timber.d("startAutoRefresh isSignedIn = ${networkInteractor.signedIn}")
         if (autoRefreshJob != null && autoRefreshJob?.isActive == true) {
             Timber.d("Already in auto refresh mode")
             return
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
-            syncNetworkData(false)
+            if (networkInteractor.signedIn) syncNetworkData(false)
             delay(10000)
             while (true) {
                 val lastSync = preferencesRepository.getLastSyncDate()
@@ -93,19 +94,30 @@ class NetworkDataSyncInteractor (
         setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
+                Timber.d("Sync job started")
+                sendSyncEvent(NetworkSyncEvent.InProgress)
+                Timber.d("executeScheduledRequests")
                 networkRequestExecutor.executeScheduledRequests()
+
                 if (!networkRequestExecutor.anySettingsRequests()) {
+                    Timber.d("updateSettingsFromNetwork")
                     networkApplicationSettings.updateSettingsFromNetwork()
                 }
 
+                Timber.d("getUserInfo")
                 val userInfo = networkInteractor.getUserInfo()
-
-                if (userInfo?.data?.sensors == null) {
-                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
+                Timber.d("userInfo = $userInfo")
+                if (userInfo?.isError() == true || userInfo?.data == null) {
+                    val event = when (userInfo?.code) {
+                        NetworkResponseLocalizer.ER_UNAUTHORIZED -> NetworkSyncEvent.Unauthorised
+                        else -> NetworkSyncEvent.Error(userInfo?.error ?: "Unknown error")
+                    }
+                    sendSyncEvent(event)
                     return@launch
                 }
 
                 val benchUpdate1 = Date()
+                Timber.d("updateSensors")
                 updateSensors(userInfo.data, ecoMode)
                 firebaseInteractor.logSync(userInfo.data)
                 val benchUpdate2 = Date()
@@ -117,22 +129,21 @@ class NetworkDataSyncInteractor (
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 networkAlertsSyncInteractor.updateAlertsFromNetwork()
             } catch (exception: Exception) {
-                val message = exception.message
-                message?.let {
+                exception.message?.let { message ->
                     Timber.e(exception, "NetworkSync Exception")
-                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.EXCEPTION, it))
+                    sendSyncEvent(NetworkSyncEvent.Error(message))
+
                 }
             } finally {
+                sendSyncEvent(NetworkSyncEvent.Idle)
                 setSyncInProgress(false)
             }
-            setSyncInProgress(false)
         }
         return syncJob
     }
 
     private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
         if (!networkInteractor.signedIn) {
-            setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
             return
         }
 
@@ -154,7 +165,7 @@ class NetworkDataSyncInteractor (
             }
         }
 
-        setSyncResult(NetworkSyncResult(NetworkSyncResultType.SUCCESS))
+        sendSyncEvent(NetworkSyncEvent.Success)
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
@@ -214,9 +225,11 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun setSyncResult(status: NetworkSyncResult) = withContext(Dispatchers.Main) {
-        Timber.d("SyncStatus = $status")
-        syncResult.value = status
+    private suspend fun sendSyncEvent(event: NetworkSyncEvent) {
+        Timber.d("SyncEvent = $event")
+        CoroutineScope(IO).launch() {
+            _syncEvents.emit(event)
+        }
     }
 
     private fun setSyncInProgress(status: Boolean) {//} = withContext(Dispatchers.Main) {
@@ -313,12 +326,9 @@ class NetworkDataSyncInteractor (
         return networkInteractor.getSensorData(request)
     }
 
-    fun syncStatusShowed() {
-        syncResult.value = NetworkSyncResult(NetworkSyncResultType.NONE)
-    }
-
     fun stopSync() {
         Timber.d("stopSync")
+        syncInProgress.value = false
         if (syncJob.isActive) {
             syncJob.cancel()
         }

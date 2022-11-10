@@ -81,10 +81,7 @@ class RuuviNetworkInteractor (
     suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
-            val benchUpdate1 = Date()
             userInfo = networkRepository.getUserInfo(token.token)
-            val benchUpdate2 = Date()
-            Timber.d("benchmark-getUserInfo-finish ${benchUpdate2.time - benchUpdate1.time} ms")
             return userInfo
         } else {
             return null

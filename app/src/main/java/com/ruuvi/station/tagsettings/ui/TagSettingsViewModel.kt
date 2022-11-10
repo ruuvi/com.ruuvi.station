@@ -8,9 +8,7 @@ import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.isLowBattery
-import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor

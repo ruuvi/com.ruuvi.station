@@ -24,11 +24,11 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
@@ -50,6 +50,7 @@ import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
@@ -62,6 +63,7 @@ import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
+import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -242,6 +244,19 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         observeAlarmStatus()
 
         listenToShowGraph()
+
+        observeSyncStatus()
+    }
+
+    private fun observeSyncStatus() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.syncEvents.collect {
+                if (it is NetworkSyncEvent.Unauthorised) {
+                    viewModel.signOut()
+                    signIn()
+                }
+            }
+        }
     }
 
     private fun observeTags() {
@@ -371,7 +386,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     if (signedIn) {
                         MyAccountActivity.start(this)
                     } else {
-                        login(signedIn)
+                        signIn()
                     }
                 }
             }
@@ -385,23 +400,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         }
     }
 
-    private fun login(signedIn: Boolean) {
-        if (signedIn) {
-            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
-            with(builder)
-            {
-                setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { _, _ ->
-                    viewModel.signOut()
-                }
-                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                }
-                show()
-            }
-        } else {
-            SignInActivity.start(this)
-        }
+    private fun signIn() {
+        SignInActivity.start(this)
     }
 
     private fun updateMenu(signed: Boolean) {
