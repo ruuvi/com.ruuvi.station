@@ -27,6 +27,8 @@ class DashboardActivityViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
+    val syncEvents = networkDataSyncInteractor.syncEvents
+
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
     fun signOut() {

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class EnterCodeViewModel (
@@ -35,13 +34,10 @@ class EnterCodeViewModel (
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
-                    networkDataSyncInteractor.syncNetworkData(false)
-                    networkDataSyncInteractor.syncInProgressFlow.collect {
-                        if (!it) {
-                            successfullyVerified.value = true
-                            requestInProcess.value = false
-                        }
-                    }
+                    val syncJob = networkDataSyncInteractor.syncNetworkData(false)
+                    syncJob.join()
+                    requestInProcess.value = false
+                    successfullyVerified.value = true
                 }
             } else {
                 errorText.value = response

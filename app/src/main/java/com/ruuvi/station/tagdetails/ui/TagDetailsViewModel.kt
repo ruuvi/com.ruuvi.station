@@ -4,8 +4,6 @@ import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.network.data.NetworkSyncResult
-import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkTokenRepository
@@ -15,7 +13,6 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -53,8 +50,7 @@ class TagDetailsViewModel(
     var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView && interactor.getTagEntities(true).isEmpty()
     var desiredTag: String? = tagDetailsArguments.desiredTag
 
-    private val syncResult = MutableLiveData<NetworkSyncResult>(NetworkSyncResult(NetworkSyncResultType.NONE))
-    val syncResultObserve: LiveData<NetworkSyncResult> = syncResult
+    val syncEvents = networkDataSyncInteractor.syncEvents
 
     private val syncInProgress = MutableLiveData<Boolean>(false)
     val syncInProgressObserve: LiveData<Boolean> = syncInProgress
@@ -68,11 +64,6 @@ class TagDetailsViewModel(
     private val trigger = MutableLiveData<Int>(1)
 
     init {
-        viewModelScope.launch {
-            networkDataSyncInteractor.syncResultFlow.collect {
-                syncResult.value = it
-            }
-        }
         viewModelScope.launch {
             networkDataSyncInteractor.syncInProgressFlow.collect{
                 syncInProgress.value = it
@@ -149,10 +140,6 @@ class TagDetailsViewModel(
                 }
             }
         }
-    }
-
-    fun syncResultShowed() {
-        networkDataSyncInteractor.syncStatusShowed()
     }
 
     fun updateNetworkStatus() {

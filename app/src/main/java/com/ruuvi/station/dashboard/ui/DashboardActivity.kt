@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.AdapterView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -17,6 +16,7 @@ import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
@@ -100,6 +100,18 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
                 adapter.notifyDataSetChanged()
             }
         }
+        observeSyncStatus()
+    }
+
+    private fun observeSyncStatus() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.syncEvents.collect {
+                if (it is NetworkSyncEvent.Unauthorised) {
+                    viewModel.signOut()
+                    signIn()
+                }
+            }
+        }
     }
 
     private fun setupListView() {
@@ -137,7 +149,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
                     if (signedIn) {
                         MyAccountActivity.start(this)
                     } else {
-                        login(signedIn)
+                        signIn()
                     }
                 }
             }
@@ -151,24 +163,8 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         }
     }
 
-    private fun login(signedIn: Boolean) {
-        if (signedIn) {
-            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
-            with(builder)
-            {
-                setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { _, _ ->
-                    viewModel.signOut()
-                }
-                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                }
-                show()
-            }
-        } else {
-            SignInActivity.start(this)
-
-        }
+    private fun signIn() {
+        SignInActivity.start(this)
     }
 
     private fun updateMenu(signed: Boolean) {
