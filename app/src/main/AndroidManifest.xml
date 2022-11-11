@@ -20,6 +20,7 @@ package="com.ruuvi.station">
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 <uses-feature android:name="android.hardware.bluetooth" />
 
@@ -40,17 +41,17 @@ package="com.ruuvi.station">
     tools:replace="android:allowBackup">
     <activity
         android:name=".network.ui.SignInActivity"
-        android:label="@string/sign_in"
         android:exported="true"
+        android:label="@string/sign_in"
         android:screenOrientation="portrait"
-        android:windowSoftInputMode="adjustPan"
-        android:theme="@style/AppTheme.NoActionBar.TransparentNavigation">
+        android:theme="@style/AppTheme.NoActionBar.TransparentNavigation"
+        android:windowSoftInputMode="adjustPan">
         <nav-graph android:value="@navigation/sign_in_navigation" />
     </activity>
     <activity
         android:name=".tagdetails.ui.TagDetailsActivity"
-        android:launchMode="singleTop"
         android:exported="false"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar.TransparentNavigation" />
     <activity
         android:name=".tagsettings.ui.TagSettingsActivity"
@@ -89,18 +90,18 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name=".addtag.ui.AddTagActivity"
-        android:label="@string/add_tag_title"
         android:exported="false"
+        android:label="@string/add_tag_title"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name="com.ruuvi.station.settings.ui.SettingsActivity"
-        android:label="@string/menu_app_settings"
         android:exported="false"
+        android:label="@string/menu_app_settings"
         android:theme="@style/AppTheme.NoActionBar" />
     <activity
         android:name=".startup.ui.StartupActivity"
-        android:noHistory="true"
         android:exported="true"
+        android:noHistory="true"
         android:theme="@style/SplashTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -114,19 +115,19 @@ package="com.ruuvi.station">
 
     <activity
         android:name=".network.ui.ShareSensorActivity"
-        android:label="@string/share_sensor_title"
         android:exported="false"
+        android:label="@string/share_sensor_title"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
-        android:exported="false" />
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
-        android:label="@string/claim_sensor"
         android:exported="false"
+        android:label="@string/claim_sensor"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity

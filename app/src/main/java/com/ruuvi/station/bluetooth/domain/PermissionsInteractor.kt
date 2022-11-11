@@ -31,7 +31,8 @@ class PermissionsInteractor(private val activity: Activity) {
     @RequiresApi(Build.VERSION_CODES.S)
     private val requiredPermissionsApi31 = mutableListOf(
         BLUETOOTH_CONNECT,
-        BLUETOOTH_SCAN
+        BLUETOOTH_SCAN,
+        POST_NOTIFICATIONS
     ).also {
         if (BuildConfig.FILE_LOGS_ENABLED) it.add(WRITE_EXTERNAL_STORAGE)
     }
