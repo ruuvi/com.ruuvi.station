@@ -46,7 +46,7 @@ import com.ruuvi.station.alarm.domain.AlarmStatus.*
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
@@ -63,7 +63,6 @@ import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein

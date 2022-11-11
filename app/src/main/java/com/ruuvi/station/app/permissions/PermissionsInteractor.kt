@@ -1,4 +1,4 @@
-package com.ruuvi.station.bluetooth.domain
+package com.ruuvi.station.app.permissions
 
 import android.Manifest.permission.*
 import android.app.Activity
@@ -31,9 +31,7 @@ class PermissionsInteractor(private val activity: Activity) {
     @RequiresApi(Build.VERSION_CODES.S)
     private val requiredPermissionsApi31 = mutableListOf(
         BLUETOOTH_CONNECT,
-        BLUETOOTH_SCAN,
-        POST_NOTIFICATIONS
-    ).also {
+        BLUETOOTH_SCAN).also {
         if (BuildConfig.FILE_LOGS_ENABLED) it.add(WRITE_EXTERNAL_STORAGE)
     }
 
@@ -46,7 +44,7 @@ class PermissionsInteractor(private val activity: Activity) {
     private val isApi31Behaviour: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-    private var locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val locationManager by lazy { activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager }
     private var shouldShowLocationDialog = true
     private var shouldAskToEnableLocation = !isApi31Behaviour
     private var shouldAskToEnableBluetooth = true
