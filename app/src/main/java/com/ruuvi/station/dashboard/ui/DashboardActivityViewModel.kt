@@ -33,9 +33,11 @@ class DashboardActivityViewModel(
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
-    val shouldAskNotificationPermission = permissionLogicInteractor.shouldAskNotificationPermission()
+    val shouldAskNotificationPermission
+        get() = permissionLogicInteractor.shouldAskNotificationPermission()
 
-    val shouldAskForBackgroundLocation = permissionLogicInteractor.shouldAskForBackgroundLocation()
+    val shouldAskForBackgroundLocationPermission
+        get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()

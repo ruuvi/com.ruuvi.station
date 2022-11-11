@@ -189,7 +189,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
             askForNotificationPermission()
         } else {
             permissionsInteractor.requestPermissions(
-                needBackground = viewModel.shouldAskForBackgroundLocation,
+                needBackground = viewModel.shouldAskForBackgroundLocationPermission,
                 askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
             )
         }

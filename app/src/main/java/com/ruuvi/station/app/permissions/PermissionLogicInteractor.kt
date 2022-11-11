@@ -16,5 +16,5 @@ class PermissionLogicInteractor(
 
     fun shouldAskNotificationPermission(): Boolean = backGroundScanningEnabled || alarmsExists
 
-    fun shouldAskForBackgroundLocation(): Boolean = backGroundScanningEnabled
+    fun shouldAskForBackgroundLocationPermission(): Boolean = backGroundScanningEnabled
 }
