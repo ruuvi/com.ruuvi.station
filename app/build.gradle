@@ -101,7 +101,8 @@ dependencies {
     implementation "androidx.compose.compiler:compiler:$compose_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
+    implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
@@ -183,7 +184,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-compose:$navigation_version"
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.23.1"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accomponist_version"
 
     implementation("io.coil-kt:coil:1.1.1")
 }

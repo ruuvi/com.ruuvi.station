@@ -20,6 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
@@ -31,20 +34,35 @@ import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
+    val notificationPermissionState = rememberPermissionState(
+        android.Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    var permissionAsked by remember {
+        mutableStateOf(false)
+    }
+
+    Timber.d("AlarmItems refresh ")
+    val alarms = viewModel.alarms
+
     LaunchedEffect(key1 = true) {
         Timber.d("Alarms LaunchedEffect")
         viewModel.initAlarms()
         while (true) {
             Timber.d("AlarmItems refreshAlarmState ")
             viewModel.refreshAlarmState()
+
+            if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
+                permissionAsked = true
+                notificationPermissionState.launchPermissionRequest()
+            }
             delay(1000)
         }
     }
 
-    val alarms = viewModel.alarms
-    Timber.d("AlarmItems refresh ")
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
