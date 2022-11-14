@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -25,10 +26,17 @@ class TagDetailsViewModel(
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
     private val tokenRepository: NetworkTokenRepository,
-    private val networkApplicationSettings: NetworkApplicationSettings
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val permissionLogicInteractor: PermissionLogicInteractor
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
+
+    val shouldAskNotificationPermission
+        get() = permissionLogicInteractor.shouldAskNotificationPermission()
+
+    val shouldAskForBackgroundLocationPermission
+        get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
 
     private val isShowGraph = MutableLiveData<Boolean>(false)
     val isShowGraphObserve: LiveData<Boolean> = isShowGraph

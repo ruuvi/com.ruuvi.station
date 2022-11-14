@@ -43,10 +43,11 @@ import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.*
+import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
 import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
@@ -63,7 +64,6 @@ import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -97,7 +97,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private lateinit var permissionsInteractor: PermissionsInteractor
+    private val permissionsInteractor = PermissionsInteractor(this)
+    private val notificationPermissionInteractor = NotificationPermissionInteractor(this)
 
     private var tagPagerScrolling = false
     private var timer: Timer? = null
@@ -117,7 +118,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         super.onCreate(savedInstanceState)
         binding = ActivityTagDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        permissionsInteractor = PermissionsInteractor(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setupViewModel()
@@ -192,6 +192,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     if (viewModel.openAddView) binding.content.noTagsTextView.callOnClick()
                 } else {
                     permissionsInteractor.showPermissionSnackbar()
+                    askForNotificationPermission()
                 }
             }
         }
@@ -582,10 +583,20 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(
-            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
-            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
-        )
+        if (permissionsInteractor.arePermissionsGranted()) {
+            askForNotificationPermission()
+        } else {
+            permissionsInteractor.requestPermissions(
+                needBackground = viewModel.shouldAskForBackgroundLocationPermission,
+                askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+            )
+        }
+    }
+
+    private fun askForNotificationPermission() {
+        if (viewModel.shouldAskNotificationPermission) {
+            notificationPermissionInteractor.checkAndRequest()
+        }
     }
 
     companion object {

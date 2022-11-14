@@ -13,8 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
@@ -24,7 +25,6 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.extensions.disableNavigationViewScrollbars
 import com.ruuvi.station.util.extensions.openUrl
 import com.ruuvi.station.util.extensions.sendFeedback
@@ -51,15 +51,15 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
         RuuviTagAdapter(this@DashboardActivity, unitsConverter, movementConverter, tags)
     }
     private var signedIn = false
-    private lateinit var permissionsInteractor: PermissionsInteractor
     private val preferencesRepository: PreferencesRepository by instance()
+    private val permissionsInteractor: PermissionsInteractor = PermissionsInteractor(this)
+    private val notificationPermissionInteractor = NotificationPermissionInteractor(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        permissionsInteractor = PermissionsInteractor(this)
 
         supportActionBar?.title = null
         supportActionBar?.setIcon(R.drawable.logo_2021)
@@ -86,6 +86,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
                     requestPermission()
                 } else {
                     permissionsInteractor.showPermissionSnackbar()
+                    askForNotificationPermission()
                 }
             }
         }
@@ -184,10 +185,20 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(
-            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
-            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
-        )
+        if (permissionsInteractor.arePermissionsGranted()) {
+            askForNotificationPermission()
+        } else {
+            permissionsInteractor.requestPermissions(
+                needBackground = viewModel.shouldAskForBackgroundLocationPermission,
+                askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+            )
+        }
+    }
+
+    private fun askForNotificationPermission() {
+        if (viewModel.shouldAskNotificationPermission) {
+            notificationPermissionInteractor.checkAndRequest()
+        }
     }
 
     companion object {

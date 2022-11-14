@@ -1,21 +1,27 @@
 package com.ruuvi.station.settings.ui
 
+import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BackgroundScanSettings(
     scaffoldState: ScaffoldState,
     viewModel: BackgroundScanSettingsViewModel
 ) {
+    val notificationPermissionState = rememberPermissionState(
+        Manifest.permission.POST_NOTIFICATIONS
+    )
 
     val backgroundInterval = viewModel.intervalFlow.collectAsState()
     val intervalOptions = remember {
@@ -24,7 +30,13 @@ fun BackgroundScanSettings(
 
     val initialValue = intervalOptions.firstOrNull { it.value == backgroundInterval.value }
 
-    val backgroundScanEnabled = viewModel.backgroundScanEnabled.collectAsState()
+    val backgroundScanEnabled by viewModel.backgroundScanEnabled.collectAsState()
+
+    if (backgroundScanEnabled && !notificationPermissionState.status.isGranted) {
+        LaunchedEffect(key1 = true) {
+            notificationPermissionState.launchPermissionRequest()
+        }
+    }
 
     val showOptimizationTips = viewModel.showOptimizationTips.collectAsState()
 
@@ -32,7 +44,7 @@ fun BackgroundScanSettings(
         Column() {
             SwitchRuuvi(
                 text = stringResource(id = R.string.background_scanning),
-                checked = backgroundScanEnabled.value,
+                checked = backgroundScanEnabled,
                 onCheckedChange = viewModel::setBackgroundScanEnabled
             )
             SubtitleWithPadding(text = stringResource(id = R.string.settings_background_scan_interval))

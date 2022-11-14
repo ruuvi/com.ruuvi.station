@@ -36,7 +36,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
