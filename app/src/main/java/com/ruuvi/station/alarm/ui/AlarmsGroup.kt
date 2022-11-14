@@ -45,21 +45,22 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
         mutableStateOf(false)
     }
 
-    Timber.d("AlarmItems refresh ")
-    val alarms = viewModel.alarms
-
     LaunchedEffect(key1 = true) {
         Timber.d("Alarms LaunchedEffect")
         viewModel.initAlarms()
         while (true) {
             Timber.d("AlarmItems refreshAlarmState ")
             viewModel.refreshAlarmState()
-
-            if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
-                permissionAsked = true
-                notificationPermissionState.launchPermissionRequest()
-            }
             delay(1000)
+        }
+    }
+    Timber.d("AlarmItems refresh ")
+    val alarms = viewModel.alarms
+
+    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
+        permissionAsked = true
+        LaunchedEffect(key1 = true) {
+            notificationPermissionState.launchPermissionRequest()
         }
     }
 
