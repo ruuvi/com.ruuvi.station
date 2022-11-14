@@ -3,9 +3,6 @@ package com.ruuvi.station.util.extensions
 import android.content.Context
 import android.text.format.DateFormat
 import com.ruuvi.station.R
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 import java.util.*
 import kotlin.math.abs
 
@@ -39,9 +36,13 @@ fun Date.describingTimeSince(context: Context): String {
 }
 
 fun Date.isStartOfTheDay(): Boolean {
-    val localDate = LocalDateTime.ofInstant(toInstant(), TimeZone.getDefault().toZoneId()).with(
-        LocalTime.MIN)
-    return time == Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant()).time
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return time == calendar.time.time
 }
 
 fun Date.localizedTime(context: Context): String {
