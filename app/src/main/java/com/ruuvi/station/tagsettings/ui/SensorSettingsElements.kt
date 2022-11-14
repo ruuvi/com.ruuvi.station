@@ -63,21 +63,19 @@ fun SensorSettings(
                 getHumidityOffsetString = viewModel::getHumidityOffsetString,
                 getPressureOffsetString = viewModel::getPressureOffsetString
             )
+            DividerSurfaceColor()
         }
-        DividerSurfaceColor()
         MoreInfoGroup(
             sensorState = sensorState,
             isLowBattery = isLowBattery,
             getAccelerationString = viewModel::getAccelerationString,
             getSignalString = viewModel::getSignalString
         )
-        if (sensorOwnedOrOffline) {
-            DividerSurfaceColor()
-            FirmwareGroup(
-                sensorState = sensorState,
-                firmware = firmware
-            )
-        }
+        DividerSurfaceColor()
+        FirmwareGroup(
+            sensorState = sensorState,
+            firmware = firmware
+        )
         DividerSurfaceColor()
         RemoveGroup(
             sensorState = sensorState,
