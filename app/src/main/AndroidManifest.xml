@@ -109,7 +109,7 @@ package="com.ruuvi.station">
         </intent-filter>
     </activity>
     <activity
-        android:name=".dashboard.ui.DashboardActivity"
+        android:name=".dashboard.ui.DashboardActivityOld"
         android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 

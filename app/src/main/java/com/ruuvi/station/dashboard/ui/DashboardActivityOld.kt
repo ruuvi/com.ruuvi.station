@@ -35,7 +35,7 @@ import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
 
-class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
+class DashboardActivityOld : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
 
     override val kodein by closestKodein()
 
@@ -48,7 +48,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
 
     private var tags: MutableList<RuuviTag> = arrayListOf()
     private val adapter: RuuviTagAdapter by lazy {
-        RuuviTagAdapter(this@DashboardActivity, unitsConverter, movementConverter, tags)
+        RuuviTagAdapter(this@DashboardActivityOld, unitsConverter, movementConverter, tags)
     }
     private var signedIn = false
     private val preferencesRepository: PreferencesRepository by instance()
@@ -203,7 +203,7 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
 
     companion object {
         fun start(context: Context) {
-            val intent = Intent(context, DashboardActivity::class.java)
+            val intent = Intent(context, DashboardActivityOld::class.java)
             context.startActivity(intent)
         }
     }

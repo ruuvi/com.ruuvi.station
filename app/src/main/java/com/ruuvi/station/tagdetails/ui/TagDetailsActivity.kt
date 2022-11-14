@@ -48,7 +48,7 @@ import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.app.permissions.PermissionsInteractor
-import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.dashboard.ui.DashboardActivityOld
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -629,7 +629,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val preferencesRepository = PreferencesRepository(Preferences(context))
             val stackBuilder = TaskStackBuilder.create(context)
             if (preferencesRepository.isDashboardEnabled()) {
-                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+                val intentDashboardActivity = Intent(context, DashboardActivityOld::class.java)
                 stackBuilder.addNextIntent(intentDashboardActivity)
             }
             stackBuilder.addNextIntent(intent)
