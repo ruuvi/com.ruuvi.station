@@ -62,8 +62,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     backgroundColor = RuuviStationTheme.colors.background,
                     topBar = { MyTopAppBar(title = title) },
                     scaffoldState = scaffoldState
-                ) {
-
+                ) { padding ->
                     AnimatedNavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
                         composable(SettingsRoutes.LIST,
                             enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },

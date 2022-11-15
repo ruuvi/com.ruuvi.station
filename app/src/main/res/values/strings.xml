@@ -456,4 +456,5 @@
     <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
     <string name="widgets_sign_in_first">To use widgets, you need to sign in first.</string>
     <string name="yes">Yes</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
 </resources>

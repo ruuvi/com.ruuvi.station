@@ -203,7 +203,7 @@ class DashboardActivityOld : AppCompatActivity(R.layout.activity_dashboard), Kod
 
     companion object {
         fun start(context: Context) {
-            val intent = Intent(context, DashboardActivityOld::class.java)
+            val intent = Intent(context, DashboardActivity::class.java)
             context.startActivity(intent)
         }
     }
