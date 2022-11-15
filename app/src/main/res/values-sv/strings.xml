@@ -8,6 +8,7 @@
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
+    <string name="account_delete_confirmation_description">En bekräftelse skickas till din e-post. För att fortsätta med raderingen, kontrollera din inkorg och följ instruktionerna.</string>
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
@@ -64,6 +65,8 @@
     <string name="battery_ok">Batteri OK</string>
     <string name="battery_voltage">Batterispänning</string>
     <string name="beta">beta</string>
+    <string name="bluetooth_download">Bluetooth-nedladdning</string>
+    <string name="bluetooth_download_description">Lokal sensordata kan laddas ner när du är inom Bluetooth-räckvidd.</string>
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
     <string name="buy_sensors_link">https://ruuvi.com/products</string>
@@ -100,6 +103,9 @@
     <string name="claim_sensor">Bekräfta ägandet</string>
     <string name="clear">Rensa</string>
     <string name="clear_confirm">Radera historisk data från appen?</string>
+    <string name="clear_local_history">Rensa lokal historik</string>
+    <string name="clear_local_history_description">Vill du rensa lokalt lagrad historisk data från appen? Detta kommer inte att rensa internt lagrad historik i sensorer eller historisk data lagrad i Ruuvi Cloud-tjänst.</string>
+    <string name="clear_view">Töm grafer</string>
     <string name="close">Stäng</string>
     <string name="cloud_er_forbidden">Förbjuden</string>
     <string name="cloud_er_internal">Internt fel</string>
@@ -147,13 +153,26 @@
     <string name="data_forwarding_url">Vidarebefordings-URL</string>
     <string name="data_forwarding_url_hint">https://din.server/...</string>
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
+    <string name="day_1">1 dag</string>
+    <string name="day_10">10 dagar</string>
+    <string name="day_2">2 dagar</string>
+    <string name="day_3">3 dagar</string>
+    <string name="day_4">4 dagar</string>
+    <string name="day_5">5 dagar</string>
+    <string name="day_6">6 dagar</string>
+    <string name="day_7">7 dagar</string>
+    <string name="day_8">8 dagar</string>
+    <string name="day_9">9 dagar</string>
+    <string name="day_x">%1$s dagar</string>
     <string name="days">Dagar</string>
+    <string name="delete_account">Radera konto</string>
     <string name="details">Info</string>
     <string name="dfu_low_battery_warning">Sensorns batterispänning är låg och uppgraderingsprocessen kan misslyckas. Vi rekommenderar att du byter ut batteriet innan du uppdaterar programvaran.</string>
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
     <string name="disconnected">Frånkopplad</string>
     <string name="done">Klar</string>
+    <string name="download">Ladda ner</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
     <string name="email">E-post</string>
     <string name="error">Fel</string>
@@ -167,6 +186,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
+    <string name="export_history">Exportera historik (csv)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
     <string name="firmware">Programvara</string>
     <string name="firmware_update">Uppdatera</string>
@@ -177,6 +197,7 @@
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
     <string name="gateway_test_success">Vidarebefordran fungerar! HTTP svarskod: %1$d</string>
     <string name="gateway_testing">Testar...</string>
+    <string name="gatt_not_in_range_description">Nedladdning av Bluetooth-historik misslyckades. Kontrollera att du är inom Bluetooth-räckvidd, att din sensor har firmware som stöder nedladdning och att sensorn inte samtidigt är ansluten till en annan iOS-enhet. Sensoranslutning är reserverad för Ruuvi Station vid användning av anslutet läge i iOS.</string>
     <string name="general">Allmänt</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station är en lättanvänt och kraftfullt program för Ruuvi sensorer. Sätt igång genom att lägga till sensorer.</string>
@@ -216,6 +237,7 @@
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
     <string name="login_to_ruuvi_network">Logga in till\nRuuvi\nStation</string>
+    <string name="longer_history_message">Längre historik är tillgänglig på webben för Ruuvi Gateway-användare</string>
     <string name="mac_address">MAC Adress</string>
     <string name="mac_copied">MAC-adressen kopierad till urklippet</string>
     <string name="measurement_sequence_number">Mätningssekvensnummer</string>
@@ -228,9 +250,12 @@
     <string name="menu_what_to_measure">Vad ska man mäta med Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
+    <string name="more">Mer...</string>
     <string name="more_info">Mer info</string>
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
+    <string name="muted_till">Avstängd till %1$s</string>
+    <string name="my_ruuvi_account">Mitt Ruuvi-konto</string>
     <string name="name">NAMN</string>
     <string name="navigation_drawer_close">Stäng navigationslådan</string>
     <string name="navigation_drawer_open">Öppna navigationslådan</string>
@@ -290,6 +315,7 @@
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Byt batteriet!</string>
     <string name="rssi">Signalstyrka (RSSI)</string>
+    <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SKANNA</string>
@@ -397,6 +423,7 @@
     <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">%1$s sedan</string>
     <string name="title_activity_dfu_update">Firmware Uppdatering</string>
+    <string name="try_again">Försök igen</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unknown_error">Okänt fel</string>
