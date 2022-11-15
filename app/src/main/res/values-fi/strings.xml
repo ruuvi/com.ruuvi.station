@@ -8,6 +8,7 @@
     <string name="acceleration_x">Kiihtyvyys X</string>
     <string name="acceleration_y">Kiihtyvyys Y</string>
     <string name="acceleration_z">Kiihtyvyys Z</string>
+    <string name="account_delete_confirmation_description">Vahvistussähköposti lähetetty. Poista tili noudattamalla sähköpostissa annettuja ohjeita.</string>
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
@@ -164,6 +165,7 @@
     <string name="day_9">9 päivää</string>
     <string name="day_x">%1$s päivää</string>
     <string name="days">päivää</string>
+    <string name="delete_account">Poista tili</string>
     <string name="details">Tiedot</string>
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
@@ -253,6 +255,7 @@
     <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
+    <string name="my_ruuvi_account">Minun Ruuvi-tili</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
@@ -271,7 +274,7 @@
     <string name="none">ei kirjautunut</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
-    <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Kyseessä on todennäköisesti vanha laiteohjelmisto ja sen päivittäminen on suositeltavaa.</string>
+    <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Joko et ole sen Bluetooth-kuuluvuusalueella, se on samanaikaisesti yhteydessä toiseen puhelimeen tai kyseessä on hyvin vanha laiteohjelmisto.</string>
     <string name="open_settings">Avaa asetukset</string>
     <string name="owner_none">Ei omistajaa</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
@@ -280,6 +283,7 @@
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
+    <string name="permission_notification_needed">Hälytysten näyttäminen vaatii ilmoitusten sallimisen asetuksista.</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
     <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
@@ -301,9 +305,9 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Ilmanpaine (%1$s)</string>
-    <string name="reading_history">Historiatietoja luetaan</string>
+    <string name="reading_history">Historiaa luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
-    <string name="reading_history_x">Historiatietoja luetaan.. %1$s</string>
+    <string name="reading_history_x">Historiaa luetaan.. %1$s</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
