@@ -72,7 +72,10 @@ fun ChartControlElement(
                     tint = RuuviStationTheme.colors.buttonText
                 )
             }
-            Paragraph(text = syncMessage.asString(context))
+            Text(
+                style = RuuviStationTheme.typography.syncStatusText,
+                text = syncMessage.asString(context)
+            )
         }
 
         Row(

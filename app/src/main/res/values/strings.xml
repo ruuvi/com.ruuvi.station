@@ -8,6 +8,7 @@
     <string name="acceleration_x">Acceleration X</string>
     <string name="acceleration_y">Acceleration Y</string>
     <string name="acceleration_z">Acceleration Z</string>
+    <string name="account_delete_confirmation_description">A confirmation is sent to your email. To proceed with the deletion, please check your inbox and follow the instructions.</string>
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
@@ -165,6 +166,7 @@
     <string name="day_9">9 days</string>
     <string name="day_x">%1$s days</string>
     <string name="days">Days</string>
+    <string name="delete_account">Delete Account</string>
     <string name="details">Details</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
@@ -255,6 +257,7 @@
     <string name="movement_counter">Movement Counter</string>
     <string name="movements">movements</string>
     <string name="muted_till">Muted till %1$s</string>
+    <string name="my_ruuvi_account">My Ruuvi Account</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
     <string name="navigation_drawer_open">Open the navigation drawer</string>
@@ -273,7 +276,7 @@
     <string name="none">none</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
-    <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. This means that it\'s probably running an old firmware version and updating it is recommended.</string>
+    <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. Either you\'re not in its Bluetooth range, it\'s connected to another phone, or it\'s running a very old firmware version.</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
@@ -282,6 +285,7 @@
     <string name="permission_dialog_title">Enable Bluetooth Scanning</string>
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
     <string name="permission_location_needed_api31">Please allow to discover nearby devices in Settings to see sensors.</string>
+    <string name="permission_notification_needed">To enable alerts please allow Notifications in Settings.</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Locate small round black buttons on white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button with no label.</string>

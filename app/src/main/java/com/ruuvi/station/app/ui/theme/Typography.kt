@@ -12,7 +12,8 @@ data class RuuviStationTypography(
     val textButtonText: TextStyle,
     val topBarText: TextStyle,
     val title: TextStyle,
-    val success: TextStyle
+    val success: TextStyle,
+    val syncStatusText: TextStyle
  )
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
@@ -60,6 +61,11 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         success = TextStyle(
             color = colors.successText,
+            fontFamily = ruuviStationFonts.regular,
+            fontSize = ruuviStationFontsSizes.normal,
+        ),
+        syncStatusText = TextStyle(
+            color = White80,
             fontFamily = ruuviStationFonts.regular,
             fontSize = ruuviStationFontsSizes.normal,
         ),
