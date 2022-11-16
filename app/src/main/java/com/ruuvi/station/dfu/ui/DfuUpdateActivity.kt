@@ -11,7 +11,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,7 +22,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -37,6 +35,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
+import com.ruuvi.station.app.ui.MyTopAppBar
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -279,34 +278,6 @@ fun ErrorScreen(viewModel: DfuUpdateViewModel) {
     } else {
         ParagraphWithPadding(text = errorMessage ?: stringResource(id = R.string.unknown_error))
     }
-}
-
-@Composable
-fun MyTopAppBar(
-    title: String
-) {
-    val context = LocalContext.current as Activity
-
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                style = RuuviStationTheme.typography.topBarText,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = {
-                context.onBackPressed()
-            }) {
-                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
-            }
-        },
-        backgroundColor = RuuviStationTheme.colors.topBar,
-        contentColor = RuuviStationTheme.colors.topBarText,
-        elevation = 0.dp
-    )
 }
 
 @Composable

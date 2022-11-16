@@ -112,7 +112,7 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
         android:exported="false"
         android:label="@string/title_activity_dashboard"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
+        android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
     <activity
