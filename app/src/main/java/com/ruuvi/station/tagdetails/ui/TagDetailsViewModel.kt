@@ -38,7 +38,7 @@ class TagDetailsViewModel(
     val shouldAskForBackgroundLocationPermission
         get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
 
-    private val isShowGraph = MutableLiveData<Boolean>(false)
+    private val isShowGraph = MutableLiveData<Boolean>(tagDetailsArguments.showHistory)
     val isShowGraphObserve: LiveData<Boolean> = isShowGraph
 
     private val selectedTag = MutableLiveData<RuuviTag?>(null)

@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
-import com.ruuvi.station.dashboard.ui.DashboardActivityOld
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.welcome.ui.WelcomeActivity
 import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
@@ -33,7 +33,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
 
         when {
             viewModel.isFirstStart() -> WelcomeActivity.start(this)
-            viewModel.isDashboardEnabled() -> DashboardActivityOld.start(this)
+            viewModel.isDashboardEnabled() -> DashboardActivity.start(this)
             else -> {
                 val isFromWelcome = intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false)
                 TagDetailsActivity.start(this, isFromWelcome)

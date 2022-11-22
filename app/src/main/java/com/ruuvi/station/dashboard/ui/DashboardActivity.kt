@@ -49,6 +49,7 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.openUrl
@@ -176,6 +177,7 @@ fun DashboardItems(items: List<RuuviTag>) {
 @Composable
 fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
     val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .height(200.dp)
@@ -265,15 +267,8 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
                                 contentDescription = ""
                             )
                         }
-                        IconButton(
-                            modifier = Modifier.size(36.dp),
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_3dots),
-                                contentDescription = ""
-                            )
-                        }
+
+                        DashboardItemDropdownMenu(sensor)
                     }
                 }
 
@@ -370,6 +365,68 @@ fun ValueDisplay(value: EnvironmentValue) {
             style = typography.dashboardUnit,
             maxLines = 1
         )
+    }
+}
+
+@Composable
+fun DashboardItemDropdownMenu(
+    sensor: RuuviTag
+) {
+    val context = LocalContext.current
+    var threeDotsMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    Box() {
+        IconButton(
+            modifier = Modifier.size(36.dp),
+            onClick = { threeDotsMenuExpanded = !threeDotsMenuExpanded }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_3dots),
+                tint = RuuviStationTheme.colors.dashboardBurger,
+                contentDescription = ""
+            )
+        }
+
+        DropdownMenu(
+            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+            expanded = threeDotsMenuExpanded,
+            onDismissRequest = { threeDotsMenuExpanded = false }
+        ) {
+            DropdownMenuItem(onClick = {
+                TagDetailsActivity.start(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.full_image_view
+                ))
+            }
+
+            DropdownMenuItem(onClick = {
+                TagDetailsActivity.start(context, sensor.id, true)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.history_view
+                ))
+            }
+            DropdownMenuItem(onClick = {
+                TagSettingsActivity.start(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.settings_and_alerts
+                ))
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.change_background
+                ))
+            }
+        }
     }
 }
 
