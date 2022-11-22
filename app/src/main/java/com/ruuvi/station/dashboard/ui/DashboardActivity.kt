@@ -44,7 +44,9 @@ import com.ruuvi.station.app.ui.components.Title
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.typography
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.MyAccountActivity
+import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -138,7 +140,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                             .fillMaxSize()
                             .padding(RuuviStationTheme.dimensions.medium)
                     ) {
-                        DashboardItems(sensors)
+                        DashboardItems(sensors, userEmail)
                     }
                 }
 
@@ -161,13 +163,13 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 }
 
 @Composable
-fun DashboardItems(items: List<RuuviTag>) {
+fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
     val configuration = LocalConfiguration.current
     val imageWidth = configuration.screenWidthDp.dp * 0.27f
     Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
     LazyColumn() {
         items(items) { sensor ->
-            DashboardItem(imageWidth, sensor)
+            DashboardItem(imageWidth, sensor, userEmail)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
     }
@@ -175,7 +177,7 @@ fun DashboardItems(items: List<RuuviTag>) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
+fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
     val context = LocalContext.current
 
     Card(
@@ -268,7 +270,7 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
                             )
                         }
 
-                        DashboardItemDropdownMenu(sensor)
+                        DashboardItemDropdownMenu(sensor, userEmail)
                     }
                 }
 
@@ -370,12 +372,16 @@ fun ValueDisplay(value: EnvironmentValue) {
 
 @Composable
 fun DashboardItemDropdownMenu(
-    sensor: RuuviTag
+    sensor: RuuviTag,
+    userEmail: String?
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
     }
+
+    val canBeShared = sensor.owner == userEmail
+    val canBeClaimed = sensor.owner.isNullOrEmpty() && userEmail?.isNotEmpty() == true
 
     Box() {
         IconButton(
@@ -425,6 +431,26 @@ fun DashboardItemDropdownMenu(
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
                     id = R.string.change_background
                 ))
+            }
+
+            if (canBeClaimed) {
+                DropdownMenuItem(onClick = {
+                    ClaimSensorActivity.start(context, sensor.id)
+                    threeDotsMenuExpanded = false
+                }) {
+                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                        id = R.string.claim_sensor
+                    ))
+                }
+            } else if (canBeShared) {
+                DropdownMenuItem(onClick = {
+                    ShareSensorActivity.start(context, sensor.id)
+                    threeDotsMenuExpanded = false
+                }) {
+                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                        id = R.string.share
+                    ))
+                }
             }
         }
     }
