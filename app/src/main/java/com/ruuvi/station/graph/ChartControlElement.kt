@@ -261,7 +261,11 @@ fun ThreeDotsMenu(
             )
         }
 
-        DropdownMenu(modifier = Modifier.background(color = RuuviStationTheme.colors.background), expanded = threeDotsMenuExpanded, onDismissRequest = { threeDotsMenuExpanded = false }) {
+        DropdownMenu(
+            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+            expanded = threeDotsMenuExpanded,
+            onDismissRequest = { threeDotsMenuExpanded = false }
+        ) {
             DropdownMenuItem(onClick = {
                 val uri = exportToCsv.invoke()
                 if (uri != null) { sendCsv(sensorId, uri, context) }

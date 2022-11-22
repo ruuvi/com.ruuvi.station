@@ -68,8 +68,8 @@
     <string name="bluetooth_download">Bluetooth download</string>
     <string name="bluetooth_download_description">Local sensor data can be downloaded, when you\'re within its Bluetooth range.</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/products</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrated">Calibrated: %1$s</string>
     <string name="calibration_clear_confirm">Clear calibration settings?</string>
@@ -445,7 +445,7 @@
     <string name="welcome_text_4">Sign in to use the full potential of the app.</string>
     <string name="welcome_text_4_2">Claim ownership of your sensors with a free Ruuvi Cloud account.</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/ideas/</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas/?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Press + to add sensors</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>
@@ -457,5 +457,4 @@
     <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
     <string name="widgets_sign_in_first">To use widgets, you need to sign in first.</string>
     <string name="yes">Yes</string>
-    <string name="title_activity_dashboard">DashboardActivity</string>
 </resources>

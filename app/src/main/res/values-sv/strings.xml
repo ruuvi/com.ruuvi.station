@@ -68,8 +68,8 @@
     <string name="bluetooth_download">Bluetooth-nedladdning</string>
     <string name="bluetooth_download_description">Lokal sensordata kan laddas ner när du är inom Bluetooth-räckvidd.</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/products</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibrera</string>
     <string name="calibrated">Kalibrerad: %1$s</string>
     <string name="calibration_clear_confirm">Renas kalibereringsinställningar?</string>
@@ -442,7 +442,7 @@
     <string name="welcome_text_4">Logga in för att få tillgång till alla appens funktioner.</string>
     <string name="welcome_text_4_2">Verifiera ditt sensorägande med ett gratis Ruuvi Cloud-konto.</string>
     <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Tryck på + för att lägga till sensorer</string>
     <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
