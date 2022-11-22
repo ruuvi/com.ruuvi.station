@@ -68,8 +68,8 @@
     <string name="bluetooth_download">Bluetooth download</string>
     <string name="bluetooth_download_description">Local sensor data can be downloaded, when you\'re within its Bluetooth range.</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/products</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrated">Calibrated: %1$s</string>
     <string name="calibration_clear_confirm">Clear calibration settings?</string>
@@ -96,6 +96,7 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
+    <string name="change_background">Change background</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
@@ -193,6 +194,7 @@
     <string name="firmware_update">Update</string>
     <string name="firmware_very_old">Very Old</string>
     <string name="follow_system_theme">Follow system theme</string>
+    <string name="full_image_view">Full image view</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
@@ -217,6 +219,7 @@
     <string name="help_seen_tags">Seen sensors: %1$,d</string>
     <string name="help_troubleshooting_text">If you’re experiencing problems and our manuals didn’t provide the help you need, check out our many troubleshooting topics, here: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Troubleshooting</string>
+    <string name="history_view">History view</string>
     <string name="hours">Hours</string>
     <string name="humidity">Humidity</string>
     <string name="humidity_absolute_name">Absolute (g/m³)</string>
@@ -333,6 +336,7 @@
     <string name="sensor_settings">Sensor Settings</string>
     <string name="sensor_shared">Shared</string>
     <string name="settings">Settings</string>
+    <string name="settings_and_alerts">Settings \u0026 Alerts</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimisation for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
     <string name="settings_background_battery_optimization_common_instructions">Go to Android Settings -> Apps -> Ruuvi Station -> Battery -> Battery Optimisation and select \'Don\'t optimise for Ruuvi Station\'.</string>
@@ -445,7 +449,7 @@
     <string name="welcome_text_4">Sign in to use the full potential of the app.</string>
     <string name="welcome_text_4_2">Claim ownership of your sensors with a free Ruuvi Cloud account.</string>
     <string name="welcome_text_5">Press SCAN to find and add nearby sensors to your Ruuvi Station.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/ideas/</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas/?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Press + to add sensors</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared you a Ruuvi sensor.</string>

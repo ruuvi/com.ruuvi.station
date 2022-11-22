@@ -83,7 +83,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private val viewModel: TagDetailsViewModel by viewModel {
         TagDetailsArguments(
             intent.getStringExtra(ARGUMENT_TAG_ID),
-            intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false)
+            intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false),
+            intent.getBooleanExtra(ARGUMENT_SHOW_HISTORY, false)
         )
     }
 
@@ -601,6 +602,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     companion object {
         private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
+        private const val ARGUMENT_SHOW_HISTORY = "ARGUMENT_SHOW_HISTORY"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
         private const val ALARM_ICON_ALPHA = 128
@@ -616,9 +618,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             context.startActivity(intent)
         }
 
-        fun start(context: Context, tagId: String) {
+        fun start(context: Context, tagId: String, showHistory: Boolean = false) {
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
+            intent.putExtra(ARGUMENT_SHOW_HISTORY, showHistory)
             context.startActivity(intent)
         }
 

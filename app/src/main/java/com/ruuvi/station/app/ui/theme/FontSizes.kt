@@ -8,7 +8,8 @@ data class RuuviStationFontSizes(
     val small: TextUnit = 14.sp,
     val normal: TextUnit = 16.sp,
     val extended: TextUnit = 18.sp,
-    val big: TextUnit = 20.sp
+    val big: TextUnit = 20.sp,
+    val bigger: TextUnit = 32.sp
 )
 
 val ruuviStationFontsSizes = RuuviStationFontSizes()

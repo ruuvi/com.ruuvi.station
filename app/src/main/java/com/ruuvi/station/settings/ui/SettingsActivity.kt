@@ -20,12 +20,11 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ruuvi.station.app.ui.MyTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.dfu.ui.MyTopAppBar
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
@@ -62,8 +61,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     backgroundColor = RuuviStationTheme.colors.background,
                     topBar = { MyTopAppBar(title = title) },
                     scaffoldState = scaffoldState
-                ) {
-
+                ) { padding ->
                     AnimatedNavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
                         composable(SettingsRoutes.LIST,
                             enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },

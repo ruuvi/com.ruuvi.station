@@ -2,209 +2,435 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
-import android.widget.AdapterView
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.*
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
-import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
-import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.app.permissions.PermissionsInteractor
-import com.ruuvi.station.databinding.ActivityDashboardBinding
-import com.ruuvi.station.network.data.NetworkSyncEvent
+import com.ruuvi.station.app.ui.DashboardTopAppBar
+import com.ruuvi.station.app.ui.MainMenu
+import com.ruuvi.station.app.ui.MenuItem
+import com.ruuvi.station.app.ui.components.Title
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme.typography
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
-import com.ruuvi.station.units.domain.MovementConverter
-import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.extensions.disableNavigationViewScrollbars
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.openUrl
 import com.ruuvi.station.util.extensions.sendFeedback
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import timber.log.Timber
+import java.io.File
+import java.io.FileInputStream
 
-
-class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), KodeinAware {
+class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
-    private val viewModel: DashboardActivityViewModel by viewModel()
-
-    private lateinit var binding: ActivityDashboardBinding
-
-    private val unitsConverter: UnitsConverter by instance()
-    private val movementConverter: MovementConverter by instance()
-
-    private var tags: MutableList<RuuviTag> = arrayListOf()
-    private val adapter: RuuviTagAdapter by lazy {
-        RuuviTagAdapter(this@DashboardActivity, unitsConverter, movementConverter, tags)
-    }
-    private var signedIn = false
-    private val preferencesRepository: PreferencesRepository by instance()
-    private val permissionsInteractor: PermissionsInteractor = PermissionsInteractor(this)
-    private val notificationPermissionInteractor = NotificationPermissionInteractor(this)
+    private val dashboardViewModel: DashboardActivityViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDashboardBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        supportActionBar?.title = null
-        supportActionBar?.setIcon(R.drawable.logo_2021)
+        setContent {
+            RuuviTheme {
+                val scaffoldState = rememberScaffoldState()
+                val systemUiController = rememberSystemUiController()
+                val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
+                val context = LocalContext.current
+                val isDarkTheme = isSystemInDarkTheme()
+                val scope = rememberCoroutineScope()
+                val userEmail by dashboardViewModel.userEmail.observeAsState()
+                val signedIn = !userEmail.isNullOrEmpty()
+                val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = listOf())
 
-        setupViewModel()
-        setupDrawer()
-        setupListView()
-
-        requestPermission()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PermissionsInteractor.REQUEST_CODE_BLUETOOTH || requestCode == PermissionsInteractor.REQUEST_CODE_LOCATION) {
-            requestPermission()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PermissionsInteractor.REQUEST_CODE_PERMISSIONS -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    requestPermission()
-                } else {
-                    permissionsInteractor.showPermissionSnackbar()
-                    askForNotificationPermission()
-                }
-            }
-        }
-    }
-
-    private fun setupViewModel() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.tagsFlow.collectLatest {
-                tags.clear()
-                tags.addAll(it)
-                binding.content.noTagsTextView.isVisible = tags.isEmpty()
-                adapter.notifyDataSetChanged()
-            }
-        }
-        observeSyncStatus()
-    }
-
-    private fun observeSyncStatus() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.syncEvents.collect {
-                if (it is NetworkSyncEvent.Unauthorised) {
-                    viewModel.signOut()
-                    signIn()
-                }
-            }
-        }
-    }
-
-    private fun setupListView() {
-        binding.content.dashboardListView.adapter = adapter
-        binding.content.dashboardListView.onItemClickListener = tagClick
-    }
-
-    private fun setupDrawer() {
-        val drawerToggle =
-            ActionBarDrawerToggle(
-                this, binding.mainDrawerLayout, binding.toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
-            )
-
-        binding.mainDrawerLayout.addDrawerListener(drawerToggle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-
-        disableNavigationViewScrollbars(binding.navigationContent.navigationView)
-
-        drawerToggle.syncState()
-
-        updateMenu(signedIn)
-
-        binding.navigationContent.navigationView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.addNewSensorMenuItem -> AddTagActivity.start(this)
-                R.id.appSettingsMenuItem -> SettingsActivity.start(this)
-                R.id.aboutMenuItem -> AboutActivity.start(this)
-                R.id.sendFeedbackMenuItem -> sendFeedback()
-                R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
-                R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
-                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
-                R.id.loginMenuItem ->  {
-                    if (signedIn) {
-                        MyAccountActivity.start(this)
-                    } else {
-                        signIn()
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    modifier = Modifier.fillMaxSize(),
+                    backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+                    topBar = { DashboardTopAppBar(
+                        actionCallBack = { AddTagActivity.start(context) },
+                        navigationCallback = {
+                            scope.launch {
+                                scaffoldState.drawerState.open()
+                            }
+                        }
+                    ) },
+                    drawerContent = {
+                                    MainMenu(
+                                        items = listOf(
+                                            MenuItem(R.string.menu_add_new_sensor, stringResource(id = R.string.menu_add_new_sensor)),
+                                            MenuItem(R.string.menu_app_settings, stringResource(id = R.string.menu_app_settings)),
+                                            MenuItem(R.string.menu_about_help, stringResource(id = R.string.menu_about_help)),
+                                            MenuItem(R.string.menu_send_feedback, stringResource(id = R.string.menu_send_feedback)),
+                                            MenuItem(R.string.menu_what_to_measure, stringResource(id = R.string.menu_what_to_measure)),
+                                            MenuItem(R.string.menu_buy_sensors, stringResource(id = R.string.menu_buy_sensors)),
+                                            MenuItem(R.string.menu_buy_gateway, stringResource(id = R.string.menu_buy_gateway)),
+                                            if (signedIn) {
+                                                MenuItem(R.string.my_ruuvi_account, stringResource(id = R.string.my_ruuvi_account))
+                                            } else {
+                                                MenuItem(R.string.sign_in, stringResource(id = R.string.sign_in))
+                                            }
+                                        ),
+                                        onItemClick = { item ->
+                                            when (item.id) {
+                                                R.string.menu_add_new_sensor -> AddTagActivity.start(context)
+                                                R.string.menu_app_settings -> SettingsActivity.start(context)
+                                                R.string.menu_about_help -> AboutActivity.start(context)
+                                                R.string.menu_send_feedback -> sendFeedback()
+                                                R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
+                                                R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_link))
+                                                R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
+                                                R.string.my_ruuvi_account -> MyAccountActivity.start(context)
+                                                R.string.sign_in -> SignInActivity.start(context)
+                                            }
+                                            scope.launch {
+                                                scaffoldState.drawerState.close()
+                                            }
+                                        }
+                                    )
+                                    },
+                    drawerBackgroundColor = RuuviStationTheme.colors.background
+                ) { paddingValues ->
+                    Surface(
+                        color = RuuviStationTheme.colors.dashboardBackground,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(RuuviStationTheme.dimensions.medium)
+                    ) {
+                        DashboardItems(sensors)
                     }
                 }
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor,
+                        darkIcons = !isDarkTheme
+                    )
+                }
             }
-            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
-            return@setNavigationItemSelectedListener true
-        }
-
-        viewModel.userEmail.observe(this) { user ->
-            signedIn = !user.isNullOrEmpty()
-            updateMenu(signedIn)
-        }
-    }
-
-    private fun signIn() {
-        SignInActivity.start(this)
-    }
-
-    private fun updateMenu(signed: Boolean) {
-        val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
-        loginMenuItem?.let {
-            it.title = if (signed) {
-                getString(R.string.my_ruuvi_account)
-            } else {
-                getString(R.string.sign_in)
-            }
-        }
-    }
-
-    private val tagClick = AdapterView.OnItemClickListener { _, view, _, _ ->
-        val tag = view.tag as RuuviTag
-        TagDetailsActivity.start(this, tag.id)
-    }
-
-    private fun requestPermission() {
-        if (permissionsInteractor.arePermissionsGranted()) {
-            askForNotificationPermission()
-        } else {
-            permissionsInteractor.requestPermissions(
-                needBackground = viewModel.shouldAskForBackgroundLocationPermission,
-                askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
-            )
-        }
-    }
-
-    private fun askForNotificationPermission() {
-        if (viewModel.shouldAskNotificationPermission) {
-            notificationPermissionInteractor.checkAndRequest()
         }
     }
 
     companion object {
         fun start(context: Context) {
-            val intent = Intent(context, DashboardActivity::class.java)
-            context.startActivity(intent)
+            val dashboardIntent = Intent(context, DashboardActivity::class.java)
+            context.startActivity(dashboardIntent)
         }
     }
+}
+
+@Composable
+fun DashboardItems(items: List<RuuviTag>) {
+    val configuration = LocalConfiguration.current
+    val imageWidth = configuration.screenWidthDp.dp * 0.27f
+    Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
+    LazyColumn() {
+        items(items) { sensor ->
+            DashboardItem(imageWidth, sensor)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            .height(200.dp)
+            .fillMaxWidth()
+            .clickable {
+                TagDetailsActivity.start(context, sensor.id)
+            },
+        shape = RoundedCornerShape(10.dp),
+        elevation = 0.dp,
+        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
+    ) {
+        //Image(painter = , contentDescription = )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier
+                    .width(imageWidth)
+                    .fillMaxHeight()
+                    .background(color = RuuviStationTheme.colors.defaultSensorBackground)
+            ) {
+                Timber.d("Image path ${sensor.userBackground} ")
+
+                var file: File? = null
+                if (sensor.userBackground?.isNotEmpty() == true) {
+                    val uri = Uri.parse(sensor.userBackground)
+                    uri.path?.let {
+                        file = File(it)
+                    }
+                    Timber.d("File ${file?.absolutePath} ${file?.exists()}")
+                    Timber.d("Image path ${sensor.userBackground} uri ${Uri.parse(sensor.userBackground)}")
+
+                }
+
+                if (file?.exists() == true) {
+                    val bitmap = BitmapFactory.decodeStream(FileInputStream(file))
+                    Image(bitmap = bitmap.asImageBitmap(), contentDescription = "", contentScale = ContentScale.Crop)
+
+                }
+                else {
+                    Image(
+                        painter = painterResource(id = R.drawable.tag_bg_layer),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        alpha = if (isSystemInDarkTheme()) 0.75f else 0.30f
+                    )
+                }
+            }
+
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = RuuviStationTheme.dimensions.extended,
+                        start = RuuviStationTheme.dimensions.extended,
+                        bottom = RuuviStationTheme.dimensions.medium,
+                        end = RuuviStationTheme.dimensions.medium,
+                    )
+            ) {
+                val (name, temp, buttons, updated, column1, column2) = createRefs()
+
+                Title(
+                    text = sensor.displayName,
+                    modifier = Modifier.constrainAs(name) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(buttons.start)
+                        width = Dimension.fillToConstraints
+                    },
+                    maxLines = 2
+                )
+
+                Row(
+                    modifier = Modifier
+                        .constrainAs(buttons) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                        },
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                        IconButton(
+                            modifier = Modifier.size(36.dp),
+                            onClick = { /*TODO*/ }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                                contentDescription = ""
+                            )
+                        }
+
+                        DashboardItemDropdownMenu(sensor)
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.constrainAs(temp){
+                        top.linkTo(name.bottom)
+                        start.linkTo(parent.start)
+                    },
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Text(
+                        style = RuuviStationTheme.typography.dashboardTemperature,
+                        text = sensor.temperatureValue.valueWithoutUnit,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp,
+                                start = 2.dp
+                            ),
+                        style = RuuviStationTheme.typography.dashboardTemperatureUnit,
+                        text = sensor.temperatureValue.unitString,
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.constrainAs(column1) {
+                        start.linkTo(parent.start)
+                        top.linkTo(temp.bottom)
+                        bottom.linkTo(updated.top)
+                        end.linkTo(column2.start)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
+                ) {
+                    if (sensor.humidityValue != null) {
+                        ValueDisplay(value = sensor.humidityValue)
+                    }
+                    if (sensor.pressureValue != null) {
+                        ValueDisplay(value = sensor.pressureValue)
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.constrainAs(column2) {
+                        start.linkTo(column1.end)
+                        top.linkTo(temp.bottom)
+                        bottom.linkTo(updated.top)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
+                ) {
+                    ValueDisplay(value = sensor.voltageValue)
+
+                    if (sensor.movementValue != null) {
+                        ValueDisplay(value = sensor.movementValue)
+                    }
+                }
+
+                Text(
+                    style = RuuviStationTheme.typography.paragraph,
+                    text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .constrainAs(updated) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.fillToConstraints
+                        },
+                    fontSize = RuuviStationTheme.fontSizes.tiny
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ValueDisplay(value: EnvironmentValue) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = value.valueWithoutUnit,
+            style = typography.dashboardValue,
+            maxLines = 1
+        )
+        Spacer(modifier = Modifier.width(width = 4.dp))
+        Text(
+            text = value.unitString,
+            style = typography.dashboardUnit,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun DashboardItemDropdownMenu(
+    sensor: RuuviTag
+) {
+    val context = LocalContext.current
+    var threeDotsMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    Box() {
+        IconButton(
+            modifier = Modifier.size(36.dp),
+            onClick = { threeDotsMenuExpanded = !threeDotsMenuExpanded }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_3dots),
+                tint = RuuviStationTheme.colors.dashboardBurger,
+                contentDescription = ""
+            )
+        }
+
+        DropdownMenu(
+            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+            expanded = threeDotsMenuExpanded,
+            onDismissRequest = { threeDotsMenuExpanded = false }
+        ) {
+            DropdownMenuItem(onClick = {
+                TagDetailsActivity.start(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.full_image_view
+                ))
+            }
+
+            DropdownMenuItem(onClick = {
+                TagDetailsActivity.start(context, sensor.id, true)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.history_view
+                ))
+            }
+            DropdownMenuItem(onClick = {
+                TagSettingsActivity.start(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.settings_and_alerts
+                ))
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.change_background
+                ))
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
 }

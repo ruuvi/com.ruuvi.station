@@ -51,17 +51,6 @@ fun ChartControlElement(
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (!syncInProgress) {
-            IconButton(onClick = {
-                gattSyncDialogOpened = true
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_widget_d_update),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-        }
         if (syncInProgress) {
             IconButton(onClick = {
                 viewModel.disconnectGatt()
@@ -76,6 +65,16 @@ fun ChartControlElement(
                 style = RuuviStationTheme.typography.syncStatusText,
                 text = syncMessage.asString(context)
             )
+        } else {
+            IconButton(onClick = {
+                gattSyncDialogOpened = true
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_widget_d_update),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.buttonText
+                )
+            }
         }
 
         Row(
@@ -262,7 +261,11 @@ fun ThreeDotsMenu(
             )
         }
 
-        DropdownMenu(modifier = Modifier.background(color = RuuviStationTheme.colors.background), expanded = threeDotsMenuExpanded, onDismissRequest = { threeDotsMenuExpanded = false }) {
+        DropdownMenu(
+            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+            expanded = threeDotsMenuExpanded,
+            onDismissRequest = { threeDotsMenuExpanded = false }
+        ) {
             DropdownMenuItem(onClick = {
                 val uri = exportToCsv.invoke()
                 if (uri != null) { sendCsv(sensorId, uri, context) }

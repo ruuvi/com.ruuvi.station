@@ -13,61 +13,95 @@ data class RuuviStationTypography(
     val topBarText: TextStyle,
     val title: TextStyle,
     val success: TextStyle,
-    val syncStatusText: TextStyle
- )
+    val syncStatusText: TextStyle,
+    val menuItem: TextStyle,
+    val dashboardValue: TextStyle,
+    val dashboardUnit: TextStyle,
+    val dashboardTemperature: TextStyle,
+    val dashboardTemperatureUnit: TextStyle
+)
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
     return RuuviStationTypography(
         subtitle = TextStyle(
             color = colors.primary,
-            fontFamily = ruuviStationFonts.bold,
+            fontFamily = ruuviStationFonts.mulishBold,
             fontSize = ruuviStationFontsSizes.normal,
         ),
         paragraph = TextStyle(
             color = colors.primary,
-            fontFamily = ruuviStationFonts.regular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.normal,
         ),
         paragraphSmall = TextStyle(
             color = colors.primary,
-            fontFamily = ruuviStationFonts.regular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.small,
         ),
         warning = TextStyle(
             color = colors.warning,
-            fontFamily = ruuviStationFonts.regular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.normal,
         ),
         buttonText = TextStyle(
-            fontFamily = ruuviStationFonts.extraBold,
+            fontFamily = ruuviStationFonts.mulishExtraBold,
             fontSize = ruuviStationFontsSizes.normal,
             textAlign = TextAlign.Center
         ),
         textButtonText = TextStyle(
-            fontFamily = ruuviStationFonts.extraBold,
+            fontFamily = ruuviStationFonts.mulishExtraBold,
             fontSize = ruuviStationFontsSizes.normal,
             textAlign = TextAlign.Center
         ),
         topBarText = TextStyle(
             color = colors.topBarText,
-            fontFamily = ruuviStationFonts.bold,
+            fontFamily = ruuviStationFonts.mulishBold,
             fontSize = ruuviStationFontsSizes.big
         ),
         title = TextStyle(
             color = colors.settingsTitleText,
-            fontFamily = ruuviStationFonts.extraBold,
+            fontFamily = ruuviStationFonts.mulishExtraBold,
             fontSize = ruuviStationFontsSizes.extended,
             textAlign = TextAlign.Left
         ),
         success = TextStyle(
             color = colors.successText,
-            fontFamily = ruuviStationFonts.regular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.normal,
         ),
         syncStatusText = TextStyle(
             color = White80,
-            fontFamily = ruuviStationFonts.regular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.normal,
+        ),
+        menuItem = TextStyle(
+            color = colors.settingsTitleText,
+            fontFamily = ruuviStationFonts.mulishBold,
+            fontSize = ruuviStationFontsSizes.normal,
+        ),
+        dashboardValue = TextStyle(
+            color = colors.settingsTitleText,
+            fontFamily = ruuviStationFonts.montserratBold,
+            fontSize = ruuviStationFontsSizes.normal,
+            textAlign = TextAlign.Left
+        ),
+        dashboardUnit = TextStyle(
+            color = colors.settingsTitleText,
+            fontFamily = ruuviStationFonts.montserratRegular,
+            fontSize = ruuviStationFontsSizes.normal,
+            textAlign = TextAlign.Left
+        ),
+        dashboardTemperature = TextStyle(
+            color = colors.settingsTitleText,
+            fontFamily = ruuviStationFonts.oswaldBold,
+            fontSize = ruuviStationFontsSizes.bigger,
+            textAlign = TextAlign.Left
+        ),
+        dashboardTemperatureUnit = TextStyle(
+            color = colors.settingsTitleText,
+            fontFamily = ruuviStationFonts.oswaldRegular,
+            fontSize = ruuviStationFontsSizes.normal,
+            textAlign = TextAlign.Left
         ),
     )
 }

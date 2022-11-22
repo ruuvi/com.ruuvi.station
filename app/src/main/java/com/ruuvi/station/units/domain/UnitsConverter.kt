@@ -4,20 +4,27 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.domain.TemperatureConverter.Companion.fahrenheitMultiplier
-import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.*
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
-
 class UnitsConverter (
         private val context: Context,
         private val preferences: PreferencesRepository
 ) {
 
     // Temperature
+    fun getTemperatureEnvironmentValue(
+        temperatureCelsius: Double,
+        accuracy: Accuracy = getTemperatureAccuracy()
+    ): EnvironmentValue =
+        EnvironmentValue (
+            value = getTemperatureValue(temperatureCelsius),
+            accuracy = accuracy,
+            valueWithUnit = getTemperatureString(temperatureCelsius, accuracy),
+            valueWithoutUnit = getTemperatureStringWithoutUnit(temperatureCelsius),
+            unitString = getTemperatureUnitString()
+        )
 
     fun getTemperatureUnit(): TemperatureUnit = preferences.getTemperatureUnit()
 
@@ -49,31 +56,41 @@ class UnitsConverter (
         }
     }
 
-    fun getTemperatureString(temperature: Double?, accuracy: Accuracy? = null): String =
+    fun getTemperatureString(temperature: Double?, accuracy: Accuracy = getTemperatureAccuracy()): String =
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
             getTemperatureRawString(getTemperatureValue(temperature), accuracy)
         }
 
-    fun getTemperatureRawString(temperature: Double, accuracy: Accuracy? = null): String {
-        val displayAccuracy = accuracy ?: getTemperatureAccuracy()
-        return context.getString(displayAccuracy.nameTemplateId, temperature, getTemperatureUnitString())
+    fun getTemperatureRawString(temperature: Double, accuracy: Accuracy = getTemperatureAccuracy()): String {
+        return context.getString(accuracy.nameTemplateId, temperature, getTemperatureUnitString())
     }
 
     fun getTemperatureAccuracy() = preferences.getTemperatureAccuracy()
 
-    fun getTemperatureStringWithoutUnit(temperature: Double?): String =
+    fun getTemperatureStringWithoutUnit(temperature: Double?, accuracy: Accuracy = getTemperatureAccuracy()): String =
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(getTemperatureAccuracy().nameTemplateId, getTemperatureValue(temperature), "").trim()
+            context.getString(accuracy.nameTemplateId, getTemperatureValue(temperature), "").trim()
         }
 
     fun getTemperatureOffsetString(offset: Double): String =
         context.getString(R.string.temperature_reading, getTemperatureOffsetValue(offset), getTemperatureUnitString())
 
     // Pressure
+    fun getPressureEnvironmentValue(
+        pressurePascal: Double,
+        accuracy: Accuracy = getPressureAccuracy()
+    ): EnvironmentValue =
+        EnvironmentValue (
+            value = getPressureValue(pressurePascal),
+            accuracy = accuracy,
+            valueWithUnit = getPressureString(pressurePascal, accuracy),
+            valueWithoutUnit = getPressureStringWithoutUnit(pressurePascal),
+            unitString = getPressureUnitString()
+        )
 
     fun getPressureUnit(): PressureUnit = preferences.getPressureUnit()
 
@@ -130,6 +147,18 @@ class UnitsConverter (
     fun getPressureAccuracy() = preferences.getPressureAccuracy()
 
     // Humidity
+    fun getHumidityEnvironmentValue(
+        humidity: Double,
+        temperature: Double,
+        accuracy: Accuracy = getHumidityAccuracy()
+    ): EnvironmentValue =
+        EnvironmentValue (
+            value = getHumidityValue(humidity, temperature),
+            accuracy = accuracy,
+            valueWithUnit = getHumidityString(humidity, temperature),
+            valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature),
+            unitString = getHumidityUnitString()
+        )
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
 
@@ -179,7 +208,6 @@ class UnitsConverter (
         }
     }
 
-
     fun getHumidityRawString(
         hunidity: Double,
         accuracy: Accuracy? = null,
@@ -220,6 +248,17 @@ class UnitsConverter (
     fun getDisplayApproximateValue(value: Float): String {
         return value.round(0).toInt().toString()
     }
+
+    fun getVoltageEnvironmentValue(
+        voltage: Double
+    ): EnvironmentValue =
+        EnvironmentValue (
+            value = voltage,
+            accuracy = Accuracy.Accuracy2,
+            valueWithUnit = context.getString(R.string.voltage_reading, voltage, context.getString(R.string.voltage_unit)),
+            valueWithoutUnit = context.getString(R.string.voltage_reading, voltage, "").trim(),
+            unitString = context.getString(R.string.voltage_unit)
+        )
 
     companion object {
         const val NO_VALUE_AVAILABLE = "-"

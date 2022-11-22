@@ -20,7 +20,7 @@ package="com.ruuvi.station">
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 <uses-feature android:name="android.hardware.bluetooth" />
 
@@ -109,7 +109,13 @@ package="com.ruuvi.station">
         </intent-filter>
     </activity>
     <activity
-        android:name=".dashboard.ui.DashboardActivity"
+        android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
+        android:exported="false"
+        android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
+    <activity
+        android:name=".dashboard.ui.DashboardActivityOld"
         android:exported="false"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
