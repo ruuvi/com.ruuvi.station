@@ -3,7 +3,7 @@ package com.ruuvi.station.app.ui
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -69,7 +69,7 @@ fun DashboardTopAppBar(
                          IconButton(
                              onClick = { navigationCallback.invoke() }) {
                              Icon(
-                                 modifier = Modifier.height(36.dp).width(36.dp),
+                                 modifier = Modifier.size(36.dp),
                                  imageVector = ImageVector.vectorResource(id = R.drawable.ic_menu_24),
                                  tint = RuuviStationTheme.colors.dashboardBurger,
                                  contentDescription = ""
@@ -79,7 +79,7 @@ fun DashboardTopAppBar(
         actions = {
             IconButton(onClick = { actionCallBack.invoke() }) {
                 Icon(
-                    modifier = Modifier.height(36.dp).width(36.dp),
+                    modifier = Modifier.size(36.dp),
                     imageVector = ImageVector.vectorResource(id = R.drawable.add),
                     tint = RuuviStationTheme.colors.dashboardIcons,
                     contentDescription = ""

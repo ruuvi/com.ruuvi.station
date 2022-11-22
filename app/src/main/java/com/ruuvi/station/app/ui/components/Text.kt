@@ -16,6 +16,16 @@ fun Subtitle(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun Title(text: String, modifier: Modifier = Modifier, maxLines: Int = Int.MAX_VALUE) {
+    Text(
+        style = RuuviStationTheme.typography.title,
+        text = text,
+        modifier = modifier,
+        maxLines = maxLines
+    )
+}
+
+@Composable
 fun SubtitleWithPadding(text: String, modifier: Modifier = Modifier) {
     Subtitle(
         text = text,

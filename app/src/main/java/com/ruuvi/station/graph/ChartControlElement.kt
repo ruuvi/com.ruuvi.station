@@ -51,17 +51,6 @@ fun ChartControlElement(
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (!syncInProgress) {
-            IconButton(onClick = {
-                gattSyncDialogOpened = true
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_widget_d_update),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-        }
         if (syncInProgress) {
             IconButton(onClick = {
                 viewModel.disconnectGatt()
@@ -76,6 +65,16 @@ fun ChartControlElement(
                 style = RuuviStationTheme.typography.syncStatusText,
                 text = syncMessage.asString(context)
             )
+        } else {
+            IconButton(onClick = {
+                gattSyncDialogOpened = true
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_widget_d_update),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.buttonText
+                )
+            }
         }
 
         Row(
