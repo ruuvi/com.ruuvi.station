@@ -26,6 +26,8 @@ val Lines10 = Color(0xFF1F3836)
 val Orange = Color(0xCCF48021)
 val Milky = Color(0xFFD6EAE7)
 val Milky2 = Color(0xFFEEF2F2)
+val DefaultSensorBackgroundDark = Color(0xFF2D605C)
+val DefaultSensorBackgroundLight = Color(0xFFD8EDEA)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -50,7 +52,8 @@ data class RuuviStationColors(
     val dashboardBackground: Color,
     val dashboardCardBackground: Color,
     val dashboardIcons: Color,
-    val dashboardBurger: Color
+    val dashboardBurger: Color,
+    val defaultSensorBackground: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -76,7 +79,8 @@ val lightPalette = RuuviStationColors(
     dashboardBackground = Milky2,
     dashboardCardBackground = White,
     dashboardIcons = Titan,
-    dashboardBurger = Titan
+    dashboardBurger = Titan,
+    defaultSensorBackground = DefaultSensorBackgroundLight
 )
 
 val darkPalette = RuuviStationColors(
@@ -102,5 +106,6 @@ val darkPalette = RuuviStationColors(
     dashboardBackground = Dark,
     dashboardCardBackground = Titan,
     dashboardIcons = Keppel,
-    dashboardBurger = White
+    dashboardBurger = White,
+    defaultSensorBackground = DefaultSensorBackgroundDark
 )

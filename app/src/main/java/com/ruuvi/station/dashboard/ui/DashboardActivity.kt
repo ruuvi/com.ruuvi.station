@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -194,7 +193,7 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
                 Modifier
                     .width(imageWidth)
                     .fillMaxHeight()
-                    .background(color = Color(0xFF2d605c))
+                    .background(color = RuuviStationTheme.colors.defaultSensorBackground)
             ) {
                 Timber.d("Image path ${sensor.userBackground} ")
 
@@ -215,7 +214,12 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag) {
 
                 }
                 else {
-                    Image(painter = painterResource(id = R.drawable.tag_bg_layer), contentDescription = "", contentScale = ContentScale.Crop, alpha = 0.75f)
+                    Image(
+                        painter = painterResource(id = R.drawable.tag_bg_layer),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        alpha = if (isSystemInDarkTheme()) 0.75f else 0.30f
+                    )
                 }
             }
 
