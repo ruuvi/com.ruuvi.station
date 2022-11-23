@@ -24,12 +24,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
@@ -43,9 +45,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
-import com.ruuvi.station.app.ui.components.Title
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme.typography
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.ClaimSensorActivity
 import com.ruuvi.station.network.ui.MyAccountActivity
@@ -168,11 +168,13 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 @Composable
 fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
     val configuration = LocalConfiguration.current
-    val imageWidth = configuration.screenWidthDp.dp * 0.27f
+    val itemHeight = 156.dp * LocalDensity.current.fontScale
+    val imageWidth = configuration.screenWidthDp.dp * 0.24f
+
     Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
     LazyColumn() {
         items(items) { sensor ->
-            DashboardItem(imageWidth, sensor, userEmail)
+            DashboardItem(imageWidth, itemHeight, sensor, userEmail)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
     }
@@ -180,12 +182,12 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
+fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
-            .height(200.dp)
+            .height(itemHeight)
             .fillMaxWidth()
             .clickable {
                 TagDetailsActivity.start(context, sensor.id)
@@ -217,11 +219,16 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
 
                 if (file?.exists() == true) {
                     val bitmap = BitmapFactory.decodeStream(FileInputStream(file))
-                    Image(bitmap = bitmap.asImageBitmap(), contentDescription = "", contentScale = ContentScale.Crop)
-
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
                 }
                 else {
                     Image(
+                        modifier = Modifier.fillMaxSize(),
                         painter = painterResource(id = R.drawable.tag_bg_layer),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
@@ -234,16 +241,19 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = RuuviStationTheme.dimensions.extended,
-                        start = RuuviStationTheme.dimensions.extended,
+                        top = RuuviStationTheme.dimensions.mediumPlus,
+                        start = RuuviStationTheme.dimensions.mediumPlus,
                         bottom = RuuviStationTheme.dimensions.medium,
                         end = RuuviStationTheme.dimensions.medium,
                     )
             ) {
                 val (name, temp, buttons, updated, column1, column2) = createRefs()
 
-                Title(
+                Text(
+                    style = RuuviStationTheme.typography.title,
                     text = sensor.displayName,
+                    lineHeight = RuuviStationTheme.fontSizes.extended,
+                    fontSize = RuuviStationTheme.fontSizes.normal,
                     modifier = Modifier.constrainAs(name) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
@@ -310,18 +320,20 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
                     modifier = Modifier.constrainAs(temp){
                         top.linkTo(name.bottom)
                         start.linkTo(parent.start)
-                    },
+                    }
+                        .offset(y = (-8).dp * LocalDensity.current.fontScale),
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
                         style = RuuviStationTheme.typography.dashboardTemperature,
                         text = sensor.temperatureValue.valueWithoutUnit,
+                        lineHeight = 10.sp,
                         color = tempTextColor
                     )
                     Text(
                         modifier = Modifier
                             .padding(
-                                top = 8.dp,
+                                top = 8.dp * LocalDensity.current.fontScale,
                                 start = 2.dp
                             ),
                         style = RuuviStationTheme.typography.dashboardTemperatureUnit,
@@ -335,11 +347,9 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier.constrainAs(column1) {
                         start.linkTo(parent.start)
-                        top.linkTo(temp.bottom)
                         bottom.linkTo(updated.top)
                         end.linkTo(column2.start)
                         width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
                     }
                 ) {
                     if (sensor.humidityValue != null) {
@@ -355,11 +365,9 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier.constrainAs(column2) {
                         start.linkTo(column1.end)
-                        top.linkTo(temp.bottom)
                         bottom.linkTo(updated.top)
                         end.linkTo(parent.end)
                         width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
                     }
                 ) {
                     ValueDisplay(value = sensor.voltageValue, false)
@@ -373,14 +381,14 @@ fun DashboardItem(imageWidth: Dp, sensor: RuuviTag, userEmail: String?) {
                     style = RuuviStationTheme.typography.paragraph,
                     text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
                     modifier = Modifier
-                        .padding(top = 4.dp)
+                        .padding(top = 2.dp)
                         .constrainAs(updated) {
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
                         },
-                    fontSize = RuuviStationTheme.fontSizes.tiny
+                    fontSize = RuuviStationTheme.fontSizes.smallest
                 )
             }
         }
@@ -395,17 +403,17 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
         RuuviStationTheme.colors.settingsTitleText
     }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.Bottom) {
         Text(
             text = value.valueWithoutUnit,
-            style = typography.dashboardValue,
+            style = RuuviStationTheme.typography.dashboardValue,
             color = textColor,
             maxLines = 1
         )
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
             text = value.unitString,
-            style = typography.dashboardUnit,
+            style = RuuviStationTheme.typography.dashboardUnit,
             color = textColor,
             maxLines = 1
         )
