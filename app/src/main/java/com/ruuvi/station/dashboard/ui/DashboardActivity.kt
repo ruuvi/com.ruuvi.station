@@ -173,7 +173,7 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
 
     Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
     LazyColumn() {
-        items(items) { sensor ->
+        items(items, key = {it.id}) { sensor ->
             DashboardItem(imageWidth, itemHeight, sensor, userEmail)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
@@ -317,10 +317,11 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
                 }
 
                 Row(
-                    modifier = Modifier.constrainAs(temp){
-                        top.linkTo(name.bottom)
-                        start.linkTo(parent.start)
-                    }
+                    modifier = Modifier
+                        .constrainAs(temp) {
+                            top.linkTo(name.bottom)
+                            start.linkTo(parent.start)
+                        }
                         .offset(y = (-8).dp * LocalDensity.current.fontScale),
                     verticalAlignment = Alignment.Top
                 ) {
