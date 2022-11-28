@@ -134,8 +134,7 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
         android:exported="false"
         android:label="@string/claim_sensor"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-
+        android:theme="@style/AppTheme.NoActionBar" />
     <activity
         android:name="com.ruuvi.station.network.ui.MyAccountActivity"
         android:exported="false"

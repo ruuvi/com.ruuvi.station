@@ -5,10 +5,20 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import com.google.android.material.snackbar.Snackbar
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.databinding.ActivityClaimSensorBinding
-import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
+import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -18,8 +28,6 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
 
     override val kodein: Kodein by closestKodein()
 
-    lateinit var binding: ActivityClaimSensorBinding
-
     private val viewModel: ClaimSensorViewModel by viewModel {
         intent.getStringExtra(SENSOR_ID)?.let {
             it
@@ -28,38 +36,64 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        binding = ActivityClaimSensorBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContent {
+            RuuviTheme {
+                val scaffoldState = rememberScaffoldState()
+                val systemUiController = rememberSystemUiController()
+                val systemBarsColor = RuuviStationTheme.colors.systemBars
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    backgroundColor = RuuviStationTheme.colors.background,
+                    topBar = { MyTopAppBar(title = "title") },
+                    scaffoldState = scaffoldState
+                ) { padding ->
 
-        setupUI()
-        setupViewModel()
+                    Paragraph(text = "test")
+                }
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor
+                    )
+                }
+            }
+        }
     }
 
+
+    @Composable
+    fun ClaimSensor() {
+        
+    }
+
+    @Composable
+    fun ForceClaim() {
+        
+    }
+    
     private fun setupViewModel() {
         viewModel.claimResultObserve.observe(this) { claimResult ->
             if (claimResult != null) {
                 if (claimResult.first) {
                     finish()
                 } else {
-                    Snackbar.make(binding.root, claimResult.second, Snackbar.LENGTH_SHORT).show()
+                    //Snackbar.make(binding.root, claimResult.second, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
 
         viewModel.claimInProgress.observe(this) {
-            binding.claimButton.isEnabled = !it
+            //binding.claimButton.isEnabled = !it
         }
     }
 
     private fun setupUI() {
-        binding.claimButton.setDebouncedOnClickListener {
-            viewModel.claimSensor()
-        }
+//        binding.claimButton.setDebouncedOnClickListener {
+//            viewModel.claimSensor()
+//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
