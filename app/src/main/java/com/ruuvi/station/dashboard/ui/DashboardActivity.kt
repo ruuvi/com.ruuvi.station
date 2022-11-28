@@ -205,20 +205,12 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
             ) {
                 Timber.d("Image path ${sensor.userBackground} ")
 
-                val uri = Uri.parse(sensor.userBackground)
+                if (sensor.userBackground != null) {
+                    val uri = Uri.parse(sensor.userBackground)
 
-
-                if (uri.path != null) {
-                    DashboardImage(uri)
-                }
-                else {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.tag_bg_layer),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        alpha = if (isSystemInDarkTheme()) 0.75f else 0.30f
-                    )
+                    if (uri.path != null) {
+                        DashboardImage(uri)
+                    }
                 }
             }
 
