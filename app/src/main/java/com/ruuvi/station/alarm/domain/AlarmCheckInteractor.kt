@@ -37,15 +37,31 @@ class AlarmCheckInteractor(
 
     fun getStatus(ruuviTag: RuuviTag): AlarmStatus {
         val alarms = getEnabledAlarms(ruuviTag)
-        val hasEnabledAlarm = alarms.isNotEmpty()
+        if (alarms.isEmpty()) return AlarmStatus.NO_ALARM
         alarms
             .forEach { alarm ->
                 if (AlarmChecker(ruuviTag, alarm).triggered) {
                     return AlarmStatus.TRIGGERED
                 }
             }
-        if (hasEnabledAlarm) return AlarmStatus.NO_TRIGGERED
-        return AlarmStatus.NO_ALARM
+        return AlarmStatus.NO_TRIGGERED
+    }
+
+    fun getAlarmStatus(ruuviTag: RuuviTag): AlarmSensorStatus {
+        val alarms = getEnabledAlarms(ruuviTag)
+        if (alarms.isEmpty()) return AlarmSensorStatus.NoAlarms
+        val triggeredTypes = mutableSetOf<AlarmType>()
+        alarms
+            .forEach { alarm ->
+                if (AlarmChecker(ruuviTag, alarm).triggered) {
+                    triggeredTypes.add(alarm.alarmType)
+                }
+            }
+        if (triggeredTypes.isEmpty()) {
+            return AlarmSensorStatus.NotTriggered
+        } else {
+            return AlarmSensorStatus.Triggered(triggeredTypes)
+        }
     }
 
     fun checkAlarm(sensor: RuuviTag, alarm: Alarm): Boolean {
@@ -296,4 +312,18 @@ enum class AlarmStatus {
     TRIGGERED,
     NO_TRIGGERED,
     NO_ALARM
+}
+
+sealed class AlarmSensorStatus {
+    object NoAlarms: AlarmSensorStatus()
+    object NotTriggered: AlarmSensorStatus()
+    class Triggered(val alarmTypes: Set<AlarmType>): AlarmSensorStatus()
+
+    fun triggered(alarmType: AlarmType): Boolean {
+        return if (this is Triggered) {
+            alarmTypes.contains(alarmType)
+        } else {
+            false
+        }
+    }
 }

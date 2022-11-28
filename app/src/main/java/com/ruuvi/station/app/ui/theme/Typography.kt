@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.ui.theme
 
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 
 data class RuuviStationTypography(
@@ -82,13 +83,13 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         dashboardValue = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.montserratBold,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.small,
             textAlign = TextAlign.Left
         ),
         dashboardUnit = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.montserratRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.tiny,
             textAlign = TextAlign.Left
         ),
         dashboardTemperature = TextStyle(

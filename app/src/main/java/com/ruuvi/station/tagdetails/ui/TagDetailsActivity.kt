@@ -315,12 +315,20 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun setupSelectedTag(selectedTag: RuuviTag) {
         val previousBitmapDrawable = backgrounds[viewModel.getPrevTag()?.id]
         if (previousBitmapDrawable != null) {
-            binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
+            //binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
         }
-        val bitmap = Utils.getBackground(applicationContext, selectedTag)
-        val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
-        backgrounds[selectedTag.id] = bitmapDrawable
-        binding.imageSwitcher.setImageDrawable(bitmapDrawable)
+        if  (selectedTag.userBackground.isNullOrEmpty()) {
+            if (isDarkMode()) {
+                binding.imageSwitcher.setImageResource(R.drawable.default_background)
+            } else {
+                binding.imageSwitcher.setImageResource(R.drawable.default_background_light)
+            }
+        } else {
+            val bitmap = Utils.getBackground(applicationContext, selectedTag)
+            val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
+            backgrounds[selectedTag.id] = bitmapDrawable
+            binding.imageSwitcher.setImageDrawable(bitmapDrawable)
+        }
     }
 
     private fun animateGraphTransition(isShowGraph: Boolean) {

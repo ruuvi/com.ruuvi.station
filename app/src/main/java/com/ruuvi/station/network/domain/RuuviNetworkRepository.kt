@@ -10,9 +10,9 @@ import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.util.extensions.getEpochSecond
 import kotlinx.coroutines.*
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
@@ -223,8 +223,8 @@ class RuuviNetworkRepository
                 bitmap?.let {
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                    val mediaType = MediaType.get(request.type)
-                    val body = RequestBody.create(mediaType, stream.toByteArray())
+                    val mediaType = request.type.toMediaType()
+                    val body = stream.toByteArray().toRequestBody(mediaType)
                     retrofitService.uploadImageData(url, request.type, body)
                     bitmap.recycle()
                 }

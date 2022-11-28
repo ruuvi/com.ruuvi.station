@@ -77,7 +77,7 @@ object Utils {
         }
         return BitmapFactory.decodeResource(
             context.resources,
-            getDefaultBackground(tag.defaultBackground)
+            R.drawable.default_background
         )
     }
 
