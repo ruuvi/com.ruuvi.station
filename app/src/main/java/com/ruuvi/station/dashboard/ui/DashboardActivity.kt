@@ -20,14 +20,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
@@ -65,7 +65,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
 
 class DashboardActivity : AppCompatActivity(), KodeinAware {
 
@@ -180,7 +179,7 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
     val context = LocalContext.current
@@ -206,25 +205,11 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
             ) {
                 Timber.d("Image path ${sensor.userBackground} ")
 
-                var file: File? = null
-                if (sensor.userBackground?.isNotEmpty() == true) {
-                    val uri = Uri.parse(sensor.userBackground)
-                    uri.path?.let {
-                        file = File(it)
-                    }
-                    Timber.d("File ${file?.absolutePath} ${file?.exists()}")
-                    Timber.d("Image path ${sensor.userBackground} uri ${Uri.parse(sensor.userBackground)}")
+                val uri = Uri.parse(sensor.userBackground)
 
-                }
 
-                if (file?.exists() == true) {
-                    val bitmap = BitmapFactory.decodeStream(FileInputStream(file))
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
-                    )
+                if (uri.path != null) {
+                    DashboardImage(uri)
                 }
                 else {
                     Image(
@@ -394,6 +379,18 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
             }
         }
     }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun DashboardImage(userBackground: Uri) {
+    Timber.d("Image path $userBackground")
+    GlideImage(
+        modifier = Modifier.fillMaxSize(),
+        model = userBackground,
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable
