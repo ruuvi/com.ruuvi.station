@@ -160,7 +160,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     //Android KTX
-    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "androidx.core:core-ktx:1.9.0"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
@@ -177,8 +177,8 @@ dependencies {
     // Retrofit2
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:3.8.0"
-    implementation "io.grpc:grpc-okhttp:1.32.2"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+    implementation "io.grpc:grpc-okhttp:1.51.0"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
@@ -186,5 +186,10 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$navigation_version"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accomponist_version"
 
-    implementation("io.coil-kt:coil:1.1.1")
+    implementation("io.coil-kt:coil:2.2.2")
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 }

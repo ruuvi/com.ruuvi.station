@@ -288,24 +288,12 @@ private fun AlarmHeader(
         )
         if (alarmState.isEnabled) {
             if (alarmState.triggered) {
-                var imageVisible by remember { mutableStateOf(true) }
-
-                AnimatedVisibility(
-                    visible = imageVisible,
-                    enter = fadeIn(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300))
-                ) {
+                BlinkingEffect() {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                         contentDescription = null,
                         tint = RuuviStationTheme.colors.activeAlert
                     )
-                }
-                LaunchedEffect(key1 = 1) {
-                    while (true) {
-                        delay(800)
-                        imageVisible = !imageVisible
-                    }
                 }
             } else {
                 Icon(
