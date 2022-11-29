@@ -6,17 +6,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.MyTopAppBar
-import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -40,18 +40,37 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
 
         setContent {
             RuuviTheme {
+                val titleString = stringResource(id = R.string.claim_sensor)
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
+                var title by remember { mutableStateOf(titleString) }
 
+                val claimState by viewModel.claimState.collectAsState()
+                
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     backgroundColor = RuuviStationTheme.colors.background,
-                    topBar = { MyTopAppBar(title = "title") },
+                    topBar = { MyTopAppBar(title = title) },
                     scaffoldState = scaffoldState
                 ) { padding ->
-
-                    Paragraph(text = "test")
+                    
+                    when (claimState) {
+                        is ClaimSensorState.InProgress -> {
+                            val state = claimState as ClaimSensorState.InProgress
+                            title = stringResource(id = state.title)
+                            LoadingScreen(status = stringResource(id = (claimState as ClaimSensorState.InProgress).status))
+                        }
+                        is ClaimSensorState.FreeToClaim -> {
+                            title = stringResource(id = R.string.claim_sensor)
+                            ClaimSensor()
+                        }
+                        is ClaimSensorState.ClaimedBySomeone -> Paragraph(text = "claimed by someone")
+                        is ClaimSensorState.ClaimFinished -> finish()
+                        is ClaimSensorState.ErrorWhileChecking -> {
+                            Paragraph(text = "error ${(claimState as ClaimSensorState.ErrorWhileChecking).error}")
+                        }
+                    }
                 }
 
                 SideEffect {
@@ -66,7 +85,17 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
 
     @Composable
     fun ClaimSensor() {
-        
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.claim_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.claim_ownership)) {
+                        viewModel.claimSensor()
+                    }
+                }
+            }
+        }
     }
 
     @Composable

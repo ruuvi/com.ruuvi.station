@@ -151,6 +151,32 @@ class RuuviNetworkInteractor (
         }
     }
 
+    suspend fun getSensorOwner(sensorId: String, onResult: (CheckSensorResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            try {
+                val response = networkRepository.checkSensorOwner(sensorId, token)
+                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
+                    sensorSettingsRepository.setSensorOwner(
+                        sensorId,
+                        response.data.email,
+                        false
+                    )
+                }
+                onResult(response)
+            } catch (e: Exception) {
+                onResult(
+                    CheckSensorResponse(
+                    result = RuuviNetworkResponse.errorResult,
+                    error = e.message.toString(),
+                    data = null,
+                    code = null
+                    )
+                )
+            }
+        }
+    }
+
     fun unclaimSensor(sensorId: String) {
         val networkRequest = NetworkRequest(NetworkRequestType.UNCLAIM, sensorId, UnclaimSensorRequest(sensorId))
         Timber.d("unclaimSensor $networkRequest")

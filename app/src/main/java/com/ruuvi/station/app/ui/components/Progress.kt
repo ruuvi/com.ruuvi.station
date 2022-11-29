@@ -1,13 +1,13 @@
 package com.ruuvi.station.app.ui.components
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.Dp
@@ -56,5 +56,20 @@ fun LoadingStatusDialog(size: Dp = RuuviStationTheme.dimensions.big) {
         onDismissRequest = {}
     ) {
         LoadingStatus(size)
+    }
+}
+
+@Composable
+fun LoadingScreen(status: String) {
+    PageSurface() {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Subtitle(text = status)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            LoadingStatus()
+        }
     }
 }

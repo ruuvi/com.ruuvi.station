@@ -51,7 +51,7 @@ fun SensorSettings(
         GeneralSettingsGroup(
             sensorState = sensorState,
             userLoggedIn = userLoggedIn,
-            sensorOwnedByUserObserve = sensorOwnedByUser,
+            sensorOwnedByUser = sensorOwnedByUser,
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
@@ -94,7 +94,7 @@ fun SensorSettings(
 fun GeneralSettingsGroup(
     sensorState: RuuviTag,
     userLoggedIn: Boolean,
-    sensorOwnedByUserObserve: Boolean,
+    sensorOwnedByUser: Boolean,
     sensorIsShared: Boolean,
     setName: (String) -> Unit
 ) {
@@ -110,21 +110,27 @@ fun GeneralSettingsGroup(
     }
     if (userLoggedIn) {
         DividerRuuvi()
-        if (sensorState.owner.isNullOrEmpty()) {
+        val owner = if (sensorState.owner.isNullOrEmpty()) {
+            stringResource(id = R.string.owner_none)
+        } else {
+            sensorState.owner
+        }
+
+        if (sensorOwnedByUser) {
+            ValueWithCaption(
+                title = stringResource(id = R.string.tagsettings_owner),
+                value = owner
+            )
+        } else {
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.tagsettings_owner),
-                value = stringResource(id = R.string.owner_none),
+                value = owner,
                 icon = painterResource(id = R.drawable.arrow_forward_16)
             ) {
                 ClaimSensorActivity.start(context, sensorState.id)
             }
-        } else {
-            ValueWithCaption(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = sensorState.owner
-            )
         }
-        if (sensorOwnedByUserObserve) {
+        if (sensorOwnedByUser) {
             val sharedText = if (sensorIsShared) {
                 stringResource(R.string.sensor_shared)
             } else {

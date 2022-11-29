@@ -78,7 +78,11 @@ class TagSettingsViewModel(
             }
 
             if (sensorState?.networkSensor != true && sensorState?.owner.isNullOrEmpty()) {
-                interactor.checkSensorOwner(sensorId)
+                try {
+                    interactor.checkSensorOwner(sensorId)
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
             }
         }
     }
@@ -96,7 +100,11 @@ class TagSettingsViewModel(
     }
 
     fun checkIfSensorShared() {
-        getSensorSharedEmails()
+        try {
+            getSensorSharedEmails()
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
 
     }
 
