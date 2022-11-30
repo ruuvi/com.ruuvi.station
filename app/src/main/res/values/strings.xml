@@ -196,6 +196,10 @@
     <string name="firmware_update">Update</string>
     <string name="firmware_very_old">Very Old</string>
     <string name="follow_system_theme">Follow system theme</string>
+    <string name="force_claim">Force Claim</string>
+    <string name="force_claim_sensor">Force Claim Sensor</string>
+    <string name="force_claim_sensor_description1">This sensor has been claimed by another user. You can force ownership to your account if you have physical access to this sensor. Every Ruuvi sensor can have only one owner.</string>
+    <string name="force_claim_sensor_description2">Force Claim is done by using Near-Field Communication (NFC). Make sure NFC is enabled on your mobile device.\n\n\t1. Touch your Ruuvi sensor with your mobile device to start the claiming process.\n\n\t2. When successfully claimed you will be forwarded back to Sensor Settings.\n\nIf claiming was unsuccessful or NFC is not available on your device:\n\n\t1. Open the cover of your Ruuvi sensor.\n\n\t2. Locate round black button (or button B in case your sensor has 2 buttons) on white circuit board and press it briefly to start the claiming process.\n\n\t3. When successfully claimed you will be forwarded back to Sensor Settings.</string>
     <string name="full_image_view">Full image view</string>
     <string name="gallery">Gallery</string>
     <string name="gateway_test_exception">Nope, it did not work. Is the URL correct?</string>

@@ -51,7 +51,7 @@ class ClaimSensorViewModel (
                         return@getSensorOwner
                     }
 
-                    _claimState.value = ClaimSensorState.ClaimedBySomeone
+                    _claimState.value = ClaimSensorState.ForceClaimInit
                     return@getSensorOwner
                 } else {
                     _claimState.value = ClaimSensorState.ErrorWhileChecking(it?.error ?: "")
@@ -108,12 +108,17 @@ class ClaimSensorViewModel (
     private fun saveSensorCalibration() {
         ruuviNetworkInteractor.updateSensorCalibration(sensorId)
     }
+
+    fun getSensorId() {
+        _claimState.value = ClaimSensorState.ForceClaimGettingId
+    }
 }
 
 sealed class ClaimSensorState {
     class InProgress(val title: Int, val status: Int): ClaimSensorState()
     object FreeToClaim: ClaimSensorState()
-    object ClaimedBySomeone: ClaimSensorState()
+    object ForceClaimInit: ClaimSensorState()
+    object ForceClaimGettingId: ClaimSensorState()
     class ErrorWhileChecking(val error: String): ClaimSensorState()
     object ClaimFinished: ClaimSensorState()
 }

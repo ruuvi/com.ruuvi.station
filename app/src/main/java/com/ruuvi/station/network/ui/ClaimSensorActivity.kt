@@ -65,7 +65,14 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
                             title = stringResource(id = R.string.claim_sensor)
                             ClaimSensor()
                         }
-                        is ClaimSensorState.ClaimedBySomeone -> Paragraph(text = "claimed by someone")
+                        is ClaimSensorState.ForceClaimInit -> {
+                            title = stringResource(id = R.string.force_claim_sensor)
+                            ForceClaimInit()
+                        }
+                        is ClaimSensorState.ForceClaimGettingId -> {
+                            title = stringResource(id = R.string.force_claim_sensor)
+                            ForceClaimGettingId()
+                        }
                         is ClaimSensorState.ClaimFinished -> finish()
                         is ClaimSensorState.ErrorWhileChecking -> {
                             Paragraph(text = "error ${(claimState as ClaimSensorState.ErrorWhileChecking).error}")
@@ -99,8 +106,28 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
     }
 
     @Composable
-    fun ForceClaim() {
-        
+    fun ForceClaimInit() {
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.force_claim_sensor_description1))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.force_claim)) {
+                        viewModel.getSensorId()
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ForceClaimGettingId() {
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.force_claim_sensor_description2))
+            }
+        }
+
     }
     
     private fun setupViewModel() {
