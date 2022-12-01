@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.ui.UiText
-import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
+import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.isLowBattery
@@ -29,7 +29,7 @@ class TagSettingsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
     private val alarmRepository: AlarmRepository,
-    private val sensorFwInteractor: SensorFwVersionInteractor,
+    private val sensorFwInteractor: SensorInfoInteractor,
     private val unitsConverter: UnitsConverter,
     private val accelerationConverter: AccelerationConverter
 ) : ViewModel() {

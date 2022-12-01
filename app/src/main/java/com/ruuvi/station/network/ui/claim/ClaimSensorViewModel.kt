@@ -1,19 +1,23 @@
-package com.ruuvi.station.network.ui
+package com.ruuvi.station.network.ui.claim
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ClaimSensorViewModel (
@@ -21,8 +25,12 @@ class ClaimSensorViewModel (
     private val ruuviNetworkInteractor: RuuviNetworkInteractor,
     private val interactor: TagSettingsInteractor,
     private val alarmRepository: AlarmRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val sensorInfoInteractor: SensorInfoInteractor,
     ): ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> ()
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _claimState = MutableStateFlow<ClaimSensorState> (
         ClaimSensorState.InProgress(R.string.claim_sensor, R.string.check_claim_state)
@@ -43,6 +51,9 @@ class ClaimSensorViewModel (
                 if (it?.isSuccess() == true) {
                     if (it.data?.email == "") {
                         _claimState.value = ClaimSensorState.FreeToClaim
+                        viewModelScope.launch {
+                            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FREE_TO_CLAIM, true))
+                        }
                         return@getSensorOwner
                     }
 
@@ -52,6 +63,9 @@ class ClaimSensorViewModel (
                     }
 
                     _claimState.value = ClaimSensorState.ForceClaimInit
+                    viewModelScope.launch {
+                        _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_INIT, true))
+                    }
                     return@getSensorOwner
                 } else {
                     _claimState.value = ClaimSensorState.ErrorWhileChecking(it?.error ?: "")
@@ -111,6 +125,33 @@ class ClaimSensorViewModel (
 
     fun getSensorId() {
         _claimState.value = ClaimSensorState.ForceClaimGettingId
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID))
+        }
+        viewModelScope.launch {
+            sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
+
+            NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
+                Timber.d("NFC VM $scanInfo")
+                if (scanInfo != null && scanInfo.mac != sensorId) {
+                    viewModelScope.launch {
+                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
+                    }
+                }
+            }
+        }
+        viewModelScope.launch {
+            var id: String? = null
+            while (id == null) {
+                val sensorInfo = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
+                Timber.d("SensorInfo $sensorInfo")
+                if (sensorInfo.id == null) {
+                    delay(3000)
+                } else {
+                    id = sensorInfo.id
+                }
+            }
+        }
     }
 }
 

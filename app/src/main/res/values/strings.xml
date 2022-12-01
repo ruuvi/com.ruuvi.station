@@ -105,6 +105,7 @@
     <string name="claim_in_progress">Claim in progress</string>
     <string name="claim_ownership">Claim Ownership</string>
     <string name="claim_sensor">Claim sensor</string>
+    <string name="claim_wrong_sensor_scanned">You are scanning different RuuviTag</string>
     <string name="clear">Clear</string>
     <string name="clear_confirm">Clear the local historical data from the app?</string>
     <string name="clear_local_history">Clear local history</string>

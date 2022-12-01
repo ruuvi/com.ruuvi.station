@@ -24,7 +24,7 @@ import java.util.*
 
 class DfuUpdateViewModel(
     val sensorId: String,
-    private val sensorFwVersionInteractor: SensorFwVersionInteractor,
+    private val sensorInfoInteractor: SensorInfoInteractor,
     private val latestFwInteractor: LatestFwInteractor,
     private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
     private val dfuInteractor: DfuInteractor,
@@ -123,7 +123,7 @@ class DfuUpdateViewModel(
         }
 
         getFwJob = viewModelScope.launch {
-            val firmware = sensorFwVersionInteractor.getSensorFirmwareVersion(sensorId)
+            val firmware = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
             _sensorFwVersion.value = firmware
             if (firmware.isSuccess && firmware.fw.isNotEmpty()) {
                 sensorSettingsRepository.setSensorFirmware(sensorId, firmware.fw)

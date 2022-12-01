@@ -2,6 +2,7 @@ package com.ruuvi.station.network.di
 
 import com.ruuvi.station.network.domain.*
 import com.ruuvi.station.network.ui.*
+import com.ruuvi.station.network.ui.claim.ClaimSensorViewModel
 import kotlinx.coroutines.Dispatchers
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
@@ -43,7 +44,7 @@ object NetworkInjectionModule {
         }
 
         bind<ClaimSensorViewModel>() with factory { sensorId: String ->
-            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance())
+            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance(), instance())
         }
 
         bind<NetworkResponseLocalizer>() with provider { NetworkResponseLocalizer(instance()) }
