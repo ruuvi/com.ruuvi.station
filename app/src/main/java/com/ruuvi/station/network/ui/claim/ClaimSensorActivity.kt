@@ -71,22 +71,27 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
         val claimState by viewModel.claimState.collectAsState()
 
         LaunchedEffect(null) {
-//            navController.currentBackStackEntryFlow.collect { backStackEntry ->
-//                title = ClaimRoutes.getTitleByRoute(
-//                    context,
-//                    backStackEntry.destination.route ?: ""
-//                )
-//            }
-
             viewModel.uiEvent.collect { uiEvent ->
                 Timber.d("uiEvent $uiEvent")
                 when (uiEvent) {
-                    is UiEvent.Navigate -> navController.navigate(uiEvent)
+                    is UiEvent.Navigate -> {
+                        navController.navigate(uiEvent)
+                    }
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
                     }
+                    is UiEvent.NavigateUp -> finish()
                     else -> {}
                 }
+            }
+        }
+
+        LaunchedEffect(navController) {
+            navController.currentBackStackEntryFlow.collect { backStackEntry ->
+                title = ClaimRoutes.getTitleByRoute(
+                    context,
+                    backStackEntry.destination.route ?: ""
+                )
             }
         }
 
@@ -115,6 +120,14 @@ class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), K
                     exitTransition = exitTransition
                 ) {
                     ClaimSensor()
+                }
+
+                composable(
+                    route = ClaimRoutes.CLAIM_IN_PROGRESS,
+                    enterTransition = enterTransition,
+                    exitTransition = exitTransition
+                ) {
+                    LoadingScreen(status = stringResource(id = R.string.claim_in_progress))
                 }
 
                 composable(

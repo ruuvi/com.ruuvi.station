@@ -5,12 +5,7 @@ import com.ruuvi.station.app.ui.UiEvent
 import timber.log.Timber
 
 fun NavController.navigate(event: UiEvent.Navigate) {
+    if (event.popBackStack) this.popBackStack()
     this.navigate(event.route)
-    Timber.d("Navigate to ${event.route}")
-}
-
-fun NavController.navigateAndPopBackStack(event: UiEvent.Navigate) {
-    this.popBackStack()
-    this.navigate(event.route)
-    Timber.d("Navigate to ${event.route}. PopBackStack")
+    Timber.d("Navigate to ${event.route} PopBackStack = ${event.popBackStack}")
 }

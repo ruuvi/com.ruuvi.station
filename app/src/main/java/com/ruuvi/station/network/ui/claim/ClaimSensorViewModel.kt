@@ -44,6 +44,7 @@ class ClaimSensorViewModel (
     val claimInProgress: LiveData<Boolean> = _claimInProgress
 
     fun checkClaimState() {
+        Timber.d("checkClaimState")
         _claimState.value = ClaimSensorState.InProgress(R.string.claim_sensor, R.string.check_claim_state)
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -51,31 +52,32 @@ class ClaimSensorViewModel (
                 if (it?.isSuccess() == true) {
                     if (it.data?.email == "") {
                         _claimState.value = ClaimSensorState.FreeToClaim
-                        viewModelScope.launch {
-                            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FREE_TO_CLAIM, true))
-                        }
+                        emitUiEvent(UiEvent.Navigate(ClaimRoutes.FREE_TO_CLAIM, true))
                         return@getSensorOwner
                     }
 
                     if (it.data?.email == ruuviNetworkInteractor.getEmail()) {
                         _claimState.value = ClaimSensorState.ClaimFinished
+                        emitUiEvent(UiEvent.NavigateUp)
                         return@getSensorOwner
                     }
 
                     _claimState.value = ClaimSensorState.ForceClaimInit
-                    viewModelScope.launch {
-                        _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_INIT, true))
-                    }
+                    emitUiEvent(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_INIT, true))
                     return@getSensorOwner
                 } else {
                     _claimState.value = ClaimSensorState.ErrorWhileChecking(it?.error ?: "")
+                    emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                    emitUiEvent(UiEvent.NavigateUp)
                 }
             }
         }
     }
 
     fun claimSensor() {
-        CoroutineScope(Dispatchers.Main).launch {
+        Timber.d("claimSensor")
+        emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
+        CoroutineScope(Dispatchers.IO).launch {
             _claimState.value = ClaimSensorState.InProgress(R.string.claim_sensor, R.string.claim_in_progress)
             try {
                 withContext(Dispatchers.IO) {
@@ -87,8 +89,11 @@ class ClaimSensorViewModel (
                                 saveAlarmsToNetwork()
                                 saveUserBackground()
                                 _claimState.value = ClaimSensorState.ClaimFinished
+                                emitUiEvent(UiEvent.NavigateUp)
                             } else {
                                 _claimState.value = ClaimSensorState.ErrorWhileChecking(it?.error ?: "")
+                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.NavigateUp)
                             }
                         }
                     }
@@ -126,7 +131,7 @@ class ClaimSensorViewModel (
     fun getSensorId() {
         _claimState.value = ClaimSensorState.ForceClaimGettingId
         viewModelScope.launch {
-            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID))
+            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
         }
         viewModelScope.launch {
             sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
@@ -151,6 +156,12 @@ class ClaimSensorViewModel (
                     id = sensorInfo.id
                 }
             }
+        }
+    }
+
+    private fun emitUiEvent (event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.emit(event)
         }
     }
 }

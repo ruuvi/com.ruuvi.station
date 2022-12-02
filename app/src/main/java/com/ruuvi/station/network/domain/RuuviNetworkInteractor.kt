@@ -68,16 +68,6 @@ class RuuviNetworkInteractor (
         return shouldSendDataToNetwork() && sensorSettings?.owner == getToken()?.email
     }
 
-    fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
-        ioScope.launch {
-            val result = getUserInfo()
-            networkResponseLocalizer.localizeResponse(result)
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
-        }
-    }
-
     suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
@@ -116,9 +106,7 @@ class RuuviNetworkInteractor (
                             )
                         }
                     }
-                    getUserInfo {
-                        onResult(claimResponse)
-                    }
+                    onResult(claimResponse)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
