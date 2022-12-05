@@ -110,7 +110,6 @@ class TagSettingsViewModel(
         } catch (e: Exception) {
             Timber.e(e)
         }
-
     }
 
     private val handler = CoroutineExceptionHandler() { _, exception ->

@@ -11,6 +11,7 @@ import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.network.domain.SensorClaimInteractor
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import kotlinx.coroutines.*
@@ -27,6 +28,7 @@ class ClaimSensorViewModel (
     private val alarmRepository: AlarmRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorInfoInteractor: SensorInfoInteractor,
+    private val sensorClaimInteractor: SensorClaimInteractor,
     ): ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<UiEvent> ()
@@ -83,7 +85,38 @@ class ClaimSensorViewModel (
                 withContext(Dispatchers.IO) {
                     val settings = interactor.getSensorSettings(sensorId)
                     settings?.let {
-                        ruuviNetworkInteractor.claimSensor(settings) {
+                        sensorClaimInteractor.claimSensor(settings) {
+                            if (it?.isSuccess() == true) {
+                                saveSensorCalibration()
+                                saveAlarmsToNetwork()
+                                saveUserBackground()
+                                _claimState.value = ClaimSensorState.ClaimFinished
+                                emitUiEvent(UiEvent.NavigateUp)
+                            } else {
+                                _claimState.value = ClaimSensorState.ErrorWhileChecking(it?.error ?: "")
+                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.NavigateUp)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.d(e)
+                _claimState.value = ClaimSensorState.ErrorWhileChecking(e.message.toString())
+            }
+        }
+    }
+
+    fun contestSensor(secret: String) {
+        Timber.d("contestSensor")
+        emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
+        CoroutineScope(Dispatchers.IO).launch {
+            _claimState.value = ClaimSensorState.InProgress(R.string.claim_sensor, R.string.claim_in_progress)
+            try {
+                withContext(Dispatchers.IO) {
+                    val settings = interactor.getSensorSettings(sensorId)
+                    settings?.let {
+                        sensorClaimInteractor.contestSensor(sensorId = sensorId, name = it.displayName, secret = secret) {
                             if (it?.isSuccess() == true) {
                                 saveSensorCalibration()
                                 saveAlarmsToNetwork()
@@ -133,7 +166,9 @@ class ClaimSensorViewModel (
         viewModelScope.launch {
             _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
         }
-        viewModelScope.launch {
+        var bluetoothJob: Job? = null
+
+        val nfcJob = viewModelScope.launch {
             sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
 
             NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
@@ -143,17 +178,26 @@ class ClaimSensorViewModel (
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
                     }
                 }
+                if (scanInfo?.mac == sensorId && !scanInfo.id.isNullOrEmpty()) {
+                    bluetoothJob?.cancel()
+                    contestSensor(scanInfo.id)
+                }
             }
         }
-        viewModelScope.launch {
+        bluetoothJob = viewModelScope.launch {
             var id: String? = null
             while (id == null) {
+                if (!this.isActive) break
                 val sensorInfo = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
                 Timber.d("SensorInfo $sensorInfo")
                 if (sensorInfo.id == null) {
                     delay(3000)
                 } else {
                     id = sensorInfo.id
+                    if (this.isActive) {
+                        contestSensor(id)
+                        nfcJob.cancel()
+                    }
                 }
             }
         }

@@ -11,6 +11,8 @@ object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
         bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance()) }
 
+        bind<SensorClaimInteractor>() with singleton { SensorClaimInteractor(instance(), instance(), instance(), instance()) }
+
         bind<NetworkTokenRepository>() with singleton { NetworkTokenRepository(instance(), instance(), instance()) }
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
@@ -44,7 +46,7 @@ object NetworkInjectionModule {
         }
 
         bind<ClaimSensorViewModel>() with factory { sensorId: String ->
-            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance(), instance())
+            ClaimSensorViewModel(sensorId, instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<NetworkResponseLocalizer>() with provider { NetworkResponseLocalizer(instance()) }
