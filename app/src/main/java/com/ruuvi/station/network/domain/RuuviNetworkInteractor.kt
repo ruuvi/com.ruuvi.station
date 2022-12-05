@@ -68,16 +68,6 @@ class RuuviNetworkInteractor (
         return shouldSendDataToNetwork() && sensorSettings?.owner == getToken()?.email
     }
 
-    fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
-        ioScope.launch {
-            val result = getUserInfo()
-            networkResponseLocalizer.localizeResponse(result)
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
-        }
-    }
-
     suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
@@ -116,9 +106,7 @@ class RuuviNetworkInteractor (
                             )
                         }
                     }
-                    getUserInfo {
-                        onResult(claimResponse)
-                    }
+                    onResult(claimResponse)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -147,6 +135,32 @@ class RuuviNetworkInteractor (
                         false
                     )
                 }
+            }
+        }
+    }
+
+    suspend fun getSensorOwner(sensorId: String, onResult: (CheckSensorResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            try {
+                val response = networkRepository.checkSensorOwner(sensorId, token)
+                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
+                    sensorSettingsRepository.setSensorOwner(
+                        sensorId,
+                        response.data.email,
+                        false
+                    )
+                }
+                onResult(response)
+            } catch (e: Exception) {
+                onResult(
+                    CheckSensorResponse(
+                    result = RuuviNetworkResponse.errorResult,
+                    error = e.message.toString(),
+                    data = null,
+                    code = null
+                    )
+                )
             }
         }
     }

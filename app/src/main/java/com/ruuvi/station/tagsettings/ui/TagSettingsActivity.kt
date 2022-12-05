@@ -125,7 +125,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
         timer?.scheduleAtFixedRate(0, 1000) {
             viewModel.getTagInfo()
         }
-        viewModel.checkIfSensorShared()
     }
 
     override fun onPause() {

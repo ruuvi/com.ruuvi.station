@@ -131,11 +131,10 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
-        android:name="com.ruuvi.station.network.ui.ClaimSensorActivity"
+        android:name="com.ruuvi.station.network.ui.claim.ClaimSensorActivity"
         android:exported="false"
         android:label="@string/claim_sensor"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
-
+        android:theme="@style/AppTheme.NoActionBar" />
     <activity
         android:name="com.ruuvi.station.network.ui.MyAccountActivity"
         android:exported="false"
@@ -165,6 +164,19 @@ package="com.ruuvi.station">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
         </intent-filter>
+    </activity>
+
+    <activity
+        android:name="com.ruuvi.station.nfc.NfcScanActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+            <data android:mimeType="text/plain" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        <meta-data
+            android:name="android.nfc.action.TECH_DISCOVERED"
+            android:resource="@xml/nfc_filter" />
     </activity>
 
     <service

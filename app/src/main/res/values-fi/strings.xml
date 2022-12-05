@@ -192,6 +192,10 @@
     <string name="firmware_update">Päivitä</string>
     <string name="firmware_very_old">Hyvin vanha</string>
     <string name="follow_system_theme">Käytä järjestelmän oletusta</string>
+    <string name="force_claim">Vaadi omistajuutta</string>
+    <string name="force_claim_sensor">Vaihda omistajuus</string>
+    <string name="force_claim_sensor_description1">Tällä anturilla on jo toinen omistaja. Omistajuus voidaan vaihtaa pakotetusti, mikäli anturi on lähettyvilläsi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="force_claim_sensor_description2">Omistajuuden pakotettu vaihtaminen tapahtuu Near-Field Communication (NFC) ominaisuutta käyttämällä. Varmista, että NFC on käytössä mobiililaitteessasi.\n\n\t1. Aloita omistajuuden pakotettu vaihto koskettamalla Ruuvi-anturia mobiililaitteellasi.\n\n\t2. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.\n\nMikäli pakotettu vaihto epäonnistui tai NFC-ominaisuutta ei ole saatavilla mobiililaitteessasi:\n\n\t1. Avaa Ruuvi-anturin suojakotelo.\n\n\t2. Paikanna valkoisella piirilevyllä oleva pieni musta painike (tai painike \"B\", mikäli anturissasi on 2 painiketta) ja napauta painiketta lyhyesti pakotetun vaihdon aloittamiseksi.\n\n\t3. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>

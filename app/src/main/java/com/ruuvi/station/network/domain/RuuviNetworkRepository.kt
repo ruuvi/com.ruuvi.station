@@ -115,6 +115,19 @@ class RuuviNetworkRepository
         onResult(result)
     }
 
+    suspend fun contestSensor(request: ContestSensorRequest, token: String, onResult: (ContestSensorResponse?) -> Unit) {
+        val response = retrofitService.contestSensor(getAuth(token), request)
+        val result: ContestSensorResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ContestSensorResponse>() {}.type
+            val errorResponse: ContestSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        onResult(result)
+    }
+
     suspend fun unclaimSensor(request: UnclaimSensorRequest, token: String): ClaimSensorResponse? = withContext(dispatcher) {
         val response = retrofitService.unclaimSensor(getAuth(token), request)
         val result: ClaimSensorResponse?

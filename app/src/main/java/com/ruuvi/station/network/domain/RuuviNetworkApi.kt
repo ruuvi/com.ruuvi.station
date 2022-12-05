@@ -27,6 +27,13 @@ interface RuuviNetworkApi{
     ): Response<ClaimSensorResponse>
 
     @Headers("Content-Type: application/json")
+    @POST("contest-sensor")
+    suspend fun contestSensor(
+        @Header("Authorization") auth: String,
+        @Body requestBody: ContestSensorRequest
+    ): Response<ContestSensorResponse>
+
+    @Headers("Content-Type: application/json")
     @POST("unclaim")
     suspend fun unclaimSensor(
         @Header("Authorization") auth: String,

@@ -72,7 +72,7 @@ object BluetoothScannerInjectionModule {
             }
         }
 
-        bind<SensorFwVersionInteractor>() with singleton { SensorFwVersionInteractor(instance()) }
+        bind<SensorInfoInteractor>() with singleton { SensorInfoInteractor(instance()) }
 
         bind<BluetoothDevicesInteractor>() with singleton { BluetoothDevicesInteractor(instance()) }
 
