@@ -8,8 +8,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
-import com.ruuvi.station.database.domain.AlarmRepository
-import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.network.domain.SensorClaimInteractor
 import com.ruuvi.station.nfc.NfcScanReciever
@@ -25,8 +23,6 @@ class ClaimSensorViewModel (
     val sensorId: String,
     private val ruuviNetworkInteractor: RuuviNetworkInteractor,
     private val interactor: TagSettingsInteractor,
-    private val alarmRepository: AlarmRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorInfoInteractor: SensorInfoInteractor,
     private val sensorClaimInteractor: SensorClaimInteractor,
     ): ViewModel() {
@@ -44,6 +40,10 @@ class ClaimSensorViewModel (
 
     private val _claimInProgress = MutableLiveData<Boolean> (false)
     val claimInProgress: LiveData<Boolean> = _claimInProgress
+
+    init {
+        checkClaimState()
+    }
 
     fun checkClaimState() {
         Timber.d("checkClaimState")
@@ -85,11 +85,8 @@ class ClaimSensorViewModel (
                 withContext(Dispatchers.IO) {
                     val settings = interactor.getSensorSettings(sensorId)
                     settings?.let {
-                        sensorClaimInteractor.claimSensor(settings) {
+                        sensorClaimInteractor.claimSensor(settings.id, settings.displayName) {
                             if (it?.isSuccess() == true) {
-                                saveSensorCalibration()
-                                saveAlarmsToNetwork()
-                                saveUserBackground()
                                 _claimState.value = ClaimSensorState.ClaimFinished
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {
@@ -118,9 +115,6 @@ class ClaimSensorViewModel (
                     settings?.let {
                         sensorClaimInteractor.contestSensor(sensorId = sensorId, name = it.displayName, secret = secret) {
                             if (it?.isSuccess() == true) {
-                                saveSensorCalibration()
-                                saveAlarmsToNetwork()
-                                saveUserBackground()
                                 _claimState.value = ClaimSensorState.ClaimFinished
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {
@@ -136,29 +130,6 @@ class ClaimSensorViewModel (
                 _claimState.value = ClaimSensorState.ErrorWhileChecking(e.message.toString())
             }
         }
-    }
-
-    init {
-        checkClaimState()
-    }
-
-    private fun saveAlarmsToNetwork() {
-        val alarms = alarmRepository.getForSensor(sensorId)
-        for (alarm in alarms) {
-            ruuviNetworkInteractor.setAlert(alarm)
-        }
-    }
-
-    private fun saveUserBackground() {
-        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        val userBackground = sensorSettings?.userBackground
-        if (userBackground?.isNotEmpty() == true) {
-            ruuviNetworkInteractor.uploadImage(sensorId, userBackground)
-        }
-    }
-
-    private fun saveSensorCalibration() {
-        ruuviNetworkInteractor.updateSensorCalibration(sensorId)
     }
 
     fun getSensorId() {

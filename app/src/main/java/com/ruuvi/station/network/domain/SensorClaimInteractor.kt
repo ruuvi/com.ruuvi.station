@@ -1,7 +1,7 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ContestSensorRequest
 import com.ruuvi.station.network.data.response.ClaimSensorResponse
@@ -15,35 +15,25 @@ class SensorClaimInteractor(
     private val tokenRepository: NetworkTokenRepository,
     private val networkRepository: RuuviNetworkRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val networkResponseLocalizer: NetworkResponseLocalizer
+    private val networkResponseLocalizer: NetworkResponseLocalizer,
+    private val ruuviNetworkInteractor: RuuviNetworkInteractor,
+    private val alarmRepository: AlarmRepository,
 ) {
     fun getEmail() = getToken()?.email
 
     private fun getToken() = tokenRepository.getTokenInfo()
 
-    suspend fun claimSensor(sensorSettings: SensorSettings, onResult: (ClaimSensorResponse?) -> Unit) {
+    suspend fun claimSensor(sensorId: String, name: String, onResult: (ClaimSensorResponse?) -> Unit) {
         val token = getToken()?.token
         token?.let {
-            val request = ClaimSensorRequest(sensorSettings.id, sensorSettings.displayName)
+            val request = ClaimSensorRequest(sensorId, name)
             try {
                 networkRepository.claimSensor(request, token) { claimResponse ->
                     networkResponseLocalizer.localizeResponse(claimResponse)
                     if (claimResponse?.isSuccess() == true) {
-                        sensorSettingsRepository.setSensorOwner(
-                            sensorSettings.id,
-                            getEmail() ?: "",
-                            true
-                        )
+                        sensorClaimed(sensorId)
                     } else {
-                        val maskedEmail =
-                            Regex("\\b\\S*@\\S*\\.\\S*\\b").find(claimResponse?.error ?: "")?.value
-                        if (maskedEmail?.isNotEmpty() == true) {
-                            sensorSettingsRepository.setSensorOwner(
-                                sensorSettings.id,
-                                maskedEmail,
-                                false
-                            )
-                        }
+                        tryToParseOwnerEmail(sensorId, claimResponse?.error ?: "")
                     }
                     onResult(claimResponse)
                 }
@@ -78,21 +68,9 @@ class SensorClaimInteractor(
                 networkRepository.contestSensor(request, token) { contestResponse ->
                     networkResponseLocalizer.localizeResponse(contestResponse)
                     if (contestResponse?.isSuccess() == true) {
-                        sensorSettingsRepository.setSensorOwner(
-                            sensorId,
-                            getEmail() ?: "",
-                            true
-                        )
+                        sensorClaimed(sensorId)
                     } else {
-                        val maskedEmail =
-                            Regex("\\b\\S*@\\S*\\.\\S*\\b").find(contestResponse?.error ?: "")?.value
-                        if (maskedEmail?.isNotEmpty() == true) {
-                            sensorSettingsRepository.setSensorOwner(
-                                sensorId,
-                                maskedEmail,
-                                false
-                            )
-                        }
+                        tryToParseOwnerEmail(sensorId, contestResponse?.error ?: "")
                     }
                     onResult(contestResponse)
                 }
@@ -108,6 +86,45 @@ class SensorClaimInteractor(
                     )
                 }
             }
+        }
+    }
+
+
+    private fun tryToParseOwnerEmail(sensorId: String, errorMessage: String) {
+        val maskedEmail =
+            Regex("\\b\\S*@\\S*\\.\\S*\\b").find(errorMessage)?.value
+        if (maskedEmail?.isNotEmpty() == true) {
+            sensorSettingsRepository.setSensorOwner(
+                sensorId,
+                maskedEmail,
+                false
+            )
+        }
+    }
+
+    private fun sensorClaimed(sensorId: String) {
+        sensorSettingsRepository.setSensorOwner(
+            sensorId,
+            getEmail() ?: "",
+            true
+        )
+        ruuviNetworkInteractor.updateSensorCalibration(sensorId)
+        saveAlarmsToNetwork(sensorId)
+        saveUserBackground(sensorId)
+    }
+
+    private fun saveAlarmsToNetwork(sensorId: String) {
+        val alarms = alarmRepository.getForSensor(sensorId)
+        for (alarm in alarms) {
+            ruuviNetworkInteractor.setAlert(alarm)
+        }
+    }
+
+    private fun saveUserBackground(sensorId: String) {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        val userBackground = sensorSettings?.userBackground
+        if (userBackground?.isNotEmpty() == true) {
+            ruuviNetworkInteractor.uploadImage(sensorId, userBackground)
         }
     }
 }
