@@ -8,6 +8,9 @@ enum class DashboardType(val code: String) {
         fun getByCode(code: String): DashboardType =
             DashboardType.values().firstOrNull{ it.code == code} ?: defaultDashboardType
 
+        fun isValidCode(code: String): Boolean =
+            values().any { it.code == code }
+
         val defaultDashboardType = IMAGE_VIEW
     }
 }

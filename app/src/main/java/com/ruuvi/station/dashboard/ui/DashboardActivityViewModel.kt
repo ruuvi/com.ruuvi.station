@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -18,8 +19,9 @@ class DashboardActivityViewModel(
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     val preferencesRepository: PreferencesRepository,
     private val tokenRepository: NetworkTokenRepository,
-    private val permissionLogicInteractor: PermissionLogicInteractor
-) : ViewModel() {
+    private val permissionLogicInteractor: PermissionLogicInteractor,
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    ) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
         while (true) {
@@ -48,6 +50,7 @@ class DashboardActivityViewModel(
 
     fun changeDashboardType(dashboardType: DashboardType) {
         preferencesRepository.updateDashboardType(dashboardType)
+        networkApplicationSettings.updateDashboardType()
         _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 }

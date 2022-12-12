@@ -35,8 +35,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
             viewModel.isFirstStart() -> WelcomeActivity.start(this)
             viewModel.isDashboardEnabled() -> DashboardActivity.start(this)
             else -> {
-                val isFromWelcome = intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false)
-                TagDetailsActivity.start(this, isFromWelcome)
+                DashboardActivity.start(this)
             }
         }
     }

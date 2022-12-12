@@ -637,12 +637,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            val preferencesRepository = PreferencesRepository(Preferences(context))
             val stackBuilder = TaskStackBuilder.create(context)
-            if (preferencesRepository.isDashboardEnabled()) {
-                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
-                stackBuilder.addNextIntent(intentDashboardActivity)
-            }
+            val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+            stackBuilder.addNextIntent(intentDashboardActivity)
             stackBuilder.addNextIntent(intent)
 
             return stackBuilder

@@ -54,7 +54,7 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     DASHBOARD_ENABLED,
-                    preferences.isDashboardEnabled().toString()
+                    true.toString()
                 )
                 firebaseAnalytics.setUserProperty(
                     GRAPH_POINT_INTERVAL,
