@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -46,6 +47,7 @@ import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -73,6 +75,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
+
+        observeSyncStatus()
 
         setContent {
             RuuviTheme {
@@ -150,6 +154,17 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         color = systemBarsColor,
                         darkIcons = !isDarkTheme
                     )
+                }
+            }
+        }
+    }
+
+    private fun observeSyncStatus() {
+        lifecycleScope.launchWhenStarted {
+            dashboardViewModel.syncEvents.collect {
+                if (it is NetworkSyncEvent.Unauthorised) {
+                    dashboardViewModel.signOut()
+                    SignInActivity.start(this@DashboardActivity)
                 }
             }
         }
