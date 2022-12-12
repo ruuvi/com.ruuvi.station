@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.preferences
 
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -216,5 +217,11 @@ class PreferencesRepository(
 
     fun updateDarkMode(darkMode: DarkModeState) {
         preferences.darkMode = darkMode
+    }
+
+    fun getDashboardType(): DashboardType = preferences.dashboardType
+
+    fun updateDashboardType(dashboardType: DashboardType) {
+        preferences.dashboardType = dashboardType
     }
 }

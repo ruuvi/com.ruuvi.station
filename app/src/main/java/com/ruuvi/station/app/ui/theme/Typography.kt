@@ -81,7 +81,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             fontSize = ruuviStationFontsSizes.normal,
         ),
         dashboardValue = TextStyle(
-            color = colors.settingsTitleText,
+            color = colors.primary,
             fontFamily = ruuviStationFonts.montserratBold,
             fontSize = ruuviStationFontsSizes.small,
             textAlign = TextAlign.Left
