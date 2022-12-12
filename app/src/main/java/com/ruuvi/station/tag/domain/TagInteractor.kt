@@ -44,9 +44,6 @@ class TagInteractor constructor(
     fun setIsFirstGraphVisit(isFirst: Boolean) =
         preferencesRepository.setIsFirstGraphVisit(isFirst)
 
-    fun isDashboardEnabled(): Boolean =
-        preferencesRepository.isDashboardEnabled()
-
     fun getHistoryLength(): Long = sensorHistoryRepository.countAll()
 
     fun makeSensorFavorite(sensor: RuuviTagEntity) {

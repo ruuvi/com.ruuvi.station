@@ -50,8 +50,6 @@ class TagDetailsViewModel(
     private val alarmStatus = MutableLiveData(AlarmStatus.NO_ALARM)
     val alarmStatusObserve: LiveData<AlarmStatus> = alarmStatus
 
-    var dashboardEnabled = isDashboardEnabled()
-
     private var prevTag: RuuviTag? = null
     fun getPrevTag() = prevTag
 
@@ -132,9 +130,6 @@ class TagDetailsViewModel(
         interactor.setIsFirstGraphVisit(isFirst)
 
     fun isShowingGraph() = isShowGraph.value == true
-
-    private fun isDashboardEnabled(): Boolean =
-        interactor.isDashboardEnabled()
 
     fun checkForAlarm() {
         ioScope.launch {
