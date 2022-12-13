@@ -2,15 +2,17 @@ package com.ruuvi.station.app.ui
 
 import android.app.Activity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,7 +23,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.dashboard.DashboardType
 
 @Composable
 fun MyTopAppBar(
@@ -54,8 +58,12 @@ fun MyTopAppBar(
 @Composable
 fun DashboardTopAppBar(
     navigationCallback: () -> Unit,
-    actionCallBack: () -> Unit
+    actionCallBack: (DashboardType) -> Unit
 ) {
+    var dashboardTypeMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
     TopAppBar(
         title = {
             Image(
@@ -77,13 +85,44 @@ fun DashboardTopAppBar(
                          }
         },
         actions = {
-            IconButton(onClick = { actionCallBack.invoke() }) {
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.add),
-                    tint = RuuviStationTheme.colors.dashboardIcons,
-                    contentDescription = ""
-                )
+            Box(
+                modifier = Modifier.clickable {
+                    dashboardTypeMenuExpanded = true
+                }
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        style = RuuviStationTheme.typography.subtitle,
+                        text = stringResource(id = R.string.view)
+                    )
+
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(id = R.drawable.drop_down_24),
+                        contentDescription = "",
+                        tint = RuuviStationTheme.colors.accent
+                    )
+                }
+
+                DropdownMenu(
+                    modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+                    expanded = dashboardTypeMenuExpanded,
+                    onDismissRequest = { dashboardTypeMenuExpanded = false }) {
+
+                    DropdownMenuItem(onClick = {
+                        actionCallBack.invoke(DashboardType.IMAGE_VIEW)
+                        dashboardTypeMenuExpanded = false
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.image_view))
+                    }
+
+                    DropdownMenuItem(onClick = {
+                        actionCallBack.invoke(DashboardType.SIMPLE_VIEW)
+                        dashboardTypeMenuExpanded = false
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.simple_view))
+                    }
+                }
             }
         },
         backgroundColor = RuuviStationTheme.colors.dashboardBackground,

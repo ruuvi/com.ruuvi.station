@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -299,6 +300,14 @@ class Preferences constructor(val context: Context) {
         sharedPreferences.edit().putInt(PREF_DARKMODE, darkMode.code).apply()
     }
 
+    var dashboardType: DashboardType
+        get() {
+            return DashboardType.getByCode(sharedPreferences.getString(PREF_DASHBOARD_TYPE, "") ?: "")
+        }
+        set(type) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_TYPE, type.code).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -342,6 +351,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
         private const val PREF_DARKMODE = "pref_darkmode"
+        private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

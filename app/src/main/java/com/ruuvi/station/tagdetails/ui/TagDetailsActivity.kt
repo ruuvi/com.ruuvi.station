@@ -216,12 +216,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             imageView
         }
 
-        if (viewModel.dashboardEnabled) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        } else {
-            setupDrawer()
-        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         binding.content.tagPager.adapter = adapter
         binding.content.tagPager.offscreenPageLimit = 1
@@ -609,7 +605,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     companion object {
-        private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
+        const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
         private const val ARGUMENT_SHOW_HISTORY = "ARGUMENT_SHOW_HISTORY"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
@@ -637,12 +633,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            val preferencesRepository = PreferencesRepository(Preferences(context))
             val stackBuilder = TaskStackBuilder.create(context)
-            if (preferencesRepository.isDashboardEnabled()) {
-                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
-                stackBuilder.addNextIntent(intentDashboardActivity)
-            }
+            val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+            stackBuilder.addNextIntent(intentDashboardActivity)
             stackBuilder.addNextIntent(intent)
 
             return stackBuilder

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -45,10 +46,12 @@ import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
+import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
@@ -73,6 +76,8 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
+        observeSyncStatus()
+
         setContent {
             RuuviTheme {
                 val scaffoldState = rememberScaffoldState()
@@ -84,13 +89,14 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = listOf())
+                val dashboardType by dashboardViewModel.dashboardType.collectAsState()
 
                 Scaffold(
                     scaffoldState = scaffoldState,
                     modifier = Modifier.fillMaxSize(),
                     backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                     topBar = { DashboardTopAppBar(
-                        actionCallBack = { AddTagActivity.start(context) },
+                        actionCallBack = { dashboardType -> dashboardViewModel.changeDashboardType(dashboardType) },
                         navigationCallback = {
                             scope.launch {
                                 scaffoldState.drawerState.open()
@@ -139,7 +145,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                             .fillMaxSize()
                             .padding(RuuviStationTheme.dimensions.medium)
                     ) {
-                        DashboardItems(sensors, userEmail)
+                        DashboardItems(sensors, userEmail, dashboardType)
                     }
                 }
 
@@ -148,6 +154,17 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         color = systemBarsColor,
                         darkIcons = !isDarkTheme
                     )
+                }
+            }
+        }
+    }
+
+    private fun observeSyncStatus() {
+        lifecycleScope.launchWhenStarted {
+            dashboardViewModel.syncEvents.collect {
+                if (it is NetworkSyncEvent.Unauthorised) {
+                    dashboardViewModel.signOut()
+                    SignInActivity.start(this@DashboardActivity)
                 }
             }
         }
@@ -162,7 +179,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 }
 
 @Composable
-fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
+fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: DashboardType) {
     val configuration = LocalConfiguration.current
     val itemHeight = 156.dp * LocalDensity.current.fontScale
     val imageWidth = configuration.screenWidthDp.dp * 0.24f
@@ -170,7 +187,19 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?) {
     Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
     LazyColumn() {
         items(items, key = {it.id}) { sensor ->
-            DashboardItem(imageWidth, itemHeight, sensor, userEmail)
+            when (dashboardType) {
+                DashboardType.SIMPLE_VIEW -> DashboardItemSimple(
+                    sensor = sensor,
+                    userEmail = userEmail
+                )
+                DashboardType.IMAGE_VIEW ->
+                    DashboardItem(
+                        imageWidth = imageWidth,
+                        itemHeight = itemHeight,
+                        sensor = sensor,
+                        userEmail = userEmail
+                    )
+            }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
     }
@@ -370,6 +399,388 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
+@Composable
+fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            //.height(itemHeight)
+            .fillMaxWidth()
+            .clickable {
+                TagDetailsActivity.start(context, sensor.id)
+            },
+        shape = RoundedCornerShape(10.dp),
+        elevation = 0.dp,
+        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = RuuviStationTheme.dimensions.mediumPlus,
+                    start = RuuviStationTheme.dimensions.mediumPlus,
+                    bottom = RuuviStationTheme.dimensions.medium,
+                    end = RuuviStationTheme.dimensions.medium,
+                )
+        ) {
+            val (name, buttons, updated, column1, column2) = createRefs()
+
+            Text(
+                style = RuuviStationTheme.typography.title,
+                text = sensor.displayName,
+                lineHeight = RuuviStationTheme.fontSizes.extended,
+                fontSize = RuuviStationTheme.fontSizes.normal,
+                modifier = Modifier.constrainAs(name) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(buttons.start)
+                    width = Dimension.fillToConstraints
+                },
+                maxLines = 2
+            )
+
+            Row(
+                modifier = Modifier
+                    .width(72.dp)
+                    .constrainAs(buttons) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    },
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.End,
+            ) {
+                CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                    if (sensor.status is AlarmSensorStatus.NotTriggered) {
+                        IconButton(
+                            modifier = Modifier.size(36.dp),
+                            onClick = {
+                                TagSettingsActivity.start(context, sensor.id)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                                contentDescription = null,
+                                tint = RuuviStationTheme.colors.accent
+                            )
+                        }
+                    } else if (sensor.status is AlarmSensorStatus.Triggered) {
+                        BlinkingEffect() {
+                            IconButton(
+                                modifier = Modifier.size(36.dp),
+                                onClick = {
+                                    TagSettingsActivity.start(context, sensor.id)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                    contentDescription = null,
+                                    tint = RuuviStationTheme.colors.activeAlert
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.size(36.dp))
+                    }
+
+                    DashboardItemDropdownMenu(sensor, userEmail)
+                }
+            }
+
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier.constrainAs(column1) {
+                    top.linkTo(name.bottom)
+                    start.linkTo(parent.start)
+                    //bottom.linkTo(column2.bottom)
+                    end.linkTo(column2.start)
+                    //height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                ValueDisplay(
+                    value = sensor.temperatureValue,
+                    sensor.status.triggered(AlarmType.TEMPERATURE)
+                )
+                if (sensor.humidityValue != null) {
+                    ValueDisplay(
+                        value = sensor.humidityValue,
+                        sensor.status.triggered(AlarmType.HUMIDITY)
+                    )
+                }
+                if (sensor.pressureValue != null) {
+                    ValueDisplay(
+                        value = sensor.pressureValue,
+                        sensor.status.triggered(AlarmType.PRESSURE)
+                    )
+                }
+            }
+
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier.constrainAs(column2) {
+                    start.linkTo(column1.end)
+                    top.linkTo(name.bottom)
+                    //bottom.linkTo(column1.bottom)
+                    end.linkTo(parent.end)
+                    //height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                ValueDisplay(value = sensor.voltageValue, false)
+
+                if (sensor.movementValue != null) {
+                    ValueDisplay(
+                        value = sensor.movementValue,
+                        sensor.status.triggered(AlarmType.MOVEMENT)
+                    )
+                }
+            }
+
+            Text(
+                style = RuuviStationTheme.typography.paragraph,
+                text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
+                modifier = Modifier
+                    .padding(top = 2.dp)
+                    .constrainAs(updated) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(column1.bottom)
+                        width = Dimension.fillToConstraints
+                    },
+                fontSize = RuuviStationTheme.fontSizes.smallest
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
+@Composable
+fun DashboardItemVariableHeight(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            //.height(itemHeight)
+            .fillMaxWidth()
+            .clickable {
+                TagDetailsActivity.start(context, sensor.id)
+            },
+        shape = RoundedCornerShape(10.dp),
+        elevation = 0.dp,
+        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            val (image, values) = createRefs()
+
+            Box(
+                Modifier
+                    //.width(imageWidth)
+                    .fillMaxSize()
+                    .background(color = RuuviStationTheme.colors.defaultSensorBackground)
+                    .constrainAs(image) {
+                        top.linkTo(values.top)
+                        bottom.linkTo(values.bottom)
+                        start.linkTo(parent.start)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.value(imageWidth)
+                    }
+            ) {
+                Timber.d("Image path ${sensor.userBackground} ")
+
+                if (sensor.userBackground != null) {
+                    val uri = Uri.parse(sensor.userBackground)
+
+                    if (uri.path != null) {
+
+                        GlideImage(
+                            modifier = Modifier.fillMaxSize(),
+                            model = uri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+
+                        //DashboardImage(uri)
+                    }
+                }
+            }
+
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = RuuviStationTheme.dimensions.mediumPlus,
+                        start = RuuviStationTheme.dimensions.mediumPlus,
+                        bottom = RuuviStationTheme.dimensions.medium,
+                        end = RuuviStationTheme.dimensions.medium,
+                    )
+                    .constrainAs(values) {
+                        start.linkTo(image.end)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
+            ) {
+                val (name, temp, buttons, updated, column1, column2) = createRefs()
+
+                Text(
+                    style = RuuviStationTheme.typography.title,
+                    text = sensor.displayName,
+                    lineHeight = RuuviStationTheme.fontSizes.extended,
+                    fontSize = RuuviStationTheme.fontSizes.normal,
+                    modifier = Modifier.constrainAs(name) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(buttons.start)
+                        width = Dimension.fillToConstraints
+                    },
+                    maxLines = 2
+                )
+
+                Row(
+                    modifier = Modifier
+                        .width(72.dp)
+                        .constrainAs(buttons) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                        },
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                        if (sensor.status is AlarmSensorStatus.NotTriggered) {
+                            IconButton(
+                                modifier = Modifier.size(36.dp),
+                                onClick = {
+                                    TagSettingsActivity.start(context, sensor.id)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                                    contentDescription = null,
+                                    tint = RuuviStationTheme.colors.accent
+                                )
+                            }
+                        } else if (sensor.status is AlarmSensorStatus.Triggered) {
+                            BlinkingEffect() {
+                                IconButton(
+                                    modifier = Modifier.size(36.dp),
+                                    onClick = {
+                                        TagSettingsActivity.start(context, sensor.id)
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                        contentDescription = null,
+                                        tint = RuuviStationTheme.colors.activeAlert
+                                    )
+                                }
+                            }
+                        } else {
+                            Spacer(modifier = Modifier.size(36.dp))
+                        }
+
+                        DashboardItemDropdownMenu(sensor, userEmail)
+                    }
+                }
+
+                val tempTextColor = if (sensor.status.triggered(AlarmType.TEMPERATURE)) {
+                    RuuviStationTheme.colors.activeAlert
+                } else {
+                    RuuviStationTheme.colors.settingsTitleText
+                }
+
+                Row(
+                    modifier = Modifier
+                        .constrainAs(temp) {
+                            top.linkTo(name.bottom)
+                            start.linkTo(parent.start)
+                        },
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Text(
+                        style = RuuviStationTheme.typography.dashboardTemperature,
+                        text = sensor.temperatureValue.valueWithoutUnit,
+                        lineHeight = 10.sp,
+                        color = tempTextColor
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp * LocalDensity.current.fontScale,
+                                start = 2.dp
+                            ),
+                        style = RuuviStationTheme.typography.dashboardTemperatureUnit,
+                        text = sensor.temperatureValue.unitString,
+                        color = tempTextColor
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.constrainAs(column1) {
+                        start.linkTo(parent.start)
+                        end.linkTo(column2.start)
+                        top.linkTo(temp.bottom)
+                        bottom.linkTo(column2.bottom)
+                        width = Dimension.fillToConstraints
+                        //height = Dimension.fillToConstraints
+                    }
+                ) {
+                    if (sensor.humidityValue != null) {
+                        ValueDisplay(value = sensor.humidityValue, sensor.status.triggered(AlarmType.HUMIDITY))
+                    }
+                    if (sensor.pressureValue != null) {
+                        ValueDisplay(value = sensor.pressureValue, sensor.status.triggered(AlarmType.PRESSURE))
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.constrainAs(column2) {
+                        start.linkTo(column1.end)
+                        end.linkTo(parent.end)
+                        top.linkTo(temp.bottom)
+                        bottom.linkTo(column1.bottom)
+                        width = Dimension.fillToConstraints
+                        //height = Dimension.fillToConstraints
+                    }
+                ) {
+                    ValueDisplay(value = sensor.voltageValue, false)
+
+                    if (sensor.movementValue != null) {
+                        ValueDisplay(value = sensor.movementValue, sensor.status.triggered(AlarmType.MOVEMENT))
+                    }
+                }
+
+                Text(
+                    style = RuuviStationTheme.typography.paragraph,
+                    text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .constrainAs(updated) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(column1.bottom)
+                            width = Dimension.fillToConstraints
+                        },
+                    fontSize = RuuviStationTheme.fontSizes.smallest
+                )
+            }
+
+        }
+    }
+}
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardImage(userBackground: Uri) {
@@ -387,7 +798,7 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlert
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        RuuviStationTheme.colors.primary
     }
 
     Row(verticalAlignment = Alignment.Bottom) {

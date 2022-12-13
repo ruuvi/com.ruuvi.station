@@ -1,6 +1,7 @@
 package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.response.NetworkUserSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
@@ -32,7 +33,7 @@ class NetworkApplicationSettings (
                         applyTemperatureUnit(response.data.settings)
                         applyHumidityUnit(response.data.settings)
                         applyPressureUnit(response.data.settings)
-                        applyDashboardEnabled(response.data.settings)
+                        applyDashboardType(response.data.settings)
                         applyCloudModeEnabled(response.data.settings)
                         applyChartShowAllPoints(response.data.settings)
                         applyChartDrawDots(response.data.settings)
@@ -56,8 +57,9 @@ class NetworkApplicationSettings (
             updateTemperatureUnit()
             updateHumidityUnit()
             updatePressureUnit()
-            updateDashboardEnabled()
+            updateDashboardType()
             updateChartShowAllPoints()
+            updateCloudModeEnabled()
             updateChartDrawDots()
             updateChartViewPeriod()
             updateTemperatureAccuracy()
@@ -116,12 +118,10 @@ class NetworkApplicationSettings (
         }
     }
 
-    private fun applyDashboardEnabled(settings: NetworkUserSettings) {
-        if (settings.DASHBOARD_ENABLED != null) {
-            settings.DASHBOARD_ENABLED.toBoolean().let {
-                Timber.d("NetworkApplicationSettings-applyDashboardEnabled: $it")
-                preferencesRepository.setIsDashboardEnabled(it)
-            }
+    private fun applyDashboardType(settings: NetworkUserSettings) {
+        if (settings.DASHBOARD_TYPE != null && DashboardType.isValidCode(settings.DASHBOARD_TYPE)) {
+            Timber.d("NetworkApplicationSettings-applyDashboardType: ${settings.DASHBOARD_TYPE}")
+            preferencesRepository.updateDashboardType(DashboardType.getByCode(settings.DASHBOARD_TYPE))
         }
     }
 
@@ -239,12 +239,12 @@ class NetworkApplicationSettings (
         }
     }
 
-    fun updateDashboardEnabled() {
+    fun updateDashboardType() {
         if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updateDashboardEnabled: ${preferencesRepository.isDashboardEnabled()}")
+            Timber.d("NetworkApplicationSettings-updateDashboardType: ${preferencesRepository.getDashboardType().code}")
             networkInteractor.updateUserSetting(
-                DASHBOARD_ENABLED,
-                preferencesRepository.isDashboardEnabled().toString()
+                DASHBOARD_TYPE,
+                preferencesRepository.getDashboardType().code
             )
         }
     }
@@ -328,7 +328,7 @@ class NetworkApplicationSettings (
         val ACCURACY_TEMPERATURE = "ACCURACY_TEMPERATURE"
         val ACCURACY_HUMIDITY = "ACCURACY_HUMIDITY"
         val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
-        val DASHBOARD_ENABLED = "DASHBOARD_ENABLED"
+        val DASHBOARD_TYPE = "DASHBOARD_TYPE"
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"

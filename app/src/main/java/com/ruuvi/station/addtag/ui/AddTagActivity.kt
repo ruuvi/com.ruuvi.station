@@ -95,7 +95,7 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
                 return@OnItemClickListener
             }
             viewModel.makeSensorFavorite(tag)
-            TagSettingsActivity.startForResult(this, 1, tag.id)
+            TagSettingsActivity.startAfterAddingNewSensor(this, tag.id)
         }
 
         binding.content.buySensorsButton.setOnClickListener {

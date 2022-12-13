@@ -12,18 +12,21 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.app.TaskStackBuilder
 import androidx.core.content.FileProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -327,10 +330,20 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             context.startActivity(intent)
         }
 
-        fun startForResult(context: Activity, requestCode: Int, tagId: String?) {
+        fun startAfterAddingNewSensor(context: Activity, tagId: String?) {
+            val dashboardIntent = Intent(context, DashboardActivity::class.java)
+
+            val sensorCardIntent = Intent(context, TagDetailsActivity::class.java)
+            sensorCardIntent.putExtra(TagDetailsActivity.ARGUMENT_TAG_ID, tagId)
+
             val settingsIntent = Intent(context, TagSettingsActivity::class.java)
             settingsIntent.putExtra(TAG_ID, tagId)
-            context.startActivityForResult(settingsIntent, requestCode)
+
+            val stackBuilder = TaskStackBuilder.create(context)
+            stackBuilder.addNextIntent(dashboardIntent)
+            stackBuilder.addNextIntent(sensorCardIntent)
+            stackBuilder.addNextIntent(settingsIntent)
+            stackBuilder.startActivities()
         }
     }
 }
