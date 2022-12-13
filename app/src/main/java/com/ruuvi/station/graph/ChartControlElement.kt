@@ -5,10 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -69,11 +66,22 @@ fun ChartControlElement(
             IconButton(onClick = {
                 gattSyncDialogOpened = true
             }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_widget_d_update),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.medium)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_sync_24),
+                        contentDescription = null,
+                        tint = RuuviStationTheme.colors.buttonText
+                    )
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+                    Text(
+                        style = RuuviStationTheme.typography.subtitle,
+                        text = stringResource(id = R.string.sync),
+                        color = RuuviStationTheme.colors.buttonText
+                    )
+                }
             }
         }
 
