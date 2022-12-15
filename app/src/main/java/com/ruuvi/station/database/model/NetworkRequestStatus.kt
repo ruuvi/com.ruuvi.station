@@ -5,7 +5,8 @@ enum class NetworkRequestStatus(val code: Int) {
     SUCCESS(1),
     OVERRIDDEN(2),
     PARSE_FAIL(3),
-    FAILED(4);
+    FAILED(4),
+    EXECUTING(5);
 
     companion object {
         fun getById(code: Int) =
@@ -15,6 +16,7 @@ enum class NetworkRequestStatus(val code: Int) {
                 2 -> OVERRIDDEN
                 3 -> PARSE_FAIL
                 4 -> FAILED
+                5 -> EXECUTING
                 else -> throw IllegalArgumentException("Unknown NetworkRequestStatus code: $code")
             }
     }

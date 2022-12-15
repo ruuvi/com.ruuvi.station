@@ -3,6 +3,7 @@ package com.ruuvi.station.database.domain
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.SensorSettings_Table
+import timber.log.Timber
 import java.util.*
 
 class SensorSettingsRepository {
@@ -84,6 +85,7 @@ class SensorSettingsRepository {
     }
 
     fun updateSensorBackground(sensorId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
+        Timber.d("updateSensorBackground $sensorId $networkBackground")
         SQLite.update(SensorSettings::class.java)
             .set(
                 SensorSettings_Table.userBackground.eq(userBackground),
@@ -95,6 +97,7 @@ class SensorSettingsRepository {
     }
 
     fun updateNetworkBackground(sensorId: String, networkBackground: String?) {
+        Timber.d("updateNetworkBackground $sensorId $networkBackground")
         SQLite.update(SensorSettings::class.java)
             .set(
                 SensorSettings_Table.networkBackground.eq(networkBackground)

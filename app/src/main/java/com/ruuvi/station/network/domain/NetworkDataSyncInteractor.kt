@@ -65,7 +65,7 @@ class NetworkDataSyncInteractor (
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
-            if (networkInteractor.signedIn) syncNetworkData(false)
+            if (networkInteractor.signedIn) syncNetworkData()
             delay(10000)
             while (true) {
                 val lastSync = preferencesRepository.getLastSyncDate()
@@ -73,7 +73,7 @@ class NetworkDataSyncInteractor (
                 if (networkInteractor.signedIn &&
                     Date(lastSync).diffGreaterThan(60000)) {
                         Timber.d("Do actual sync")
-                    syncNetworkData(false)
+                    syncNetworkData()
                 }
                 delay(10000)
             }
@@ -85,7 +85,7 @@ class NetworkDataSyncInteractor (
         autoRefreshJob?.cancel()
     }
 
-    fun syncNetworkData(ecoMode: Boolean): Job {
+    fun syncNetworkData(): Job {
         if (syncJob.isActive == true) {
             Timber.d("Already in sync mode")
             return syncJob
@@ -118,7 +118,7 @@ class NetworkDataSyncInteractor (
 
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
-                updateSensors(userInfo.data, ecoMode)
+                updateSensors(userInfo.data)
                 firebaseInteractor.logSync(userInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
@@ -267,7 +267,7 @@ class NetworkDataSyncInteractor (
         return 0
     }
 
-    private suspend fun updateSensors(userInfoData: UserInfoResponseBody, ecoMode: Boolean) {
+    private suspend fun updateSensors(userInfoData: UserInfoResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
@@ -279,7 +279,7 @@ class NetworkDataSyncInteractor (
                 tagEntry.update()
             }
 
-            if (!ecoMode && !sensor.picture.isNullOrEmpty()) {
+            if (!sensor.picture.isNullOrEmpty()) {
                 setSensorImage(sensor, sensorSettings)
             }
         }
@@ -296,7 +296,7 @@ class NetworkDataSyncInteractor (
         val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
 
         if (networkImageGuid != sensorSettings.networkBackground) {
-            Timber.d("updating image $networkImageGuid")
+            Timber.d("updating image $networkImageGuid ${sensorSettings}")
             try {
                 val imageFile = imageInteractor.downloadImage(
                     "cloud_${sensor.sensor}",

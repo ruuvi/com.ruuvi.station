@@ -35,6 +35,8 @@ class NetworkRequestRepository {
         networkRequest.attempts++
         if (networkRequest.attempts > MAX_ATTEMPTS) {
             networkRequest.status = NetworkRequestStatus.FAILED
+        } else {
+            networkRequest.status = NetworkRequestStatus.READY
         }
         saveRequest(networkRequest)
     }
