@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -598,14 +599,12 @@ fun DashboardItemVariableHeight(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag
                     val uri = Uri.parse(sensor.userBackground)
 
                     if (uri.path != null) {
-
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
                             model = uri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
-
                         //DashboardImage(uri)
                     }
                 }
@@ -788,6 +787,12 @@ fun DashboardImage(userBackground: Uri) {
     GlideImage(
         modifier = Modifier.fillMaxSize(),
         model = userBackground,
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(id = R.drawable.tag_bg_layer),
         contentDescription = null,
         contentScale = ContentScale.Crop
     )

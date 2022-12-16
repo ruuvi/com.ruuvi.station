@@ -57,7 +57,9 @@ fun SensorSettings(
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
 
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
         SensorSettingsImage(sensorState = sensorState) {
             BackgroundActivity.start(context, sensorState.id)
         }
