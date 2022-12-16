@@ -37,7 +37,7 @@ import org.kodein.di.android.closestKodein
 import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
-class ClaimSensorActivity : AppCompatActivity(R.layout.activity_claim_sensor), KodeinAware {
+class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 

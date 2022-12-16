@@ -56,7 +56,7 @@
     <string name="app_theme">App Theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Back</string>
-    <string name="background_image">Background\nimage</string>
+    <string name="background_image">Background image</string>
     <string name="background_interval">every %1$s min</string>
     <string name="background_interval_10sec">every %1$s sec</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>

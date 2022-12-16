@@ -10,14 +10,24 @@ import android.provider.MediaStore
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.FileProvider
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.domain.SensorHistoryRepository
@@ -50,7 +60,7 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), KodeinAware {
+class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -76,34 +86,34 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityTagSettingsBinding.inflate(layoutInflater)
-        binding.alertsCompose.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent { 
-                RuuviTheme {
-                    SensorSettings(viewModel, alarmsViewModel)
+        setContent {
+            RuuviTheme {
+                val context = LocalContext.current
+                val scaffoldState = rememberScaffoldState()
+                val systemUiController = rememberSystemUiController()
+                val systemBarsColor = RuuviStationTheme.colors.systemBars
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    backgroundColor = RuuviStationTheme.colors.background,
+                    topBar = { MyTopAppBar(title = stringResource(id = R.string.sensor_settings)) },
+                    scaffoldState = scaffoldState
+                ) { paddingValues ->
+                    SensorSettings(
+                        scaffoldState = scaffoldState,
+                        viewModel = viewModel,
+                        alarmsViewModel = alarmsViewModel
+                    )
+                }
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor
+                    )
                 }
             }
         }
-        setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        setupViewModel()
-
-        scrollToAlarms()
-    }
-
-    private fun scrollToAlarms() {
-        val scrollToAlarms = intent.getBooleanExtra(SCROLL_TO_ALARMS, false)
-        Timber.d("SCROLL_TO_ALARMS = $scrollToAlarms")
-        if (scrollToAlarms) {
-            Handler(Looper.getMainLooper()).post {
-                binding.scrollView.scrollTo(0, binding.alertsCompose.top-binding.toolbar.height)
-            }
-        }
     }
 
     private fun setupViewModel() {
@@ -112,7 +122,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                 setupSensorImage(sensorState)
             }
         }
-
 
         viewModel.operationStatusObserve.observe(this) {
             if (!it.isNullOrEmpty()) {
@@ -215,11 +224,6 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             finish()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_edit, menu)
-        return true
     }
 
     private fun setupSensorImage(sensorState: RuuviTag) {
