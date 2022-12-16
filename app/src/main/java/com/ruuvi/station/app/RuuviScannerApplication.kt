@@ -10,6 +10,7 @@ import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
+import com.ruuvi.station.app.domain.ImageMigrationInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
@@ -40,6 +41,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val preferencesRepository: PreferencesRepository by instance()
     private val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider by instance()
     private val runtimeBehavior: RuntimeBehavior by instance()
+    private val imageMigrationInteractor: ImageMigrationInteractor by instance()
 
     private var isInForeground: Boolean = false
 
@@ -79,6 +81,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
             //declare first: private val fakesSender: FakeScanResultsSender by instance()
             //fakesSender.startSendFakes()
         }
+
+        imageMigrationInteractor.migrateDefaultImages()
 
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 

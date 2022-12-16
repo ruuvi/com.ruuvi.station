@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.di
 
 import androidx.lifecycle.ViewModelProvider
+import com.ruuvi.station.app.domain.ImageMigrationInteractor
 import com.ruuvi.station.app.domain.PowerManagerInterator
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.review.ReviewManagerInteractor
@@ -22,5 +23,7 @@ object AppInjectionModule {
         bind<PowerManagerInterator>() with singleton { PowerManagerInterator(instance(), instance()) }
 
         bind<PermissionLogicInteractor>() with singleton { PermissionLogicInteractor(instance(), instance()) }
+
+        bind<ImageMigrationInteractor>() with singleton { ImageMigrationInteractor(instance(), instance()) }
     }
 }

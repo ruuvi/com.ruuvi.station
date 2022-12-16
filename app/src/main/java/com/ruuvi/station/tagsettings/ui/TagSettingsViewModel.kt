@@ -141,14 +141,12 @@ class TagSettingsViewModel(
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
-        Timber.d("updateTagBackground")
-        interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
-        if (userBackground.isNullOrEmpty() == false) {
-            networkInteractor.uploadImage(sensorId, userBackground)
-        } else if (sensorState.value.networkBackground?.isNotEmpty() == true) {
-            networkInteractor.resetImage(sensorId)
-        }
+    fun setCustomBackground(userBackground: String) {
+        interactor.setCustomBackgroundImage(sensorId, userBackground)
+    }
+
+    fun setDefaultBackground(defaultBackground: Int) {
+        interactor.setDefaultBackgroundImage(sensorId, defaultBackground)
     }
 
     fun statusProcessed() { operationStatus.value = "" }

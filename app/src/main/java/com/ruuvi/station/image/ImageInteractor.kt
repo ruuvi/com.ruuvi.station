@@ -2,6 +2,7 @@ package com.ruuvi.station.image
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
@@ -139,5 +140,31 @@ class ImageInteractor (
         val matrix = Matrix()
         matrix.postRotate(degrees)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    fun saveResourceAsFile(name: String, resourceImage: Int): File? {
+        val image = File.createTempFile(name, ".jpg", getExternalFilesDir())
+        val bitmap = BitmapFactory.decodeResource(
+            context.resources,
+            resourceImage
+        )
+
+        var output: FileOutputStream? = null
+        try {
+            output = FileOutputStream(image)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+        } catch (e: Exception) {
+            Timber.e(e)
+          return null
+        } finally {
+            output?.flush()
+            output?.close()
+        }
+        return image
+    }
+
+    fun deleteFile(userBackground: String) {
+        val file = File(userBackground)
+        if (file.exists()) file.delete()
     }
 }

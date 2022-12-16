@@ -12,7 +12,7 @@ object TagSettingsInjectionModule {
     val module = Kodein.Module(TagSettingsInjectionModule.javaClass.name) {
 
         bind<TagSettingsInteractor>() with singleton {
-            TagSettingsInteractor(instance(), instance(), instance(), instance())
+            TagSettingsInteractor(instance(), instance(), instance(), instance(), instance())
         }
 
         bind<TagSettingsViewModel>() with factory { args: TagSettingsViewModelArgs ->

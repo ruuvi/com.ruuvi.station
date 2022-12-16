@@ -82,8 +82,8 @@ object Utils {
     }
 
 
-    fun getDefaultBackground(number: Int, context: Context?): Drawable? {
-        return ContextCompat.getDrawable(context!!, getDefaultBackground(number))
+    fun getDefaultBackground(number: Int, context: Context): Drawable? {
+        return ContextCompat.getDrawable(context, getDefaultBackground(number))
     }
 
     fun getDefaultBackground(number: Int): Int {

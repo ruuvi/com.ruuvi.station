@@ -142,7 +142,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
             if (viewModel.file != null) {
                 val rotation = imageInteractor.getCameraPhotoOrientation(viewModel.file)
                 imageInteractor.resize(currentPhotoPath, viewModel.file, rotation)
-                viewModel.updateTagBackground(viewModel.file.toString(), null)
+                viewModel.setCustomBackground(viewModel.file.toString())
                 val backgroundUri = Uri.parse(viewModel.file.toString())
                 val background = imageInteractor.getImage(backgroundUri)
                 binding.tagImageView.setImageBitmap(background)
@@ -181,7 +181,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
                         val uri = Uri.fromFile(photoFile)
                         val rotation = imageInteractor.getCameraPhotoOrientation(uri)
                         imageInteractor.resize(currentPhotoPath, uri, rotation)
-                        viewModel.updateTagBackground(uri.toString(), null)
+                        viewModel.setCustomBackground(uri.toString())
                         val backgroundUri = Uri.parse(uri.toString())
                         val background = imageInteractor.getImage(backgroundUri)
                         binding.tagImageView.setImageBitmap(background)
@@ -235,7 +235,7 @@ class TagSettingsActivity : AppCompatActivity(R.layout.activity_tag_settings), K
 
         binding.tagImageSelectButton.setDebouncedOnClickListener {
             val defaultBackground = if (sensorState.defaultBackground == 8) 0 else sensorState.defaultBackground + 1
-            viewModel.updateTagBackground(null, defaultBackground)
+            viewModel.setDefaultBackground(defaultBackground)
             binding.tagImageView.setImageDrawable(Utils.getDefaultBackground(defaultBackground, applicationContext))
         }
     }

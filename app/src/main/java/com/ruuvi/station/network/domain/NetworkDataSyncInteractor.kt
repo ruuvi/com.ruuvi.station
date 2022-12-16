@@ -20,6 +20,7 @@ import com.ruuvi.station.network.data.response.GetSensorDataResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.data.response.UserInfoResponseBody
+import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -43,7 +44,8 @@ class NetworkDataSyncInteractor (
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
     private val calibrationInteractor: CalibrationInteractor,
-    private val firebaseInteractor: FirebaseInteractor
+    private val firebaseInteractor: FirebaseInteractor,
+    private val tagSettingsInteractor: TagSettingsInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -128,6 +130,7 @@ class NetworkDataSyncInteractor (
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 networkAlertsSyncInteractor.updateAlertsFromNetwork()
+                networkRequestExecutor.executeScheduledRequests()
             } catch (exception: Exception) {
                 exception.message?.let { message ->
                     Timber.e(exception, "NetworkSync Exception")
@@ -279,7 +282,9 @@ class NetworkDataSyncInteractor (
                 tagEntry.update()
             }
 
-            if (!sensor.picture.isNullOrEmpty()) {
+            if (sensor.picture.isNullOrEmpty()) {
+                tagSettingsInteractor.setDefaultBackgroundImage(sensor.sensor, sensorSettings.defaultBackground)
+            } else {
                 setSensorImage(sensor, sensorSettings)
             }
         }
