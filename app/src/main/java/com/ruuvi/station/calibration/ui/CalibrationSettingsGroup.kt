@@ -69,7 +69,8 @@ fun CalibrationItem (
     TextEditWithCaptionButton(
         title = title,
         value = value,
-        icon = painterResource(id = R.drawable.arrow_forward_16)
+        icon = painterResource(id = R.drawable.arrow_forward_16),
+        tint = RuuviStationTheme.colors.trackInactive
     ) {
         action.invoke()
     }

@@ -183,7 +183,9 @@ fun GeneralSettingsGroup(
     SensorSettingsTitle(title = stringResource(id = R.string.general))
     TextEditWithCaptionButton(
         title = stringResource(id = R.string.tag_name),
-        value = sensorState.displayName
+        value = sensorState.displayName,
+        icon = painterResource(id = R.drawable.edit_20),
+        tint = RuuviStationTheme.colors.accent
     ) {
         setNameDialog = true
     }
@@ -204,7 +206,8 @@ fun GeneralSettingsGroup(
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.tagsettings_owner),
                 value = owner,
-                icon = painterResource(id = R.drawable.arrow_forward_16)
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
             ) {
                 ClaimSensorActivity.start(context, sensorState.id)
             }
@@ -220,7 +223,8 @@ fun GeneralSettingsGroup(
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.share),
                 value = sharedText,
-                icon = painterResource(id = R.drawable.arrow_forward_16)
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
@@ -308,7 +312,8 @@ fun RemoveGroup(
         TextEditWithCaptionButton(
             value = null,
             title = stringResource(id = R.string.remove_this_sensor),
-            icon = painterResource(id = R.drawable.arrow_forward_16)
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
         ) {
             removeDialog = true
         }
