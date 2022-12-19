@@ -12,6 +12,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.Utils
 import timber.log.Timber
+import java.io.File
 
 class TagSettingsInteractor(
     private val tagRepository: TagRepository,
@@ -125,5 +126,20 @@ class TagSettingsInteractor(
                 )
             }
         }
+    }
+
+    fun createFileForCamera(name: String): Pair<File,Uri> = imageInteractor.createFileForCamera(name)
+
+    fun setImageFromCamera(sensorId: String, imageFile: File, uri: Uri) {
+        imageInteractor.resize(
+            filename = imageFile.absolutePath,
+            uri = uri,
+            rotation = imageInteractor.getCameraPhotoOrientation(uri)
+        )
+        setCustomBackgroundImage(
+            sensorId = sensorId,
+            userBackground = uri.toString(),
+            defaultBackground = 0
+        )
     }
 }

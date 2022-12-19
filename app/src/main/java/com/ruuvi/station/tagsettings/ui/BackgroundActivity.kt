@@ -37,6 +37,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import timber.log.Timber
+import java.io.File
 
 class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
@@ -64,6 +65,11 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                     setImageFromGallery = { uri ->
                         viewModel.setImageFromGallery(uri)
                         finish()
+                    },
+                    getImageFileForCamera = viewModel::getImageFileForCamera,
+                    setImageFromCamera = { file, uri ->
+                        viewModel.setImageFromCamera(file, uri)
+                        finish()
                     }
                 )
             }
@@ -74,7 +80,9 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
     fun Body(
         defaultImages: List<Int>,
         setDefaultImage: (Int) -> Unit,
-        setImageFromGallery: (Uri) -> Unit
+        setImageFromGallery: (Uri) -> Unit,
+        getImageFileForCamera: () -> Pair<File, Uri>,
+        setImageFromCamera: (File, Uri) -> Unit
     ) {
         val context = LocalContext.current
         val scaffoldState = rememberScaffoldState()
@@ -93,7 +101,9 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             ) {
                 item(span = { GridItemSpan(3) }){
                     PageHeader(
-                        setImageFromGallery = setImageFromGallery
+                        setImageFromGallery = setImageFromGallery,
+                        getImageFileForCamera = getImageFileForCamera,
+                        setImageFromCamera = setImageFromCamera
                     )
                 }
 
@@ -118,14 +128,31 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
     @Composable
     fun PageHeader(
-        setImageFromGallery: (Uri) -> Unit
+        setImageFromGallery: (Uri) -> Unit,
+        getImageFileForCamera: () -> Pair<File, Uri>,
+        setImageFromCamera: (File, Uri) -> Unit
     ) {
+        var cameraFile by remember {
+            mutableStateOf<Pair<File, Uri>?>(null)
+        }
+
         val imagePicker = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { uri ->
                 Timber.d("Image selected ${uri?.path}")
                 if (uri != null) {
                     setImageFromGallery.invoke(uri)
+                }
+            }
+        )
+
+        val cameraLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture(),
+            onResult = { success ->
+                Timber.d("Image taken $success")
+                val cameraImage = cameraFile?.first
+                if (success && cameraImage != null) {
+                    setImageFromCamera(cameraImage, Uri.fromFile(cameraImage))
                 }
             }
         )
@@ -146,7 +173,11 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 icon = painterResource(id = R.drawable.camera_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
-
+                cameraFile = getImageFileForCamera.invoke()
+                Timber.d("Image file uri $cameraFile")
+                cameraFile?.let {
+                    cameraLauncher.launch(it.second)
+                }
             }
             DividerRuuvi()
             TextEditWithCaptionButton(

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import java.io.File
 
 class BackgroundViewModel(
     val sensorId: String,
@@ -27,4 +28,10 @@ class BackgroundViewModel(
     fun setImageFromGallery(uri: Uri) {
         tagSettingsInteractor.setImageFromGallery(sensorId, uri)
     }
+
+    fun setImageFromCamera(imageFile: File, uri: Uri) {
+        tagSettingsInteractor.setImageFromCamera(sensorId, imageFile, uri)
+    }
+
+    fun getImageFileForCamera(): Pair<File, Uri> = tagSettingsInteractor.createFileForCamera(sensorId)
 }

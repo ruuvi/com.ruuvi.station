@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import coil.ImageLoader
 import coil.request.ImageRequest
@@ -167,6 +168,15 @@ class ImageInteractor (
 
     fun createFile(name: String): File {
         return File.createTempFile(name, ".jpg", getExternalFilesDir())
+    }
+
+    fun createFileForCamera(name: String): Pair<File,Uri> {
+        val image = createFile(name)
+        return image to FileProvider.getUriForFile(
+            context,
+            "com.ruuvi.station.fileprovider",
+            image
+        )
     }
 
     fun copyFile(from: Uri, destination: File): Boolean {
