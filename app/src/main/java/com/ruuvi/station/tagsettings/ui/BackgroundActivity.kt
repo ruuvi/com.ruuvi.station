@@ -2,21 +2,22 @@ package com.ruuvi.station.tagsettings.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,6 +36,7 @@ import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 
 class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
@@ -53,13 +55,27 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                Body(defaultImages = viewModel.getDefaultImages())
+                Body(
+                    defaultImages = viewModel.getDefaultImages(),
+                    setDefaultImage = { image ->
+                        viewModel.setDefaultImage(image)
+                        finish()
+                    },
+                    setImageFromGallery = { uri ->
+                        viewModel.setImageFromGallery(uri)
+                        finish()
+                    }
+                )
             }
         }
     }
 
     @Composable
-    fun Body(defaultImages: List<Int>) {
+    fun Body(
+        defaultImages: List<Int>,
+        setDefaultImage: (Int) -> Unit,
+        setImageFromGallery: (Uri) -> Unit
+    ) {
         val context = LocalContext.current
         val scaffoldState = rememberScaffoldState()
         val systemUiController = rememberSystemUiController()
@@ -76,13 +92,17 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 columns = GridCells.Fixed(3)
             ) {
                 item(span = { GridItemSpan(3) }){
-                    PageHeader()
+                    PageHeader(
+                        setImageFromGallery = setImageFromGallery
+                    )
                 }
 
-                items(defaultImages) { pic ->
+                items(defaultImages) { defaultImage ->
                     Image(
-                        modifier = Modifier.padding(RuuviStationTheme.dimensions.small),
-                        painter = painterResource(id = pic),
+                        modifier = Modifier
+                            .padding(RuuviStationTheme.dimensions.small)
+                            .clickable { setDefaultImage.invoke(defaultImage) },
+                        painter = painterResource(id = defaultImage),
                         contentDescription = ""
                     )
                 }
@@ -97,7 +117,19 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
     }
 
     @Composable
-    fun PageHeader() {
+    fun PageHeader(
+        setImageFromGallery: (Uri) -> Unit
+    ) {
+        val imagePicker = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri ->
+                Timber.d("Image selected ${uri?.path}")
+                if (uri != null) {
+                    setImageFromGallery.invoke(uri)
+                }
+            }
+        )
+
         Column(
         ) {
             Paragraph(
@@ -123,7 +155,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 icon = painterResource(id = R.drawable.gallery_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
-
+                imagePicker.launch("image/*")
             }
             DividerRuuvi()
             Subtitle(

@@ -65,15 +65,6 @@ class TagSettingsInteractor(
         networkInteractor.checkSensorOwner(sensorId)
     }
 
-    fun setDefaultBackgroundImage(sensorId: String, defaultBackground: Int) {
-        Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
-        val backgroundResource = Utils.getDefaultBackground(defaultBackground)
-        val imageFile = imageInteractor.saveResourceAsFile("background_" + sensorId, backgroundResource)
-        if (imageFile != null) {
-            setCustomBackgroundImage(sensorId, Uri.fromFile(imageFile).toString(), defaultBackground)
-        }
-    }
-
     fun setCustomBackgroundImage(
         sensorId: String,
         userBackground: String,
@@ -94,6 +85,44 @@ class TagSettingsInteractor(
 
             if (sensorSettings.networkSensor) {
                 networkInteractor.uploadImage(sensorId, userBackground)
+            }
+        }
+    }
+
+    fun setDefaultBackgroundImage(sensorId: String, defaultBackground: Int) {
+        Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
+        val backgroundResource = Utils.getDefaultBackground(defaultBackground)
+        setDefaultBackgroundImageByResource(sensorId, backgroundResource)
+    }
+
+    fun setDefaultBackgroundImageByResource(sensorId: String, defaultBackground: Int) {
+        Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
+        val imageFile = imageInteractor.saveResourceAsFile("background_" + sensorId, defaultBackground)
+        if (imageFile != null) {
+            setCustomBackgroundImage(sensorId, Uri.fromFile(imageFile).toString(), defaultBackground)
+        }
+    }
+
+    fun setImageFromGallery(sensorId: String, uri: Uri) {
+        Timber.d("setImageFromGallery $sensorId $uri")
+        val isImage = imageInteractor.isImage(uri)
+        Timber.d("isImage $isImage")
+        if (imageInteractor.isImage(uri)) {
+            val image = imageInteractor.createFile(sensorId)
+            Timber.d("output file ${image.absolutePath}")
+
+            if (imageInteractor.copyFile(uri, image)) {
+                val imageUri = Uri.fromFile(image)
+                imageInteractor.resize(
+                    filename = image.absolutePath,
+                    uri = imageUri,
+                    rotation = imageInteractor.getCameraPhotoOrientation(imageUri)
+                )
+                setCustomBackgroundImage(
+                    sensorId = sensorId,
+                    userBackground = imageUri.toString(),
+                    defaultBackground = 0
+                )
             }
         }
     }

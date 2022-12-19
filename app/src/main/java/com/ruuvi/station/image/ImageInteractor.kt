@@ -17,6 +17,7 @@ import coil.request.ImageRequest
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -104,6 +105,7 @@ class ImageInteractor (
         }
     }
 
+    //TODO filename and uri should become 1 param
     fun resize(filename: String?, uri: Uri?, rotation: Int) {
         try {
             val targetWidth = 1080
@@ -143,7 +145,7 @@ class ImageInteractor (
     }
 
     fun saveResourceAsFile(name: String, resourceImage: Int): File? {
-        val image = File.createTempFile(name, ".jpg", getExternalFilesDir())
+        val image = createFile(name)
         val bitmap = BitmapFactory.decodeResource(
             context.resources,
             resourceImage
@@ -161,6 +163,29 @@ class ImageInteractor (
             output?.close()
         }
         return image
+    }
+
+    fun createFile(name: String): File {
+        return File.createTempFile(name, ".jpg", getExternalFilesDir())
+    }
+
+    fun copyFile(from: Uri, destination: File): Boolean {
+        var inputStream: InputStream? = null
+        try {
+            inputStream = context.contentResolver.openInputStream(from)
+            if (inputStream != null) {
+                destination.outputStream().use { output ->
+                    inputStream.copyTo(output)
+                }
+                return true
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to copy file from $from to $destination")
+            return false
+        } finally {
+            inputStream?.close()
+        }
+        return false
     }
 
     fun deleteFile(userBackground: String) {
