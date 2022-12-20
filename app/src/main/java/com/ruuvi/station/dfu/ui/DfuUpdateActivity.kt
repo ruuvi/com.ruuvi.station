@@ -35,7 +35,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
-import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.RuuviTopAppBar
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -116,7 +116,7 @@ fun Body(
             .fillMaxSize()
     ) {
         Column() {
-            MyTopAppBar(title)
+            RuuviTopAppBar(title)
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())

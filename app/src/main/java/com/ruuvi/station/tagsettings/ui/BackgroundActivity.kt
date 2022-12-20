@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
@@ -92,7 +92,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
-            topBar = { MyTopAppBar(title = stringResource(id = R.string.change_background)) },
+            topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState
         ) { paddingValues ->
 

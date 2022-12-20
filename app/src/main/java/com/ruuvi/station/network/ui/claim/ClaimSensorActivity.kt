@@ -24,7 +24,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -98,7 +98,7 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
-            topBar = { MyTopAppBar(title = title) },
+            topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState
         ) { padding ->
 

@@ -56,6 +56,7 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -879,6 +880,7 @@ fun DashboardItemDropdownMenu(
                 ))
             }
             DropdownMenuItem(onClick = {
+                BackgroundActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(

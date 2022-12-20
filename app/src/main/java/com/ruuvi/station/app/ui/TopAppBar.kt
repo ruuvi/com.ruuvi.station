@@ -4,10 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,8 +25,9 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dashboard.DashboardType
 
 @Composable
-fun MyTopAppBar(
-    title: String
+fun RuuviTopAppBar(
+    title: String,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     val context = LocalContext.current as Activity
 
@@ -49,6 +47,7 @@ fun MyTopAppBar(
                 Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
             }
         },
+        actions = actions,
         backgroundColor = RuuviStationTheme.colors.topBar,
         contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
