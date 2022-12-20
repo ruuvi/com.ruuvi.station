@@ -46,7 +46,7 @@
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Назад</string>
-    <string name="background_image">Фоновое\nизображение</string>
+    <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>
     <string name="background_interval_10sec">каждые %1$s сек</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>

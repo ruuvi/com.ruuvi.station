@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -55,6 +56,7 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.extensions.describingTimeSince
@@ -598,14 +600,12 @@ fun DashboardItemVariableHeight(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag
                     val uri = Uri.parse(sensor.userBackground)
 
                     if (uri.path != null) {
-
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
                             model = uri,
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
-
                         //DashboardImage(uri)
                     }
                 }
@@ -791,6 +791,12 @@ fun DashboardImage(userBackground: Uri) {
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(id = R.drawable.tag_bg_layer),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable
@@ -874,6 +880,7 @@ fun DashboardItemDropdownMenu(
                 ))
             }
             DropdownMenuItem(onClick = {
+                BackgroundActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(

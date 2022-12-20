@@ -58,7 +58,7 @@ package="com.ruuvi.station">
         android:configChanges="orientation|screenSize|locale"
         android:exported="false"
         android:label="@string/sensor_settings"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
+        android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustResize" />
 
     <service
@@ -111,8 +111,7 @@ package="com.ruuvi.station">
     <activity
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
         android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
+        android:theme="@style/AppTheme.NoActionBar"></activity>
 
     <activity
         android:name=".dashboard.ui.DashboardActivityOld"
@@ -164,6 +163,13 @@ package="com.ruuvi.station">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
         </intent-filter>
+    </activity>
+
+    <activity
+        android:name="com.ruuvi.station.tagsettings.ui.BackgroundActivity"
+        android:exported="false"
+        android:label="@string/change_background"
+        android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
     <activity

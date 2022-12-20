@@ -34,7 +34,7 @@ class EnterCodeViewModel (
         networkSignInInteractor.signIn(token) { response->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
-                    val syncJob = networkDataSyncInteractor.syncNetworkData(false)
+                    val syncJob = networkDataSyncInteractor.syncNetworkData()
                     syncJob.join()
                     requestInProcess.value = false
                     successfullyVerified.value = true

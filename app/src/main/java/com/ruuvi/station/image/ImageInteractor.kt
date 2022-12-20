@@ -2,6 +2,7 @@ package com.ruuvi.station.image
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
@@ -10,19 +11,33 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.ruuvi.station.R
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class ImageInteractor (
     private val context: Context
-    ) {
+) {
+    val defaultImages = listOf(
+        R.drawable.bg2,
+        R.drawable.bg3,
+        R.drawable.bg4,
+        R.drawable.bg5,
+        R.drawable.bg6,
+        R.drawable.bg7,
+        R.drawable.bg8,
+        R.drawable.bg9,
+    )
+
     private fun getExternalFilesDir() =
         context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
@@ -103,6 +118,7 @@ class ImageInteractor (
         }
     }
 
+    //TODO filename and uri should become 1 param
     fun resize(filename: String?, uri: Uri?, rotation: Int) {
         try {
             val targetWidth = 1080
@@ -140,4 +156,78 @@ class ImageInteractor (
         matrix.postRotate(degrees)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
+
+    fun saveResourceAsFile(name: String, resourceImage: Int): File? {
+        val image = createFile(name)
+        val bitmap = BitmapFactory.decodeResource(
+            context.resources,
+            resourceImage
+        )
+
+        var output: FileOutputStream? = null
+        try {
+            output = FileOutputStream(image)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+        } catch (e: Exception) {
+            Timber.e(e)
+          return null
+        } finally {
+            output?.flush()
+            output?.close()
+        }
+        return image
+    }
+
+    fun createFile(name: String): File {
+        return File.createTempFile(name, ".jpg", getExternalFilesDir())
+    }
+
+    fun createFileForCamera(name: String): Pair<File,Uri> {
+        val image = createFile(name)
+        return image to FileProvider.getUriForFile(
+            context,
+            "com.ruuvi.station.fileprovider",
+            image
+        )
+    }
+
+    fun copyFile(from: Uri, destination: File): Boolean {
+        var inputStream: InputStream? = null
+        try {
+            inputStream = context.contentResolver.openInputStream(from)
+            if (inputStream != null) {
+                destination.outputStream().use { output ->
+                    inputStream.copyTo(output)
+                }
+                return true
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to copy file from $from to $destination")
+            return false
+        } finally {
+            inputStream?.close()
+        }
+        return false
+    }
+
+    fun deleteFile(userBackground: String) {
+        val file = File(userBackground)
+        if (file.exists()) file.delete()
+    }
+
+    fun getDefaultBackgroundById(number: Int): Int {
+        return when (number) {
+            1 -> R.drawable.bg2
+            2 -> R.drawable.bg3
+            3 -> R.drawable.bg4
+            4 -> R.drawable.bg5
+            5 -> R.drawable.bg6
+            6 -> R.drawable.bg7
+            7 -> R.drawable.bg8
+            8 -> R.drawable.bg9
+            else -> getRandomResource()
+        }
+    }
+
+    fun getRandomResource(): Int = defaultImages.random()
 }

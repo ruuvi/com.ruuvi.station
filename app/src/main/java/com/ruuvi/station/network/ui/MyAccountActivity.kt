@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.MyTopAppBar
+import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -100,7 +100,7 @@ fun MyAccountBody(
     }
 
     Column() {
-        MyTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
+        RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
         PageSurfaceWithPadding() {
             Column() {
                 SubtitleWithPadding(text = stringResource(id = R.string.logged_in))

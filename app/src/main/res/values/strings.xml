@@ -56,7 +56,7 @@
     <string name="app_theme">App Theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Back</string>
-    <string name="background_image">Background\nimage</string>
+    <string name="background_image">Background image</string>
     <string name="background_interval">every %1$s min</string>
     <string name="background_interval_10sec">every %1$s sec</string>
     <string name="background_notification_message">You can disable background scanning in Settings</string>
@@ -97,6 +97,7 @@
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
     <string name="change_background">Change background</string>
+    <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable background scanning?</string>
@@ -188,6 +189,7 @@
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>
     <string name="export_csv_failed">Failed to create CSV file</string>
+    <string name="export_csv_feature_location">You can export sensor\'s history from its history graph page. Tap three dots menu icon on top right corner, and then select \"Export history (csv)\".</string>
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX Power (dBm)</string>
@@ -336,6 +338,8 @@
     <string name="searching_for_sensor">Searching for a sensor</string>
     <string name="sec">sec</string>
     <string name="seconds">Seconds</string>
+    <string name="select_default_image">Select from default images</string>
+    <string name="select_from_gallery">Select from phone gallery</string>
     <string name="select_picture">Select Picture</string>
     <string name="select_sensor">Select sensor</string>
     <string name="send_email">Send Email</string>
@@ -427,6 +431,7 @@
     <string name="tagsettings_network_info">NETWORK INFO</string>
     <string name="tagsettings_owner">Owner</string>
     <string name="tagsettings_sensor_remove">Remove sensor</string>
+    <string name="take_photo">Take a photo</string>
     <string name="temperature">Temperature</string>
     <string name="temperature_accuracy_title">Temperature resolution</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>

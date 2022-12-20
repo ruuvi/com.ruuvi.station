@@ -26,6 +26,8 @@ class NetworkRequestExecutor (
     private fun getToken() = tokenRepository.getTokenInfo()
 
     fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true) {
+        Timber.d("registerRequest $networkRequest $executeNow")
+        networkRequest.status = if (executeNow) NetworkRequestStatus.EXECUTING else NetworkRequestStatus.READY
         CoroutineScope(Dispatchers.IO).launch {
             networkRequestRepository.disableSimilar(networkRequest)
             networkRequestRepository.saveRequest(networkRequest)
@@ -36,6 +38,7 @@ class NetworkRequestExecutor (
     }
 
     suspend fun executeScheduledRequests() {
+        Timber.d("executeScheduledRequests")
         val requests = networkRequestRepository.getScheduledRequests()
         for (networkRequest in requests) {
             execute(networkRequest)
@@ -48,6 +51,7 @@ class NetworkRequestExecutor (
     }
 
     private suspend fun execute(networkRequest: NetworkRequest) {
+        Timber.d("executing $networkRequest")
         val token = getToken()?.token
 
         val request = getRequest(networkRequest)
@@ -71,6 +75,7 @@ class NetworkRequestExecutor (
     }
 
     private fun getRequest(networkRequest: NetworkRequest): Any? {
+        Timber.d("getRequest $networkRequest")
         with(networkRequest){
             return when (type) {
                 NetworkRequestType.UNCLAIM -> parseJson<UnclaimSensorRequest>(requestData)
@@ -85,6 +90,7 @@ class NetworkRequestExecutor (
     }
 
     private suspend fun runSpecificAction(token:String, networkRequest: NetworkRequest, request: Any?): RuuviNetworkResponse<*>? {
+        Timber.d("runSpecificAction $networkRequest")
         return when (networkRequest.type) {
             NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
             NetworkRequestType.UPDATE_SENSOR -> updateSensor(token, request as UpdateSensorRequest)
@@ -97,34 +103,42 @@ class NetworkRequestExecutor (
     }
 
     private suspend fun setAlert(token: String, request: SetAlertRequest): SetAlertResponse? {
+        Timber.d("setAlert $request")
         return networkRepository.setAlert(request, token)
     }
 
     private suspend fun unclaimSensor(token: String, request: UnclaimSensorRequest): ClaimSensorResponse? {
+        Timber.d("unclaimSensor $request")
         return networkRepository.unclaimSensor(request, token)
     }
 
     private suspend fun updateSensor(token: String, request: UpdateSensorRequest): UpdateSensorResponse? {
+        Timber.d("updateSensor $request")
         return networkRepository.updateSensor(request, token)
     }
 
     private suspend fun unshareSensor(token: String, request: UnshareSensorRequest): ShareSensorResponse? {
+        Timber.d("unshareSensor $request")
         return networkRepository.unshareSensor(request, token)
     }
 
     private suspend fun uploadImage(token: String, request: UploadImageRequestWrapper): UploadImageResponse? {
+        Timber.d("uploadImage")
         val response = networkRepository.uploadImage(request.filename, request.request, token)
-        if (response?.isSuccess() == true && response.data?.guid.isNullOrEmpty()) {
+        if (response?.isSuccess() == true && !response.data?.guid.isNullOrEmpty()) {
+            Timber.d("uploadImage-updateNetworkBackground")
             sensorSettingsRepository.updateNetworkBackground(request.request.sensor, response.data?.guid)
         }
         return response
     }
 
     private suspend fun resetImage(token: String, request: UploadImageRequest): UploadImageResponse? {
+        Timber.d("resetImage $request")
         return networkRepository.resetImage(request, token)
     }
 
     private suspend fun updateUserSettings(token: String, request: UpdateUserSettingRequest): UpdateUserSettingResponse? {
+        Timber.d("updateUserSettings $request")
         return networkRepository.updateUserSettings(request, token)
     }
 
@@ -146,10 +160,12 @@ class NetworkRequestExecutor (
     }
 
     private fun disableRequest(networkRequest: NetworkRequest, status: NetworkRequestStatus) {
+        Timber.d("disableRequest $networkRequest")
         networkRequestRepository.disableRequest(networkRequest, status)
     }
 
     private fun registerFailedAttempt(networkRequest: NetworkRequest) {
+        Timber.d("registerFailedAttempt $networkRequest")
         networkRequestRepository.registerFailedAttempt(networkRequest)
     }
 }

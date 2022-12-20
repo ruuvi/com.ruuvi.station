@@ -249,11 +249,11 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun uploadImage(sensorId: String, filename: String) {
+    fun uploadImage(sensorId: String, filename: String, uploadNow: Boolean = false) {
         if (shouldSendSensorDataToNetwork(sensorId)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             Timber.d("uploadImage $networkRequest")
-            networkRequestExecutor.registerRequest(networkRequest)
+            networkRequestExecutor.registerRequest(networkRequest, uploadNow)
         }
     }
 
