@@ -141,14 +141,6 @@ class TagSettingsViewModel(
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun setCustomBackground(userBackground: String) {
-        interactor.setCustomBackgroundImage(sensorId, userBackground)
-    }
-
-    fun setDefaultBackground(defaultBackground: Int) {
-        interactor.setDefaultBackgroundImage(sensorId, defaultBackground)
-    }
-
     fun statusProcessed() { operationStatus.value = "" }
 
     fun setName(name: String?) {

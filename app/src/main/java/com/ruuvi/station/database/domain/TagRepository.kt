@@ -105,7 +105,6 @@ class TagRepository(
             sensor.id?.let { sensorId ->
                 sensor.favorite = true
                 val sensorSettings = SensorSettings(id = sensorId, createDate = Date(), name = sensor.displayName())
-                sensorSettingsRepository.setKindaRandomBackground(sensorSettings)
                 sensorSettings.save(it)
                 sensor.save(it)
             }

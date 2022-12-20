@@ -24,6 +24,6 @@ object AppInjectionModule {
 
         bind<PermissionLogicInteractor>() with singleton { PermissionLogicInteractor(instance(), instance()) }
 
-        bind<ImageMigrationInteractor>() with singleton { ImageMigrationInteractor(instance(), instance()) }
+        bind<ImageMigrationInteractor>() with singleton { ImageMigrationInteractor(instance(), instance(), instance()) }
     }
 }

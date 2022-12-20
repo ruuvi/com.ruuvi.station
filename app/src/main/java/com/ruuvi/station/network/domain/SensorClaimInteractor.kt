@@ -124,7 +124,11 @@ class SensorClaimInteractor(
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         val userBackground = sensorSettings?.userBackground
         if (userBackground?.isNotEmpty() == true) {
-            ruuviNetworkInteractor.uploadImage(sensorId, userBackground)
+            ruuviNetworkInteractor.uploadImage(
+                sensorId = sensorId,
+                filename = userBackground,
+                uploadNow = true
+            )
         }
     }
 }

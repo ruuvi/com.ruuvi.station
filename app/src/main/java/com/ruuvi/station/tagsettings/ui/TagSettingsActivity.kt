@@ -3,7 +3,6 @@ package com.ruuvi.station.tagsettings.ui
 import android.app.Activity
 import android.content.*
 import android.os.*
-import android.view.*
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
@@ -25,20 +24,13 @@ import com.ruuvi.station.app.ui.components.RuuviMessageDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.database.domain.SensorHistoryRepository
-import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
-import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
-import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -58,11 +50,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         intent.getStringExtra(TAG_ID)
     }
 
-    private val repository: TagRepository by instance()
-    private val unitsConverter: UnitsConverter by instance()
-    private val imageInteractor: ImageInteractor by instance()
-    private val sensorHistoryRepository: SensorHistoryRepository by instance()
-    private val sensorSettingsRepository: SensorSettingsRepository by instance()
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,37 +120,9 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         timer?.cancel()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_export) {
-            val exporter = CsvExporter(this, repository, sensorHistoryRepository, sensorSettingsRepository, unitsConverter)
-            val uri = exporter.toCsv(viewModel.sensorId)
-            if (uri != null) {
-                val sendIntent = Intent()
-                sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                sendIntent.type = "text/csv"
-                sendIntent.flags =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(
-                    Intent.createChooser(
-                        sendIntent,
-                        getString(R.string.export_csv_chooser_title, viewModel.sensorId)
-                    )
-                )
-            }
-        } else {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     companion object {
         private const val TAG_ID = "TAG_ID"
         private const val SCROLL_TO_ALARMS = "SCROLL_TO_ALARMS"
-
-        private const val REQUEST_TAKE_PHOTO = 1
-
-        private const val REQUEST_GALLERY_PHOTO = 2
 
         fun start(context: Context, tagId: String?, scrollToAlarms: Boolean = false) {
             val intent = Intent(context, TagSettingsActivity::class.java)

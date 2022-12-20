@@ -24,7 +24,6 @@ class SensorSettingsRepository {
         var settings = getSensorSettings(sensorId)
         if (settings == null) {
             settings = SensorSettings(sensorId, Date())
-            setKindaRandomBackground(settings)
             settings.insert()
         }
         return settings
@@ -112,16 +111,6 @@ class SensorSettingsRepository {
         settings.owner = owner
         settings.networkSensor = isNetworkSensor
         settings.update()
-    }
-
-    fun setKindaRandomBackground(sensorSettings: SensorSettings){
-        val settings = getSensorSettings()
-        var background = (Math.random() * 9.0).toInt()
-        for (i in 0..99) {
-            if (settings.none { it.defaultBackground == background }) break
-            background = (Math.random() * 9.0).toInt()
-        }
-        sensorSettings.defaultBackground = background
     }
 
     fun updateLastSync(sensorId: String, date: Date?) {

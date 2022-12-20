@@ -283,7 +283,7 @@ class NetworkDataSyncInteractor (
             }
 
             if (sensor.picture.isNullOrEmpty()) {
-                tagSettingsInteractor.setDefaultBackgroundImage(sensor.sensor, sensorSettings.defaultBackground)
+                tagSettingsInteractor.setRandomDefaultBackgroundImage(sensor.sensor)
             } else {
                 setSensorImage(sensor, sensorSettings)
             }

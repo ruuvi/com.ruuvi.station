@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.ruuvi.station.R
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -25,7 +26,18 @@ import kotlin.coroutines.suspendCoroutine
 
 class ImageInteractor (
     private val context: Context
-    ) {
+) {
+    val defaultImages = listOf(
+        R.drawable.bg2,
+        R.drawable.bg3,
+        R.drawable.bg4,
+        R.drawable.bg5,
+        R.drawable.bg6,
+        R.drawable.bg7,
+        R.drawable.bg8,
+        R.drawable.bg9,
+    )
+
     private fun getExternalFilesDir() =
         context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
@@ -202,4 +214,20 @@ class ImageInteractor (
         val file = File(userBackground)
         if (file.exists()) file.delete()
     }
+
+    fun getDefaultBackgroundById(number: Int): Int {
+        return when (number) {
+            1 -> R.drawable.bg2
+            2 -> R.drawable.bg3
+            3 -> R.drawable.bg4
+            4 -> R.drawable.bg5
+            5 -> R.drawable.bg6
+            6 -> R.drawable.bg7
+            7 -> R.drawable.bg8
+            8 -> R.drawable.bg9
+            else -> getRandomResource()
+        }
+    }
+
+    fun getRandomResource(): Int = defaultImages.random()
 }

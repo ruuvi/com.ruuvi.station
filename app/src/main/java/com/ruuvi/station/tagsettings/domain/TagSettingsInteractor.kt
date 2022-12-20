@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagsettings.domain
 
 import android.net.Uri
+import androidx.annotation.DrawableRes
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -10,7 +11,6 @@ import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.model.TemperatureUnit
-import com.ruuvi.station.util.Utils
 import timber.log.Timber
 import java.io.File
 
@@ -66,12 +66,12 @@ class TagSettingsInteractor(
         networkInteractor.checkSensorOwner(sensorId)
     }
 
-    fun setCustomBackgroundImage(
+    fun setBackgroundImage(
         sensorId: String,
         userBackground: String,
-        defaultBackground: Int? = null,
+        uploadNow: Boolean = false
     ) {
-        Timber.d("setCustomBackgroundImage $sensorId $userBackground $defaultBackground")
+        Timber.d("setCustomBackgroundImage $sensorId $userBackground")
         val sensorSettings = getSensorSettings(sensorId)
         if (sensorSettings != null) {
             sensorSettings.userBackground?.let { oldFile ->
@@ -80,27 +80,42 @@ class TagSettingsInteractor(
             sensorSettingsRepository.updateSensorBackground(
                 sensorId = sensorId,
                 userBackground = userBackground,
-                defaultBackground = defaultBackground ?: sensorSettings.defaultBackground,
+                defaultBackground = 0,
                 networkBackground = null
             )
 
             if (sensorSettings.networkSensor) {
-                networkInteractor.uploadImage(sensorId, userBackground)
+                networkInteractor.uploadImage(
+                    sensorId = sensorId,
+                    filename = userBackground,
+                    uploadNow = uploadNow
+                )
             }
         }
     }
 
-    fun setDefaultBackgroundImage(sensorId: String, defaultBackground: Int) {
-        Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
-        val backgroundResource = Utils.getDefaultBackground(defaultBackground)
-        setDefaultBackgroundImageByResource(sensorId, backgroundResource)
+    fun setRandomDefaultBackgroundImage(
+        sensorId: String
+    ) {
+        setDefaultBackgroundImageByResource(
+            sensorId = sensorId,
+            defaultBackground = imageInteractor.getRandomResource()
+        )
     }
 
-    fun setDefaultBackgroundImageByResource(sensorId: String, defaultBackground: Int) {
+    fun setDefaultBackgroundImageByResource(
+        sensorId: String,
+        @DrawableRes defaultBackground: Int,
+        uploadNow: Boolean = false
+    ) {
         Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
         val imageFile = imageInteractor.saveResourceAsFile("background_" + sensorId, defaultBackground)
         if (imageFile != null) {
-            setCustomBackgroundImage(sensorId, Uri.fromFile(imageFile).toString(), defaultBackground)
+            setBackgroundImage(
+                sensorId = sensorId,
+                userBackground = Uri.fromFile(imageFile).toString(),
+                uploadNow = uploadNow
+            )
         }
     }
 
@@ -119,10 +134,9 @@ class TagSettingsInteractor(
                     uri = imageUri,
                     rotation = imageInteractor.getCameraPhotoOrientation(imageUri)
                 )
-                setCustomBackgroundImage(
+                setBackgroundImage(
                     sensorId = sensorId,
-                    userBackground = imageUri.toString(),
-                    defaultBackground = 0
+                    userBackground = imageUri.toString()
                 )
             }
         }
@@ -136,10 +150,9 @@ class TagSettingsInteractor(
             uri = uri,
             rotation = imageInteractor.getCameraPhotoOrientation(uri)
         )
-        setCustomBackgroundImage(
+        setBackgroundImage(
             sensorId = sensorId,
-            userBackground = uri.toString(),
-            defaultBackground = 0
+            userBackground = uri.toString()
         )
     }
 }
