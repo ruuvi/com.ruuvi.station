@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.databinding.ViewTagDetailBinding
 import com.ruuvi.station.graph.ChartControlElement
 import com.ruuvi.station.graph.GraphView
@@ -156,6 +157,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
             tagHumidityLayout.isVisible = tag.humidity != null
             tagPressureLayout.isVisible = tag.pressure != null
             tagMovementLayout.isVisible = tag.movementCounter != null
+            lowBatteryLayout.isVisible = tag.isLowBattery()
 
             tagTemperatureTextView.text = viewModel.getTemperatureStringWithoutUnit(tag)
             tagHumidityTextView.text = tag.humidityString

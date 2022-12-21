@@ -161,7 +161,7 @@ fun SensorSettingsImage(
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
             Text(
                 style = RuuviStationTheme.typography.subtitle,
-                text = stringResource(id = R.string.background_image),
+                text = stringResource(id = R.string.change_background_image),
                 color = RuuviStationTheme.colors.buttonText
             )
         }

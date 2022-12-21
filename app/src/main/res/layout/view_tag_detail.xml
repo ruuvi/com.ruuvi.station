@@ -131,6 +131,27 @@
                     tools:text="124" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/lowBatteryLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <TextView
+                    style="@style/SensorScreenParagraphSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/low_battery"
+                    android:layout_marginEnd="8dp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:src="@drawable/icon_battery_low" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
         <include
             android:id="@+id/graphsContent"
