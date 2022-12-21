@@ -253,6 +253,7 @@
     <string name="login_to_ruuvi_network">Sign in to\nRuuvi\nStation</string>
     <string name="longer_history_message">Ruuvi Station mobile app supports maximum 10 days history. Ruuvi Cloud subscribers are able to view up to 2 years of historical data using web app at ruuvi.com/station (requires Ruuvi Gateway router).</string>
     <string name="longer_history_title">Longer history</string>
+    <string name="low_battery">Low battery</string>
     <string name="mac_address">MAC Address</string>
     <string name="mac_copied">MAC address copied to clipboard</string>
     <string name="measurement_sequence_number">Measurement Sequence Number</string>
