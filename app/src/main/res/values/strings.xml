@@ -97,6 +97,7 @@
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
     <string name="change_background">Change background</string>
+    <string name="change_background_image">Change background image</string>
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
