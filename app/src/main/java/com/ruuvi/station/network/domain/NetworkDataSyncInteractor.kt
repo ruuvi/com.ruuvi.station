@@ -283,7 +283,11 @@ class NetworkDataSyncInteractor (
             }
 
             if (sensor.picture.isNullOrEmpty()) {
-                tagSettingsInteractor.setRandomDefaultBackgroundImage(sensor.sensor)
+                tagSettingsInteractor.setDefaultBackgroundImageByResource(
+                    sensorId = sensor.sensor,
+                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
+                    uploadNow = true
+                )
             } else {
                 setSensorImage(sensor, sensorSettings)
             }

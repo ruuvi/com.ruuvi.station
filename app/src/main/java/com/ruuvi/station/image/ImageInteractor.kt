@@ -13,7 +13,7 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
-import coil.ImageLoader
+import coil.imageLoader
 import coil.request.ImageRequest
 import com.ruuvi.station.R
 import timber.log.Timber
@@ -43,22 +43,28 @@ class ImageInteractor (
 
     suspend fun downloadImage(filename: String, url: String): File {
         return suspendCoroutine { continuation ->
-            val imageLoader = ImageLoader(context)
+            val imageLoader = context.imageLoader
             val request = ImageRequest.Builder(context)
                 .data(url)
                 .target(
-                    onStart = { placeholder ->
-                        // Handle the placeholder drawable.
-                    },
+                    onStart = { },
                     onSuccess = { result ->
                         val bitmap = (result as BitmapDrawable).bitmap
                         val storageDir = getExternalFilesDir()
                         val imageFile = File(storageDir, "$filename.jpg")
-                        val out = FileOutputStream(imageFile)
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                        out.flush()
-                        out.close()
-                        continuation.resume(imageFile)
+
+                        var output: FileOutputStream? = null
+                        try {
+                            output = FileOutputStream(imageFile)
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                            continuation.resume(imageFile)
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                            continuation.resumeWithException(Exception("Failed to save image $url"))
+                        } finally {
+                            output?.flush()
+                            output?.close()
+                        }
                     },
                     onError = {
                         continuation.resumeWithException(Exception("Failed to load image $url"))
@@ -212,7 +218,11 @@ class ImageInteractor (
 
     fun deleteFile(userBackground: String) {
         val file = File(userBackground)
-        if (file.exists()) file.delete()
+        try {
+            if (file.exists()) file.delete()
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to delete old image file")
+        }
     }
 
     fun getDefaultBackgroundById(number: Int): Int {

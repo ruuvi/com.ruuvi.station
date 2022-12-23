@@ -12,7 +12,7 @@ class ImageMigrationInteractor(
 
     fun migrateDefaultImages() {
         val settings = sensorSettingsRepository.getSensorSettings().filter {
-            it.userBackground.isNullOrEmpty()
+            it.userBackground.isNullOrEmpty() && !it.networkSensor
         }
         for (setting in settings) {
             tagSettingsInteractor.setDefaultBackgroundImageByResource(
