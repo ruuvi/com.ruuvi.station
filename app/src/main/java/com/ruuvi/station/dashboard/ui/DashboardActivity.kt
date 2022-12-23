@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
@@ -149,7 +151,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                             .fillMaxSize()
                             .padding(RuuviStationTheme.dimensions.medium)
                     ) {
-                        DashboardItems(sensors, userEmail, dashboardType)
+                        if (sensors.isEmpty()) {
+                            EmptyDashboard()
+                        } else {
+                            DashboardItems(sensors, userEmail, dashboardType)
+                        }
                     }
                 }
 
@@ -179,6 +185,27 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             val dashboardIntent = Intent(context, DashboardActivity::class.java)
             context.startActivity(dashboardIntent)
         }
+    }
+}
+
+@Composable
+fun EmptyDashboard() {
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier.clickable {
+                AddTagActivity.start(context)
+            },
+            style = RuuviStationTheme.typography.title,
+            text = stringResource(id = R.string.press_to_add),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
