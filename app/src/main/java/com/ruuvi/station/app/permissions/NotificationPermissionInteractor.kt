@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -16,13 +17,15 @@ import timber.log.Timber
 class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePermissionInteractor(activity) {
 
     override fun checkAndRequest() {
-        val permissionGranted = permissionGranted(notificationPermission)
-        Timber.d("permissionGranted = $permissionGranted")
-        val shouldShowRationale = shouldShowRationale(notificationPermission)
-        Timber.d("shouldShowRationale = $shouldShowRationale")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionGranted = permissionGranted(notificationPermission)
+            Timber.d("permissionGranted = $permissionGranted")
+            val shouldShowRationale = shouldShowRationale(notificationPermission)
+            Timber.d("shouldShowRationale = $shouldShowRationale")
 
-        if (!permissionGranted) {
-            requestPermission(notificationPermission)
+            if (!permissionGranted) {
+                requestPermission(notificationPermission)
+            }
         }
     }
 
@@ -31,7 +34,7 @@ class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePer
     }
 
     override fun onPermissionDenied() {
-        showPermissionSnackbar("To enable alerts please allow Notifications in Settings")
+        showPermissionSnackbar(activity.getString(R.string.notification_permission_needed))
     }
 
     companion object {

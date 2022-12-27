@@ -43,6 +43,9 @@ class DashboardActivityViewModel(
     val shouldAskForBackgroundLocationPermission
         get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
 
+    val shouldAskToEnableBluetooth
+        get() = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         tokenRepository.signOut { }

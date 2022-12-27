@@ -43,11 +43,12 @@ import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
+import com.ruuvi.station.app.permissions.BluetoothPermissions
+import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
-import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
@@ -85,6 +86,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
         observeSyncStatus()
 
         setContent {
+            var bluetoothCheckReady by remember {
+                mutableStateOf(false)
+            }
+
             RuuviTheme {
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
@@ -96,6 +101,21 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val signedIn = !userEmail.isNullOrEmpty()
                 val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = listOf())
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
+
+                NotificationPermission(
+                    scaffoldState = scaffoldState,
+                    shouldAskNotificationPermission = dashboardViewModel.shouldAskNotificationPermission
+                ) {
+                    bluetoothCheckReady = true
+                }
+
+                if (bluetoothCheckReady) {
+                    BluetoothPermissions(
+                        scaffoldState = scaffoldState,
+                        askToEnableBluetooth = dashboardViewModel.shouldAskToEnableBluetooth,
+                        askForBackgroundLocation = dashboardViewModel.shouldAskForBackgroundLocationPermission
+                    )
+                }
 
                 Scaffold(
                     scaffoldState = scaffoldState,
