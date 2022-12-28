@@ -8,6 +8,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.model.TemperatureUnit
@@ -109,7 +110,7 @@ class TagSettingsInteractor(
         uploadNow: Boolean = false
     ) {
         Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
-        val imageFile = imageInteractor.saveResourceAsFile("background_" + sensorId, defaultBackground)
+        val imageFile = imageInteractor.saveResourceAsFile(sensorId, defaultBackground)
         if (imageFile != null) {
             setBackgroundImage(
                 sensorId = sensorId,
@@ -124,7 +125,7 @@ class TagSettingsInteractor(
         val isImage = imageInteractor.isImage(uri)
         Timber.d("isImage $isImage")
         if (imageInteractor.isImage(uri)) {
-            val image = imageInteractor.createFile(sensorId)
+            val image = imageInteractor.createFile(sensorId, ImageSource.GALLERY)
             Timber.d("output file ${image.absolutePath}")
 
             if (imageInteractor.copyFile(uri, image)) {
@@ -142,7 +143,7 @@ class TagSettingsInteractor(
         }
     }
 
-    fun createFileForCamera(name: String): Pair<File,Uri> = imageInteractor.createFileForCamera(name)
+    fun createFileForCamera(sensorId: String): Pair<File,Uri> = imageInteractor.createFileForCamera(sensorId)
 
     fun setImageFromCamera(sensorId: String, imageFile: File, uri: Uri) {
         imageInteractor.resize(

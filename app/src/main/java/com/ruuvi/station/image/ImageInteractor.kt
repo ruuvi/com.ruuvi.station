@@ -23,6 +23,9 @@ import java.io.InputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.abs
+import kotlin.random.Random
+import kotlin.random.asJavaRandom
 
 class ImageInteractor (
     private val context: Context
@@ -163,8 +166,8 @@ class ImageInteractor (
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
-    fun saveResourceAsFile(name: String, resourceImage: Int): File? {
-        val image = createFile(name)
+    fun saveResourceAsFile(sensorId: String, resourceImage: Int): File? {
+        val image = createFile(sensorId, ImageSource.DEFAULT)
         val bitmap = BitmapFactory.decodeResource(
             context.resources,
             resourceImage
@@ -184,12 +187,22 @@ class ImageInteractor (
         return image
     }
 
-    fun createFile(name: String): File {
-        return File.createTempFile(name, ".jpg", getExternalFilesDir())
+    fun getFilename(sensorId: String, source: ImageSource): String {
+        val name = sensorId.replace(":","")
+        return if (source == ImageSource.CLOUD) {
+            val random = abs(Random.asJavaRandom().nextLong())
+            "${source.prefix}_${name}_${random}"
+        } else {
+            "${source.prefix}_${name}_"
+        }
     }
 
-    fun createFileForCamera(name: String): Pair<File,Uri> {
-        val image = createFile(name)
+    fun createFile(name: String, imageSource: ImageSource): File {
+        return File.createTempFile(getFilename(name, imageSource), ".jpg", getExternalFilesDir())
+    }
+
+    fun createFileForCamera(sensorId: String): Pair<File,Uri> {
+        val image = createFile(sensorId, ImageSource.CAMERA)
         return image to FileProvider.getUriForFile(
             context,
             "com.ruuvi.station.fileprovider",
@@ -240,4 +253,11 @@ class ImageInteractor (
     }
 
     fun getRandomResource(): Int = defaultImages.random()
+}
+
+enum class ImageSource (val prefix: String) {
+    CAMERA ("camera"),
+    DEFAULT ("default"),
+    GALLERY ("gallery"),
+    CLOUD ("cloud")
 }

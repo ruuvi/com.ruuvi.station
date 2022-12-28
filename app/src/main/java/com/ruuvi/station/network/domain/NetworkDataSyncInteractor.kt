@@ -12,6 +12,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
@@ -308,7 +309,7 @@ class NetworkDataSyncInteractor (
             Timber.d("updating image $networkImageGuid ${sensorSettings}")
             try {
                 val imageFile = imageInteractor.downloadImage(
-                    "cloud_${sensor.sensor}",
+                    imageInteractor.getFilename(sensor.sensor, ImageSource.CLOUD),
                     sensor.picture
                 )
                 sensorSettingsRepository.updateSensorBackground(
