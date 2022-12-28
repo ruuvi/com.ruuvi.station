@@ -88,6 +88,7 @@ fun DashboardTopAppBar(
                 modifier = Modifier.clickable {
                     dashboardTypeMenuExpanded = true
                 }
+                    .padding(end = RuuviStationTheme.dimensions.small)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -96,7 +97,7 @@ fun DashboardTopAppBar(
                     )
 
                     Icon(
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.padding(RuuviStationTheme.dimensions.medium),
                         painter = painterResource(id = R.drawable.drop_down_24),
                         contentDescription = "",
                         tint = RuuviStationTheme.colors.accent
