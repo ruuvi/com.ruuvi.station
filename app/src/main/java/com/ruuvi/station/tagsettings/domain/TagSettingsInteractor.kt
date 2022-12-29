@@ -22,6 +22,7 @@ class TagSettingsInteractor(
     private val networkInteractor: RuuviNetworkInteractor,
     private val imageInteractor: ImageInteractor
 ) {
+    fun getDefaultImages() = imageInteractor.defaultImages
 
     fun getFavouriteSensorById(tagId: String): RuuviTag? =
         tagRepository

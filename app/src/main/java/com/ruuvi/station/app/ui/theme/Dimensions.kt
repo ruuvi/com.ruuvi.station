@@ -22,7 +22,8 @@ data class RuuviDimensions(
     val buttonInnerPadding: Dp = big,
     val settingsListHeight: Dp = 56.dp,
     val sensorSettingTitleHeight: Dp = 48.dp,
-    val dashboardIconSize: Dp = 32.dp
+    val dashboardIconSize: Dp = 32.dp,
+    val defaultImagePreviewHeight: Dp = 208.dp
 )
 
 val ruuviDimensions = RuuviDimensions()

@@ -19,6 +19,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -109,10 +110,11 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
                 items(defaultImages) { defaultImage ->
                     Image(
-                        modifier = Modifier
+                        modifier = Modifier.height(RuuviStationTheme.dimensions.defaultImagePreviewHeight)
                             .padding(RuuviStationTheme.dimensions.small)
                             .clickable { setDefaultImage.invoke(defaultImage) },
                         painter = painterResource(id = defaultImage),
+                        contentScale = ContentScale.Crop,
                         contentDescription = ""
                     )
                 }

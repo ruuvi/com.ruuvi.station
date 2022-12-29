@@ -31,6 +31,10 @@ class ImageInteractor (
     private val context: Context
 ) {
     val defaultImages = listOf(
+        R.drawable.new_bg1,
+        R.drawable.new_bg2,
+        R.drawable.new_bg3,
+        R.drawable.new_bg4,
         R.drawable.bg2,
         R.drawable.bg3,
         R.drawable.bg4,
