@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -81,7 +82,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         observeSyncStatus()
 
@@ -117,71 +118,109 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     )
                 }
 
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    modifier = Modifier.fillMaxSize(),
-                    backgroundColor = RuuviStationTheme.colors.dashboardBackground,
-                    topBar = { DashboardTopAppBar(
-                        actionCallBack = { dashboardType -> dashboardViewModel.changeDashboardType(dashboardType) },
-                        navigationCallback = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
-                            }
-                        }
-                    ) },
-                    drawerContent = {
-                                    MainMenu(
-                                        items = listOf(
-                                            MenuItem(R.string.menu_add_new_sensor, stringResource(id = R.string.menu_add_new_sensor)),
-                                            MenuItem(R.string.menu_app_settings, stringResource(id = R.string.menu_app_settings)),
-                                            MenuItem(R.string.menu_about_help, stringResource(id = R.string.menu_about_help)),
-                                            MenuItem(R.string.menu_send_feedback, stringResource(id = R.string.menu_send_feedback)),
-                                            MenuItem(R.string.menu_what_to_measure, stringResource(id = R.string.menu_what_to_measure)),
-                                            MenuItem(R.string.menu_buy_sensors, stringResource(id = R.string.menu_buy_sensors)),
-                                            MenuItem(R.string.menu_buy_gateway, stringResource(id = R.string.menu_buy_gateway)),
-                                            if (signedIn) {
-                                                MenuItem(R.string.my_ruuvi_account, stringResource(id = R.string.my_ruuvi_account))
-                                            } else {
-                                                MenuItem(R.string.sign_in, stringResource(id = R.string.sign_in))
-                                            }
-                                        ),
-                                        onItemClick = { item ->
-                                            when (item.id) {
-                                                R.string.menu_add_new_sensor -> AddTagActivity.start(context)
-                                                R.string.menu_app_settings -> SettingsActivity.start(context)
-                                                R.string.menu_about_help -> AboutActivity.start(context)
-                                                R.string.menu_send_feedback -> sendFeedback()
-                                                R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
-                                                R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_link))
-                                                R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
-                                                R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                                R.string.sign_in -> SignInActivity.start(context)
-                                            }
-                                            scope.launch {
-                                                scaffoldState.drawerState.close()
-                                            }
-                                        }
+                Box (Modifier.statusBarsPadding()) {
+                    Scaffold(
+                        scaffoldState = scaffoldState,
+                        modifier = Modifier.fillMaxSize(),
+                        backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+                        topBar = {
+                            DashboardTopAppBar(
+                                actionCallBack = { dashboardType ->
+                                    dashboardViewModel.changeDashboardType(
+                                        dashboardType
                                     )
-                                    },
-                    drawerBackgroundColor = RuuviStationTheme.colors.background
-                ) { paddingValues ->
-                    Surface(
-                        color = RuuviStationTheme.colors.dashboardBackground,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(RuuviStationTheme.dimensions.medium)
-                    ) {
-                        if (sensors.isEmpty()) {
-                            EmptyDashboard()
-                        } else {
-                            DashboardItems(sensors, userEmail, dashboardType)
+                                },
+                                navigationCallback = {
+                                    scope.launch {
+                                        scaffoldState.drawerState.open()
+                                    }
+                                }
+                            )
+                        },
+                        drawerContent = {
+                            MainMenu(
+                                items = listOf(
+                                    MenuItem(
+                                        R.string.menu_add_new_sensor,
+                                        stringResource(id = R.string.menu_add_new_sensor)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_app_settings,
+                                        stringResource(id = R.string.menu_app_settings)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_about_help,
+                                        stringResource(id = R.string.menu_about_help)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_send_feedback,
+                                        stringResource(id = R.string.menu_send_feedback)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_what_to_measure,
+                                        stringResource(id = R.string.menu_what_to_measure)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_buy_sensors,
+                                        stringResource(id = R.string.menu_buy_sensors)
+                                    ),
+                                    MenuItem(
+                                        R.string.menu_buy_gateway,
+                                        stringResource(id = R.string.menu_buy_gateway)
+                                    ),
+                                    if (signedIn) {
+                                        MenuItem(
+                                            R.string.my_ruuvi_account,
+                                            stringResource(id = R.string.my_ruuvi_account)
+                                        )
+                                    } else {
+                                        MenuItem(
+                                            R.string.sign_in,
+                                            stringResource(id = R.string.sign_in)
+                                        )
+                                    }
+                                ),
+                                onItemClick = { item ->
+                                    when (item.id) {
+                                        R.string.menu_add_new_sensor -> AddTagActivity.start(context)
+                                        R.string.menu_app_settings -> SettingsActivity.start(context)
+                                        R.string.menu_about_help -> AboutActivity.start(context)
+                                        R.string.menu_send_feedback -> sendFeedback()
+                                        R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
+                                        R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_link))
+                                        R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
+                                        R.string.my_ruuvi_account -> MyAccountActivity.start(context)
+                                        R.string.sign_in -> SignInActivity.start(context)
+                                    }
+                                    scope.launch {
+                                        scaffoldState.drawerState.close()
+                                    }
+                                }
+                            )
+                        },
+                        drawerBackgroundColor = RuuviStationTheme.colors.background
+                    ) { paddingValues ->
+                        Surface(
+                            color = RuuviStationTheme.colors.dashboardBackground,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            if (sensors.isEmpty()) {
+                                EmptyDashboard()
+                            } else {
+                                DashboardItems(sensors, userEmail, dashboardType)
+                            }
                         }
                     }
                 }
 
                 SideEffect {
-                    systemUiController.setSystemBarsColor(
+                    systemUiController.setStatusBarColor(
                         color = systemBarsColor,
+                        darkIcons = !isDarkTheme
+                    )
+                    systemUiController.setNavigationBarColor(
+                        color = Color.Transparent,
                         darkIcons = !isDarkTheme
                     )
                 }
@@ -253,6 +292,7 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: Das
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
+        item { Box(modifier = Modifier.navigationBarsPadding()) }
     }
 }
 
@@ -264,6 +304,7 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
+            .padding(horizontal = RuuviStationTheme.dimensions.medium)
             .clickable {
                 TagDetailsActivity.start(context, sensor.id)
             },
@@ -363,6 +404,7 @@ fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = RuuviStationTheme.dimensions.medium)
             .clickable {
                 TagDetailsActivity.start(context, sensor.id)
             },

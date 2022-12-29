@@ -110,8 +110,7 @@ package="com.ruuvi.station">
     </activity>
     <activity
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
-        android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar" />
+        android:exported="false" />
 
     <activity
         android:name=".dashboard.ui.DashboardActivityOld"

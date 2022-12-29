@@ -7,13 +7,12 @@ import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.internal.NavigationMenuView
 import com.google.android.material.navigation.NavigationView
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 
-fun AppCompatActivity.sendFeedback(){
+fun Activity.sendFeedback(){
     val intent = Intent(Intent.ACTION_SENDTO)
     intent.data = Uri.parse("mailto:")
     intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ))
@@ -28,7 +27,7 @@ App: ${applicationInfo.loadLabel(packageManager)} ${BuildConfig.VERSION_NAME}"""
     startActivity(Intent.createChooser(intent, getString(R.string.send_email)))
 }
 
-fun AppCompatActivity.openUrl(url: String){
+fun Activity.openUrl(url: String){
     val webIntent = Intent(Intent.ACTION_VIEW)
     webIntent.data = Uri.parse(url)
     startActivity(webIntent)
