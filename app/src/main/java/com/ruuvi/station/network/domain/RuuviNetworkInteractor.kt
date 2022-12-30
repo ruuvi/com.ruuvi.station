@@ -345,4 +345,23 @@ class RuuviNetworkInteractor (
             )
         }
     }
+
+    suspend fun getSubscription(onResult: (GetSubscriptionResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            try {
+                val response = networkRepository.getSubscription(token)
+                onResult(response)
+            } catch (e: Exception) {
+                onResult(
+                    GetSubscriptionResponse(
+                        result = RuuviNetworkResponse.errorResult,
+                        error = e.message.toString(),
+                        data = null,
+                        code = null
+                    )
+                )
+            }
+        }
+    }
 }

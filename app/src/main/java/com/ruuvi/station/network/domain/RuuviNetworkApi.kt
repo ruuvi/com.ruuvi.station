@@ -145,4 +145,10 @@ interface RuuviNetworkApi{
         @Header("Authorization") auth: String,
         @Body request: DeleteAccountRequest
     ): Response<DeleteAccountResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("subscription")
+    suspend fun getSubscription(
+        @Header("Authorization") auth: String
+    ): Response<GetSubscriptionResponse>
 }

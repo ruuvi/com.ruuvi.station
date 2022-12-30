@@ -3,12 +3,14 @@ package com.ruuvi.station.network.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+ import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -38,6 +40,7 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
             var deleteAccountDialog by remember {
                 mutableStateOf(false)
             }
+            val subscription by viewModel.subscription.collectAsState()
 
             LaunchedEffect(key1 = true) {
                 viewModel.events.collect() { event ->
@@ -56,7 +59,8 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                 MyAccountBody(
                     user = username,
                     signOut = viewModel::signOut,
-                    deleteAccount = viewModel::removeAccount
+                    deleteAccount = viewModel::removeAccount,
+                    subscription = subscription
                 )
 
                 if (isLoading) {
@@ -93,7 +97,8 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
 fun MyAccountBody(
     user: String,
     signOut: () -> Unit,
-    deleteAccount: () -> Unit
+    deleteAccount: () -> Unit,
+    subscription: Subscription?
 ){
     var signOutDialog by remember {
         mutableStateOf(false)
@@ -106,6 +111,10 @@ fun MyAccountBody(
                 SubtitleWithPadding(text = stringResource(id = R.string.logged_in))
                 ParagraphWithPadding(text = user)
                 
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                SubscriptionInfo(subscription = subscription)
+
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -130,5 +139,24 @@ fun MyAccountBody(
                 signOut.invoke()
             }
         }
+    }
+}
+
+@Composable
+fun SubscriptionInfo(subscription: Subscription?) {
+    Title(text = "Subscription")
+    if (subscription == null) {
+        Paragraph(text = "unknown")
+    } else {
+        val dateText = DateUtils.formatDateTime(
+            LocalContext.current,
+            subscription.endTime.time,
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+        )
+        Subtitle(text = subscription.name)
+        Paragraph(text = "Valid till: $dateText")
+        Paragraph(text = "Max claims: ${subscription.maxClaims}")
+        Paragraph(text = "Max shares: ${subscription.maxShares}")
+        Paragraph(text = "Max shares per sensor: ${subscription.maxSharesPerSensor}")
     }
 }

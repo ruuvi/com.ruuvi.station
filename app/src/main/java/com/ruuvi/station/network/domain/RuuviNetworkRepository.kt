@@ -375,6 +375,18 @@ class RuuviNetworkRepository
         }
     }
 
+    suspend fun getSubscription(token: String): GetSubscriptionResponse? = withContext(dispatcher){
+        val response = retrofitService.getSubscription(getAuth(token))
+        val result: GetSubscriptionResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<GetSubscriptionResponse>() {}.type
+            val errorResponse: GetSubscriptionResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        result
+    }
+
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/"
 
