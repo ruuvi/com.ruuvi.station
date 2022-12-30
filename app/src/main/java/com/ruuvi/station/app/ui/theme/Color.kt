@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 val White = Color.White
 val White80 = Color(0xCCFFFFFF)
+val White50 = Color(0x80FFFFFF)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
@@ -53,7 +54,9 @@ data class RuuviStationColors(
     val dashboardCardBackground: Color,
     val dashboardIcons: Color,
     val dashboardBurger: Color,
-    val defaultSensorBackground: Color
+    val defaultSensorBackground: Color,
+    val secondaryTextColor: Color,
+    val backgroundAlpha: Float
 )
 
 val lightPalette = RuuviStationColors(
@@ -80,7 +83,9 @@ val lightPalette = RuuviStationColors(
     dashboardCardBackground = White,
     dashboardIcons = Titan,
     dashboardBurger = Titan,
-    defaultSensorBackground = DefaultSensorBackgroundLight
+    defaultSensorBackground = DefaultSensorBackgroundLight,
+    secondaryTextColor = Titan50,
+    backgroundAlpha = 0.3f
 )
 
 val darkPalette = RuuviStationColors(
@@ -107,5 +112,7 @@ val darkPalette = RuuviStationColors(
     dashboardCardBackground = Titan,
     dashboardIcons = Keppel,
     dashboardBurger = White,
-    defaultSensorBackground = DefaultSensorBackgroundDark
+    defaultSensorBackground = DefaultSensorBackgroundDark,
+    secondaryTextColor = White50,
+    backgroundAlpha = 0.75f
 )

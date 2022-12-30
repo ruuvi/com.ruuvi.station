@@ -446,7 +446,9 @@ fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
 
             ItemValues(
                 sensor = sensor,
-                modifier = Modifier.constrainAs(values) {
+                modifier = Modifier
+                    .padding(vertical = RuuviStationTheme.dimensions.small)
+                    .constrainAs(values) {
                     top.linkTo(title.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -494,7 +496,7 @@ fun ItemButtons(
     Row(
         modifier = modifier
             .width(RuuviStationTheme.dimensions.dashboardIconSize * 2),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
@@ -595,7 +597,7 @@ fun ItemValuesWithoutTemperature(
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Top,
         ) {
             if (sensor.humidityValue != null) {
                 ValueDisplay(
@@ -603,24 +605,23 @@ fun ItemValuesWithoutTemperature(
                     sensor.status.triggered(AlarmType.HUMIDITY)
                 )
             }
+            if (sensor.movementValue != null) {
+                ValueDisplay(
+                    value = sensor.movementValue,
+                    sensor.status.triggered(AlarmType.MOVEMENT)
+                )
+            }
         }
 
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Top,
         ) {
             if (sensor.pressureValue != null) {
                 ValueDisplay(
                     value = sensor.pressureValue,
                     sensor.status.triggered(AlarmType.PRESSURE)
-                )
-            }
-
-            if (sensor.movementValue != null) {
-                ValueDisplay(
-                    value = sensor.movementValue,
-                    sensor.status.triggered(AlarmType.MOVEMENT)
                 )
             }
         }
@@ -638,9 +639,8 @@ fun ItemBottom(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            style = RuuviStationTheme.typography.paragraph,
+            style = RuuviStationTheme.typography.dashboardSecondary,
             text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
-            fontSize = RuuviStationTheme.fontSizes.smallest
         )
 
         if (sensor.isLowBattery()) {
@@ -663,6 +663,7 @@ fun DashboardImage(userBackground: Uri) {
         modifier = Modifier.fillMaxSize(),
         painter = painterResource(id = R.drawable.tag_bg_layer),
         contentDescription = null,
+        alpha = RuuviStationTheme.colors.backgroundAlpha,
         contentScale = ContentScale.Crop
     )
 }
@@ -823,9 +824,8 @@ fun LowBattery(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         Text(
-            style = RuuviStationTheme.typography.paragraph,
+            style = RuuviStationTheme.typography.dashboardSecondary,
             text = stringResource(id = R.string.low_battery),
-            fontSize = RuuviStationTheme.fontSizes.smallest
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
         Image(

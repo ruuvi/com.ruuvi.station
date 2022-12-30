@@ -18,7 +18,8 @@ data class RuuviStationTypography(
     val dashboardValue: TextStyle,
     val dashboardUnit: TextStyle,
     val dashboardBigValue: TextStyle,
-    val dashboardBigValueUnit: TextStyle
+    val dashboardBigValueUnit: TextStyle,
+    val dashboardSecondary: TextStyle
 )
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
@@ -88,7 +89,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         dashboardUnit = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.montserratRegular,
-            fontSize = ruuviStationFontsSizes.tiny,
+            fontSize = ruuviStationFontsSizes.smallest,
             textAlign = TextAlign.Left
         ),
         dashboardBigValue = TextStyle(
@@ -102,6 +103,11 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             fontFamily = ruuviStationFonts.oswaldRegular,
             fontSize = ruuviStationFontsSizes.normal,
             textAlign = TextAlign.Left
+        ),
+        dashboardSecondary = TextStyle(
+            color = colors.secondaryTextColor,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = ruuviStationFontsSizes.smallest,
         ),
     )
 }
