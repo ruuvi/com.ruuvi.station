@@ -1,6 +1,5 @@
 package com.ruuvi.station.dashboard.ui
 
-import androidx.compose.ui.Alignment.Companion.Top
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -19,6 +18,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -50,6 +50,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
@@ -449,11 +450,11 @@ fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
                 modifier = Modifier
                     .padding(vertical = RuuviStationTheme.dimensions.small)
                     .constrainAs(values) {
-                    top.linkTo(title.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
+                        top.linkTo(title.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
             )
 
             ItemBottom(
@@ -644,7 +645,7 @@ fun ItemBottom(
         )
 
         if (sensor.isLowBattery()) {
-            LowBattery(modifier = Modifier.weight(1f),)
+            LowBattery(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -659,9 +660,9 @@ fun DashboardImage(userBackground: Uri) {
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
-    Image(
+    GlideImage(
         modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.tag_bg_layer),
+        model = rememberResourceUri(R.drawable.tag_bg_layer),
         contentDescription = null,
         alpha = RuuviStationTheme.colors.backgroundAlpha,
         contentScale = ContentScale.Crop

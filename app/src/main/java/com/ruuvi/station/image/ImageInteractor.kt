@@ -31,10 +31,12 @@ class ImageInteractor (
     private val context: Context
 ) {
     val defaultImages = listOf(
-        R.drawable.new_bg1,
-        R.drawable.new_bg2,
-        R.drawable.new_bg3,
-        R.drawable.new_bg4,
+        R.drawable.new_bg5,
+        R.drawable.new_bg6,
+        R.drawable.new_bg7,
+        R.drawable.new_bg8,
+        R.drawable.new_bg9,
+        R.drawable.new_bg10,
         R.drawable.bg2,
         R.drawable.bg3,
         R.drawable.bg4,
@@ -43,6 +45,17 @@ class ImageInteractor (
         R.drawable.bg7,
         R.drawable.bg8,
         R.drawable.bg9,
+        R.drawable.new_bg1,
+        R.drawable.new_bg2,
+        R.drawable.new_bg3,
+        R.drawable.new_bg4,
+    )
+
+    val randomImages = listOf(
+        R.drawable.new_bg1,
+        R.drawable.new_bg2,
+        R.drawable.new_bg3,
+        R.drawable.new_bg4,
     )
 
     private fun getExternalFilesDir() =
@@ -256,7 +269,7 @@ class ImageInteractor (
         }
     }
 
-    fun getRandomResource(): Int = defaultImages.random()
+    fun getRandomResource(): Int = randomImages.random()
 }
 
 enum class ImageSource (val prefix: String) {

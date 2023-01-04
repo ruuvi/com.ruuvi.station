@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,13 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
-import com.ruuvi.station.app.ui.components.DividerRuuvi
-import com.ruuvi.station.app.ui.components.Paragraph
-import com.ruuvi.station.app.ui.components.Subtitle
-import com.ruuvi.station.app.ui.components.TextEditWithCaptionButton
+import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -77,6 +75,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     fun Body(
         defaultImages: List<Int>,
@@ -100,7 +99,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3)
             ) {
-                item(span = { GridItemSpan(3) }){
+                item(span = { GridItemSpan(3) }) {
                     PageHeader(
                         setImageFromGallery = setImageFromGallery,
                         getImageFileForCamera = getImageFileForCamera,
@@ -109,11 +108,11 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 }
 
                 items(defaultImages) { defaultImage ->
-                    Image(
+                    GlideImage(
                         modifier = Modifier.height(RuuviStationTheme.dimensions.defaultImagePreviewHeight)
                             .padding(RuuviStationTheme.dimensions.small)
                             .clickable { setDefaultImage.invoke(defaultImage) },
-                        painter = painterResource(id = defaultImage),
+                        model = rememberResourceUri(defaultImage),
                         contentScale = ContentScale.Crop,
                         contentDescription = ""
                     )
