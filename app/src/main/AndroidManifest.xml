@@ -39,6 +39,18 @@ package="com.ruuvi.station">
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:replace="android:allowBackup">
+
+    <activity
+        android:name=".startup.ui.StartupActivity"
+        android:exported="true"
+        android:noHistory="true"
+        android:theme="@style/SplashTheme">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
     <activity
         android:name=".network.ui.SignInActivity"
         android:exported="true"
@@ -48,40 +60,25 @@ package="com.ruuvi.station">
         android:windowSoftInputMode="adjustPan">
         <nav-graph android:value="@navigation/sign_in_navigation" />
     </activity>
+
     <activity
         android:name=".tagdetails.ui.TagDetailsActivity"
         android:exported="false"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar.TransparentNavigation" />
+
     <activity
         android:name=".tagsettings.ui.TagSettingsActivity"
         android:configChanges="orientation|screenSize|locale"
         android:exported="false"
         android:label="@string/sensor_settings"
-        android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustResize" />
-
-    <service
-        android:name=".bluetooth.ScanForDevicesService"
-        android:exported="false"
-        android:permission="android.permission.BIND_JOB_SERVICE" />
-
-    <service
-        android:name=".bluetooth.BluetoothForegroundService"
-        android:enabled="true"
-        android:exported="true"
-        android:foregroundServiceType="location"
-        android:permission="android.permission.BIND_JOB_SERVICE" />
 
     <activity
         android:name=".welcome.ui.WelcomeActivity"
         android:exported="false"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme.NoActionBar.TransparentNavigation" />
-
-    <meta-data
-        android:name="preloaded_fonts"
-        android:resource="@array/preloaded_fonts" />
 
     <activity
         android:name=".about.ui.AboutActivity"
@@ -98,16 +95,7 @@ package="com.ruuvi.station">
         android:exported="false"
         android:label="@string/menu_app_settings"
         android:theme="@style/AppTheme.NoActionBar" />
-    <activity
-        android:name=".startup.ui.StartupActivity"
-        android:exported="true"
-        android:noHistory="true"
-        android:theme="@style/SplashTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+
     <activity
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
         android:exported="false" />
@@ -184,17 +172,6 @@ package="com.ruuvi.station">
             android:resource="@xml/nfc_filter" />
     </activity>
 
-    <service
-        android:name="com.ruuvi.station.dfu.domain.DfuService"
-        android:exported="false"
-        android:label="Dfu Service">
-        <intent-filter>
-            <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
-
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-    </service>
-
     <provider
         android:name="androidx.core.content.FileProvider"
         android:authorities="com.ruuvi.station.fileprovider"
@@ -234,11 +211,6 @@ package="com.ruuvi.station">
             android:resource="@xml/simple_widget_info" />
     </receiver>
 
-    <service
-        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetService"
-        android:exported="true"
-        android:permission="android.permission.BIND_REMOTEVIEWS" />
-
     <receiver
         android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider"
         android:exported="true">
@@ -250,5 +222,37 @@ package="com.ruuvi.station">
             android:name="android.appwidget.provider"
             android:resource="@xml/complex_widget_info" />
     </receiver>
+
+    <service
+        android:name=".bluetooth.ScanForDevicesService"
+        android:exported="false"
+        android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service
+        android:name=".bluetooth.BluetoothForegroundService"
+        android:enabled="true"
+        android:exported="true"
+        android:foregroundServiceType="location"
+        android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <service
+        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetService"
+        android:exported="true"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <service
+        android:name="com.ruuvi.station.dfu.domain.DfuService"
+        android:exported="false"
+        android:label="Dfu Service">
+        <intent-filter>
+            <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </service>
+
+    <meta-data
+        android:name="preloaded_fonts"
+        android:resource="@array/preloaded_fonts" />
 </application>
 </manifest>

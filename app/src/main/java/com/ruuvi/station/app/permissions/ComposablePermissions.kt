@@ -36,13 +36,100 @@ fun BluetoothPermissions(
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         NearbyDevicesPermissions(scaffoldState, askToEnableBluetooth)
     } else {
-        LocationBluetoothPermissions(scaffoldState, askToEnableBluetooth, askForBackgroundLocation)
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            LocationBluetoothPermissionsAndroid11(scaffoldState, askToEnableBluetooth, askForBackgroundLocation)
+        } else {
+            LocationBluetoothPermissions(scaffoldState, askToEnableBluetooth)
+        }
     }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationBluetoothPermissions(
+    scaffoldState: ScaffoldState,
+    askToEnableBluetooth: Boolean
+) {
+    Timber.d("LocationBluetoothPermissions askToEnableBluetooth = $askToEnableBluetooth")
+    val context = LocalContext.current
+
+    var showBluetoothPermissionDialog by remember {
+        mutableStateOf(false)
+    }
+
+    val rememberLocationManager = remember {
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
+
+    val enableBluetoothLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        Timber.d("EnableBluetooth result $it")
+    }
+
+    val enableLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        Timber.d("EnableLocation result $it")
+    }
+
+    val bluetoothConnectPermissionState = rememberMultiplePermissionsState(
+        listOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
+    ) {
+        Timber.d("Permission request result:")
+        for (item in it) {
+            Timber.d("${item.key} - ${item.value}")
+        }
+
+        if (it.all { item -> item.value }) {
+            Timber.d("LocationBluetoothPermissions are granted!")
+            if (askToEnableBluetooth) {
+                enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+                if (!rememberLocationManager.locationEnabled()) {
+                    enableLocationLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            }
+        } else {
+            Timber.d("LocationBluetoothPermissions are NOT granted")
+            permissionSnackbar(context, scaffoldState, context.getString(R.string.permission_location_needed))
+        }
+    }
+
+
+    if (showBluetoothPermissionDialog) {
+        RuuviMessageDialog(
+            title = stringResource(id = R.string.permission_dialog_title),
+            message = stringResource(id = R.string.permission_dialog_request_message)
+        ) {
+            showBluetoothPermissionDialog = false
+            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+        }
+    }
+
+    LaunchedEffect(key1 = null) {
+        Timber.d("Checking BT permissions")
+        if (bluetoothConnectPermissionState.allPermissionsGranted) {
+            Timber.d("LocationBluetoothPermissions are already granted")
+            if (askToEnableBluetooth) {
+                enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+                if (!rememberLocationManager.locationEnabled()) {
+                    enableLocationLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            }
+        } else {
+            Timber.d("LocationBluetoothPermissions requesting")
+            if (bluetoothConnectPermissionState.shouldShowRationale) {
+                showBluetoothPermissionDialog = true
+            } else {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun LocationBluetoothPermissionsAndroid11(
     scaffoldState: ScaffoldState,
     askToEnableBluetooth: Boolean,
     askForBackgroundLocation: Boolean
