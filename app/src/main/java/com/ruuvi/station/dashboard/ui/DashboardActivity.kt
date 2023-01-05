@@ -101,7 +101,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val scope = rememberCoroutineScope()
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
-                val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = listOf())
+                val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = null)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
 
                 NotificationPermission(
@@ -206,10 +206,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                             modifier = Modifier
                                 .fillMaxSize()
                         ) {
-                            if (sensors.isEmpty()) {
-                                EmptyDashboard()
-                            } else {
-                                DashboardItems(sensors, userEmail, dashboardType)
+                            sensors?.let {
+                                if (it.isEmpty()) {
+                                    EmptyDashboard()
+                                } else {
+                                    DashboardItems(it, userEmail, dashboardType)
+                                }
                             }
                         }
                     }
