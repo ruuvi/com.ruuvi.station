@@ -11,8 +11,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -22,9 +24,9 @@ import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -93,6 +97,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             }
 
             RuuviTheme {
+                val lifecycleOwner = LocalLifecycleOwner.current
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
@@ -101,7 +106,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val scope = rememberCoroutineScope()
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
-                val sensors by dashboardViewModel.tagsFlow.collectAsState(initial = null)
+                val sensors by remember(dashboardViewModel.tagsFlow, lifecycleOwner) {
+                    dashboardViewModel.tagsFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                }.collectAsState(null)
+
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
 
                 NotificationPermission(
@@ -273,41 +281,42 @@ fun EmptyDashboard() {
 
 @Composable
 fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: DashboardType) {
-    val configuration = LocalConfiguration.current
     val itemHeight = 156.dp * LocalDensity.current.fontScale
-    val imageWidth = configuration.screenWidthDp.dp * 0.24f
 
-    Timber.d("Image width $imageWidth ${configuration.screenWidthDp.dp}")
-    LazyColumn() {
+    LazyVerticalGrid(
+        modifier = Modifier
+            .padding(horizontal = RuuviStationTheme.dimensions.medium),
+        columns = GridCells.Adaptive(300.dp),
+        verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium)
+    ) {
         items(items, key = {it.id}) { sensor ->
             when (dashboardType) {
-                DashboardType.SIMPLE_VIEW -> DashboardItemSimple(
-                    sensor = sensor,
-                    userEmail = userEmail
-                )
+                DashboardType.SIMPLE_VIEW ->
+                    DashboardItemSimple(
+                        sensor = sensor,
+                        userEmail = userEmail
+                    )
                 DashboardType.IMAGE_VIEW ->
                     DashboardItem(
-                        imageWidth = imageWidth,
                         itemHeight = itemHeight,
                         sensor = sensor,
                         userEmail = userEmail
                     )
             }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         }
-        item { Box(modifier = Modifier.navigationBarsPadding()) }
+        item(span = { GridItemSpan(Int.MAX_VALUE) }) { Box(modifier = Modifier.navigationBarsPadding()) }
     }
 }
 
 @Composable
-fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
+fun DashboardItem(itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
-            .padding(horizontal = RuuviStationTheme.dimensions.medium)
             .clickable {
                 TagDetailsActivity.start(context, sensor.id)
             },
@@ -318,7 +327,7 @@ fun DashboardItem(imageWidth: Dp, itemHeight: Dp, sensor: RuuviTag, userEmail: S
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 Modifier
-                    .width(imageWidth)
+                    .fillMaxWidth(fraction = 0.25f)
                     .fillMaxHeight()
                     .background(color = RuuviStationTheme.colors.defaultSensorBackground)
             ) {
@@ -407,7 +416,6 @@ fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = RuuviStationTheme.dimensions.medium)
             .clickable {
                 TagDetailsActivity.start(context, sensor.id)
             },
