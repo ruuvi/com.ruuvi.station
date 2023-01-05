@@ -224,6 +224,14 @@ package="com.ruuvi.station">
     </receiver>
 
     <service
+        android:name="com.ruuvi.station.firebase.domain.RuuviFirebaseMessagingService"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+
+    <service
         android:name=".bluetooth.ScanForDevicesService"
         android:exported="false"
         android:permission="android.permission.BIND_JOB_SERVICE" />
