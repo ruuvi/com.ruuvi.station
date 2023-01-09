@@ -235,7 +235,7 @@ class RuuviNetworkRepository
                 val bitmap = imageInteractor.getImage(fileUri)
                 bitmap?.let {
                     val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
                     val mediaType = request.type.toMediaType()
                     val body = stream.toByteArray().toRequestBody(mediaType)
                     retrofitService.uploadImageData(url, request.type, body)

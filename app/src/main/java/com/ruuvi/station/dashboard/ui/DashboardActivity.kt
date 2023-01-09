@@ -2,6 +2,7 @@ package com.ruuvi.station.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -85,6 +87,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
 
+    @OptIn(ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -101,6 +104,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
+                val configuration = LocalConfiguration.current
                 val context = LocalContext.current
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
@@ -127,7 +131,14 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     )
                 }
 
-                Box (Modifier.statusBarsPadding()) {
+                Box (
+                    modifier =
+                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            Modifier.statusBarsPadding().windowInsetsPadding(WindowInsets.tappableElement)
+                        } else {
+                            Modifier.statusBarsPadding()
+                        }
+                ) {
                     Scaffold(
                         scaffoldState = scaffoldState,
                         modifier = Modifier.fillMaxSize(),
@@ -213,6 +224,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                             color = RuuviStationTheme.colors.dashboardBackground,
                             modifier = Modifier
                                 .fillMaxSize()
+                                .padding(paddingValues)
                         ) {
                             sensors?.let {
                                 if (it.isEmpty()) {

@@ -41,7 +41,7 @@ class TagSettingsInteractor(
     fun deleteTagsAndRelatives(sensorId: String) {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         tagRepository.deleteSensorAndRelatives(sensorId)
-        sensorSettings?.owner?.let { owner ->
+        if (sensorSettings?.networkSensor == true && sensorSettings.owner?.isNotEmpty() == true) {
             if (sensorSettings.owner == networkInteractor.getEmail()) {
                 networkInteractor.unclaimSensor(sensorId)
             } else {

@@ -45,17 +45,7 @@ class ImageInteractor (
         R.drawable.bg7,
         R.drawable.bg8,
         R.drawable.bg9,
-        R.drawable.new_bg1,
         R.drawable.new_bg2,
-        R.drawable.new_bg3,
-        R.drawable.new_bg4,
-    )
-
-    val randomImages = listOf(
-        R.drawable.new_bg1,
-        R.drawable.new_bg2,
-        R.drawable.new_bg3,
-        R.drawable.new_bg4,
     )
 
     private fun getExternalFilesDir() =
@@ -76,7 +66,7 @@ class ImageInteractor (
                         var output: FileOutputStream? = null
                         try {
                             output = FileOutputStream(imageFile)
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
                             continuation.resume(imageFile)
                         } catch (e: Exception) {
                             Timber.e(e)
@@ -193,7 +183,7 @@ class ImageInteractor (
         var output: FileOutputStream? = null
         try {
             output = FileOutputStream(image)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
         } catch (e: Exception) {
             Timber.e(e)
           return null
@@ -269,7 +259,7 @@ class ImageInteractor (
         }
     }
 
-    fun getRandomResource(): Int = randomImages.random()
+    fun getRandomResource(): Int = R.drawable.new_bg2
 }
 
 enum class ImageSource (val prefix: String) {
