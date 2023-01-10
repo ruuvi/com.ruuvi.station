@@ -58,6 +58,13 @@
         <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
 
+    <style name="ChartText">
+        <item name="android:textColor">@color/white80</item>
+        <item name="android:textSize">@dimen/textParagraphSize</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
+
     <style name="Paragraph.Secondary" parent="Paragraph">
         <item name="android:alpha">0.5</item>
     </style>
