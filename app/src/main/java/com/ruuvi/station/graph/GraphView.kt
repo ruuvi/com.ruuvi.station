@@ -304,8 +304,8 @@ class GraphView (
         setLabelCount(chart)
 
         chart.description.text = label
-        chart.axisLeft.axisMinimum = set.yMin - 0.5f
-        chart.axisLeft.axisMaximum = set.yMax + 0.5f
+        chart.axisLeft.axisMinimum = set.yMin - 1f
+        chart.axisLeft.axisMaximum = set.yMax + 1f
         chart.axisLeft.setDrawTopYLabelEntry(false)
 
         chart.data = LineData(set)
