@@ -48,7 +48,6 @@ class GraphView (
     private var storedReadings: MutableList<TagSensorReading>? = null
     private var graphSetupCompleted = false
     private var offsetsNormalized = false
-    private var visibilitySet = false
     private val isTablet = context.resources.getBoolean(R.bool.isTablet)
 
     private lateinit var tempChart: LineChart
