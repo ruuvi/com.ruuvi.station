@@ -51,16 +51,16 @@ data class SensorSettings(
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
     fun calibrateSensor(sensor: RuuviTagEntity) {
-        sensor.temperature += (temperatureOffset ?: 0.0)
+        sensor.temperature = sensor.temperature - sensor.temperatureOffset + (temperatureOffset ?: 0.0)
         sensor.temperatureOffset = temperatureOffset ?: 0.0
 
         sensor.pressure?.let { pressure ->
-            sensor.pressure = pressure + (pressureOffset ?: 0.0)
+            sensor.pressure = pressure - sensor.pressureOffset + (pressureOffset ?: 0.0)
         }
         sensor.pressureOffset = pressureOffset ?: 0.0
 
         sensor.humidity?.let { humidity ->
-            sensor.humidity = humidity + (humidityOffset ?: 0.0)
+            sensor.humidity = humidity - sensor.humidityOffset + (humidityOffset ?: 0.0)
         }
         sensor.humidityOffset = humidityOffset ?: 0.0
     }
