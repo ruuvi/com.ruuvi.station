@@ -19,16 +19,15 @@ class CalibrationInteractor (
     val sensorHistoryRepository: SensorHistoryRepository,
     private val networkInteractor: RuuviNetworkInteractor
     ) {
-    fun getSensorData(sensorId: String): RuuviTagEntity? = tagRepository.getTagById(sensorId)
+    private fun getSensorEntity(sensorId: String): RuuviTagEntity? = tagRepository.getTagById(sensorId)
 
     fun getTemperatureString(temperature: Double?): String = unitsConverter.getTemperatureString(temperature, Accuracy.Accuracy2)
 
     fun getSensorSettings(sensorId: String): SensorSettings? = sensorSettingsRepository.getSensorSettings(sensorId)
 
     fun calibrateTemperature(sensorId: String, targetValue: Double) {
-        val data = getSensorData(sensorId)
-        data?.let {
-            val fromTemperature = data.temperature - data.temperatureOffset
+        getSensorEntity(sensorId)?.let { entity ->
+            val fromTemperature = entity.temperature - entity.temperatureOffset
             val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue).round(2)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset)
@@ -52,16 +51,15 @@ class CalibrationInteractor (
     private fun isHumidityCalibrated(settings: SensorSettings?): Boolean = settings?.humidityOffset ?: 0.0 != 0.0
 
     fun getTemperatureCalibrationInfo(sensorId: String): CalibrationInfo? {
-        val data = getSensorData(sensorId)
         val sensorSettings = getSensorSettings(sensorId)
         val currentTemperatureOffset = getSensorSettings(sensorId)?.temperatureOffset ?: 0.0
         val isTemperatureCalibrated = isTemperatureCalibrated(sensorSettings)
-        data?.let {
-            val temperatureRaw = data.temperature - data.temperatureOffset
+        getSensorEntity(sensorId)?.let { entity ->
+            val temperatureRaw = entity.temperature - entity.temperatureOffset
             val temperatureCalibrated = temperatureRaw + currentTemperatureOffset
             return CalibrationInfo(
                 sensorId,
-                it.updateAt,
+                entity.updateAt,
                 temperatureRaw,
                 temperatureCalibrated,
                 isTemperatureCalibrated,
@@ -73,16 +71,15 @@ class CalibrationInteractor (
     }
 
     fun getPressureCalibrationInfo(sensorId: String): CalibrationInfo? {
-        val data = getSensorData(sensorId)
         val sensorSettings = getSensorSettings(sensorId)
         val currentPressureOffset = getSensorSettings(sensorId)?.pressureOffset ?: 0.0
         val isPressureCalibrated = isPressureCalibrated(sensorSettings)
-        data?.let {
-            val rawValue = (data.pressure ?: 0.0) - data.pressureOffset
+        getSensorEntity(sensorId)?.let { entity ->
+            val rawValue = (entity.pressure ?: 0.0) - entity.pressureOffset
             val calibratedValue = rawValue + currentPressureOffset
             return CalibrationInfo(
                 sensorId,
-                it.updateAt,
+                entity.updateAt,
                 rawValue,
                 calibratedValue,
                 isPressureCalibrated,
@@ -94,16 +91,15 @@ class CalibrationInteractor (
     }
 
     fun getHumidityCalibrationInfo(sensorId: String): CalibrationInfo? {
-        val data = getSensorData(sensorId)
         val sensorSettings = getSensorSettings(sensorId)
         val currentHumidityOffset = getSensorSettings(sensorId)?.humidityOffset ?: 0.0
         val isHumidityCalibrated = isHumidityCalibrated(sensorSettings)
-        data?.let {
-            val rawValue = (data.humidity ?: 0.0) - data.humidityOffset
+        getSensorEntity(sensorId)?.let { entity ->
+            val rawValue = (entity.humidity ?: 0.0) - entity.humidityOffset
             val calibratedValue = rawValue + currentHumidityOffset
             return CalibrationInfo(
                 sensorId,
-                it.updateAt,
+                entity.updateAt,
                 rawValue,
                 calibratedValue,
                 isHumidityCalibrated,
@@ -125,8 +121,7 @@ class CalibrationInteractor (
     }
 
     fun calibratePressure(sensorId: String, targetValue: Double) {
-        val data = getSensorData(sensorId)
-        data?.let {
+        getSensorEntity(sensorId)?.let { data ->
             val fromPressure = (data.pressure ?: 0.0) - data.pressureOffset
             val targetPascal = unitsConverter.getPressurePascalValue(targetValue)
             val offset = targetPascal - fromPressure
@@ -147,8 +142,7 @@ class CalibrationInteractor (
     }
 
     fun calibrateHumidity(sensorId: String, targetValue: Double) {
-        val data = getSensorData(sensorId)
-        data?.let {
+        getSensorEntity(sensorId)?.let { data ->
             val fromHumidity = (data.humidity ?: 0.0) - data.humidityOffset
             val offset = targetValue - fromHumidity
             sensorSettingsRepository.setSensorHumidityOffset(sensorId, offset)
@@ -161,10 +155,14 @@ class CalibrationInteractor (
         networkInteractor.updateSensorCalibration(sensorId)
     }
 
-    fun recalibrateHistory(sensorId: String) {
-        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        sensorSettings?.let {
-            recalibrateHistory(it)
+    private fun recalibrateHistory(sensorId: String) {
+        sensorSettingsRepository.getSensorSettings(sensorId)?.let { sensorSettings ->
+            recalibrateHistory(sensorSettings)
+
+            getSensorEntity(sensorId)?.let { entity ->
+                sensorSettings.calibrateSensor(entity)
+                tagRepository.updateTag(entity)
+            }
         }
     }
 
