@@ -306,6 +306,7 @@ class GraphView (
         chart.description.text = label
         chart.axisLeft.axisMinimum = set.yMin - 0.5f
         chart.axisLeft.axisMaximum = set.yMax + 0.5f
+        chart.axisLeft.setDrawTopYLabelEntry(false)
 
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = true
