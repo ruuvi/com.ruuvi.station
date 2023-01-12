@@ -96,12 +96,16 @@
     <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
     <string name="cancel">Peruuta</string>
     <string name="change_background_image">Vaihda taustakuva</string>
+    <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
+    <string name="check_claim_state">Omistajuuden tilaa haetaan</string>
     <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
+    <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
+    <string name="claim_wrong_sensor_scanned">Olet lukemassa väärää RuuviTagia</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen paikallisesti tallennetut historiatiedot?</string>
     <string name="clear_local_history">Tyhjennä paikallinen historia</string>
@@ -184,6 +188,7 @@
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
     <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjakoikkuna</string>
     <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
+    <string name="export_csv_feature_location">Anturihistoria voidaan viedä tiedostoon anturin historiasivulla. Napauta oikeassa yläkulmassa olevaa kolmipistevalikkoa ja valitse sitten \"Lataa historia (csv)\".</string>
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
@@ -232,6 +237,7 @@
     <string name="humidity_relative_name">Suhteellinen (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Ilmankosteus (%1$s)</string>
+    <string name="image_view">Näytä kuvat</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -244,6 +250,7 @@
     <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nStationiin</string>
     <string name="longer_history_message">Ruuvi Station -mobiilisovellus tukee maksimissaan 10 päivän historiaa. Ruuvi Cloud -tilaajat voivat tarkastella historiatietoja jopa 2 vuoden ajalta web-sovelluksessa osoitteessa ruuvi.com/fi/station (vaatii Ruuvi Gateway -reitittimen).</string>
     <string name="longer_history_title">Pidempi historia</string>
+    <string name="low_battery">Paristo vähissä</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
@@ -328,6 +335,8 @@
     <string name="searching_for_sensor">Laitetta etsitään</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekuntia</string>
+    <string name="select_default_image">Valitse oletuskuva</string>
+    <string name="select_from_gallery">Valitse kuvagalleriasta</string>
     <string name="select_picture">Valitse kuva</string>
     <string name="select_sensor">Valitse anturi</string>
     <string name="send_email">Lähetä sähköpostia</string>
@@ -401,6 +410,7 @@
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
+    <string name="simple_view">Piilota kuvat</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
     <string name="start_the_update">Aloita päivitys</string>
@@ -417,6 +427,7 @@
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
+    <string name="take_photo">Ota kuva</string>
     <string name="temperature">Lämpötila</string>
     <string name="temperature_accuracy_title">Lämpötilan resoluutio</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
@@ -439,6 +450,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="version">Versio: %1$s</string>
+    <string name="view">Näkymä</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>

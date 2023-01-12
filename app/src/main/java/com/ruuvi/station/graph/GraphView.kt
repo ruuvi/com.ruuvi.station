@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -47,12 +48,15 @@ class GraphView (
     private var storedReadings: MutableList<TagSensorReading>? = null
     private var graphSetupCompleted = false
     private var offsetsNormalized = false
-    private var visibilitySet = false
     private val isTablet = context.resources.getBoolean(R.bool.isTablet)
 
     private lateinit var tempChart: LineChart
     private lateinit var humidChart: LineChart
     private lateinit var pressureChart: LineChart
+    private lateinit var spacerTop: View
+    private lateinit var spacerBottom: View
+    var emptyMessageView: View? = null
+    var previousHasData: Boolean? = null
 
     fun drawChart(
             inputReadings: List<TagSensorReading>,
@@ -62,14 +66,14 @@ class GraphView (
         setupCharts(view)
 
         val firstReading = inputReadings.firstOrNull()
-        if (firstReading != null) {
-            setupVisibility(
-                view,
-                true,
-                firstReading.humidity != null,
-                firstReading.pressure != null
-            )
-        }
+
+        setupVisibility(
+            view = view,
+            hasData = firstReading != null,
+            showTemperature = true,
+            showHumidity = firstReading?.humidity != null,
+            showPressure = firstReading?.pressure != null
+        )
 
         if (storedReadings.isNullOrEmpty() || tempChart.highestVisibleX >= tempChart.data?.xMax ?: Float.MIN_VALUE) {
             val calendar = Calendar.getInstance()
@@ -143,24 +147,34 @@ class GraphView (
         pressureChart.fitScreen()
     }
 
-    private fun setupVisibility(view: View, showTemperature: Boolean, showHumidity: Boolean, showPressure: Boolean) {
-        if (visibilitySet) return
-        tempChart = view.findViewById(R.id.tempChart)
-        humidChart = view.findViewById(R.id.humidChart)
-        pressureChart = view.findViewById(R.id.pressureChart)
+    private fun setupVisibility(
+        view: View,
+        hasData: Boolean,
+        showTemperature: Boolean,
+        showHumidity: Boolean,
+        showPressure: Boolean
+    ) {
+        if (hasData == previousHasData) return
+
+        if (!this::tempChart.isInitialized) tempChart = view.findViewById(R.id.tempChart)
+        if (!this::humidChart.isInitialized) humidChart = view.findViewById(R.id.humidChart)
+        if (!this::pressureChart.isInitialized) pressureChart = view.findViewById(R.id.pressureChart)
 
         Timber.d("setupVisibility $showTemperature $showHumidity $showPressure")
 
-        tempChart.isVisible = showTemperature
-        humidChart.isVisible = showHumidity
-        pressureChart.isVisible = showPressure
+        tempChart.isVisible = showTemperature && hasData
+        humidChart.isVisible = showHumidity && hasData
+        pressureChart.isVisible = showPressure && hasData
 
         if (context.resources.configuration.orientation != ORIENTATION_LANDSCAPE) {
-            view.findViewById<View>(R.id.spacerTop)?.isVisible = !showHumidity && !showPressure
-            view.findViewById<View>(R.id.spacerBottom)?.isVisible = !showHumidity && !showPressure
+            if (!this::spacerTop.isInitialized) spacerTop = view.findViewById<View>(R.id.spacerTop)
+            if (!this::spacerBottom.isInitialized) spacerBottom = view.findViewById<View>(R.id.spacerBottom)
+            spacerTop.isVisible = !showHumidity && !showPressure
+            spacerBottom.isVisible = !showHumidity && !showPressure
         }
 
-        visibilitySet = true
+        setupEmptyChartMessageVisibility(view, !hasData)
+        previousHasData = hasData
     }
 
     private fun setupCharts(view: View) {
@@ -289,8 +303,9 @@ class GraphView (
         setLabelCount(chart)
 
         chart.description.text = label
-        chart.axisLeft.axisMinimum = set.yMin - 0.5f
-        chart.axisLeft.axisMaximum = set.yMax + 0.5f
+        chart.axisLeft.axisMinimum = set.yMin - 1f
+        chart.axisLeft.axisMaximum = set.yMax + 1f
+        chart.axisLeft.setDrawTopYLabelEntry(false)
 
         chart.data = LineData(set)
         chart.data.isHighlightEnabled = true
@@ -411,6 +426,13 @@ class GraphView (
             offsetRight,
             offsetBottom
         )
+    }
+
+    private fun setupEmptyChartMessageVisibility(view: View, visible: Boolean) {
+        if (emptyMessageView == null) {
+            emptyMessageView = view.findViewById<TextView>(R.id.emptyTextView)
+        }
+        emptyMessageView?.isVisible = visible
     }
 
     class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {

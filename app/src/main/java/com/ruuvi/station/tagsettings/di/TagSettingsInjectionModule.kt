@@ -21,7 +21,7 @@ object TagSettingsInjectionModule {
         }
 
         bind<BackgroundViewModel>() with factory { sensorId: String ->
-            BackgroundViewModel(sensorId, instance())
+            BackgroundViewModel(sensorId, instance(), instance())
         }
     }
 }

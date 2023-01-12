@@ -94,6 +94,11 @@ class NetworkDataSyncInteractor (
             return syncJob
         }
 
+        if (networkInteractor.signedIn == false) {
+            Timber.d("Not signed in")
+            return syncJob
+        }
+
         setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
