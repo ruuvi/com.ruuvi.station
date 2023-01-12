@@ -14,15 +14,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.tagsettings.ui.MoreInfoItem
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.viewModel
+import timber.log.Timber
+
+var fcmToken by mutableStateOf<String?>(null)// String? = null
 
 class MyAccountActivity : AppCompatActivity(), KodeinAware {
 
@@ -30,9 +36,23 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
 
     private val viewModel: MyAccountViewModel by viewModel()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.e(task.exception, "Fetching FCM registration token failed")
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            fcmToken = task.result
+
+            // Log and toast
+            Timber.d("FCM token $fcmToken")
+        })
 
         setContent {
             val username by viewModel.userEmail.observeAsState("")
@@ -116,6 +136,14 @@ fun MyAccountBody(
                 SubscriptionInfo(subscription = subscription)
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                if (fcmToken != null) {
+                    MoreInfoItem(
+                        title = "",
+                        value = fcmToken.toString()
+                    )
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     RuuviButton(text = stringResource(id = R.string.delete_account), isWarning = true) {
