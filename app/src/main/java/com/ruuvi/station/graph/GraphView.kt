@@ -274,6 +274,7 @@ class GraphView (
 
     private fun addDataToChart(data: MutableList<Entry>, chart: LineChart, label: String) {
         val set = LineDataSet(data, label)
+        setLabelCount(chart)
         set.setDrawCircles(preferencesRepository.graphDrawDots())
         set.setDrawValues(false)
         set.setDrawFilled(true)
@@ -300,7 +301,6 @@ class GraphView (
 
         chart.xAxis.axisMaximum = (to - from).toFloat()
         chart.xAxis.axisMinimum = 0f
-        setLabelCount(chart)
 
         chart.description.text = label
         chart.axisLeft.axisMinimum = set.yMin - 1f
@@ -326,9 +326,16 @@ class GraphView (
 
     private fun setLabelCount(chart: LineChart) {
         val timeText = getTimeInstance(DateFormat.SHORT).format(Date())
-        var labelCount = if (timeText.length > 5) 4 else 6
-        if (isTablet) labelCount += 1
-        chart.xAxis.setLabelCount(labelCount, false)
+
+        val computePaint = Paint(1)
+        computePaint.typeface = pressureChart.xAxis.typeface
+        computePaint.textSize = pressureChart.xAxis.textSize
+        val computeSize = Utils.calcTextSize(computePaint, timeText)
+
+        Timber.d("setLabelCount computeLabelWidth = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()}")
+
+        var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 1.7)
+        chart.xAxis.setLabelCount(labelCount.toInt(), false)
         chart.axisLeft.setLabelCount(6, false)
     }
 
