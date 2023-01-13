@@ -1,8 +1,6 @@
 package com.ruuvi.station.firebase.data
 
-data class PushMessageRoot(
-    val default: PushBody
-)
+import com.ruuvi.station.alarm.domain.AlarmType
 
 data class PushBody(
     val token: String,
@@ -20,4 +18,9 @@ data class AlertMessage(
     val thresholdValue: Double,
     val alertUnit: String,
     val alertData: String
-)
+) {
+
+    val alarmType: AlarmType?
+        get() = AlarmType.getByNetworkCode(alertType.lowercase())
+
+}

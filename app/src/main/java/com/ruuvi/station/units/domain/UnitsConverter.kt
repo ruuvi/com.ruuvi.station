@@ -30,7 +30,8 @@ class UnitsConverter (
 
     fun getAllTemperatureUnits(): Array<TemperatureUnit> = TemperatureUnit.values()
 
-    fun getTemperatureUnitString(): String = context.getString(getTemperatureUnit().unit)
+    fun getTemperatureUnitString(unit: TemperatureUnit = getTemperatureUnit()): String =
+        context.getString(unit.unit)
 
     fun getTemperatureValue(temperatureCelsius: Double): Double {
         return when (getTemperatureUnit()) {
@@ -96,7 +97,9 @@ class UnitsConverter (
 
     fun getAllPressureUnits(): Array<PressureUnit> = PressureUnit.values()
 
-    fun getPressureUnitString(): String = context.getString(getPressureUnit().unit)
+    fun getPressureUnitString(pressureUnit: PressureUnit = getPressureUnit()): String {
+        return context.getString(pressureUnit.unit)
+    }
 
     fun getPressureValue(pressurePascal: Double): Double {
         return when (getPressureUnit()) {
