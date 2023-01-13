@@ -42,6 +42,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -76,6 +77,7 @@ import com.ruuvi.station.util.extensions.describingTimeSince
 import com.ruuvi.station.util.extensions.openUrl
 import com.ruuvi.station.util.extensions.sendFeedback
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -87,7 +89,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
 
-    @OptIn(ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -134,7 +135,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 Box (
                     modifier =
                         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            Modifier.statusBarsPadding().windowInsetsPadding(WindowInsets.tappableElement)
+                            Modifier
+                                .statusBarsPadding()
+                                .windowInsetsPadding(WindowInsets.tappableElement)
                         } else {
                             Modifier.statusBarsPadding()
                         }
@@ -656,6 +659,13 @@ fun ItemBottom(
     sensor: RuuviTag,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current
+
+    var updatedText by remember {
+        mutableStateOf(sensor.updatedAt?.describingTimeSince(context) ?: "")
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(top = 2.dp)
@@ -663,11 +673,21 @@ fun ItemBottom(
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
-            text = sensor.updatedAt?.describingTimeSince(LocalContext.current) ?: "",
+            text = updatedText,
         )
 
         if (sensor.isLowBattery()) {
             LowBattery(modifier = Modifier.weight(1f))
+        }
+    }
+
+    LaunchedEffect(key1 = lifecycle) {
+        lifecycle.whenStarted {
+            while (true) {
+                Timber.d("updatedText")
+                updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
+                delay(500)
+            }
         }
     }
 }
