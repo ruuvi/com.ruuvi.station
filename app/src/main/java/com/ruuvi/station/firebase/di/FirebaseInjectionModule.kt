@@ -4,6 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
+import com.ruuvi.station.firebase.domain.PushAlertInteractor
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -17,5 +18,7 @@ object FirebaseInjectionModule {
         bind<FirebaseInteractor>() with singleton {
             FirebaseInteractor(instance(), instance(), instance(), instance(), instance(), instance())
         }
+
+        bind<PushAlertInteractor>() with singleton { PushAlertInteractor(instance()) }
     }
 }
