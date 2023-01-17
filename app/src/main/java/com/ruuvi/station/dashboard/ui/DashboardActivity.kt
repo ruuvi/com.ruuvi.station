@@ -681,10 +681,9 @@ fun ItemBottom(
         }
     }
 
-    LaunchedEffect(key1 = lifecycle) {
+    LaunchedEffect(key1 = lifecycle, key2 = sensor.updatedAt) {
         lifecycle.whenStarted {
             while (true) {
-                Timber.d("updatedText")
                 updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
                 delay(500)
             }
