@@ -2,6 +2,10 @@ package com.ruuvi.station.firebase.data
 
 import com.ruuvi.station.alarm.domain.AlarmType
 
+data class GcmMessage(
+    val GCM: PushBody
+)
+
 data class PushBody(
     val token: String,
     val email: String,
