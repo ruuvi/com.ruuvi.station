@@ -52,6 +52,11 @@ package="com.ruuvi.station">
     </activity>
 
     <activity
+        android:name=".onboarding.ui.OnboardingActivity"
+        android:exported="false">
+    </activity>
+
+    <activity
         android:name=".network.ui.SignInActivity"
         android:exported="true"
         android:label="@string/sign_in"
@@ -156,8 +161,7 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.tagsettings.ui.BackgroundActivity"
         android:exported="false"
         android:label="@string/change_background"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
+        android:theme="@style/AppTheme.NoActionBar"></activity>
 
     <activity
         android:name="com.ruuvi.station.nfc.NfcScanActivity"

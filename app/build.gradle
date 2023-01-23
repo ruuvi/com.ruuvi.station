@@ -102,6 +102,9 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
+    implementation "com.google.accompanist:accompanist-pager-indicators:$accomponist_version"
+
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
