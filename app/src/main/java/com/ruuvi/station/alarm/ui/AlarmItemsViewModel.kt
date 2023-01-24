@@ -15,11 +15,16 @@ class AlarmItemsViewModel(
     val alarmsInteractor: AlarmsInteractor,
 ): ViewModel() {
 
-    private val _alarms = mutableStateListOf<AlarmItemState>(*alarmsInteractor.getAlarmsForSensor(sensorId).toTypedArray())
+    private val _alarms = mutableStateListOf<AlarmItemState>()
     val alarms: List<AlarmItemState> = _alarms
 
     var editLow: Boolean? = null
     var editHigh: Boolean? = null
+
+    fun initAlarms() {
+        _alarms.clear()
+        _alarms.addAll(alarmsInteractor.getAlarmsForSensor(sensorId).toTypedArray())
+    }
 
     fun getPossibleRange(type: AlarmType): ClosedFloatingPointRange<Float> =
         alarmsInteractor.getPossibleRange(type)
@@ -28,7 +33,7 @@ class AlarmItemsViewModel(
         val alarmItem = _alarms.firstOrNull { it.type == type }
 
         if (alarmItem != null) {
-            val newAlarm = alarmItem.copy(isEnabled = enabled)
+            val newAlarm = alarmItem.copy(isEnabled = enabled, mutedTill = null)
             _alarms[_alarms.indexOf(alarmItem)] = newAlarm
             saveAlarm(newAlarm)
         }
@@ -162,7 +167,9 @@ class AlarmItemsViewModel(
         val alertItems = alarmsInteractor.getAlarmsForSensor(sensorId)
         for ((index, item) in _alarms.withIndex()) {
             val updated = alertItems.firstOrNull { it.type == item.type }
+            item.isEnabled = updated?.isEnabled ?: item.isEnabled
             item.triggered = updated?.triggered ?: false
+            item.mutedTill = updated?.mutedTill
         }
     }
 }

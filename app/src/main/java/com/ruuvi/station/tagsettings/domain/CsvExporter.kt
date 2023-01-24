@@ -1,7 +1,7 @@
 package com.ruuvi.station.tagsettings.domain
 
 import android.content.Context
-import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
@@ -23,7 +23,7 @@ class CsvExporter(
     private val unitsConverter: UnitsConverter
 ) {
 
-    fun toCsv(tagId: String) {
+    fun toCsv(tagId: String): Uri? {
         val tag = repository.getTagById(tagId)
         val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthDays)
         val cacheDir = File(context.cacheDir.path + "/export/")
@@ -107,18 +107,11 @@ class CsvExporter(
         } catch (e: Exception) {
             Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
             e.printStackTrace()
-            return
+            return null
         }
 
         Toast.makeText(context, context.getString(R.string.export_csv_created), Toast.LENGTH_SHORT).show()
-        val uri = FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
-
-        val sendIntent = Intent()
-        sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
-        sendIntent.type = "text/csv"
-        sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, tag?.id)))
+        return FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
     }
 
     companion object {

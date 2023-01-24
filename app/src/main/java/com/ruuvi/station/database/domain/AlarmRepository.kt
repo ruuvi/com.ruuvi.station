@@ -56,7 +56,8 @@ class AlarmRepository {
         max: Double,
         type: Int,
         enabled: Boolean,
-        description: String
+        description: String,
+        mutedTill: Date?
     ): Alarm {
         var alarm = getForSensor(sensorId).firstOrNull { it.type == type }
         if (alarm == null) {
@@ -72,6 +73,7 @@ class AlarmRepository {
         alarm.max = max
         alarm.type = type
         alarm.customDescription = description
+        alarm.mutedTill = mutedTill
         alarm.save()
         return alarm
     }

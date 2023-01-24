@@ -10,8 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.tag.domain.RuuviTag
 import timber.log.Timber
-import java.math.BigDecimal
-import java.math.RoundingMode
+import java.util.*
 
 object Utils {
     fun createBall(
@@ -64,7 +63,7 @@ object Utils {
             }
         }
         if (letter.isBlank()) letter = " "
-        return letter.toUpperCase()
+        return letter.uppercase(Locale.getDefault())
     }
 
     fun getBackground(context: Context, tag: RuuviTag): Bitmap? {
@@ -99,12 +98,5 @@ object Utils {
             8 -> R.drawable.bg9
             else -> R.drawable.bg1
         }
-    }
-
-    fun round(value: Double, places: Int): Double {
-        require(places >= 0)
-        var bd = BigDecimal(value)
-        bd = bd.setScale(places, RoundingMode.HALF_UP)
-        return bd.toDouble()
     }
 }

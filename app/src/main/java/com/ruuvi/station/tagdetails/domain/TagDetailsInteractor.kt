@@ -47,4 +47,10 @@ class TagDetailsInteractor(
 
     fun getSignalString(tag: RuuviTag): String =
         unitsConverter.getSignalString(tag.rssi)
+
+    fun getViewPeriod(): Int = preferences.getGraphViewPeriodDays()
+
+    fun setViewPeriod(periodDays: Int) {
+        preferences.setGraphViewPeriodDays(periodDays)
+    }
 }

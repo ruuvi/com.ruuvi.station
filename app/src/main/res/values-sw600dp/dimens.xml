@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="graph_description_size">6sp</dimen>
+    <dimen name="textChart">14sp</dimen>
+</resources>

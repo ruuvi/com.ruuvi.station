@@ -35,6 +35,16 @@ fun Date.describingTimeSince(context: Context): String {
     return output
 }
 
+fun Date.isStartOfTheDay(): Boolean {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return time == calendar.time.time
+}
+
 fun Date.localizedTime(context: Context): String {
     val timeFormat = DateFormat.getTimeFormat(context)
     return timeFormat.format(this)

@@ -10,7 +10,7 @@ fun Float.isInteger(epsilon: Float = 0.00000001f) = this.equalsEpsilon(this.roun
 
 fun Float.round(places: Int): Float {
     require(places >= 0)
-    var bd = BigDecimal(this.toDouble())
+    var bd = BigDecimal.valueOf(this.toDouble())
     bd = bd.setScale(places, RoundingMode.HALF_UP)
     return bd.toFloat()
 }

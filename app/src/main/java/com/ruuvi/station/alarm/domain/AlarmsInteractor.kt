@@ -119,7 +119,8 @@ class AlarmsInteractor(
             max = state.max,
             type = state.type.value,
             enabled = state.isEnabled,
-            description = state.customDescription
+            description = state.customDescription,
+            mutedTill = state.mutedTill
         )
         networkInteractor.setAlert(alarm)
     }
