@@ -157,13 +157,13 @@ interface RuuviNetworkApi{
     suspend fun pushRegister(
         @Header("Authorization") auth: String,
         @Body request: PushRegisterRequest
-    )
+    ): Response<PushRegisterResponse>
 
     @Headers("Content-Type: application/json")
     @POST("push-unregister")
     suspend fun pushUnregister(
         @Body request: PushUnregisterRequest
-    )
+    ): Response<PushUnregisterResponse>
 
     @Headers("Content-Type: application/json")
     @GET("push-list")

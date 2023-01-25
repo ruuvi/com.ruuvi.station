@@ -387,6 +387,52 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun registerPush(token: String, fcmToken: String): PushRegisterResponse?
+    {
+        val response = retrofitService.pushRegister(
+            auth = getAuth(token),
+            request = PushRegisterRequest(token = fcmToken)
+        )
+        val result: PushRegisterResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushRegisterResponse>() {}.type
+            val errorResponse: PushRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
+    suspend fun unregisterPush(token: String, fcmToken: String): PushUnregisterResponse?
+    {
+        val response = retrofitService.pushUnregister(
+            request = PushUnregisterRequest(token = fcmToken)
+        )
+        val result: PushUnregisterResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushUnregisterResponse>() {}.type
+            val errorResponse: PushUnregisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
+    suspend fun getPushList(token: String): PushListResponse?
+    {
+        val response = retrofitService.getPushList(
+            auth = getAuth(token)
+        )
+        val result: PushListResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushListResponse>() {}.type
+            val errorResponse: PushListResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/" //production
         //private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
