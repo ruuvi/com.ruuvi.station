@@ -11,6 +11,7 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
+import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -46,7 +47,8 @@ class NetworkDataSyncInteractor (
     private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
     private val calibrationInteractor: CalibrationInteractor,
     private val firebaseInteractor: FirebaseInteractor,
-    private val tagSettingsInteractor: TagSettingsInteractor
+    private val tagSettingsInteractor: TagSettingsInteractor,
+    private val pushRegisterInteractor: PushRegisterInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -68,15 +70,20 @@ class NetworkDataSyncInteractor (
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
-            if (networkInteractor.signedIn) syncNetworkData()
+            if (networkInteractor.signedIn) {
+                pushRegisterInteractor.checkAndRegisterDeviceToken()
+                syncNetworkData()
+            }
             delay(10000)
             while (true) {
                 val lastSync = preferencesRepository.getLastSyncDate()
                 Timber.d("Cloud auto refresh another round. Last sync ${Date(lastSync)}")
-                if (networkInteractor.signedIn &&
-                    Date(lastSync).diffGreaterThan(60000)) {
+                if (Date(lastSync).diffGreaterThan(60000)) {
+                    pushRegisterInteractor.checkAndRegisterDeviceToken()
+                    if (networkInteractor.signedIn) {
                         Timber.d("Do actual sync")
-                    syncNetworkData()
+                        syncNetworkData()
+                    }
                 }
                 delay(10000)
             }

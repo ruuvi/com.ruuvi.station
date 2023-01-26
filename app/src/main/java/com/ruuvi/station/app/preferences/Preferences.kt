@@ -308,6 +308,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_DASHBOARD_TYPE, type.code).apply()
         }
 
+    var registeredToken: String
+        get() = sharedPreferences.getString(PREF_REGISTERED_DEVICE_TOKEN, "") ?: ""
+        set(token) {
+            sharedPreferences.edit().putString(PREF_REGISTERED_DEVICE_TOKEN, token).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -352,6 +358,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
         private const val PREF_DARKMODE = "pref_darkmode"
         private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
+        private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

@@ -1,11 +1,20 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.firebase.domain.PushRegisterInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NetworkSignInInteractor (
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val networkDataSyncInteractor: NetworkDataSyncInteractor
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    private val networkTokenRepository: NetworkTokenRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val pushRegisterInteractor: PushRegisterInteractor
 ) {
     fun signIn(token: String, response: (String) -> Unit) {
         networkInteractor.verifyUser(token) {response->
@@ -17,6 +26,24 @@ class NetworkSignInInteractor (
                 errorText = response.error
             }
             response(errorText)
+        }
+    }
+
+    fun signOut(finished: ()->Unit) {
+        networkDataSyncInteractor.stopSync()
+        CoroutineScope(Dispatchers.IO).launch {
+            networkTokenRepository.clearTokenInfo()
+            pushRegisterInteractor.checkAndRegisterDeviceToken()
+
+            val sensors = sensorSettingsRepository.getSensorSettings()
+            for (sensor in sensors) {
+                if (sensor.networkSensor) {
+                    tagRepository.deleteSensorAndRelatives(sensor.id)
+                }
+            }
+            withContext(Dispatchers.Main){
+                finished()
+            }
         }
     }
 }

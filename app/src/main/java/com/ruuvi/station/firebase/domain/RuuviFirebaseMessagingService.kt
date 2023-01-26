@@ -48,4 +48,9 @@ class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
             }
         }
     }
+
+    override fun onNewToken(p0: String) {
+        Timber.d("onNewToken $p0")
+        super.onNewToken(p0)
+    }
 }

@@ -364,4 +364,24 @@ class RuuviNetworkInteractor (
             }
         }
     }
+
+    suspend fun registerPush(fcmToken: String): PushRegisterResponse? {
+        val token = getToken()?.token
+        token?.let {
+            return networkRepository.registerPush(it, fcmToken)
+        }
+        return null
+    }
+
+    suspend fun unregisterPush(fcmToken: String): PushUnregisterResponse? {
+        return networkRepository.unregisterPush(fcmToken)
+    }
+
+    suspend fun getPushList(): PushListResponse? {
+        val token = getToken()?.token
+        token?.let {
+            return networkRepository.getPushList(it)
+        }
+        return null
+    }
 }

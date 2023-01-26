@@ -403,7 +403,7 @@ class RuuviNetworkRepository
         return result
     }
 
-    suspend fun unregisterPush(token: String, fcmToken: String): PushUnregisterResponse?
+    suspend fun unregisterPush(fcmToken: String): PushUnregisterResponse?
     {
         val response = retrofitService.pushUnregister(
             request = PushUnregisterRequest(token = fcmToken)

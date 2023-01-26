@@ -6,21 +6,19 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.NetworkTokenRepository
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
-import com.ruuvi.station.units.domain.UnitsConverter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
-    val converter: UnitsConverter,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val permissionLogicInteractor: PermissionLogicInteractor,
     private val networkApplicationSettings: NetworkApplicationSettings,
+    private val networkSignInInteractor: NetworkSignInInteractor
     ) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
@@ -48,7 +46,7 @@ class DashboardActivityViewModel(
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()
-        tokenRepository.signOut { }
+        networkSignInInteractor.signOut { }
     }
 
     fun changeDashboardType(dashboardType: DashboardType) {
