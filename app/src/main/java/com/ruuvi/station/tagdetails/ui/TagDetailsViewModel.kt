@@ -7,7 +7,6 @@ import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
@@ -18,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
@@ -25,9 +25,9 @@ class TagDetailsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val permissionLogicInteractor: PermissionLogicInteractor
+    private val permissionLogicInteractor: PermissionLogicInteractor,
+    private val networkSignInInteractor: NetworkSignInInteractor
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
@@ -153,7 +153,7 @@ class TagDetailsViewModel(
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()
-        tokenRepository.signOut {
+        networkSignInInteractor.signOut {
             refreshTags()
         }
     }

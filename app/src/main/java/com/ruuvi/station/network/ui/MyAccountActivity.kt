@@ -61,6 +61,7 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                 mutableStateOf(false)
             }
             val subscription by viewModel.subscription.collectAsState()
+            val tokens by viewModel.tokens.collectAsState()
 
             LaunchedEffect(key1 = true) {
                 viewModel.events.collect() { event ->
@@ -80,7 +81,8 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                     user = username,
                     signOut = viewModel::signOut,
                     deleteAccount = viewModel::removeAccount,
-                    subscription = subscription
+                    subscription = subscription,
+                    tokens = tokens
                 )
 
                 if (isLoading) {
@@ -118,7 +120,8 @@ fun MyAccountBody(
     user: String,
     signOut: () -> Unit,
     deleteAccount: () -> Unit,
-    subscription: Subscription?
+    subscription: Subscription?,
+    tokens: List<Pair<Long, String>>?
 ){
     var signOutDialog by remember {
         mutableStateOf(false)
@@ -143,6 +146,15 @@ fun MyAccountBody(
                         value = fcmToken.toString()
                     )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                }
+
+                if (tokens != null) {
+                    ParagraphWithPadding(text = "Registered FCM tokens")
+                    for (token in tokens) {
+                        Paragraph(text = "${token.first} - ${token.second}")
+                    }
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
                 }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

@@ -224,4 +224,17 @@ class PreferencesRepository(
     fun updateDashboardType(dashboardType: DashboardType) {
         preferences.dashboardType = dashboardType
     }
+
+    fun getRegisteredToken(): String = preferences.registeredToken
+
+    fun updateRegisteredToken(token: String) {
+        preferences.registeredToken = token
+    }
+
+    fun getDeviceTokenRefreshDate(): Long =
+        preferences.deviceTokenRefreshDate
+
+    fun setDeviceTokenRefreshDate(refreshDate: Long) {
+        preferences.deviceTokenRefreshDate = refreshDate
+    }
 }
