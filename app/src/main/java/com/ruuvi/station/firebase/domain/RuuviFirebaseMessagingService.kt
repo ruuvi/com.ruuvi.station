@@ -16,6 +16,7 @@ class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
     override val kodein: Kodein by kodein()
 
     val pushAlertInteractor: PushAlertInteractor by instance()
+    val pushRegisterInteractor: PushRegisterInteractor by instance()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Timber.d("remoteMessage = ${remoteMessage.notification}")
@@ -51,6 +52,7 @@ class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
 
     override fun onNewToken(p0: String) {
         Timber.d("onNewToken $p0")
+        pushRegisterInteractor.checkAndRegisterDeviceToken()
         super.onNewToken(p0)
     }
 }

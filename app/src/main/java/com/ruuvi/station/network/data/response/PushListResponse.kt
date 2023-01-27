@@ -7,7 +7,7 @@ data class PushListResponseBody(
 )
 
 data class PushListElement(
-    val tokenId: Long,
+    val id: Long,
     val name: String,
     val lastAccessed: Long
 )

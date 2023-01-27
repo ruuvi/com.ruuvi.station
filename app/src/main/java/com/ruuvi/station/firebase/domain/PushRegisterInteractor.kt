@@ -3,10 +3,12 @@ package com.ruuvi.station.firebase.domain
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 class PushRegisterInteractor(
     val preferencesRepository: PreferencesRepository,
@@ -29,15 +31,20 @@ class PushRegisterInteractor(
                     val currentToken = task.result
                     registeredToken = preferencesRepository.getRegisteredToken()
 
-                    if (registeredToken != currentToken) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            if (registeredToken.isNotEmpty()) {
-                                unregisterToken(registeredToken)
-                            }
+                    val lastRefresh = preferencesRepository.getDeviceTokenRefreshDate()
 
-                            if (currentToken.isNotEmpty()) {
-                                registerToken(currentToken)
-                            }
+                    val tokenChanged = registeredToken != currentToken
+
+                    val timeToRefreshToken = Date(lastRefresh).diffGreaterThan(refreshInterval)
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Timber.d("checkAndRegisterDeviceToken tokenChanged = $tokenChanged timeToRefreshToken = $timeToRefreshToken")
+                        if (tokenChanged && registeredToken.isNotEmpty()) {
+                            unregisterToken(registeredToken)
+                        }
+
+                        if (currentToken.isNotEmpty() && (tokenChanged || timeToRefreshToken)) {
+                            registerToken(currentToken)
                         }
                     }
                 }
@@ -51,6 +58,7 @@ class PushRegisterInteractor(
         Timber.d("registerToken result $registerResult")
         if (registerResult?.isSuccess() == true) {
             preferencesRepository.updateRegisteredToken(currentToken)
+            preferencesRepository.setDeviceTokenRefreshDate(Date().time)
         }
     }
 
@@ -61,5 +69,9 @@ class PushRegisterInteractor(
         if (unregisterResult?.isSuccess() == true) {
             preferencesRepository.updateRegisteredToken("")
         }
+    }
+
+    companion object {
+        private const val refreshInterval = 1000L * 3600 * 24 // 24h
     }
 }

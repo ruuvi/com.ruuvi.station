@@ -18,6 +18,10 @@ class NetworkSignInInteractor (
 ) {
     fun signIn(token: String, response: (String) -> Unit) {
         networkInteractor.verifyUser(token) {response->
+            if (response?.isSuccess() == true) {
+                pushRegisterInteractor.checkAndRegisterDeviceToken()
+            }
+
             var  errorText = ""
             // TODO LOCALIZE
             if (response == null) {
