@@ -1,38 +1,21 @@
 package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.app.preferences.Preferences
-import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.data.NetworkTokenInfo
-import kotlinx.coroutines.*
 
 class NetworkTokenRepository (
-    private val preferences: Preferences,
-    private val sensorSettingsRepository: SensorSettingsRepository,
-    private val tagRepository: TagRepository
+    private val preferences: Preferences
 ) {
     fun saveTokenInfo(tokenInfo: NetworkTokenInfo) {
         setNetworkTokenInfo(tokenInfo)
     }
 
-    fun getTokenInfo(): NetworkTokenInfo? = getNetworkTokenInfo()
-
-    fun signOut(finished: ()->Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            saveTokenInfo(NetworkTokenInfo("", ""))
-            preferences.lastSyncDate = Long.MIN_VALUE
-
-            val sensors = sensorSettingsRepository.getSensorSettings()
-            for (sensor in sensors) {
-                if (sensor.networkSensor) {
-                    tagRepository.deleteSensorAndRelatives(sensor.id)
-                }
-            }
-            withContext(Dispatchers.Main){
-                finished()
-            }
-        }
+    fun clearTokenInfo() {
+        saveTokenInfo(NetworkTokenInfo("", ""))
+        preferences.lastSyncDate = Long.MIN_VALUE
     }
+
+    fun getTokenInfo(): NetworkTokenInfo? = getNetworkTokenInfo()
 
     private fun getNetworkTokenInfo(): NetworkTokenInfo? {
         return if (preferences.networkEmail.isEmpty() || preferences.networkToken.isEmpty()) {

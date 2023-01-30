@@ -3,7 +3,7 @@ package com.ruuvi.station.firebase.domain
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.GsonBuilder
-import com.ruuvi.station.firebase.data.PushBody
+import com.ruuvi.station.firebase.data.GcmMessage
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -16,6 +16,7 @@ class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
     override val kodein: Kodein by kodein()
 
     val pushAlertInteractor: PushAlertInteractor by instance()
+    val pushRegisterInteractor: PushRegisterInteractor by instance()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Timber.d("remoteMessage = ${remoteMessage.notification}")
@@ -39,13 +40,23 @@ class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
             Timber.d("value = $value")
         }
 
-        remoteMessage.data.values.firstOrNull().let { message ->
-            val parsedMessage = GsonBuilder().create().fromJson(message, PushBody::class.java)
-            Timber.d("parsed $parsedMessage")
+        try {
+            remoteMessage.data.values.firstOrNull().let { message ->
+                val parsedMessage = GsonBuilder().create().fromJson(message, GcmMessage::class.java)
+                Timber.d("parsed $parsedMessage")
 
-            if (parsedMessage.type == "alert") {
-                pushAlertInteractor.processAlertPush(parsedMessage.data, this)
+                if (parsedMessage.GCM.type == "alert") {
+                    pushAlertInteractor.processAlertPush(parsedMessage.GCM.data, this)
+                }
             }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
+    }
+
+    override fun onNewToken(p0: String) {
+        Timber.d("onNewToken $p0")
+        pushRegisterInteractor.checkAndRegisterDeviceToken()
+        super.onNewToken(p0)
     }
 }

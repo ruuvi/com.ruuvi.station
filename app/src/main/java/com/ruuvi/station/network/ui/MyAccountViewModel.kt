@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.response.GetSubscriptionResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.NetworkTokenRepository
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +18,8 @@ import java.util.*
 class MyAccountViewModel(
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository,
-    private val networkInteractor: RuuviNetworkInteractor
+    private val networkInteractor: RuuviNetworkInteractor,
+    private val networkSignInInteractor: NetworkSignInInteractor
 ): ViewModel() {
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
@@ -30,14 +30,18 @@ class MyAccountViewModel(
     private val _subscription = MutableStateFlow<Subscription?>(null)
     val subscription: StateFlow<Subscription?> = _subscription
 
+    private val _tokens = MutableStateFlow<List<Pair<Long,String>>?>(null)
+    val tokens: StateFlow<List<Pair<Long,String>>?> = _tokens
+
     init {
         Timber.d("init MyAccountViewModel")
         getSubscriptionInfo()
+        getRegisteredTokens()
     }
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()
-        tokenRepository.signOut {
+        networkSignInInteractor.signOut {
             sendEvent(MyAccountEvent.CloseActivity)
         }
     }
@@ -64,6 +68,15 @@ class MyAccountViewModel(
         viewModelScope.launch {
             networkInteractor.getSubscription { response ->
                 _subscription.value = Subscription.getFromResponse(response)
+            }
+        }
+    }
+
+    fun getRegisteredTokens() {
+        viewModelScope.launch {
+            val response = networkInteractor.getPushList()
+            if (response != null && response.isSuccess()) {
+                _tokens.value = response.data?.tokens?.map { Pair(it.id, it.name) }
             }
         }
     }
