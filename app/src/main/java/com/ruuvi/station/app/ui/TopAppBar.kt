@@ -5,11 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,6 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.PagerState
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -85,9 +88,10 @@ fun DashboardTopAppBar(
         },
         actions = {
             Box(
-                modifier = Modifier.clickable {
-                    dashboardTypeMenuExpanded = true
-                }
+                modifier = Modifier
+                    .clickable {
+                        dashboardTypeMenuExpanded = true
+                    }
                     .padding(end = RuuviStationTheme.dimensions.small)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -129,4 +133,34 @@ fun DashboardTopAppBar(
         contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
     )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun OnboardingTopAppBar(
+    pagerState: PagerState,
+    actionCallBack: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+
+        },
+        actions = {
+            Paragraph(text = "Skip")
+        },
+        backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+        contentColor = RuuviStationTheme.colors.topBarText,
+
+        )
 }
