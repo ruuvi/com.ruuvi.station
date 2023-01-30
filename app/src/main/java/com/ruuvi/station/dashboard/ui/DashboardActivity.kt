@@ -192,10 +192,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         R.string.menu_buy_gateway,
                                         stringResource(id = R.string.menu_buy_gateway)
                                     ),
-                                    MenuItem(
-                                        1111,
-                                        "welcome"
-                                    ),
                                     if (signedIn) {
                                         MenuItem(
                                             R.string.my_ruuvi_account,
@@ -206,7 +202,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                             R.string.sign_in,
                                             stringResource(id = R.string.sign_in)
                                         )
-                                    }
+                                    },
+                                    MenuItem(
+                                        1111,
+                                        "Welcome"
+                                    )
                                 ),
                                 onItemClick = { item ->
                                     when (item.id) {

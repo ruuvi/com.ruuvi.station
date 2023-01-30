@@ -5,20 +5,32 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.OnboardingTopAppBar
 import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.Subtitle
+import com.ruuvi.station.app.ui.components.Title
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 
@@ -53,9 +65,21 @@ class OnboardingActivity : AppCompatActivity() {
                         val pageType = OnboardingPages.values().elementAt(page)
 
                         when (pageType) {
-                            OnboardingPages.PAGE1 -> OnboardingScreen1()
-                            OnboardingPages.PAGE2 -> OnboardingScreen2()
-                            OnboardingPages.PAGE3 -> OnboardingScreen3()
+                            OnboardingPages.PAGE1 -> OnboardingTemplate(
+                                title = "History",
+                                subtitle = "Explore detailed 10 days",
+                                imageRes = R.drawable.onboarding1
+                            )
+                            OnboardingPages.PAGE2 -> OnboardingTemplate(
+                                title = "Dashboard",
+                                subtitle = "Follow measurements on a convenient",
+                                imageRes = R.drawable.onboarding2
+                            )
+                            OnboardingPages.PAGE3 -> OnboardingTemplate(
+                                title = "Alerts",
+                                subtitle = "Set custom",
+                                imageRes = R.drawable.onboarding3
+                            )
                         }
                     }
                 }
@@ -100,4 +124,32 @@ fun OnboardingScreen2() {
 @Composable
 fun OnboardingScreen3() {
     Paragraph(text = "Page 3")
+}
+
+@Composable
+fun OnboardingTemplate(
+    title: String,
+    subtitle: String,
+    imageRes: Int
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Subtitle(text = subtitle)
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Title(text = title)
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        //shape = RoundedCornerShape(10.dp)
+        Card(shape = RoundedCornerShape(10.dp)) {
+            Image(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                painter = painterResource(id = imageRes),
+                contentDescription = "",
+                alignment = Alignment.TopCenter,
+                contentScale = ContentScale.FillWidth
+            )
+        }
+    }
+
 }
