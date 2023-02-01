@@ -95,6 +95,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
     <string name="cancel">Peruuta</string>
+    <string name="change_background">Vaihda taustakuva</string>
     <string name="change_background_image">Vaihda taustakuva</string>
     <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
@@ -202,6 +203,7 @@
     <string name="force_claim_sensor">Vaihda omistajuus</string>
     <string name="force_claim_sensor_description1">Tällä anturilla on jo toinen omistaja. Omistajuus voidaan vaihtaa pakotetusti, mikäli anturi on lähettyvilläsi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="force_claim_sensor_description2">Omistajuuden pakotettu vaihtaminen tapahtuu Near-Field Communication (NFC) ominaisuutta käyttämällä. Varmista, että NFC on käytössä mobiililaitteessasi.\n\n\t1. Aloita omistajuuden pakotettu vaihto koskettamalla Ruuvi-anturia mobiililaitteellasi.\n\n\t2. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.\n\nMikäli pakotettu vaihto epäonnistui tai NFC-ominaisuutta ei ole saatavilla mobiililaitteessasi:\n\n\t1. Avaa Ruuvi-anturin suojakotelo.\n\n\t2. Paikanna valkoisella piirilevyllä oleva pieni musta painike (tai painike \"B\", mikäli anturissasi on 2 painiketta) ja napauta painiketta lyhyesti pakotetun vaihdon aloittamiseksi.\n\n\t3. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.</string>
+    <string name="full_image_view">Anturikortti</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
@@ -226,6 +228,7 @@
     <string name="help_seen_tags">Havaitut anturit: %1$,d</string>
     <string name="help_troubleshooting_text">Jos törmäät ongelmiin ja ohjeet eivät auttaneet, tarkista vianetsintäkysymykset: ruuvi.com/fi/tuki</string>
     <string name="help_troubleshooting_title">Vianetsintä</string>
+    <string name="history_view">Historianäkymä</string>
     <string name="hours">tuntia</string>
     <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
@@ -345,6 +348,7 @@
     <string name="sensor_settings">Asetukset</string>
     <string name="sensor_shared">Jaettu</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_and_alerts">Asetukset ja hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
     <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
     <string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Akku -> Virransäästö ja valitse \'Älä käytä\'.</string>

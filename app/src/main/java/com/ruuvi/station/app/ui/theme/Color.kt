@@ -56,7 +56,8 @@ data class RuuviStationColors(
     val dashboardBurger: Color,
     val defaultSensorBackground: Color,
     val secondaryTextColor: Color,
-    val backgroundAlpha: Float
+    val backgroundAlpha: Float,
+    val onboardingTextColor: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -85,7 +86,8 @@ val lightPalette = RuuviStationColors(
     dashboardBurger = Titan,
     defaultSensorBackground = DefaultSensorBackgroundLight,
     secondaryTextColor = Titan50,
-    backgroundAlpha = 0.3f
+    backgroundAlpha = 0.3f,
+    onboardingTextColor = White
 )
 
 val darkPalette = RuuviStationColors(
@@ -114,5 +116,6 @@ val darkPalette = RuuviStationColors(
     dashboardBurger = White,
     defaultSensorBackground = DefaultSensorBackgroundDark,
     secondaryTextColor = White50,
-    backgroundAlpha = 0.75f
+    backgroundAlpha = 0.75f,
+    onboardingTextColor = White
 )

@@ -2,6 +2,7 @@ package com.ruuvi.station.app.ui.theme
 
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.ruuvi.station.util.extensions.scaledSp
 
 data class RuuviStationFontSizes(
     val smallest: TextUnit = 11.sp,

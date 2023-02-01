@@ -11,12 +11,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -25,6 +27,7 @@ import com.google.accompanist.pager.PagerState
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.dashboard.DashboardType
 
 @Composable
@@ -153,14 +156,21 @@ fun OnboardingTopAppBar(
                     modifier = Modifier
                         .padding(16.dp)
                 )
+
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = RuuviStationTheme.dimensions.mediumPlus)
+                        .align(Alignment.CenterEnd)
+                        .clickable { actionCallBack.invoke() },
+                    style = RuuviStationTheme.typography.topBarText,
+                    text = "Skip",
+                    fontSize = ruuviStationFontsSizes.normal,
+                    textDecoration = TextDecoration.Underline
+                )
             }
-
         },
-        actions = {
-            Paragraph(text = "Skip")
-        },
-        backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+        elevation = 0.dp,
+        backgroundColor = Color.Transparent,
         contentColor = RuuviStationTheme.colors.topBarText,
-
         )
 }
