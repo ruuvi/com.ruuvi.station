@@ -258,7 +258,6 @@
     <string name="low_battery">Low battery</string>
     <string name="mac_address">MAC Address</string>
     <string name="mac_copied">MAC address copied to clipboard</string>
-    <string name="measure_your_world">Measure Your World</string>
     <string name="measurement_sequence_number">Measurement Sequence Number</string>
     <string name="menu_about_help">About / Help</string>
     <string name="menu_add_new_sensor">Add a New Sensor</string>
@@ -295,6 +294,27 @@
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. Either you\'re not in its Bluetooth range, it\'s connected to another phone, or it\'s running a very old firmware version.</string>
+    <string name="onboarding_access_widgets">Access your favourite sensors right from your home screen</string>
+    <string name="onboarding_alerts">Alerts</string>
+    <string name="onboarding_dashboard">Dashboard</string>
+    <string name="onboarding_explore_detailed">Explore detailed 10 days</string>
+    <string name="onboarding_follow_measurement">Follow measurements on a convenient</string>
+    <string name="onboarding_handy_widgets">Handy Widgets</string>
+    <string name="onboarding_have_fun">Have fun with customised</string>
+    <string name="onboarding_history">History</string>
+    <string name="onboarding_measure_your_world">Measure Your World</string>
+    <string name="onboarding_messages">Messages</string>
+    <string name="onboarding_personalise">Personalise</string>
+    <string name="onboarding_read_sensors_data">Read Sensor\'s Data</string>
+    <string name="onboarding_set_custom">Set custom</string>
+    <string name="onboarding_share_your_sensors">Share your sensors</string>
+    <string name="onboarding_sharees_can_use">Sharees can use the sensors as they were their own</string>
+    <string name="onboarding_station_web">Ruuvi Station on The Web</string>
+    <string name="onboarding_swype_to_continue">Swype to continue. →</string>
+    <string name="onboarding_via_bluetooth_or_cloud">Via Bluetooth or from the Cloud</string>
+    <string name="onboarding_web_pros">Large dashboard, multi-year history, email alerts and more</string>
+    <string name="onboarding_with_ruuvi_sensors">With Ruuvi sensors and Ruuvi app.</string>
+    <string name="onboarding_your_sensors">Your Sensors</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
@@ -325,7 +345,6 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Air Pressure (%1$s)</string>
-    <string name="read_sensors_data">Read Sensor\'s Data</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
     <string name="reading_history_x">Reading history.. %1$s</string>
@@ -427,7 +446,6 @@
     <string name="start_update_process">Start update process</string>
     <string name="successfully_claimed">Ownership of the sensor claimed successfully</string>
     <string name="successfully_shared">Successfully shared sensor</string>
-    <string name="swype_to_continue">Swype to continue. →</string>
     <string name="sync">Sync</string>
     <string name="sync_complete">Sync complete</string>
     <string name="sync_confirm">Download history data from the sensor?</string>
@@ -461,7 +479,6 @@
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
     <string name="version">Version: %1$s</string>
-    <string name="via_bluetooth_or_cloud">Via Bluetooth or from the Cloud</string>
     <string name="view">View</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
@@ -483,6 +500,5 @@
     <string name="widgets_preview_time">7:45</string>
     <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
     <string name="widgets_sign_in_first">To use widgets, you need to sign in first.</string>
-    <string name="with_ruuvi_sensors">With Ruuvi sensors and Ruuvi app.</string>
     <string name="yes">Yes</string>
 </resources>

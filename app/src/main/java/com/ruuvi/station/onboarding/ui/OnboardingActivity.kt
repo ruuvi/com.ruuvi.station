@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.booleanResource
@@ -28,6 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -35,13 +36,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.OnboardingTopAppBar
 import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.onboarding.domain.OnboardingPages
 import com.ruuvi.station.util.extensions.scaledSp
 
 class OnboardingActivity : AppCompatActivity() {
-    @OptIn(ExperimentalPagerApi::class)
+    @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -58,15 +60,12 @@ class OnboardingActivity : AppCompatActivity() {
                 val systemUiController = rememberSystemUiController()
                 val isDarkTheme = isSystemInDarkTheme()
 
-                val backgroundImage = if (isDarkTheme) {
-                    R.drawable.onboarding_bg_dark
-                } else {
-                    R.drawable.onboarding_bg_light
-                }
 
-                Image(
+                val pageType = OnboardingPages.values().elementAt(pagerState.currentPage)
+
+                GlideImage(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(id = backgroundImage),
+                    model = rememberResourceUri(pageType.backgroundImageRes),
                     contentScale = ContentScale.Crop,
                     contentDescription = null
                 )
@@ -84,13 +83,12 @@ class OnboardingActivity : AppCompatActivity() {
                     scaffoldState = scaffoldState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .statusBarsPadding()
-                        .navigationBarsPadding(),
+                        .statusBarsPadding(),
                     backgroundColor = Color.Transparent,
                     topBar = {
                         OnboardingTopAppBar(pagerState = pagerState) { finish() }
                     }
-                ) { _ ->
+                ) { paddingValues ->
 
                     HorizontalPager(
                         modifier = Modifier
@@ -104,18 +102,18 @@ class OnboardingActivity : AppCompatActivity() {
                         when (pageType) {
                             OnboardingPages.MEASURE_YOUR_WORLD -> OnboardingTemplate(
                                 textLines = listOf(
-                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.measure_your_world)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.with_ruuvi_sensors)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.swype_to_continue)),
-                                    OnboardingText.OnboardingSubTitle("(squirrel image here)"),
+                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.onboarding_measure_your_world)),
+                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors)),
+                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_swype_to_continue)),
+                                    OnboardingText.OnboardingImage(R.drawable.onboarding_beaver, ContentScale.FillWidth)
                                 ),
                                 imageRes = null
                             )
-                            OnboardingPages.READ_SENSORS_DATA -> com.ruuvi.station.onboarding.ui.OnboardingTemplate(
+                            OnboardingPages.READ_SENSORS_DATA -> OnboardingTemplate(
                                 textLines = listOf(
-                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.read_sensors_data)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.via_bluetooth_or_cloud)),
-                                    OnboardingText.OnboardingImage(R.drawable.onboarding_read_data)
+                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.onboarding_read_sensors_data)),
+                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud)),
+                                    OnboardingText.OnboardingImage(R.drawable.onboarding_read_data, ContentScale.Fit)
                                 ),
                                 imageRes = null
                             )
@@ -166,7 +164,7 @@ class OnboardingActivity : AppCompatActivity() {
 }
 
 sealed class OnboardingText() {
-    class OnboardingTitle(val text: String): OnboardingText() {
+    class OnboardingTitle(val text: String) : OnboardingText() {
         @Composable
         override fun Display() {
             Text(
@@ -179,7 +177,7 @@ sealed class OnboardingText() {
         }
     }
 
-    class OnboardingSubTitle(val text: String): OnboardingText() {
+    class OnboardingSubTitle(val text: String) : OnboardingText() {
         @Composable
         override fun Display() {
             Text(
@@ -192,7 +190,8 @@ sealed class OnboardingText() {
         }
     }
 
-    class OnboardingImage(val drawable: Int): OnboardingText() {
+    class OnboardingImage(val drawable: Int, val contentScale: ContentScale = ContentScale.Fit) :
+        OnboardingText() {
         @Composable
         override fun Display() {
             Image(
@@ -200,10 +199,11 @@ sealed class OnboardingText() {
                 painter = painterResource(id = drawable),
                 contentDescription = "",
                 alignment = Alignment.Center,
-                contentScale = ContentScale.Fit
+                contentScale = contentScale
             )
         }
     }
+
 
     @Composable
     open fun Display() {
@@ -262,5 +262,4 @@ fun OnboardingTemplate(
             }
         }
     }
-
 }
