@@ -67,6 +67,7 @@ import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
+import com.ruuvi.station.onboarding.ui.OnboardingActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
@@ -201,7 +202,11 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                             R.string.sign_in,
                                             stringResource(id = R.string.sign_in)
                                         )
-                                    }
+                                    },
+                                    MenuItem(
+                                        1111,
+                                        "Welcome"
+                                    )
                                 ),
                                 onItemClick = { item ->
                                     when (item.id) {
@@ -214,6 +219,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
                                         R.string.my_ruuvi_account -> MyAccountActivity.start(context)
                                         R.string.sign_in -> SignInActivity.start(context)
+                                        1111 -> OnboardingActivity.start(context)
                                     }
                                     scope.launch {
                                         scaffoldState.drawerState.close()
