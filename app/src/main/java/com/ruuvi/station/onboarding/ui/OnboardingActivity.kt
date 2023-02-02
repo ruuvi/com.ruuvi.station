@@ -6,15 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
@@ -25,25 +21,23 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.OnboardingTopAppBar
-import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.onboarding.domain.OnboardingPages
 import com.ruuvi.station.util.extensions.scaledSp
 
 class OnboardingActivity : AppCompatActivity() {
-    @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -54,92 +48,12 @@ class OnboardingActivity : AppCompatActivity() {
 
         setContent {
             RuuviTheme {
-                val pagerState = rememberPagerState()
-                val scaffoldState = rememberScaffoldState()
                 val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
                 val systemUiController = rememberSystemUiController()
                 val isDarkTheme = isSystemInDarkTheme()
 
-
-                val pageType = OnboardingPages.values().elementAt(pagerState.currentPage)
-
-                GlideImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = rememberResourceUri(pageType.backgroundImageRes),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null
-                )
-
-                if (pagerState.currentPage == OnboardingPages.values().indexOf(OnboardingPages.READ_SENSORS_DATA)) {
-                    Image(
-                        modifier = Modifier.fillMaxWidth(),
-                        painter = painterResource(id = R.drawable.onboarding_cloud),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null
-                    )
-                }
-
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding(),
-                    backgroundColor = Color.Transparent,
-                    topBar = {
-                        OnboardingTopAppBar(pagerState = pagerState) { finish() }
-                    }
-                ) { paddingValues ->
-
-                    HorizontalPager(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        count = OnboardingPages.values().size,
-                        state = pagerState
-                    ) { page ->
-
-                        val pageType = OnboardingPages.values().elementAt(page)
-
-                        when (pageType) {
-                            OnboardingPages.MEASURE_YOUR_WORLD -> OnboardingTemplate(
-                                textLines = listOf(
-                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.onboarding_measure_your_world)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_swype_to_continue)),
-                                    OnboardingText.OnboardingImage(R.drawable.onboarding_beaver, ContentScale.FillWidth)
-                                ),
-                                imageRes = null
-                            )
-                            OnboardingPages.READ_SENSORS_DATA -> OnboardingTemplate(
-                                textLines = listOf(
-                                    OnboardingText.OnboardingTitle(stringResource(id = R.string.onboarding_read_sensors_data)),
-                                    OnboardingText.OnboardingSubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud)),
-                                    OnboardingText.OnboardingImage(R.drawable.onboarding_read_data, ContentScale.Fit)
-                                ),
-                                imageRes = null
-                            )
-                            OnboardingPages.PAGE1 -> OnboardingTemplate(
-                                listOf(
-                                    OnboardingText.OnboardingSubTitle("Explore detailed 10 days"),
-                                    OnboardingText.OnboardingTitle("History"),
-                                ),
-                                imageRes = R.drawable.onboarding1
-                            )
-                            OnboardingPages.PAGE2 -> OnboardingTemplate(
-                                listOf(
-                                    OnboardingText.OnboardingSubTitle("Follow measurements on a convenient"),
-                                    OnboardingText.OnboardingTitle("Dashboard"),
-                                ),
-                                imageRes = R.drawable.onboarding2
-                            )
-                            OnboardingPages.PAGE3 -> OnboardingTemplate(
-                                listOf(
-                                    OnboardingText.OnboardingSubTitle("Set custom"),
-                                    OnboardingText.OnboardingTitle("Alerts"),
-                                ),
-                                imageRes = R.drawable.onboarding3
-                            )
-                        }
-                    }
+                OnboardingBody() {
+                    finish()
                 }
 
                 SideEffect {
@@ -157,14 +71,191 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     companion object {
+        val topBarHeight = 60.dp
         fun start(context: Context) {
             context.startActivity(Intent(context, OnboardingActivity::class.java))
         }
     }
 }
 
-sealed class OnboardingText() {
-    class OnboardingTitle(val text: String) : OnboardingText() {
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
+@Composable
+fun OnboardingBody(
+    onSkipAction: () -> Unit
+) {
+    val pagerState = rememberPagerState()
+
+    HorizontalPager(
+        modifier = Modifier
+            .fillMaxSize(),
+        count = OnboardingPages.values().size,
+        state = pagerState
+    ) { page ->
+
+        val pageType = OnboardingPages.values().elementAt(page)
+
+        val isTablet = booleanResource(id = R.bool.isTablet)
+        val imageSizeFraction = if (isTablet) 0.5f else 0.8f
+
+        GlideImage(
+            modifier = Modifier.fillMaxSize(),
+            model = rememberResourceUri(pageType.backgroundImageRes),
+            contentScale = ContentScale.Crop,
+            contentDescription = null
+        )
+
+        if (pageType == OnboardingPages.READ_SENSORS_DATA) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.4f),
+                    painter = painterResource(id = R.drawable.onboarding_cloud),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null
+                )
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    painter = painterResource(id = R.drawable.onboarding_read_data),
+                    contentScale = ContentScale.FillHeight,
+                    alignment = Alignment.Center,
+                    contentDescription = null
+                )
+            }
+        }
+
+        Column(modifier = Modifier
+            .statusBarsPadding()
+            .padding(top = OnboardingActivity.topBarHeight)) {
+
+            when (pageType) {
+                OnboardingPages.MEASURE_YOUR_WORLD -> OnboardingTemplatePage(
+                    textLines = listOf(
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_measure_your_world)),
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors)),
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_swype_to_continue)),
+                        OnboardingElement.Image(
+                            drawable = R.drawable.onboarding_beaver,
+                            alignment = Alignment.BottomCenter,
+                            contentScale = ContentScale.FillWidth
+                        )
+                    ),
+                    imageRes = null
+                )
+                OnboardingPages.READ_SENSORS_DATA -> OnboardingTemplatePage(
+                    textLines = listOf(
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_read_sensors_data)),
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud)),
+                    ),
+                    imageRes = null
+                )
+                OnboardingPages.DASHBOARD -> OnboardingTemplatePage(
+                    listOf(
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_follow_measurement)),
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_dashboard))
+                    ),
+                    imageRes = R.drawable.onboarding_dashboard
+                )
+                OnboardingPages.PERSONALISE -> OnboardingTemplatePage(
+                    listOf(
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_personalise)),
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_your_sensors))
+                    ),
+                    imageRes = R.drawable.onboarding_personalise
+                )
+                OnboardingPages.HISTORY -> OnboardingTemplatePage(
+                    listOf(
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_explore_detailed)),
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_history))
+                    ),
+                    imageRes = R.drawable.onboarding_history
+                )
+                OnboardingPages.ALERTS -> OnboardingTemplatePage(
+                    listOf(
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_set_custom)),
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_alerts))
+                    ),
+                    imageRes = R.drawable.onboarding_alerts
+                )
+                OnboardingPages.MESSAGES -> OnboardingTemplatePage(
+                    listOf(
+                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_have_fun)),
+                        OnboardingElement.Title(stringResource(id = R.string.onboarding_messages)),
+                        OnboardingElement.Image(
+                            drawable = R.drawable.onboarding_messages,
+                            alignment = Alignment.TopCenter,
+                            imageSizeFraction = imageSizeFraction,
+                            contentScale = ContentScale.FillWidth)
+                    ),
+                    imageRes = null
+                )
+                OnboardingPages.SHARING ->
+                    OnboardingSharingPage()
+//                    OnboardingTemplatePage(
+//                    listOf(
+//                        OnboardingElement.Title(stringResource(id = R.string.onboarding_share_your_sensors)),
+//                        OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_sharees_can_use)),
+//                        OnboardingElement.Image(
+//                            drawable = R.drawable.onboarding_sharing,
+//                            alignment = Alignment.TopCenter,
+//                            contentScale = ContentScale.FillWidth,
+//                            imageSizeFraction = imageSizeFraction
+//                        ),
+//                        OnboardingElement.GatewayBanner()
+//                    ),
+//                    imageRes = null
+//                )
+            }
+        }
+
+    }
+
+    Box(modifier = Modifier.statusBarsPadding()) {
+        OnboardingTopBar(height = OnboardingActivity.topBarHeight, pagerState = pagerState) { onSkipAction.invoke() }
+    }
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun OnboardingTopBar(
+    height: Dp,
+    pagerState: PagerState,
+    actionCallBack: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .requiredHeight(height)
+    ) {
+
+        HorizontalPagerIndicator(
+            activeColor = Color.White,
+            pagerState = pagerState,
+        )
+
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                .align(Alignment.CenterEnd)
+                .clickable { actionCallBack.invoke() },
+            style = RuuviStationTheme.typography.topBarText,
+            text = stringResource(id = R.string.onboarding_skip),
+            fontSize = ruuviStationFontsSizes.normal,
+            textDecoration = TextDecoration.Underline
+        )
+    }
+}
+
+
+sealed class OnboardingElement() {
+    class Title(val text: String) : OnboardingElement() {
         @Composable
         override fun Display() {
             Text(
@@ -177,7 +268,7 @@ sealed class OnboardingText() {
         }
     }
 
-    class OnboardingSubTitle(val text: String) : OnboardingText() {
+    class SubTitle(val text: String) : OnboardingElement() {
         @Composable
         override fun Display() {
             Text(
@@ -190,45 +281,53 @@ sealed class OnboardingText() {
         }
     }
 
-    class OnboardingImage(val drawable: Int, val contentScale: ContentScale = ContentScale.Fit) :
-        OnboardingText() {
+    class Image(
+        val drawable: Int,
+        val alignment: Alignment,
+        val imageSizeFraction: Float = 1f,
+        val contentScale: ContentScale = ContentScale.Fit
+    ) : OnboardingElement() {
         @Composable
         override fun Display() {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
             Image(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(imageSizeFraction),
                 painter = painterResource(id = drawable),
                 contentDescription = "",
-                alignment = Alignment.Center,
+                alignment = alignment,
                 contentScale = contentScale
             )
         }
     }
 
+    class GatewayBanner() : OnboardingElement() {
+        @Composable
+        override fun Display() {
+            Box (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .requiredHeight(100.dp)
+                    .navigationBarsPadding()
+                    .background(RuuviStationTheme.colors.accent),
+                contentAlignment = Alignment.Center
+            ){
+                Title(stringResource(id = R.string.onboarding_gateway_required))
+            }
+        }
+    }
 
     @Composable
     open fun Display() {
-        // dd
+        // should be overridden
     }
 }
 
 @Composable
-fun OnboardingScreen1() {
-    Paragraph(text = "Page 1")
-}
-
-@Composable
-fun OnboardingScreen2() {
-    Paragraph(text = "Page 2")
-}
-
-@Composable
-fun OnboardingScreen3() {
-    Paragraph(text = "Page 3")
-}
-
-@Composable
-fun OnboardingTemplate(
-    textLines: List<OnboardingText>,
+fun OnboardingTemplatePage(
+    textLines: List<OnboardingElement>,
     imageRes: Int?
 ) {
     Column(
@@ -243,6 +342,8 @@ fun OnboardingTemplate(
         if (imageRes != null) {
             val isTablet = booleanResource(id = R.bool.isTablet)
             val imageSizeFraction = if (isTablet) 0.5f else 0.8f
+
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
             Card(
                 modifier = Modifier
@@ -261,5 +362,51 @@ fun OnboardingTemplate(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun OnboardingSharingPage() {
+//    OnboardingElement.Title(stringResource(id = R.string.onboarding_share_your_sensors)),
+//    OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_sharees_can_use)),
+//    OnboardingElement.Image(
+//        drawable = R.drawable.onboarding_sharing,
+//        alignment = Alignment.TopCenter,
+//        contentScale = ContentScale.FillWidth,
+//        imageSizeFraction = imageSizeFraction
+//    ),
+//    OnboardingElement.GatewayBanner()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        OnboardingTemplatePage(
+            listOf(
+                OnboardingElement.Title(stringResource(id = R.string.onboarding_share_your_sensors)),
+                OnboardingElement.SubTitle(stringResource(id = R.string.onboarding_sharees_can_use)),
+                OnboardingElement.Image(
+                    drawable = R.drawable.onboarding_sharing,
+                    alignment = Alignment.TopCenter,
+                    contentScale = ContentScale.FillWidth,
+                    imageSizeFraction = 0.8f
+                ),
+                //OnboardingElement.GatewayBanner()
+            ),
+            imageRes = null
+        )
+
+//        Box (
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .requiredHeight(100.dp)
+//                .background(RuuviStationTheme.colors.accent),
+//            contentAlignment = Alignment.Center
+//        ){
+//            OnboardingElement.Title(stringResource(id = R.string.onboarding_gateway_required))
+//        }
+//        Spacer(modifier = Modifier.navigationBarsPadding())
     }
 }

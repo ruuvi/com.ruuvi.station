@@ -299,6 +299,7 @@
     <string name="onboarding_dashboard">Dashboard</string>
     <string name="onboarding_explore_detailed">Explore detailed 10 days</string>
     <string name="onboarding_follow_measurement">Follow measurements on a convenient</string>
+    <string name="onboarding_gateway_required">Requires a Ruuvi Gateway wireless sensor router.</string>
     <string name="onboarding_handy_widgets">Handy Widgets</string>
     <string name="onboarding_have_fun">Have fun with customised</string>
     <string name="onboarding_history">History</string>
@@ -309,6 +310,7 @@
     <string name="onboarding_set_custom">Set custom</string>
     <string name="onboarding_share_your_sensors">Share your sensors</string>
     <string name="onboarding_sharees_can_use">Sharees can use the sensors as they were their own</string>
+    <string name="onboarding_skip">Skip</string>
     <string name="onboarding_station_web">Ruuvi Station on The Web</string>
     <string name="onboarding_swype_to_continue">Swype to continue. →</string>
     <string name="onboarding_via_bluetooth_or_cloud">Via Bluetooth or from the Cloud</string>
