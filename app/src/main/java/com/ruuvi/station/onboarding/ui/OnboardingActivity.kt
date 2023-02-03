@@ -422,7 +422,7 @@ fun FinishPage(continueAction: ()-> Unit) {
     ) {
         Title("That's it.")
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        SubTitle("Let's start something. Write some text for this screen.")
+        SubTitle("Let's go to sign in page. Write some text for this screen.")
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         RuuviButton(text = "Continue") {
             continueAction.invoke()
