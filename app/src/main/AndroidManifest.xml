@@ -53,6 +53,7 @@ package="com.ruuvi.station">
 
     <activity
         android:name=".onboarding.ui.OnboardingActivity"
+        android:screenOrientation="portrait"
         android:exported="false">
     </activity>
 
