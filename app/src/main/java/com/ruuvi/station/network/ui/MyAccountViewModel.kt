@@ -90,18 +90,18 @@ sealed class MyAccountEvent {
 
 data class Subscription (
     val name: String,
-    val endTime: Date,
+    val endTime: Date?,
     val maxClaims: Int,
     val maxShares: Int,
     val maxSharesPerSensor: Int,
 ) {
     companion object {
         fun getFromResponse(response: GetSubscriptionResponse?): Subscription? {
-            val activeSubscription = response?.data?.subscriptions?.firstOrNull { it.isActive == 1 }
+            val activeSubscription = response?.data?.subscriptions?.firstOrNull { it.isActive }
             return activeSubscription?.let {
                 Subscription(
                     name = it.subscriptionName,
-                    endTime = Date(it.endTime * 1000),
+                    endTime = it.endTime?.let { endTime -> Date(endTime * 1000) },
                     maxClaims = it.maxClaims,
                     maxShares = it.maxShares,
                     maxSharesPerSensor = it.maxSharesPerSensor

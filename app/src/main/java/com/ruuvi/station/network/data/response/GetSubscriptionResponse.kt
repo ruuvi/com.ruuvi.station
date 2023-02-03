@@ -16,7 +16,7 @@ data class SubscriptionInfo(
     val subscriptionName: String,
     val claimCode: String,
     val creatorId: String,
-    val isActive: Int,
+    val isActive: Boolean,
     val startTime: Long,
-    val endTime: Long
+    val endTime: Long?
 )

@@ -140,6 +140,7 @@
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>
+    <string name="current_plan">Current Ruuvi plan</string>
     <string name="current_version">Current version</string>
     <string name="current_version_fw">Current version:</string>
     <string name="dark_theme">Dark theme</string>
@@ -243,6 +244,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Air Humidity (%1$s)</string>
     <string name="image_view">Image view</string>
+    <string name="information">Information</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -326,6 +328,7 @@
     <string name="permission_location_needed">Please enable location permission in Settings to see sensors.</string>
     <string name="permission_location_needed_api31">Please allow to show nearby devices in Settings to see sensors.</string>
     <string name="permission_notification_needed">To enable alerts please allow Notifications in Settings.</string>
+    <string name="plan_expiry_date">Ruuvi plan\'s expiry date</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Locate the small round black buttons on the white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button without a label.</string>
@@ -441,11 +444,13 @@
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
+    <string name="signed_in_user">Signed in user</string>
     <string name="simple_view">Simple view</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="start_the_update">Start the update</string>
     <string name="start_update_process">Start update process</string>
+    <string name="subscription_disclaimer">This is a completely free app that does not support monthly subscription purchases or other in-app purchases. If you are a user of the Ruuvi Gateway router and you are looking for more detailed information about your Ruuvi account, go to our website and sign in.</string>
     <string name="successfully_claimed">Ownership of the sensor claimed successfully</string>
     <string name="successfully_shared">Successfully shared sensor</string>
     <string name="sync">Sync</string>

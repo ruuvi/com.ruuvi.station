@@ -139,6 +139,7 @@
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
+    <string name="current_plan">Nykyinen tilaus</string>
     <string name="current_version">Nykyinen versio</string>
     <string name="current_version_fw">Nykyinen versio:</string>
     <string name="dark_theme">Tumma teema</string>
@@ -241,6 +242,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Ilmankosteus (%1$s)</string>
     <string name="image_view">Näytä kuvat</string>
+    <string name="information">Tietoja</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -299,6 +301,7 @@
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
     <string name="permission_notification_needed">Hälytysten näyttäminen vaatii ilmoitusten sallimisen asetuksista.</string>
+    <string name="plan_expiry_date">Ruuvi-tilauksen päättymispäivä</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
     <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
@@ -414,11 +417,13 @@
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
+    <string name="signed_in_user">Kirjautunut</string>
     <string name="simple_view">Piilota kuvat</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
     <string name="start_the_update">Aloita päivitys</string>
     <string name="start_update_process">Siirry päivittämään</string>
+    <string name="subscription_disclaimer">Tämä on täysin ilmainen sovellus, joka ei tue kuukausitilausten ostoja tai muita sovelluksen sisäisiä ostoja. Mikäli olet Ruuvi Gateway -reitittimen käyttäjä ja etsit tarkempia Ruuvi-tilisi tietoja, siirry kotisivuillemme ja kirjaudu sisään.</string>
     <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
     <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
     <string name="sync">Synkronoi</string>

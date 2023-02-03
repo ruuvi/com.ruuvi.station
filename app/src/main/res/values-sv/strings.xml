@@ -139,6 +139,7 @@
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
+    <string name="current_plan">Nuvarande plan</string>
     <string name="current_version">Nuvarande version</string>
     <string name="current_version_fw">Nuvarande version:</string>
     <string name="dark_theme">Mörkt tema</string>
@@ -241,6 +242,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfuktighet (%1$s)</string>
     <string name="image_view">Bildvy</string>
+    <string name="information">Information</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -300,6 +302,7 @@
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
     <string name="permission_location_needed_api31">Tillåt att enheter i närheten visas i Inställningar.</string>
     <string name="permission_notification_needed">För att visa alarm krävs att aviseringar tillåts i inställningar.</string>
+    <string name="plan_expiry_date">Ruuvi-prenumerationens utgångsdatum</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.</string>
@@ -415,6 +418,7 @@
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
+    <string name="signed_in_user">Inloggad</string>
     <string name="simple_view">Enkel vy</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>

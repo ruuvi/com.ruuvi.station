@@ -131,15 +131,28 @@ fun MyAccountBody(
         RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
         PageSurfaceWithPadding() {
             Column() {
-                SubtitleWithPadding(text = stringResource(id = R.string.logged_in))
+                SubtitleWithPadding(text = stringResource(id = R.string.signed_in_user))
                 ParagraphWithPadding(text = user)
-                
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
                 SubscriptionInfo(subscription = subscription)
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.delete_account), isWarning = true) {
+                        deleteAccount.invoke()
+                    }
+
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.big))
+                    RuuviButton(text = stringResource(id = R.string.sign_out)) {
+                        signOutDialog = true
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                ParagraphWithPadding(text = "Anything bellow this line should be removed before beta testing.")
+                
                 if (fcmToken != null) {
                     MoreInfoItem(
                         title = "",
@@ -155,17 +168,6 @@ fun MyAccountBody(
                     }
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
-                }
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    RuuviButton(text = stringResource(id = R.string.delete_account), isWarning = true) {
-                        deleteAccount.invoke()
-                    }
-
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.big))
-                    RuuviButton(text = stringResource(id = R.string.sign_out)) {
-                        signOutDialog = true
-                    }
                 }
             }
         }
@@ -184,19 +186,22 @@ fun MyAccountBody(
 
 @Composable
 fun SubscriptionInfo(subscription: Subscription?) {
-    Title(text = "Subscription")
-    if (subscription == null) {
-        Paragraph(text = "unknown")
-    } else {
-        val dateText = DateUtils.formatDateTime(
-            LocalContext.current,
-            subscription.endTime.time,
-            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-        )
-        Subtitle(text = subscription.name)
-        Paragraph(text = "Valid till: $dateText")
-        Paragraph(text = "Max claims: ${subscription.maxClaims}")
-        Paragraph(text = "Max shares: ${subscription.maxShares}")
-        Paragraph(text = "Max shares per sensor: ${subscription.maxSharesPerSensor}")
+    if (subscription != null) {
+        SubtitleWithPadding(text = stringResource(id = R.string.current_plan))
+        ParagraphWithPadding(text = subscription.name)
+
+        val dateText = subscription.endTime?.let {
+            DateUtils.formatDateTime(
+                LocalContext.current,
+                subscription.endTime.time,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
+            )
+        } ?: stringResource(id = R.string.none)
+        
+        SubtitleWithPadding(text = stringResource(id = R.string.plan_expiry_date))
+        ParagraphWithPadding(text = dateText)
+
+        SubtitleWithPadding(text = stringResource(id = R.string.information))
+        ParagraphWithPadding(text = stringResource(id = R.string.subscription_disclaimer))
     }
 }
