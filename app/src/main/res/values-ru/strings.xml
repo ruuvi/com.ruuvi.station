@@ -46,7 +46,7 @@
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Назад</string>
-    <string name="background_image">Фоновое\nизображение</string>
+    <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>
     <string name="background_interval_10sec">каждые %1$s сек</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
@@ -56,8 +56,8 @@
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/products</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -83,6 +83,7 @@
     <string name="camera">Камера</string>
     <string name="camera_fail">Не удалось запустить камеру</string>
     <string name="cancel">Отмена</string>
+    <string name="change_background_image">Изменить фоновое изображение</string>
     <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
     <string name="charts_background_dialog_title_question">Включить фоновое сканирование?</string>
@@ -236,6 +237,7 @@
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано.</string>
+    <string name="onboarding_measure_your_world">Measure Your World</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
@@ -380,6 +382,7 @@
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
     <string name="version">Версия: %1$s</string>
+    <string name="view">Вид</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>
@@ -387,7 +390,7 @@
     <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках.</string>
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление.</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Нажмите + чтобы добавить датчики</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>

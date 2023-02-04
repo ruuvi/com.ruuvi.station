@@ -68,8 +68,8 @@
     <string name="bluetooth_download">Bluetooth-lataus</string>
     <string name="bluetooth_download_description">Voit ladata anturin sisäisen historian ollessasi Bluetooth-kantaman sisällä.</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/fi/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet</string>
+    <string name="buy_gateway_link">https://ruuvi.com/fi/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibroi</string>
     <string name="calibrated">Kalibroitu: %1$s</string>
     <string name="calibration_clear_confirm">Poista kalibrointiasetukset?</string>
@@ -95,12 +95,18 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
     <string name="cancel">Peruuta</string>
+    <string name="change_background">Vaihda taustakuva</string>
+    <string name="change_background_image">Vaihda taustakuva</string>
+    <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön taustaskannauksen?</string>
+    <string name="check_claim_state">Omistajuuden tilaa haetaan</string>
     <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
+    <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
+    <string name="claim_wrong_sensor_scanned">Olet lukemassa väärää RuuviTagia</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen paikallisesti tallennetut historiatiedot?</string>
     <string name="clear_local_history">Tyhjennä paikallinen historia</string>
@@ -133,6 +139,7 @@
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
+    <string name="current_plan">Nykyinen tilaus</string>
     <string name="current_version">Nykyinen versio</string>
     <string name="current_version_fw">Nykyinen versio:</string>
     <string name="dark_theme">Tumma teema</string>
@@ -175,6 +182,7 @@
     <string name="download">Lataa</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
+    <string name="empty_chart_message">Ei tallennettuja mittauksia \nvalitulla aikajaksolla.</string>
     <string name="error">Virhe</string>
     <string name="error_dfu_disconnected">Yhteys päivitettävään laitteeseen menetetty</string>
     <string name="error_dfu_firmware_not_valid">Laiteohjelmisto ei kelpaa</string>
@@ -183,6 +191,7 @@
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
     <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjakoikkuna</string>
     <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
+    <string name="export_csv_feature_location">Anturihistoria voidaan viedä tiedostoon anturin historiasivulla. Napauta oikeassa yläkulmassa olevaa kolmipistevalikkoa ja valitse sitten \"Lataa historia (csv)\".</string>
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
@@ -192,6 +201,11 @@
     <string name="firmware_update">Päivitä</string>
     <string name="firmware_very_old">Hyvin vanha</string>
     <string name="follow_system_theme">Käytä järjestelmän oletusta</string>
+    <string name="force_claim">Vaadi omistajuutta</string>
+    <string name="force_claim_sensor">Vaihda omistajuus</string>
+    <string name="force_claim_sensor_description1">Tällä anturilla on jo toinen omistaja. Omistajuus voidaan vaihtaa pakotetusti, mikäli anturi on lähettyvilläsi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="force_claim_sensor_description2">Omistajuuden pakotettu vaihtaminen tapahtuu Near-Field Communication (NFC) ominaisuutta käyttämällä. Varmista, että NFC on käytössä mobiililaitteessasi.\n\n\t1. Aloita omistajuuden pakotettu vaihto koskettamalla Ruuvi-anturia mobiililaitteellasi.\n\n\t2. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.\n\nMikäli pakotettu vaihto epäonnistui tai NFC-ominaisuutta ei ole saatavilla mobiililaitteessasi:\n\n\t1. Avaa Ruuvi-anturin suojakotelo.\n\n\t2. Paikanna valkoisella piirilevyllä oleva pieni musta painike (tai painike \"B\", mikäli anturissasi on 2 painiketta) ja napauta painiketta lyhyesti pakotetun vaihdon aloittamiseksi.\n\n\t3. Sinut siirretään takaisin Asetukset-sivulle onnistuneen vaihdon päätteeksi.</string>
+    <string name="full_image_view">Anturikortti</string>
     <string name="gallery">Galleria</string>
     <string name="gateway_test_exception">Tapahtui virhe. Onko osoite varmasti oikein?</string>
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
@@ -216,6 +230,7 @@
     <string name="help_seen_tags">Havaitut anturit: %1$,d</string>
     <string name="help_troubleshooting_text">Jos törmäät ongelmiin ja ohjeet eivät auttaneet, tarkista vianetsintäkysymykset: ruuvi.com/fi/tuki</string>
     <string name="help_troubleshooting_title">Vianetsintä</string>
+    <string name="history_view">Historianäkymä</string>
     <string name="hours">tuntia</string>
     <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
@@ -227,6 +242,8 @@
     <string name="humidity_relative_name">Suhteellinen (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Ilmankosteus (%1$s)</string>
+    <string name="image_view">Näytä kuvat</string>
+    <string name="information">Tietoja</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -239,6 +256,7 @@
     <string name="login_to_ruuvi_network">Kirjaudu\nRuuvi\nStationiin</string>
     <string name="longer_history_message">Ruuvi Station -mobiilisovellus tukee maksimissaan 10 päivän historiaa. Ruuvi Cloud -tilaajat voivat tarkastella historiatietoja jopa 2 vuoden ajalta web-sovelluksessa osoitteessa ruuvi.com/fi/station (vaatii Ruuvi Gateway -reitittimen).</string>
     <string name="longer_history_title">Pidempi historia</string>
+    <string name="low_battery">Paristo vähissä</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
@@ -255,7 +273,7 @@
     <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
-    <string name="my_ruuvi_account">Minun Ruuvi-tili</string>
+    <string name="my_ruuvi_account">Minun Ruuvi-tilini</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
@@ -272,9 +290,33 @@
     <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="none">ei kirjautunut</string>
+    <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Joko et ole sen Bluetooth-kuuluvuusalueella, se on samanaikaisesti yhteydessä toiseen puhelimeen tai kyseessä on hyvin vanha laiteohjelmisto.</string>
+    <string name="onboarding_access_widgets">Lisää suosikkianturisi kotinäytölle</string>
+    <string name="onboarding_alerts">Hälytyksiä</string>
+    <string name="onboarding_dashboard">Koontinäytöltä</string>
+    <string name="onboarding_explore_detailed">Yksityiskohtainen 10 päivän</string>
+    <string name="onboarding_follow_measurement">Reaaliaikaiset anturitiedot kätevästi</string>
+    <string name="onboarding_gateway_required">Tarvitset langattoman Ruuvi Gateway -reitittimen.</string>
+    <string name="onboarding_handy_widgets">Kätevät widgetit</string>
+    <string name="onboarding_have_fun">Lisää hauskoja</string>
+    <string name="onboarding_history">Historia</string>
+    <string name="onboarding_measure_your_world">Measure Your World</string>
+    <string name="onboarding_messages">Hälytysviestejä</string>
+    <string name="onboarding_personalise">Sinun näköisesi</string>
+    <string name="onboarding_read_sensors_data">Anturitiedot</string>
+    <string name="onboarding_set_custom">Aseta kustomoituja</string>
+    <string name="onboarding_share_your_sensors">Jaa antureita</string>
+    <string name="onboarding_sharees_can_use">Käytä sinulle jaettuja antureita kuin omiasi</string>
+    <string name="onboarding_skip">Ohita</string>
+    <string name="onboarding_station_web">Ruuvi Station verkossa</string>
+    <string name="onboarding_swipe_to_continue">Jatka pyyhkäisemällä. →</string>
+    <string name="onboarding_via_bluetooth_or_cloud">Bluetooth-yhteydellä tai pilvestä</string>
+    <string name="onboarding_web_pros">Koontikäyttö, usean vuoden historian tallennus, sähköpostihälytykset ja paljon muuta</string>
+    <string name="onboarding_with_ruuvi_sensors">Kaikki Ruuvi-anturisi tiedot yhdestä sovelluksesta.</string>
+    <string name="onboarding_your_sensors">Sovellus</string>
     <string name="open_settings">Avaa asetukset</string>
     <string name="owner_none">Ei omistajaa</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
@@ -284,6 +326,7 @@
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
     <string name="permission_notification_needed">Hälytysten näyttäminen vaatii ilmoitusten sallimisen asetuksista.</string>
+    <string name="plan_expiry_date">Ruuvi-tilauksen päättymispäivä</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
     <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
@@ -305,9 +348,9 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Ilmanpaine (%1$s)</string>
-    <string name="reading_history">Historiaa luetaan</string>
+    <string name="reading_history">Historiatietoja luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
-    <string name="reading_history_x">Historiaa luetaan.. %1$s</string>
+    <string name="reading_history_x">Historiatietoja luetaan.. %1$s</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
@@ -323,6 +366,8 @@
     <string name="searching_for_sensor">Laitetta etsitään</string>
     <string name="sec">sek</string>
     <string name="seconds">Sekuntia</string>
+    <string name="select_default_image">Valitse oletuskuva</string>
+    <string name="select_from_gallery">Valitse kuvagalleriasta</string>
     <string name="select_picture">Valitse kuva</string>
     <string name="select_sensor">Valitse anturi</string>
     <string name="send_email">Lähetä sähköpostia</string>
@@ -331,6 +376,7 @@
     <string name="sensor_settings">Asetukset</string>
     <string name="sensor_shared">Jaettu</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_and_alerts">Asetukset ja hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
     <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
     <string name="settings_background_battery_optimization_common_instructions">Mene käyttöjärjestelmän sivulle Asetukset -> Sovellukset -> Ruuvi Station -> Akku -> Virransäästö ja valitse \'Älä käytä\'.</string>
@@ -396,10 +442,13 @@
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
+    <string name="signed_in_user">Kirjautunut</string>
+    <string name="simple_view">Piilota kuvat</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
     <string name="start_the_update">Aloita päivitys</string>
     <string name="start_update_process">Siirry päivittämään</string>
+    <string name="subscription_disclaimer">Tämä on täysin ilmainen sovellus, joka ei tue kuukausitilausten ostoja tai muita sovelluksen sisäisiä ostoja. Mikäli olet Ruuvi Gateway -reitittimen käyttäjä ja etsit tarkempia Ruuvi-tilisi tietoja, siirry kotisivuillemme ja kirjaudu sisään.</string>
     <string name="successfully_claimed">Anturin omistajuus vahvistettu</string>
     <string name="successfully_shared">Anturi jaettu onnistuneesti</string>
     <string name="sync">Synkronoi</string>
@@ -412,6 +461,7 @@
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
     <string name="tagsettings_owner">Omistaja</string>
     <string name="tagsettings_sensor_remove">Poista</string>
+    <string name="take_photo">Ota kuva</string>
     <string name="temperature">Lämpötila</string>
     <string name="temperature_accuracy_title">Lämpötilan resoluutio</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
@@ -434,6 +484,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="version">Versio: %1$s</string>
+    <string name="view">Näkymä</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>
@@ -443,7 +494,7 @@
     <string name="welcome_text_4">Kirjaudu sisään käyttääksesi kaikkia sovelluksen ominaisuuksia.</string>
     <string name="welcome_text_4_2">Vahvista anturiesi omistajuudet ilmaisen Ruuvi Cloud -tilin avulla.</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/fi/ideat</string>
+    <string name="what_to_measure_link">https://ruuvi.com/fi/ideat?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Paina + lisätäksesi antureita</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
