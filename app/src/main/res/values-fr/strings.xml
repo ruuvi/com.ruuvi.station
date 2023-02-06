@@ -168,6 +168,7 @@
     <string name="day_6">6 jours</string>
     <string name="day_7">7 jours</string>
     <string name="day_8">8 jours</string>
+    <string name="day_9">9 jours</string>
     <string name="day_x">%1$s jours</string>
     <string name="days">Jours</string>
     <string name="delete_account">Supprimer le compte</string>

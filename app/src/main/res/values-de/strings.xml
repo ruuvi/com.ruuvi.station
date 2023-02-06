@@ -167,7 +167,8 @@
     <string name="day_5">5 Tage</string>
     <string name="day_6">6 Tage</string>
     <string name="day_7">7 Tage</string>
-    <string name="day_8">Tage</string>
+    <string name="day_8">8 Tage</string>
+    <string name="day_9">9 Tage</string>
     <string name="day_x">%1$s Tage</string>
     <string name="days">Tage</string>
     <string name="delete_account">Konto löschen</string>

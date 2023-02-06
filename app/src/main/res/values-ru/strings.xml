@@ -134,6 +134,16 @@
     <string name="data_forwarding_url">URL шлюза</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
+    <string name="day_1">1 день</string>
+    <string name="day_10">10 дней</string>
+    <string name="day_2">2 дня</string>
+    <string name="day_3">3 дня</string>
+    <string name="day_4">4 дня</string>
+    <string name="day_5">5 дней</string>
+    <string name="day_6">6 дней</string>
+    <string name="day_7">7 дней</string>
+    <string name="day_8">8 дней</string>
+    <string name="day_9">9 дней</string>
     <string name="days">Дней</string>
     <string name="details">Подробнее</string>
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
