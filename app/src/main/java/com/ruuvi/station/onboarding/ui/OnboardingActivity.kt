@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.booleanResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -26,10 +25,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
@@ -83,17 +84,10 @@ fun OnboardingBody(
     onSkipAction: () -> Unit
 ) {
     val pagerState = rememberPagerState()
-    val isDarkTheme = isSystemInDarkTheme()
 
-    val backgroundRes = if (isDarkTheme) {
-        R.drawable.onboarding_bg_dark
-    } else {
-        R.drawable.onboarding_bg_light
-    }
-
-    Image(
+    GlideImage(
         modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = backgroundRes),
+        model = rememberResourceUri(R.drawable.onboarding_bg_dark),
         contentScale = ContentScale.Crop,
         contentDescription = null
     )
@@ -158,6 +152,7 @@ fun SubTitle(text: String) {
     )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun Screenshot(imageRes: Int) {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -179,8 +174,8 @@ fun Screenshot(imageRes: Int) {
             backgroundColor = Color.Transparent,
             border = BorderStroke(1.dp, Color.Black)
         ) {
-            Image(
-                painter = painterResource(id = imageRes),
+            GlideImage(
+                model = rememberResourceUri(resourceId = imageRes),
                 contentDescription = "",
                 alignment = Alignment.TopCenter,
                 contentScale = ContentScale.FillWidth
@@ -190,6 +185,7 @@ fun Screenshot(imageRes: Int) {
 }
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MeasureYourWorldPage() {
     Column(
@@ -204,11 +200,11 @@ fun MeasureYourWorldPage() {
         SubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(),
-            painter = painterResource(id = R.drawable.onboarding_beaver),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_beaver),
             contentDescription = "",
             alignment = Alignment.BottomCenter,
             contentScale = ContentScale.FillWidth
@@ -216,6 +212,7 @@ fun MeasureYourWorldPage() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReadSensorsDataPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -227,19 +224,19 @@ fun ReadSensorsDataPage() {
             .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(cloudSizeFraction),
-            painter = painterResource(id = R.drawable.onboarding_cloud),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_cloud),
             contentScale = ContentScale.Crop,
             alignment = Alignment.BottomCenter,
             contentDescription = null
         )
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxSize(),
-            painter = painterResource(id = R.drawable.onboarding_read_data),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_read_data),
             contentScale = ContentScale.FillHeight,
             alignment = Alignment.Center,
             contentDescription = null
@@ -327,6 +324,7 @@ fun AlertsPage() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SharingPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -343,11 +341,11 @@ fun SharingPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(imageSizeFraction),
-            painter = painterResource(id = R.drawable.onboarding_sharing),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_sharing),
             contentDescription = "",
             alignment = Alignment.TopCenter,
             contentScale = ContentScale.FillWidth
@@ -355,6 +353,7 @@ fun SharingPage() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun WidgetsPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -371,11 +370,11 @@ fun WidgetsPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_access_widgets))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(imageSizeFraction),
-            painter = painterResource(id = R.drawable.onboarding_widgets),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_widgets),
             contentDescription = "",
             alignment = Alignment.TopCenter,
             contentScale = ContentScale.FillWidth
@@ -383,6 +382,7 @@ fun WidgetsPage() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun WebPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -399,11 +399,11 @@ fun WebPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_web_pros))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Image(
+        GlideImage(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(imageSizeFraction),
-            painter = painterResource(id = R.drawable.onboarding_web),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_web),
             contentDescription = "",
             alignment = Alignment.TopCenter,
             contentScale = ContentScale.FillWidth
