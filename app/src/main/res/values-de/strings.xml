@@ -63,9 +63,10 @@
     <string name="background_notification_scanning_every">Alles Scannen</string>
     <string name="background_scanning">Hintergrundsuche (Bluetooth)</string>
     <string name="battery_ok">Batterie OK</string>
-    <string name="battery_voltage">Battery Voltage</string>
+    <string name="battery_voltage">Batteriespannung</string>
     <string name="beta">beta</string>
     <string name="bluetooth_download">Bluetooth-Download</string>
+    <string name="bluetooth_download_description">Lokale Sensordaten können heruntergeladen werden, wenn Sie sich in Bluetooth-Reichweite befinden.</string>
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
@@ -156,7 +157,7 @@
     <string name="data_forwarding_during_sync_enable">Daten während der Synchronisierung weiterleiten (beta)</string>
     <string name="data_forwarding_location_enable">Senden Sie auch die Standortkoordinaten dieses Geräts</string>
     <string name="data_forwarding_url">Datenweiterleitungs-URL</string>
-    <string name="data_forwarding_url_hint">https://your.gateway/...</string>
+    <string name="data_forwarding_url_hint">https://dein.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
     <string name="day_1">1 Tag</string>
     <string name="day_10">10 Tage</string>
@@ -170,11 +171,11 @@
     <string name="day_x">%1$s Tage</string>
     <string name="days">Tage</string>
     <string name="delete_account">Konto löschen</string>
-    <string name="details">Details</string>
+    <string name="details">Einzelheiten</string>
     <string name="dfu_low_battery_warning">Die Batteriespannung des Sensors scheint zu niedrig zu sein, und der Firmware-Aktualisierungsprozess kann fehlschlagen. Wir empfehlen, die Batterie vor der Aktualisierung zu ersetzen.</string>
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
-    <string name="disconnected">Disconnected</string>
+    <string name="disconnected">Getrennt</string>
     <string name="done">Fertig</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
@@ -272,7 +273,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
     <string name="menu_app_settings">App Einstellungen</string>
     <string name="menu_buy_gateway">Ruuvi Gateway kaufen</string>
-    <string name="menu_buy_sensors">Ruuvi Sensoren kaufen</string>
+    <string name="menu_buy_sensors">Sensoren kaufen</string>
     <string name="menu_send_feedback">Feedback schicken</string>
     <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
