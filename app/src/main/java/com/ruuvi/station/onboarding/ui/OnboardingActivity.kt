@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -208,24 +207,36 @@ fun MeasureYourWorldPage() {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReadSensorsDataPage() {
-    val isTablet = booleanResource(id = R.bool.isTablet)
-    val cloudSizeFraction = if (isTablet) 0.3f else 0.45f
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0x9900CCBA))
+                .padding(top = OnboardingActivity.topBarHeight),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Box(modifier = Modifier.statusBarsPadding()) { }
+            Title(stringResource(id = R.string.onboarding_read_sensors_data))
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+            SubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
+        }
+
         GlideImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(cloudSizeFraction),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_cloud),
+                .fillMaxHeight(0.1f),
+            model = rememberResourceUri(resourceId = R.drawable.onboarding_cloud_bottom),
             contentScale = ContentScale.Crop,
-            alignment = Alignment.BottomCenter,
+            alignment = Alignment.Center,
             contentDescription = null
         )
+
         GlideImage(
             modifier = Modifier
                 .fillMaxSize(),
@@ -234,18 +245,6 @@ fun ReadSensorsDataPage() {
             alignment = Alignment.Center,
             contentDescription = null
         )
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(top = OnboardingActivity.topBarHeight),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Title(stringResource(id = R.string.onboarding_read_sensors_data))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        SubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
     }
 }
 
