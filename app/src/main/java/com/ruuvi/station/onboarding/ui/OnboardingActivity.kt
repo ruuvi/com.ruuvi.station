@@ -41,14 +41,9 @@ class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
 
         setContent {
             RuuviTheme {
-                val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
                 val systemUiController = rememberSystemUiController()
                 val isDarkTheme = isSystemInDarkTheme()
 
@@ -58,8 +53,8 @@ class OnboardingActivity : AppCompatActivity() {
 
                 SideEffect {
                     systemUiController.setStatusBarColor(
-                        color = systemBarsColor,
-                        darkIcons = !isDarkTheme
+                        color = Color.Transparent,
+                        darkIcons = false
                     )
                     systemUiController.setNavigationBarColor(
                         color = Color.Transparent,
@@ -129,7 +124,6 @@ fun OnboardingBody(
     }
 }
 
-
 @Composable
 fun Title(text: String) {
     Text(
@@ -183,7 +177,6 @@ fun Screenshot(imageRes: Int) {
         }
     }
 }
-
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
