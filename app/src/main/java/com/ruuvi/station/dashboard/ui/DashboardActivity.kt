@@ -131,7 +131,6 @@ class DashboardActivity : AppCompatActivity(R.layout.activity_dashboard), Kodein
                 R.id.sendFeedbackMenuItem -> sendFeedback()
                 R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
                 R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
-                R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
                 R.id.loginMenuItem -> login(signedIn)
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)

@@ -398,7 +398,7 @@
     <string name="settings_background_scan_interval_description">Définir l\'intervalle d\'acquisition</string>
     <string name="settings_chart">Paramètres de l\'histogramme</string>
     <string name="settings_chart_all_points">Afficher toutes les données mesurées</string>
-    <string name="settings_chart_all_points_description">L\'utilisation de cette fonction peut ralentir la mise à jour de l\'histogramme</string>
+    <string name="settings_chart_all_points_description">L\'utilisation de cette fonction peut ralentir la mise à jour de l\'histogramme.</string>
     <string name="settings_chart_description">Définir l\'intervalle entre deux mesures</string>
     <string name="settings_chart_draw_dots">Afficher les points</string>
     <string name="settings_chart_draw_dots_description">L\'affichage des points facilite l\'analyse de l\'histogramme</string>
@@ -414,7 +414,7 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Identifiant de l\'appareil</string>
     <string name="settings_humidity_unit">Unité d\'humidité</string>
-    <string name="settings_humidity_unit_details">Choisissez l\'unité souhaitée pour l\'humidité</string>
+    <string name="settings_humidity_unit_details">Choisissez l\'unité souhaitée pour l\'humidité.</string>
     <string name="settings_language">Langue</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
@@ -453,7 +453,7 @@
     <string name="subscription_disclaimer">Il s\'agit d\'une application entièrement gratuite qui ne prend pas en charge les achats d\'abonnements mensuels ou autres achats in-app. Si vous êtes un utilisateur du routeur Ruuvi Gateway et que vous recherchez des informations plus détaillées sur votre compte Ruuvi, rendez-vous sur notre site Web et connectez-vous.</string>
     <string name="successfully_claimed">Appropriation confirmée</string>
     <string name="successfully_shared">Capteur partagé avec succès</string>
-    <string name="sync">Synchronisation</string>
+    <string name="sync">Synchroniser</string>
     <string name="sync_complete">Synchronisation terminée</string>
     <string name="sync_confirm">Souhaitez vous importer les données du capteur ?</string>
     <string name="synchronizing">Synchronisation</string>

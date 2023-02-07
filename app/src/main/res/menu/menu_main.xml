@@ -46,13 +46,6 @@
                 android:title="@string/menu_buy_sensors" />
         </group>
         <group
-            android:id="@+id/getGatewayGroup"
-            android:checkableBehavior="none">
-            <item
-                android:id="@+id/getGatewayMenuItem"
-                android:title="@string/menu_buy_gateway" />
-        </group>
-        <group
             android:id="@+id/loginGroup"
             android:checkableBehavior="none">
             <item

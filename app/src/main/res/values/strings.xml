@@ -398,7 +398,7 @@
     <string name="settings_background_scan_interval_description">Define how often the background scanning will run</string>
     <string name="settings_chart">Chart Settings</string>
     <string name="settings_chart_all_points">Display all data in chart</string>
-    <string name="settings_chart_all_points_description">Enabling it may cause charts to update slowly</string>
+    <string name="settings_chart_all_points_description">Enabling it may cause charts to update slowly.</string>
     <string name="settings_chart_description">Configure interval between points shown on chart</string>
     <string name="settings_chart_draw_dots">Draw dots in chart</string>
     <string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected</string>
@@ -414,7 +414,7 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Device identifier</string>
     <string name="settings_humidity_unit">Humidity Unit</string>
-    <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed</string>
+    <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
     <string name="settings_language">Language</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
