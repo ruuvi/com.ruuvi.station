@@ -187,8 +187,9 @@ fun MeasureYourWorldPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Title(stringResource(id = R.string.onboarding_measure_your_world))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
@@ -222,8 +223,9 @@ fun ReadSensorsDataPage() {
             verticalArrangement = Arrangement.Bottom
         ) {
             Box(modifier = Modifier.statusBarsPadding()) { }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
             Title(stringResource(id = R.string.onboarding_read_sensors_data))
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             SubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
         }
 
@@ -257,8 +259,9 @@ fun DashboardPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         SubTitle(stringResource(id = R.string.onboarding_follow_measurement))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         Title(stringResource(id = R.string.onboarding_dashboard))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_dashboard)
@@ -274,8 +277,9 @@ fun PersonalisePage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         SubTitle(stringResource(id = R.string.onboarding_personalise))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         Title(stringResource(id = R.string.onboarding_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_personalise)
@@ -291,8 +295,9 @@ fun HistoryPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         SubTitle(stringResource(id = R.string.onboarding_explore_detailed))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         Title(stringResource(id = R.string.onboarding_history))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_history)
@@ -308,8 +313,9 @@ fun AlertsPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         SubTitle(stringResource(id = R.string.onboarding_set_custom))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         Title(stringResource(id = R.string.onboarding_alerts))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_alerts)
@@ -329,8 +335,9 @@ fun SharingPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Title(stringResource(id = R.string.onboarding_share_your_sensors))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         GlideImage(
@@ -358,8 +365,9 @@ fun WidgetsPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Title(stringResource(id = R.string.onboarding_handy_widgets))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_access_widgets))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         GlideImage(
@@ -387,8 +395,9 @@ fun WebPage() {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Title(stringResource(id = R.string.onboarding_station_web))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_web_pros))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         GlideImage(
@@ -412,8 +421,9 @@ fun FinishPage(continueAction: ()-> Unit) {
             .padding(top = OnboardingActivity.topBarHeight),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Title("That's it.")
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle("Let's go to sign in page. Write some text for this screen.")
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         RuuviButton(text = "Continue") {
@@ -423,6 +433,7 @@ fun FinishPage(continueAction: ()-> Unit) {
 }
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun GatewayBanner() {
     Column(
@@ -431,14 +442,29 @@ fun GatewayBanner() {
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.Bottom
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .requiredHeight(100.dp)
                 .background(RuuviStationTheme.colors.accent),
-            contentAlignment = Alignment.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SubTitle(stringResource(id = R.string.onboarding_gateway_required))
+            GlideImage(
+                modifier = Modifier.padding(start = RuuviStationTheme.dimensions.big),
+                contentScale = ContentScale.Fit,
+                model = rememberResourceUri(resourceId = R.drawable.onboarding_gateway),
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.padding(
+                    start = RuuviStationTheme.dimensions.extended,
+                    end = RuuviStationTheme.dimensions.big),
+                style = RuuviStationTheme.typography.onboardingSubtitle,
+                textAlign = TextAlign.Start,
+                text = stringResource(id = R.string.onboarding_gateway_required),
+                fontSize = 16.scaledSp
+            )
         }
     }
 }
