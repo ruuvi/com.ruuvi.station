@@ -293,6 +293,7 @@
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas.</string>
+    <string name="onboarding_measure_your_world">Measure Your World</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
