@@ -66,6 +66,8 @@ class OnboardingActivity : AppCompatActivity() {
 
     companion object {
         val topBarHeight = 60.dp
+        val bannerHeight = 100.dp
+
         fun start(context: Context) {
             context.startActivity(Intent(context, OnboardingActivity::class.java))
         }
@@ -339,16 +341,7 @@ fun SharingPage() {
         Title(stringResource(id = R.string.onboarding_share_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        GlideImage(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(imageSizeFraction),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_sharing),
-            contentDescription = "",
-            alignment = Alignment.TopCenter,
-            contentScale = ContentScale.FillWidth
-        )
+        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_sharing)
     }
 }
 
@@ -369,24 +362,14 @@ fun WidgetsPage() {
         Title(stringResource(id = R.string.onboarding_handy_widgets))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_access_widgets))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        GlideImage(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(imageSizeFraction),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_widgets),
-            contentDescription = "",
-            alignment = Alignment.TopCenter,
-            contentScale = ContentScale.FillWidth
-        )
+        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_widgets)
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun WebPage() {
-    val isTablet = booleanResource(id = R.bool.isTablet)
-    val imageSizeFraction = if (isTablet) 0.7f else 0.8f
+    val imageSizeFraction = 0.8f
 
     Column(
         modifier = Modifier
@@ -399,16 +382,34 @@ fun WebPage() {
         Title(stringResource(id = R.string.onboarding_station_web))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         SubTitle(stringResource(id = R.string.onboarding_web_pros))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_web)
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun FitImageAboveBanner(
+    imageSizeFraction: Float,
+    imageRes: Int
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = RuuviStationTheme.dimensions.extended),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         GlideImage(
             modifier = Modifier
-                .fillMaxHeight()
+                .weight(1f)
                 .fillMaxWidth(imageSizeFraction),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_web),
+            model = rememberResourceUri(resourceId = imageRes),
             contentDescription = "",
-            alignment = Alignment.TopCenter,
-            contentScale = ContentScale.FillWidth
+            alignment = Alignment.Center,
+            contentScale = ContentScale.Fit
         )
+        Box(Modifier.requiredHeight(OnboardingActivity.bannerHeight))
+        Box(Modifier.navigationBarsPadding())
     }
 }
 
@@ -445,7 +446,7 @@ fun GatewayBanner() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .requiredHeight(100.dp)
+                .requiredHeight(OnboardingActivity.bannerHeight)
                 .background(RuuviStationTheme.colors.accent),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
