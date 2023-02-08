@@ -202,11 +202,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                             R.string.sign_in,
                                             stringResource(id = R.string.sign_in)
                                         )
-                                    },
-                                    MenuItem(
-                                        1111,
-                                        "Welcome"
-                                    )
+                                    }
                                 ),
                                 onItemClick = { item ->
                                     when (item.id) {

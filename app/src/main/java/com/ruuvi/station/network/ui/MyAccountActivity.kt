@@ -149,26 +149,6 @@ fun MyAccountBody(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                ParagraphWithPadding(text = "Anything bellow this line should be removed before beta testing.")
-                
-                if (fcmToken != null) {
-                    MoreInfoItem(
-                        title = "",
-                        value = fcmToken.toString()
-                    )
-                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-                }
-
-                if (tokens != null) {
-                    ParagraphWithPadding(text = "Registered FCM tokens")
-                    for (token in tokens) {
-                        Paragraph(text = "${token.first} - ${token.second}")
-                    }
-                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                }
             }
         }
 
