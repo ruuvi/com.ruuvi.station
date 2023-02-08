@@ -24,6 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.util.extensions.viewModel
@@ -196,6 +198,7 @@ fun AlreadyLatestVersionScreen(viewModel: DfuUpdateViewModel) {
     ParagraphWithPadding(text = stringResource(id = R.string.already_latest_version))
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
     val deviceDiscovered by viewModel.deviceDiscovered.observeAsState()
@@ -206,8 +209,8 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ruuvitag_button_location),
+        GlideImage(
+            model = rememberResourceUri(resourceId = R.drawable.ruuvitag_button_location),
             contentDescription = "",
             modifier = Modifier
                 .width(screenWidth * 4 / 5)
