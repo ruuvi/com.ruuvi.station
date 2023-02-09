@@ -182,6 +182,16 @@ fun Screenshot(imageRes: Int) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MeasureYourWorldPage() {
+    GlideImage(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+        model = rememberResourceUri(resourceId = R.drawable.onboarding_beaver_v2),
+        contentDescription = "",
+        alignment = Alignment.BottomCenter,
+        contentScale = ContentScale.FillWidth
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -195,15 +205,6 @@ fun MeasureYourWorldPage() {
         SubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
-        GlideImage(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_beaver),
-            contentDescription = "",
-            alignment = Alignment.BottomCenter,
-            contentScale = ContentScale.FillWidth
-        )
     }
 }
 
@@ -220,7 +221,10 @@ fun ReadSensorsDataPage() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0x9900CCBA))
-                .padding(top = OnboardingActivity.topBarHeight),
+                .padding(
+                    top = OnboardingActivity.topBarHeight,
+                    bottom = RuuviStationTheme.dimensions.extended
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -245,7 +249,7 @@ fun ReadSensorsDataPage() {
             modifier = Modifier
                 .fillMaxSize(),
             model = rememberResourceUri(resourceId = R.drawable.onboarding_read_data),
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.Fit,
             alignment = Alignment.Center,
             contentDescription = null
         )
