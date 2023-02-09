@@ -21,6 +21,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -878,8 +879,8 @@ fun LowBattery(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
         Image(
             modifier = Modifier
-                .height(16.dp)
-                .align(Top),
+                .height(12.dp)
+                .align(CenterVertically),
             painter = painterResource(id = R.drawable.icon_battery_low),
             contentDescription = null
         )
