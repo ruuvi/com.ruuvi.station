@@ -103,7 +103,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
-
+                             CloudBenefitsPage()
                         }
                         composable(
                             SignInRoutes.ENTER_CODE,
@@ -151,7 +151,6 @@ fun EnterEmailPage(
 ) {
     var email by remember{ mutableStateOf("") }
 
-
     Column(
         modifier = Modifier.systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
@@ -176,7 +175,9 @@ fun EnterEmailPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended).clickable { useWithoutAccount.invoke() },
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                    .clickable { useWithoutAccount.invoke() },
                 style = RuuviStationTheme.typography.onboardingSubtitle,
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.use_without_account),
@@ -186,6 +187,37 @@ fun EnterEmailPage(
             )
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
+    }
+}
+
+@Composable
+fun CloudBenefitsPage() {
+    Column(
+        modifier = Modifier.systemBarsPadding(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+        OnboardingTitle(
+            text = stringResource(id = R.string.why_should_sign_in),
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.big))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        OnboardingSubTitle(text = stringResource(id = R.string.sensors_ownership_and_settings_stored_in_cloud))
+        Text(text = "", textDecoration = TextDecoration.Underline)
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        BenefitsList()
+    }
+}
+
+@Composable
+fun BenefitsList() {
+    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.Start) {
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_ownerships))
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_names))
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_alerts))
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_backgrounds))
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_calibration))
+        OnboardingText(text = stringResource(id = R.string.cloud_stored_sharing))
     }
 }
 
