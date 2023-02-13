@@ -67,6 +67,7 @@ import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.network.ui.SignInActivityOld
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.onboarding.ui.OnboardingActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
@@ -207,6 +208,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                     MenuItem(
                                         1111,
                                         "Welcome"
+                                    ),
+                                    MenuItem(
+                                        2222,
+                                        "Sign In"
                                     )
                                 ),
                                 onItemClick = { item ->
@@ -219,8 +224,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_link))
                                         R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
                                         R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                        R.string.sign_in -> SignInActivity.start(context)
+                                        R.string.sign_in -> SignInActivityOld.start(context)
                                         1111 -> OnboardingActivity.start(context)
+                                        2222 -> SignInActivity.start(context)
                                     }
                                     scope.launch {
                                         scaffoldState.drawerState.close()
@@ -266,7 +272,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
             dashboardViewModel.syncEvents.collect {
                 if (it is NetworkSyncEvent.Unauthorised) {
                     dashboardViewModel.signOut()
-                    SignInActivity.start(this@DashboardActivity)
+                    SignInActivityOld.start(this@DashboardActivity)
                 }
             }
         }

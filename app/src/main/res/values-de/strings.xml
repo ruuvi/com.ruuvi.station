@@ -282,7 +282,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
     <string name="movement_counter">Bewegungszähler</string>
-    <string name="movements">Sensor auswählen</string>
+    <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
     <string name="my_ruuvi_account">Mein Ruuvi Konto</string>
     <string name="name">NAME</string>
@@ -378,6 +378,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="select_default_image">Aus Standardbildern auswählen</string>
     <string name="select_from_gallery">Aus der Handy-Galerie auswählen</string>
     <string name="select_picture">Bild auswählen</string>
+    <string name="select_sensor">Sensor auswählen</string>
     <string name="send_email">Email schicken</string>
     <string name="sensor_already_added">Sensor ist bereits hinzugefügt</string>
     <string name="sensor_not_shared">Nicht geteilt</string>
@@ -403,7 +404,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_background_scan_interval_description">Definieren Sie, wie oft der Hintergrundscan ausgeführt wird</string>
     <string name="settings_chart">Diagramm Einstellungen</string>
     <string name="settings_chart_all_points">Alle Daten im Diagramm anzeigen</string>
-    <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden</string>
+    <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden.</string>
     <string name="settings_chart_description">Konfigurieren Sie das Intervall zwischen den auf dem Diagramm angezeigten Punkten</string>
     <string name="settings_chart_draw_dots">Punkte im Diagramm zeichnen</string>
     <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden</string>
@@ -419,7 +420,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Gerätekennung</string>
     <string name="settings_humidity_unit">Feuchtigkeitseinheit</string>
-    <string name="settings_humidity_unit_details">Wählen Sie die Luftfeuchtigkeitseinheit aus, die angezeigt werden soll</string>
+    <string name="settings_humidity_unit_details">Wählen Sie die Luftfeuchtigkeitseinheit aus, die angezeigt werden soll.</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
@@ -458,7 +459,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="subscription_disclaimer">Dies ist eine völlig kostenlose App, die keine monatlichen Abonnementkäufe oder andere In-App-Käufe unterstützt. Wenn Sie ein Nutzer des Ruuvi Gateway Routers sind und detailliertere Informationen über Ihr Ruuvi Konto suchen, gehen Sie auf unsere Website und melden Sie sich an.</string>
     <string name="successfully_claimed">Besitz des Sensors erfolgreich beansprucht</string>
     <string name="successfully_shared">Sensor erfolgreich geteilt</string>
-    <string name="sync">Synchronisieren</string>
+    <string name="sync">Sync</string>
     <string name="sync_complete">Synchronisierung abgeschlossen</string>
     <string name="sync_confirm">Daten vom Sensor herunterladen?</string>
     <string name="synchronizing">Synchronisieren</string>

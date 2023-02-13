@@ -126,9 +126,9 @@ fun OnboardingBody(
 }
 
 @Composable
-fun Title(text: String) {
+fun OnboardingTitle(text: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+        modifier = modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
         style = RuuviStationTheme.typography.onboardingTitle,
         textAlign = TextAlign.Center,
         text = text,
@@ -137,13 +137,26 @@ fun Title(text: String) {
 }
 
 @Composable
-fun SubTitle(text: String) {
+fun OnboardingSubTitle(text: String) {
     Text(
         modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
         style = RuuviStationTheme.typography.onboardingSubtitle,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 20.scaledSp
+        fontSize = 20.scaledSp,
+        lineHeight = 26.scaledSp
+    )
+}
+
+@Composable
+fun OnboardingText(text: String) {
+    Text(
+        modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+        style = RuuviStationTheme.typography.onboardingSubtitle,
+        textAlign = TextAlign.Center,
+        text = text,
+        fontSize = 16.scaledSp,
+        lineHeight = 20.scaledSp
     )
 }
 
@@ -200,11 +213,11 @@ fun MeasureYourWorldPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        Title(stringResource(id = R.string.onboarding_measure_your_world))
+        OnboardingTitle(stringResource(id = R.string.onboarding_measure_your_world))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        SubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
     }
 }
 
@@ -230,9 +243,9 @@ fun ReadSensorsDataPage() {
         ) {
             Box(modifier = Modifier.statusBarsPadding()) { }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-            Title(stringResource(id = R.string.onboarding_read_sensors_data))
+            OnboardingTitle(stringResource(id = R.string.onboarding_read_sensors_data))
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-            SubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
+            OnboardingSubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
         }
 
         GlideImage(
@@ -266,9 +279,9 @@ fun DashboardPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        SubTitle(stringResource(id = R.string.onboarding_follow_measurement))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_follow_measurement))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        Title(stringResource(id = R.string.onboarding_dashboard))
+        OnboardingTitle(stringResource(id = R.string.onboarding_dashboard))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_dashboard)
     }
@@ -284,9 +297,9 @@ fun PersonalisePage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        SubTitle(stringResource(id = R.string.onboarding_personalise))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_personalise))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        Title(stringResource(id = R.string.onboarding_your_sensors))
+        OnboardingTitle(stringResource(id = R.string.onboarding_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_personalise)
     }
@@ -302,9 +315,9 @@ fun HistoryPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        SubTitle(stringResource(id = R.string.onboarding_explore_detailed))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_explore_detailed))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        Title(stringResource(id = R.string.onboarding_history))
+        OnboardingTitle(stringResource(id = R.string.onboarding_history))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_history)
     }
@@ -320,9 +333,9 @@ fun AlertsPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        SubTitle(stringResource(id = R.string.onboarding_set_custom))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_set_custom))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        Title(stringResource(id = R.string.onboarding_alerts))
+        OnboardingTitle(stringResource(id = R.string.onboarding_alerts))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_alerts)
     }
@@ -342,9 +355,9 @@ fun SharingPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        Title(stringResource(id = R.string.onboarding_share_your_sensors))
+        OnboardingTitle(stringResource(id = R.string.onboarding_share_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
         FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_sharing)
     }
 }
@@ -363,9 +376,9 @@ fun WidgetsPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        Title(stringResource(id = R.string.onboarding_handy_widgets))
+        OnboardingTitle(stringResource(id = R.string.onboarding_handy_widgets))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SubTitle(stringResource(id = R.string.onboarding_access_widgets))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_access_widgets))
         FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_widgets)
     }
 }
@@ -383,9 +396,9 @@ fun WebPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        Title(stringResource(id = R.string.onboarding_station_web))
+        OnboardingTitle(stringResource(id = R.string.onboarding_station_web))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SubTitle(stringResource(id = R.string.onboarding_web_pros))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_web_pros))
         FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_web)
     }
 }
@@ -427,9 +440,9 @@ fun FinishPage(continueAction: ()-> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        Title("That's it.")
+        OnboardingTitle("That's it.")
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SubTitle("Let's go to sign in page. Write some text for this screen.")
+        OnboardingSubTitle("Let's go to sign in page. Write some text for this screen.")
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         RuuviButton(text = "Continue") {
             continueAction.invoke()

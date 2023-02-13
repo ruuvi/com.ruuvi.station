@@ -44,7 +44,6 @@ import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.*
 import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
-import com.ruuvi.station.app.preferences.Preferences
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.app.permissions.PermissionsInteractor
@@ -53,7 +52,7 @@ import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
-import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.network.ui.SignInActivityOld
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
@@ -407,7 +406,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun signIn() {
-        SignInActivity.start(this)
+        SignInActivityOld.start(this)
     }
 
     private fun updateMenu(signed: Boolean) {

@@ -19,7 +19,7 @@ import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityDashboardBinding
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
-import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.network.ui.SignInActivityOld
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
@@ -165,7 +165,7 @@ class DashboardActivityOld : AppCompatActivity(R.layout.activity_dashboard), Kod
     }
 
     private fun signIn() {
-        SignInActivity.start(this)
+        SignInActivityOld.start(this)
     }
 
     private fun updateMenu(signed: Boolean) {
