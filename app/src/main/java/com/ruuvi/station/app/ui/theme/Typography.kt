@@ -23,7 +23,8 @@ data class RuuviStationTypography(
     val dashboardBigValueUnit: TextStyle,
     val dashboardSecondary: TextStyle,
     val onboardingTitle: TextStyle,
-    val onboardingSubtitle: TextStyle
+    val onboardingSubtitle: TextStyle,
+    val onboardingText: TextStyle
 )
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
@@ -116,12 +117,19 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         onboardingTitle = TextStyle(
             color = colors.onboardingTextColor,
             fontFamily = ruuviStationFonts.montserratExtraBold,
-            fontSize = 36.sp,
+            fontSize = 36.sp
         ),
         onboardingSubtitle = TextStyle(
             color = colors.onboardingTextColor,
             fontFamily = ruuviStationFonts.mulishSemiBoldItalic,
             fontSize = 20.sp,
+            lineHeight = 26.sp
+        ),
+        onboardingText = TextStyle(
+            color = colors.onboardingTextColor,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = 16.sp,
+            lineHeight = 20.sp
         )
     )
 }

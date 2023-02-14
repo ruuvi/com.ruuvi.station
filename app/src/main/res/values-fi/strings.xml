@@ -15,6 +15,7 @@
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
+    <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
     <string name="ago">sitten</string>
     <string name="alarm_custom_description_title">Aseta hälytysviesti</string>
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
@@ -106,6 +107,7 @@
     <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
+    <string name="claim_warning">Kolmas osapuoli voi vaatia antureittesi omistajuutta, jos et merkitse omistajuutta itsellesi.</string>
     <string name="claim_wrong_sensor_scanned">Olet lukemassa väärää RuuviTagia</string>
     <string name="clear">Pyyhi</string>
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen paikallisesti tallennetut historiatiedot?</string>
@@ -136,6 +138,12 @@
     <string name="cloud_er_user_not_found">Käyttäjää ei löydy</string>
     <string name="cloud_only_mode">Pilvitila</string>
     <string name="cloud_only_mode_description">Päivitä lähellä olevat pilveen rekisteröidyt anturit ainoastaan pilvestä hylkäämällä niiden Bluetooth-viestit. Vaatii Ruuvi Gateway -reitittimen.</string>
+    <string name="cloud_stored_alerts">● Hälytykset</string>
+    <string name="cloud_stored_backgrounds">● Taustakuvat</string>
+    <string name="cloud_stored_calibration">● Kalibrointiasetukset</string>
+    <string name="cloud_stored_names">● Anturinimet</string>
+    <string name="cloud_stored_ownerships">● Antureiden omistajuudet</string>
+    <string name="cloud_stored_sharing">● Jako-asetukset</string>
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
@@ -150,6 +158,7 @@
     <string name="dashboard_disabled">Koontinäyttö ei käytössä. </string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="dashboard_enabled">Koontinäyttö käytössä. </string>
+    <string name="dashboard_no_sensors_message">Sinulla ei ole vielä Ruuvi-antureita sovelluksessa.</string>
     <string name="data_format">Dataformaatti</string>
     <string name="data_forwarding_background_location_message_bloked">Salli sijaintitietojen käyttö päätelaitteesi asetuksissa sisällyttääksesi koordinaatit lähetykseen</string>
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
@@ -183,6 +192,7 @@
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>
     <string name="email">Sähköposti</string>
     <string name="empty_chart_message">Ei tallennettuja mittauksia \nvalitulla aikajaksolla.</string>
+    <string name="enter_code">Syötä koodi</string>
     <string name="error">Virhe</string>
     <string name="error_dfu_disconnected">Yhteys päivitettävään laitteeseen menetetty</string>
     <string name="error_dfu_firmware_not_valid">Laiteohjelmisto ei kelpaa</string>
@@ -250,6 +260,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Uusin saatavilla oleva Ruuvi-laiteohjelmisto:</string>
+    <string name="lets_do_it">Lisää tilille!</string>
     <string name="light_theme">Vaalea teema</string>
     <string name="logged_in">Kirjautunut:</string>
     <string name="login_description">Hyödyntääksesi kaikkia sovelluksen ominaisuuksia, kirjaudu sisään tai luo uusi ilmainen Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
@@ -289,7 +300,9 @@
     <string name="no">Ei</string>
     <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
+    <string name="no_password_needed">Et tarvitse salasanaa.</string>
     <string name="none">ei kirjautunut</string>
+    <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
@@ -358,6 +371,7 @@
     <string name="remove_this_sensor">Poista tämä anturi</string>
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
     <string name="replace_battery">Vaihda paristo!</string>
+    <string name="request_code">Pyydä kirjautumiskoodi</string>
     <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä pilvitilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
@@ -375,6 +389,7 @@
     <string name="sensor_not_shared">Ei jaettu</string>
     <string name="sensor_settings">Asetukset</string>
     <string name="sensor_shared">Jaettu</string>
+    <string name="sensors_ownership_and_settings_stored_in_cloud">Antureiden omistajuudet ja asetukset tallennetaan turvallisesti Ruuvi Cloud -pilvipalveluun.</string>
     <string name="settings">Asetukset</string>
     <string name="settings_and_alerts">Asetukset ja hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
@@ -396,7 +411,7 @@
     <string name="settings_background_scan_interval_description">Määritä taustaskannauksen toteutusväli</string>
     <string name="settings_chart">Historiatietojen asetukset</string>
     <string name="settings_chart_all_points">Näytä kaikki kerätyt mittaukset</string>
-    <string name="settings_chart_all_points_description">Ominaisuuden käyttäminen saattaa hidastaa historiatietojen päivittymistä</string>
+    <string name="settings_chart_all_points_description">Ominaisuuden käyttäminen saattaa hidastaa historiatietojen päivittymistä.</string>
     <string name="settings_chart_description">Määritä tietopisteiden näyttöväli</string>
     <string name="settings_chart_draw_dots">Näytä tietopisteet</string>
     <string name="settings_chart_draw_dots_description">Tietopisteiden näyttäminen helpottaa tallennetun historiatiedon tutkimista</string>
@@ -412,7 +427,7 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Laitteen tunniste</string>
     <string name="settings_humidity_unit">Kosteusyksikkö</string>
-    <string name="settings_humidity_unit_details">Valitse sovelluksessa käytettävä kosteusyksikkö</string>
+    <string name="settings_humidity_unit_details">Valitse sovelluksessa käytettävä kosteusyksikkö.</string>
     <string name="settings_language">Kieli</string>
     <string name="settings_pressure_unit">Paineyksikkö</string>
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö.</string>
@@ -432,6 +447,7 @@
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
     <string name="sign_in_login_button">Kirjaudu</string>
     <string name="sign_in_manual_code">Syötä koodi</string>
+    <string name="sign_in_or_create_free_account">Kirjaudu tai luo ilmainen tili</string>
     <string name="sign_in_request_code">Pyydä kirjautumiskoodi</string>
     <string name="sign_in_skip_confirm_go_back">Takaisin</string>
     <string name="sign_in_skip_confirm_title">Haluatko varmasti ohittaa sisäänkirjautumisen?</string>
@@ -474,15 +490,18 @@
     <string name="temperature_with_unit">Lämpötila (%1$s)</string>
     <string name="time_since">%1$s sitten</string>
     <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
+    <string name="to_use_all_app_features">Ota kaikki ominaisuudet käyttöön ja vahvista antureiden omistajuus</string>
     <string name="try_again">Yritä uudelleen</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="type_your_email">Anna sähköpostiosoite...</string>
     <string name="unknown_error">Tuntematon virhe</string>
     <string name="update_action">KÄYNNISTÄ UUDELLEEN</string>
     <string name="update_downloaded_message">Päivitys on ladattu.</string>
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
+    <string name="use_without_account">Käytä ilman tiliä</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
@@ -495,6 +514,7 @@
     <string name="welcome_text_4_2">Vahvista anturiesi omistajuudet ilmaisen Ruuvi Cloud -tilin avulla.</string>
     <string name="welcome_text_5">Näytä lähietäisyydellä olevat anturit napauttamalla SKANNAA.</string>
     <string name="what_to_measure_link">https://ruuvi.com/fi/ideat?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="why_should_sign_in">Miksi kirjautua?</string>
     <string name="widget_empty">Paina + lisätäksesi antureita</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>

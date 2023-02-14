@@ -234,7 +234,7 @@ class UnitsConverter (
     }
 
     fun getDisplayValue(value: Float): String {
-        if (value.isInteger(0.09f)) {
+        if (value.isInteger(0.009f)) {
             return getDisplayApproximateValue(value)
         } else {
             return getDisplayPreciseValue(value)

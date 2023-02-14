@@ -13,8 +13,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.databinding.ActivityWelcomeBinding
-import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.databinding.ActivityWelcomeBinding import com.ruuvi.station.network.ui.SignInActivityOld
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.setDebouncedOnClickListener
 import org.kodein.di.KodeinAware
@@ -108,7 +107,7 @@ class WelcomeActivity : AppCompatActivity(R.layout.activity_welcome), KodeinAwar
     }
 
     private fun openSignInActivity() {
-        SignInActivity.start(this@WelcomeActivity)
+        SignInActivityOld.start(this@WelcomeActivity)
     }
 
     companion object{

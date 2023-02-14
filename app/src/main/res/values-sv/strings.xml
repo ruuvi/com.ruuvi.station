@@ -373,7 +373,7 @@
     <string name="settings_background_scan_interval_description">Ange intervallet för bakgrundsskanning</string>
     <string name="settings_chart">Historik</string>
     <string name="settings_chart_all_points">Visa all insamlad data i graferna</string>
-    <string name="settings_chart_all_points_description">Den här funktionen kan göra appen laddar historik långsammare</string>
+    <string name="settings_chart_all_points_description">Den här funktionen kan göra appen laddar historik långsammare.</string>
     <string name="settings_chart_description">Ange visningsintervallet för datapunkter</string>
     <string name="settings_chart_draw_dots">Visa datapunkter</string>
     <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation</string>
@@ -389,7 +389,7 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Enhetsidentifikation</string>
     <string name="settings_humidity_unit">Luftfuktighetsenhet</string>
-    <string name="settings_humidity_unit_details">Välj den fuktighetsenhet som du vill ska visas</string>
+    <string name="settings_humidity_unit_details">Välj den fuktighetsenhet som du vill ska visas.</string>
     <string name="settings_language">Språk</string>
     <string name="settings_pressure_unit">Tryckenhet</string>
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas.</string>

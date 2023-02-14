@@ -59,6 +59,11 @@ package="com.ruuvi.station">
 
     <activity
         android:name=".network.ui.SignInActivity"
+        android:exported="false"
+        android:screenOrientation="portrait" />
+
+    <activity
+        android:name=".network.ui.SignInActivityOld"
         android:exported="true"
         android:label="@string/sign_in"
         android:screenOrientation="portrait"

@@ -20,7 +20,7 @@ object FirebaseInjectionModule {
             FirebaseInteractor(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
-        bind<PushAlertInteractor>() with singleton { PushAlertInteractor(instance()) }
+        bind<PushAlertInteractor>() with singleton { PushAlertInteractor(instance(), instance()) }
 
         bind<PushRegisterInteractor>() with singleton { PushRegisterInteractor(instance(), instance()) }
     }

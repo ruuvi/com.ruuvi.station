@@ -15,6 +15,7 @@
     <string name="accuracy_description">Wählen Sie aus, wie genau Sie die Live-Messwerte der Sensoren in der App sehen möchten. Diese Einstellung hat keinen Einfluss auf Verlaufsdiagramme oder Alarme.</string>
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
+    <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
     <string name="ago">vor</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -105,6 +106,7 @@
     <string name="claim_description">Besitzen Sie diesen Sensor? Wenn ja, beanspruchen Sie bitte den Besitz des Sensors und er wird Ihrem Ruuvi-Konto hinzugefügt. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.\n\nVorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
     <string name="claim_ownership">Inhaberschaft beanspruchen</string>
     <string name="claim_sensor">Sensor beanspruchen</string>
+    <string name="claim_warning">Wenn Sie das Eigentum an Ihren Sensoren nicht beanspruchen, können diese von unerwünschten Dritten beansprucht werden.</string>
     <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene RuuviTag</string>
     <string name="clear">Löschen</string>
     <string name="clear_confirm">Die lokalen historischen Daten aus der App löschen?</string>
@@ -135,6 +137,12 @@
     <string name="cloud_er_user_not_found">Benutzer wurde nicht gefunden</string>
     <string name="cloud_only_mode">Cloud-Modus</string>
     <string name="cloud_only_mode_description">Aktualisieren Sie Cloud-Sensoren in der Nähe nur von der Cloud aus, indem Sie deren Bluetooth-Meldungen ignorieren. Dazu ist ein Ruuvi Gateway Router erforderlich.</string>
+    <string name="cloud_stored_alerts">● Warnungen</string>
+    <string name="cloud_stored_backgrounds">● Hintergrundbilder</string>
+    <string name="cloud_stored_calibration">● Kalibrierungseinstellungen</string>
+    <string name="cloud_stored_names">● Sensornamen</string>
+    <string name="cloud_stored_ownerships">●  sorbesitz</string>
+    <string name="cloud_stored_sharing">● Einstellungen teilen</string>
     <string name="confirm">Bestätige</string>
     <string name="connected_reading_info">Synchronisieren...</string>
     <string name="connecting">Verbinden...</string>
@@ -149,6 +157,7 @@
     <string name="dashboard_disabled">Die Dashboard-Ansicht ist deaktiviert. </string>
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
     <string name="dashboard_enabled">Die Dashboard-Ansicht ist aktiviert.</string>
+    <string name="dashboard_no_sensors_message">Scheint, als hätten Sie noch keine Ruuvi-Sensoren hinzugefügt.</string>
     <string name="data_format">Datei Format</string>
     <string name="data_forwarding_background_location_message_bloked">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um die Koordinaten einzuschließen.</string>
     <string name="data_forwarding_background_location_message_first">Diese Funktion erfordert eine Standortberechtigung. Um Ihre Standortkoordinaten einzubeziehen, wählen Sie bitte aus, ob Sie einen genauen oder ungefähren Standort wünschen und erlauben Sie den Zugriff während der Verwendung der App, wenn Sie im nächsten Dialog dazu aufgefordert werden.</string>
@@ -182,6 +191,7 @@
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
     <string name="email">Email</string>
     <string name="empty_chart_message">Im gewählten Verlaufsfenster sind keine Daten verfügbar.</string>
+    <string name="enter_code">Code eingeben</string>
     <string name="error">Fehler</string>
     <string name="error_dfu_disconnected">Gerät nicht angeschlossen</string>
     <string name="error_dfu_firmware_not_valid">Firmware ist nicht gültig</string>
@@ -260,6 +270,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Neueste verfügbare Ruuvi Firmware-Version:</string>
+    <string name="lets_do_it">Lass es uns tun!</string>
     <string name="light_theme">Thema Licht</string>
     <string name="logged_in">Eingeloggt:</string>
     <string name="login_description">Um alle Funktionen nutzen zu können, erstellen Sie ein kostenloses Konto oder melden Sie sich bei Ihrem bestehenden Ruuvi-Konto an, indem Sie Ihre E-Mail-Adresse eingeben.</string>
@@ -282,7 +293,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
     <string name="movement_counter">Bewegungszähler</string>
-    <string name="movements">Sensor auswählen</string>
+    <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
     <string name="my_ruuvi_account">Mein Ruuvi Konto</string>
     <string name="name">NAME</string>
@@ -300,11 +311,14 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_new_data_points">Keine neuen Datenpunkte verfügbar</string>
+    <string name="no_password_needed">Es wird kein Passwort benötigt.</string>
     <string name="none">keiner</string>
+    <string name="note">Notiz!</string>
     <string name="notification_permission_needed">Um Benachrichtigungen zu aktivieren, erlauben Sie bitte Benachrichtigungen in den Einstellungen</string>
     <string name="offset_correction">Offset-Korrektur</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ihr Sensor meldet seine aktuelle Firmware-Version nicht. Dies bedeutet, dass wahrscheinlich eine alte Firmware-Version ausgeführt wird und eine Aktualisierung empfohlen wird.</string>
+    <string name="onboarding_access_widgets">Greifen Sie direkt von Ihrem Startbildschirm aus auf Ihre bevorzugten Sensoren zu</string>
     <string name="onboarding_alerts">Warnungen</string>
     <string name="onboarding_dashboard">Dashboard</string>
     <string name="onboarding_explore_detailed">Detaillierte Entdeckungen 10 Tage</string>
@@ -367,6 +381,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="remove_this_sensor">Entfernen Sie diesen Sensor</string>
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Batterie austauschen!</string>
+    <string name="request_code">Anfrage Code</string>
     <string name="rssi">Signalstärke (RSSI)</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
@@ -378,11 +393,13 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="select_default_image">Aus Standardbildern auswählen</string>
     <string name="select_from_gallery">Aus der Handy-Galerie auswählen</string>
     <string name="select_picture">Bild auswählen</string>
+    <string name="select_sensor">Sensor auswählen</string>
     <string name="send_email">Email schicken</string>
     <string name="sensor_already_added">Sensor ist bereits hinzugefügt</string>
     <string name="sensor_not_shared">Nicht geteilt</string>
     <string name="sensor_settings">Sensoreinstellungen</string>
     <string name="sensor_shared">Geteilt</string>
+    <string name="sensors_ownership_and_settings_stored_in_cloud">Die Eigentumsrechte und Einstellungen des Sensors werden sicher in der Ruuvi Cloud gespeichert.</string>
     <string name="settings">Einstellungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>
     <string name="settings_background_battery_optimization">Wenn beim Scannen im Hintergrund Probleme auftreten, sollten Sie die Batterieoptimierung für Ruuvi Station deaktivieren. Dieses Verfahren kann je nach Gerätehersteller, Modell und Android-Version variieren.</string>
@@ -403,7 +420,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_background_scan_interval_description">Definieren Sie, wie oft der Hintergrundscan ausgeführt wird</string>
     <string name="settings_chart">Diagramm Einstellungen</string>
     <string name="settings_chart_all_points">Alle Daten im Diagramm anzeigen</string>
-    <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden</string>
+    <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden.</string>
     <string name="settings_chart_description">Konfigurieren Sie das Intervall zwischen den auf dem Diagramm angezeigten Punkten</string>
     <string name="settings_chart_draw_dots">Punkte im Diagramm zeichnen</string>
     <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden</string>
@@ -419,7 +436,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Gerätekennung</string>
     <string name="settings_humidity_unit">Feuchtigkeitseinheit</string>
-    <string name="settings_humidity_unit_details">Wählen Sie die Luftfeuchtigkeitseinheit aus, die angezeigt werden soll</string>
+    <string name="settings_humidity_unit_details">Wählen Sie die Luftfeuchtigkeitseinheit aus, die angezeigt werden soll.</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
@@ -439,6 +456,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_in_email_sent">E-Mail gesendet</string>
     <string name="sign_in_login_button">Anmeldung</string>
     <string name="sign_in_manual_code">Code manuell eingeben</string>
+    <string name="sign_in_or_create_free_account">Melden Sie sich an oder erstellen Sie ein kostenloses Konto</string>
     <string name="sign_in_request_code">Fordern Sie einen Code an</string>
     <string name="sign_in_skip_confirm_go_back">Zurückgehen</string>
     <string name="sign_in_skip_confirm_title">Sind Sie sicher, dass Sie die Anmeldung überspringen wollen?</string>
@@ -458,7 +476,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="subscription_disclaimer">Dies ist eine völlig kostenlose App, die keine monatlichen Abonnementkäufe oder andere In-App-Käufe unterstützt. Wenn Sie ein Nutzer des Ruuvi Gateway Routers sind und detailliertere Informationen über Ihr Ruuvi Konto suchen, gehen Sie auf unsere Website und melden Sie sich an.</string>
     <string name="successfully_claimed">Besitz des Sensors erfolgreich beansprucht</string>
     <string name="successfully_shared">Sensor erfolgreich geteilt</string>
-    <string name="sync">Synchronisieren</string>
+    <string name="sync">Sync</string>
     <string name="sync_complete">Synchronisierung abgeschlossen</string>
     <string name="sync_confirm">Daten vom Sensor herunterladen?</string>
     <string name="synchronizing">Synchronisieren</string>
@@ -481,15 +499,18 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">vor %1$s</string>
     <string name="title_activity_dfu_update">Firmware Update</string>
+    <string name="to_use_all_app_features">Um alle Funktionen zu nutzen und den Besitz Ihrer Sensoren zu verifizieren</string>
     <string name="try_again">Erneut versuchen</string>
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="type_your_email">Geben Sie Ihre E-Mail ein..</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="update_action">NEUSTART</string>
     <string name="update_downloaded_message">Ein Update wurde soeben heruntergeladen.</string>
     <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
+    <string name="use_without_account">Nutzung ohne Konto</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
@@ -502,6 +523,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="welcome_text_4_2">Beanspruchen Sie das Eigentum an Ihren Sensoren mit einem kostenlosen Ruuvi Cloud-Konto.</string>
     <string name="welcome_text_5">Drücken Sie SCAN, um Sensoren in der Nähe zu finden und zu Ihrer Ruuvi Station hinzuzufügen.</string>
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="why_should_sign_in">Warum sollte ich mich anmelden?</string>
     <string name="widget_empty">Drücken Sie +, um Sensoren hinzuzufügen</string>
     <string name="widgets_battery_optimisation_hint">Damit die Widgets von Ruuvi automatisch aktualisiert werden können, deaktivieren Sie bitte die Batterieoptimierung der App.</string>
     <string name="widgets_gateway_only">Sie können Ruuvi-Widgets verwenden, wenn sich Ihre Sensoren in Reichweite eines Ruuvi-Gateways befinden oder wenn Ihnen jemand einen Ruuvi-Sensor zur Verfügung gestellt hat.</string>

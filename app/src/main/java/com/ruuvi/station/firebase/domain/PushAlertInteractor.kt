@@ -11,6 +11,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.firebase.data.AlertMessage
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -19,7 +20,8 @@ import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 
 class PushAlertInteractor(
-    val unitsConverter: UnitsConverter
+    val unitsConverter: UnitsConverter,
+    val alarmRepository: AlarmRepository
 ) {
     fun processAlertPush(message: AlertMessage, context: Context) {
         message.alarmType.let { alarmType ->
@@ -27,14 +29,15 @@ class PushAlertInteractor(
             if (notificationMessage != null) {
                 val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 createNotificationChannel(notificationManager)
+                val alertId = getAlertId(message.id, message.alarmType)
                 val notificationData = AlertNotificationData (
                     sensorId = message.id,
                     message = notificationMessage,
-                    alarmId = null,
+                    alarmId = alertId,
                     sensorName = message.name,
                     alertCustomDescription = message.alertData
                         )
-                notificationManager.notify(-1, createNotification(context, notificationData))
+                notificationManager.notify(alertId ?: -1, createNotification(context, notificationData))
             }
         }
     }
@@ -174,6 +177,10 @@ class PushAlertInteractor(
         }
 
         return notification.build()
+    }
+
+    private fun getAlertId(sensorId: String, alarmType: AlarmType?): Int? {
+        return alarmRepository.getForSensor(sensorId).firstOrNull{it.alarmType == alarmType}?.id
     }
 
     companion object {
