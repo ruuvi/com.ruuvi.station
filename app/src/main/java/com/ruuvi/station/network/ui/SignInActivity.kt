@@ -23,9 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -37,6 +41,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.onboarding.ui.OnboardingSubTitle
@@ -94,8 +99,8 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
                         ) {
                             EnterEmailPage(
-                                {},
-                                { navController.navigate(UiEvent.Navigate(SignInRoutes.CLOUD_BENEFITS)) }
+                                requestCode = { navController.navigate(UiEvent.Navigate(SignInRoutes.ENTER_CODE)) },
+                                useWithoutAccount = { navController.navigate(UiEvent.Navigate(SignInRoutes.CLOUD_BENEFITS)) }
                             )
                         }
                         composable(
@@ -103,14 +108,23 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
-                             CloudBenefitsPage()
+                            CloudBenefitsPage(
+                                letsDoIt = {
+                                    navController.navigate(UiEvent.Navigate(SignInRoutes.ENTER_EMAIL))
+                                },
+                                useWithoutAccount = {
+                                    finish()
+                                }
+                            )
                         }
                         composable(
                             SignInRoutes.ENTER_CODE,
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
-
+                            EnterCodePage() {
+                                finish()
+                            }
                         }
                     }
                 }
@@ -152,7 +166,7 @@ fun EnterEmailPage(
     var email by remember{ mutableStateOf("") }
 
     Column(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -166,6 +180,7 @@ fun EnterEmailPage(
         SignInTextFieldRuuvi(value = email, hint = stringResource(id = R.string.type_your_email), onValueChange = { email = it })
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         RuuviButton(text = stringResource(id = R.string.request_code)) {
+            requestCode.invoke("email")
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         OnboardingText(text = stringResource(id = R.string.no_password_needed))
@@ -190,10 +205,14 @@ fun EnterEmailPage(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CloudBenefitsPage() {
+fun CloudBenefitsPage(
+    letsDoIt: () -> Unit,
+    useWithoutAccount: () -> Unit
+) {
     Column(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -203,9 +222,86 @@ fun CloudBenefitsPage() {
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.big))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingSubTitle(text = stringResource(id = R.string.sensors_ownership_and_settings_stored_in_cloud))
-        Text(text = "", textDecoration = TextDecoration.Underline)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         BenefitsList()
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        val annotatedString = buildAnnotatedString {
+            withStyle(style = SpanStyle(Orange2)) {
+                append(stringResource(id = R.string.note))
+            }
+            append(" ")
+            append(stringResource(id = R.string.claim_warning))
+        }
+        OnboardingText(text = annotatedString)
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        RuuviButton(text = stringResource(id = R.string.lets_do_it)) {
+            letsDoIt.invoke()
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                    .clickable { useWithoutAccount.invoke() },
+                style = RuuviStationTheme.typography.onboardingSubtitle,
+                textAlign = TextAlign.Center,
+                text = stringResource(id = R.string.use_without_account),
+                textDecoration = TextDecoration.Underline,
+                fontSize = 16.scaledSp,
+                lineHeight = 20.scaledSp
+            )
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        }
+
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun EnterCodePage(codeEntered: (String) -> Unit) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val imageSizeFraction = if (isTablet) 0.8f else 1f
+
+    var code by remember{ mutableStateOf("") }
+
+    Box(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        contentAlignment = Alignment.Center
+    ) {
+        GlideImage(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(imageSizeFraction)
+                .navigationBarsPadding(),
+            model = rememberResourceUri(resourceId = R.drawable.signin_beaver_mail),
+            contentDescription = "",
+            alignment = Alignment.BottomCenter,
+            contentScale = ContentScale.FillWidth
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+        OnboardingTitle(
+            text = stringResource(id = R.string.enter_code)
+        )
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        SignInTextFieldRuuvi(value = code, onValueChange = {
+            code = it
+            if (code.length >= 4) {
+                codeEntered.invoke(code)
+            }
+        })
     }
 }
 

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
@@ -152,11 +153,23 @@ fun OnboardingSubTitle(text: String) {
 fun OnboardingText(text: String) {
     Text(
         modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
-        style = RuuviStationTheme.typography.onboardingSubtitle,
+        style = RuuviStationTheme.typography.onboardingText,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 16.scaledSp,
-        lineHeight = 20.scaledSp
+        fontSize = 18.scaledSp,
+        lineHeight = 22.scaledSp
+    )
+}
+
+@Composable
+fun OnboardingText(text: AnnotatedString) {
+    Text(
+        modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+        style = RuuviStationTheme.typography.onboardingText,
+        textAlign = TextAlign.Center,
+        text = text,
+        fontSize = 18.scaledSp,
+        lineHeight = 22.scaledSp
     )
 }
 
