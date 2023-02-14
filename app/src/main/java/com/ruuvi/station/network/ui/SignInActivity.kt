@@ -44,6 +44,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.onboarding.ui.BackgroundBeaver
 import com.ruuvi.station.onboarding.ui.OnboardingSubTitle
 import com.ruuvi.station.onboarding.ui.OnboardingText
 import com.ruuvi.station.onboarding.ui.OnboardingTitle
@@ -259,7 +260,6 @@ fun CloudBenefitsPage(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EnterCodePage(codeEntered: (String) -> Unit) {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -267,21 +267,7 @@ fun EnterCodePage(codeEntered: (String) -> Unit) {
 
     var code by remember{ mutableStateOf("") }
 
-    Box(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
-        contentAlignment = Alignment.Center
-    ) {
-        GlideImage(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(imageSizeFraction)
-                .navigationBarsPadding(),
-            model = rememberResourceUri(resourceId = R.drawable.signin_beaver_mail),
-            contentDescription = "",
-            alignment = Alignment.BottomCenter,
-            contentScale = ContentScale.FillWidth
-        )
-    }
+    BackgroundBeaver(R.drawable.signin_beaver_mail)
 
     Column(
         modifier = Modifier.fillMaxSize().systemBarsPadding(),

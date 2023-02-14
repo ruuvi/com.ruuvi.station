@@ -10,8 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +35,9 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.onboarding.domain.OnboardingPages
 import com.ruuvi.station.util.extensions.scaledSp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +80,7 @@ class OnboardingActivity : AppCompatActivity() {
 @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun OnboardingBody(
-    onSkipAction: () -> Unit
+    onFinishAction: () -> Unit
 ) {
     val pagerState = rememberPagerState()
 
@@ -113,7 +115,7 @@ fun OnboardingBody(
             OnboardingPages.SHARING -> SharingPage()
             OnboardingPages.WIDGETS -> WidgetsPage()
             OnboardingPages.WEB -> WebPage()
-            OnboardingPages.FINISH -> FinishPage(onSkipAction)
+            OnboardingPages.FINISH -> FinishPage(onFinishAction)
         }
     }
 
@@ -122,7 +124,12 @@ fun OnboardingBody(
             height = OnboardingActivity.topBarHeight,
             pagerState = pagerState,
             skipVisible = pageType != OnboardingPages.FINISH
-        ) { onSkipAction.invoke() }
+
+        ) {
+            CoroutineScope(Dispatchers.Main).launch {
+                pagerState.scrollToPage(OnboardingPages.values().indexOf(OnboardingPages.FINISH))
+            }
+        }
     }
 }
 
@@ -208,16 +215,8 @@ fun Screenshot(imageRes: Int) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MeasureYourWorldPage() {
-    GlideImage(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .navigationBarsPadding(),
-        model = rememberResourceUri(resourceId = R.drawable.onboarding_beaver_v2),
-        contentDescription = "",
-        alignment = Alignment.BottomCenter,
-        contentScale = ContentScale.FillWidth
-    )
+    BackgroundBeaver(R.drawable.onboarding_beaver_start)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -231,6 +230,29 @@ fun MeasureYourWorldPage() {
         OnboardingSubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         OnboardingSubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun BackgroundBeaver(imageRes: Int) {
+    val isTablet = booleanResource(id = R.bool.isTablet)
+    val imageSizeFraction = if (isTablet) 0.8f else 1f
+
+    Box(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        contentAlignment = Alignment.Center
+    ) {
+        GlideImage(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(imageSizeFraction)
+                .navigationBarsPadding(),
+            model = rememberResourceUri(resourceId = imageRes),
+            contentDescription = "",
+            alignment = Alignment.BottomCenter,
+            contentScale = ContentScale.FillWidth
+        )
     }
 }
 
@@ -296,7 +318,7 @@ fun DashboardPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_dashboard))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Screenshot(R.drawable.onboarding_dashboard)
+        Screenshot(R.drawable.onboarding_screenshot_dashboard)
     }
 }
 
@@ -314,7 +336,7 @@ fun PersonalisePage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Screenshot(R.drawable.onboarding_personalise)
+        Screenshot(R.drawable.onboarding_screenshot_personalise)
     }
 }
 
@@ -332,7 +354,7 @@ fun HistoryPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_history))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Screenshot(R.drawable.onboarding_history)
+        Screenshot(R.drawable.onboarding_screenshot_history)
     }
 }
 
@@ -350,11 +372,10 @@ fun AlertsPage() {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_alerts))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        Screenshot(R.drawable.onboarding_alerts)
+        Screenshot(R.drawable.onboarding_screenshot_alerts)
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SharingPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -396,7 +417,6 @@ fun WidgetsPage() {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun WebPage() {
     val imageSizeFraction = 0.8f
@@ -445,6 +465,8 @@ fun FitImageAboveBanner(
 
 @Composable
 fun FinishPage(continueAction: ()-> Unit) {
+    BackgroundBeaver(R.drawable.onboarding_beaver_end)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
