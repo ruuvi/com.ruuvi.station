@@ -54,6 +54,7 @@ import com.ruuvi.station.util.extensions.scaledSp
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
 class SignInActivity: AppCompatActivity(), KodeinAware {
@@ -282,12 +283,10 @@ fun EnterCodePage(codeEntered: (String) -> Unit) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        SignInTextFieldRuuvi(value = code, onValueChange = {
-            code = it
-            if (code.length >= 4) {
-                codeEntered.invoke(code)
-            }
-        })
+        OtpTextField(otpText = code) { text, isDone ->
+            code = text
+            Timber.d("OtpTextField $code $isDone")
+        }
     }
 }
 
