@@ -29,7 +29,7 @@ class SignInViewModel(
         }
         setProgress(true)
 
-        networkInteractor.registerUser(UserRegisterRequest(email = email)) {
+        networkInteractor.registerUser(UserRegisterRequest(email = email.trim())) {
             if (it == null) {
                 //TODO LOCALIZE
                 showError(UiText.DynamicString("Unknown error"))
