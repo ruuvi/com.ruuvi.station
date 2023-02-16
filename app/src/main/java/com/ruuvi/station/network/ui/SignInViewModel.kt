@@ -86,7 +86,7 @@ class SignInViewModel(
 
     private fun signInFinished() {
         viewModelScope.launch {
-            _uiEvent.emit(UiEvent.NavigateUp)
+            _uiEvent.emit(UiEvent.Finish)
         }
     }
 }

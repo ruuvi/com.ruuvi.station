@@ -204,15 +204,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                             R.string.sign_in,
                                             stringResource(id = R.string.sign_in)
                                         )
-                                    },
-                                    MenuItem(
-                                        1111,
-                                        "Welcome"
-                                    ),
-                                    MenuItem(
-                                        2222,
-                                        "Sign In"
-                                    )
+                                    }
                                 ),
                                 onItemClick = { item ->
                                     when (item.id) {
@@ -224,9 +216,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_link))
                                         R.string.menu_buy_gateway -> openUrl(getString(R.string.buy_gateway_link))
                                         R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                        R.string.sign_in -> SignInActivityOld.start(context)
-                                        1111 -> OnboardingActivity.start(context)
-                                        2222 -> SignInActivity.start(context)
+                                        R.string.sign_in -> SignInActivity.start(context)
                                     }
                                     scope.launch {
                                         scaffoldState.drawerState.close()

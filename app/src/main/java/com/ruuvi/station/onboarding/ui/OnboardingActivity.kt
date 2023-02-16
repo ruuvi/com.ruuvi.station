@@ -33,7 +33,9 @@ import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.onboarding.domain.OnboardingPages
+import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.scaledSp
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.CoroutineScope
@@ -59,6 +61,12 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
 
                 OnboardingBody(onboardingViewModel.signedIn) {
                     finish()
+                    onboardingViewModel.onboardingFinished()
+                    if (onboardingViewModel.signedIn) {
+                        StartupActivity.start(this, true)
+                    } else {
+                        SignInActivity.start(this)
+                    }
                 }
 
                 SideEffect {

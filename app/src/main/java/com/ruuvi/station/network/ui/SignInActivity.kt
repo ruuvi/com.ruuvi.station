@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentScope
@@ -17,7 +18,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -50,6 +50,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.settings.ui.*
+import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
 import com.ruuvi.station.util.extensions.viewModel
@@ -75,15 +76,11 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
-                var title: String by rememberSaveable { mutableStateOf("") }
                 var inProgress by remember { mutableStateOf(false) }
 
-                LaunchedEffect(navController) {
-                    navController.currentBackStackEntryFlow.collect { backStackEntry ->
-                        title = SettingsRoutes.getTitleByRoute(
-                            activity,
-                            backStackEntry.destination.route ?: ""
-                        )
+                BackHandler() {
+                    if (navController.currentBackStackEntry?.destination?.route == SignInRoutes.ENTER_EMAIL) {
+                        closeActivity()
                     }
                 }
 
@@ -123,7 +120,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                                     navController.navigateUp()
                                 },
                                 useWithoutAccount = {
-                                    finish()
+                                    closeActivity()
                                 }
                             )
                         }
@@ -156,7 +153,8 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             is UiEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(this@SignInActivity))
                             }
-                            is UiEvent.NavigateUp -> finish()
+                            is UiEvent.Finish -> closeActivity()
+                            is UiEvent.NavigateUp -> navController.navigateUp()
                             is UiEvent.Progress -> inProgress = uiEvent.inProgress
                             else -> {}
                         }
@@ -164,6 +162,11 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 }
             }
         }
+    }
+
+    private fun closeActivity() {
+        finish()
+        StartupActivity.start(this, true)
     }
 
     private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
@@ -296,7 +299,6 @@ fun CloudBenefitsPage(
             )
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
-
     }
 }
 
