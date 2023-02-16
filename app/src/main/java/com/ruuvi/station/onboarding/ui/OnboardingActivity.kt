@@ -124,7 +124,6 @@ fun OnboardingBody(
 
         when (pageType) {
             OnboardingPages.MEASURE_YOUR_WORLD -> MeasureYourWorldPage()
-            OnboardingPages.READ_SENSORS_DATA -> ReadSensorsDataPage()
             OnboardingPages.DASHBOARD -> DashboardPage()
             OnboardingPages.PERSONALISE -> PersonalisePage()
             OnboardingPages.HISTORY -> HistoryPage()
@@ -271,54 +270,6 @@ fun BackgroundBeaver(imageRes: Int) {
             contentDescription = "",
             alignment = Alignment.BottomCenter,
             contentScale = ContentScale.FillWidth
-        )
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun ReadSensorsDataPage() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0x9900CCBA))
-                .padding(
-                    top = OnboardingActivity.topBarHeight,
-                    bottom = RuuviStationTheme.dimensions.extended
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Box(modifier = Modifier.statusBarsPadding()) { }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-            OnboardingTitle(stringResource(id = R.string.onboarding_read_sensors_data))
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-            OnboardingSubTitle(stringResource(id = R.string.onboarding_via_bluetooth_or_cloud))
-        }
-
-        GlideImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.1f),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_cloud_bottom),
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.Center,
-            contentDescription = null
-        )
-
-        GlideImage(
-            modifier = Modifier
-                .fillMaxSize(),
-            model = rememberResourceUri(resourceId = R.drawable.onboarding_read_data),
-            contentScale = ContentScale.Fit,
-            alignment = Alignment.Center,
-            contentDescription = null
         )
     }
 }
