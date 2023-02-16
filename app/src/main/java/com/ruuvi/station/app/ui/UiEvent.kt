@@ -5,4 +5,5 @@ sealed class UiEvent {
     object NavigateUp: UiEvent()
     data class ShowSnackbar(val message: UiText): UiEvent()
     data class ShowPopup(val message: UiText): UiEvent()
+    data class Progress(val inProgress: Boolean, val message: UiText?): UiEvent()
 }

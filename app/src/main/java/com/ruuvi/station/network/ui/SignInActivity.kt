@@ -19,10 +19,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -44,13 +48,11 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.onboarding.ui.BackgroundBeaver
-import com.ruuvi.station.onboarding.ui.OnboardingSubTitle
-import com.ruuvi.station.onboarding.ui.OnboardingText
-import com.ruuvi.station.onboarding.ui.OnboardingTitle
+import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.settings.ui.*
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
+import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -59,6 +61,8 @@ import timber.log.Timber
 @OptIn(ExperimentalAnimationApi::class)
 class SignInActivity: AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by closestKodein()
+
+    private val viewModel: SignInViewModel by viewModel()
 
     @OptIn(ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +76,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
                 var title: String by rememberSaveable { mutableStateOf("") }
+                var inProgress by remember { mutableStateOf(false) }
 
                 LaunchedEffect(navController) {
                     navController.currentBackStackEntryFlow.collect { backStackEntry ->
@@ -90,7 +95,9 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 )
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding(),
                     backgroundColor = Color.Transparent,
                     scaffoldState = scaffoldState
                 ) { padding ->
@@ -101,8 +108,9 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
                         ) {
                             EnterEmailPage(
-                                requestCode = { navController.navigate(UiEvent.Navigate(SignInRoutes.ENTER_CODE)) },
-                                useWithoutAccount = { navController.navigate(UiEvent.Navigate(SignInRoutes.CLOUD_BENEFITS)) }
+                                inProgress = inProgress,
+                                requestCode = { email -> viewModel.submitEmail(email) },
+                                useWithoutAccount = { viewModel.requestToSkipSignIn() }
                             )
                         }
                         composable(
@@ -112,7 +120,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                         ) {
                             CloudBenefitsPage(
                                 letsDoIt = {
-                                    navController.navigate(UiEvent.Navigate(SignInRoutes.ENTER_EMAIL))
+                                    navController.navigateUp()
                                 },
                                 useWithoutAccount = {
                                     finish()
@@ -124,8 +132,8 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
-                            EnterCodePage() {
-                                finish()
+                            EnterCodePage(inProgress) { token ->
+                                viewModel.verifyCode(token)
                             }
                         }
                     }
@@ -136,6 +144,23 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                         color = Color.Transparent,
                         darkIcons = false
                     )
+                }
+
+                LaunchedEffect(null) {
+                    viewModel.uiEvent.collect { uiEvent ->
+                        Timber.d("uiEvent $uiEvent")
+                        when (uiEvent) {
+                            is UiEvent.Navigate -> {
+                                navController.navigate(uiEvent)
+                            }
+                            is UiEvent.ShowSnackbar -> {
+                                scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(this@SignInActivity))
+                            }
+                            is UiEvent.NavigateUp -> finish()
+                            is UiEvent.Progress -> inProgress = uiEvent.inProgress
+                            else -> {}
+                        }
+                    }
                 }
             }
         }
@@ -160,15 +185,20 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EnterEmailPage(
+    inProgress: Boolean,
     requestCode: (String) -> Unit,
     useWithoutAccount: () -> Unit
 ) {
     var email by remember{ mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -181,11 +211,19 @@ fun EnterEmailPage(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         SignInTextFieldRuuvi(value = email, hint = stringResource(id = R.string.type_your_email), onValueChange = { email = it })
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        RuuviButton(text = stringResource(id = R.string.request_code)) {
-            requestCode.invoke("email")
+        RuuviButton(
+            text = stringResource(id = R.string.request_code),
+            enabled = !inProgress
+        ) {
+            requestCode.invoke(email)
+            keyboardController?.hide()
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         OnboardingText(text = stringResource(id = R.string.no_password_needed))
+        if (inProgress) {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            LoadingAnimation3dots()
+        }
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Bottom,
@@ -207,14 +245,15 @@ fun EnterEmailPage(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CloudBenefitsPage(
     letsDoIt: () -> Unit,
     useWithoutAccount: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -261,17 +300,25 @@ fun CloudBenefitsPage(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun EnterCodePage(codeEntered: (String) -> Unit) {
+fun EnterCodePage(
+    inProgress: Boolean,
+    codeEntered: (String) -> Unit
+) {
     val isTablet = booleanResource(id = R.bool.isTablet)
     val imageSizeFraction = if (isTablet) 0.8f else 1f
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
 
     var code by remember{ mutableStateOf("") }
 
     BackgroundBeaver(R.drawable.signin_beaver_mail)
 
     Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -283,10 +330,25 @@ fun EnterCodePage(codeEntered: (String) -> Unit) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        OtpTextField(otpText = code) { text, isDone ->
+        OtpTextField(
+            otpText = code,
+            modifier = Modifier.focusRequester(focusRequester)
+        ) { text, isDone ->
             code = text
+            if (isDone) {
+                keyboardController?.hide()
+                codeEntered.invoke(text)
+            }
             Timber.d("OtpTextField $code $isDone")
         }
+        if (inProgress) {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            LoadingAnimation3dots()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 
