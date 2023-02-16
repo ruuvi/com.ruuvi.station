@@ -351,9 +351,9 @@ fun PersonalisePage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        OnboardingSubTitle(stringResource(id = R.string.onboarding_personalise))
+        OnboardingTitle(stringResource(id = R.string.onboarding_personalise))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        OnboardingTitle(stringResource(id = R.string.onboarding_your_sensors))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         Screenshot(R.drawable.onboarding_screenshot_personalise)
     }
@@ -408,9 +408,9 @@ fun SharingPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        OnboardingSubTitle(stringResource(id = R.string.onboarding_sharees_can_use))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_share_your_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        OnboardingTitle(stringResource(id = R.string.onboarding_share_your_sensors))
+        OnboardingTitle(stringResource(id = R.string.onboarding_sharees_can_use))
         FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_sharing)
     }
 }
