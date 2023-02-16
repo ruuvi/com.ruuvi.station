@@ -13,18 +13,21 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.util.extensions.scaledSp
 
 
 @Composable
 fun OtpTextField(
     modifier: Modifier = Modifier,
     otpText: String,
+    enabled: Boolean = true,
     otpCount: Int = 4,
     onOtpTextChange: (String, Boolean) -> Unit
 ) {
     BasicTextField(
         modifier = modifier,
         value = otpText,
+        enabled = enabled,
         onValueChange = {
             if (it.length <= otpCount) {
                 onOtpTextChange.invoke(it, it.length == otpCount)
@@ -54,8 +57,7 @@ private fun CharView(
 ) {
     val isFocused = text.length == index
     val char = when {
-        index == text.length -> ""
-        index > text.length -> ""
+        index >= text.length -> ""
         else -> text[index].toString()
     }
     Text(
@@ -65,16 +67,13 @@ private fun CharView(
                 1.dp, when {
                     isFocused -> Color.Gray
                     else -> Color.LightGray
-                }, RoundedCornerShape(8.dp)
+                },
+                RoundedCornerShape(8.dp)
             )
-            .padding(2.dp),
+            .padding(top = 2.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
         text = char,
-        style = RuuviStationTheme.typography.onboardingTitle,
-//        color = if (isFocused) {
-//            Color.LightGray
-//        } else {
-//            Color.Gray
-//        },
+        style = RuuviStationTheme.typography.otpChar,
+        fontSize = 28.scaledSp,
         textAlign = TextAlign.Center
     )
 }

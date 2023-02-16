@@ -3,7 +3,6 @@ package com.ruuvi.station.app.ui.theme
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.ruuvi.station.util.extensions.scaledSp
 
 data class RuuviStationTypography(
     val subtitle: TextStyle,
@@ -24,7 +23,8 @@ data class RuuviStationTypography(
     val dashboardSecondary: TextStyle,
     val onboardingTitle: TextStyle,
     val onboardingSubtitle: TextStyle,
-    val onboardingText: TextStyle
+    val onboardingText: TextStyle,
+    val otpChar: TextStyle
 )
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
@@ -130,6 +130,11 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = 16.sp,
             lineHeight = 20.sp
-        )
+        ),
+        otpChar = TextStyle(
+            color = colors.onboardingTextColor,
+            fontFamily = ruuviStationFonts.montserratExtraBold,
+            fontSize = 30.sp
+        ),
     )
 }

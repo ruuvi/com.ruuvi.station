@@ -55,6 +55,7 @@ import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
 import com.ruuvi.station.util.extensions.viewModel
+import kotlinx.coroutines.flow.SharedFlow
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -130,7 +131,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
-                            EnterCodePage(inProgress) { token ->
+                            EnterCodePage(inProgress, viewModel.tokenProcessed) { token ->
                                 viewModel.verifyCode(token)
                             }
                         }
@@ -152,7 +153,10 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                                 navController.navigate(uiEvent)
                             }
                             is UiEvent.ShowSnackbar -> {
-                                scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(this@SignInActivity))
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = uiEvent.message.asString(this@SignInActivity),
+                                    actionLabel = getString(R.string.ok)
+                                )
                             }
                             is UiEvent.Finish -> closeActivity()
                             is UiEvent.NavigateUp -> navController.navigateUp()
@@ -307,6 +311,7 @@ fun CloudBenefitsPage(
 @Composable
 fun EnterCodePage(
     inProgress: Boolean,
+    tokenProcessed: SharedFlow<Boolean>,
     codeEntered: (String) -> Unit
 ) {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -314,7 +319,13 @@ fun EnterCodePage(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
-    var code by remember{ mutableStateOf("") }
+    var code by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = null) {
+        tokenProcessed.collect {
+            if (it) code = ""
+        }
+    }
 
     BackgroundBeaver(R.drawable.signin_beaver_mail)
 
@@ -335,6 +346,7 @@ fun EnterCodePage(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OtpTextField(
             otpText = code,
+            enabled = !inProgress,
             modifier = Modifier.focusRequester(focusRequester)
         ) { text, isDone ->
             code = text
@@ -342,7 +354,6 @@ fun EnterCodePage(
                 keyboardController?.hide()
                 codeEntered.invoke(text)
             }
-            Timber.d("OtpTextField $code $isDone")
         }
         if (inProgress) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))

@@ -22,6 +22,9 @@ class SignInViewModel(
     private val _uiEvent = MutableSharedFlow<UiEvent> ()
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
+    private val _tokenProcessed = MutableSharedFlow<Boolean> ()
+    val tokenProcessed: SharedFlow<Boolean> = _tokenProcessed
+
     fun submitEmail(email: String) {
         if (email.isNullOrEmpty()) {
             showError(UiText.StringResource(R.string.cloud_er_invalid_email_address))
@@ -58,6 +61,9 @@ class SignInViewModel(
             } else {
                 showError(UiText.DynamicString(response))
                 setProgress(false)
+            }
+            viewModelScope.launch {
+                _tokenProcessed.emit(true)
             }
         }
     }
