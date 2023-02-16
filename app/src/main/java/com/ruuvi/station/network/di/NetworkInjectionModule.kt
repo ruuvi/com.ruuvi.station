@@ -54,5 +54,9 @@ object NetworkInjectionModule {
         bind<MyAccountViewModel>() with provider {
             MyAccountViewModel(instance(), instance(), instance(), instance())
         }
+
+        bind<SignInViewModel>() with provider {
+            SignInViewModel(instance(), instance(), instance())
+        }
     }
 }

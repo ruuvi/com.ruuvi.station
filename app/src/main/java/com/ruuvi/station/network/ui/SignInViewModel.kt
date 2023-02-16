@@ -1,0 +1,92 @@
+package com.ruuvi.station.network.ui
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.network.data.request.UserRegisterRequest
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
+
+class SignInViewModel(
+    val networkInteractor: RuuviNetworkInteractor,
+    val networkSignInInteractor: NetworkSignInInteractor,
+    val networkDataSyncInteractor: NetworkDataSyncInteractor
+): ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> ()
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
+
+    fun submitEmail(email: String) {
+        if (email.isNullOrEmpty()) {
+            showError(UiText.StringResource(R.string.cloud_er_invalid_email_address))
+            return
+        }
+        setProgress(true)
+
+        networkInteractor.registerUser(UserRegisterRequest(email = email)) {
+            if (it == null) {
+                //TODO LOCALIZE
+                showError(UiText.DynamicString("Unknown error"))
+            } else {
+                if (it.error.isNullOrEmpty() == false) {
+                    showError(UiText.DynamicString(it.error))
+                } else {
+                    goToPage(SignInRoutes.ENTER_CODE)
+                }
+            }
+            setProgress(false)
+        }
+    }
+
+    fun verifyCode(token: String) {
+        setProgress(true)
+
+        networkSignInInteractor.signIn(token) { response->
+            if (response.isNullOrEmpty()) {
+                viewModelScope.launch {
+                    val syncJob = networkDataSyncInteractor.syncNetworkData()
+                    syncJob.join()
+                    setProgress(false)
+                    signInFinished()
+                }
+            } else {
+                showError(UiText.DynamicString(response))
+                setProgress(false)
+            }
+        }
+    }
+
+    fun requestToSkipSignIn() {
+        goToPage(SignInRoutes.CLOUD_BENEFITS)
+    }
+
+    private fun showError(message: UiText) {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.ShowSnackbar(message))
+        }
+    }
+
+    private fun goToPage(destination: String, popBackStack: Boolean = false) {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.Navigate(destination, popBackStack))
+        }
+    }
+
+    private fun setProgress(inProgress: Boolean, message: UiText? = null) {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.Progress(inProgress, message))
+        }
+    }
+
+    private fun signInFinished() {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.Finish)
+        }
+    }
+}

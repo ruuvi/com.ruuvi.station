@@ -333,7 +333,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
-        private const val PREF_FIRST_START = "FIRST_START_PREF"
+        private const val PREF_FIRST_START = "FIRST_START_PREF2"
         private const val PREF_FIRST_GRAPH = "first_graph_visit"
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"

@@ -2,14 +2,12 @@ package com.ruuvi.station.alarm.ui
 
 import android.content.Context
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -396,7 +394,6 @@ fun ChangeDescriptionDialog(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AlarmEditDialog(
     alarmState: AlarmItemState,
