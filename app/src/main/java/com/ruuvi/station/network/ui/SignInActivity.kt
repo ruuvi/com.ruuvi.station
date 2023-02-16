@@ -31,6 +31,7 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -212,7 +213,7 @@ fun EnterEmailPage(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingSubTitle(text = stringResource(id = R.string.to_use_all_app_features))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        SignInTextFieldRuuvi(value = email, hint = stringResource(id = R.string.type_your_email), onValueChange = { email = it })
+        SignInEmailTextField(value = email, hint = stringResource(id = R.string.type_your_email), onValueChange = { email = it })
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         RuuviButton(
             text = stringResource(id = R.string.request_code),
@@ -367,12 +368,11 @@ fun BenefitsList() {
 }
 
 @Composable
-fun SignInTextFieldRuuvi(
+fun SignInEmailTextField(
     modifier: Modifier = Modifier,
     value: String,
     label: String? = null,
     hint: String? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
     onValueChange: (String) -> Unit,
 ) {
@@ -387,7 +387,7 @@ fun SignInTextFieldRuuvi(
         textStyle = RuuviStationTheme.typography.paragraph,
         colors = OnboardingTextFieldColors(),
         modifier = modifier,
-        keyboardOptions = keyboardOptions,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         keyboardActions = keyboardActions,
         singleLine = true
     )
