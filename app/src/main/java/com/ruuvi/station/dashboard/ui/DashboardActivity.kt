@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -69,17 +71,13 @@ import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.SignInActivityOld
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
-import com.ruuvi.station.onboarding.ui.OnboardingActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
-import com.ruuvi.station.util.extensions.describingTimeSince
-import com.ruuvi.station.util.extensions.openUrl
-import com.ruuvi.station.util.extensions.sendFeedback
-import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
@@ -229,7 +227,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         ) {
                             sensors?.let {
                                 if (it.isEmpty()) {
-                                    EmptyDashboard()
+                                    EmptyDashboard() {
+                                        openUrl(getString(R.string.buy_sensors_link))
+                                    }
                                 } else {
                                     DashboardItems(it, userEmail, dashboardType)
                                 }
@@ -272,23 +272,45 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 }
 
 @Composable
-fun EmptyDashboard() {
+fun EmptyDashboard(buySensors: () -> Unit) {
     val context = LocalContext.current
 
-    Row(
+    Card(
         modifier = Modifier
-            .fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+            .fillMaxSize()
+            .padding(RuuviStationTheme.dimensions.medium)
+            .systemBarsPadding(),
+        shape = RoundedCornerShape(10.dp),
+        elevation = 0.dp,
+        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
     ) {
-        Text(
-            modifier = Modifier.clickable {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+                style = RuuviStationTheme.typography.onboardingSubtitle,
+                text = stringResource(id = R.string.dashboard_no_sensors_message),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+            RuuviButton(text = stringResource(id = R.string.add_your_first_sensor)) {
                 AddTagActivity.start(context)
-            },
-            style = RuuviStationTheme.typography.title,
-            text = stringResource(id = R.string.press_to_add),
-            textAlign = TextAlign.Center
-        )
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                    .clickable { buySensors.invoke() },
+                style = RuuviStationTheme.typography.title,
+                textAlign = TextAlign.Center,
+                text = stringResource(id = R.string.menu_buy_sensors),
+                textDecoration = TextDecoration.Underline
+            )
+        }
     }
 }
 
