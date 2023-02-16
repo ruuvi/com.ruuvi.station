@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.ui.theme
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -24,7 +25,9 @@ data class RuuviStationTypography(
     val onboardingTitle: TextStyle,
     val onboardingSubtitle: TextStyle,
     val onboardingText: TextStyle,
-    val otpChar: TextStyle
+    val otpChar: TextStyle,
+    val emailTextField: TextStyle,
+    val emailHintTextField: TextStyle,
 )
 
 fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
@@ -135,6 +138,16 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             color = colors.onboardingTextColor,
             fontFamily = ruuviStationFonts.montserratExtraBold,
             fontSize = 30.sp
+        ),
+        emailTextField = TextStyle(
+            color = Color.White,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = ruuviStationFontsSizes.normal
+        ),
+        emailHintTextField = TextStyle(
+            color = Color.LightGray,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = ruuviStationFontsSizes.normal
         ),
     )
 }

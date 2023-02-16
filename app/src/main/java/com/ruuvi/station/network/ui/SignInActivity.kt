@@ -210,7 +210,7 @@ fun EnterEmailPage(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.huge))
         OnboardingTitle(
             text = stringResource(id = R.string.sign_in_or_create_free_account),
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.big))
@@ -248,7 +248,7 @@ fun EnterEmailPage(
                 fontSize = 16.scaledSp,
                 lineHeight = 20.scaledSp
             )
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         }
     }
 }
@@ -282,7 +282,7 @@ fun CloudBenefitsPage(
             append(stringResource(id = R.string.claim_warning))
         }
         OnboardingText(text = annotatedString)
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         RuuviButton(text = stringResource(id = R.string.lets_do_it)) {
             letsDoIt.invoke()
         }
@@ -302,7 +302,7 @@ fun CloudBenefitsPage(
                 fontSize = 16.scaledSp,
                 lineHeight = 20.scaledSp
             )
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         }
     }
 }
@@ -327,8 +327,6 @@ fun EnterCodePage(
         }
     }
 
-    BackgroundBeaver(R.drawable.signin_beaver_mail)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -343,7 +341,7 @@ fun EnterCodePage(
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         OtpTextField(
             otpText = code,
             enabled = !inProgress,
@@ -358,6 +356,9 @@ fun EnterCodePage(
         if (inProgress) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             LoadingAnimation3dots()
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            BackgroundBeaver(R.drawable.signin_beaver_mail)
         }
     }
 
@@ -388,14 +389,14 @@ fun SignInEmailTextField(
     onValueChange: (String) -> Unit,
 ) {
     val labelFun: @Composable (() -> Unit)? = if (label != null) { { Paragraph(text = label) } } else null
-    val hintFun:@Composable (() -> Unit)? = if (hint != null) { { Paragraph(text = hint) } } else null
+    val hintFun:@Composable (() -> Unit)? = if (hint != null) { { Text(text = hint, style = RuuviStationTheme.typography.emailHintTextField) } } else null
 
     TextField(
         value = value,
         onValueChange = onValueChange,
         label = labelFun,
         placeholder = hintFun,
-        textStyle = RuuviStationTheme.typography.paragraph,
+        textStyle = RuuviStationTheme.typography.emailTextField,
         colors = OnboardingTextFieldColors(),
         modifier = modifier,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -406,6 +407,7 @@ fun SignInEmailTextField(
 
 @Composable
 fun OnboardingTextFieldColors() = TextFieldDefaults.textFieldColors(
+    textColor = Color.White,
     backgroundColor = Color.Transparent,
     cursorColor = RuuviStationTheme.colors.accent,
     trailingIconColor = RuuviStationTheme.colors.accent,

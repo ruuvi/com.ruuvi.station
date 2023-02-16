@@ -62,6 +62,7 @@ import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.database.tables.isLowBattery
@@ -293,6 +294,7 @@ fun EmptyDashboard(buySensors: () -> Unit) {
             Text(
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
                 style = RuuviStationTheme.typography.onboardingSubtitle,
+                color = colors.primary,
                 text = stringResource(id = R.string.dashboard_no_sensors_message),
                 textAlign = TextAlign.Center
             )

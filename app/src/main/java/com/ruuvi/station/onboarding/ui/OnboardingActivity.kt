@@ -231,8 +231,6 @@ fun Screenshot(imageRes: Int) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MeasureYourWorldPage() {
-    BackgroundBeaver(R.drawable.onboarding_beaver_start)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -246,6 +244,9 @@ fun MeasureYourWorldPage() {
         OnboardingSubTitle(stringResource(id = R.string.onboarding_with_ruuvi_sensors))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         OnboardingSubTitle(stringResource(id = R.string.onboarding_swipe_to_continue))
+        Column(modifier = Modifier.weight(1f)) {
+            BackgroundBeaver(R.drawable.onboarding_beaver_start)
+        }
     }
 }
 
@@ -268,8 +269,8 @@ fun BackgroundBeaver(imageRes: Int) {
                 .navigationBarsPadding(),
             model = rememberResourceUri(resourceId = imageRes),
             contentDescription = "",
-            alignment = Alignment.BottomCenter,
-            contentScale = ContentScale.FillWidth
+            alignment = Alignment.Center,
+            contentScale = ContentScale.Fit
         )
     }
 }
@@ -402,7 +403,7 @@ fun WebPage() {
         OnboardingSubTitle(stringResource(id = R.string.onboarding_web_pros))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_station_web))
-        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_web)
+        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_web_app)
     }
 }
 
@@ -438,8 +439,6 @@ fun FinishPage(
     signedIn: Boolean,
     continueAction: ()-> Unit
 ) {
-    BackgroundBeaver(R.drawable.onboarding_beaver_end)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -449,18 +448,20 @@ fun FinishPage(
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         if (signedIn) {
-            OnboardingTitle(stringResource(id = R.string.onboarding_lets_get_started ))
+            OnboardingTitle(stringResource(id = R.string.onboarding_lets_get_started))
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             OnboardingSubTitle(stringResource(id = R.string.onboarding_lets_get_started_description))
         } else {
-            OnboardingTitle(stringResource(id = R.string.onboarding_almost_there ))
+            OnboardingTitle(stringResource(id = R.string.onboarding_almost_there))
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             OnboardingSubTitle(stringResource(id = R.string.onboarding_go_to_sign_in))
         }
-
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         RuuviButton(text = stringResource(id = R.string.onboarding_continue)) {
             continueAction.invoke()
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            BackgroundBeaver(R.drawable.onboarding_beaver_end)
         }
     }
 }
@@ -496,7 +497,8 @@ fun GatewayBanner() {
                 style = RuuviStationTheme.typography.onboardingSubtitle,
                 textAlign = TextAlign.Start,
                 text = stringResource(id = R.string.onboarding_gateway_required),
-                fontSize = 16.scaledSp
+                fontSize = 16.scaledSp,
+                lineHeight = 20.scaledSp
             )
         }
     }
