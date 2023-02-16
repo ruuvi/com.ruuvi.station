@@ -100,6 +100,8 @@
     <string name="change_background">Change background</string>
     <string name="change_background_image">Change background image</string>
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
+    <string name="changelog">(changelog)</string>
+    <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable Bluetooth background scanning?</string>

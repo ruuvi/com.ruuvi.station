@@ -12,8 +12,8 @@ import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
+import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -59,7 +59,8 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
     }
 
     private fun showAppStats(appStats: AppStats?) {
-        var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + "\n"
+        var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + " " +
+                getString(R.string.changelog)+ "\n"
 
         appStats?.let {
             debugText += getString(R.string.help_seen_tags, it.seenTags) + "\n"
@@ -71,6 +72,10 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
         val dbFile = File(dbPath)
         debugText += getString(R.string.help_db_size, dbFile.length() / 1024)
         binding.content.debugInfo.text = debugText
+        binding.content.debugInfo.makeWebLinks(
+            this,
+            Pair(getString(R.string.changelog), getString(R.string.changelog_android_url))
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
