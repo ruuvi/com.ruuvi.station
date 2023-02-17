@@ -360,9 +360,9 @@ fun SharingPage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-        OnboardingSubTitle(stringResource(id = R.string.onboarding_share_your_sensors))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_sharees_can_use))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        OnboardingSubTitle(stringResource(id = R.string.onboarding_share_your_sensors))
         FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_sharing)
     }
 }

@@ -56,6 +56,7 @@ fun RuuviButton(
 ) {
     Button(
         modifier = modifier
+            .defaultMinSize(minWidth = 150.dp)
             .height(height),
         enabled = enabled,
         shape = shape,

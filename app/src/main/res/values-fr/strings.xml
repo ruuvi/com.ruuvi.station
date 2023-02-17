@@ -65,6 +65,7 @@
     <string name="background_scanning">Balayage en arrière plan (Bluetooth)</string>
     <string name="battery_ok">Batterie OK</string>
     <string name="battery_voltage">Tension de la pile</string>
+    <string name="benefits_sign_in">En savoir plus sur les avantages du compte Ruuvi ou connectez-vous plus tard</string>
     <string name="beta">beta</string>
     <string name="bluetooth_download">Téléchargement Bluetooth</string>
     <string name="bluetooth_download_description">Les données du capteur local peuvent être téléchargées lorsque vous êtes dans sa portée Bluetooth.</string>
@@ -108,7 +109,7 @@
     <string name="claim_description">Êtes-vous propriétaire de ce capteur ? En devenant propriétaire, le capteur sera associé à votre compte Ruuvi. Chaque capteur ne peut avoir qu\'un seul propriétaire.\n\nAvantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="claim_ownership">Confirmer l\'appropriation</string>
     <string name="claim_sensor">Confirmer l\'appropriation</string>
-    <string name="claim_warning">Si vous ne revendiquez pas la propriété de vos capteurs, ils peuvent être revendiqués par des tiers indésirables.</string>
+    <string name="claim_warning">Sécurisez les informations de propriété de vos capteurs en revendiquant leurs propriétés dans l\'application.</string>
     <string name="claim_wrong_sensor_scanned">Vous scannez différents RuuviTag</string>
     <string name="clear">Effacer</string>
     <string name="clear_confirm">Supprimer l\'historique de l\'application ?</string>
@@ -139,12 +140,12 @@
     <string name="cloud_er_user_not_found">Utilisateur introuvable</string>
     <string name="cloud_only_mode">Statut du cloud</string>
     <string name="cloud_only_mode_description">Mettre à jour les capteurs à proximité associés au cloud seulement en rejetant les messages Bluetooth depuis le could. Nécessite le routeur Ruuvi Gateway.</string>
-    <string name="cloud_stored_alerts">● Alertes</string>
-    <string name="cloud_stored_backgrounds">● Images d\'arrière-plan</string>
+    <string name="cloud_stored_alerts">● Images d\'arrière-plan</string>
+    <string name="cloud_stored_backgrounds">● Paramètres d\'alerte</string>
     <string name="cloud_stored_calibration">● Paramètres d\'étalonnage</string>
     <string name="cloud_stored_names">● Noms des capteurs</string>
     <string name="cloud_stored_ownerships">● Propriété des capteurs</string>
-    <string name="cloud_stored_sharing">● Paramètres de partage</string>
+    <string name="cloud_stored_sharing">● Paramètres de l\'application</string>
     <string name="confirm">Confirmer</string>
     <string name="connected_reading_info">Synchronisation...</string>
     <string name="connecting">Connexion...</string>
@@ -266,7 +267,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Dernière version du Ruuvi Firmware :</string>
-    <string name="lets_do_it">Faisons-le!</string>
+    <string name="lets_do_it">Connectez-vous</string>
     <string name="light_theme">Thème de la lumière</string>
     <string name="logged_in">Connecté :</string>
     <string name="login_description">Profitez de tous les avantages de Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
@@ -307,14 +308,14 @@
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_new_data_points">Pas de nouvelles données disponibles</string>
-    <string name="no_password_needed">Aucun mot de passe n\'est nécessaire.</string>
+    <string name="no_password_needed">Un compte gratuit sera créé pour cet e-mail si vous n\'en avez pas déjà un. Seule l\'adresse e-mail est requise. Nous gardons vos informations en toute sécurité.</string>
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Impossible d\'obtenir la version actuelle de l\'appareil. La version est probablement trop ancienne et il est recommandé d\'effectuer une mise à jour.</string>
-    <string name="onboarding_access_widgets">Ajoutez vos capteurs préférés à votre écran d\'accueil sous forme</string>
+    <string name="onboarding_access_widgets">Apportez vos capteurs préférés sur votre écran d\'accueil sous forme</string>
     <string name="onboarding_alerts">alertes</string>
     <string name="onboarding_almost_there">Presque là!</string>
     <string name="onboarding_continue">Suivant</string>
@@ -331,15 +332,15 @@
     <string name="onboarding_personalise">Personnalisez</string>
     <string name="onboarding_read_sensors_data">Lisez vos capteurs Ruuvi</string>
     <string name="onboarding_set_custom">Définissez et personnalisez vos</string>
-    <string name="onboarding_share_your_sensors">Mesurez avec vos amis et votre famille en</string>
-    <string name="onboarding_sharees_can_use">partageant des capteurs</string>
+    <string name="onboarding_share_your_sensors">à mesurer avec vos amis et votre famille.</string>
+    <string name="onboarding_sharees_can_use">Partagez des capteurs</string>
     <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_station_web">Ruuvi Web App</string>
+    <string name="onboarding_station_web">l\'application Web Ruuvi</string>
     <string name="onboarding_swipe_to_continue">Balayez pour continuer →</string>
     <string name="onboarding_via_bluetooth_or_cloud">en utilisant Bluetooth ou Ruuvi Cloud</string>
-    <string name="onboarding_web_pros">Grand tableau de bord, historique sur plusieurs années, alertes par courriel, etc.</string>
-    <string name="onboarding_with_ruuvi_sensors">Mesurer n\'a jamais été aussi simple.</string>
-    <string name="onboarding_your_sensors">votre application en utilisant des noms et des arrière-plans personnalisés.</string>
+    <string name="onboarding_web_pros">Grand tableau de bord, historique pluriannuel, alertes par e-mail et plus encore sur</string>
+    <string name="onboarding_with_ruuvi_sensors">Apprenez à connaître votre application Ruuvi Station.</string>
+    <string name="onboarding_your_sensors">votre application avec des noms et des arrière-plans personnalisés.</string>
     <string name="open_settings">Ouvrir les réglages</string>
     <string name="owner_none">Pas de propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
@@ -380,7 +381,7 @@
     <string name="remove_shared_sensor">En supprimant le capteur vous n\'aurez plus accès aux données du capteur et une notification sera envoyée au propriétaire.</string>
     <string name="remove_this_sensor">Supprimer le capteur</string>
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
-    <string name="replace_battery">Remplacez la batterie !</string>
+    <string name="replace_battery">Batterie faible</string>
     <string name="request_code">Demander un code</string>
     <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode nuage lorsque vous souhaitez enregistrer les données de puissance du signal uniquement via la passerelle Ruuvi.</string>
@@ -399,8 +400,8 @@
     <string name="sensor_not_shared">Non partagé</string>
     <string name="sensor_settings">Paramètres</string>
     <string name="sensor_shared">Partagé</string>
-    <string name="sensors_ownership_and_settings_stored_in_cloud">Les propriétés et les paramètres du capteur seront stockés en toute sécurité dans Ruuvi Cloud.</string>
     <string name="settings">Réglages</string>
+    <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
     <string name="settings_background_battery_optimization">Si le balayage en arrière plan ne fonctionne pas, désactivez le mode économie d\'énergie de votre téléphone.</string>
     <string name="settings_background_battery_optimization_common_instructions">Allez dans : Réglages -> Applications -> Ruuvi Station -> Batterie -> Économie d\'énergie -> Désactiver.</string>
@@ -456,7 +457,7 @@
     <string name="sign_in_email_sent">Email envoyé</string>
     <string name="sign_in_login_button">Connexion</string>
     <string name="sign_in_manual_code">Entrer le code</string>
-    <string name="sign_in_or_create_free_account">Connectez-vous ou créez un compte gratuit</string>
+    <string name="sign_in_or_create_free_account">Connectez-vous ou créez un compte Ruuvi gratuit</string>
     <string name="sign_in_request_code">Obtenir un code</string>
     <string name="sign_in_skip_confirm_go_back">Retourner</string>
     <string name="sign_in_skip_confirm_title">Êtes-vous sûr de vouloir ignorer l\'ouverture de session ?</string>
@@ -499,7 +500,7 @@
     <string name="temperature_with_unit">Température (%1$s)</string>
     <string name="time_since">il y\'a %1$s</string>
     <string name="title_activity_dfu_update">Mise à jour du firmware</string>
-    <string name="to_use_all_app_features">Pour utiliser toutes les fonctionnalités et vérifier la propriété de vos capteurs</string>
+    <string name="to_use_all_app_features">Aucun mot de passe nécessaire.</string>
     <string name="try_again">Essayez à nouveau</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
@@ -510,7 +511,7 @@
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
-    <string name="use_without_account">Utiliser sans compte</string>
+    <string name="use_without_account">Non merci, je continue sans compte</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
@@ -523,7 +524,7 @@
     <string name="welcome_text_4_2">Réclamez la propriété de vos capteurs avec un compte Ruuvi Cloud gratuit.</string>
     <string name="welcome_text_5">Afficher les capteurs à proximité en appuyant sur BALAYAGE.</string>
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
-    <string name="why_should_sign_in">Pourquoi devrais-je me connecter ?</string>
+    <string name="why_should_sign_in">Bénéfices</string>
     <string name="widget_empty">Appuyez sur + pour ajouter des capteurs</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur.</string>

@@ -65,6 +65,7 @@
     <string name="background_scanning">Bakgrundsskanning (Bluetooth)</string>
     <string name="battery_ok">Batteri OK</string>
     <string name="battery_voltage">Batterispänning</string>
+    <string name="benefits_sign_in">Läs mer om Ruuvi-kontoförmåner eller logga in senare</string>
     <string name="beta">beta</string>
     <string name="bluetooth_download">Bluetooth-nedladdning</string>
     <string name="bluetooth_download_description">Lokal sensordata kan laddas ner när du är inom Bluetooth-räckvidd.</string>
@@ -109,7 +110,7 @@
     <string name="claim_in_progress">Anspråk pågår</string>
     <string name="claim_ownership">Bekräfta Ägandet</string>
     <string name="claim_sensor">Bekräfta ägandet</string>
-    <string name="claim_warning">Om du inte gör anspråk på ägarskap av dina sensorer kan annan oönskad göra det.</string>
+    <string name="claim_warning">Säkra ägarinformationen för dina sensorer genom att göra anspråk på deras äganderätt i appen.</string>
     <string name="claim_wrong_sensor_scanned">Du skannar fel RuuviTag</string>
     <string name="clear">Rensa</string>
     <string name="clear_confirm">Radera historisk data från appen?</string>
@@ -140,12 +141,12 @@
     <string name="cloud_er_user_not_found">Användaren hittades inte</string>
     <string name="cloud_only_mode">Molnläge</string>
     <string name="cloud_only_mode_description">Uppdatera närliggande molnregistrerade sensorer endast från molnet genom att inte lyssna på deras Bluetooth-meddelanden. Kräver en Ruuvi Gateway.</string>
-    <string name="cloud_stored_alerts">● Alarm</string>
-    <string name="cloud_stored_backgrounds">● Bakgrundsbilder</string>
+    <string name="cloud_stored_alerts">● Bakgrundsbilder</string>
+    <string name="cloud_stored_backgrounds">● Varningsinställningar</string>
     <string name="cloud_stored_calibration">● Kalibreringsinställningar</string>
     <string name="cloud_stored_names">● Sensornamn</string>
     <string name="cloud_stored_ownerships">● Sensorns ägarskap</string>
-    <string name="cloud_stored_sharing">● Delningsinställningar</string>
+    <string name="cloud_stored_sharing">● App inställningar</string>
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
@@ -262,7 +263,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Senast tillgängliga Ruuvi firmwareversion:</string>
-    <string name="lets_do_it">Vi gör det!</string>
+    <string name="lets_do_it">Gå till inloggning</string>
     <string name="light_theme">Ljust tema</string>
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
@@ -303,14 +304,14 @@
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_new_data_points">Inga nya mätningar tillgängliga</string>
-    <string name="no_password_needed">Inget lösenord krävs.</string>
+    <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
     <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i Inställningar.</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas.</string>
-    <string name="onboarding_access_widgets">Lägg till dina favoritsensorer på din startskärm som</string>
+    <string name="onboarding_access_widgets">Ta med dina favoritsensorer till din startskärm som</string>
     <string name="onboarding_alerts">varningar</string>
     <string name="onboarding_almost_there">Nästan där!</string>
     <string name="onboarding_continue">Nästa</string>
@@ -327,15 +328,15 @@
     <string name="onboarding_personalise">Anpassa</string>
     <string name="onboarding_read_sensors_data">Läs dina Ruuvi-sensorer</string>
     <string name="onboarding_set_custom">Ställ in och anpassa dina</string>
-    <string name="onboarding_share_your_sensors">Mät tillsammans med dina vänner och familj genom att</string>
-    <string name="onboarding_sharees_can_use">dela sensorer</string>
+    <string name="onboarding_share_your_sensors">för att mäta tillsammans med dina vänner och familj.</string>
+    <string name="onboarding_sharees_can_use">Dela sensorer</string>
     <string name="onboarding_skip">Hoppa över.</string>
-    <string name="onboarding_station_web">Ruuvi Web App</string>
+    <string name="onboarding_station_web">Ruuvi webbappen</string>
     <string name="onboarding_swipe_to_continue">Dra för att fortsätta →</string>
     <string name="onboarding_via_bluetooth_or_cloud">med Bluetooth eller Ruuvi Cloud</string>
-    <string name="onboarding_web_pros">Stort data-vy, flera års historik, e-postalarm och mer</string>
-    <string name="onboarding_with_ruuvi_sensors">Att mäta har aldrig varit enklare.</string>
-    <string name="onboarding_your_sensors">din app med hjälp av anpassade namn och bakgrunder.</string>
+    <string name="onboarding_web_pros">Stor instrumentpanel, flerårig historik, e-postvarningar och mer på</string>
+    <string name="onboarding_with_ruuvi_sensors">Lär känna din Ruuvi Station -applikation.</string>
+    <string name="onboarding_your_sensors">din app med anpassade namn och bakgrunder.</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
@@ -376,7 +377,7 @@
     <string name="remove_shared_sensor">Om du tar bort sensorn så meddelas ägaren till sensorn och du kan inte komma åt den längre.</string>
     <string name="remove_this_sensor">Ta bort sensorn</string>
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
-    <string name="replace_battery">Byt batteriet!</string>
+    <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
     <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
@@ -395,7 +396,6 @@
     <string name="sensor_not_shared">Inte delad</string>
     <string name="sensor_settings">Sensorinställningar</string>
     <string name="sensor_shared">Delad</string>
-    <string name="sensors_ownership_and_settings_stored_in_cloud">Sensorns ägarskap och inställningar kommer att lagras säkert i Ruuvi Cloud.</string>
     <string name="settings">Inställningar</string>
     <string name="settings_and_alerts">Inställningar \u0026 alarm</string>
     <string name="settings_appearance">Utseende</string>
@@ -453,7 +453,7 @@
     <string name="sign_in_email_sent">E-post skickat</string>
     <string name="sign_in_login_button">Logga in</string>
     <string name="sign_in_manual_code">Ange kod manuellt</string>
-    <string name="sign_in_or_create_free_account">Logga in eller skapa ett gratis konto.</string>
+    <string name="sign_in_or_create_free_account">Logga in eller skapa ett gratis Ruuvi-konto</string>
     <string name="sign_in_request_code">Begär en inloggningskod</string>
     <string name="sign_in_skip_confirm_go_back">Gå tillbaka</string>
     <string name="sign_in_skip_confirm_title">Är du säker på att du vill hoppa över inloggningen?</string>
@@ -496,7 +496,7 @@
     <string name="temperature_with_unit">Temperatur (%1$s)</string>
     <string name="time_since">%1$s sedan</string>
     <string name="title_activity_dfu_update">Firmware Uppdatering</string>
-    <string name="to_use_all_app_features">För att använda alla funktioner och verifiera ägarskapet av dina sensorer.</string>
+    <string name="to_use_all_app_features">Inget lösenord behövs.</string>
     <string name="try_again">Försök igen</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
@@ -507,7 +507,7 @@
     <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
     <string name="updating">Uppdaterar...</string>
-    <string name="use_without_account">Använd utan konto.</string>
+    <string name="use_without_account">Nej tack, jag fortsätter utan konto</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
@@ -520,7 +520,7 @@
     <string name="welcome_text_4_2">Verifiera ditt sensorägande med ett gratis Ruuvi Cloud-konto.</string>
     <string name="welcome_text_5">Tryck på SCAN för att se sensorerna i närheten.</string>
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
-    <string name="why_should_sign_in">Varför ska jag logga in?</string>
+    <string name="why_should_sign_in">Fördelar</string>
     <string name="widget_empty">Tryck på + för att lägga till sensorer</string>
     <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
