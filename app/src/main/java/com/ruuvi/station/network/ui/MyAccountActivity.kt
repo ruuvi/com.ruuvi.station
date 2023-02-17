@@ -16,6 +16,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.components.*
@@ -134,8 +135,6 @@ fun MyAccountBody(
                 SubtitleWithPadding(text = stringResource(id = R.string.signed_in_user))
                 ParagraphWithPadding(text = user)
 
-                SubscriptionInfo(subscription = subscription)
-
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -149,25 +148,27 @@ fun MyAccountBody(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                ParagraphWithPadding(text = "Anything bellow this line should be removed before beta testing.")
-                
-                if (fcmToken != null) {
-                    MoreInfoItem(
-                        title = "",
-                        value = fcmToken.toString()
-                    )
+                if (BuildConfig.DEBUG) {
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-                }
 
-                if (tokens != null) {
-                    ParagraphWithPadding(text = "Registered FCM tokens")
-                    for (token in tokens) {
-                        Paragraph(text = "${token.first} - ${token.second}")
+                    if (fcmToken != null) {
+                        MoreInfoItem(
+                            title = "",
+                            value = fcmToken.toString()
+                        )
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
                     }
-                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
+                    SubscriptionInfo(subscription = subscription)
+
+                    if (tokens != null) {
+                        ParagraphWithPadding(text = "Registered FCM tokens")
+                        for (token in tokens) {
+                            Paragraph(text = "${token.first} - ${token.second}")
+                        }
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                    }
                 }
             }
         }

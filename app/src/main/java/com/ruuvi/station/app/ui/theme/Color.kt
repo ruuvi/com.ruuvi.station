@@ -25,6 +25,7 @@ val Dark = Color(0xFF001D1B)
 val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
 val Orange = Color(0xCCF48021)
+val OrangeSolid = Color(0xFFF48021)
 val Orange2 = Color(0xFFF8B075)
 val Milky = Color(0xFFD6EAE7)
 val Milky2 = Color(0xFFEEF2F2)
@@ -58,7 +59,8 @@ data class RuuviStationColors(
     val defaultSensorBackground: Color,
     val secondaryTextColor: Color,
     val backgroundAlpha: Float,
-    val onboardingTextColor: Color
+    val onboardingTextColor: Color,
+    val dangerousButton: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -88,7 +90,8 @@ val lightPalette = RuuviStationColors(
     defaultSensorBackground = DefaultSensorBackgroundLight,
     secondaryTextColor = Titan50,
     backgroundAlpha = 0.3f,
-    onboardingTextColor = White
+    onboardingTextColor = White,
+    dangerousButton = OrangeSolid
 )
 
 val darkPalette = RuuviStationColors(
@@ -118,5 +121,6 @@ val darkPalette = RuuviStationColors(
     defaultSensorBackground = DefaultSensorBackgroundDark,
     secondaryTextColor = White50,
     backgroundAlpha = 0.75f,
-    onboardingTextColor = White
+    onboardingTextColor = White,
+    dangerousButton = OrangeSolid
 )

@@ -22,7 +22,7 @@ fun ruuviButtonColors() = ButtonDefaults.buttonColors(
 
 @Composable
 fun ruuviWarningButtonColors() = ButtonDefaults.buttonColors(
-    backgroundColor = RuuviStationTheme.colors.warning,
+    backgroundColor = RuuviStationTheme.colors.dangerousButton,
     contentColor = RuuviStationTheme.colors.buttonText,
     disabledBackgroundColor = RuuviStationTheme.colors.inactive,
     disabledContentColor = RuuviStationTheme.colors.onInactive

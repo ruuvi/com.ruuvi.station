@@ -2,6 +2,7 @@ package com.ruuvi.station.network.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.response.GetSubscriptionResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -35,8 +36,10 @@ class MyAccountViewModel(
 
     init {
         Timber.d("init MyAccountViewModel")
-        getSubscriptionInfo()
-        getRegisteredTokens()
+        if (BuildConfig.DEBUG) {
+            getSubscriptionInfo()
+            getRegisteredTokens()
+        }
     }
 
     fun signOut() {
