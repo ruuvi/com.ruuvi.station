@@ -103,7 +103,7 @@ fun OnboardingBody(
 
     GlideImage(
         modifier = Modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.onboarding_bg_dark),
+        model = rememberResourceUri(R.drawable.onboarding_background),
         contentScale = ContentScale.Crop,
         contentDescription = null
     )
@@ -252,9 +252,9 @@ fun MeasureYourWorldPage() {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun BackgroundBeaver(imageRes: Int) {
+fun BackgroundBeaver(imageRes: Int, imageFraction: Pair<Float, Float> = 0.8f to 1f) {
     val isTablet = booleanResource(id = R.bool.isTablet)
-    val imageSizeFraction = if (isTablet) 0.8f else 1f
+    val imageSizeFraction = if (isTablet) imageFraction.first else imageFraction.second
 
     Box(
         modifier = Modifier

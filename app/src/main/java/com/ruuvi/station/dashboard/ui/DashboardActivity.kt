@@ -267,6 +267,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
     companion object {
         fun start(context: Context) {
             val dashboardIntent = Intent(context, DashboardActivity::class.java)
+            dashboardIntent
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             context.startActivity(dashboardIntent)
         }
     }

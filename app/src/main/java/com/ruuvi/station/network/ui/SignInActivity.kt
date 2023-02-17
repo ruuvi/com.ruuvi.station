@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -88,7 +87,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
 
                 GlideImage(
                     modifier = Modifier.fillMaxSize(),
-                    model = rememberResourceUri(R.drawable.onboarding_bg_dark),
+                    model = rememberResourceUri(R.drawable.onboarding_background),
                     contentScale = ContentScale.Crop,
                     contentDescription = null
                 )
@@ -227,7 +226,14 @@ fun EnterEmailPage(
             keyboardController?.hide()
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-        OnboardingText(text = stringResource(id = R.string.no_password_needed))
+        Text(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+            style = RuuviStationTheme.typography.onboardingText,
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.no_password_needed),
+            fontSize = 16.scaledSp,
+            lineHeight = 20.scaledSp
+        )
         if (inProgress) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             LoadingAnimation3dots()
@@ -243,7 +249,7 @@ fun EnterEmailPage(
                     .clickable { useWithoutAccount.invoke() },
                 style = RuuviStationTheme.typography.onboardingSubtitle,
                 textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.use_without_account),
+                text = stringResource(id = R.string.benefits_sign_in),
                 textDecoration = TextDecoration.Underline,
                 fontSize = 16.scaledSp,
                 lineHeight = 20.scaledSp
@@ -314,8 +320,6 @@ fun EnterCodePage(
     tokenProcessed: SharedFlow<Boolean>,
     codeEntered: (String) -> Unit
 ) {
-    val isTablet = booleanResource(id = R.bool.isTablet)
-    val imageSizeFraction = if (isTablet) 0.8f else 1f
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
@@ -358,7 +362,7 @@ fun EnterCodePage(
             LoadingAnimation3dots()
         }
         Column(modifier = Modifier.weight(1f)) {
-            BackgroundBeaver(R.drawable.signin_beaver_mail)
+            BackgroundBeaver(R.drawable.signin_beaver_mail, 0.8f to 0.95f)
         }
     }
 

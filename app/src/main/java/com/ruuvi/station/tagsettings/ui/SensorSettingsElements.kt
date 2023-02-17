@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagsettings.ui
 
-import android.app.Activity
 import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -36,6 +35,7 @@ import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -285,8 +285,7 @@ fun RemoveGroup(
     sensorOwnedByUser: Boolean,
     deleteSensor: ()->Unit
 ) {
-    val activity = (LocalContext.current as? Activity)
-
+    val context = LocalContext.current
     val removeMessage = if (sensorState.networkSensor != true) {
         stringResource(id = R.string.remove_local_sensor)
     } else {
@@ -325,7 +324,7 @@ fun RemoveGroup(
             onDismissRequest = { removeDialog = false },
             onOkClickAction = {
                 deleteSensor()
-                activity?.finish()
+                DashboardActivity.start(context)
             }
         ) {
             Paragraph(text = removeMessage)
