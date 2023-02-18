@@ -315,6 +315,8 @@ class NetworkDataSyncInteractor (
     }
 
     private suspend fun setSensorImage(sensor: SensorDataResponse, sensorSettings: SensorSettings) {
+        if (networkRequestExecutor.gotAnyImagesInSync(sensor.sensor)) return
+
         val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
 
         if (networkImageGuid != sensorSettings.networkBackground) {

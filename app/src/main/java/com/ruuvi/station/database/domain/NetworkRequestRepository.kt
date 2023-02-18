@@ -1,26 +1,45 @@
 package com.ruuvi.station.database.domain
 
-import com.raizlabs.android.dbflow.kotlinextensions.delete
-import com.raizlabs.android.dbflow.kotlinextensions.insert
-import com.raizlabs.android.dbflow.kotlinextensions.save
+import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.model.NetworkRequestStatus
-import com.ruuvi.station.database.tables.NetworkRequest
-import com.ruuvi.station.database.tables.NetworkRequest_Table
+import com.ruuvi.station.database.model.NetworkRequestType
+import com.ruuvi.station.database.tables.*
 import java.util.*
 
 class NetworkRequestRepository {
+    fun getSimilar(networkRequest: NetworkRequest): List<NetworkRequest> {
+        return SQLite.select()
+            .from(NetworkRequest::class.java)
+            .where(NetworkRequest_Table.type.eq(networkRequest.type))
+            .and(NetworkRequest_Table.key.eq(networkRequest.key))
+            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
+            .queryList()
+    }
+
+    fun getActiveRequestsForKeyType(key: String, type: NetworkRequestType): List<NetworkRequest> {
+        return SQLite.select()
+            .from(NetworkRequest::class.java)
+            .where(NetworkRequest_Table.type.eq(type))
+            .and(NetworkRequest_Table.key.eq(key))
+            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
+            .queryList()
+    }
+
     fun delete(networkRequest: NetworkRequest) {
         if (networkRequest.id != 0) networkRequest.delete()
     }
 
     fun disableRequest(networkRequest: NetworkRequest, status: NetworkRequestStatus) {
-        networkRequest.status = status
-        networkRequest.attempts++
-        if (networkRequest.status == NetworkRequestStatus.SUCCESS) {
-            networkRequest.successDate = Date()
+        val request = getById(networkRequest.id)
+        if (request != null) {
+            request.status = status
+            request.attempts++
+            if (request.status == NetworkRequestStatus.SUCCESS) {
+                request.successDate = Date()
+            }
+            saveRequest(request)
         }
-        saveRequest(networkRequest)
     }
 
     fun saveRequest(networkRequest: NetworkRequest) {
@@ -31,21 +50,33 @@ class NetworkRequestRepository {
         }
     }
 
+    fun getById(requestId: Int): NetworkRequest? {
+        return SQLite
+            .select()
+            .from(NetworkRequest::class.java)
+            .where(NetworkRequest_Table.id.eq(requestId))
+            .querySingle()
+    }
+
     fun registerFailedAttempt(networkRequest: NetworkRequest) {
-        networkRequest.attempts++
-        if (networkRequest.attempts > MAX_ATTEMPTS) {
-            networkRequest.status = NetworkRequestStatus.FAILED
-        } else {
-            networkRequest.status = NetworkRequestStatus.READY
+        val request = getById(networkRequest.id)
+        if (request != null && request.status == NetworkRequestStatus.EXECUTING) {
+            request.attempts++
+            if (request.attempts > MAX_ATTEMPTS) {
+                request.status = NetworkRequestStatus.FAILED
+            } else {
+                request.status = NetworkRequestStatus.READY
+            }
+            saveRequest(request)
         }
-        saveRequest(networkRequest)
     }
 
     fun disableSimilar(networkRequest: NetworkRequest) {
-        SQLite.delete(NetworkRequest::class.java)
+        SQLite.update(NetworkRequest::class.java)
+            .set(NetworkRequest_Table.status.eq(NetworkRequestStatus.OVERRIDDEN))
             .where(NetworkRequest_Table.type.eq(networkRequest.type))
             .and(NetworkRequest_Table.key.eq(networkRequest.key))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
+            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
             .execute()
     }
 
@@ -55,6 +86,17 @@ class NetworkRequestRepository {
             .where(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
             .orderBy(NetworkRequest_Table.requestDate, true)
             .queryList()
+    }
+
+    fun startExecuting(networkRequest: NetworkRequest): Boolean {
+        val request = getById(networkRequest.id)
+        if (request != null && request.status == NetworkRequestStatus.READY) {
+            request.status = NetworkRequestStatus.EXECUTING
+            saveRequest(request)
+            return true
+        } else {
+            return false
+        }
     }
 
     companion object {

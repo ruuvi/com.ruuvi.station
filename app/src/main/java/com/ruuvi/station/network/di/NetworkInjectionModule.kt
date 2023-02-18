@@ -19,6 +19,8 @@ object NetworkInjectionModule {
 
         bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
+        bind<NetworkRequestExecutor.NetworkJobManager>() with singleton { NetworkRequestExecutor.NetworkJobManager() }
+
         bind<NetworkRequestExecutor>() with singleton { NetworkRequestExecutor(instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
