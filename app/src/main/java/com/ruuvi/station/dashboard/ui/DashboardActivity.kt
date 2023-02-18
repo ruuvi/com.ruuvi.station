@@ -282,7 +282,11 @@ fun EmptyDashboard(buySensors: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(RuuviStationTheme.dimensions.medium)
+            .padding(
+                start = RuuviStationTheme.dimensions.medium,
+                end = RuuviStationTheme.dimensions.medium,
+                bottom = RuuviStationTheme.dimensions.medium,
+            )
             .systemBarsPadding(),
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,

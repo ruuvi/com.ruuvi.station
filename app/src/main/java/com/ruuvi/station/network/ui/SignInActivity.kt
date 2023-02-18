@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -281,7 +282,7 @@ fun CloudBenefitsPage(
         BenefitsList()
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         val annotatedString = buildAnnotatedString {
-            withStyle(style = SpanStyle(Orange2)) {
+            withStyle(style = SpanStyle(color = Orange2, fontWeight = FontWeight.W900)) {
                 append(stringResource(id = R.string.note))
             }
             append(" ")
