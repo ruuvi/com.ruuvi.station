@@ -384,7 +384,7 @@ fun WidgetsPage() {
         OnboardingSubTitle(stringResource(id = R.string.onboarding_access_widgets))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         OnboardingTitle(stringResource(id = R.string.onboarding_handy_widgets))
-        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_widgets)
+        FitImageAboveBanner(imageSizeFraction, R.drawable.onboarding_widgets_preview)
     }
 }
 
