@@ -406,6 +406,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sensor_not_shared">Nicht geteilt</string>
     <string name="sensor_settings">Sensoreinstellungen</string>
     <string name="sensor_shared">Geteilt</string>
+    <string name="sensors_ownership_and_settings_stored_in_cloud">Die Anmeldung bei der App hat viele Vorteile. Einstellungen werden sicher in deinem Konto gespeichert:</string>
     <string name="settings">Einstellungen</string>
     <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>

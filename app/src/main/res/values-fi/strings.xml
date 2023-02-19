@@ -303,6 +303,7 @@
     <string name="no">Ei</string>
     <string name="no_data">Ei tietoja</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
+    <string name="no_password_needed">Tälle osoitteelle luodaan ilmainen tili, jos sinulla ei vielä ole tiliä. Tarvitset kirjautumiseen ainoastaan sähköpostiosoitteen. Pidämme tietosi turvassa.</string>
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>

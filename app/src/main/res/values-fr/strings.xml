@@ -400,6 +400,7 @@
     <string name="sensor_not_shared">Non partagé</string>
     <string name="sensor_settings">Paramètres</string>
     <string name="sensor_shared">Partagé</string>
+    <string name="sensors_ownership_and_settings_stored_in_cloud">La connexion à l\'application présente de nombreux avantages. Les paramètres seront stockés en toute sécurité sur votre compte:</string>
     <string name="settings">Réglages</string>
     <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
