@@ -318,7 +318,7 @@
     <string name="onboarding_dashboard">instrumentpanel</string>
     <string name="onboarding_explore_detailed">Utforska din</string>
     <string name="onboarding_follow_measurement">Se alla sensorer med en blick på din</string>
-    <string name="onboarding_gateway_required">Kräver en Ruuvi Gateway trådlös sensornätverksrouter.</string>
+    <string name="onboarding_gateway_required">En Ruuvi Gateway -router krävs.</string>
     <string name="onboarding_go_to_sign_in">Ruuvi-upplevelsen är bättre när du är inloggad. Gör det nu eller fortsätt utan molnfunktioner.</string>
     <string name="onboarding_handy_widgets">widgets</string>
     <string name="onboarding_history">mäthistorik</string>
@@ -330,7 +330,7 @@
     <string name="onboarding_set_custom">Ställ in och anpassa dina</string>
     <string name="onboarding_share_your_sensors">för att mäta tillsammans med dina vänner och familj.</string>
     <string name="onboarding_sharees_can_use">Dela sensorer</string>
-    <string name="onboarding_skip">Hoppa över.</string>
+    <string name="onboarding_skip">Hoppa över</string>
     <string name="onboarding_station_web">Ruuvi webbappen</string>
     <string name="onboarding_swipe_to_continue">Dra för att fortsätta →</string>
     <string name="onboarding_via_bluetooth_or_cloud">med Bluetooth eller Ruuvi Cloud</string>

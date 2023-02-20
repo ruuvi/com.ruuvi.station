@@ -322,7 +322,7 @@
     <string name="onboarding_dashboard">tableau de bord</string>
     <string name="onboarding_explore_detailed">Explorez votre</string>
     <string name="onboarding_follow_measurement">Visualisez tous les capteurs en un coup d\'œil sur votre</string>
-    <string name="onboarding_gateway_required">Nécessite un routeur de capteurs sans fil Ruuvi Gateway.</string>
+    <string name="onboarding_gateway_required">Un routeur Ruuvi Gateway est requis.</string>
     <string name="onboarding_go_to_sign_in">L\'expérience Ruuvi est meilleure lorsque vous êtes connecté. Faites-le maintenant ou continuez sans les fonctionnalités cloud.</string>
     <string name="onboarding_handy_widgets">de widgets</string>
     <string name="onboarding_history">historique de mesure</string>
@@ -334,7 +334,7 @@
     <string name="onboarding_set_custom">Définissez et personnalisez vos</string>
     <string name="onboarding_share_your_sensors">à mesurer avec vos amis et votre famille.</string>
     <string name="onboarding_sharees_can_use">Partagez des capteurs</string>
-    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_skip">Ignorer</string>
     <string name="onboarding_station_web">l\'application Web Ruuvi</string>
     <string name="onboarding_swipe_to_continue">Balayez pour continuer →</string>
     <string name="onboarding_via_bluetooth_or_cloud">en utilisant Bluetooth ou Ruuvi Cloud</string>

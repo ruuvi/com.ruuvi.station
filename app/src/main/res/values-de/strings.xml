@@ -328,7 +328,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="onboarding_dashboard">Dashboard</string>
     <string name="onboarding_explore_detailed">Erkunden Sie Ihren</string>
     <string name="onboarding_follow_measurement">Sehen Sie alle Sensoren auf einen Blick auf Ihrem</string>
-    <string name="onboarding_gateway_required">Erfordert einen drahtlosen Sensor-Router Ruuvi Gateway.</string>
+    <string name="onboarding_gateway_required">Ein Ruuvi Gateway -Router ist erforderlich.</string>
     <string name="onboarding_go_to_sign_in">Ruuvi ist besser, wenn Sie angemeldet sind. Machen Sie es jetzt oder fahren Sie ohne Cloud-Funktionen fort.</string>
     <string name="onboarding_handy_widgets">Widgets hinzu</string>
     <string name="onboarding_history">Messverlauf</string>

@@ -319,7 +319,7 @@
     <string name="onboarding_dashboard">Dashboard</string>
     <string name="onboarding_explore_detailed">Explore your measurement</string>
     <string name="onboarding_follow_measurement">View all sensors at a glance on your</string>
-    <string name="onboarding_gateway_required">Requires a Ruuvi Gateway wireless sensor router.</string>
+    <string name="onboarding_gateway_required">A Ruuvi Gateway router is required.</string>
     <string name="onboarding_go_to_sign_in">Ruuvi experience is better when you\'re signed in. Do it now or continue without cloud features.</string>
     <string name="onboarding_handy_widgets">Widgets</string>
     <string name="onboarding_history">History</string>

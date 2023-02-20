@@ -317,7 +317,7 @@
     <string name="onboarding_dashboard">koontinäytöltä</string>
     <string name="onboarding_explore_detailed">Tarkastele anturiesi</string>
     <string name="onboarding_follow_measurement">Seuraa kaikkia antureitasi</string>
-    <string name="onboarding_gateway_required">Tarvitset langattoman Ruuvi Gateway -reitittimen.</string>
+    <string name="onboarding_gateway_required">Vaatii Ruuvi Gateway -reitittimen.</string>
     <string name="onboarding_go_to_sign_in">Kirjautumalla sisään saat parhaan Ruuvi-käyttökokemuksen. Tee se nyt tai jatka ilman pilviominaisuuksia.</string>
     <string name="onboarding_handy_widgets">widgeteillä</string>
     <string name="onboarding_history">mittaushistoriaa</string>
