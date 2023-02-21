@@ -232,7 +232,7 @@
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
-    <string name="network_sharing_disabled">Вы можете поделиться сенсорами только из зоны покрытия Ruuvi Gateway. Если у вас нет Gateway, вы можете приобрести его на ruuvi.com/gateway</string>
+    <string name="network_sharing_disabled">Вы можете поделиться сенсорами только из зоны покрытия Ruuvi Gateway.</string>
     <string name="network_status_title">Статус сети Ruuvi</string>
     <string name="network_sync_result_exception">Ошибка синхронизации: %1$s</string>
     <string name="network_sync_result_not_logged">Ошибка синхронизации: необходимо залогиниться вначале</string>

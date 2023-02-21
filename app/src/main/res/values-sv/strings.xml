@@ -292,7 +292,7 @@
     <string name="name">NAMN</string>
     <string name="navigation_drawer_close">Stäng navigationslådan</string>
     <string name="navigation_drawer_open">Öppna navigationslådan</string>
-    <string name="network_sharing_disabled">Endast sensorer inom räckhåll av din Ruuvi Gateway kan delas. Mer information finns på ruuvi.com/gateway</string>
+    <string name="network_sharing_disabled">Endast sensorer inom räckhåll av din Ruuvi Gateway kan delas.</string>
     <string name="network_status_title">Ruuvi cloud status</string>
     <string name="network_sync_result_exception">Synkroniseringen misslyckades: %1$s</string>
     <string name="network_sync_result_not_logged">Synkroniseringen misslyckades: du måste vara inloggad</string>

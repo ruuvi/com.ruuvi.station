@@ -296,7 +296,7 @@
     <string name="name">NOM</string>
     <string name="navigation_drawer_close">Fermer le menu</string>
     <string name="navigation_drawer_open">Ouvrir le menu</string>
-    <string name="network_sharing_disabled">Vous pouvez partager seulement des capteurs à proximité du Ruuvi Gateway. Plus d\'infos sur ruuvi.com/gateway</string>
+    <string name="network_sharing_disabled">Vous pouvez partager seulement des capteurs à proximité du Ruuvi Gateway.</string>
     <string name="network_status_title">Statut du Ruuvi cloud</string>
     <string name="network_sync_result_exception">Echec de la synchronisation : %1$s</string>
     <string name="network_sync_result_not_logged">Echec de la synchronisation : veuillez vous connecter</string>

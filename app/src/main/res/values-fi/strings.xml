@@ -291,7 +291,7 @@
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
     <string name="navigation_drawer_open">Avaa siirtymisvalikko</string>
-    <string name="network_sharing_disabled">Voit jakaa vain Ruuvi Gateway -reitittimen läheisyydessä olevia antureita. Lisätietoja reitittimestä osoitteesta ruuvi.com/fi/gateway</string>
+    <string name="network_sharing_disabled">Voit jakaa vain Ruuvi Gateway -reitittimen läheisyydessä olevia antureita.</string>
     <string name="network_status_title">Ruuvin pilven tila</string>
     <string name="network_sync_result_exception">Synkronointi epäonnistui: %1$s</string>
     <string name="network_sync_result_not_logged">Synkronointi epäonnistui: kirjaudu ensin</string>

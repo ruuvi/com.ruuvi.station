@@ -302,7 +302,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Schließen der Navigation</string>
     <string name="navigation_drawer_open">Öffnen der Navigation</string>
-    <string name="network_sharing_disabled">Nur Sensoren in Reichweite Ihres Ruuvi Gateways können geteilt werden. Wenn Sie noch keinen haben, holen Sie ihn sich auf ruuvi.com/gateway</string>
+    <string name="network_sharing_disabled">Nur Sensoren in Reichweite Ihres Ruuvi Gateways können geteilt werden.</string>
     <string name="network_status_title">Ruuvi-Cloud-Status</string>
     <string name="network_sync_result_exception">Synchronisierung fehlgeschlagen: %1$s</string>
     <string name="network_sync_result_not_logged">Synchronisierung fehlgeschlagen: Sie müssen sich zuerst anmelden</string>
