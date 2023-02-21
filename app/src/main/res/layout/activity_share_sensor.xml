@@ -31,7 +31,7 @@
       android:layout_width="match_parent"
       android:layout_height="0dp"
       style="@style/Scrollbars"
-      app:layout_constraintBottom_toTopOf="@+id/guideline2"
+      app:layout_constraintBottom_toTopOf="@+id/sharingLayout"
       app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
     <LinearLayout
@@ -63,6 +63,7 @@
   </ScrollView>
 
   <View
+      android:id="@+id/shareSeparator"
       android:layout_width="match_parent"
       android:layout_height="1dp"
       android:background="@color/ap_gray"
