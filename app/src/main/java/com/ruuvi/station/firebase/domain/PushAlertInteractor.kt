@@ -12,12 +12,15 @@ import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
 import com.ruuvi.station.database.domain.AlarmRepository
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.firebase.data.AlertMessage
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
+import timber.log.Timber
+import java.util.Date
 
 class PushAlertInteractor(
     val unitsConverter: UnitsConverter,
@@ -27,17 +30,23 @@ class PushAlertInteractor(
         message.alarmType.let { alarmType ->
             val notificationMessage = getMessage(message, context)
             if (notificationMessage != null) {
+                val localAlert = getLocalAlert(message.id, message.alarmType)
+                if (isLocallyMuted(localAlert)) {
+                    Timber.d("Alert is locally muted till $localAlert. Message: $message")
+                    return
+                }
+
                 val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 createNotificationChannel(notificationManager)
-                val alertId = getAlertId(message.id, message.alarmType)
+
                 val notificationData = AlertNotificationData (
                     sensorId = message.id,
                     message = notificationMessage,
-                    alarmId = alertId,
+                    alarmId = localAlert?.id,
                     sensorName = message.name,
                     alertCustomDescription = message.alertData
                         )
-                notificationManager.notify(alertId ?: -1, createNotification(context, notificationData))
+                notificationManager.notify(localAlert?.id ?: -1, createNotification(context, notificationData))
             }
         }
     }
@@ -179,8 +188,13 @@ class PushAlertInteractor(
         return notification.build()
     }
 
-    private fun getAlertId(sensorId: String, alarmType: AlarmType?): Int? {
-        return alarmRepository.getForSensor(sensorId).firstOrNull{it.alarmType == alarmType}?.id
+    private fun getLocalAlert(sensorId: String, alarmType: AlarmType?): Alarm? {
+        return alarmRepository.getForSensor(sensorId).firstOrNull{it.alarmType == alarmType}
+    }
+
+    private fun isLocallyMuted(alert: Alarm?): Boolean {
+        val alarmMutedTill = alert?.mutedTill
+        return alarmMutedTill != null && alarmMutedTill.time > Date().time
     }
 
     companion object {
