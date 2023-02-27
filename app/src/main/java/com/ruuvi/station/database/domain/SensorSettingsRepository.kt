@@ -132,6 +132,12 @@ class SensorSettingsRepository {
         settings.update()
     }
 
+    fun updateNetworkHistoryLastSync(sensorId: String, date: Date) {
+        val settings = getSensorSettingsOrCreate(sensorId)
+        settings.networkHistoryLastSync = date
+        settings.update()
+    }
+
     fun clearLastSyncGatt() {
         SQLite.update(SensorSettings::class.java)
             .set(SensorSettings_Table.lastSync.eq(null))

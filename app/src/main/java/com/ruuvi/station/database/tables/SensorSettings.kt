@@ -4,7 +4,7 @@ import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.LocalDatabase
-import com.ruuvi.station.network.data.response.SensorDataResponse
+import com.ruuvi.station.network.data.response.SensorsDenseInfo
 import java.util.*
 
 @Table (
@@ -47,6 +47,8 @@ data class SensorSettings(
     var networkSensor: Boolean = false,
     @Column
     var firmware: String? = null,
+    @Column
+    var networkHistoryLastSync: Date? = null,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -80,7 +82,7 @@ data class SensorSettings(
         sensorReading.humidityOffset = humidityOffset ?: 0.0
     }
 
-    fun updateFromNetwork(sensor: SensorDataResponse, calibrationInteractor: CalibrationInteractor) {
+    fun updateFromNetwork(sensor: SensorsDenseInfo, calibrationInteractor: CalibrationInteractor) {
         name = sensor.name
         owner = sensor.owner
         val recalibrateHistory = humidityOffset != sensor.offsetHumidity || pressureOffset != sensor.offsetPressure || temperatureOffset != sensor.offsetTemperature
