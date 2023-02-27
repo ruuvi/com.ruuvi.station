@@ -450,7 +450,7 @@
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_in_benefits_description">Benefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored on the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
-    <string name="sign_in_check_email">Check your email for an activation code.</string>
+    <string name="sign_in_check_email">We\'ve sent a one-time password to your email. Sign in by entering it here:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">Email sent</string>
     <string name="sign_in_login_button">Sign in</string>

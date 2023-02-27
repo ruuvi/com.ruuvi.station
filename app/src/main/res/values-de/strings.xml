@@ -459,7 +459,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="share_sensor_unshare_confirm">Möchten Sie die Freigabe des Sensors für %1$s aufheben?</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
-    <string name="sign_in_check_email">Überprüfen Sie Ihre E-Mail auf einen Aktivierungscode.</string>
+    <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet. Melden Sie sich an, indem Sie es hier eingeben:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">E-Mail gesendet</string>
     <string name="sign_in_login_button">Anmeldung</string>

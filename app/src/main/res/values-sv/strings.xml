@@ -449,7 +449,7 @@
     <string name="share_sensor_unshare_confirm">Vill du sluta dela sensorn med %1$s?</string>
     <string name="sign_in">Logga in</string>
     <string name="sign_in_benefits_description">Fördelar:\n\n ● Sensornamn, bakgrundsbilder, kalibrering och larminformation från en säker molntjänst\n\n ● Läs sensorinformation på distans online ( kräver Ruuvi Gateway-router)\n\n ● Dela sensorer med vänner och familj (kräver Ruuvi Gateway)\n\n ● Upp till 2 års historik från station.ruuvi.com (kräver Ruuvi Gateway)</string>
-    <string name="sign_in_check_email">Kontrollera din e-post efter en aktiveringskod.</string>
+    <string name="sign_in_check_email">Vi har skickat ett engångslösenord till din e-post. Logga in genom att ange den här:</string>
     <string name="sign_in_code_hint">Kod</string>
     <string name="sign_in_email_sent">E-post skickat</string>
     <string name="sign_in_login_button">Logga in</string>

@@ -453,7 +453,7 @@
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
     <string name="sign_in">Connexion</string>
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
-    <string name="sign_in_check_email">Le code d\'activation vous a été envoyé par mail.</string>
+    <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail. Connectez-vous en le saisissant ici:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_email_sent">Email envoyé</string>
     <string name="sign_in_login_button">Connexion</string>

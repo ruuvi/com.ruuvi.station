@@ -448,7 +448,7 @@
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Hyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
-    <string name="sign_in_check_email">Tarkasta aktivointikoodi saamastasi sähköpostista.</string>
+    <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan. Kirjaudu syöttämällä se tähän:</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
     <string name="sign_in_login_button">Kirjaudu</string>
