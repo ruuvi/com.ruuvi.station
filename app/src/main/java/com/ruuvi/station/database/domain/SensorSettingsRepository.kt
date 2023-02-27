@@ -122,7 +122,7 @@ class SensorSettingsRepository {
     fun clearLastSync(sensorId: String) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.lastSync = null
-        settings.networkLastSync = null
+        settings.networkHistoryLastSync = null
         settings.update()
     }
 
