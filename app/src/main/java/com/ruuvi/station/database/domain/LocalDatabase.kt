@@ -13,7 +13,24 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 27
+        const val VERSION = 29
+    }
+
+    @Migration(version = 29, database = LocalDatabase::class)
+    class Migration29Data : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL(
+                "UPDATE SensorSettings SET networkHistoryLastSync = networkLastSync"
+            )
+        }
+    }
+
+    @Migration(version = 28, database = LocalDatabase::class)
+    class Migration28(table: Class<SensorSettings?>?) : AlterTableMigration<SensorSettings?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.INTEGER, "networkHistoryLastSync")
+        }
     }
 
     @Migration(version = 27, database = LocalDatabase::class)

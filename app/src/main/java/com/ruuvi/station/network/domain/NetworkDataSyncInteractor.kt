@@ -18,10 +18,7 @@ import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SortMode
-import com.ruuvi.station.network.data.response.GetSensorDataResponse
-import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
-import com.ruuvi.station.network.data.response.SensorDataResponse
-import com.ruuvi.station.network.data.response.UserInfoResponseBody
+import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
@@ -101,7 +98,8 @@ class NetworkDataSyncInteractor (
             return syncJob
         }
 
-        if (networkInteractor.signedIn == false) {
+        val userEmail = networkInteractor.getEmail()
+        if (userEmail.isNullOrEmpty() || !networkInteractor.signedIn) {
             Timber.d("Not signed in")
             return syncJob
         }
@@ -119,13 +117,13 @@ class NetworkDataSyncInteractor (
                     networkApplicationSettings.updateSettingsFromNetwork()
                 }
 
-                Timber.d("getUserInfo")
-                val userInfo = networkInteractor.getUserInfo()
-                Timber.d("userInfo = $userInfo")
-                if (userInfo?.isError() == true || userInfo?.data == null) {
-                    val event = when (userInfo?.code) {
+                Timber.d("get getSensorDenseLastData")
+                val sensorsInfo = networkInteractor.getSensorDenseLastData()
+                Timber.d("sensorsInfo = $sensorsInfo")
+                if (sensorsInfo?.isError() == true || sensorsInfo?.data == null) {
+                    val event = when (sensorsInfo?.code) {
                         NetworkResponseLocalizer.ER_UNAUTHORIZED -> NetworkSyncEvent.Unauthorised
-                        else -> NetworkSyncEvent.Error(userInfo?.error ?: "Unknown error")
+                        else -> NetworkSyncEvent.Error(sensorsInfo?.error ?: "Unknown error")
                     }
                     sendSyncEvent(event)
                     return@launch
@@ -133,13 +131,13 @@ class NetworkDataSyncInteractor (
 
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
-                updateSensors(userInfo.data)
-                firebaseInteractor.logSync(userInfo.data)
+                updateSensors(sensorsInfo.data)
+                firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")
                 val benchSync1 = Date()
-                syncForPeriod(userInfo.data, GlobalSettings.historyLengthHours)
+                syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 networkAlertsSyncInteractor.updateAlertsFromNetwork()
@@ -148,7 +146,6 @@ class NetworkDataSyncInteractor (
                 exception.message?.let { message ->
                     Timber.e(exception, "NetworkSync Exception")
                     sendSyncEvent(NetworkSyncEvent.Error(message))
-
                 }
             } finally {
                 sendSyncEvent(NetworkSyncEvent.Idle)
@@ -158,7 +155,7 @@ class NetworkDataSyncInteractor (
         return syncJob
     }
 
-    private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
+    private suspend fun syncForPeriod(userInfoData: SensorsDenseResponseBody, hours: Int) {
         if (!networkInteractor.signedIn) {
             return
         }
@@ -196,7 +193,7 @@ class NetworkDataSyncInteractor (
             calendar.add(Calendar.HOUR, -period)
 
             var since = calendar.time
-            val lastSync = sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE)
+            val lastSync = sensorSettings.networkHistoryLastSync ?: Date(Long.MIN_VALUE)
             if (lastSync > since) {
                 calendar.time = lastSync
                 calendar.add(Calendar.SECOND, 1)
@@ -234,7 +231,7 @@ class NetworkDataSyncInteractor (
 
             if (measurements.size > 0) {
                 val benchUpdate1 = Date()
-                saveSensorData( sensorSettings, measurements)
+                saveSensorHistory( sensorSettings, measurements)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-saveSensorData-finish ${sensorId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
@@ -253,37 +250,41 @@ class NetworkDataSyncInteractor (
         syncInProgress.value = status
     }
 
-    private fun saveSensorData(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
+    private fun saveSensorHistory(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
         val sensorId = sensorSettings.id
         val list = measurements.mapNotNull { measurement ->
-            try {
-                if (measurement.data.isNotEmpty()) {
-                    val reading = TagSensorReading(
-                        BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
-                        Date(measurement.timestamp * 1000)
-                    )
-                    sensorSettings.calibrateSensor(reading)
-                    reading
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
-                null
-            }
+            preparePoint(sensorSettings, measurement)
         }
         val newestPoint = list.maxByOrNull { it.createdAt }
 
         if (list.isNotEmpty() && newestPoint != null) {
-            tagRepository.activateSensor(newestPoint)
             sensorHistoryRepository.bulkInsert(sensorId, list)
-            sensorSettingsRepository.updateNetworkLastSync(sensorId, newestPoint.createdAt)
+            sensorSettingsRepository.updateNetworkHistoryLastSync(sensorId, newestPoint.createdAt)
             return list.size
         }
         return 0
     }
 
-    private suspend fun updateSensors(userInfoData: UserInfoResponseBody) {
+    private fun preparePoint(sensorSettings: SensorSettings, measurement: SensorDataMeasurementResponse): TagSensorReading? {
+        return try {
+            if (measurement.data.isNotEmpty()) {
+                val reading = TagSensorReading(
+                    BluetoothLibrary.decode(sensorSettings.id, measurement.data, measurement.rssi),
+                    Date(measurement.timestamp * 1000)
+                )
+                sensorSettings.calibrateSensor(reading)
+                reading
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
+            Timber.e(e, "NetworkData: ${sensorSettings.id} measurement = $measurement")
+            null
+        }
+    }
+
+    private suspend fun updateSensors(userInfoData: SensorsDenseResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
@@ -304,6 +305,11 @@ class NetworkDataSyncInteractor (
             } else {
                 setSensorImage(sensor, sensorSettings)
             }
+
+            val latestData = sensor.measurements.maxByOrNull { it.timestamp }
+            if (latestData != null) {
+                updateLatestMeasurement(sensorSettings, latestData)
+            }
         }
 
         val sensors = sensorSettingsRepository.getSensorSettings()
@@ -314,7 +320,18 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun setSensorImage(sensor: SensorDataResponse, sensorSettings: SensorSettings) {
+    private fun updateLatestMeasurement(
+        sensorSettings: SensorSettings,
+        measurement: SensorDataMeasurementResponse
+    ) {
+        val lastPoint = preparePoint(sensorSettings, measurement)
+        if (lastPoint != null) {
+            tagRepository.activateSensor(lastPoint)
+            sensorSettingsRepository.updateNetworkLastSync(sensorSettings.id, lastPoint.createdAt)
+        }
+    }
+
+    private suspend fun setSensorImage(sensor: SensorsDenseInfo, sensorSettings: SensorSettings) {
         if (networkRequestExecutor.gotAnyImagesInSync(sensor.sensor)) return
 
         val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
