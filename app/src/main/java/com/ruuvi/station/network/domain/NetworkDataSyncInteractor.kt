@@ -231,7 +231,7 @@ class NetworkDataSyncInteractor (
 
             if (measurements.size > 0) {
                 val benchUpdate1 = Date()
-                saveSensorData( sensorSettings, measurements)
+                saveSensorHistory( sensorSettings, measurements)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-saveSensorData-finish ${sensorId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
@@ -250,7 +250,7 @@ class NetworkDataSyncInteractor (
         syncInProgress.value = status
     }
 
-    private fun saveSensorData(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
+    private fun saveSensorHistory(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
         val sensorId = sensorSettings.id
         val list = measurements.mapNotNull { measurement ->
             preparePoint(sensorSettings, measurement)
