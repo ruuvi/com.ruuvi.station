@@ -15,17 +15,11 @@ fun AppearanceSettings(
     scaffoldState: ScaffoldState,
     viewModel: AppearanceSettingsViewModel
 ) {
-    val dashboardEnabled = viewModel.dashboardEnabled.observeAsState(initial = false)
     val darkMode = viewModel.darkMode.observeAsState(DarkModeState.SYSTEM_THEME)
     val themeOptions = viewModel.getThemeOptions()
 
     PageSurfaceWithPadding {
         Column {
-            DashboardSettings(
-                dashboardEnabled = dashboardEnabled,
-                dashboardEnabledChanged = viewModel::setIsDashboardEnabled
-            )
-
             AppThemeSettings(
                 themeOptions = themeOptions,
                 currentTheme = darkMode,
@@ -33,19 +27,6 @@ fun AppearanceSettings(
             )
         }
     }
-}
-
-@Composable
-fun DashboardSettings(
-    dashboardEnabled: State<Boolean>,
-    dashboardEnabledChanged: ((Boolean) -> Unit)
-) {
-    SwitchRuuvi(
-        text = stringResource(id = R.string.dashboard),
-        checked = dashboardEnabled.value,
-        onCheckedChange = dashboardEnabledChanged
-    )
-    Paragraph(text = stringResource(id = R.string.dashboard_description))
 }
 
 @Composable

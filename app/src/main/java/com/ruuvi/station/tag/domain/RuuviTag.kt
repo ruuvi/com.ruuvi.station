@@ -1,6 +1,7 @@
 package com.ruuvi.station.tag.domain
 
-import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.units.model.EnvironmentValue
 import java.util.Date
 
 data class RuuviTag(
@@ -30,11 +31,16 @@ data class RuuviTag(
     val updatedAt: Date?,
     val userBackground: String?,
     val networkBackground: String?,
-    val status: AlarmStatus = AlarmStatus.NO_ALARM,
+    val status: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     val connectable: Boolean?,
     val lastSync: Date?,
     val networkLastSync: Date?,
     val networkSensor: Boolean,
     val owner: String?,
-    var firmware: String?
+    var firmware: String?,
+    val temperatureValue: EnvironmentValue,
+    val humidityValue: EnvironmentValue?,
+    val pressureValue: EnvironmentValue?,
+    val movementValue: EnvironmentValue?,
+    val voltageValue: EnvironmentValue
 )

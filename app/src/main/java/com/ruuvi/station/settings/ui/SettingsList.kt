@@ -24,7 +24,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
 
 @Composable
@@ -35,9 +34,6 @@ fun SettingsList(
 ) {
     val context = LocalContext.current
     BackHandler() {
-        if (viewModel.shouldRestartApp()) {
-            StartupActivity.start(context, false)
-        }
         (context as Activity).finish()
     }
 

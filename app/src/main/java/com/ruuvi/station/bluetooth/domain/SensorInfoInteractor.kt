@@ -7,7 +7,7 @@ import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-class SensorFwVersionInteractor (
+class SensorInfoInteractor (
     private val interactor: BluetoothInteractor
 ) {
     suspend fun getSensorFirmwareVersion(sensorId: String): SensorFirmwareResult {
@@ -17,9 +17,9 @@ class SensorFwVersionInteractor (
                 Timber.d("Connected state = $state")
             }
 
-            override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
-                Timber.d("deviceInfo model = $model fw = $fw")
-                result = SensorFirmwareResult(true, fw, "")
+            override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean, id: String?) {
+                Timber.d("deviceInfo model = $model fw = $fw id = $id")
+                result = SensorFirmwareResult(true, fw, "", id)
             }
 
             override fun dataReady(data: List<LogReading>) {

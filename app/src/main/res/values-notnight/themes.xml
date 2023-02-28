@@ -29,6 +29,7 @@
         <item name="colorControlNormal">@color/pastelGray</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
 
+        <item name="colorSensorDefaultBackground">@color/defaultSensorBackgroundLight</item>
         <item name="android:autofilledHighlight" tools:targetApi="26">@android:color/transparent</item>
     </style>
 

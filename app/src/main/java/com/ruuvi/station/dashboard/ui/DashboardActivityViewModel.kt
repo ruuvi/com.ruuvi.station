@@ -1,24 +1,25 @@
 package com.ruuvi.station.dashboard.ui
 
 import androidx.lifecycle.*
+import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.NetworkTokenRepository
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
-import com.ruuvi.station.units.domain.UnitsConverter
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
-    val converter: UnitsConverter,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
-    val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository
-) : ViewModel() {
+    private val preferencesRepository: PreferencesRepository,
+    private val permissionLogicInteractor: PermissionLogicInteractor,
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val networkSignInInteractor: NetworkSignInInteractor
+    ) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
         while (true) {
@@ -27,10 +28,30 @@ class DashboardActivityViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
+    private var _dashBoardType = MutableStateFlow<DashboardType> (preferencesRepository.getDashboardType())
+    val dashboardType: StateFlow<DashboardType> = _dashBoardType
+
+    val syncEvents = networkDataSyncInteractor.syncEvents
+
     val userEmail = preferencesRepository.getUserEmailLiveData()
+
+    val shouldAskNotificationPermission
+        get() = permissionLogicInteractor.shouldAskNotificationPermission()
+
+    val shouldAskForBackgroundLocationPermission
+        get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
+
+    val shouldAskToEnableBluetooth
+        get() = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()
-        tokenRepository.signOut { }
+        networkSignInInteractor.signOut { }
+    }
+
+    fun changeDashboardType(dashboardType: DashboardType) {
+        preferencesRepository.updateDashboardType(dashboardType)
+        networkApplicationSettings.updateDashboardType()
+        _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 }

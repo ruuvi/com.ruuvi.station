@@ -105,14 +105,6 @@ class AppSettingsInteractor(
         }
     }
 
-    fun isDashboardEnabled(): Boolean =
-        preferencesRepository.isDashboardEnabled()
-
-    fun setIsDashboardEnabled(isEnabled: Boolean) {
-        preferencesRepository.setIsDashboardEnabled(isEnabled)
-        networkApplicationSettings.updateDashboardEnabled()
-    }
-
     fun isCloudModeEnabled(): Boolean =
         preferencesRepository.isCloudModeEnabled()
 

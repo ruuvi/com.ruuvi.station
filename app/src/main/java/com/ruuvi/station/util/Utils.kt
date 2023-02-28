@@ -2,10 +2,8 @@ package com.ruuvi.station.util
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -77,26 +75,7 @@ object Utils {
         }
         return BitmapFactory.decodeResource(
             context.resources,
-            getDefaultBackground(tag.defaultBackground)
+            R.drawable.default_background
         )
-    }
-
-
-    fun getDefaultBackground(number: Int, context: Context?): Drawable? {
-        return ContextCompat.getDrawable(context!!, getDefaultBackground(number))
-    }
-
-    fun getDefaultBackground(number: Int): Int {
-        return when (number) {
-            1 -> R.drawable.bg2
-            2 -> R.drawable.bg3
-            3 -> R.drawable.bg4
-            4 -> R.drawable.bg5
-            5 -> R.drawable.bg6
-            6 -> R.drawable.bg7
-            7 -> R.drawable.bg8
-            8 -> R.drawable.bg9
-            else -> R.drawable.bg1
-        }
     }
 }

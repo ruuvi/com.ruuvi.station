@@ -21,6 +21,14 @@ fun ruuviButtonColors() = ButtonDefaults.buttonColors(
 )
 
 @Composable
+fun ruuviWarningButtonColors() = ButtonDefaults.buttonColors(
+    backgroundColor = RuuviStationTheme.colors.dangerousButton,
+    contentColor = RuuviStationTheme.colors.buttonText,
+    disabledBackgroundColor = RuuviStationTheme.colors.inactive,
+    disabledContentColor = RuuviStationTheme.colors.onInactive
+)
+
+@Composable
 fun ruuviTextButtonColors() = ButtonDefaults.textButtonColors(
     contentColor = RuuviStationTheme.colors.accent,
     disabledContentColor = RuuviStationTheme.colors.onInactive
@@ -43,14 +51,16 @@ fun RuuviButton(
     height: Dp = RuuviStationTheme.dimensions.buttonHeight,
     enabled: Boolean = true,
     loading: Boolean = false,
+    isWarning: Boolean = false,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier
+            .defaultMinSize(minWidth = 150.dp)
             .height(height),
         enabled = enabled,
         shape = shape,
-        colors = ruuviButtonColors(),
+        colors = if (isWarning) ruuviWarningButtonColors() else ruuviButtonColors(),
         elevation = ruuviButtonElevation(),
         contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
         onClick = { onClick() }) {

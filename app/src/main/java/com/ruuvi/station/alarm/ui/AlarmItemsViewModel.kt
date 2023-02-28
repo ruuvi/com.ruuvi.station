@@ -131,8 +131,8 @@ class AlarmItemsViewModel(
         val itemIndex = _alarms.indexOf(alarmItem)
 
         if (validateRange(type, min, max) && alarmItem != null && min != null && max != null) {
-            val savableHigh = alarmsInteractor.getSavableValue(type, max).round(2)
-            val savableLow = alarmsInteractor.getSavableValue(type, min).round(2)
+            val savableHigh = alarmsInteractor.getSavableValue(type, max).round(4)
+            val savableLow = alarmsInteractor.getSavableValue(type, min).round(4)
 
             val newAlarm = alarmItem.copy(
                 min = savableLow,

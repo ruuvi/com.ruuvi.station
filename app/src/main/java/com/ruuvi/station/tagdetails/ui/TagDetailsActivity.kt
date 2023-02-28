@@ -24,11 +24,11 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
@@ -43,13 +43,15 @@ import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.*
-import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagDetailsBinding
 import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.network.data.NetworkSyncEvent
+import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -80,7 +82,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private val viewModel: TagDetailsViewModel by viewModel {
         TagDetailsArguments(
             intent.getStringExtra(ARGUMENT_TAG_ID),
-            intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false)
+            intent.getBooleanExtra(ARGUMENT_FROM_WELCOME, false),
+            intent.getBooleanExtra(ARGUMENT_SHOW_HISTORY, false)
         )
     }
 
@@ -94,7 +97,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
 
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
-    private lateinit var permissionsInteractor: PermissionsInteractor
+    private val permissionsInteractor = PermissionsInteractor(this)
+    private val notificationPermissionInteractor = NotificationPermissionInteractor(this)
 
     private var tagPagerScrolling = false
     private var timer: Timer? = null
@@ -114,7 +118,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         super.onCreate(savedInstanceState)
         binding = ActivityTagDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        permissionsInteractor = PermissionsInteractor(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setupViewModel()
@@ -189,6 +192,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     if (viewModel.openAddView) binding.content.noTagsTextView.callOnClick()
                 } else {
                     permissionsInteractor.showPermissionSnackbar()
+                    askForNotificationPermission()
                 }
             }
         }
@@ -211,12 +215,8 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             imageView
         }
 
-        if (viewModel.dashboardEnabled) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        } else {
-            setupDrawer()
-        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.mainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         binding.content.tagPager.adapter = adapter
         binding.content.tagPager.offscreenPageLimit = 1
@@ -241,6 +241,19 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
         observeAlarmStatus()
 
         listenToShowGraph()
+
+        observeSyncStatus()
+    }
+
+    private fun observeSyncStatus() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.syncEvents.collect {
+                if (it is NetworkSyncEvent.Unauthorised) {
+                    viewModel.signOut()
+                    signIn()
+                }
+            }
+        }
     }
 
     private fun observeTags() {
@@ -297,12 +310,20 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private fun setupSelectedTag(selectedTag: RuuviTag) {
         val previousBitmapDrawable = backgrounds[viewModel.getPrevTag()?.id]
         if (previousBitmapDrawable != null) {
-            binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
+            //binding.tagBackgroundView.setImageDrawable(previousBitmapDrawable)
         }
-        val bitmap = Utils.getBackground(applicationContext, selectedTag)
-        val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
-        backgrounds[selectedTag.id] = bitmapDrawable
-        binding.imageSwitcher.setImageDrawable(bitmapDrawable)
+        if  (selectedTag.userBackground.isNullOrEmpty()) {
+            if (isDarkMode()) {
+                binding.imageSwitcher.setImageResource(R.drawable.default_background)
+            } else {
+                binding.imageSwitcher.setImageResource(R.drawable.default_background_light)
+            }
+        } else {
+            val bitmap = Utils.getBackground(applicationContext, selectedTag)
+            val bitmapDrawable = BitmapDrawable(applicationContext.resources, bitmap)
+            backgrounds[selectedTag.id] = bitmapDrawable
+            binding.imageSwitcher.setImageDrawable(bitmapDrawable)
+        }
     }
 
     private fun animateGraphTransition(isShowGraph: Boolean) {
@@ -366,50 +387,33 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 R.id.whatTomeasureMenuItem -> openUrl(getString(R.string.what_to_measure_link))
                 R.id.getMoreSensorsMenuItem -> openUrl(getString(R.string.buy_sensors_link))
                 R.id.getGatewayMenuItem -> openUrl(getString(R.string.buy_gateway_link))
-                R.id.loginMenuItem -> login(signedIn)
+                R.id.loginMenuItem -> {
+                    if (signedIn) {
+                        MyAccountActivity.start(this)
+                    } else {
+                        signIn()
+                    }
+                }
             }
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             return@setNavigationItemSelectedListener true
         }
 
-        viewModel.userEmail.observe(this) {
-            var user = it
-            if (user.isNullOrEmpty()) {
-                user = getString(R.string.none)
-                signedIn = false
-            } else {
-                signedIn = true
-            }
+        viewModel.userEmail.observe(this) { user ->
+            signedIn = !user.isNullOrEmpty()
             updateMenu(signedIn)
-            binding.navigationContent.loggedUserTextView.text = user
         }
     }
 
-    private fun login(signedIn: Boolean) {
-        if (signedIn) {
-            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
-            with(builder)
-            {
-                setMessage(getString(R.string.sign_out_confirm))
-                setPositiveButton(getString(R.string.yes)) { _, _ ->
-                    viewModel.signOut()
-                }
-                setNegativeButton(getString(R.string.no)) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                }
-                show()
-            }
-        } else {
-            SignInActivity.start(this)
-        }
+    private fun signIn() {
+        SignInActivity.start(this)
     }
 
     private fun updateMenu(signed: Boolean) {
-        binding.navigationContent.networkLayout.isVisible = viewModel.userEmail.value?.isNotEmpty() == true
         val loginMenuItem = binding.navigationContent.navigationView.menu.findItem(R.id.loginMenuItem)
         loginMenuItem?.let {
             it.title = if (signed) {
-                getString(R.string.sign_out)
+                getString(R.string.my_ruuvi_account)
             } else {
                 getString(R.string.sign_in)
             }
@@ -583,14 +587,25 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        permissionsInteractor.requestPermissions(
-            needBackground = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND,
-            askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
-        )
+        if (permissionsInteractor.arePermissionsGranted()) {
+            askForNotificationPermission()
+        } else {
+            permissionsInteractor.requestPermissions(
+                needBackground = viewModel.shouldAskForBackgroundLocationPermission,
+                askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
+            )
+        }
+    }
+
+    private fun askForNotificationPermission() {
+        if (viewModel.shouldAskNotificationPermission) {
+            notificationPermissionInteractor.checkAndRequest()
+        }
     }
 
     companion object {
-        private const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
+        const val ARGUMENT_TAG_ID = "ARGUMENT_TAG_ID"
+        private const val ARGUMENT_SHOW_HISTORY = "ARGUMENT_SHOW_HISTORY"
         private const val MIN_TEXT_SPACING = 0
         private const val MAX_TEXT_SPACING = 1000
         private const val ALARM_ICON_ALPHA = 128
@@ -606,9 +621,10 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             context.startActivity(intent)
         }
 
-        fun start(context: Context, tagId: String) {
+        fun start(context: Context, tagId: String, showHistory: Boolean = false) {
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
+            intent.putExtra(ARGUMENT_SHOW_HISTORY, showHistory)
             context.startActivity(intent)
         }
 
@@ -616,12 +632,9 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
             val intent = Intent(context, TagDetailsActivity::class.java)
             intent.putExtra(ARGUMENT_TAG_ID, tagId)
 
-            val preferencesRepository = PreferencesRepository(Preferences(context))
             val stackBuilder = TaskStackBuilder.create(context)
-            if (preferencesRepository.isDashboardEnabled()) {
-                val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
-                stackBuilder.addNextIntent(intentDashboardActivity)
-            }
+            val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+            stackBuilder.addNextIntent(intentDashboardActivity)
             stackBuilder.addNextIntent(intent)
 
             return stackBuilder

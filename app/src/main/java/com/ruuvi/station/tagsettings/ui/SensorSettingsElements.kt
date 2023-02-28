@@ -1,17 +1,20 @@
 package com.ruuvi.station.tagsettings.ui
 
-import android.app.Activity
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import android.net.Uri
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -23,22 +26,29 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.dfu.ui.FirmwareGroup
-import com.ruuvi.station.network.ui.ClaimSensorActivity
+import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import timber.log.Timber
 
 @Composable
 fun SensorSettings(
+    scaffoldState: ScaffoldState,
     viewModel: TagSettingsViewModel,
     alarmsViewModel: AlarmItemsViewModel
 ) {
+    val context = LocalContext.current
     val sensorState by viewModel.sensorState.collectAsState()
     val userLoggedIn by viewModel.userLoggedIn.collectAsState()
     val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsState(initial = false)
@@ -47,11 +57,16 @@ fun SensorSettings(
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
 
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+        SensorSettingsImage(sensorState = sensorState) {
+            BackgroundActivity.start(context, sensorState.id)
+        }
         GeneralSettingsGroup(
             sensorState = sensorState,
             userLoggedIn = userLoggedIn,
-            sensorOwnedByUserObserve = sensorOwnedByUser,
+            sensorOwnedByUser = sensorOwnedByUser,
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
@@ -63,21 +78,19 @@ fun SensorSettings(
                 getHumidityOffsetString = viewModel::getHumidityOffsetString,
                 getPressureOffsetString = viewModel::getPressureOffsetString
             )
+            DividerSurfaceColor()
         }
-        DividerSurfaceColor()
         MoreInfoGroup(
             sensorState = sensorState,
             isLowBattery = isLowBattery,
             getAccelerationString = viewModel::getAccelerationString,
             getSignalString = viewModel::getSignalString
         )
-        if (sensorOwnedOrOffline) {
-            DividerSurfaceColor()
-            FirmwareGroup(
-                sensorState = sensorState,
-                firmware = firmware
-            )
-        }
+        DividerSurfaceColor()
+        FirmwareGroup(
+            sensorState = sensorState,
+            firmware = firmware
+        )
         DividerSurfaceColor()
         RemoveGroup(
             sensorState = sensorState,
@@ -92,11 +105,75 @@ fun SensorSettings(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun SensorSettingsImage(
+    sensorState: RuuviTag,
+    onClick: () -> Unit
+) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(color = RuuviStationTheme.colors.defaultSensorBackground)
+            .clickable { onClick.invoke() },
+        contentAlignment = Alignment.Center
+    ) {
+        Timber.d("Image path ${sensorState.userBackground} ")
+
+        if (sensorState.userBackground != null) {
+            val uri = Uri.parse(sensorState.userBackground)
+
+            if (uri.path != null) {
+                GlideImage(
+                    modifier = Modifier.fillMaxSize(),
+                    model = uri,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(id = R.drawable.tag_bg_layer),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(modifier = Modifier
+                .clip(CircleShape)
+                .size(RuuviStationTheme.dimensions.huge)
+                .background(RuuviStationTheme.colors.accent),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(RuuviStationTheme.dimensions.extraBig),
+                    painter = painterResource(id = R.drawable.camera_24),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.buttonText
+                )
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+            Text(
+                style = RuuviStationTheme.typography.subtitle,
+                text = stringResource(id = R.string.change_background_image),
+                color = RuuviStationTheme.colors.buttonText
+            )
+        }
+    }
+
+}
+
 @Composable
 fun GeneralSettingsGroup(
     sensorState: RuuviTag,
     userLoggedIn: Boolean,
-    sensorOwnedByUserObserve: Boolean,
+    sensorOwnedByUser: Boolean,
     sensorIsShared: Boolean,
     setName: (String) -> Unit
 ) {
@@ -106,27 +183,36 @@ fun GeneralSettingsGroup(
     SensorSettingsTitle(title = stringResource(id = R.string.general))
     TextEditWithCaptionButton(
         title = stringResource(id = R.string.tag_name),
-        value = sensorState.displayName
+        value = sensorState.displayName,
+        icon = painterResource(id = R.drawable.edit_20),
+        tint = RuuviStationTheme.colors.accent
     ) {
         setNameDialog = true
     }
     if (userLoggedIn) {
         DividerRuuvi()
-        if (sensorState.owner.isNullOrEmpty()) {
+        val owner = if (sensorState.owner.isNullOrEmpty()) {
+            stringResource(id = R.string.owner_none)
+        } else {
+            sensorState.owner
+        }
+
+        if (sensorOwnedByUser) {
+            ValueWithCaption(
+                title = stringResource(id = R.string.tagsettings_owner),
+                value = owner
+            )
+        } else {
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.tagsettings_owner),
-                value = stringResource(id = R.string.owner_none),
-                icon = painterResource(id = R.drawable.arrow_forward_16)
+                value = owner,
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
             ) {
                 ClaimSensorActivity.start(context, sensorState.id)
             }
-        } else {
-            ValueWithCaption(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = sensorState.owner
-            )
         }
-        if (sensorOwnedByUserObserve) {
+        if (sensorOwnedByUser) {
             val sharedText = if (sensorIsShared) {
                 stringResource(R.string.sensor_shared)
             } else {
@@ -137,7 +223,8 @@ fun GeneralSettingsGroup(
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.share),
                 value = sharedText,
-                icon = painterResource(id = R.drawable.arrow_forward_16)
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
@@ -198,8 +285,7 @@ fun RemoveGroup(
     sensorOwnedByUser: Boolean,
     deleteSensor: ()->Unit
 ) {
-    val activity = (LocalContext.current as? Activity)
-
+    val context = LocalContext.current
     val removeMessage = if (sensorState.networkSensor != true) {
         stringResource(id = R.string.remove_local_sensor)
     } else {
@@ -225,7 +311,8 @@ fun RemoveGroup(
         TextEditWithCaptionButton(
             value = null,
             title = stringResource(id = R.string.remove_this_sensor),
-            icon = painterResource(id = R.drawable.arrow_forward_16)
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
         ) {
             removeDialog = true
         }
@@ -237,7 +324,7 @@ fun RemoveGroup(
             onDismissRequest = { removeDialog = false },
             onOkClickAction = {
                 deleteSensor()
-                activity?.finish()
+                DashboardActivity.start(context)
             }
         ) {
             Paragraph(text = removeMessage)

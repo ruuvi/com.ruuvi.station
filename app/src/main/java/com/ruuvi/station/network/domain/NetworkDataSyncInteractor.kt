@@ -11,20 +11,21 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
+import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
-import com.ruuvi.station.network.data.NetworkSyncResult
-import com.ruuvi.station.network.data.NetworkSyncResultType
+import com.ruuvi.station.image.ImageSource
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SortMode
-import com.ruuvi.station.network.data.response.GetSensorDataResponse
-import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
-import com.ruuvi.station.network.data.response.SensorDataResponse
-import com.ruuvi.station.network.data.response.UserInfoResponseBody
+import com.ruuvi.station.network.data.response.*
+import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import java.io.File
@@ -42,7 +43,9 @@ class NetworkDataSyncInteractor (
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val networkAlertsSyncInteractor: NetworkAlertsSyncInteractor,
     private val calibrationInteractor: CalibrationInteractor,
-    private val firebaseInteractor: FirebaseInteractor
+    private val firebaseInteractor: FirebaseInteractor,
+    private val tagSettingsInteractor: TagSettingsInteractor,
+    private val pushRegisterInteractor: PushRegisterInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -50,29 +53,34 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var autoRefreshJob: Job? = null
 
-    private val syncResult = MutableStateFlow<NetworkSyncResult> (NetworkSyncResult(NetworkSyncResultType.NONE))
-    val syncResultFlow: StateFlow<NetworkSyncResult> = syncResult
+    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> ()
+    val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
 
     fun startAutoRefresh() {
-        Timber.d("startAutoRefresh")
+        Timber.d("startAutoRefresh isSignedIn = ${networkInteractor.signedIn}")
         if (autoRefreshJob != null && autoRefreshJob?.isActive == true) {
             Timber.d("Already in auto refresh mode")
             return
         }
 
         autoRefreshJob = CoroutineScope(IO).launch {
-            syncNetworkData(false)
+            if (networkInteractor.signedIn) {
+                pushRegisterInteractor.checkAndRegisterDeviceToken()
+                syncNetworkData()
+            }
             delay(10000)
             while (true) {
                 val lastSync = preferencesRepository.getLastSyncDate()
                 Timber.d("Cloud auto refresh another round. Last sync ${Date(lastSync)}")
-                if (networkInteractor.signedIn &&
-                    Date(lastSync).diffGreaterThan(60000)) {
+                if (Date(lastSync).diffGreaterThan(60000)) {
+                    pushRegisterInteractor.checkAndRegisterDeviceToken()
+                    if (networkInteractor.signedIn) {
                         Timber.d("Do actual sync")
-                    syncNetworkData(false)
+                        syncNetworkData()
+                    }
                 }
                 delay(10000)
             }
@@ -84,55 +92,71 @@ class NetworkDataSyncInteractor (
         autoRefreshJob?.cancel()
     }
 
-    fun syncNetworkData(ecoMode: Boolean): Job {
+    fun syncNetworkData(): Job {
         if (syncJob.isActive == true) {
             Timber.d("Already in sync mode")
+            return syncJob
+        }
+
+        val userEmail = networkInteractor.getEmail()
+        if (userEmail.isNullOrEmpty() || !networkInteractor.signedIn) {
+            Timber.d("Not signed in")
             return syncJob
         }
 
         setSyncInProgress(true)
         syncJob = CoroutineScope(IO).launch() {
             try {
+                Timber.d("Sync job started")
+                sendSyncEvent(NetworkSyncEvent.InProgress)
+                Timber.d("executeScheduledRequests")
                 networkRequestExecutor.executeScheduledRequests()
+
                 if (!networkRequestExecutor.anySettingsRequests()) {
+                    Timber.d("updateSettingsFromNetwork")
                     networkApplicationSettings.updateSettingsFromNetwork()
                 }
 
-                val userInfo = networkInteractor.getUserInfo()
-
-                if (userInfo?.data?.sensors == null) {
-                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
+                Timber.d("get getSensorDenseLastData")
+                val sensorsInfo = networkInteractor.getSensorDenseLastData()
+                Timber.d("sensorsInfo = $sensorsInfo")
+                if (sensorsInfo?.isError() == true || sensorsInfo?.data == null) {
+                    val event = when (sensorsInfo?.code) {
+                        NetworkResponseLocalizer.ER_UNAUTHORIZED -> NetworkSyncEvent.Unauthorised
+                        else -> NetworkSyncEvent.Error(sensorsInfo?.error ?: "Unknown error")
+                    }
+                    sendSyncEvent(event)
                     return@launch
                 }
 
                 val benchUpdate1 = Date()
-                updateSensors(userInfo.data, ecoMode)
-                firebaseInteractor.logSync(userInfo.data)
+                Timber.d("updateSensors")
+                updateSensors(sensorsInfo.data)
+                firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
                 Timber.d("benchmark-syncForPeriod-start")
                 val benchSync1 = Date()
-                syncForPeriod(userInfo.data, GlobalSettings.historyLengthHours)
+                syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 networkAlertsSyncInteractor.updateAlertsFromNetwork()
+                networkRequestExecutor.executeScheduledRequests()
             } catch (exception: Exception) {
-                val message = exception.message
-                message?.let {
+                exception.message?.let { message ->
                     Timber.e(exception, "NetworkSync Exception")
-                    setSyncResult(NetworkSyncResult(NetworkSyncResultType.EXCEPTION, it))
+                    sendSyncEvent(NetworkSyncEvent.Error(message))
                 }
             } finally {
+                sendSyncEvent(NetworkSyncEvent.Idle)
                 setSyncInProgress(false)
             }
-            setSyncInProgress(false)
         }
         return syncJob
     }
 
-    private suspend fun syncForPeriod(userInfoData: UserInfoResponseBody, hours: Int) {
+    private suspend fun syncForPeriod(userInfoData: SensorsDenseResponseBody, hours: Int) {
         if (!networkInteractor.signedIn) {
-            setSyncResult(NetworkSyncResult(NetworkSyncResultType.NOT_LOGGED))
             return
         }
 
@@ -154,7 +178,7 @@ class NetworkDataSyncInteractor (
             }
         }
 
-        setSyncResult(NetworkSyncResult(NetworkSyncResultType.SUCCESS))
+        sendSyncEvent(NetworkSyncEvent.Success)
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
@@ -169,7 +193,7 @@ class NetworkDataSyncInteractor (
             calendar.add(Calendar.HOUR, -period)
 
             var since = calendar.time
-            val lastSync = sensorSettings.networkLastSync ?: Date(Long.MIN_VALUE)
+            val lastSync = sensorSettings.networkHistoryLastSync ?: Date(Long.MIN_VALUE)
             if (lastSync > since) {
                 calendar.time = lastSync
                 calendar.add(Calendar.SECOND, 1)
@@ -207,16 +231,18 @@ class NetworkDataSyncInteractor (
 
             if (measurements.size > 0) {
                 val benchUpdate1 = Date()
-                saveSensorData( sensorSettings, measurements)
+                saveSensorHistory( sensorSettings, measurements)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-saveSensorData-finish ${sensorId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
             }
         }
     }
 
-    private suspend fun setSyncResult(status: NetworkSyncResult) = withContext(Dispatchers.Main) {
-        Timber.d("SyncStatus = $status")
-        syncResult.value = status
+    private suspend fun sendSyncEvent(event: NetworkSyncEvent) {
+        Timber.d("SyncEvent = $event")
+        CoroutineScope(IO).launch() {
+            _syncEvents.emit(event)
+        }
     }
 
     private fun setSyncInProgress(status: Boolean) {//} = withContext(Dispatchers.Main) {
@@ -224,37 +250,41 @@ class NetworkDataSyncInteractor (
         syncInProgress.value = status
     }
 
-    private fun saveSensorData(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
+    private fun saveSensorHistory(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
         val sensorId = sensorSettings.id
         val list = measurements.mapNotNull { measurement ->
-            try {
-                if (measurement.data.isNotEmpty()) {
-                    val reading = TagSensorReading(
-                        BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi),
-                        Date(measurement.timestamp * 1000)
-                    )
-                    sensorSettings.calibrateSensor(reading)
-                    reading
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "NetworkData: $sensorId measurement = $measurement")
-                null
-            }
+            preparePoint(sensorSettings, measurement)
         }
         val newestPoint = list.maxByOrNull { it.createdAt }
 
         if (list.isNotEmpty() && newestPoint != null) {
-            tagRepository.activateSensor(newestPoint)
             sensorHistoryRepository.bulkInsert(sensorId, list)
-            sensorSettingsRepository.updateNetworkLastSync(sensorId, newestPoint.createdAt)
+            sensorSettingsRepository.updateNetworkHistoryLastSync(sensorId, newestPoint.createdAt)
             return list.size
         }
         return 0
     }
 
-    private suspend fun updateSensors(userInfoData: UserInfoResponseBody, ecoMode: Boolean) {
+    private fun preparePoint(sensorSettings: SensorSettings, measurement: SensorDataMeasurementResponse): TagSensorReading? {
+        return try {
+            if (measurement.data.isNotEmpty()) {
+                val reading = TagSensorReading(
+                    BluetoothLibrary.decode(sensorSettings.id, measurement.data, measurement.rssi),
+                    Date(measurement.timestamp * 1000)
+                )
+                sensorSettings.calibrateSensor(reading)
+                reading
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
+            Timber.e(e, "NetworkData: ${sensorSettings.id} measurement = $measurement")
+            null
+        }
+    }
+
+    private suspend fun updateSensors(userInfoData: SensorsDenseResponseBody) {
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
@@ -266,8 +296,19 @@ class NetworkDataSyncInteractor (
                 tagEntry.update()
             }
 
-            if (!ecoMode && !sensor.picture.isNullOrEmpty()) {
+            if (sensor.picture.isNullOrEmpty()) {
+                tagSettingsInteractor.setDefaultBackgroundImageByResource(
+                    sensorId = sensor.sensor,
+                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
+                    uploadNow = true
+                )
+            } else {
                 setSensorImage(sensor, sensorSettings)
+            }
+
+            val latestData = sensor.measurements.maxByOrNull { it.timestamp }
+            if (latestData != null) {
+                updateLatestMeasurement(sensorSettings, latestData)
             }
         }
 
@@ -279,14 +320,27 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun setSensorImage(sensor: SensorDataResponse, sensorSettings: SensorSettings) {
+    private fun updateLatestMeasurement(
+        sensorSettings: SensorSettings,
+        measurement: SensorDataMeasurementResponse
+    ) {
+        val lastPoint = preparePoint(sensorSettings, measurement)
+        if (lastPoint != null) {
+            tagRepository.activateSensor(lastPoint)
+            sensorSettingsRepository.updateNetworkLastSync(sensorSettings.id, lastPoint.createdAt)
+        }
+    }
+
+    private suspend fun setSensorImage(sensor: SensorsDenseInfo, sensorSettings: SensorSettings) {
+        if (networkRequestExecutor.gotAnyImagesInSync(sensor.sensor)) return
+
         val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
 
         if (networkImageGuid != sensorSettings.networkBackground) {
-            Timber.d("updating image $networkImageGuid")
+            Timber.d("updating image $networkImageGuid ${sensorSettings}")
             try {
                 val imageFile = imageInteractor.downloadImage(
-                    "cloud_${sensor.sensor}",
+                    imageInteractor.getFilename(sensor.sensor, ImageSource.CLOUD),
                     sensor.picture
                 )
                 sensorSettingsRepository.updateSensorBackground(
@@ -313,12 +367,9 @@ class NetworkDataSyncInteractor (
         return networkInteractor.getSensorData(request)
     }
 
-    fun syncStatusShowed() {
-        syncResult.value = NetworkSyncResult(NetworkSyncResultType.NONE)
-    }
-
     fun stopSync() {
         Timber.d("stopSync")
+        syncInProgress.value = false
         if (syncJob.isActive) {
             syncJob.cancel()
         }

@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/tagBackgroundView"
-        android:src="@drawable/gradient_background"
+        android:src="@drawable/default_background"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

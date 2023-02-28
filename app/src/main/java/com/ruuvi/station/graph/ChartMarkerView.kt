@@ -1,6 +1,7 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.widget.TextView
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
@@ -31,13 +32,19 @@ class ChartMarkerView @JvmOverloads
         val date = Date(e.x.toLong() + getFrom.invoke())
         val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
 
+        val dateText = DateUtils.formatDateTime(
+            context,
+            date.time,
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+        )
+
         val valueText = when (chartSensorType) {
             ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(e.y.toDouble(), Accuracy.Accuracy2)
             ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(e.y.toDouble(), Accuracy.Accuracy2)
             ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(e.y.toDouble(), Accuracy.Accuracy2)
         }
 
-        tvContent.text ="$valueText\n$timeText"
+        tvContent.text ="$valueText\n$timeText\n$dateText"
 
         super.refreshContent(e, highlight)
     }

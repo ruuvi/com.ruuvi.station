@@ -2,14 +2,12 @@ package com.ruuvi.station.alarm.ui
 
 import android.content.Context
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -18,8 +16,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
@@ -31,8 +33,17 @@ import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
+    val notificationPermissionState = rememberPermissionState(
+        android.Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    var permissionAsked by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(key1 = true) {
         Timber.d("Alarms LaunchedEffect")
         viewModel.initAlarms()
@@ -42,9 +53,16 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
             delay(1000)
         }
     }
-
-    val alarms = viewModel.alarms
     Timber.d("AlarmItems refresh ")
+    val alarms = viewModel.alarms
+
+    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
+        permissionAsked = true
+        LaunchedEffect(key1 = true) {
+            notificationPermissionState.launchPermissionRequest()
+        }
+    }
+
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
@@ -269,24 +287,12 @@ private fun AlarmHeader(
         )
         if (alarmState.isEnabled) {
             if (alarmState.triggered) {
-                var imageVisible by remember { mutableStateOf(true) }
-
-                AnimatedVisibility(
-                    visible = imageVisible,
-                    enter = fadeIn(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300))
-                ) {
+                BlinkingEffect() {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                         contentDescription = null,
                         tint = RuuviStationTheme.colors.activeAlert
                     )
-                }
-                LaunchedEffect(key1 = 1) {
-                    while (true) {
-                        delay(800)
-                        imageVisible = !imageVisible
-                    }
                 }
             } else {
                 Icon(
@@ -379,13 +385,15 @@ fun ChangeDescriptionDialog(
                 if (it.length <= 32) description = it
             },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences
+            ),
             keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
         )
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AlarmEditDialog(
     alarmState: AlarmItemState,

@@ -44,7 +44,12 @@ class TagConverter(
             networkLastSync = sensorSettings.networkLastSync,
             networkSensor = sensorSettings.networkSensor,
             owner = sensorSettings.owner,
-            firmware = sensorSettings.firmware
+            firmware = sensorSettings.firmware,
+            temperatureValue = unitsConverter.getTemperatureEnvironmentValue(entity.temperature),
+            pressureValue = entity.pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
+            humidityValue = entity.humidity?.let { unitsConverter.getHumidityEnvironmentValue(it, entity.temperature) },
+            movementValue = entity.movementCounter?.let { movementConverter.getMovementEnvironmentValue(it) },
+            voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage)
         )
 
     fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag =
@@ -80,6 +85,11 @@ class TagConverter(
             networkLastSync = entity.networkLastSync,
             networkSensor = entity.networkSensor,
             owner = entity.owner,
-            firmware = entity.firmware
+            firmware = entity.firmware,
+            temperatureValue = unitsConverter.getTemperatureEnvironmentValue(entity.temperature),
+            pressureValue = entity.pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
+            humidityValue = entity.humidity?.let { unitsConverter.getHumidityEnvironmentValue(it, entity.temperature) },
+            movementValue = entity.movementCounter?.let { movementConverter.getMovementEnvironmentValue(it) },
+            voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage)
         )
 }

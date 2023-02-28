@@ -58,6 +58,13 @@
         <item name="lineHeight">@dimen/textLineHeight</item>
     </style>
 
+    <style name="ChartText">
+        <item name="android:textColor">@color/white80</item>
+        <item name="android:textSize">@dimen/textParagraphSize</item>
+        <item name="fontFamily">@font/mulish_regular</item>
+        <item name="lineHeight">@dimen/textLineHeight</item>
+    </style>
+
     <style name="Paragraph.Secondary" parent="Paragraph">
         <item name="android:alpha">0.5</item>
     </style>
@@ -96,17 +103,6 @@
         <item name="android:autoLink">web</item>
         <item name="android:linksClickable">true</item>
         <item name="android:textColorLink">?colorAccent</item>
-    </style>
-
-    <style name="Status">
-        <item name="android:textColor">?attr/colorPrimaryText</item>
-        <item name="android:textSize">@dimen/textStatusSize</item>
-        <item name="fontFamily">@font/mulish_semibolditalic</item>
-        <item name="lineHeight">@dimen/textLineHeight</item>
-    </style>
-    <style name="Status.WithPadding">
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
     </style>
 
     <style name="PagerTabStripText">

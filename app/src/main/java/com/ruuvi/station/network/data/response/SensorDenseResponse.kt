@@ -8,6 +8,7 @@ data class SensorsDenseResponseBody(
 
 data class SensorsDenseInfo (
     val sensor: String,
+    val owner: String,
     val name: String,
     val picture: String,
     val public: Boolean,

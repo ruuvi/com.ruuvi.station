@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress

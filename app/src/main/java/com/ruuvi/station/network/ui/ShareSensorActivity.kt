@@ -97,6 +97,7 @@ class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , 
         viewModel.canShareObserve.observe(this) {
             binding.shareSensorDisabledTitleTextView.isVisible = !it
             binding.sharingLayout.isVisible = it
+            binding.shareSeparator.isVisible = it
         }
     }
 
