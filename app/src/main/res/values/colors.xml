@@ -54,4 +54,7 @@
 
     <color name="chartLineColor">#34ad9f</color>
     <color name="chartFillColor">#4D46CAB9</color>
+
+    <color name="defaultSensorBackgroundDark">#FF2D605C</color>
+    <color name="defaultSensorBackgroundLight">#FFD8EDEA</color>
 </resources>

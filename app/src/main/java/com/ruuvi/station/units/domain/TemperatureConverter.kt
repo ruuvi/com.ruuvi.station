@@ -17,7 +17,7 @@ class TemperatureConverter {
         }
 
         fun fahrenheitToCelsius(fahrenheit: Double): Double {
-            return ((fahrenheit - fahrenheitAddition) / fahrenheitMultiplier).round(2)
+            return ((fahrenheit - fahrenheitAddition) / fahrenheitMultiplier).round(4)
         }
 
         fun kelvinToCelsius(kelvin: Double): Double {

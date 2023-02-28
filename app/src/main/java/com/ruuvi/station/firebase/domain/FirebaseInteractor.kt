@@ -8,7 +8,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.network.data.response.UserInfoResponseBody
+import com.ruuvi.station.network.data.response.SensorsDenseResponseBody
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import kotlinx.coroutines.*
@@ -54,7 +54,7 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     DASHBOARD_ENABLED,
-                    preferences.isDashboardEnabled().toString()
+                    true.toString()
                 )
                 firebaseAnalytics.setUserProperty(
                     GRAPH_POINT_INTERVAL,
@@ -140,10 +140,10 @@ class FirebaseInteractor(
         }
     }
 
-    fun logSync(userInfoData: UserInfoResponseBody) {
+    fun logSync(userEmail: String, userInfoData: SensorsDenseResponseBody) {
         CoroutineScope(Dispatchers.IO).launch {
-            val claimed = userInfoData.sensors.count { it.owner == userInfoData.email }
-            val notOwned = userInfoData.sensors.count { it.owner != userInfoData.email }
+            val claimed = userInfoData.sensors.count { it.owner == userEmail }
+            val notOwned = userInfoData.sensors.count { it.owner != userEmail }
             firebaseAnalytics.logEvent("sync") {
                 param(SENSORS_CLAIMED, claimed.toLong())
                 param(SENSORS_SHARED_TO_USER, notOwned.toLong())

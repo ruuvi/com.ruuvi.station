@@ -3,23 +3,21 @@ package com.ruuvi.station.tagdetails.ui
 import androidx.lifecycle.*
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.network.data.NetworkSyncResult
-import com.ruuvi.station.network.data.NetworkSyncResultType
 import com.ruuvi.station.network.data.NetworkSyncStatus
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
-import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.util.BackgroundScanModes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.network.domain.NetworkSignInInteractor
 
 class TagDetailsViewModel(
     tagDetailsArguments: TagDetailsArguments,
@@ -27,13 +25,20 @@ class TagDetailsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val tokenRepository: NetworkTokenRepository,
-    private val networkApplicationSettings: NetworkApplicationSettings
+    private val networkApplicationSettings: NetworkApplicationSettings,
+    private val permissionLogicInteractor: PermissionLogicInteractor,
+    private val networkSignInInteractor: NetworkSignInInteractor
 ) : ViewModel() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    private val isShowGraph = MutableLiveData<Boolean>(false)
+    val shouldAskNotificationPermission
+        get() = permissionLogicInteractor.shouldAskNotificationPermission()
+
+    val shouldAskForBackgroundLocationPermission
+        get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
+
+    private val isShowGraph = MutableLiveData<Boolean>(tagDetailsArguments.showHistory)
     val isShowGraphObserve: LiveData<Boolean> = isShowGraph
 
     private val selectedTag = MutableLiveData<RuuviTag?>(null)
@@ -45,16 +50,13 @@ class TagDetailsViewModel(
     private val alarmStatus = MutableLiveData(AlarmStatus.NO_ALARM)
     val alarmStatusObserve: LiveData<AlarmStatus> = alarmStatus
 
-    var dashboardEnabled = isDashboardEnabled()
-
     private var prevTag: RuuviTag? = null
     fun getPrevTag() = prevTag
 
     var openAddView: Boolean = tagDetailsArguments.shouldOpenAddView && interactor.getTagEntities(true).isEmpty()
     var desiredTag: String? = tagDetailsArguments.desiredTag
 
-    private val syncResult = MutableLiveData<NetworkSyncResult>(NetworkSyncResult(NetworkSyncResultType.NONE))
-    val syncResultObserve: LiveData<NetworkSyncResult> = syncResult
+    val syncEvents = networkDataSyncInteractor.syncEvents
 
     private val syncInProgress = MutableLiveData<Boolean>(false)
     val syncInProgressObserve: LiveData<Boolean> = syncInProgress
@@ -68,11 +70,6 @@ class TagDetailsViewModel(
     private val trigger = MutableLiveData<Int>(1)
 
     init {
-        viewModelScope.launch {
-            networkDataSyncInteractor.syncResultFlow.collect {
-                syncResult.value = it
-            }
-        }
         viewModelScope.launch {
             networkDataSyncInteractor.syncInProgressFlow.collect{
                 syncInProgress.value = it
@@ -134,9 +131,6 @@ class TagDetailsViewModel(
 
     fun isShowingGraph() = isShowGraph.value == true
 
-    private fun isDashboardEnabled(): Boolean =
-        interactor.isDashboardEnabled()
-
     fun checkForAlarm() {
         ioScope.launch {
             Timber.d("checkForAlarm")
@@ -151,10 +145,6 @@ class TagDetailsViewModel(
         }
     }
 
-    fun syncResultShowed() {
-        networkDataSyncInteractor.syncStatusShowed()
-    }
-
     fun updateNetworkStatus() {
         CoroutineScope(Dispatchers.Main).launch {
             trigger.value = -1
@@ -163,7 +153,7 @@ class TagDetailsViewModel(
 
     fun signOut() {
         networkDataSyncInteractor.stopSync()
-        tokenRepository.signOut {
+        networkSignInInteractor.signOut {
             refreshTags()
         }
     }

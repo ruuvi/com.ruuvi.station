@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -299,6 +300,26 @@ class Preferences constructor(val context: Context) {
         sharedPreferences.edit().putInt(PREF_DARKMODE, darkMode.code).apply()
     }
 
+    var dashboardType: DashboardType
+        get() {
+            return DashboardType.getByCode(sharedPreferences.getString(PREF_DASHBOARD_TYPE, "") ?: "")
+        }
+        set(type) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_TYPE, type.code).apply()
+        }
+
+    var registeredToken: String
+        get() = sharedPreferences.getString(PREF_REGISTERED_DEVICE_TOKEN, "") ?: ""
+        set(token) {
+            sharedPreferences.edit().putString(PREF_REGISTERED_DEVICE_TOKEN, token).apply()
+        }
+
+    var deviceTokenRefreshDate: Long
+        get() = sharedPreferences.getLong(PREF_DEVICE_TOKEN_REFRESH_DATE, Long.MIN_VALUE)
+        set(refreshDate) {
+            sharedPreferences.edit().putLong(PREF_DEVICE_TOKEN_REFRESH_DATE, refreshDate).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -312,7 +333,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
-        private const val PREF_FIRST_START = "FIRST_START_PREF"
+        private const val PREF_FIRST_START = "FIRST_START_PREF2"
         private const val PREF_FIRST_GRAPH = "first_graph_visit"
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"
         private const val PREF_HUMIDITY_UNIT = "pref_humidity_unit"
@@ -342,6 +363,9 @@ class Preferences constructor(val context: Context) {
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
         private const val PREF_DARKMODE = "pref_darkmode"
+        private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
+        private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
+        private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

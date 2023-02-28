@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:layout_height="100dp"
     tools:layout_width="130dp">
     <!--    style="@style/Widget.Comruuvistation.AppWidget.Container"-->

@@ -3,6 +3,7 @@ package com.ruuvi.station.database.domain
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.SensorSettings_Table
+import timber.log.Timber
 import java.util.*
 
 class SensorSettingsRepository {
@@ -23,7 +24,6 @@ class SensorSettingsRepository {
         var settings = getSensorSettings(sensorId)
         if (settings == null) {
             settings = SensorSettings(sensorId, Date())
-            setKindaRandomBackground(settings)
             settings.insert()
         }
         return settings
@@ -84,6 +84,7 @@ class SensorSettingsRepository {
     }
 
     fun updateSensorBackground(sensorId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
+        Timber.d("updateSensorBackground $sensorId $networkBackground")
         SQLite.update(SensorSettings::class.java)
             .set(
                 SensorSettings_Table.userBackground.eq(userBackground),
@@ -95,6 +96,7 @@ class SensorSettingsRepository {
     }
 
     fun updateNetworkBackground(sensorId: String, networkBackground: String?) {
+        Timber.d("updateNetworkBackground $sensorId $networkBackground")
         SQLite.update(SensorSettings::class.java)
             .set(
                 SensorSettings_Table.networkBackground.eq(networkBackground)
@@ -111,16 +113,6 @@ class SensorSettingsRepository {
         settings.update()
     }
 
-    fun setKindaRandomBackground(sensorSettings: SensorSettings){
-        val settings = getSensorSettings()
-        var background = (Math.random() * 9.0).toInt()
-        for (i in 0..99) {
-            if (settings.none { it.defaultBackground == background }) break
-            background = (Math.random() * 9.0).toInt()
-        }
-        sensorSettings.defaultBackground = background
-    }
-
     fun updateLastSync(sensorId: String, date: Date?) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.lastSync = date
@@ -130,13 +122,19 @@ class SensorSettingsRepository {
     fun clearLastSync(sensorId: String) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.lastSync = null
-        settings.networkLastSync = null
+        settings.networkHistoryLastSync = null
         settings.update()
     }
 
     fun updateNetworkLastSync(sensorId: String, date: Date) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.networkLastSync = date
+        settings.update()
+    }
+
+    fun updateNetworkHistoryLastSync(sensorId: String, date: Date) {
+        val settings = getSensorSettingsOrCreate(sensorId)
+        settings.networkHistoryLastSync = date
         settings.update()
     }
 

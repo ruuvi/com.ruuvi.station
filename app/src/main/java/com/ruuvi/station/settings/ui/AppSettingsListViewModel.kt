@@ -15,16 +15,8 @@ class AppSettingsListViewModel(
 
     val experimentalFeatures = preferencesRepository.getExperimentalFeaturesLiveData()
 
-    private val onStartDashboardEnabled: Boolean = interactor.isDashboardEnabled()
-
     fun getBackgroundScanMode(): BackgroundScanModes =
         interactor.getBackgroundScanMode()
-
-    fun isDashboardEnabled(): Boolean =
-        interactor.isDashboardEnabled()
-
-    fun setIsDashboardEnabled(isEnabled: Boolean) =
-        interactor.setIsDashboardEnabled(isEnabled)
 
     fun getBackgroundScanInterval(): Int =
         interactor.getBackgroundScanInterval()
@@ -49,6 +41,4 @@ class AppSettingsListViewModel(
 
     fun shouldShowCloudMode() =
         interactor.shouldShowCloudMode()
-
-    fun shouldRestartApp() = onStartDashboardEnabled != interactor.isDashboardEnabled()
 }

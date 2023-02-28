@@ -68,23 +68,10 @@ class RuuviNetworkInteractor (
         return shouldSendDataToNetwork() && sensorSettings?.owner == getToken()?.email
     }
 
-    fun getUserInfo(onResult: (UserInfoResponse?) -> Unit) {
-        ioScope.launch {
-            val result = getUserInfo()
-            networkResponseLocalizer.localizeResponse(result)
-            withContext(Dispatchers.Main) {
-                onResult(result)
-            }
-        }
-    }
-
     suspend fun getUserInfo(): UserInfoResponse? {
         val token = getToken()
         if (token != null) {
-            val benchUpdate1 = Date()
             userInfo = networkRepository.getUserInfo(token.token)
-            val benchUpdate2 = Date()
-            Timber.d("benchmark-getUserInfo-finish ${benchUpdate2.time - benchUpdate1.time} ms")
             return userInfo
         } else {
             return null
@@ -119,9 +106,7 @@ class RuuviNetworkInteractor (
                             )
                         }
                     }
-                    getUserInfo {
-                        onResult(claimResponse)
-                    }
+                    onResult(claimResponse)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -150,6 +135,32 @@ class RuuviNetworkInteractor (
                         false
                     )
                 }
+            }
+        }
+    }
+
+    suspend fun getSensorOwner(sensorId: String, onResult: (CheckSensorResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            try {
+                val response = networkRepository.checkSensorOwner(sensorId, token)
+                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
+                    sensorSettingsRepository.setSensorOwner(
+                        sensorId,
+                        response.data.email,
+                        false
+                    )
+                }
+                onResult(response)
+            } catch (e: Exception) {
+                onResult(
+                    CheckSensorResponse(
+                    result = RuuviNetworkResponse.errorResult,
+                    error = e.message.toString(),
+                    data = null,
+                    code = null
+                    )
+                )
             }
         }
     }
@@ -238,11 +249,11 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun uploadImage(sensorId: String, filename: String) {
+    fun uploadImage(sensorId: String, filename: String, uploadNow: Boolean = false) {
         if (shouldSendSensorDataToNetwork(sensorId)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             Timber.d("uploadImage $networkRequest")
-            networkRequestExecutor.registerRequest(networkRequest)
+            networkRequestExecutor.registerRequest(networkRequest, uploadNow)
         }
     }
 
@@ -322,5 +333,55 @@ class RuuviNetworkInteractor (
             Timber.d("setAlert $networkRequest")
             networkRequestExecutor.registerRequest(networkRequest)
         }
+    }
+
+    fun requestDeleteAccount(onResult: (DeleteAccountResponse?) -> Unit) {
+        val token = getToken()
+        if (token != null) {
+            networkRepository.requestDeleteAccount(
+                email = token.email,
+                token = token.token,
+                onResult = onResult
+            )
+        }
+    }
+
+    suspend fun getSubscription(onResult: (GetSubscriptionResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            try {
+                val response = networkRepository.getSubscription(token)
+                onResult(response)
+            } catch (e: Exception) {
+                onResult(
+                    GetSubscriptionResponse(
+                        result = RuuviNetworkResponse.errorResult,
+                        error = e.message.toString(),
+                        data = null,
+                        code = null
+                    )
+                )
+            }
+        }
+    }
+
+    suspend fun registerPush(fcmToken: String): PushRegisterResponse? {
+        val token = getToken()?.token
+        token?.let {
+            return networkRepository.registerPush(it, fcmToken)
+        }
+        return null
+    }
+
+    suspend fun unregisterPush(fcmToken: String): PushUnregisterResponse? {
+        return networkRepository.unregisterPush(fcmToken)
+    }
+
+    suspend fun getPushList(): PushListResponse? {
+        val token = getToken()?.token
+        token?.let {
+            return networkRepository.getPushList(it)
+        }
+        return null
     }
 }

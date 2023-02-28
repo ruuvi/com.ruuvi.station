@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 val White = Color.White
 val White80 = Color(0xCCFFFFFF)
+val White50 = Color(0x80FFFFFF)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
@@ -24,7 +25,12 @@ val Dark = Color(0xFF001D1B)
 val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
 val Orange = Color(0xCCF48021)
+val OrangeSolid = Color(0xFFF48021)
+val Orange2 = Color(0xFFF8B075)
 val Milky = Color(0xFFD6EAE7)
+val Milky2 = Color(0xFFEEF2F2)
+val DefaultSensorBackgroundDark = Color(0xFF2D605C)
+val DefaultSensorBackgroundLight = Color(0xFFD8EDEA)
 
 data class RuuviStationColors(
     val primary: Color,
@@ -45,7 +51,16 @@ data class RuuviStationColors(
     val settingsSubTitle: Color,
     val settingsTitleText: Color,
     val divider: Color,
-    val activeAlert: Color
+    val activeAlert: Color,
+    val dashboardBackground: Color,
+    val dashboardCardBackground: Color,
+    val dashboardIcons: Color,
+    val dashboardBurger: Color,
+    val defaultSensorBackground: Color,
+    val secondaryTextColor: Color,
+    val backgroundAlpha: Float,
+    val onboardingTextColor: Color,
+    val dangerousButton: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -67,7 +82,16 @@ val lightPalette = RuuviStationColors(
     settingsSubTitle = Keppel15,
     settingsTitleText = Titan,
     divider = Lines,
-    activeAlert = Orange
+    activeAlert = Orange,
+    dashboardBackground = Milky2,
+    dashboardCardBackground = White,
+    dashboardIcons = Titan,
+    dashboardBurger = Titan,
+    defaultSensorBackground = DefaultSensorBackgroundLight,
+    secondaryTextColor = Titan50,
+    backgroundAlpha = 0.3f,
+    onboardingTextColor = White,
+    dangerousButton = OrangeSolid
 )
 
 val darkPalette = RuuviStationColors(
@@ -89,5 +113,14 @@ val darkPalette = RuuviStationColors(
     settingsSubTitle = Titan50,
     settingsTitleText = White,
     divider = Lines10,
-    activeAlert = Orange
+    activeAlert = Orange,
+    dashboardBackground = Dark,
+    dashboardCardBackground = Titan,
+    dashboardIcons = Keppel,
+    dashboardBurger = White,
+    defaultSensorBackground = DefaultSensorBackgroundDark,
+    secondaryTextColor = White50,
+    backgroundAlpha = 0.75f,
+    onboardingTextColor = White,
+    dangerousButton = OrangeSolid
 )

@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +47,8 @@ fun TextEditButton(
 fun TextEditWithCaptionButton(
     value: String?,
     title: String,
-    icon: Painter = painterResource(id = R.drawable.edit_20),
+    icon: Painter,
+    tint: Color,
     editAction: () -> Unit
 ) {
     Row(modifier = Modifier
@@ -66,9 +69,10 @@ fun TextEditWithCaptionButton(
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = value ?: "")
-        Image(
+        Icon(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = icon,
+            tint = tint,
             contentDescription = ""
         )
     }

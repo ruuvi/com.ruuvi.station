@@ -14,15 +14,7 @@ class AppearanceSettingsViewModel (
     private val _darkMode = MutableLiveData<DarkModeState> (interactor.getDarkMode())
     val darkMode: LiveData<DarkModeState> = _darkMode
 
-    private  val _dashboardEnabled = MutableLiveData<Boolean> (interactor.isDashboardEnabled())
-    val dashboardEnabled: LiveData<Boolean> = _dashboardEnabled
-
     fun getThemeOptions(): Array<DarkModeState> = DarkModeState.values()
-
-    fun setIsDashboardEnabled(isEnabled: Boolean) {
-        interactor.setIsDashboardEnabled(isEnabled)
-        _dashboardEnabled.value = interactor.isDashboardEnabled()
-    }
 
     fun setDarkMode(mode: DarkModeState) {
         interactor.updateDarkMode(mode)

@@ -10,9 +10,9 @@ import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.util.extensions.getEpochSecond
 import kotlinx.coroutines.*
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
@@ -110,6 +110,19 @@ class RuuviNetworkRepository
         } else {
             val type = object : TypeToken<ClaimSensorResponse>() {}.type
             val errorResponse: ClaimSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            result = errorResponse
+        }
+        onResult(result)
+    }
+
+    suspend fun contestSensor(request: ContestSensorRequest, token: String, onResult: (ContestSensorResponse?) -> Unit) {
+        val response = retrofitService.contestSensor(getAuth(token), request)
+        val result: ContestSensorResponse?
+        if (response.isSuccessful) {
+            result = response.body()
+        } else {
+            val type = object : TypeToken<ContestSensorResponse>() {}.type
+            val errorResponse: ContestSensorResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
         onResult(result)
@@ -222,9 +235,9 @@ class RuuviNetworkRepository
                 val bitmap = imageInteractor.getImage(fileUri)
                 bitmap?.let {
                     val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                    val mediaType = MediaType.get(request.type)
-                    val body = RequestBody.create(mediaType, stream.toByteArray())
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
+                    val mediaType = request.type.toMediaType()
+                    val body = stream.toByteArray().toRequestBody(mediaType)
                     retrofitService.uploadImageData(url, request.type, body)
                     bitmap.recycle()
                 }
@@ -340,9 +353,89 @@ class RuuviNetworkRepository
         result
     }
 
-    companion object {
-        private const val BASE_URL = "https://network.ruuvi.com/"
+    fun requestDeleteAccount(email: String, token: String, onResult: (DeleteAccountResponse?) -> Unit) {
+        ioScope.launch {
+            var result: DeleteAccountResponse?
+            try {
+                val response = retrofitService.deleteAccount(getAuth(token), DeleteAccountRequest(email))
+                if (response.isSuccessful) {
+                    result = response.body()
+                } else {
+                    val type = object : TypeToken<UserRegisterResponse>() {}.type
+                    val errorResponse: DeleteAccountResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+                    result = errorResponse
+                }
+            } catch (e: Exception) {
+                result = DeleteAccountResponse(result = RuuviNetworkResponse.errorResult, error = e.message.orEmpty(), data = null, code = null)
+            }
 
+            withContext(Dispatchers.Main) {
+                onResult(result)
+            }
+        }
+    }
+
+    suspend fun getSubscription(token: String): GetSubscriptionResponse? = withContext(dispatcher){
+        val response = retrofitService.getSubscription(getAuth(token))
+        val result: GetSubscriptionResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<GetSubscriptionResponse>() {}.type
+            val errorResponse: GetSubscriptionResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        result
+    }
+
+    suspend fun registerPush(token: String, fcmToken: String): PushRegisterResponse?
+    {
+        val response = retrofitService.pushRegister(
+            auth = getAuth(token),
+            request = PushRegisterRequest(token = fcmToken)
+        )
+        val result: PushRegisterResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushRegisterResponse>() {}.type
+            val errorResponse: PushRegisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
+    suspend fun unregisterPush(fcmToken: String): PushUnregisterResponse?
+    {
+        val response = retrofitService.pushUnregister(
+            request = PushUnregisterRequest(token = fcmToken)
+        )
+        val result: PushUnregisterResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushUnregisterResponse>() {}.type
+            val errorResponse: PushUnregisterResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
+    suspend fun getPushList(token: String): PushListResponse?
+    {
+        val response = retrofitService.getPushList(
+            auth = getAuth(token)
+        )
+        val result: PushListResponse? = if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<PushListResponse>() {}.type
+            val errorResponse: PushListResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+        return result
+    }
+
+    companion object {
+        private const val BASE_URL = "https://network.ruuvi.com/" //production
+        //private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
         fun getAuth(token: String) = "Bearer $token"
     }
 }

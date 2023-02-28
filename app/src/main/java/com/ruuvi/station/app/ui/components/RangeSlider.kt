@@ -27,7 +27,7 @@ fun RuuviRangeSlider(
     onValueChangeFinished: (() -> Unit)? = null,
 ) {
     RangeSlider(
-        values = values.start..values.endInclusive,
+        value = values.start..values.endInclusive,
         onValueChange = {
             onValueChange.invoke(it.start..it.endInclusive)
         },

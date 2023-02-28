@@ -5,12 +5,10 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.ui.UiText
-import com.ruuvi.station.bluetooth.domain.SensorFwVersionInteractor
+import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.isLowBattery
-import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -31,7 +29,7 @@ class TagSettingsViewModel(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
     private val alarmRepository: AlarmRepository,
-    private val sensorFwInteractor: SensorFwVersionInteractor,
+    private val sensorFwInteractor: SensorInfoInteractor,
     private val unitsConverter: UnitsConverter,
     private val accelerationConverter: AccelerationConverter
 ) : ViewModel() {
@@ -65,7 +63,17 @@ class TagSettingsViewModel(
         getFirmware(it.firmware)
     }
 
+    init {
+        if (!_sensorState.value.networkSensor && sensorState.value.owner.isNullOrEmpty()) {
+            Timber.d("checkSensorOwner")
+            viewModelScope.launch {
+                networkInteractor.getSensorOwner(sensorId) {}
+            }
+        }
+    }
+
     private fun getFirmware(firmware: String?): UiText? {
+        Timber.d("getFirmware")
         if (firmware.isNullOrEmpty() && sensorState.value.dataFormat != 5) {
             return UiText.StringResource(R.string.firmware_very_old)
         }
@@ -73,19 +81,17 @@ class TagSettingsViewModel(
     }
 
     fun getTagInfo() {
+        Timber.d("getTagInfo")
         CoroutineScope(Dispatchers.IO).launch {
             val sensorState = interactor.getFavouriteSensorById(sensorId)
             if (sensorState != null) {
                 _sensorState.value = sensorState
             }
-
-            if (sensorState?.networkSensor != true && sensorState?.owner.isNullOrEmpty()) {
-                interactor.checkSensorOwner(sensorId)
-            }
         }
     }
 
     fun updateSensorFirmwareVersion() {
+        Timber.d("updateSensorFirmwareVersion")
         CoroutineScope(Dispatchers.IO).launch {
             val storredFw = sensorState.value.firmware
             if (storredFw.isNullOrEmpty() && sensorState.value.connectable == true) {
@@ -98,18 +104,25 @@ class TagSettingsViewModel(
     }
 
     fun checkIfSensorShared() {
-        getSensorSharedEmails()
-
-    }
-
-    private val handler = CoroutineExceptionHandler() { _, exception ->
-        CoroutineScope(Dispatchers.Main).launch {
-            operationStatus.value = exception.message
-            Timber.d("CoroutineExceptionHandler: ${exception.message}")
+        Timber.d("checkIfSensorShared")
+        try {
+            getSensorSharedEmails()
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
+    private val handler = CoroutineExceptionHandler() { _, exception ->
+        Timber.d("CoroutineExceptionHandler: ${exception.message}")
+
+//        CoroutineScope(Dispatchers.Main).launch {
+//            operationStatus.value = exception.message
+//            Timber.d("CoroutineExceptionHandler: ${exception.message}")
+//        }
+    }
+
     fun getSensorSharedEmails() {
+        Timber.d("getSensorSharedEmails")
         networkInteractor.getSharedInfo(sensorId, handler) { response ->
             Timber.d("getSensorSharedEmails ${response.toString()}")
             _sensorShared.value = response?.sharedTo?.isNotEmpty() == true
@@ -120,6 +133,7 @@ class TagSettingsViewModel(
         interactor.getTagById(tagId)
 
     fun deleteSensor() {
+        Timber.d("deleteSensor")
         interactor.deleteTagsAndRelatives(sensorId)
     }
 
@@ -127,18 +141,10 @@ class TagSettingsViewModel(
         alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
-    fun updateTagBackground(userBackground: String?, defaultBackground: Int?) {
-        interactor.updateTagBackground(sensorId, userBackground, defaultBackground)
-        if (userBackground.isNullOrEmpty() == false) {
-            networkInteractor.uploadImage(sensorId, userBackground)
-        } else if (sensorState.value.networkBackground?.isNotEmpty() == true) {
-            networkInteractor.resetImage(sensorId)
-        }
-    }
-
     fun statusProcessed() { operationStatus.value = "" }
 
     fun setName(name: String?) {
+        Timber.d("setName")
         interactor.updateTagName(sensorId, name)
         getTagInfo()
         networkInteractor.updateSensorName(sensorId)

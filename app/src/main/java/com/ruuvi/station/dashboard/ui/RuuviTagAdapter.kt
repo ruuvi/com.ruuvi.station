@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.domain.AlarmStatus
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.databinding.ItemDashboardBinding
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.MovementConverter
@@ -60,12 +60,12 @@ class RuuviTagAdapter(
         val updatedAt = item?.updatedAt?.describingTimeSince(activity)
         binding.lastSeenTextView.text = updatedAt
 
-        val status = item?.status ?: AlarmStatus.NO_ALARM
+        val status = item?.status ?: AlarmSensorStatus.NoAlarms
         val (isVisible, iconResource, alpha) =
             when (status) {
-                AlarmStatus.NO_ALARM -> Triple(true, R.drawable.ic_notifications_off_24px, 0.5f)
-                AlarmStatus.NO_TRIGGERED -> Triple(true, R.drawable.ic_notifications_on_24px, 1f)
-                AlarmStatus.TRIGGERED -> Triple(!binding.bell.isVisible, R.drawable.ic_notifications_active_24px, 1f)
+                is AlarmSensorStatus.NoAlarms -> Triple(true, R.drawable.ic_notifications_off_24px, 0.5f)
+                is AlarmSensorStatus.NotTriggered -> Triple(true, R.drawable.ic_notifications_on_24px, 1f)
+                is AlarmSensorStatus.Triggered -> Triple(!binding.bell.isVisible, R.drawable.ic_notifications_active_24px, 1f)
             }
         binding.bell.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
         binding.bell.setImageResource(iconResource)

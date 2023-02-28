@@ -27,6 +27,13 @@ interface RuuviNetworkApi{
     ): Response<ClaimSensorResponse>
 
     @Headers("Content-Type: application/json")
+    @POST("contest-sensor")
+    suspend fun contestSensor(
+        @Header("Authorization") auth: String,
+        @Body requestBody: ContestSensorRequest
+    ): Response<ContestSensorResponse>
+
+    @Headers("Content-Type: application/json")
     @POST("unclaim")
     suspend fun unclaimSensor(
         @Header("Authorization") auth: String,
@@ -131,4 +138,36 @@ interface RuuviNetworkApi{
         @Query("measurements") measurements: Boolean = false,
         @Query("alerts") alerts: Boolean = false
     ): Response<SensorDenseResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("request-delete")
+    suspend fun deleteAccount(
+        @Header("Authorization") auth: String,
+        @Body request: DeleteAccountRequest
+    ): Response<DeleteAccountResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("subscription")
+    suspend fun getSubscription(
+        @Header("Authorization") auth: String
+    ): Response<GetSubscriptionResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("push-register")
+    suspend fun pushRegister(
+        @Header("Authorization") auth: String,
+        @Body request: PushRegisterRequest
+    ): Response<PushRegisterResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("push-unregister")
+    suspend fun pushUnregister(
+        @Body request: PushUnregisterRequest
+    ): Response<PushUnregisterResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("push-list")
+    suspend fun getPushList(
+        @Header("Authorization") auth: String
+    ): Response<PushListResponse>
 }

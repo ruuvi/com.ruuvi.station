@@ -16,11 +16,9 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
-import com.ruuvi.station.bluetooth.domain.PermissionsInteractor
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.util.extensions.openUrl
-import kotlinx.coroutines.flow.collect
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -97,7 +95,7 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
                 return@OnItemClickListener
             }
             viewModel.makeSensorFavorite(tag)
-            TagSettingsActivity.startForResult(this, 1, tag.id)
+            TagSettingsActivity.startAfterAddingNewSensor(this, tag.id)
         }
 
         binding.content.buySensorsButton.setOnClickListener {

@@ -14,6 +14,7 @@ import com.ruuvi.station.dataforwarding.di.DataForwardingInjectionModule
 import com.ruuvi.station.graph.di.GraphInjectionModule
 import com.ruuvi.station.image.di.ImageInjectionModule
 import com.ruuvi.station.network.di.NetworkInjectionModule
+import com.ruuvi.station.onboarding.di.OnboardingInjectionModule
 import com.ruuvi.station.settings.di.SettingsInjectionModule
 import com.ruuvi.station.startup.di.StartupActivityInjectionModule
 import com.ruuvi.station.tag.di.RuuviTagInjectionModule
@@ -48,5 +49,6 @@ object AppInjectionModules {
         import(DatabaseInjectionModule.module)
         import(DfuInjectionModule.module)
         import(WidgetInjectionModule.module)
+        import(OnboardingInjectionModule.module)
     }
 }

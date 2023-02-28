@@ -45,7 +45,7 @@ class BluetoothGattInteractor (
                 }
             }
 
-            override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean) {
+            override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean, serialNumber: String?) {
                 if (canReadLogs) {
                     setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_DATA, model, fw))
                 } else {

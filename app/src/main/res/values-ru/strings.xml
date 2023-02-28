@@ -46,7 +46,7 @@
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Назад</string>
-    <string name="background_image">Фоновое\nизображение</string>
+    <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>
     <string name="background_interval_10sec">каждые %1$s сек</string>
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
@@ -56,8 +56,8 @@
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
     <string name="brackets_text">(%1$s)</string>
-    <string name="buy_gateway_link">https://ruuvi.com/gateway</string>
-    <string name="buy_sensors_link">https://ruuvi.com/products</string>
+    <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -83,9 +83,11 @@
     <string name="camera">Камера</string>
     <string name="camera_fail">Не удалось запустить камеру</string>
     <string name="cancel">Отмена</string>
+    <string name="change_background_image">Изменить фоновое изображение</string>
+    <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
-    <string name="charts_background_dialog_title_question">Включить фоновое сканирование?</string>
+    <string name="charts_background_dialog_title_question">Включить фоновое сканирование Bluetooth?</string>
     <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="claim_ownership">Заявить о владении</string>
     <string name="claim_sensor">Заявить о собственности</string>
@@ -133,6 +135,16 @@
     <string name="data_forwarding_url">URL шлюза</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
+    <string name="day_1">1 день</string>
+    <string name="day_10">10 дней</string>
+    <string name="day_2">2 дня</string>
+    <string name="day_3">3 дня</string>
+    <string name="day_4">4 дня</string>
+    <string name="day_5">5 дней</string>
+    <string name="day_6">6 дней</string>
+    <string name="day_7">7 дней</string>
+    <string name="day_8">8 дней</string>
+    <string name="day_9">9 дней</string>
     <string name="days">Дней</string>
     <string name="details">Подробнее</string>
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
@@ -220,7 +232,7 @@
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
-    <string name="network_sharing_disabled">Вы можете поделиться сенсорами только из зоны покрытия Ruuvi Gateway. Если у вас нет Gateway, вы можете приобрести его на ruuvi.com/gateway</string>
+    <string name="network_sharing_disabled">Вы можете поделиться сенсорами только из зоны покрытия Ruuvi Gateway.</string>
     <string name="network_status_title">Статус сети Ruuvi</string>
     <string name="network_sync_result_exception">Ошибка синхронизации: %1$s</string>
     <string name="network_sync_result_not_logged">Ошибка синхронизации: необходимо залогиниться вначале</string>
@@ -236,6 +248,7 @@
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано.</string>
+    <string name="onboarding_measure_your_world">Measure Your World</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
@@ -266,7 +279,6 @@
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
-    <string name="replace_battery">Замените батарею!</string>
     <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
@@ -299,7 +311,7 @@
     <string name="settings_background_scan_interval_description">Установите как часто должно включаться фоновое сканирование</string>
     <string name="settings_chart">Настройки графиков</string>
     <string name="settings_chart_all_points">Отображать все данные</string>
-    <string name="settings_chart_all_points_description">Это может привести к медленному обновлению графиков</string>
+    <string name="settings_chart_all_points_description">Это может привести к медленному обновлению графиков.</string>
     <string name="settings_chart_description">Установите интервал между точками и диапазон истории для графиков</string>
     <string name="settings_chart_draw_dots">Показывать точки на графике</string>
     <string name="settings_chart_draw_dots_description">Маленькие точки помогут точно понять когда были получены данные</string>
@@ -315,7 +327,7 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Идентификатор устройства</string>
     <string name="settings_humidity_unit">Ед. изм. Влажности</string>
-    <string name="settings_humidity_unit_details">Выберите единицу измерения влажности для отображения</string>
+    <string name="settings_humidity_unit_details">Выберите единицу измерения влажности для отображения.</string>
     <string name="settings_language">Язык</string>
     <string name="settings_pressure_unit">Ед. изм. Давления</string>
     <string name="settings_pressure_unit_details">Выберите единицу измерения давления для отображения.</string>
@@ -330,7 +342,7 @@
     <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
     <string name="sign_in">Войти</string>
     <string name="sign_in_benefits_description">Преимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
-    <string name="sign_in_check_email">Пожалуйста, проверьте email для дальнейших инструкций</string>
+    <string name="sign_in_check_email">Мы отправили одноразовый пароль на вашу электронную почту. Войдите, введя его здесь:</string>
     <string name="sign_in_code_hint">Код для входа</string>
     <string name="sign_in_email_sent">Email отправлен</string>
     <string name="sign_in_login_button">Войти</string>
@@ -380,6 +392,7 @@
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
     <string name="version">Версия: %1$s</string>
+    <string name="view">Вид</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>
@@ -387,7 +400,7 @@
     <string name="welcome_text_2">В реальном времени считывайте показатели с датчиков и просматривайте историю на графиках.</string>
     <string name="welcome_text_3">Устанавливайте лимиты значений, при  превышении которых вы получите уведомление.</string>
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
-    <string name="what_to_measure_link">https://ruuvi.com/ideas</string>
+    <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Нажмите + чтобы добавить датчики</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>
