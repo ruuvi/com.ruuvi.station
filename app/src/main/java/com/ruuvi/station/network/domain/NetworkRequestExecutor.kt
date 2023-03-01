@@ -119,7 +119,11 @@ class NetworkRequestExecutor (
         Timber.d("runSpecificAction $networkRequest")
         var response: RuuviNetworkResponse<*>? = null
 
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+            Timber.d("runSpecificAction exception: ${throwable.message} ${throwable.stackTrace}")
+        }
+
+        val job = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             response =  when (networkRequest.type) {
                 NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
                 NetworkRequestType.UPDATE_SENSOR -> updateSensor(
