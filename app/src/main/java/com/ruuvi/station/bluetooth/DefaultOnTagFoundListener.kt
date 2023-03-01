@@ -11,9 +11,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.util.extensions.logData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
@@ -43,7 +41,10 @@ class DefaultOnTagFoundListener(
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
         Timber.d("saveReading for tag(${ruuviTag.id})")
-        ioScope.launch {
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Timber.d("Error while saving advertisement: ${throwable.message}")
+        }
+        (ioScope + coroutineExceptionHandler).launch {
             ruuviTag.id?.let { sensorId ->
                 val dbTag = repository.getTagById(sensorId)
                 if (dbTag != null) {
