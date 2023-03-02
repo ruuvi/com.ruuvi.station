@@ -77,9 +77,13 @@ class MyAccountViewModel(
 
     fun getRegisteredTokens() {
         viewModelScope.launch {
-            val response = networkInteractor.getPushList()
-            if (response != null && response.isSuccess()) {
-                _tokens.value = response.data?.tokens?.map { Pair(it.id, it.name) }
+            try {
+                val response = networkInteractor.getPushList()
+                if (response != null && response.isSuccess()) {
+                    _tokens.value = response.data?.tokens?.map { Pair(it.id, it.name) }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }
