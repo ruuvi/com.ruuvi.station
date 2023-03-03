@@ -1,6 +1,10 @@
 package com.ruuvi.station.settings.ui
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -9,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -17,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ruuvi.station.R
@@ -25,6 +27,7 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.util.BackgroundScanModes
+import java.util.*
 
 @Composable
 fun SettingsList(
@@ -49,6 +52,20 @@ fun SettingsList(
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (Build.VERSION.SDK_INT >= TIRAMISU) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_language),
+                    description = Locale.getDefault().displayLanguage,
+                    onClick = {
+                        val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
+                        intent.data = Uri.parse("package:${context.packageName}")
+                        context.startActivity(intent)
+                    }
+                )
+            }
+        }
+
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
