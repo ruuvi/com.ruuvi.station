@@ -428,7 +428,7 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                 setupAlarmIcon(item)
                 val graphItem = menu.findItem(R.id.action_graph)
                 if (viewModel.isShowingGraph()) {
-                    graphItem.setIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
+                    graphItem.setIcon(R.drawable.icon_temperature)
                 } else {
                     graphItem.setIcon(R.drawable.ic_ruuvi_graphs_icon)
                 }
