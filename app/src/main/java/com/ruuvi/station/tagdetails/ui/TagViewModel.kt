@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -175,7 +176,7 @@ class TagViewModel(
     fun syncGatt() {
         tagEntry.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * preferencesRepository.getGraphViewPeriodDays())
+            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
             if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }
