@@ -1,3 +1,4 @@
+
 package com.ruuvi.station.app.ui.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -64,6 +66,55 @@ fun TextFieldRuuvi(
         ) { innerTextField ->
             TextFieldDefaults.TextFieldDecorationBox(
                 value = value,
+                enabled = true,
+                placeholder = { Hint(hint) },
+                visualTransformation = VisualTransformation.None,
+                innerTextField = innerTextField,
+                colors = RuuviTextFieldColors(),
+                singleLine = true,
+                interactionSource = interactionSource,
+                contentPadding = PaddingValues(vertical = 8.dp),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun TextFieldRuuvi(
+    modifier: Modifier = Modifier,
+    value: TextFieldValue,
+    hint: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    onValueChange: (TextFieldValue) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val customTextSelectionColors = TextSelectionColors(
+        handleColor = RuuviStationTheme.colors.accent,
+        backgroundColor = RuuviStationTheme.colors.accent.copy(alpha = 0.4f)
+    )
+
+    CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            textStyle = RuuviStationTheme.typography.paragraph,
+            interactionSource = interactionSource,
+            modifier = modifier.indicatorLine(
+                enabled = true,
+                colors = RuuviTextFieldColors(),
+                interactionSource = interactionSource,
+                isError = false
+            ),            visualTransformation = VisualTransformation.None,
+            keyboardOptions = keyboardOptions,
+            cursorBrush = SolidColor(RuuviStationTheme.colors.accent),
+            keyboardActions = keyboardActions,
+            singleLine = true)
+        { innerTextField ->
+            TextFieldDefaults.TextFieldDecorationBox(
+                value = value.text,
                 enabled = true,
                 placeholder = { Hint(hint) },
                 visualTransformation = VisualTransformation.None,

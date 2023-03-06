@@ -12,18 +12,21 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,7 @@ import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @Composable
@@ -241,6 +245,7 @@ fun GeneralSettingsGroup(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SetSensorName(
     value: String?,
@@ -248,31 +253,44 @@ fun SetSensorName(
     onDismissRequest : () -> Unit
 ) {
     var name by remember {
-        mutableStateOf(value ?: "")
+        mutableStateOf(TextFieldValue(value ?: "", TextRange((value ?: "").length)))
     }
     RuuviDialog(
         title = stringResource(id = R.string.tag_name),
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
-            setName.invoke(name)
+            setName.invoke(name.text)
             onDismissRequest.invoke()
         }
     ) {
         val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         ParagraphWithPadding(text = stringResource(id = R.string.rename_sensor_message))
         TextFieldRuuvi(
             value = name,
             onValueChange = {
-                if (it.length <= 32) name = it
+                if (it.text.length <= 32) name = it
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (it.isFocused) keyboardController?.show()
+                },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences
             ),
-            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }
+            )
         )
+
+        LaunchedEffect(key1 = Unit) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
     }
 }
 
