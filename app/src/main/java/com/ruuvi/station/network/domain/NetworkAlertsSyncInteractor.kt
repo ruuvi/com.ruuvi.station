@@ -4,28 +4,21 @@ import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.data.response.NetworkAlertItem
+import com.ruuvi.station.network.data.response.SensorDenseResponse
 import timber.log.Timber
 import java.lang.Exception
 
 class NetworkAlertsSyncInteractor(
-    private val tokenRepository: NetworkTokenRepository,
-    private val networkRepository: RuuviNetworkRepository,
     private val alarmRepository: AlarmRepository,
     private val sensorSettingsRepository: SensorSettingsRepository
 ) {
-    private fun getToken() = tokenRepository.getTokenInfo()
 
-    suspend fun updateAlertsFromNetwork() {
+    fun updateAlertsFromNetwork(sensors: SensorDenseResponse) {
         try {
-            getToken()?.token?.let { token ->
-                val response = networkRepository.getAlerts(token = token, sensorId = null)
-                if (response?.isSuccess() == true && response.data != null) {
-                    response.data.sensors.forEach { sensor ->
-                        if (sensorSettingsRepository.getSensorSettings(sensorId = sensor.sensor) != null) {
-                            sensor.alerts.forEach { alert ->
-                                saveNetworkAlert(sensor.sensor, alert)
-                            }
-                        }
+            sensors.data?.sensors?.forEach { sensor ->
+                if (sensorSettingsRepository.getSensorSettings(sensorId = sensor.sensor) != null) {
+                    sensor.alerts.forEach { alert ->
+                        saveNetworkAlert(sensor.sensor, alert)
                     }
                 }
             }

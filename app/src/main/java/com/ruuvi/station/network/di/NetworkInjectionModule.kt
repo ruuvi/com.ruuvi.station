@@ -32,7 +32,7 @@ object NetworkInjectionModule {
         }
 
         bind<NetworkAlertsSyncInteractor>() with  singleton {
-            NetworkAlertsSyncInteractor(instance(), instance(), instance(), instance())
+            NetworkAlertsSyncInteractor(instance(), instance())
         }
 
         bind<EmailEnterViewModel>() with provider {

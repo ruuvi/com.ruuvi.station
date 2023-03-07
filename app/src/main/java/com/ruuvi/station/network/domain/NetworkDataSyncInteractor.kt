@@ -17,6 +17,7 @@ import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
+import com.ruuvi.station.network.data.request.SensorDenseRequest
 import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -118,7 +119,15 @@ class NetworkDataSyncInteractor (
                 }
 
                 Timber.d("get getSensorDenseLastData")
-                val sensorsInfo = networkInteractor.getSensorDenseLastData()
+                val sensorsRequest = SensorDenseRequest(
+                    sensor = null,
+                    measurements = true,
+                    alerts = true,
+                    sharedToOthers = true,
+                    sharedToMe = true
+                )
+
+                val sensorsInfo = networkInteractor.getSensorDenseLastData(sensorsRequest)
                 Timber.d("sensorsInfo = $sensorsInfo")
                 if (sensorsInfo?.isError() == true || sensorsInfo?.data == null) {
                     val event = when (sensorsInfo?.code) {
@@ -140,7 +149,7 @@ class NetworkDataSyncInteractor (
                 syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
-                networkAlertsSyncInteractor.updateAlertsFromNetwork()
+                networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
             } catch (exception: Exception) {
                 exception.message?.let { message ->

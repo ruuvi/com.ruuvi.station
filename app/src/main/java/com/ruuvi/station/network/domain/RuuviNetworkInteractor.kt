@@ -298,17 +298,19 @@ class RuuviNetworkInteractor (
         return getSensorData(request)
     }
 
-    suspend fun getSensorDenseLastData(): SensorDenseResponse? = withContext(Dispatchers.IO) {
-        val token = getToken()?.token
-
-        token?.let {
-            val request = SensorDenseRequest(
+    suspend fun getSensorDenseLastData(
+        request: SensorDenseRequest =
+            SensorDenseRequest(
                 sensor = null,
                 measurements = true,
                 alerts = false,
                 sharedToOthers = false,
                 sharedToMe = true
             )
+    ): SensorDenseResponse? = withContext(Dispatchers.IO) {
+        val token = getToken()?.token
+
+        token?.let {
             return@withContext networkRepository.getSensorDenseData(token, request)
         }
     }
