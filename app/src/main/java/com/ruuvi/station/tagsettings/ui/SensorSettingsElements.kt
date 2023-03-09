@@ -32,6 +32,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
@@ -173,7 +174,7 @@ fun GeneralSettingsGroup(
     sensorState: RuuviTag,
     userLoggedIn: Boolean,
     sensorOwnedByUser: Boolean,
-    sensorIsShared: Boolean,
+    sensorIsShared: UiText,
     setName: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -212,11 +213,7 @@ fun GeneralSettingsGroup(
             }
         }
         if (sensorOwnedByUser) {
-            val sharedText = if (sensorIsShared) {
-                stringResource(R.string.sensor_shared)
-            } else {
-                stringResource(R.string.sensor_not_shared)
-            }
+            val sharedText = sensorIsShared.asString(context)
             DividerRuuvi()
 
             TextEditWithCaptionButton(

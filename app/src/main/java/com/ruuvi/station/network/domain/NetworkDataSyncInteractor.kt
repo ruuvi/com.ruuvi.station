@@ -47,7 +47,8 @@ class NetworkDataSyncInteractor (
     private val firebaseInteractor: FirebaseInteractor,
     private val tagSettingsInteractor: TagSettingsInteractor,
     private val pushRegisterInteractor: PushRegisterInteractor,
-    private val networkShareListInteractor: NetworkShareListInteractor
+    private val networkShareListInteractor: NetworkShareListInteractor,
+    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -113,6 +114,8 @@ class NetworkDataSyncInteractor (
                 sendSyncEvent(NetworkSyncEvent.InProgress)
                 Timber.d("executeScheduledRequests")
                 networkRequestExecutor.executeScheduledRequests()
+
+                subscriptionInfoSyncInteractor.syncSubscriptionInfo()
 
                 if (!networkRequestExecutor.anySettingsRequests()) {
                     Timber.d("updateSettingsFromNetwork")

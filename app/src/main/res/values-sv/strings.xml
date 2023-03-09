@@ -116,7 +116,7 @@
     <string name="clear_confirm">Radera historisk data från appen?</string>
     <string name="clear_local_history">Rensa lokal historik</string>
     <string name="clear_local_history_description">Vill du rensa lokalt lagrad historisk data från appen? Detta kommer inte att rensa internt lagrad historik i sensorer eller historisk data lagrad i Ruuvi Cloud-tjänst.</string>
-    <string name="clear_view">Töm grafer</string>
+    <string name="clear_view">Töm historikvy</string>
     <string name="close">Stäng</string>
     <string name="cloud_er_forbidden">Förbjuden</string>
     <string name="cloud_er_internal">Internt fel</string>
@@ -370,7 +370,7 @@
     <string name="pressure_with_unit">Lufttryck (%1$s)</string>
     <string name="reading_history">Läser historik</string>
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
-    <string name="reading_history_x">Läser historik.. %1$s</string>
+    <string name="reading_history_x">Läser Bluetooth: %1$s</string>
     <string name="remove">Ta bort</string>
     <string name="remove_claimed_sensor">Om du tar bort sensorn upphör ägarskapet. Vem som helst kan göra anspråk på ägandet av sensorn efter borttagning. Varje Ruuvi-sensor kan bara ha en ägare.</string>
     <string name="remove_local_sensor">Är du säker på att du vill ta bort den här sensorn?</string>
@@ -442,7 +442,7 @@
     <string name="settings_temperature_unit_details">Välj den temperaturenhet som du vill ska visas.</string>
     <string name="share">Dela</string>
     <string name="share_sensor_add_friend">Lägg till vän</string>
-    <string name="share_sensor_already_shared">Sensorn är redan delad %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Du har använt %1$,d/%2$,d av det maximala antalet delningar för denna sensor. Sensorn delas med följande användare:</string>
     <string name="share_sensor_description">Du kan dela sensorn med vänner och familj om den är inom räckhåll för en Ruuvi Gateway.\n\nMottagaren meddelas via e-post. Om mottagaren inte har ett Ruuvi-konto skapas ett gratis Ruuvi-konto automatiskt vid första inloggningen.\n\nObservera att sensorns anpassade namn och bakgrundsbild delas. Namnet och bildsynkroniseringen sker endast vid en gång, efteråt kan det anpassas av mottagaren. Kalibreringsvärden (om sådana finns) synkroniseras automatiskt och mottagaren ser alltid de korrigerade värdena.</string>
     <string name="share_sensor_send_button">Skicka</string>
     <string name="share_sensor_title">Dela sensor</string>

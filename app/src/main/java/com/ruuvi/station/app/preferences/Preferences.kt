@@ -320,6 +320,24 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putLong(PREF_DEVICE_TOKEN_REFRESH_DATE, refreshDate).apply()
         }
 
+    var subscriptionRefreshDate: Long
+        get() = sharedPreferences.getLong(PREF_SUBSCRIPTION_REFRESH_DATE, Long.MIN_VALUE)
+        set(refreshDate) {
+            sharedPreferences.edit().putLong(PREF_SUBSCRIPTION_REFRESH_DATE, refreshDate).apply()
+        }
+
+    var subscriptionMaxSharesPerSensor: Int
+        get() = sharedPreferences.getInt(
+            PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR,
+            DEFAULT_MAX_SHARES_PER_SENSOR
+        )
+        set(maxShares) {
+            sharedPreferences.edit().putInt(
+                PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR,
+                maxShares
+            ).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -366,6 +384,8 @@ class Preferences constructor(val context: Context) {
         private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
         private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
+        private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
+        private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""
@@ -376,6 +396,7 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
+        private const val DEFAULT_MAX_SHARES_PER_SENSOR = 10
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM

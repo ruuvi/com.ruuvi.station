@@ -17,7 +17,7 @@ object TagSettingsInjectionModule {
         }
 
         bind<TagSettingsViewModel>() with factory { args: TagSettingsViewModelArgs ->
-            TagSettingsViewModel(args.tagId, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            TagSettingsViewModel(args.tagId, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<BackgroundViewModel>() with factory { sensorId: String ->
