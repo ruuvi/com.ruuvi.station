@@ -49,6 +49,8 @@ data class SensorSettings(
     var firmware: String? = null,
     @Column
     var networkHistoryLastSync: Date? = null,
+    @Column
+    var canShare: Boolean? = null,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -85,6 +87,7 @@ data class SensorSettings(
     fun updateFromNetwork(sensor: SensorsDenseInfo, calibrationInteractor: CalibrationInteractor) {
         name = sensor.name
         owner = sensor.owner
+        canShare = sensor.canShare
         val recalibrateHistory = humidityOffset != sensor.offsetHumidity || pressureOffset != sensor.offsetPressure || temperatureOffset != sensor.offsetTemperature
         humidityOffset = sensor.offsetHumidity
         pressureOffset = sensor.offsetPressure

@@ -100,7 +100,6 @@ fun SensorSettings(
     }
 
     LaunchedEffect(key1 = 1) {
-        viewModel.checkIfSensorShared()
         viewModel.updateSensorFirmwareVersion()
     }
 }

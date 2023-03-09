@@ -46,7 +46,8 @@ class NetworkDataSyncInteractor (
     private val calibrationInteractor: CalibrationInteractor,
     private val firebaseInteractor: FirebaseInteractor,
     private val tagSettingsInteractor: TagSettingsInteractor,
-    private val pushRegisterInteractor: PushRegisterInteractor
+    private val pushRegisterInteractor: PushRegisterInteractor,
+    private val networkShareListInteractor: NetworkShareListInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -150,6 +151,7 @@ class NetworkDataSyncInteractor (
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
+                networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
             } catch (exception: Exception) {
                 exception.message?.let { message ->

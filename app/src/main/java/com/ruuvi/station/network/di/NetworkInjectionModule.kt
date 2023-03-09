@@ -24,8 +24,10 @@ object NetworkInjectionModule {
         bind<NetworkRequestExecutor>() with singleton { NetworkRequestExecutor(instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
+
+        bind<NetworkShareListInteractor>() with singleton { NetworkShareListInteractor(instance()) }
 
         bind<NetworkApplicationSettings>() with  singleton {
             NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance())
@@ -44,7 +46,7 @@ object NetworkInjectionModule {
         }
 
         bind<ShareSensorViewModel>() with factory { tagId: String ->
-            ShareSensorViewModel(tagId, instance())
+            ShareSensorViewModel(tagId, instance(), instance(), instance(), instance())
         }
 
         bind<ClaimSensorViewModel>() with factory { sensorId: String ->

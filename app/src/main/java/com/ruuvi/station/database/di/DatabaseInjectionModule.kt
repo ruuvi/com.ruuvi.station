@@ -33,5 +33,9 @@ object DatabaseInjectionModule {
         bind<NetworkRequestRepository>() with singleton {
             NetworkRequestRepository()
         }
+
+        bind<SensorShareListRepository>() with singleton {
+            SensorShareListRepository()
+        }
     }
 }

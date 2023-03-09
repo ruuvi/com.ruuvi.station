@@ -13,7 +13,15 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 29
+        const val VERSION = 30
+    }
+
+    @Migration(version = 30, database = LocalDatabase::class)
+    class Migration30(table: Class<SensorSettings?>?) : AlterTableMigration<SensorSettings?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.INTEGER, "canShare")
+        }
     }
 
     @Migration(version = 29, database = LocalDatabase::class)
