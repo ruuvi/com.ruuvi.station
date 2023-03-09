@@ -44,6 +44,10 @@ class DashboardActivityViewModel(
     val shouldAskToEnableBluetooth
         get() = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
 
+    fun refreshDashboardType() {
+        _dashBoardType.value = preferencesRepository.getDashboardType()
+    }
+
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
