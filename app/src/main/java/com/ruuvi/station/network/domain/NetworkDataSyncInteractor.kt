@@ -17,6 +17,7 @@ import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
+import com.ruuvi.station.network.data.request.SensorDenseRequest
 import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -45,7 +46,9 @@ class NetworkDataSyncInteractor (
     private val calibrationInteractor: CalibrationInteractor,
     private val firebaseInteractor: FirebaseInteractor,
     private val tagSettingsInteractor: TagSettingsInteractor,
-    private val pushRegisterInteractor: PushRegisterInteractor
+    private val pushRegisterInteractor: PushRegisterInteractor,
+    private val networkShareListInteractor: NetworkShareListInteractor,
+    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -112,13 +115,23 @@ class NetworkDataSyncInteractor (
                 Timber.d("executeScheduledRequests")
                 networkRequestExecutor.executeScheduledRequests()
 
+                subscriptionInfoSyncInteractor.syncSubscriptionInfo()
+
                 if (!networkRequestExecutor.anySettingsRequests()) {
                     Timber.d("updateSettingsFromNetwork")
                     networkApplicationSettings.updateSettingsFromNetwork()
                 }
 
                 Timber.d("get getSensorDenseLastData")
-                val sensorsInfo = networkInteractor.getSensorDenseLastData()
+                val sensorsRequest = SensorDenseRequest(
+                    sensor = null,
+                    measurements = true,
+                    alerts = true,
+                    sharedToOthers = true,
+                    sharedToMe = true
+                )
+
+                val sensorsInfo = networkInteractor.getSensorDenseLastData(sensorsRequest)
                 Timber.d("sensorsInfo = $sensorsInfo")
                 if (sensorsInfo?.isError() == true || sensorsInfo?.data == null) {
                     val event = when (sensorsInfo?.code) {
@@ -140,7 +153,8 @@ class NetworkDataSyncInteractor (
                 syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
-                networkAlertsSyncInteractor.updateAlertsFromNetwork()
+                networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
+                networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
             } catch (exception: Exception) {
                 exception.message?.let { message ->
@@ -164,14 +178,16 @@ class NetworkDataSyncInteractor (
             val tagJobs = mutableListOf<Job>()
             for (tagInfo in userInfoData.sensors) {
 
-                val job = launch {
-                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
-                    val benchUpdate1 = Date()
-                    syncSensorDataForPeriod(tagInfo.sensor, hours)
-                    val benchUpdate2 = Date()
-                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
+                if (tagInfo.subscription.maxHistoryDays > 0) {
+                    val job = launch {
+                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
+                        val benchUpdate1 = Date()
+                        syncSensorDataForPeriod(tagInfo.sensor, hours)
+                        val benchUpdate2 = Date()
+                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
+                    }
+                    tagJobs.add(job)
                 }
-                tagJobs.add(job)
             }
             for (job in tagJobs) {
                 job.join()

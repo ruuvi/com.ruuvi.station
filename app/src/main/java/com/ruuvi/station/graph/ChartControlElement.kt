@@ -41,7 +41,7 @@ fun ChartControlElement(
 
     val syncInProgress by viewModel.gattSyncInProgress.collectAsState(false)
 
-    val syncMessage by viewModel.gattSyncStatus.collectAsState(UiText.EmptyString())
+    val syncMessage by viewModel.gattSyncStatus.collectAsState(UiText.EmptyString)
 
     var gattSyncDialogOpened by remember {
         mutableStateOf(false)

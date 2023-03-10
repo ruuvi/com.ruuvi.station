@@ -116,7 +116,7 @@
     <string name="clear_confirm">Tyhjennetäänkö sovellukseen paikallisesti tallennetut historiatiedot?</string>
     <string name="clear_local_history">Tyhjennä paikallinen historia</string>
     <string name="clear_local_history_description">Haluatko tyhjentää sovelluksen muistiin tallennetun mittaushistorian? Tämä ei tyhjennä anturin sisäistä historiaa eikä Ruuvi Cloud -pilvipalveluun tallennettua historiaa.</string>
-    <string name="clear_view">Tyhjennä kaaviot</string>
+    <string name="clear_view">Tyhjennä kaavionäkymä</string>
     <string name="close">Sulje</string>
     <string name="cloud_er_forbidden">Kielletty</string>
     <string name="cloud_er_internal">Sisäinen virhe</string>
@@ -369,7 +369,7 @@
     <string name="pressure_with_unit">Ilmanpaine (%1$s)</string>
     <string name="reading_history">Historiatietoja luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
-    <string name="reading_history_x">Historiatietoja luetaan.. %1$s</string>
+    <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
@@ -441,7 +441,7 @@
     <string name="settings_temperature_unit_details">Valitse sovelluksessa käytettävä lämpötilayksikkö.</string>
     <string name="share">Jaa</string>
     <string name="share_sensor_add_friend">Lisää ystävä</string>
-    <string name="share_sensor_already_shared">Anturi on jo jaettu %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Olet käyttänyt %1$,d/%2$,d tämän anturin enimmäisjakomäärästä. Anturi on jaettu seuraaville käyttäjille:</string>
     <string name="share_sensor_description">Voit jakaa tämän anturin ystäville tai perheenjäsenille, mikäli laite on Ruuvi Gateway -reitittimen kuuluvuusalueella.\n\nVastaanottaja saa jakamisesta ilmoituksen sähköpostilla. Ilmainen Ruuvi-tili luodaan ensimmäisen sisäänkirjautumisen yhteydessä, mikäli vastaanottajalla ei ole vielä Ruuvi-tiliä.\n\nAnturin nimi ja taustakuva jaetaan vastaanottajalle vain kertaalleen. Sen jälkeen kumpikin voivat muokata vain omia anturiasetuksiaan. Kalibrointiarvot (mikäli käytössä) synkronoidaan automaattisesti jaetuille antureille ja vastaanottaja näkee vain lopulliset korjatut arvot.</string>
     <string name="share_sensor_send_button">Lähetä</string>
     <string name="share_sensor_title">Jaa anturi</string>

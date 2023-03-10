@@ -4,9 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
+import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
@@ -31,7 +33,9 @@ class TagSettingsViewModel(
     private val alarmRepository: AlarmRepository,
     private val sensorFwInteractor: SensorInfoInteractor,
     private val unitsConverter: UnitsConverter,
-    private val accelerationConverter: AccelerationConverter
+    private val accelerationConverter: AccelerationConverter,
+    private val shareListRepository: SensorShareListRepository,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
     var file: Uri? = null
 
@@ -41,13 +45,14 @@ class TagSettingsViewModel(
     private val _userLoggedIn = MutableStateFlow<Boolean> (networkInteractor.signedIn)
     val userLoggedIn: StateFlow<Boolean> = _userLoggedIn
 
-    private val _sensorShared = MutableStateFlow<Boolean> (false)
-    val sensorShared: StateFlow<Boolean> = _sensorShared
+    private val _sensorShared = MutableStateFlow<UiText> (UiText.EmptyString)
+    val sensorShared: StateFlow<UiText> = _sensorShared
 
     private val operationStatus = MutableLiveData<String> ("")
     val operationStatusObserve: LiveData<String> = operationStatus
 
     val isLowBattery: Flow<Boolean> = sensorState.mapNotNull {
+        Timber.d("isLowBattery")
         it.isLowBattery()
     }
 
@@ -122,11 +127,15 @@ class TagSettingsViewModel(
     }
 
     fun getSensorSharedEmails() {
-        Timber.d("getSensorSharedEmails")
-        networkInteractor.getSharedInfo(sensorId, handler) { response ->
-            Timber.d("getSensorSharedEmails ${response.toString()}")
-            _sensorShared.value = response?.sharedTo?.isNotEmpty() == true
+        val shareCount = shareListRepository.getShareListForSensor(sensorId).size
+        val shareText = if (shareCount > 0) {
+            UiText.StringResourceWithArgs(R.string.shared_to_x,
+                arrayOf(shareCount, preferencesRepository.getSubscriptionMaxSharesPerSensor()) )
+        } else {
+            UiText.StringResource(R.string.sensor_not_shared)
         }
+        _sensorShared.value = shareText
+        Timber.d("getSensorSharedEmails $shareCount")
     }
 
     fun getTagById(tagId: String): RuuviTagEntity? =

@@ -2,6 +2,7 @@ package com.ruuvi.station.database.domain
 
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.config.DatabaseDefinition
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.*
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -87,6 +88,10 @@ class TagRepository(
 
         SQLite.delete(SensorSettings::class.java)
             .where(SensorSettings_Table.id.eq(sensor.id))
+            .execute()
+
+        SQLite.delete(SensorsShareList::class.java)
+            .where(SensorsShareList_Table.sensorId.eq(sensor.id))
             .execute()
 
         sensor.delete()
