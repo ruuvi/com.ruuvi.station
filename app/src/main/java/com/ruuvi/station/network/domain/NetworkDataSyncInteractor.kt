@@ -178,14 +178,16 @@ class NetworkDataSyncInteractor (
             val tagJobs = mutableListOf<Job>()
             for (tagInfo in userInfoData.sensors) {
 
-                val job = launch {
-                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
-                    val benchUpdate1 = Date()
-                    syncSensorDataForPeriod(tagInfo.sensor, hours)
-                    val benchUpdate2 = Date()
-                    Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
+                if (tagInfo.subscription.maxHistoryDays > 0) {
+                    val job = launch {
+                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
+                        val benchUpdate1 = Date()
+                        syncSensorDataForPeriod(tagInfo.sensor, hours)
+                        val benchUpdate2 = Date()
+                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
+                    }
+                    tagJobs.add(job)
                 }
-                tagJobs.add(job)
             }
             for (job in tagJobs) {
                 job.join()
