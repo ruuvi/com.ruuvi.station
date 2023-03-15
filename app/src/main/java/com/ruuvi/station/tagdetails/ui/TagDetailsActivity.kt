@@ -43,7 +43,6 @@ import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmStatus
 import com.ruuvi.station.alarm.domain.AlarmStatus.*
-import com.ruuvi.station.app.permissions.NotificationPermissionInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.app.permissions.PermissionsInteractor
@@ -98,7 +97,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     private var alarmStatus: AlarmStatus = NO_ALARM
     private val backgrounds = HashMap<String, BitmapDrawable>()
     private val permissionsInteractor = PermissionsInteractor(this)
-    private val notificationPermissionInteractor = NotificationPermissionInteractor(this)
 
     private var tagPagerScrolling = false
     private var timer: Timer? = null
@@ -192,7 +190,6 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
                     if (viewModel.openAddView) binding.content.noTagsTextView.callOnClick()
                 } else {
                     permissionsInteractor.showPermissionSnackbar()
-                    askForNotificationPermission()
                 }
             }
         }
@@ -587,19 +584,11 @@ class TagDetailsActivity : AppCompatActivity(R.layout.activity_tag_details), Kod
     }
 
     private fun requestPermission() {
-        if (permissionsInteractor.arePermissionsGranted()) {
-            askForNotificationPermission()
-        } else {
+        if (!permissionsInteractor.arePermissionsGranted()) {
             permissionsInteractor.requestPermissions(
                 needBackground = viewModel.shouldAskForBackgroundLocationPermission,
                 askForBluetooth = !preferencesRepository.isCloudModeEnabled() || !preferencesRepository.signedIn()
             )
-        }
-    }
-
-    private fun askForNotificationPermission() {
-        if (viewModel.shouldAskNotificationPermission) {
-            notificationPermissionInteractor.checkAndRequest()
         }
     }
 
