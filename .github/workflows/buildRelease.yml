@@ -31,9 +31,9 @@ jobs:
       uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
-        releaseDirectory: app/build/outputs/apk/withFileLogs/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
+        releaseDir: app/build/outputs/apk/withFileLogs/release
+        signingKey: ${{ secrets.SIGNING_KEY }}
+        keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
         
@@ -42,9 +42,9 @@ jobs:
       uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
-        releaseDirectory: app/build/outputs/apk/withoutFileLogs/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
+        releaseDir: app/build/outputs/apk/withoutFileLogs/release
+        signingKey: ${{ secrets.SIGNING_KEY }}
+        keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
         
@@ -54,9 +54,9 @@ jobs:
       uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
-        releaseDirectory: app/build/outputs/bundle/withoutFileLogsRelease/
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
+        releaseDir: app/build/outputs/bundle/withoutFileLogsRelease/
+        signingKey: ${{ secrets.SIGNING_KEY }}
+        keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
 
