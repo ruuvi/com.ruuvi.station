@@ -28,7 +28,7 @@ jobs:
       
     - name: Sign test APK
       id: sign_test_apk
-      uses: r0adkll/sign-android-release@v1.0.4
+      uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
         releaseDirectory: app/build/outputs/apk/withFileLogs/release
@@ -39,7 +39,7 @@ jobs:
         
     - name: Sign release APK
       id: sign_apk
-      uses: r0adkll/sign-android-release@v1.0.4
+      uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
         releaseDirectory: app/build/outputs/apk/withoutFileLogs/release
@@ -51,7 +51,7 @@ jobs:
         
     - name: Sign bundle
       id: sign_bundle
-      uses: r0adkll/sign-android-release@v1.0.4
+      uses: ilharp/sign-android-release@v1
       with:
         # The directory to find your release to sign
         releaseDirectory: app/build/outputs/bundle/withoutFileLogsRelease/
