@@ -5,6 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
+  import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
@@ -23,7 +25,7 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.extensions.diff
 import timber.log.Timber
-import java.util.Calendar
+import java.util.*
 
 class AlarmCheckInteractor(
     private val context: Context,
@@ -147,9 +149,11 @@ class AlarmCheckInteractor(
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
+                .setSound(Uri.parse("android.resource://"+context.packageName +"/"+R.raw.ruuvi_speak_16bit_stereo))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(tagDetailsPendingIntent)
                 .setLargeIcon(bitmap)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
                 .addAction(action)
                 .addAction(actionMute)
@@ -160,8 +164,12 @@ class AlarmCheckInteractor(
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, importance)
+            val attributes: AudioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build()
+
+            val channel = NotificationChannel(CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+            channel.setSound(Uri.parse("android.resource://"+context.packageName +"/"+R.raw.ruuvi_speak_16bit_stereo), attributes)
             notificationManager.createNotificationChannel(channel)
         }
     }
