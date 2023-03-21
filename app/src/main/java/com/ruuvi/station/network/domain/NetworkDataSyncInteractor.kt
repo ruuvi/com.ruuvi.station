@@ -324,7 +324,11 @@ class NetworkDataSyncInteractor (
 
             val latestData = sensor.measurements.maxByOrNull { it.timestamp }
             if (latestData != null) {
-                updateLatestMeasurement(sensorSettings, latestData)
+                updateLatestMeasurement(
+                    sensorSettings = sensorSettings,
+                    measurement = latestData,
+                    saveToHistory = sensor.subscription.maxHistoryDays == 0
+                )
             }
         }
 
@@ -338,12 +342,17 @@ class NetworkDataSyncInteractor (
 
     private fun updateLatestMeasurement(
         sensorSettings: SensorSettings,
-        measurement: SensorDataMeasurementResponse
+        measurement: SensorDataMeasurementResponse,
+        saveToHistory: Boolean
     ) {
         val lastPoint = preparePoint(sensorSettings, measurement)
         if (lastPoint != null) {
+            val freshPoint = (sensorSettings.networkLastSync?.time ?: Long.MIN_VALUE) < lastPoint.createdAt.time
             tagRepository.activateSensor(lastPoint)
             sensorSettingsRepository.updateNetworkLastSync(sensorSettings.id, lastPoint.createdAt)
+            if (saveToHistory && freshPoint) {
+                sensorHistoryRepository.insertPoint(lastPoint)
+            }
         }
     }
 
