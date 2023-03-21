@@ -1,17 +1,7 @@
 package com.ruuvi.station.alarm.domain
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.graphics.BitmapFactory
-  import android.media.AudioAttributes
-import android.net.Uri
-import android.os.Build
-import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
-import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.Alarm
@@ -20,7 +10,6 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.extensions.diff
@@ -32,10 +21,10 @@ class AlarmCheckInteractor(
     private val tagConverter: TagConverter,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val alarmRepository: AlarmRepository,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val alertNotificationInteractor: AlertNotificationInteractor
 ) {
     private val lastFiredNotification = mutableMapOf<Int, Long>()
-    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun getStatus(ruuviTag: RuuviTag): AlarmStatus {
         val alarms = getEnabledAlarms(ruuviTag)
@@ -102,81 +91,22 @@ class AlarmCheckInteractor(
 
     private fun sendAlert(checker: AlarmChecker) {
         Timber.d("sendAlert tag.tagName = ${checker.ruuviTag}tagName; alarm.id = ${checker.alarm.id}; notificationResourceId = ${checker.alarmResource}")
-        createNotificationChannel()
-        val notification =
-            createNotification(checker)
-        notification?.let {
-            notificationManager.notify(checker.alarm.id, notification)
-        }
-    }
-
-    private fun createNotification(checker: AlarmChecker): Notification? {
         val message = checker.getMessage()
-        if (!message.isNullOrEmpty()) {
-            val tagDetailsPendingIntent =
-                TagDetailsActivity.createPendingIntent(
-                    context,
-                    checker.ruuviTag.id,
-                    checker.alarm.id
-                )
-            val cancelPendingIntent =
-                CancelAlarmReceiver.createPendingIntent(context, checker.alarm.id)
-            val mutePendingIntent = MuteAlarmReceiver.createPendingIntent(context, checker.alarm.id)
-            val action = NotificationCompat.Action(
-                R.drawable.ic_ruuvi_app_notification_icon_v2,
-                context.getString(R.string.alarm_notification_disable),
-                cancelPendingIntent
-            )
-            val actionMute = NotificationCompat.Action(
-                R.drawable.ic_ruuvi_app_notification_icon_v2,
-                context.getString(R.string.alarm_mute_for_hour),
-                mutePendingIntent
+        if (message?.isNotEmpty() == true) {
+            val notificationData = AlertNotificationInteractor.AlertNotificationData(
+                sensorId = checker.ruuviTag.id,
+                message = message,
+                alarmId = checker.alarm.id,
+                sensorName = checker.ruuviTag.displayName,
+                alertCustomDescription = checker.alarm.customDescription
             )
 
-            val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
-            return NotificationCompat
-                .Builder(context, CHANNEL_ID)
-                .setContentTitle(message)
-                .setTicker("${checker.ruuviTag.displayName} $message")
-                .setStyle(
-                    NotificationCompat
-                        .BigTextStyle()
-                        .setBigContentTitle(message)
-                        .setSummaryText(checker.ruuviTag.displayName)
-                        .bigText(checker.alarm.customDescription)
-                )
-                .setContentText(checker.alarm.customDescription)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setOnlyAlertOnce(true)
-                .setAutoCancel(true)
-                .setSound(Uri.parse("android.resource://"+context.packageName +"/"+R.raw.ruuvi_speak_16bit_stereo))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(tagDetailsPendingIntent)
-                .setLargeIcon(bitmap)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setSmallIcon(R.drawable.ic_ruuvi_app_notification_icon_v2)
-                .addAction(action)
-                .addAction(actionMute)
-                .build()
-        }
-        return null
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val attributes: AudioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build()
-
-            val channel = NotificationChannel(CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            channel.setSound(Uri.parse("android.resource://"+context.packageName +"/"+R.raw.ruuvi_speak_16bit_stereo), attributes)
-            notificationManager.createNotificationChannel(channel)
+            alertNotificationInteractor.notify(checker.alarm.id, notificationData)
         }
     }
 
     fun removeNotificationById(notificationId: Int) {
-        Timber.d("dismissNotification with id = $notificationId")
-        if (notificationId != -1) notificationManager.cancel(notificationId)
+        alertNotificationInteractor.removeNotificationById(notificationId)
     }
 
     inner class AlarmChecker(
@@ -309,8 +239,6 @@ class AlarmCheckInteractor(
     }
 
     companion object {
-        private const val CHANNEL_ID = "notify_001"
-        private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
         private const val FORMAT5 = 5
         private const val MOVEMENT_THRESHOLD = 0.03
     }
