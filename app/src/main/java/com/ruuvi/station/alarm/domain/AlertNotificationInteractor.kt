@@ -80,7 +80,7 @@ class AlertNotificationInteractor(
             )
             .setContentText(notificationData.alertCustomDescription)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setOnlyAlertOnce(true)
+            .setOnlyAlertOnce(false)
             .setAutoCancel(true)
             .setSound(alertSoundUri)
             .setVibrate(vibrationPattern)
