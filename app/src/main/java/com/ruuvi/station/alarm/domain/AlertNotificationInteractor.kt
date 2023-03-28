@@ -4,10 +4,12 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
@@ -121,5 +123,13 @@ class AlertNotificationInteractor(
         private const val CHANNEL_ID = "ruuvi_notify_001"
         private const val OLD_CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
+
+        fun openNotificationChannelSettings(context: Context) {
+            val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                putExtra(Settings.EXTRA_CHANNEL_ID, CHANNEL_ID)
+            }
+            context.startActivity(intent)
+        }
     }
 }

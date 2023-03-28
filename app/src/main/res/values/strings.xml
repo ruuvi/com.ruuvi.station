@@ -399,6 +399,7 @@
     <string name="sensor_shared">Shared</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Signing in to the app has many advantages. Settings will be safely stored to your account:</string>
     <string name="settings">Settings</string>
+    <string name="settings_alert_notifications">Alert Notifications</string>
     <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimisation for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
@@ -439,6 +440,8 @@
     <string name="settings_language">Language</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
+    <string name="settings_sound">Sound Settings</string>
+    <string name="settings_sound_description">Configure app related sound and vibration settings.</string>
     <string name="settings_temperature_unit">Temperature Unit</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="share">Share</string>

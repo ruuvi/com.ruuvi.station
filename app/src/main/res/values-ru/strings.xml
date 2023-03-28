@@ -292,6 +292,7 @@
     <string name="sensor_settings">Настройки датчика</string>
     <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
+    <string name="settings_alert_notifications">Уведомления о тревогах</string>
     <string name="settings_appearance">Внешний вид</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
     <string name="settings_background_battery_optimization_common_instructions">Перейдите в настройки Android -> Приложения -> Ruuvi Station -> Батарея -> укажите, что не нужно экономить заряд.</string>
@@ -331,6 +332,8 @@
     <string name="settings_language">Язык</string>
     <string name="settings_pressure_unit">Ед. изм. Давления</string>
     <string name="settings_pressure_unit_details">Выберите единицу измерения давления для отображения.</string>
+    <string name="settings_sound">Настройки звука</string>
+    <string name="settings_sound_description">Настройте звуки и вибрацию для уведомлений от приложения.</string>
     <string name="settings_temperature_unit">Ед. изм. Температуры</string>
     <string name="settings_temperature_unit_details">Выберите единицу измерения температуры для отображения.</string>
     <string name="share">Поделиться</string>
