@@ -77,7 +77,7 @@ class AlarmCheckInteractor(
         val lastNotificationTime = lastFiredNotification[alarm.id]
         val calendar = Calendar.getInstance()
         val now = calendar.timeInMillis
-        calendar.add(Calendar.SECOND, -10)
+        calendar.add(Calendar.SECOND, -NOTIFICATION_THRESHOLD_SECONDS)
         val notificationThreshold = calendar.timeInMillis
         val alarmMutedTill = alarm.mutedTill
         val muted = alarmMutedTill != null && alarmMutedTill.time > now
@@ -241,6 +241,7 @@ class AlarmCheckInteractor(
     companion object {
         private const val FORMAT5 = 5
         private const val MOVEMENT_THRESHOLD = 0.03
+        private const val NOTIFICATION_THRESHOLD_SECONDS = 30
     }
 }
 

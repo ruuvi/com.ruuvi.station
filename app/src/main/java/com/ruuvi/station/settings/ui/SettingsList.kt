@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -61,6 +62,18 @@ fun SettingsList(
                         val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
                         intent.data = Uri.parse("package:${context.packageName}")
                         context.startActivity(intent)
+                    }
+                )
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= O) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_alert_notifications),
+                    description = null,
+                    onClick = {
+                        onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.ALERT_NOTIFICATIONS))
                     }
                 )
             }
