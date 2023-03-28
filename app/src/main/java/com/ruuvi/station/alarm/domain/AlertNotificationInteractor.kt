@@ -30,6 +30,8 @@ class AlertNotificationInteractor(
 
     private val alertSoundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.ruuvi_speak_16bit_stereo}")
 
+    private val vibrationPattern = longArrayOf(0L, 200L, 100L, 200L)
+
     fun notify(notificationId: Int, notificationData: AlertNotificationData) {
         createNotificationChannel()
         notificationManager.notify(notificationId, createNotification(notificationData))
@@ -79,6 +81,7 @@ class AlertNotificationInteractor(
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setSound(alertSoundUri)
+            .setVibrate(vibrationPattern)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(tagDetailsPendingIntent)
@@ -107,6 +110,7 @@ class AlertNotificationInteractor(
             )
 
             channel.setSound(alertSoundUri, attributes)
+            channel.vibrationPattern = vibrationPattern
 
             notificationManager.deleteNotificationChannel(OLD_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
