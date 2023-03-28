@@ -108,12 +108,14 @@ class AlertNotificationInteractor(
 
             channel.setSound(alertSoundUri, attributes)
 
+            notificationManager.deleteNotificationChannel(OLD_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
         }
     }
 
     companion object {
-        private const val CHANNEL_ID = "notify_001"
+        private const val CHANNEL_ID = "ruuvi_notify_001"
+        private const val OLD_CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
     }
 }
