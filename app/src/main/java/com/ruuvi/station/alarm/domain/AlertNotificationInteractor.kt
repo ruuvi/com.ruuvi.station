@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
@@ -30,12 +31,8 @@ class AlertNotificationInteractor(
 
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    private val alertSoundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.ruuvi_speak_16bit_stereo}")
-
-    private val vibrationPattern = longArrayOf(0L, 200L, 100L, 200L)
-
     fun notify(notificationId: Int, notificationData: AlertNotificationData) {
-        createNotificationChannel()
+        createNotificationChannel(notificationManager)
         notificationManager.notify(notificationId, createNotification(notificationData))
     }
 
@@ -84,7 +81,6 @@ class AlertNotificationInteractor(
             .setAutoCancel(true)
             .setSound(alertSoundUri)
             .setVibrate(vibrationPattern)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(tagDetailsPendingIntent)
             .setLargeIcon(bitmap)
@@ -99,37 +95,43 @@ class AlertNotificationInteractor(
         return notification.build()
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val attributes: AudioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build()
-
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-
-            channel.setSound(alertSoundUri, attributes)
-            channel.vibrationPattern = vibrationPattern
-
-            notificationManager.deleteNotificationChannel(OLD_CHANNEL_ID)
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
     companion object {
         private const val CHANNEL_ID = "ruuvi_notify_001"
         private const val OLD_CHANNEL_ID = "notify_001"
         private const val NOTIFICATION_CHANNEL_NAME = "Alert notifications"
 
+        private val alertSoundUri = Uri.parse("android.resource://${BuildConfig.APPLICATION_ID}/${R.raw.ruuvi_speak_16bit_stereo}")
+        private val vibrationPattern = longArrayOf(0L, 200L, 100L, 200L)
+
         fun openNotificationChannelSettings(context: Context) {
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            createNotificationChannel(manager)
+
             val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                 putExtra(Settings.EXTRA_CHANNEL_ID, CHANNEL_ID)
             }
             context.startActivity(intent)
+        }
+
+        private fun createNotificationChannel(manager: NotificationManager) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val attributes: AudioAttributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()
+
+                val channel = NotificationChannel(
+                    CHANNEL_ID,
+                    NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+
+                channel.setSound(alertSoundUri, attributes)
+                channel.vibrationPattern = vibrationPattern
+
+                manager.deleteNotificationChannel(OLD_CHANNEL_ID)
+                manager.createNotificationChannel(channel)
+            }
         }
     }
 }

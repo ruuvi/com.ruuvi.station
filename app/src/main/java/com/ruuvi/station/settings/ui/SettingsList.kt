@@ -27,6 +27,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
 
@@ -57,7 +58,7 @@ fun SettingsList(
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.settings_language),
-                    description = Locale.getDefault().displayLanguage,
+                    value = Locale.getDefault().displayLanguage,
                     onClick = {
                         val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
                         intent.data = Uri.parse("package:${context.packageName}")
@@ -71,7 +72,7 @@ fun SettingsList(
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.settings_alert_notifications),
-                    description = null,
+                    value = null,
                     onClick = {
                         onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.ALERT_NOTIFICATIONS))
                     }
@@ -82,7 +83,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.APPEARANCE)) }
             )
         }
@@ -90,7 +91,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_background_scan),
-                description = intervalText,
+                value = intervalText,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.BACKGROUNDSCAN)) }
             )
         }
@@ -98,7 +99,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
-                description = stringResource(id = viewModel.getTemperatureUnit().unit),
+                value = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
         }
@@ -106,7 +107,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
-                description = stringResource(id = viewModel.getHumidityUnit().unit),
+                value = stringResource(id = viewModel.getHumidityUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
         }
@@ -114,7 +115,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
-                description = stringResource(id = viewModel.getPressureUnit().unit),
+                value = stringResource(id = viewModel.getPressureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
@@ -123,7 +124,7 @@ fun SettingsList(
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.ruuvi_cloud),
-                    description = null,
+                    value = null,
                     onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CLOUD)) }
                 )
             }
@@ -132,7 +133,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_chart),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CHARTS)) }
             )
         }
@@ -140,7 +141,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_data_forwarding),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
             )
         }
@@ -150,52 +151,75 @@ fun SettingsList(
 @Composable
 fun SettingsElement(
     name: String,
-    description: String?,
+    fixedHeight: Boolean = true,
+    value: String? = null,
+    description: String? = null,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        ConstraintLayout(modifier = Modifier
+        val modifier = if (fixedHeight) {
+            Modifier.height(RuuviStationTheme.dimensions.settingsListHeight)
+        } else {
+            Modifier
+        }
+
+        ConstraintLayout(modifier = modifier
             .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.settingsListHeight)
-            .padding(RuuviStationTheme.dimensions.medium)
+            .padding(
+                vertical = RuuviStationTheme.dimensions.screenPadding,
+                horizontal = RuuviStationTheme.dimensions.screenPadding
+            )
             .clickable(role = Role.Button) { onClick.invoke() }
         ) {
             val (caption, descElement, arrow) = createRefs()
 
-            Text(
-                modifier = Modifier
-                    .constrainAs(caption) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.absoluteLeft)
-                        end.linkTo(descElement.start)
-                        width = Dimension.fillToConstraints
-                    },
-                style = RuuviStationTheme.typography.subtitle,
-                text = name,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(modifier = Modifier
+                .constrainAs(caption) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.absoluteLeft)
+                    end.linkTo(descElement.start)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                },
+            ) {
 
-            if (description != null) {
+                Text(
+                    style = RuuviStationTheme.typography.subtitle,
+                    text = name,
+                    textAlign = TextAlign.Left,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                if (!description.isNullOrEmpty()) {
+                    Text(
+                        style = RuuviStationTheme.typography.subtitle.copy(
+                            color = RuuviStationTheme.colors.secondaryTextColor,
+                            fontFamily = ruuviStationFonts.mulishRegular),
+                        text = description,
+                        textAlign = TextAlign.Left
+                    )
+                }
+            }
+
+
+            if (!value.isNullOrEmpty()) {
                 Text(
                     modifier = Modifier
                         .padding(end = RuuviStationTheme.dimensions.mediumPlus)
                         .constrainAs(descElement) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
-                            //start.linkTo(caption.end)
                             end.linkTo(arrow.start)
-                            //width = Dimension.fillToConstraints
 
                         },
                     style = RuuviStationTheme.typography.paragraph,
                     textAlign = TextAlign.End,
-                    text = description,
+                    text = value,
                     maxLines = 1,
                     overflow = TextOverflow.Visible
                 )

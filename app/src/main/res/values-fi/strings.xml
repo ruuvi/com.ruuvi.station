@@ -397,6 +397,7 @@
     <string name="sensor_shared">Jaettu</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Sisäänkirjautumalla saat useita etuja. Asetukset tallennetaan turvallisesti tilillesi:</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_alert_notifications">Hälytysilmoitukset</string>
     <string name="settings_and_alerts">Asetukset \u0026 hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
     <string name="settings_background_battery_optimization">Poista virransäästötoiminnot käytöstä, mikäli taustaskannaus ei toimi luotettavasti. Virransäästötoiminnot saattavat sijaita eri paikassa Android käyttöjärjestelmäversiosta ja laitteen valmistajasta riippuen.</string>
@@ -437,6 +438,8 @@
     <string name="settings_language">Kieli</string>
     <string name="settings_pressure_unit">Paineyksikkö</string>
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö.</string>
+    <string name="settings_sound">Ääniasetukset</string>
+    <string name="settings_sound_description">Määritä sovelluksen ääni- ja värinäasetukset.</string>
     <string name="settings_temperature_unit">Lämpötilayksikkö</string>
     <string name="settings_temperature_unit_details">Valitse sovelluksessa käytettävä lämpötilayksikkö.</string>
     <string name="share">Jaa</string>

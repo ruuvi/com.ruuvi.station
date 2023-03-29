@@ -402,6 +402,7 @@
     <string name="sensor_shared">Partagé</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">La connexion à l\'application présente de nombreux avantages. Les paramètres seront stockés en toute sécurité sur votre compte:</string>
     <string name="settings">Réglages</string>
+    <string name="settings_alert_notifications">Notifications d\'alerte</string>
     <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
     <string name="settings_background_battery_optimization">Si le balayage en arrière plan ne fonctionne pas, désactivez le mode économie d\'énergie de votre téléphone.</string>
@@ -442,6 +443,8 @@
     <string name="settings_language">Langue</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
+    <string name="settings_sound">Paramètres du son</string>
+    <string name="settings_sound_description">Configurer les paramètres de son et de vibration de l\'application.</string>
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température.</string>
     <string name="share">Partager</string>

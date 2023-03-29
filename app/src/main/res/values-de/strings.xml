@@ -408,6 +408,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sensor_shared">Geteilt</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Die Anmeldung bei der App hat viele Vorteile. Einstellungen werden sicher in deinem Konto gespeichert:</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_alert_notifications">Alarmbenachrichtigungen</string>
     <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>
     <string name="settings_background_battery_optimization">Wenn beim Scannen im Hintergrund Probleme auftreten, sollten Sie die Batterieoptimierung für Ruuvi Station deaktivieren. Dieses Verfahren kann je nach Gerätehersteller, Modell und Android-Version variieren.</string>
@@ -448,6 +449,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_language">Sprache</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
+    <string name="settings_sound">Toneinstellungen</string>
+    <string name="settings_sound_description">Konfigurieren Sie die Ton- und Vibrationseinstellungen der App.</string>
     <string name="settings_temperature_unit">Temperatureinheit</string>
     <string name="settings_temperature_unit_details">Wählen Sie die Temperatureinheit, die angezeigt werden soll.</string>
     <string name="share">Teilen</string>

@@ -23,11 +23,11 @@
 
     <dimen name="divider">1dp</dimen>
 
-    <dimen name="screenPadding">@dimen/extended</dimen>
-    <dimen name="screenStart">@dimen/extended</dimen>
-    <dimen name="screenEnd">@dimen/extended</dimen>
-    <dimen name="screenTop">@dimen/extended</dimen>
-    <dimen name="screenBottom">@dimen/extended</dimen>
+    <dimen name="screenPadding">@dimen/normalPlus</dimen>
+    <dimen name="screenStart">@dimen/normalPlus</dimen>
+    <dimen name="screenEnd">@dimen/normalPlus</dimen>
+    <dimen name="screenTop">@dimen/normalPlus</dimen>
+    <dimen name="screenBottom">@dimen/normalPlus</dimen>
 
     <dimen name="sensorSettingsHeaderHeight">48dp</dimen>
     <dimen name="sensorSettingsItemHeight">48dp</dimen>

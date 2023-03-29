@@ -418,14 +418,14 @@ fun MoreInfoItem (
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .weight(1f),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.Start,
             text = title)
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .combinedClickable(
                     onClick = {},
                     onLongClick = {
@@ -452,7 +452,7 @@ fun BatteryInfoItem (
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .weight(1f),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.Start,
@@ -475,7 +475,7 @@ fun BatteryInfoItem (
 
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .combinedClickable(
                     onClick = {},
                     onLongClick = {
@@ -515,7 +515,7 @@ fun SensorSettingsTitle (title: String) {
         Text(
             text = title,
             style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
         )
     }
 }
@@ -531,14 +531,14 @@ fun ValueWithCaption(
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.subtitle,
             textAlign = TextAlign.Start,
             text = title)
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = value ?: "")

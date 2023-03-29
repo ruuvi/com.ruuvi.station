@@ -31,12 +31,12 @@ fun TextEditButton(
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = if (value.isNullOrEmpty()) emptyText else value)
         Image(
-            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             painter = painterResource(id = R.drawable.edit_20),
             contentDescription = ""
         )
@@ -58,19 +58,19 @@ fun TextEditWithCaptionButton(
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.subtitle,
             textAlign = TextAlign.Start,
             text = title)
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = value ?: "")
         Icon(
-            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium),
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             painter = icon,
             tint = tint,
             contentDescription = ""
