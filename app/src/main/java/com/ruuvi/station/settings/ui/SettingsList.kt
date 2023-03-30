@@ -206,29 +206,29 @@ fun SettingsElement(
                 }
             }
 
-
-            if (!value.isNullOrEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .padding(end = RuuviStationTheme.dimensions.mediumPlus)
-                        .constrainAs(descElement) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            end.linkTo(arrow.start)
-
-                        },
-                    style = RuuviStationTheme.typography.paragraph,
-                    textAlign = TextAlign.End,
-                    text = value,
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
+            Column(modifier = Modifier
+                .constrainAs(descElement) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(arrow.start)
+                },
+            ) {
+                if (!value.isNullOrEmpty()) {
+                    Text(
+                        style = RuuviStationTheme.typography.paragraph,
+                        textAlign = TextAlign.End,
+                        text = value,
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
+                    )
+                }
             }
 
             Image(
                 painter = painterResource(id = R.drawable.arrow_forward_16),
                 contentDescription = "",
                 modifier = Modifier
+                    .padding(start = RuuviStationTheme.dimensions.mediumPlus)
                     .constrainAs(arrow) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
