@@ -272,7 +272,7 @@
     <string name="pressure_with_unit">Атмосферное Давление (%1$s)</string>
     <string name="reading_history">Чтение истории</string>
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
-    <string name="reading_history_x">Чтение истории.. %1$s</string>
+    <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="remove">Удалить</string>
     <string name="remove_claimed_sensor">Удаляя датчик вы также отказываетесь от владения. Кто-то другой сможет заявить о владении этим датчиком. Каждый датчик может иметь только одного владельца.</string>
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
@@ -292,6 +292,7 @@
     <string name="sensor_settings">Настройки датчика</string>
     <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
+    <string name="settings_alert_notifications">Уведомления о тревогах</string>
     <string name="settings_appearance">Внешний вид</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
     <string name="settings_background_battery_optimization_common_instructions">Перейдите в настройки Android -> Приложения -> Ruuvi Station -> Батарея -> укажите, что не нужно экономить заряд.</string>
@@ -331,11 +332,13 @@
     <string name="settings_language">Язык</string>
     <string name="settings_pressure_unit">Ед. изм. Давления</string>
     <string name="settings_pressure_unit_details">Выберите единицу измерения давления для отображения.</string>
+    <string name="settings_sound">Настройки звука</string>
+    <string name="settings_sound_description">Настройте звуки и вибрацию для уведомлений от приложения.</string>
     <string name="settings_temperature_unit">Ед. изм. Температуры</string>
     <string name="settings_temperature_unit_details">Выберите единицу измерения температуры для отображения.</string>
     <string name="share">Поделиться</string>
     <string name="share_sensor_add_friend">Добавить друга</string>
-    <string name="share_sensor_already_shared">Предоставлен доступ %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Вы использовали %1$,d/%2$,d от максимального количества делений для этого датчика. Датчик используется совместно со следующими пользователями:</string>
     <string name="share_sensor_description">Вы можете поделиться измерениями этого датчика с друзьями или членами семьи, если датчик находится в радиусе действия Ruuvi Gateway.\n\nПолучатель будет извещен по электронной почте. Если у него нет аккаунта Ruuvi, то бесплатный аккаунт будет создан при первом входе.\n\nНазвание датчика и изображение использованное в качестве фона будет также доступно для пользователя. Пользователь сможет позже изменить название и изображение на удобное для себя. Данные калибровки датчика (если они были установлены владельцем) будут автоматически синхронизированы и получатель всегда будет видеть данные после калибровки.</string>
     <string name="share_sensor_send_button">Отправить</string>
     <string name="share_sensor_title">Поделиться датчиком Ruuvi</string>

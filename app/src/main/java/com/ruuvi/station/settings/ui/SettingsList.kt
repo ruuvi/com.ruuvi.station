@@ -1,6 +1,11 @@
 package com.ruuvi.station.settings.ui
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -9,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -17,14 +21,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.util.BackgroundScanModes
+import java.util.*
 
 @Composable
 fun SettingsList(
@@ -49,10 +54,36 @@ fun SettingsList(
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (Build.VERSION.SDK_INT >= TIRAMISU) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_language),
+                    value = Locale.getDefault().displayLanguage,
+                    onClick = {
+                        val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
+                        intent.data = Uri.parse("package:${context.packageName}")
+                        context.startActivity(intent)
+                    }
+                )
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= O) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_alert_notifications),
+                    value = null,
+                    onClick = {
+                        onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.ALERT_NOTIFICATIONS))
+                    }
+                )
+            }
+        }
+
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.APPEARANCE)) }
             )
         }
@@ -60,7 +91,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_background_scan),
-                description = intervalText,
+                value = intervalText,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.BACKGROUNDSCAN)) }
             )
         }
@@ -68,7 +99,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
-                description = stringResource(id = viewModel.getTemperatureUnit().unit),
+                value = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
         }
@@ -76,7 +107,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
-                description = stringResource(id = viewModel.getHumidityUnit().unit),
+                value = stringResource(id = viewModel.getHumidityUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
         }
@@ -84,7 +115,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit),
-                description = stringResource(id = viewModel.getPressureUnit().unit),
+                value = stringResource(id = viewModel.getPressureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
         }
@@ -93,7 +124,7 @@ fun SettingsList(
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.ruuvi_cloud),
-                    description = null,
+                    value = null,
                     onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CLOUD)) }
                 )
             }
@@ -102,7 +133,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_chart),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CHARTS)) }
             )
         }
@@ -110,7 +141,7 @@ fun SettingsList(
         item {
             SettingsElement(
                 name = stringResource(id = R.string.settings_data_forwarding),
-                description = null,
+                value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
             )
         }
@@ -120,61 +151,84 @@ fun SettingsList(
 @Composable
 fun SettingsElement(
     name: String,
-    description: String?,
+    fixedHeight: Boolean = true,
+    value: String? = null,
+    description: String? = null,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        ConstraintLayout(modifier = Modifier
+        val modifier = if (fixedHeight) {
+            Modifier.height(RuuviStationTheme.dimensions.settingsListHeight)
+        } else {
+            Modifier
+        }
+
+        ConstraintLayout(modifier = modifier
             .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.settingsListHeight)
-            .padding(RuuviStationTheme.dimensions.medium)
+            .padding(
+                vertical = RuuviStationTheme.dimensions.screenPadding,
+                horizontal = RuuviStationTheme.dimensions.screenPadding
+            )
             .clickable(role = Role.Button) { onClick.invoke() }
         ) {
             val (caption, descElement, arrow) = createRefs()
 
-            Text(
-                modifier = Modifier
-                    .constrainAs(caption) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.absoluteLeft)
-                        end.linkTo(descElement.start)
-                        width = Dimension.fillToConstraints
-                    },
-                style = RuuviStationTheme.typography.subtitle,
-                text = name,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(modifier = Modifier
+                .constrainAs(caption) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.absoluteLeft)
+                    end.linkTo(descElement.start)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                },
+            ) {
 
-            if (description != null) {
                 Text(
-                    modifier = Modifier
-                        .padding(end = RuuviStationTheme.dimensions.mediumPlus)
-                        .constrainAs(descElement) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            //start.linkTo(caption.end)
-                            end.linkTo(arrow.start)
-                            //width = Dimension.fillToConstraints
-
-                        },
-                    style = RuuviStationTheme.typography.paragraph,
-                    textAlign = TextAlign.End,
-                    text = description,
+                    style = RuuviStationTheme.typography.subtitle,
+                    text = name,
+                    textAlign = TextAlign.Left,
                     maxLines = 1,
-                    overflow = TextOverflow.Visible
+                    overflow = TextOverflow.Ellipsis
                 )
+
+                if (!description.isNullOrEmpty()) {
+                    Text(
+                        style = RuuviStationTheme.typography.subtitle.copy(
+                            color = RuuviStationTheme.colors.secondaryTextColor,
+                            fontFamily = ruuviStationFonts.mulishRegular),
+                        text = description,
+                        textAlign = TextAlign.Left
+                    )
+                }
+            }
+
+            Column(modifier = Modifier
+                .constrainAs(descElement) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(arrow.start)
+                },
+            ) {
+                if (!value.isNullOrEmpty()) {
+                    Text(
+                        style = RuuviStationTheme.typography.paragraph,
+                        textAlign = TextAlign.End,
+                        text = value,
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
+                    )
+                }
             }
 
             Image(
                 painter = painterResource(id = R.drawable.arrow_forward_16),
                 contentDescription = "",
                 modifier = Modifier
+                    .padding(start = RuuviStationTheme.dimensions.mediumPlus)
                     .constrainAs(arrow) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)

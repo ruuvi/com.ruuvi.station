@@ -54,10 +54,10 @@
 
       <TextView
           android:id="@+id/shareSensorTitleTextView"
+          style="@style/Paragraph.WithPadding"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          style="@style/Paragraph.WithPadding"
-          android:text="@string/share_sensor_description"/>
+          android:text="@string/share_sensor_description" />
 
     </LinearLayout>
   </ScrollView>
@@ -74,7 +74,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-      app:layout_constraintGuide_percent="0.50" />
+      app:layout_constraintGuide_percent="0.45" />
 
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/sharingLayout"

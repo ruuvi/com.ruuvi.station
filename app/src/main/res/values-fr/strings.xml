@@ -115,7 +115,7 @@
     <string name="clear_confirm">Supprimer l\'historique de l\'application ?</string>
     <string name="clear_local_history">Effacer l\'histoire locale</string>
     <string name="clear_local_history_description">Voulez-vous effacer les données historiques stockées localement dans l\'application ? Cela n\'effacera pas l\'historique stocké en interne par le capteur ou les données historiques stockées sur le service Ruuvi Cloud.</string>
-    <string name="clear_view">Vue dégagée</string>
+    <string name="clear_view">Vue historique vide</string>
     <string name="close">Fermer</string>
     <string name="cloud_er_forbidden">Interdit</string>
     <string name="cloud_er_internal">Erreur interne</string>
@@ -374,7 +374,7 @@
     <string name="pressure_with_unit">Pression de l\'air (%1$s)</string>
     <string name="reading_history">Analyse de l\'historique</string>
     <string name="reading_history_not_supported">Firmware non supporté</string>
-    <string name="reading_history_x">Analyse de l\'historique.. %1$s</string>
+    <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="remove">Supprimer</string>
     <string name="remove_claimed_sensor">Le propriétaire sera réinitialisé en supprimant le capteur. N\'importe qui pourra alors s\'approprier le capteur. Chaque capteur Ruuvi ne pouvant avoir qu\'un propriétaire.</string>
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
@@ -402,6 +402,7 @@
     <string name="sensor_shared">Partagé</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">La connexion à l\'application présente de nombreux avantages. Les paramètres seront stockés en toute sécurité sur votre compte:</string>
     <string name="settings">Réglages</string>
+    <string name="settings_alert_notifications">Notifications d\'alerte</string>
     <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
     <string name="settings_background_battery_optimization">Si le balayage en arrière plan ne fonctionne pas, désactivez le mode économie d\'énergie de votre téléphone.</string>
@@ -442,15 +443,18 @@
     <string name="settings_language">Langue</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
+    <string name="settings_sound">Paramètres du son</string>
+    <string name="settings_sound_description">Configurer les paramètres de son et de vibration de l\'application.</string>
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température.</string>
     <string name="share">Partager</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
-    <string name="share_sensor_already_shared">Le capteur est déjà partagé %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Vous avez utilisé %1$,d/%2$,d du nombre maximum de divisions pour ce capteur. Le capteur est partagé avec les utilisateurs suivants :</string>
     <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
     <string name="share_sensor_send_button">Envoyer</string>
     <string name="share_sensor_title">Partager le capteur</string>
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
+    <string name="shared_to_x">Partagé %1$,d/%2$,d</string>
     <string name="sign_in">Connexion</string>
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail. Connectez-vous en le saisissant ici:</string>

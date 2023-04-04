@@ -12,7 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/valuesLayout"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/screenPadding"
         style="@style/Scrollbars">
         <TextView
             android:id="@+id/calibrationInstructionsTextView"

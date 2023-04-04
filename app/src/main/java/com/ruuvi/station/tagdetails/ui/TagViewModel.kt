@@ -60,7 +60,7 @@ class TagViewModel(
     private val _gattSyncInProgress = MutableStateFlow<Boolean>(false)
     val gattSyncInProgress: StateFlow<Boolean> = _gattSyncInProgress
 
-    private val _gattSyncStatus = MutableStateFlow<UiText>(UiText.EmptyString())
+    private val _gattSyncStatus = MutableStateFlow<UiText>(UiText.EmptyString)
     val gattSyncStatus: StateFlow<UiText> = _gattSyncStatus
 
     private val _event = MutableSharedFlow<SyncProgress>()
@@ -106,7 +106,7 @@ class TagViewModel(
                         when (gattStatus.syncProgress) {
                             SyncProgress.STILL, SyncProgress.DONE -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                             }
                             SyncProgress.CONNECTING -> {
                                 _gattSyncInProgress.value = true
@@ -118,7 +118,7 @@ class TagViewModel(
                             }
                             SyncProgress.DISCONNECTED -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.DISCONNECTED)
                                 resetGattStatus()
                             }
@@ -140,19 +140,19 @@ class TagViewModel(
                             }
                             SyncProgress.NOT_SUPPORTED -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_SUPPORTED)
                                 resetGattStatus()
                             }
                             SyncProgress.NOT_FOUND -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_FOUND)
                                 resetGattStatus()
                             }
                             SyncProgress.ERROR -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.ERROR)
                                 resetGattStatus()
                             }

@@ -12,18 +12,21 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
@@ -40,6 +44,7 @@ import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @Composable
@@ -100,7 +105,6 @@ fun SensorSettings(
     }
 
     LaunchedEffect(key1 = 1) {
-        viewModel.checkIfSensorShared()
         viewModel.updateSensorFirmwareVersion()
     }
 }
@@ -174,7 +178,7 @@ fun GeneralSettingsGroup(
     sensorState: RuuviTag,
     userLoggedIn: Boolean,
     sensorOwnedByUser: Boolean,
-    sensorIsShared: Boolean,
+    sensorIsShared: UiText,
     setName: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -213,11 +217,7 @@ fun GeneralSettingsGroup(
             }
         }
         if (sensorOwnedByUser) {
-            val sharedText = if (sensorIsShared) {
-                stringResource(R.string.sensor_shared)
-            } else {
-                stringResource(R.string.sensor_not_shared)
-            }
+            val sharedText = sensorIsShared.asString(context)
             DividerRuuvi()
 
             TextEditWithCaptionButton(
@@ -241,6 +241,7 @@ fun GeneralSettingsGroup(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SetSensorName(
     value: String?,
@@ -248,31 +249,44 @@ fun SetSensorName(
     onDismissRequest : () -> Unit
 ) {
     var name by remember {
-        mutableStateOf(value ?: "")
+        mutableStateOf(TextFieldValue(value ?: "", TextRange((value ?: "").length)))
     }
     RuuviDialog(
         title = stringResource(id = R.string.tag_name),
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
-            setName.invoke(name)
+            setName.invoke(name.text)
             onDismissRequest.invoke()
         }
     ) {
         val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         ParagraphWithPadding(text = stringResource(id = R.string.rename_sensor_message))
         TextFieldRuuvi(
             value = name,
             onValueChange = {
-                if (it.length <= 32) name = it
+                if (it.text.length <= 32) name = it
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (it.isFocused) keyboardController?.show()
+                },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences
             ),
-            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }
+            )
         )
+
+        LaunchedEffect(key1 = Unit) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
     }
 }
 
@@ -404,14 +418,14 @@ fun MoreInfoItem (
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .weight(1f),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.Start,
             text = title)
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .combinedClickable(
                     onClick = {},
                     onLongClick = {
@@ -438,7 +452,7 @@ fun BatteryInfoItem (
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .weight(1f),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.Start,
@@ -461,7 +475,7 @@ fun BatteryInfoItem (
 
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .combinedClickable(
                     onClick = {},
                     onLongClick = {
@@ -501,7 +515,7 @@ fun SensorSettingsTitle (title: String) {
         Text(
             text = title,
             style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
         )
     }
 }
@@ -517,14 +531,14 @@ fun ValueWithCaption(
     ) {
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.subtitle,
             textAlign = TextAlign.Start,
             text = title)
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = value ?: "")

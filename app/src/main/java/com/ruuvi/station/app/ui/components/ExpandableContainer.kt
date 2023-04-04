@@ -79,7 +79,7 @@ fun ExpandableContainer(
                 modifier = Modifier
                     .background(color = backgroundColor)
                     .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-                    .padding(RuuviStationTheme.dimensions.medium)
+                    .padding(RuuviStationTheme.dimensions.screenPadding)
                     .clickable { expandedState = !expandedState },
                 verticalAlignment = Alignment.CenterVertically
             ) {

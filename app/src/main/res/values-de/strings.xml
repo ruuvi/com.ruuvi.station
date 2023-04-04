@@ -115,7 +115,7 @@
     <string name="clear_confirm">Die lokalen historischen Daten aus der App löschen?</string>
     <string name="clear_local_history">Lokaler Verlauf löschen</string>
     <string name="clear_local_history_description">Möchten Sie lokal gespeicherte historische Daten aus der App löschen? Dies löscht nicht den intern gespeicherten Verlauf des Sensors oder die im Ruuvi Cloud-Dienst gespeicherten historischen Daten.</string>
-    <string name="clear_view">Klare Sicht</string>
+    <string name="clear_view">Klare verlaufsansicht</string>
     <string name="close">Schließen</string>
     <string name="cloud_er_forbidden">Verboten</string>
     <string name="cloud_er_internal">Interner Fehler</string>
@@ -380,7 +380,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="pressure_with_unit">Luftdruck (%1$s)</string>
     <string name="reading_history">History wird gelesen</string>
     <string name="reading_history_not_supported">Firmware nicht unterstützt</string>
-    <string name="reading_history_x">History wird gelesen.. %1$s</string>
+    <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
     <string name="remove">Löschen</string>
     <string name="remove_claimed_sensor">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus widerrufen. Nach dem Entfernen kann eine andere Person das Eigentum an dem Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
     <string name="remove_local_sensor">Möchten Sie den Sensor entfernen? Sie können ihn später bei Bedarf wieder hinzufügen.</string>
@@ -408,6 +408,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sensor_shared">Geteilt</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Die Anmeldung bei der App hat viele Vorteile. Einstellungen werden sicher in deinem Konto gespeichert:</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_alert_notifications">Alarmbenachrichtigungen</string>
     <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>
     <string name="settings_background_battery_optimization">Wenn beim Scannen im Hintergrund Probleme auftreten, sollten Sie die Batterieoptimierung für Ruuvi Station deaktivieren. Dieses Verfahren kann je nach Gerätehersteller, Modell und Android-Version variieren.</string>
@@ -448,15 +449,18 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_language">Sprache</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
+    <string name="settings_sound">Toneinstellungen</string>
+    <string name="settings_sound_description">Konfigurieren Sie die Ton- und Vibrationseinstellungen der App.</string>
     <string name="settings_temperature_unit">Temperatureinheit</string>
     <string name="settings_temperature_unit_details">Wählen Sie die Temperatureinheit, die angezeigt werden soll.</string>
     <string name="share">Teilen</string>
     <string name="share_sensor_add_friend">Freund hinzufügen</string>
-    <string name="share_sensor_already_shared">Bereits geteilt %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Sie haben %1$,d/%2$,d der maximalen Teilungszahl für diesen Sensor verwendet. Der Sensor wird mit den folgenden Benutzern geteilt:</string>
     <string name="share_sensor_description">Sie können den Sensor mit Freunden und Familie teilen, wenn er sich in Reichweite eines Ruuvi Gateways befindet.\n\nDer Empfänger wird per E-Mail benachrichtigt. Wenn der Empfänger kein Ruuvi-Konto hat, wird beim ersten Anmelden automatisch ein kostenloses Ruuvi-Konto erstellt.\n\nBeachten Sie, dass der benutzerdefinierte Name und das Hintergrundbild des Sensors geteilt werden. Der Name und das Bild werden nur einmal synchronisiert und können danach vom Empfänger privat angepasst werden. Vom Besitzer eingestellte Offset-Werte (sofern vorhanden) werden automatisch synchronisiert und der Empfänger sieht immer die endgültigen korrigierten Werte.</string>
     <string name="share_sensor_send_button">Senden</string>
     <string name="share_sensor_title">Sensor teilen</string>
     <string name="share_sensor_unshare_confirm">Möchten Sie die Freigabe des Sensors für %1$s aufheben?</string>
+    <string name="shared_to_x">Freigegebene %1$,d/%2$,d</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
     <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet. Melden Sie sich an, indem Sie es hier eingeben:</string>

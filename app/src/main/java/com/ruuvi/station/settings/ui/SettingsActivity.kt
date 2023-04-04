@@ -62,7 +62,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     topBar = { RuuviTopAppBar(title = title) },
                     scaffoldState = scaffoldState
                 ) { padding ->
-                    AnimatedNavHost(navController = navController, startDestination = SettingsRoutes.LIST) {
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = SettingsRoutes.LIST
+                    ) {
                         composable(SettingsRoutes.LIST,
                             enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
                             exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
@@ -82,6 +85,15 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             AppearanceSettings(
                                 scaffoldState = scaffoldState,
                                 viewModel = appearanceSettingsViewModel
+                            )
+                        }
+                        composable(
+                            route = SettingsRoutes.ALERT_NOTIFICATIONS,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            AlertNotificationsSettings(
+                                scaffoldState = scaffoldState
                             )
                         }
                         composable(SettingsRoutes.BACKGROUNDSCAN,

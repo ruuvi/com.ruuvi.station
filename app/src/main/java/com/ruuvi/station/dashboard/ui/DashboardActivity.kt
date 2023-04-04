@@ -259,6 +259,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     dashboardViewModel.signOut()
                     SignInActivity.start(this@DashboardActivity)
                 }
+
+                if (it is NetworkSyncEvent.Success) {
+                    dashboardViewModel.refreshDashboardType()
+                }
             }
         }
     }

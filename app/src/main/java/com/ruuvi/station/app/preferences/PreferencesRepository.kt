@@ -237,4 +237,18 @@ class PreferencesRepository(
     fun setDeviceTokenRefreshDate(refreshDate: Long) {
         preferences.deviceTokenRefreshDate = refreshDate
     }
+
+    fun getSubscriptionRefreshDate(): Long =
+        preferences.subscriptionRefreshDate
+
+    fun setSubscriptionRefreshDate(refreshDate: Long) {
+        preferences.subscriptionRefreshDate = refreshDate
+    }
+
+    fun getSubscriptionMaxSharesPerSensor(): Int =
+        preferences.subscriptionMaxSharesPerSensor
+
+    fun setSubscriptionMaxSharesPerSensor(maxShares: Int) {
+        preferences.subscriptionMaxSharesPerSensor = maxShares
+    }
 }

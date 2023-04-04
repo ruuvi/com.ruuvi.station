@@ -8,16 +8,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -360,6 +365,7 @@ fun MovementAlertEditItem(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ChangeDescriptionDialog(
     alarmState: AlarmItemState,
@@ -367,30 +373,43 @@ fun ChangeDescriptionDialog(
     onDismissRequest : () -> Unit
 ) {
     var description by remember {
-        mutableStateOf(alarmState.customDescription)
+        mutableStateOf(TextFieldValue(alarmState.customDescription, TextRange(alarmState.customDescription.length)))
     }
+
     RuuviDialog(
         title = stringResource(id = R.string.alarm_custom_description_title),
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
-            setDescription.invoke(alarmState.type, description)
+            setDescription.invoke(alarmState.type, description.text)
             onDismissRequest.invoke()
         }
     ) {
         val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         TextFieldRuuvi(
             value = description,
             onValueChange = {
-                if (it.length <= 32) description = it
+                if (it.text.length <= 32) description = it
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (it.isFocused) keyboardController?.show()
+                },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences
             ),
             keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
         )
+
+        LaunchedEffect(key1 = Unit) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
     }
 }
 

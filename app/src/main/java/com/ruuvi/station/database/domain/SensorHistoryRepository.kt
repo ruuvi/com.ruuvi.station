@@ -163,6 +163,10 @@ class SensorHistoryRepository {
         executeSQL(updateQuery)
     }
 
+    fun insertPoint(historyPoint: TagSensorReading) {
+        historyPoint.insert()
+    }
+
     companion object {
         const val POINT_THRESHOLD = 1000
         const val HIGH_DENSITY_INTERVAL_MINUTES = 15

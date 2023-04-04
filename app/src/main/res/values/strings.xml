@@ -116,8 +116,8 @@
     <string name="clear">Clear</string>
     <string name="clear_confirm">Clear the local history data from the app?</string>
     <string name="clear_local_history">Clear local history</string>
-    <string name="clear_local_history_description">Do you want to clear locally stored historical data from the app? This won\'t clear internally stored history from the sensor or historical data stored on the Ruuvi Cloud service.</string>
-    <string name="clear_view">Clear view</string>
+    <string name="clear_local_history_description">Do you want to clear locally stored history data from the app? This won\'t clear internally stored history from the sensor or history data stored on the Ruuvi Cloud service.</string>
+    <string name="clear_view">Clear history view</string>
     <string name="close">Close</string>
     <string name="cloud_er_forbidden">Forbidden</string>
     <string name="cloud_er_internal">Internal error</string>
@@ -371,7 +371,7 @@
     <string name="pressure_with_unit">Air Pressure (%1$s)</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
-    <string name="reading_history_x">Reading history.. %1$s</string>
+    <string name="reading_history_x">Reading Bluetooth: %1$s</string>
     <string name="remove">Remove</string>
     <string name="remove_claimed_sensor">By removing the sensor, your sensor ownership status will be revoked. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
@@ -399,6 +399,7 @@
     <string name="sensor_shared">Shared</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Signing in to the app has many advantages. Settings will be safely stored to your account:</string>
     <string name="settings">Settings</string>
+    <string name="settings_alert_notifications">Alert Notifications</string>
     <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_background_battery_optimization">If you experience any issues with background scanning you should disable battery optimisation for Ruuvi Station. This procedure may vary depending on your device vendor, model and Android version.</string>
@@ -439,15 +440,18 @@
     <string name="settings_language">Language</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
+    <string name="settings_sound">Sound Settings</string>
+    <string name="settings_sound_description">Configure app related sound and vibration settings.</string>
     <string name="settings_temperature_unit">Temperature Unit</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="share">Share</string>
     <string name="share_sensor_add_friend">Add friend</string>
-    <string name="share_sensor_already_shared">Already shared %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">You have used %1$,d/%2$,d of maximum shares of this sensor. The sensor has been shared to following users:</string>
     <string name="share_sensor_description">You can share the sensor with friends and family if it\'s in range of a Ruuvi Gateway.\n\nReceiver will be notified by email. If the receiver doesn\'t have a Ruuvi account, a free Ruuvi account will automatically be created at first log in.\n\nNote that the sensor\'s custom name and background image will be shared. The name and image sync is one time only, and after this, they can be privately customised by the receiver. Offset values (if any) set by the owner, will be automatically synced, and the receiver will always see the final corrected values.</string>
     <string name="share_sensor_send_button">Send</string>
     <string name="share_sensor_title">Share sensor</string>
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
+    <string name="shared_to_x">Shared to %1$,d/%2$,d</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_in_benefits_description">Benefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored on the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
     <string name="sign_in_check_email">We\'ve sent a one-time password to your email. Sign in by entering it here:</string>
