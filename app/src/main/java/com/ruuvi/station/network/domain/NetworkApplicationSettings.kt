@@ -23,29 +23,26 @@ class NetworkApplicationSettings (
     private fun getToken() = tokenRepository.getTokenInfo()
 
     suspend fun updateSettingsFromNetwork() {
-        try {
-            getToken()?.token?.let { token ->
-                val response = networkRepository.getUserSettings(token)
-                if (response?.data != null && response.isSuccess()) {
-                    if (initializeSettings(response.data.settings)) {
-                        applyBackgroundScanMode(response.data.settings)
-                        applyBackgroundScanInterval(response.data.settings)
-                        applyTemperatureUnit(response.data.settings)
-                        applyHumidityUnit(response.data.settings)
-                        applyPressureUnit(response.data.settings)
-                        applyDashboardType(response.data.settings)
-                        applyCloudModeEnabled(response.data.settings)
-                        applyChartShowAllPoints(response.data.settings)
-                        applyChartDrawDots(response.data.settings)
-                        applyChartViewPeriod(response.data.settings)
-                        applyTemperatureAccuracy(response.data.settings)
-                        applyHumidityAccuracy(response.data.settings)
-                        applyPressureAccuracy(response.data.settings)
-                    }
+
+        getToken()?.token?.let { token ->
+            val response = networkRepository.getUserSettings(token)
+            if (response?.data != null && response.isSuccess()) {
+                if (initializeSettings(response.data.settings)) {
+                    applyBackgroundScanMode(response.data.settings)
+                    applyBackgroundScanInterval(response.data.settings)
+                    applyTemperatureUnit(response.data.settings)
+                    applyHumidityUnit(response.data.settings)
+                    applyPressureUnit(response.data.settings)
+                    applyDashboardType(response.data.settings)
+                    applyCloudModeEnabled(response.data.settings)
+                    applyChartShowAllPoints(response.data.settings)
+                    applyChartDrawDots(response.data.settings)
+                    applyChartViewPeriod(response.data.settings)
+                    applyTemperatureAccuracy(response.data.settings)
+                    applyHumidityAccuracy(response.data.settings)
+                    applyPressureAccuracy(response.data.settings)
                 }
             }
-        } catch (e: Exception) {
-            Timber.e(e, "NetworkApplicationSettings-updateSettingsFromNetwork")
         }
     }
 

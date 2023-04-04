@@ -21,11 +21,11 @@ class PushRegisterInteractor(
         Timber.d("checkAndRegisterDeviceToken")
         var registeredToken = preferencesRepository.getRegisteredToken()
 
-        if (registeredToken.isNotEmpty() && !ruuviNetworkInteractor.signedIn) {
-            val handler = CoroutineExceptionHandler { _, exception ->
-                Timber.e(exception)
-            }
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Timber.e(exception)
+        }
 
+        if (registeredToken.isNotEmpty() && !ruuviNetworkInteractor.signedIn) {
             CoroutineScope(Dispatchers.IO + handler).launch {
                 unregisterToken(registeredToken)
             }
@@ -44,7 +44,7 @@ class PushRegisterInteractor(
 
                     val timeToRefreshToken = Date(lastRefresh).diffGreaterThan(refreshInterval)
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO + handler).launch {
                         Timber.d("checkAndRegisterDeviceToken tokenChanged = $tokenChanged timeToRefreshToken = $timeToRefreshToken")
                         if (tokenChanged && registeredToken.isNotEmpty()) {
                             unregisterToken(registeredToken)

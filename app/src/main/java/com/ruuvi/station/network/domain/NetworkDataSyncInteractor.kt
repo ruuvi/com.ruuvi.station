@@ -107,8 +107,12 @@ class NetworkDataSyncInteractor (
             return syncJob
         }
 
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Timber.e(throwable, "NetworkSync Exception")
+        }
+
         setSyncInProgress(true)
-        syncJob = CoroutineScope(IO).launch() {
+        syncJob = CoroutineScope(IO + coroutineExceptionHandler).launch() {
             try {
                 Timber.d("Sync job started")
                 sendSyncEvent(NetworkSyncEvent.InProgress)
@@ -156,9 +160,9 @@ class NetworkDataSyncInteractor (
                 networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
                 networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
-            } catch (exception: Exception) {
+            }
+            catch (exception: Exception) {
                 exception.message?.let { message ->
-                    Timber.e(exception, "NetworkSync Exception")
                     sendSyncEvent(NetworkSyncEvent.Error(message))
                 }
             } finally {
