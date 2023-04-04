@@ -30,9 +30,6 @@ class CustomXAxisRenderer(
         val rawInterval = range / labelCount
         val interval = getClosestPredefinedInterval(rawInterval)
 
-        val timeZoneOffset = if (interval > 3600000) TimeZone.getDefault().getOffset(Date().time) else 0
-        Timber.d("computeAxisValues timeZoneOffset = $timeZoneOffset")
-
         var firstPoint = ((from + min).toLong() / interval) * interval - from  - 2 * interval
         var lastPoint =  ((from + max).toLong() / interval) * interval - from  + 2 * interval
 
@@ -42,7 +39,7 @@ class CustomXAxisRenderer(
         }
 
         var numberOfPoints = 0
-        if (interval != 0L && lastPoint != firstPoint) {
+        if (lastPoint != firstPoint) {
             for (f in firstPoint..lastPoint step interval) {
                 numberOfPoints++
             }
