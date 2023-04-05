@@ -191,6 +191,7 @@
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
     <string name="dfu_update_do_not_close_app">Do not close the app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
+    <string name="do_not_show_again">Don\'t show this again</string>
     <string name="done">Done</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
@@ -226,6 +227,7 @@
     <string name="gateway_test_success">Data forwarding works! Response code: %1$d</string>
     <string name="gateway_testing">Testing...</string>
     <string name="gatt_not_in_range_description">Bluetooth history download failed. Check that you\'re within Bluetooth range, your sensor has firmware that supports downloading and that the sensor is not simultaneously connected to another iOS device. Sensor connection is reserved for Ruuvi Station when using connected mode in iOS.</string>
+    <string name="gatt_sync_description">Ruuvi Station downloads the internal history of the sensor for the last 10 days if the measurement history is available.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
     <string name="general">General</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station is an easy-to-use but powerful tool to supercharge your Ruuvi sensors. Simply add some sensors and you\'re ready to go.</string>
@@ -482,6 +484,7 @@
     <string name="sync">Sync</string>
     <string name="sync_complete">Sync complete</string>
     <string name="sync_confirm">Download history data from the sensor?</string>
+    <string name="synchronisation">Synchronisation</string>
     <string name="synchronizing">Synchronising</string>
     <string name="tag_name">Name</string>
     <string name="tag_not_in_range">Sensor not found, is it in range?</string>
