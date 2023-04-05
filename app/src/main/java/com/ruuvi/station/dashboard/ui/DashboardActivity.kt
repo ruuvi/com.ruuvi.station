@@ -702,6 +702,20 @@ fun ItemBottom(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(top = 2.dp)
     ) {
+        val icon = if (sensor.updatedAt == sensor.networkLastSync) {
+            R.drawable.ic_icon_gateway
+        } else {
+            R.drawable.ic_icon_bluetooth
+        }
+        Icon(
+            modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+            painter = painterResource(id = icon),
+            tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+            contentDescription = null,
+        )
+        
+        Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
+
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
