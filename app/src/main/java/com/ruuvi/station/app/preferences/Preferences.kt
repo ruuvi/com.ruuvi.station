@@ -338,6 +338,12 @@ class Preferences constructor(val context: Context) {
             ).apply()
         }
 
+    var dontShowGattSync: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DONT_SHOW_GATT_SYNC, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_DONT_SHOW_GATT_SYNC, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -386,6 +392,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
+        private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

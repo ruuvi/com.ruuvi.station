@@ -74,6 +74,9 @@ class TagViewModel(
     private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
 
+    private val _dontShowGattSync = MutableStateFlow<Boolean>(preferencesRepository.getDontShowGattSync())
+    val dontShowGattSync: StateFlow<Boolean> = _dontShowGattSync
+
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private var showGraph = false
@@ -272,5 +275,10 @@ class TagViewModel(
     fun refreshStatus() {
         Timber.d("refreshStatus")
         _chartViewPeriod.value = getGraphViewPeriod()
+    }
+
+    fun dontShowGattSyncDescription() {
+        preferencesRepository.setDontShowGattSync(true)
+        _dontShowGattSync.value = preferencesRepository.getDontShowGattSync()
     }
 }

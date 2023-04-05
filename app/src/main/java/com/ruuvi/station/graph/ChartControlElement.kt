@@ -47,6 +47,8 @@ fun ChartControlElement(
         mutableStateOf(false)
     }
 
+    val dontShowGattSync by viewModel.dontShowGattSync.collectAsState()
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (syncInProgress) {
             IconButton(onClick = {
@@ -166,10 +168,11 @@ fun ChartControlElement(
          }
      }
 
-    if (gattSyncDialogOpened) {
+    if (gattSyncDialogOpened && !dontShowGattSync) {
         GattSyncDescriptionDialog(
             doNotShowAgain = {
                 gattSyncDialogOpened = false
+                viewModel.dontShowGattSyncDescription()
             },
             onDismissRequest = {
                 gattSyncDialogOpened = false

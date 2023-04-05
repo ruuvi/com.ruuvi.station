@@ -251,4 +251,11 @@ class PreferencesRepository(
     fun setSubscriptionMaxSharesPerSensor(maxShares: Int) {
         preferences.subscriptionMaxSharesPerSensor = maxShares
     }
+
+    fun getDontShowGattSync(): Boolean =
+        preferences.dontShowGattSync
+
+    fun setDontShowGattSync(value: Boolean) {
+        preferences.dontShowGattSync = value
+    }
 }
