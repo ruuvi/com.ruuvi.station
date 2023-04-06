@@ -8,8 +8,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -36,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -81,7 +78,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 var inProgress by remember { mutableStateOf(false) }
 
                 BackHandler() {
-                    if (navController.currentBackStackEntry?.destination?.route == SignInRoutes.ENTER_EMAIL) {
+                    if (navController.currentBackStackEntry?.destination?.route == SignInRoutes.CLOUD_BENEFITS) {
                         closeActivity()
                     }
                 }
@@ -100,36 +97,34 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                     backgroundColor = Color.Transparent,
                     scaffoldState = scaffoldState
                 ) { padding ->
-                    AnimatedNavHost(navController = navController, startDestination = SignInRoutes.ENTER_EMAIL) {
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = SignInRoutes.CLOUD_BENEFITS,
+                        enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                        exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                        popEnterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
+                        popExitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) }
+                    ) {
                         composable(
-                            SignInRoutes.ENTER_EMAIL,
-                            enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                            exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
-                        ) {
-                            EnterEmailPage(
-                                inProgress = inProgress,
-                                requestCode = { email -> viewModel.submitEmail(email) },
-                                useWithoutAccount = { viewModel.requestToSkipSignIn() }
-                            )
-                        }
-                        composable(
-                            route = SignInRoutes.CLOUD_BENEFITS,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
+                            route = SignInRoutes.CLOUD_BENEFITS
                         ) {
                             CloudBenefitsPage(
                                 letsDoIt = {
-                                    navController.navigateUp()
-                                },
-                                useWithoutAccount = {
-                                    closeActivity()
+                                    navController.navigate(SignInRoutes.ENTER_EMAIL)
                                 }
                             )
                         }
                         composable(
-                            SignInRoutes.ENTER_CODE,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
+                            SignInRoutes.ENTER_EMAIL
+                        ) {
+                            EnterEmailPage(
+                                inProgress = inProgress,
+                                requestCode = { email -> viewModel.submitEmail(email) },
+                                useWithoutAccount = { closeActivity() }
+                            )
+                        }
+                        composable(
+                            SignInRoutes.ENTER_CODE
                         ) {
                             EnterCodePage(inProgress, viewModel.tokenProcessed) { token ->
                                 viewModel.verifyCode(token)
@@ -173,17 +168,6 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
         finish()
         StartupActivity.start(this, true)
     }
-
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
-        { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
-            animationSpec = tween(600)
-        ) }
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
-        { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Right,
-            animationSpec = tween(600)
-        ) }
 
     companion object {
         fun start(context: Context) {
@@ -250,7 +234,7 @@ fun EnterEmailPage(
                     .clickable { useWithoutAccount.invoke() },
                 style = RuuviStationTheme.typography.onboardingSubtitle,
                 textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.benefits_sign_in),
+                text = stringResource(id = R.string.use_without_account),
                 textDecoration = TextDecoration.Underline,
                 fontSize = 16.scaledSp,
                 lineHeight = 20.scaledSp
@@ -262,8 +246,7 @@ fun EnterEmailPage(
 
 @Composable
 fun CloudBenefitsPage(
-    letsDoIt: () -> Unit,
-    useWithoutAccount: () -> Unit
+    letsDoIt: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -289,27 +272,23 @@ fun CloudBenefitsPage(
             append(stringResource(id = R.string.claim_warning))
         }
         OnboardingText(text = annotatedString)
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        RuuviButton(text = stringResource(id = R.string.lets_do_it)) {
-            letsDoIt.invoke()
-        }
+
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            RuuviButton(text = stringResource(id = R.string.sign_in_continue)) {
+                letsDoIt.invoke()
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
             Text(
-                modifier = Modifier
-                    .padding(horizontal = RuuviStationTheme.dimensions.extended)
-                    .clickable { useWithoutAccount.invoke() },
-                style = RuuviStationTheme.typography.onboardingSubtitle,
+                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+                style = RuuviStationTheme.typography.onboardingText,
                 textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.use_without_account),
-                textDecoration = TextDecoration.Underline,
-                fontSize = 16.scaledSp,
-                lineHeight = 20.scaledSp
+                text = stringResource(id = R.string.signing_in_is_optional),
+                fontSize = RuuviStationTheme.fontSizes.normal
             )
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         }
     }
 }
