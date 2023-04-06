@@ -434,8 +434,8 @@ class RuuviNetworkRepository
     }
 
     companion object {
-        private const val BASE_URL = "https://network.ruuvi.com/" //production
-        //private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
+        //private const val BASE_URL = "https://network.ruuvi.com/" //production
+        private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
         fun getAuth(token: String) = "Bearer $token"
     }
 }

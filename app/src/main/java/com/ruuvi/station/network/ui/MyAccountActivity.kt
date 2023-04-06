@@ -137,8 +137,14 @@ fun MyAccountBody(
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    RuuviButton(text = stringResource(id = R.string.delete_account), isWarning = true) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    RuuviButton(
+                        text = stringResource(id = R.string.delete_account),
+                        isWarning = true
+                    ) {
                         deleteAccount.invoke()
                     }
 
@@ -148,28 +154,28 @@ fun MyAccountBody(
                     }
                 }
 
-                if (BuildConfig.DEBUG) {
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                if (fcmToken != null) {
+                    MoreInfoItem(
+                        title = "",
+                        value = fcmToken.toString()
+                    )
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                }
+
+                SubscriptionInfo(subscription = subscription)
+
+                if (tokens != null) {
+                    ParagraphWithPadding(text = "Registered FCM tokens")
+                    for (token in tokens) {
+                        Paragraph(text = "${token.first} - ${token.second}")
+                    }
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
-                    if (fcmToken != null) {
-                        MoreInfoItem(
-                            title = "",
-                            value = fcmToken.toString()
-                        )
-                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-                    }
-
-                    SubscriptionInfo(subscription = subscription)
-
-                    if (tokens != null) {
-                        ParagraphWithPadding(text = "Registered FCM tokens")
-                        for (token in tokens) {
-                            Paragraph(text = "${token.first} - ${token.second}")
-                        }
-                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                    }
                 }
+
             }
         }
 
