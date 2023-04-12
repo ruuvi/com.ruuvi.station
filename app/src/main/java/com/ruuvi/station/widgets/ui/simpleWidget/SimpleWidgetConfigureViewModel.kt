@@ -3,8 +3,8 @@ package com.ruuvi.station.widgets.ui.simpleWidget
 import android.appwidget.AppWidgetManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -21,11 +21,11 @@ class SimpleWidgetConfigureViewModel(
     var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
-    val cloudSensors = Transformations.map(_allSensors) { allSensors ->
+    val cloudSensors = _allSensors.map { allSensors ->
         allSensors.filter { it.networkLastSync != null }
     }
 
-    val gotFilteredSensors = Transformations.map(_allSensors) { allSensors ->
+    val gotFilteredSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }
     }
 
@@ -40,11 +40,11 @@ class SimpleWidgetConfigureViewModel(
     private val _widgetType = MutableLiveData<WidgetType> (DEFAULT_WIDGET_TYPE)
     val widgetType: LiveData<WidgetType> = _widgetType
 
-    override val userHasCloudSensors: LiveData<Boolean> = Transformations.map(cloudSensors) {
+    override val userHasCloudSensors: LiveData<Boolean> = cloudSensors.map {
         it.isNotEmpty()
     }
 
-    override val canBeSaved: LiveData<Boolean> = Transformations.map(_sensorId) {
+    override val canBeSaved: LiveData<Boolean> = _sensorId.map {
         it != null
     }
 

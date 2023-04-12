@@ -49,11 +49,11 @@ class TagViewModel(
 
     private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
 
-    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
+    val isNetworkTagObserve: LiveData<Boolean> = networkStatus.map {
         it != null
     }
 
-    val canUseGattSync: LiveData<Boolean> = Transformations.map(_tagEntry) {
+    val canUseGattSync: LiveData<Boolean> = _tagEntry.map {
         it?.connectable == true
     }
 
