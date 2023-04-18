@@ -117,6 +117,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 }.collectAsState(null)
 
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
+                val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -149,11 +150,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                         topBar = {
                             DashboardTopAppBar(
-                                actionCallBack = { dashboardType ->
-                                    dashboardViewModel.changeDashboardType(
-                                        dashboardType
-                                    )
-                                },
+                                dashboardType = dashboardType,
+                                dashboardTapAction = dashboardTapAction,
+                                changeDashboardType = dashboardViewModel::changeDashboardType,
+                                changeDashboardTapAction = dashboardViewModel::changeDashboardTapAction,
                                 navigationCallback = {
                                     scope.launch {
                                         scaffoldState.drawerState.open()
