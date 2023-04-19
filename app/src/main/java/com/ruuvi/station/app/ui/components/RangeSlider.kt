@@ -1,12 +1,13 @@
 package com.ruuvi.station.app.ui.components
 
-import androidx.annotation.FloatRange
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import java.lang.Float.max
+import java.lang.Float.min
 
 @Composable
 fun RuuviSliderColors() = SliderDefaults.colors(
@@ -26,8 +27,10 @@ fun RuuviRangeSlider(
     steps: Int = 0,
     onValueChangeFinished: (() -> Unit)? = null,
 ) {
+    val start = if (valueRange.contains(values.start)) values.start else valueRange.start
+    val end = if (valueRange.contains(values.endInclusive)) values.endInclusive else valueRange.endInclusive
     RangeSlider(
-        value = values.start..values.endInclusive,
+        value = min(start, end)..max(start,end),
         onValueChange = {
             onValueChange.invoke(it.start..it.endInclusive)
         },
