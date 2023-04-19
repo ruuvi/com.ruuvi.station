@@ -74,9 +74,6 @@ class TagViewModel(
     private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
 
-    private val _dontShowGattSync = MutableStateFlow<Boolean>(preferencesRepository.getDontShowGattSync())
-    val dontShowGattSync: StateFlow<Boolean> = _dontShowGattSync
-
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private var showGraph = false
@@ -99,6 +96,8 @@ class TagViewModel(
     }
 
     private fun isSyncInProgress(): Boolean = networkSyncInProgress.value ?: false && isNetworkTagObserve.value ?: false
+
+    fun shouldSkipGattSyncDialog() = preferencesRepository.getDontShowGattSync()
 
     private fun collectGattSyncStatus() {
         viewModelScope.launch {
@@ -279,6 +278,5 @@ class TagViewModel(
 
     fun dontShowGattSyncDescription() {
         preferencesRepository.setDontShowGattSync(true)
-        _dontShowGattSync.value = preferencesRepository.getDontShowGattSync()
     }
 }
