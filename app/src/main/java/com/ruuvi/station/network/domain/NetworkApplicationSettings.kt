@@ -1,6 +1,7 @@
 package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.response.NetworkUserSettings
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -10,7 +11,6 @@ import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import timber.log.Timber
-import java.lang.Exception
 
 class NetworkApplicationSettings (
     private val tokenRepository: NetworkTokenRepository,
@@ -34,6 +34,7 @@ class NetworkApplicationSettings (
                     applyHumidityUnit(response.data.settings)
                     applyPressureUnit(response.data.settings)
                     applyDashboardType(response.data.settings)
+                    applyDashboardTapAction(response.data.settings)
                     applyCloudModeEnabled(response.data.settings)
                     applyChartShowAllPoints(response.data.settings)
                     applyChartDrawDots(response.data.settings)
@@ -55,6 +56,7 @@ class NetworkApplicationSettings (
             updateHumidityUnit()
             updatePressureUnit()
             updateDashboardType()
+            updateDashboardTapAction()
             updateChartShowAllPoints()
             updateCloudModeEnabled()
             updateChartDrawDots()
@@ -119,6 +121,13 @@ class NetworkApplicationSettings (
         if (settings.DASHBOARD_TYPE != null && DashboardType.isValidCode(settings.DASHBOARD_TYPE)) {
             Timber.d("NetworkApplicationSettings-applyDashboardType: ${settings.DASHBOARD_TYPE}")
             preferencesRepository.updateDashboardType(DashboardType.getByCode(settings.DASHBOARD_TYPE))
+        }
+    }
+
+    private fun applyDashboardTapAction(settings: NetworkUserSettings) {
+        if (settings.DASHBOARD_TAP_ACTION != null && DashboardTapAction.isValidCode(settings.DASHBOARD_TAP_ACTION)) {
+            Timber.d("NetworkApplicationSettings-applyDashboardTapAction: ${settings.DASHBOARD_TAP_ACTION}")
+            preferencesRepository.updateDashboardTapAction(DashboardTapAction.getByCode(settings.DASHBOARD_TAP_ACTION))
         }
     }
 
@@ -316,6 +325,16 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateDashboardTapAction() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateDashboardTapAction: ${preferencesRepository.getDashboardTapAction().code}")
+            networkInteractor.updateUserSetting(
+                DASHBOARD_TAP_ACTION,
+                preferencesRepository.getDashboardTapAction().code
+            )
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
@@ -326,6 +345,7 @@ class NetworkApplicationSettings (
         val ACCURACY_HUMIDITY = "ACCURACY_HUMIDITY"
         val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
         val DASHBOARD_TYPE = "DASHBOARD_TYPE"
+        val DASHBOARD_TAP_ACTION = "DASHBOARD_TAP_ACTION"
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"

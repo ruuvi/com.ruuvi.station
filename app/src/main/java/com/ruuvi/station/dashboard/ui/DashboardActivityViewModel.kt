@@ -65,7 +65,7 @@ class DashboardActivityViewModel(
 
     fun changeDashboardTapAction(dashboardTapAction: DashboardTapAction) {
         preferencesRepository.updateDashboardTapAction(dashboardTapAction)
-        //networkApplicationSettings.updateDashboardTapAction()
+        networkApplicationSettings.updateDashboardTapAction()
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
 }
