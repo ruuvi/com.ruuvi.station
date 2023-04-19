@@ -25,9 +25,11 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
+import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 
 @Composable
@@ -62,8 +64,11 @@ fun RuuviTopAppBar(
 
 @Composable
 fun DashboardTopAppBar(
+    dashboardType: DashboardType,
+    dashboardTapAction: DashboardTapAction,
     navigationCallback: () -> Unit,
-    actionCallBack: (DashboardType) -> Unit
+    changeDashboardType: (DashboardType) -> Unit,
+    changeDashboardTapAction: (DashboardTapAction) -> Unit
 ) {
     var dashboardTypeMenuExpanded by remember {
         mutableStateOf(false)
@@ -112,23 +117,59 @@ fun DashboardTopAppBar(
                 }
 
                 DropdownMenu(
-                    modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+                    modifier = Modifier
+                        .background(color = RuuviStationTheme.colors.background)
+                        .padding(all = RuuviStationTheme.dimensions.medium),
                     expanded = dashboardTypeMenuExpanded,
                     onDismissRequest = { dashboardTypeMenuExpanded = false }) {
 
-                    DropdownMenuItem(onClick = {
-                        actionCallBack.invoke(DashboardType.IMAGE_VIEW)
-                        dashboardTypeMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.image_view))
-                    }
+                    Subtitle(
+                        modifier = Modifier.padding(
+                            horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                            vertical = RuuviStationTheme.dimensions.medium
+                        ),
+                        text = stringResource(id = R.string.card_type)
+                    )
 
-                    DropdownMenuItem(onClick = {
-                        actionCallBack.invoke(DashboardType.SIMPLE_VIEW)
-                        dashboardTypeMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.simple_view))
-                    }
+                    RadioButtonRuuvi(
+                        text = stringResource(id = R.string.image_cards),
+                        isSelected = dashboardType == DashboardType.IMAGE_VIEW,
+                        onClick = {
+                            changeDashboardType.invoke(DashboardType.IMAGE_VIEW)
+                        }
+                    )
+
+                    RadioButtonRuuvi(
+                        text = stringResource(id = R.string.simple_cards),
+                        isSelected = dashboardType == DashboardType.SIMPLE_VIEW,
+                        onClick = {
+                            changeDashboardType.invoke(DashboardType.SIMPLE_VIEW)
+                        }
+                    )
+
+                    Subtitle(
+                        modifier = Modifier.padding(
+                            horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                            vertical = RuuviStationTheme.dimensions.medium
+                        ),
+                        text = stringResource(id = R.string.card_action)
+                    )
+
+                    RadioButtonRuuvi(
+                        text = stringResource(id = R.string.open_sensor_view),
+                        isSelected = dashboardTapAction == DashboardTapAction.OPEN_CARD,
+                        onClick = {
+                            changeDashboardTapAction.invoke(DashboardTapAction.OPEN_CARD)
+                        }
+                    )
+
+                    RadioButtonRuuvi(
+                        text = stringResource(id = R.string.open_history_view),
+                        isSelected = dashboardTapAction == DashboardTapAction.SHOW_CHART,
+                        onClick = {
+                            changeDashboardTapAction.invoke(DashboardTapAction.SHOW_CHART)
+                        }
+                    )
                 }
             }
         },

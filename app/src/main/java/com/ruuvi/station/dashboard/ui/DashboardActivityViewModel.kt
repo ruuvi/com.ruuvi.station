@@ -3,6 +3,7 @@ package com.ruuvi.station.dashboard.ui
 import androidx.lifecycle.*
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -31,6 +32,9 @@ class DashboardActivityViewModel(
     private var _dashBoardType = MutableStateFlow<DashboardType> (preferencesRepository.getDashboardType())
     val dashboardType: StateFlow<DashboardType> = _dashBoardType
 
+    private var _dashBoardTapAction = MutableStateFlow<DashboardTapAction> (preferencesRepository.getDashboardTapAction())
+    val dashboardTapAction: StateFlow<DashboardTapAction> = _dashBoardTapAction
+
     val syncEvents = networkDataSyncInteractor.syncEvents
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
@@ -57,5 +61,11 @@ class DashboardActivityViewModel(
         preferencesRepository.updateDashboardType(dashboardType)
         networkApplicationSettings.updateDashboardType()
         _dashBoardType.value = preferencesRepository.getDashboardType()
+    }
+
+    fun changeDashboardTapAction(dashboardTapAction: DashboardTapAction) {
+        preferencesRepository.updateDashboardTapAction(dashboardTapAction)
+        networkApplicationSettings.updateDashboardTapAction()
+        _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
 }

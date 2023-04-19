@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.preferences
 
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
@@ -106,13 +107,6 @@ class PreferencesRepository(
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
         preferences.backgroundScanMode = mode
-    }
-
-    fun isDashboardEnabled(): Boolean =
-        preferences.dashboardEnabled
-
-    fun setIsDashboardEnabled(isEnabled: Boolean) {
-        preferences.dashboardEnabled = isEnabled
     }
 
     fun getBackgroundScanInterval(): Int =
@@ -223,6 +217,12 @@ class PreferencesRepository(
 
     fun updateDashboardType(dashboardType: DashboardType) {
         preferences.dashboardType = dashboardType
+    }
+
+    fun getDashboardTapAction(): DashboardTapAction = preferences.dashboardTapAction
+
+    fun updateDashboardTapAction(dashboardTapAction: DashboardTapAction) {
+        preferences.dashboardTapAction = dashboardTapAction
     }
 
     fun getRegisteredToken(): String = preferences.registeredToken

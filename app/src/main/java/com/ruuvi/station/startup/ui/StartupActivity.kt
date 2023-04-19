@@ -32,7 +32,6 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
 
         when {
             viewModel.isFirstStart() -> OnboardingActivity.start(this)
-            viewModel.isDashboardEnabled() -> DashboardActivity.start(this)
             else -> {
                 DashboardActivity.start(this)
             }
