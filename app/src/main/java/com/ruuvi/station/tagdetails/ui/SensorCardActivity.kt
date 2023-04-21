@@ -51,24 +51,34 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
-    private val viewModel: SensorCardViewModel by viewModel()
+    private val viewModel: SensorCardViewModel by viewModel {
+        SensorCardViewModelArguments(
+            intent.getStringExtra(ARGUMENT_SENSOR_ID),
+            intent.getBooleanExtra(ARGUMENT_SHOW_CHART, false),
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            RuuviTheme() {
-                val sensors by viewModel.tagsFlow.collectAsStateWithLifecycle(initialValue = listOf())
-
-                SensorsPager(sensors)
+            RuuviTheme {
+                val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
+                val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle(initialValue = 0)
+                SensorsPager(selectedIndex, sensors)
             }
         }
     }
 
     companion object {
-        fun start(context: Context, sensorId: String) {
+        const val ARGUMENT_SENSOR_ID = "ARGUMENT_SENSOR_ID"
+        const val ARGUMENT_SHOW_CHART = "ARGUMENT_SHOW_CHART"
+
+        fun start(context: Context, sensorId: String, showChart: Boolean = false) {
             val intent = Intent(context, SensorCardActivity::class.java)
+            intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
+            intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
             context.startActivity(intent)
         }
     }
@@ -77,6 +87,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SensorsPager(
+    selectedIndex: Int?,
     sensors: List<RuuviTag>
 ) {
     val systemUiController = rememberSystemUiController()
@@ -86,6 +97,9 @@ fun SensorsPager(
     var chartsEnabled by remember {
         mutableStateOf(false)
     }
+
+
+
 
     val sensor = sensors.getOrNull(pagerState.currentPage)
 

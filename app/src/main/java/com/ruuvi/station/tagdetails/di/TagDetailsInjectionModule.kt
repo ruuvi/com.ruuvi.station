@@ -4,6 +4,7 @@ import com.ruuvi.station.tagdetails.domain.TagDetailsArguments
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.tagdetails.ui.SensorCardViewModel
+import com.ruuvi.station.tagdetails.ui.SensorCardViewModelArguments
 import com.ruuvi.station.tagdetails.ui.TagDetailsViewModel
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.tagsettings.domain.CsvExporter
@@ -25,8 +26,8 @@ object TagDetailsInjectionModule {
             TagViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), sensorId = args.tagId)
         }
 
-        bind<SensorCardViewModel>() with provider {
-            SensorCardViewModel(instance())
+        bind<SensorCardViewModel>() with factory { arguments: SensorCardViewModelArguments ->
+            SensorCardViewModel(arguments, instance())
         }
 
         bind<CsvExporter>() with singleton { CsvExporter(instance(), instance(), instance(), instance(), instance()) }
