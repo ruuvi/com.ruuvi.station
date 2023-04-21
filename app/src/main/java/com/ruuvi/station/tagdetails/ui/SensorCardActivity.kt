@@ -45,6 +45,9 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SensorCardActivity : AppCompatActivity(), KodeinAware {
@@ -65,8 +68,12 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
         setContent {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
-                val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle(initialValue = 0)
-                SensorsPager(selectedIndex, sensors)
+                val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
+                SensorsPager(
+                    selectedIndex = selectedIndex,
+                    sensors = sensors,
+                    pageChanged = viewModel::pageChanged
+                )
             }
         }
     }
@@ -87,27 +94,53 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SensorsPager(
-    selectedIndex: Int?,
-    sensors: List<RuuviTag>
+    selectedIndex: Int,
+    sensors: List<RuuviTag>,
+    pageChanged: (Int) -> Unit
 ) {
+    Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
-    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(selectedIndex)
     var chartsEnabled by remember {
         mutableStateOf(false)
     }
 
+    coroutineScope.launch {
+        Timber.d("gotp page $selectedIndex")
+        pagerState.scrollToPage(selectedIndex)
+    }
 
 
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collectLatest { page ->
+            Timber.d("LaunchedEffect $page")
 
-    val sensor = sensors.getOrNull(pagerState.currentPage)
+            pageChanged.invoke(page)
+        }
+//        if (selectedIndex > 0 && selectedIndex < pagerState.pageCount) {
+//            Timber.d("setting page to $selectedIndex")
+//            coroutineScope.launch {
+//                pagerState.scrollToPage(selectedIndex)
+//            }
+//        }
+        // Collect from the pager state a snapshotFlow reading the currentPage
+//        snapshotFlow { pagerState.currentPage }.collectLatest { page ->
+//            Timber.d("page changed to $page")
+//            pageChanged.invoke(page)
+//        }
+    }
+
+    val sensor = sensors.getOrNull(selectedIndex)
 
     if (sensor?.userBackground != null) {
         val uri = Uri.parse(sensor.userBackground)
-
         if (uri.path != null) {
             Crossfade(targetState = uri) {
+                Timber.d("image for sensor ${sensor.displayName}")
+
                 SensorCardImage(it)
             }
         }

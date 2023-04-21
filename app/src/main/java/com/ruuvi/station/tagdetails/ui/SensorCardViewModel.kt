@@ -19,8 +19,12 @@ class SensorCardViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private val _selectedIndex = MutableStateFlow<Int?>(null)
-    val selectedIndex: StateFlow<Int?> = _selectedIndex
+    private val _selectedIndex = MutableStateFlow<Int>(0)
+    val selectedIndex: StateFlow<Int> = _selectedIndex
+
+    fun pageChanged(page: Int) {
+        _selectedIndex.value = page
+    }
 
     init {
         if (arguments.sensorId != null) {
