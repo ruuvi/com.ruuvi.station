@@ -17,18 +17,23 @@ data class AlarmItemState(
     var mutedTill: Date? = null,
     var triggered: Boolean = false
 ) {
-    fun getPossibleRange() = type.possibleRange
-
     companion object {
         fun getStateForDbAlarm(alarm: Alarm, alarmsInteractor: AlarmsInteractor): AlarmItemState {
-            val rangeLow = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.min.toFloat())
-            val rangeHigh = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.max.toFloat())
+            val type = alarm.alarmType
+            val alarmMin = minOf(alarm.min, alarm.max)
+            val alarmMax = maxOf(alarm.min, alarm.max)
+            var possibleRange = type.possibleRange.first.toDouble() .. type.possibleRange.last.toDouble()
+            val min = if (possibleRange.contains(alarmMin)) alarmMin else possibleRange.start
+            val max = if (possibleRange.contains(alarmMax)) alarmMax else possibleRange.endInclusive
+            val rangeLow = alarmsInteractor.getRangeValue(alarm.alarmType, min.toFloat())
+            val rangeHigh = alarmsInteractor.getRangeValue(alarm.alarmType, max.toFloat())
+
             return AlarmItemState(
                 sensorId = alarm.ruuviTagId,
-                type = alarm.alarmType,
+                type = type,
                 isEnabled = alarm.enabled,
-                min = alarm.min,
-                max = alarm.max,
+                min = min,
+                max = max,
                 rangeLow = rangeLow,
                 rangeHigh = rangeHigh,
                 displayLow = alarmsInteractor.getDisplayValue(rangeLow),

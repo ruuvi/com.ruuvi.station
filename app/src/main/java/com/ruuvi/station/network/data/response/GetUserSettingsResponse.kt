@@ -17,7 +17,8 @@ data class NetworkUserSettings(
     val CHART_SHOW_ALL_POINTS: String?,
     val CHART_DRAW_DOTS: String?,
     val CHART_VIEW_PERIOD: String?,
-    val DASHBOARD_TYPE: String?
+    val DASHBOARD_TYPE: String?,
+    val DASHBOARD_TAP_ACTION: String?
 ) {
     fun isEmpty() =
                 BACKGROUND_SCAN_MODE == null &&
@@ -29,6 +30,7 @@ data class NetworkUserSettings(
                 ACCURACY_HUMIDITY == null &&
                 ACCURACY_PRESSURE == null &&
                 DASHBOARD_TYPE == null &&
+                DASHBOARD_TAP_ACTION == null &&
                 CLOUD_MODE_ENABLED == null &&
                 CHART_SHOW_ALL_POINTS == null &&
                 CHART_DRAW_DOTS == null &&

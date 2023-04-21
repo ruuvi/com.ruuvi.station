@@ -61,6 +61,7 @@ import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -115,6 +116,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 }.collectAsState(null)
 
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
+                val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -147,11 +149,10 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                         topBar = {
                             DashboardTopAppBar(
-                                actionCallBack = { dashboardType ->
-                                    dashboardViewModel.changeDashboardType(
-                                        dashboardType
-                                    )
-                                },
+                                dashboardType = dashboardType,
+                                dashboardTapAction = dashboardTapAction,
+                                changeDashboardType = dashboardViewModel::changeDashboardType,
+                                changeDashboardTapAction = dashboardViewModel::changeDashboardTapAction,
                                 navigationCallback = {
                                     scope.launch {
                                         scaffoldState.drawerState.open()
@@ -229,7 +230,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         openUrl(getString(R.string.buy_sensors_link))
                                     }
                                 } else {
-                                    DashboardItems(it, userEmail, dashboardType)
+                                    DashboardItems(
+                                        items = it,
+                                        userEmail = userEmail,
+                                        dashboardType = dashboardType,
+                                        dashboardTapAction = dashboardTapAction
+                                    )
                                 }
                             }
                         }
@@ -325,7 +331,12 @@ fun EmptyDashboard(buySensors: () -> Unit) {
 }
 
 @Composable
-fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: DashboardType) {
+fun DashboardItems(
+    items: List<RuuviTag>,
+    userEmail: String?,
+    dashboardType: DashboardType,
+    dashboardTapAction: DashboardTapAction
+) {
     val itemHeight = 156.dp * LocalDensity.current.fontScale
 
     LazyVerticalGrid(
@@ -340,13 +351,15 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: Das
                 DashboardType.SIMPLE_VIEW ->
                     DashboardItemSimple(
                         sensor = sensor,
-                        userEmail = userEmail
+                        userEmail = userEmail,
+                        dashboardTapAction = dashboardTapAction
                     )
                 DashboardType.IMAGE_VIEW ->
                     DashboardItem(
                         itemHeight = itemHeight,
                         sensor = sensor,
-                        userEmail = userEmail
+                        userEmail = userEmail,
+                        dashboardTapAction = dashboardTapAction
                     )
             }
         }
@@ -356,7 +369,12 @@ fun DashboardItems(items: List<RuuviTag>, userEmail: String?, dashboardType: Das
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DashboardItem(itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
+fun DashboardItem(
+    itemHeight: Dp,
+    sensor: RuuviTag,
+    userEmail: String?,
+    dashboardTapAction: DashboardTapAction
+) {
     val context = LocalContext.current
 
     Card(
@@ -365,7 +383,11 @@ fun DashboardItem(itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
             .fillMaxWidth()
             .combinedClickable (
                 onClick = {
-                    TagDetailsActivity.start(context, sensor.id)
+                    TagDetailsActivity.start(
+                        context = context,
+                        tagId = sensor.id,
+                        showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
                 },
                 onLongClick = {
                     SensorCardActivity.start(context, sensor.id)
@@ -461,14 +483,22 @@ fun DashboardItem(itemHeight: Dp, sensor: RuuviTag, userEmail: String?) {
 }
 
 @Composable
-fun DashboardItemSimple(sensor: RuuviTag, userEmail: String?) {
+fun DashboardItemSimple(
+    sensor: RuuviTag,
+    userEmail: String?,
+    dashboardTapAction: DashboardTapAction
+) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                TagDetailsActivity.start(context, sensor.id)
+                TagDetailsActivity.start(
+                    context = context,
+                    tagId = sensor.id,
+                    showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
+                )
             },
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,

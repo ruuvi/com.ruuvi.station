@@ -47,8 +47,6 @@ fun ChartControlElement(
         mutableStateOf(false)
     }
 
-    val dontShowGattSync by viewModel.dontShowGattSync.collectAsState()
-
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (syncInProgress) {
             IconButton(onClick = {
@@ -71,7 +69,7 @@ fun ChartControlElement(
             }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.medium)
+                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extended)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.gatt_sync),
@@ -168,7 +166,7 @@ fun ChartControlElement(
          }
      }
 
-    if (gattSyncDialogOpened && !dontShowGattSync) {
+    if (gattSyncDialogOpened && !viewModel.shouldSkipGattSyncDialog()) {
         GattSyncDescriptionDialog(
             doNotShowAgain = {
                 gattSyncDialogOpened = false

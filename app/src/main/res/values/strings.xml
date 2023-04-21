@@ -98,6 +98,8 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
+    <string name="card_action">Card action</string>
+    <string name="card_type">Card type</string>
     <string name="change_background">Change background</string>
     <string name="change_background_image">Change background image</string>
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
@@ -258,6 +260,7 @@
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Air Humidity (%1$s)</string>
+    <string name="image_cards">Image cards</string>
     <string name="image_view">Image view</string>
     <string name="information">Information</string>
     <string name="language_english">English</string>
@@ -340,6 +343,8 @@
     <string name="onboarding_web_pros">Large dashboard, multi-year history, email alerts and more on</string>
     <string name="onboarding_with_ruuvi_sensors">Let\'s get to know your Ruuvi Station app.</string>
     <string name="onboarding_your_sensors">your app with custom names and backgrounds.</string>
+    <string name="open_history_view">Open history view</string>
+    <string name="open_sensor_view">Open sensor view</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
@@ -475,6 +480,7 @@
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Signed in user</string>
     <string name="signing_in_is_optional">(Signing in is optional)</string>
+    <string name="simple_cards">Simple cards</string>
     <string name="simple_view">Simple view</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
@@ -518,7 +524,7 @@
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
-    <string name="use_without_account">No thanks, I\'ll continue without an account</string>
+    <string name="use_without_account">No thanks, skip</string>
     <string name="version">Version: %1$s</string>
     <string name="view">View</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

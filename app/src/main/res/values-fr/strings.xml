@@ -97,6 +97,8 @@
     <string name="camera">Appareil photo</string>
     <string name="camera_fail">Impossible d\'accéder à l\'appareil photo</string>
     <string name="cancel">Annuler</string>
+    <string name="card_action">Action de la carte</string>
+    <string name="card_type">Type de carte</string>
     <string name="change_background">Paramètres et alertes</string>
     <string name="change_background_image">Modifier l\'image de fond</string>
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
@@ -189,6 +191,7 @@
     <string name="dfu_no_internet">Echec du téléchargement de la mise à jour. Veuillez vérifier votre connexion Internet.</string>
     <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour.</string>
     <string name="disconnected">Déconnecté</string>
+    <string name="do_not_show_again">Ne plus afficher ça</string>
     <string name="done">Prêt</string>
     <string name="download">Téléchargement</string>
     <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
@@ -229,6 +232,7 @@
     <string name="gateway_test_success">Le routeur fonctionne ! Réponse : %1$d</string>
     <string name="gateway_testing">Test en cours...</string>
     <string name="gatt_not_in_range_description">Le téléchargement de l\'historique Bluetooth a échoué. Vérifiez que vous êtes à portée Bluetooth, que votre capteur possède un micrologiciel prenant en charge le téléchargement et que le capteur n\'est pas simultanément connecté à un autre appareil iOS. La connexion du capteur est réservée à la Ruuvi Station lorsque vous utilisez le mode connecté dans iOS.</string>
+    <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="general">Général</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station est une application intuitive pour contôler vos capteurs Ruuvi. Commencez en jumelant des capteurs.</string>
@@ -259,6 +263,7 @@
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Humidité de l\'air (%1$s)</string>
+    <string name="image_cards">Cartes-images</string>
     <string name="image_view">Vue de l\'image</string>
     <string name="information">Information</string>
     <string name="language_english">English</string>
@@ -341,6 +346,8 @@
     <string name="onboarding_web_pros">Grand tableau de bord, historique pluriannuel, alertes par e-mail et plus encore sur</string>
     <string name="onboarding_with_ruuvi_sensors">Apprenez à connaître votre application Ruuvi Station.</string>
     <string name="onboarding_your_sensors">votre application avec des noms et des arrière-plans personnalisés.</string>
+    <string name="open_history_view">Ouvrir la vue de l\'historique</string>
+    <string name="open_sensor_view">Ouvrir la vue du capteur</string>
     <string name="open_settings">Ouvrir les réglages</string>
     <string name="owner_none">Pas de propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
@@ -459,6 +466,7 @@
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail. Connectez-vous en le saisissant ici:</string>
     <string name="sign_in_code_hint">Code</string>
+    <string name="sign_in_continue">Continuer</string>
     <string name="sign_in_email_sent">Email envoyé</string>
     <string name="sign_in_login_button">Connexion</string>
     <string name="sign_in_manual_code">Entrer le code</string>
@@ -474,6 +482,8 @@
     <string name="signal_reading_zero">- %1$s</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Utilisateur connecté</string>
+    <string name="signing_in_is_optional">(La connexion est facultative)</string>
+    <string name="simple_cards">Cartes simples</string>
     <string name="simple_view">Vue simple</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
@@ -485,6 +495,7 @@
     <string name="sync">Synchroniser</string>
     <string name="sync_complete">Synchronisation terminée</string>
     <string name="sync_confirm">Souhaitez vous importer les données du capteur ?</string>
+    <string name="synchronisation">Synchronisation</string>
     <string name="synchronizing">Synchronisation</string>
     <string name="tag_name">Nom du capteur</string>
     <string name="tag_not_in_range">Capteur introuvable. Le capteur est-il à proximité ?</string>
@@ -516,7 +527,7 @@
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
-    <string name="use_without_account">Non merci, je continue sans compte</string>
+    <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
