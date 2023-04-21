@@ -3,9 +3,11 @@ package com.ruuvi.station.tagdetails.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -32,6 +37,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
+import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -39,6 +45,7 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
+import timber.log.Timber
 
 class SensorCardActivity : AppCompatActivity(), KodeinAware {
 
@@ -80,6 +87,18 @@ fun SensorsPager(
         mutableStateOf(false)
     }
 
+    val sensor = sensors.getOrNull(pagerState.currentPage)
+
+    if (sensor?.userBackground != null) {
+        val uri = Uri.parse(sensor.userBackground)
+
+        if (uri.path != null) {
+            Crossfade(targetState = uri) {
+                SensorCardImage(it)
+            }
+        }
+    }
+
     Box(modifier = Modifier.systemBarsPadding()) {
         Column() {
             SensorCardTopAppBar(
@@ -90,7 +109,6 @@ fun SensorsPager(
                 alertAction = {},
                 chartsAction = { chartsEnabled = !chartsEnabled},
                 settingsAction = {
-                    val sensor = sensors.getOrNull(pagerState.currentPage)
                     if (sensor != null) {
                         TagSettingsActivity.start(context, sensor.id)
                     }
@@ -214,6 +232,24 @@ fun SensorCardTopAppBar(
     )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun SensorCardImage(userBackground: Uri) {
+    Timber.d("Image path $userBackground")
+    GlideImage(
+        modifier = Modifier.fillMaxSize(),
+        model = userBackground,
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+    GlideImage(
+        modifier = Modifier.fillMaxSize(),
+        model = rememberResourceUri(R.drawable.tag_bg_layer),
+        contentDescription = null,
+        alpha = RuuviStationTheme.colors.backgroundAlpha,
+        contentScale = ContentScale.Crop
+    )
+}
 
 @Composable
 fun ChartView() {
