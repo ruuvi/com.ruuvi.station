@@ -9,7 +9,7 @@ enum class DashboardTapAction(val code: String) {
             DashboardTapAction.values().firstOrNull{ it.code == code} ?: defaultDashboardTapAction
 
         fun isValidCode(code: String): Boolean =
-            DashboardType.values().any { it.code == code }
+            DashboardTapAction.values().any { it.code == code }
 
         val defaultDashboardTapAction = OPEN_CARD
     }
