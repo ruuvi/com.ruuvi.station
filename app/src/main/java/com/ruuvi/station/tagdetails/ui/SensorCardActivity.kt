@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -45,9 +46,8 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SensorCardActivity : AppCompatActivity(), KodeinAware {
@@ -107,41 +107,28 @@ fun SensorsPager(
     var chartsEnabled by remember {
         mutableStateOf(false)
     }
-
-    coroutineScope.launch {
-        Timber.d("gotp page $selectedIndex")
-        pagerState.scrollToPage(selectedIndex)
+    var pagerSensor by remember {
+        mutableStateOf(sensors.getOrNull(selectedIndex))
     }
 
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collectLatest { page ->
-            Timber.d("LaunchedEffect $page")
-
-            pageChanged.invoke(page)
+    LaunchedEffect(pagerState, sensors.size) {
+        snapshotFlow { pagerState.currentPage }.collectLatest { page ->
+            Timber.d("page changed to $page")
+            delay(100)
+            pagerSensor = sensors.getOrNull(page)
         }
-//        if (selectedIndex > 0 && selectedIndex < pagerState.pageCount) {
-//            Timber.d("setting page to $selectedIndex")
-//            coroutineScope.launch {
-//                pagerState.scrollToPage(selectedIndex)
-//            }
-//        }
-        // Collect from the pager state a snapshotFlow reading the currentPage
-//        snapshotFlow { pagerState.currentPage }.collectLatest { page ->
-//            Timber.d("page changed to $page")
-//            pageChanged.invoke(page)
-//        }
     }
 
-    val sensor = sensors.getOrNull(selectedIndex)
+    Timber.d("page sensor $pagerSensor sensors = $sensors")
 
-    if (sensor?.userBackground != null) {
-        val uri = Uri.parse(sensor.userBackground)
-        if (uri.path != null) {
-            Crossfade(targetState = uri) {
-                Timber.d("image for sensor ${sensor.displayName}")
-
-                SensorCardImage(it)
+    pagerSensor?.let { sensor ->
+        if (sensor.userBackground != null) {
+            val uri = Uri.parse(sensor.userBackground)
+            if (uri.path != null) {
+                Crossfade(targetState = uri) {
+                    Timber.d("image for sensor ${sensor.displayName}")
+                    SensorCardImage(it)
+                }
             }
         }
     }
@@ -154,10 +141,10 @@ fun SensorsPager(
                 },
                 chartsEnabled = chartsEnabled,
                 alertAction = {},
-                chartsAction = { chartsEnabled = !chartsEnabled},
+                chartsAction = { chartsEnabled = !chartsEnabled },
                 settingsAction = {
-                    if (sensor != null) {
-                        TagSettingsActivity.start(context, sensor.id)
+                    if (pagerSensor != null) {
+                        TagSettingsActivity.start(context, pagerSensor?.id)
                     }
                 }
             )
@@ -209,6 +196,7 @@ fun SensorTitle(sensor: RuuviTag) {
     }
 }
 
+@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun SensorCard(sensor: RuuviTag) {
     Column(
