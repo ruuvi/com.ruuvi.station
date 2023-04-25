@@ -385,7 +385,6 @@
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
     <string name="replace_battery">Paristo vähissä</string>
     <string name="request_code">Pyydä kirjautumiskoodi</string>
-    <string name="rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä pilvitilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -475,6 +474,8 @@
     <string name="sign_out_confirm">Anturit, joiden omistajuuden olet vahvistanut asetussivulla poistetaan sovelluksesta automaattisesti uloskirjauduttaessa. Anturitiedot palautetaan pilvipalvelusta samalla sähköpostiosoitteella uudelleenkirjauduttaessa.\n\nHaluatko varmasti kirjautua ulos?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signaalin voimakkuus (dBm)</string>
+    <string name="signal_strength_rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Kirjautunut</string>
     <string name="signing_in_is_optional">(Kirjautuminen ei ole pakollista)</string>

@@ -387,7 +387,6 @@
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>
     <string name="replace_battery">Low battery</string>
     <string name="request_code">Request Code</string>
-    <string name="rssi">Signal Strength (RSSI)</string>
     <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use cloud mode when you want to record signal strength data only via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -477,6 +476,8 @@
     <string name="sign_out_confirm">When you sign out, sensors the ownerships of which you\'ve claimed on the sensor Settings page will be automatically removed from the app. When you sign in again using the same email address, the sensors will be returned from the cloud.\n\nDo you want to sign out?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signal Strength (dBm)</string>
+    <string name="signal_strength_rssi">Signal Strength (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Signed in user</string>
     <string name="signing_in_is_optional">(Signing in is optional)</string>

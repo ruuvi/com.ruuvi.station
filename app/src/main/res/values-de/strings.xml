@@ -396,7 +396,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Schwache Batterie</string>
     <string name="request_code">Anfrage Code</string>
-    <string name="rssi">Signalstärke (RSSI)</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -486,6 +485,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_out_confirm">Wenn Sie sich abmelden, werden Sensoren, deren Eigentum Sie mit den Sensoreinstellungen bestätigt haben, automatisch aus der App entfernt. Wenn Sie sich erneut mit derselben E-Mail-Adresse anmelden, werden die Sensoren aus der Cloud zurückgegeben.\n\nMöchten Sie sich abmelden?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signalstärke (dBm)</string>
+    <string name="signal_strength_rssi">Signalstärke (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Angemeldeter Benutzer</string>
     <string name="signing_in_is_optional">(Die Anmeldung ist optional)</string>
