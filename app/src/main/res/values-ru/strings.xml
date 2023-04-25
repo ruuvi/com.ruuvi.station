@@ -280,7 +280,6 @@
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
-    <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
     <string name="sec">сек</string>
@@ -361,6 +360,8 @@
     <string name="sign_out_confirm">После выхода все датчики, которые зарегистрованы на вас, будут удалены из приложения. Если вы повторно войдете с тем же email адресом, список ваших датчиков будет загружен из облака. \n\nВы хотите выйти из сети?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Сила сигнала (dBm)</string>
+    <string name="signal_strength_rssi">Сила сигнала (RSSI)</string>
     <string name="signal_unit">дБм</string>
     <string name="signing_in_is_optional">(Авторизация не обязательна)</string>
     <string name="skip">ПРОПУСТИТЬ</string>

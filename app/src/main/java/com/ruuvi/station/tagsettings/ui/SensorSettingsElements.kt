@@ -393,7 +393,7 @@ fun MoreInfoGroup(
                 value = stringResource(id = R.string.tx_power_reading, sensorState.txPower)
             )
             MoreInfoItem(
-                title = stringResource(id = R.string.rssi),
+                title = stringResource(id = R.string.signal_strength_rssi),
                 value = getSignalString(sensorState.rssi)
             )
             MoreInfoItem(

@@ -8,7 +8,7 @@ enum class WidgetType(val code: Int, val titleResId: Int) {
     PRESSURE(3, R.string.pressure),
     MOVEMENT(4, R.string.movement_counter),
     VOLTAGE(5, R.string.battery_voltage),
-    SIGNAL_STRENGTH(6, R.string.rssi),
+    SIGNAL_STRENGTH(6, R.string.signal_strength_rssi),
     ACCELERATION_X(7, R.string.acceleration_x),
     ACCELERATION_Y(8, R.string.acceleration_y),
     ACCELERATION_Z(9, R.string.acceleration_z);

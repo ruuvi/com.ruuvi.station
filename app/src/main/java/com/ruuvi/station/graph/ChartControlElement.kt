@@ -64,7 +64,9 @@ fun ChartControlElement(
             )
         } else {
             IconButton(onClick = {
-                gattSyncDialogOpened = true
+                if (!viewModel.shouldSkipGattSyncDialog()) {
+                    gattSyncDialogOpened = true
+                }
                 viewModel.syncGatt()
             }) {
                 Row(
@@ -140,19 +142,19 @@ fun ChartControlElement(
                  }
              }
              SyncProgress.NOT_FOUND -> {
-                 RuuviConfirmDialog(
-                     title = stringResource(id = R.string.error),
-                     message = stringResource(id = R.string.gatt_not_in_range_description),
-                     noButtonCaption = stringResource(id = R.string.close),
-                     yesButtonCaption = stringResource(id = R.string.try_again),
-                     onDismissRequest = {
+                 if (!gattSyncDialogOpened) {
+                     RuuviConfirmDialog(
+                         title = stringResource(id = R.string.error),
+                         message = stringResource(id = R.string.gatt_not_in_range_description),
+                         noButtonCaption = stringResource(id = R.string.close),
+                         yesButtonCaption = stringResource(id = R.string.try_again),
+                         onDismissRequest = {
+                             uiEvent = null
+                         }
+                     ) {
                          uiEvent = null
-                         gattSyncDialogOpened = false
+                         viewModel.syncGatt()
                      }
-                 ) {
-                     uiEvent = null
-                     gattSyncDialogOpened = false
-                     viewModel.syncGatt()
                  }
              }
              SyncProgress.ERROR -> {
@@ -166,7 +168,7 @@ fun ChartControlElement(
          }
      }
 
-    if (gattSyncDialogOpened && !viewModel.shouldSkipGattSyncDialog()) {
+    if (gattSyncDialogOpened) {
         GattSyncDescriptionDialog(
             doNotShowAgain = {
                 gattSyncDialogOpened = false

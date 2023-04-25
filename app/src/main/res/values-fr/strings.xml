@@ -390,7 +390,6 @@
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
     <string name="replace_battery">Batterie faible</string>
     <string name="request_code">Demander un code</string>
-    <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode nuage lorsque vous souhaitez enregistrer les données de puissance du signal uniquement via la passerelle Ruuvi.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -480,6 +479,8 @@
     <string name="sign_out_confirm">Les capteurs dont vous êtes propriétaire seront suspprimés de l\'application lorsque vous vous déconnectez de votre compte Ruuvi. Les données seront importées du cloud lorsque vous vous connectez à nouveau.\n\nSouhaitez vous vous déconnecter ?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Puissance du signal (dBm)</string>
+    <string name="signal_strength_rssi">Puissance du signal (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Utilisateur connecté</string>
     <string name="signing_in_is_optional">(La connexion est facultative)</string>
