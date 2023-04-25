@@ -428,7 +428,7 @@
     <string name="settings_chart_all_points_description">Ominaisuuden käyttäminen saattaa hidastaa historiatietojen päivittymistä.</string>
     <string name="settings_chart_description">Määritä tietopisteiden näyttöväli</string>
     <string name="settings_chart_draw_dots">Näytä tietopisteet</string>
-    <string name="settings_chart_draw_dots_description">Tietopisteiden näyttäminen helpottaa tallennetun historiatiedon tutkimista</string>
+    <string name="settings_chart_draw_dots_description">Tietopisteiden näyttäminen helpottaa tallennetun historiatiedon tutkimista.</string>
     <string name="settings_chart_interval">Historian tarkkuus</string>
     <string name="settings_chart_interval_description">Aseta historian tallennusväli 1 - 60 minuuttia. Tiheämpi tallennusväli mahdollistaa tarkempien historiatietojen esittämisen, mutta tämä käyttää enemmän laitteen resursseja.</string>
     <string name="settings_chart_view_period">Historian tarkastelujakso</string>

@@ -268,6 +268,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
                 if (it is NetworkSyncEvent.Success) {
                     dashboardViewModel.refreshDashboardType()
+                    dashboardViewModel.refreshDashboardTapAction()
                 }
             }
         }

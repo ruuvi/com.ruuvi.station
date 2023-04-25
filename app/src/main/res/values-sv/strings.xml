@@ -425,11 +425,11 @@
     <string name="settings_background_scan_interval">Dataloggningsintervall</string>
     <string name="settings_background_scan_interval_description">Ange intervallet för bakgrundsskanning</string>
     <string name="settings_chart">Historik</string>
-    <string name="settings_chart_all_points">Visa all insamlad data i graferna</string>
+    <string name="settings_chart_all_points">Visa alla mätningar</string>
     <string name="settings_chart_all_points_description">Den här funktionen kan göra appen laddar historik långsammare.</string>
     <string name="settings_chart_description">Ange visningsintervallet för datapunkter</string>
     <string name="settings_chart_draw_dots">Visa datapunkter</string>
-    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation</string>
+    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation.</string>
     <string name="settings_chart_interval">Historikens noggrannhet</string>
     <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser.</string>
     <string name="settings_chart_view_period">Historik</string>

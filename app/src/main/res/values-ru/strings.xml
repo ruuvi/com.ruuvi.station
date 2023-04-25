@@ -316,7 +316,7 @@
     <string name="settings_chart_all_points_description">Это может привести к медленному обновлению графиков.</string>
     <string name="settings_chart_description">Установите интервал между точками и диапазон истории для графиков</string>
     <string name="settings_chart_draw_dots">Показывать точки на графике</string>
-    <string name="settings_chart_draw_dots_description">Маленькие точки помогут точно понять когда были получены данные</string>
+    <string name="settings_chart_draw_dots_description">Маленькие точки помогут точно понять когда были получены данные.</string>
     <string name="settings_chart_interval">Интервал Графиков</string>
     <string name="settings_chart_interval_description">Установите интервал между точками на графиках от 1 до 60 минут. Чем меньше значение, тем выше точность отображения. Но в тоже время повышаются требования к быстродействию вашего телефона.</string>
     <string name="settings_chart_view_period">Диапазон отображения графиков</string>

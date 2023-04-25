@@ -253,7 +253,7 @@
     <string name="humidity">Humidity</string>
     <string name="humidity_absolute_name">Absolute (g/m³)</string>
     <string name="humidity_absolute_unit">g/m³</string>
-    <string name="humidity_accuracy_title">Humidity resolution</string>
+    <string name="humidity_accuracy_title">Humidity Resolution</string>
     <string name="humidity_dew_point_name">Dew point (°)</string>
     <string name="humidity_dew_point_unit">°</string>
     <string name="humidity_reading">%1$,.2f %2$s</string>
@@ -364,7 +364,7 @@
     <string name="prepare_your_sensor_instructions_6">4. If set successfully, you will see a solid red light lit on the circuit board and the button in the app will change to “Start the update”.</string>
     <string name="press_to_add">No sensors added\nPress here to add sensors</string>
     <string name="pressure">Pressure</string>
-    <string name="pressure_accuracy_title">Pressure resolution</string>
+    <string name="pressure_accuracy_title">Pressure Resolution</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
     <string name="pressure_inhg_name">Inch of mercury (inHg)</string>
@@ -426,11 +426,11 @@
     <string name="settings_background_scan_interval">Data logging interval</string>
     <string name="settings_background_scan_interval_description">Define how often the background scanning will run</string>
     <string name="settings_chart">Chart Settings</string>
-    <string name="settings_chart_all_points">Display all data in chart</string>
-    <string name="settings_chart_all_points_description">Enabling it may cause charts to update slowly.</string>
+    <string name="settings_chart_all_points">Show all measurements</string>
+    <string name="settings_chart_all_points_description">Charts may be updated slowly when enabled.</string>
     <string name="settings_chart_description">Configure interval between points shown on chart</string>
-    <string name="settings_chart_draw_dots">Draw dots in chart</string>
-    <string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected</string>
+    <string name="settings_chart_draw_dots">Show datapoints</string>
+    <string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected.</string>
     <string name="settings_chart_interval">Chart Interval</string>
     <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Smaller values mean a more accurate chart, but also a higher performance requirement for your device.</string>
     <string name="settings_chart_view_period">Chart History View Period</string>
@@ -441,7 +441,7 @@
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
-    <string name="settings_gateway_device_identifier">Device identifier</string>
+    <string name="settings_gateway_device_identifier">Device Identifier</string>
     <string name="settings_humidity_unit">Humidity Unit</string>
     <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
     <string name="settings_language">Language</string>
@@ -502,7 +502,7 @@
     <string name="tagsettings_sensor_remove">Remove sensor</string>
     <string name="take_photo">Take a photo</string>
     <string name="temperature">Temperature</string>
-    <string name="temperature_accuracy_title">Temperature resolution</string>
+    <string name="temperature_accuracy_title">Temperature Resolution</string>
     <string name="temperature_celsius_name">Celsius (℃)</string>
     <string name="temperature_celsius_unit">°C</string>
     <string name="temperature_fahrenheit_name">Fahrenheit (℉)</string>

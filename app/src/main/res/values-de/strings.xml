@@ -435,11 +435,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_background_scan_interval">Datenprotokollierungsintervall</string>
     <string name="settings_background_scan_interval_description">Definieren Sie, wie oft der Hintergrundscan ausgeführt wird</string>
     <string name="settings_chart">Diagramm Einstellungen</string>
-    <string name="settings_chart_all_points">Alle Daten im Diagramm anzeigen</string>
+    <string name="settings_chart_all_points">Alle Messungen anzeigen</string>
     <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden.</string>
     <string name="settings_chart_description">Konfigurieren Sie das Intervall zwischen den auf dem Diagramm angezeigten Punkten</string>
-    <string name="settings_chart_draw_dots">Punkte im Diagramm zeichnen</string>
-    <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden</string>
+    <string name="settings_chart_draw_dots">Datenpunkte anzeigen</string>
+    <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden.</string>
     <string name="settings_chart_interval">Diagrammintervall</string>
     <string name="settings_chart_interval_description">Stellen Sie das Intervall zwischen den Punkten für das Diagramm von 1 bis 60 Minuten ein. Kleinere Werte bedeuten ein genaueres Diagramm, aber auch einen höheren Leistungsbedarf für Ihr Gerät.</string>
     <string name="settings_chart_view_period">Anzeigezeitraum des Diagrammverlaufs</string>
