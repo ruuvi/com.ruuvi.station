@@ -89,7 +89,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
 
     private fun observeSyncStatus() {
         var i = 0
-        viewModel.syncStatus.observe(viewLifecycleOwner, Observer {
+        viewModel.syncStatus.observe(viewLifecycleOwner) {
             binding.tagSynchronizingTextView.isVisible = it
             if (it) {
                 var syncText = getText(R.string.synchronizing).toString()
@@ -100,7 +100,7 @@ class TagFragment : Fragment(R.layout.view_tag_detail), KodeinAware {
                 if (i > 3) i = 0
                 binding.tagSynchronizingTextView.text = syncText
             }
-        })
+        }
     }
 
     override fun onResume() {

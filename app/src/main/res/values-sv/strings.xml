@@ -386,7 +386,6 @@
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
-    <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -425,11 +424,11 @@
     <string name="settings_background_scan_interval">Dataloggningsintervall</string>
     <string name="settings_background_scan_interval_description">Ange intervallet för bakgrundsskanning</string>
     <string name="settings_chart">Historik</string>
-    <string name="settings_chart_all_points">Visa all insamlad data i graferna</string>
+    <string name="settings_chart_all_points">Visa alla mätningar</string>
     <string name="settings_chart_all_points_description">Den här funktionen kan göra appen laddar historik långsammare.</string>
     <string name="settings_chart_description">Ange visningsintervallet för datapunkter</string>
     <string name="settings_chart_draw_dots">Visa datapunkter</string>
-    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation</string>
+    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation.</string>
     <string name="settings_chart_interval">Historikens noggrannhet</string>
     <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser.</string>
     <string name="settings_chart_view_period">Historik</string>
@@ -476,6 +475,8 @@
     <string name="sign_out_confirm">Sensorer som du har verifierat äganderätten till på inställningssidan tas automatiskt bort från appen när du loggar ut. Sensordata hämtas från molnet igen om du loggar in med samma e-postadress.\n\nÄr du säker på att du vill logga ut? </string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signalstyrka (dBm)</string>
+    <string name="signal_strength_rssi">Signalstyrka (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Inloggad</string>
     <string name="signing_in_is_optional">(Inloggning är inte obligatoriskt)</string>

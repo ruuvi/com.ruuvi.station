@@ -52,6 +52,10 @@ class DashboardActivityViewModel(
         _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 
+    fun refreshDashboardTapAction() {
+        _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
