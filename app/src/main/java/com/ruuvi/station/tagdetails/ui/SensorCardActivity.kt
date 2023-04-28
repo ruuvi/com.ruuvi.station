@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -31,6 +30,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -41,6 +43,7 @@ import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import org.kodein.di.KodeinAware
@@ -49,6 +52,7 @@ import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import java.util.ArrayList
 
 class SensorCardActivity : AppCompatActivity(), KodeinAware {
 
@@ -72,7 +76,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                 SensorsPager(
                     selectedIndex = selectedIndex,
                     sensors = sensors,
-                    pageChanged = viewModel::pageChanged
+                    getHistory = viewModel::getSensorHistory
                 )
             }
         }
@@ -96,7 +100,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
 fun SensorsPager(
     selectedIndex: Int,
     sensors: List<RuuviTag>,
-    pageChanged: (Int) -> Unit
+    getHistory: (String) -> List<TagSensorReading>
 ) {
     Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
@@ -162,7 +166,10 @@ fun SensorsPager(
                     ) {
                         SensorTitle(sensor = sensor)
                         if (chartsEnabled) {
-                            ChartView()
+                            ChartView(
+                                sensorId = sensor.id,
+                                getHistory = getHistory
+                            )
                         } else {
                             SensorCard(sensor = sensor)
                         }
@@ -196,7 +203,6 @@ fun SensorTitle(sensor: RuuviTag) {
     }
 }
 
-@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun SensorCard(sensor: RuuviTag) {
     Column(
@@ -287,14 +293,44 @@ fun SensorCardImage(userBackground: Uri) {
 }
 
 @Composable
-fun ChartView() {
+fun ChartView(
+    sensorId: String,
+    getHistory: (String) -> List<TagSensorReading>
+) {
+    var history by remember {
+        mutableStateOf<List<TagSensorReading>>(listOf())
+    }
+
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
+            Timber.d("ChartView - factory")
             LineChart(context)
         },
         update = { view ->
+            Timber.d("ChartView - update")
+            var from: Long = 0
+            val tempData: MutableList<Entry> = ArrayList()
+            if (history.isNotEmpty()) {
+                from = history[0].createdAt.time
+                history.forEach { item ->
+                    val timestamp = (item.createdAt.time - from).toFloat()
+                    tempData.add(Entry(timestamp, item.temperature.toFloat()))
+                }
 
+                val set = LineDataSet(tempData  , "temp")
+                view.data = LineData(set)
+                view.notifyDataSetChanged()
+                view.invalidate()
+            }
         }
     )
+
+    LaunchedEffect(key1 = Unit) {
+        while (true) {
+            Timber.d("ChartView - get history $sensorId")
+            history = getHistory.invoke(sensorId)
+            delay(1000)
+        }
+    }
 }
