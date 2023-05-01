@@ -7,6 +7,8 @@ enum class AlarmType(val value: Int, val networkCode: String?, val possibleRange
     RSSI(3, "signal", -105 .. 0),
     MOVEMENT(4, "movement", 0 .. 0);
 
+    fun valueInRange(value: Double): Boolean = value >= possibleRange.first && value <= possibleRange.last
+
     companion object {
         fun getByNetworkCode(networkCode: String): AlarmType? = values().firstOrNull { it.networkCode == networkCode }
 
