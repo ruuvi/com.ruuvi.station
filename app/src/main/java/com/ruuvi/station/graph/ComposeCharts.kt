@@ -6,9 +6,8 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -73,11 +72,14 @@ fun ChartsView(
         }
     }
 
-    Column() {
-        ChartView(tempChart, tempData, unitsConverter, from)
-        ChartView(humiChart, humiData, unitsConverter, from)
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
+            ChartView(tempChart, Modifier.fillMaxSize(), tempData, unitsConverter, from)
+        }
+        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
+            ChartView(humiChart, Modifier.fillMaxSize(), humiData, unitsConverter, from)
+        }
     }
-
 
     LaunchedEffect(key1 = Unit) {
         while (true) {
@@ -91,6 +93,7 @@ fun ChartsView(
 @Composable
 fun ChartView(
     lineChart: LineChart,
+    modifier: Modifier,
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
     from: Long,
@@ -98,8 +101,7 @@ fun ChartView(
     val context = LocalContext.current
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         factory = { context ->
             Timber.d("ChartView - factory")
             val chart = lineChart
