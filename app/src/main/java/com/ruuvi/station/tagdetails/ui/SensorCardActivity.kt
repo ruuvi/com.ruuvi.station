@@ -40,6 +40,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartView
+import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -167,7 +168,7 @@ fun SensorsPager(
                     ) {
                         SensorTitle(sensor = sensor)
                         if (chartsEnabled) {
-                            ChartView(
+                            ChartsView(
                                 sensorId = sensor.id,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter

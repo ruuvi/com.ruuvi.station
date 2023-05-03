@@ -2,12 +2,17 @@ package com.ruuvi.station.graph
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
-import androidx.compose.foundation.layout.fillMaxSize
+import android.view.MotionEvent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -19,6 +24,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -30,7 +37,7 @@ import java.text.DateFormat
 import java.util.*
 
 @Composable
-fun ChartView(
+fun ChartsView(
     sensorId: String,
     unitsConverter: UnitsConverter,
     getHistory: (String) -> List<TagSensorReading>
@@ -42,11 +49,60 @@ fun ChartView(
 
     val context = LocalContext.current
 
+    val tempData: MutableList<Entry> = ArrayList()
+    val humiData: MutableList<Entry> = ArrayList()
+
+    val tempChart by remember {
+        mutableStateOf(LineChart(context))
+    }
+
+    val humiChart by remember {
+        mutableStateOf(LineChart(context))
+    }
+
+    synchronizeChartGestures(setOf(tempChart, humiChart))
+
+    if (history.isNotEmpty()) {
+        from = history[0].createdAt.time
+        history.forEach { item ->
+            val timestamp = (item.createdAt.time - from).toFloat()
+            tempData.add(Entry(timestamp, item.temperature.toFloat()))
+            if (item.humidity != null) {
+                humiData.add(Entry(timestamp, item.humidity!!.toFloat()))
+            }
+        }
+    }
+
+    Column() {
+        ChartView(tempChart, tempData, unitsConverter, from)
+        ChartView(humiChart, humiData, unitsConverter, from)
+    }
+
+
+    LaunchedEffect(key1 = Unit) {
+        while (true) {
+            Timber.d("ChartView - get history $sensorId")
+            history = getHistory.invoke(sensorId)
+            delay(1000)
+        }
+    }
+}
+
+@Composable
+fun ChartView(
+    lineChart: LineChart,
+    chartData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    from: Long,
+) {
+    val context = LocalContext.current
+
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth(),
         factory = { context ->
             Timber.d("ChartView - factory")
-            val chart = LineChart(context)
+            val chart = lineChart
             setupChart(chart)
             applyChartStyle(
                 context = context,
@@ -58,28 +114,12 @@ fun ChartView(
             chart
         },
         update = { view ->
-
             Timber.d("ChartView - update")
-            val tempData: MutableList<Entry> = ArrayList()
-            if (history.isNotEmpty()) {
-                from = history[0].createdAt.time
-                history.forEach { item ->
-                    val timestamp = (item.createdAt.time - from).toFloat()
-                    tempData.add(Entry(timestamp, item.temperature.toFloat()))
-                }
-
-                addDataToChart(context, tempData, view, "temp")
-            }
+            addDataToChart(context, chartData, view, "temp")
         }
     )
 
-    LaunchedEffect(key1 = Unit) {
-        while (true) {
-            Timber.d("ChartView - get history $sensorId")
-            history = getHistory.invoke(sensorId)
-            delay(1000)
-        }
-    }
+
 }
 
 fun setupChart(chart: LineChart) {
@@ -210,4 +250,96 @@ private fun setLabelCount(chart: LineChart) {
     var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 1.7)
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
     chart.axisLeft.setLabelCount(6, false)
+}
+
+// Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
+private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
+    val computePaint = Paint(1)
+    computePaint.typeface = pressureChart.axisLeft.typeface
+    computePaint.textSize = pressureChart.axisLeft.textSize
+    val computeSize = Utils.calcTextSize(computePaint, "0000.00")
+    val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
+
+    val offsetLeft = computeSize.width * 1.1f
+    val offsetBottom = computeHeight * 2
+    val offsetTop = tempChart.viewPortHandler.offsetTop() / 2f
+    val offsetRight = tempChart.viewPortHandler.offsetRight() / 2f
+
+    Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
+
+    tempChart.setViewPortOffsets(
+        offsetLeft,
+        offsetTop,
+        offsetRight,
+        offsetBottom
+    )
+
+    humidChart.setViewPortOffsets(
+        offsetLeft,
+        offsetTop,
+        offsetRight,
+        offsetBottom
+    )
+
+    pressureChart.setViewPortOffsets(
+        offsetLeft,
+        offsetTop,
+        offsetRight,
+        offsetBottom
+    )
+}
+
+private fun synchronizeChartGestures(charts: Set<LineChart>) {
+    fun synchronizeCharts(sourceChart: LineChart) {
+        val sourceMatrixValues = FloatArray(9)
+        sourceChart.viewPortHandler.matrixTouch.getValues(sourceMatrixValues)
+
+        charts.forEach { targetChart: LineChart ->
+            if (targetChart != sourceChart) {
+                val targetMatrix = targetChart.viewPortHandler.matrixTouch
+                val targetMatrixValues = FloatArray(9)
+                targetMatrix.getValues(targetMatrixValues)
+                targetMatrixValues[Matrix.MSCALE_X] = sourceMatrixValues[Matrix.MSCALE_X]
+                targetMatrixValues[Matrix.MTRANS_X] = sourceMatrixValues[Matrix.MTRANS_X]
+                targetMatrixValues[Matrix.MSKEW_X] = sourceMatrixValues[Matrix.MSKEW_X]
+                targetMatrix.setValues(targetMatrixValues)
+                targetChart.viewPortHandler.refresh(targetMatrix, targetChart, true)
+            }
+        }
+    }
+
+    charts.forEach { chart: LineChart ->
+        chart.onChartGestureListener = object : OnChartGestureListener {
+            override fun onChartGestureEnd(
+                me: MotionEvent?,
+                lastPerformedGesture: ChartTouchListener.ChartGesture?
+            ) {
+                charts.forEach {
+                    it.setTouchEnabled(true)
+                }
+                synchronizeCharts(chart)
+            }
+
+            override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
+            override fun onChartSingleTapped(me: MotionEvent?) {}
+            override fun onChartGestureStart(
+                me: MotionEvent?,
+                lastPerformedGesture: ChartTouchListener.ChartGesture?
+            ) {
+                charts.minus(chart).forEach {
+                    it.setTouchEnabled(false)
+                }
+            }
+
+            override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
+                synchronizeCharts(chart)
+            }
+
+            override fun onChartLongPressed(me: MotionEvent?) {}
+            override fun onChartDoubleTapped(me: MotionEvent?) {}
+            override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
+                synchronizeCharts(chart)
+            }
+        }
+    }
 }
