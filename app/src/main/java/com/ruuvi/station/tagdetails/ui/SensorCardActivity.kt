@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -28,6 +29,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.github.mikephil.charting.charts.LineChart
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -35,11 +37,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
-import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.graph.ChartView
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -133,7 +133,7 @@ fun SensorsPager(
             if (uri.path != null) {
                 Crossfade(targetState = uri) {
                     Timber.d("image for sensor ${sensor.displayName}")
-                    SensorCardImage(it)
+                    SensorCardImage(it, chartsEnabled)
                 }
             }
         }
@@ -162,6 +162,19 @@ fun SensorsPager(
             ) { page ->
                 val sensor = sensors.getOrNull(page)
                 if (sensor != null) {
+
+                    val tempChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val humiChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val pressureChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
@@ -170,6 +183,9 @@ fun SensorsPager(
                         if (chartsEnabled) {
                             ChartsView(
                                 sensorId = sensor.id,
+                                tempChart,
+                                humiChart,
+                                pressureChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter
                             )
@@ -278,19 +294,32 @@ fun SensorCardTopAppBar(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun SensorCardImage(userBackground: Uri) {
+fun SensorCardImage(
+    userBackground: Uri,
+    chartsEnabled: Boolean
+) {
     Timber.d("Image path $userBackground")
+
     GlideImage(
         modifier = Modifier.fillMaxSize(),
         model = userBackground,
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
-    GlideImage(
+
+    Image(
         modifier = Modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.tag_bg_layer),
+        painter = painterResource(id = R.drawable.tag_bg_layer),
         contentDescription = null,
-        alpha = RuuviStationTheme.colors.backgroundAlpha,
         contentScale = ContentScale.Crop
     )
+
+    if (chartsEnabled) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xCC001D1B))
+        )
+    }
+
 }

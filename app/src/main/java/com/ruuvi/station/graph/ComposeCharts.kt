@@ -6,12 +6,10 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -38,46 +36,59 @@ import java.util.*
 @Composable
 fun ChartsView(
     sensorId: String,
+    tempChart: LineChart,
+    humiChart: LineChart,
+    pressureChart: LineChart,
     unitsConverter: UnitsConverter,
     getHistory: (String) -> List<TagSensorReading>
 ) {
+    normalizeOffsets(tempChart, humiChart, pressureChart)
+
     var history by remember {
         mutableStateOf<List<TagSensorReading>>(listOf())
     }
-    var from: Long = 0
+
+    var from by remember {
+        mutableStateOf(0L)
+    }
 
     val context = LocalContext.current
 
-    val tempData: MutableList<Entry> = ArrayList()
-    val humiData: MutableList<Entry> = ArrayList()
+    val temperatureData: MutableList<Entry> = ArrayList()
+    val humidityData: MutableList<Entry> = ArrayList()
+    val pressureData: MutableList<Entry> = ArrayList()
 
-    val tempChart by remember {
-        mutableStateOf(LineChart(context))
-    }
-
-    val humiChart by remember {
-        mutableStateOf(LineChart(context))
-    }
-
-    synchronizeChartGestures(setOf(tempChart, humiChart))
+    synchronizeChartGestures(setOf(tempChart, humiChart, pressureChart))
 
     if (history.isNotEmpty()) {
         from = history[0].createdAt.time
         history.forEach { item ->
             val timestamp = (item.createdAt.time - from).toFloat()
-            tempData.add(Entry(timestamp, item.temperature.toFloat()))
+            temperatureData.add(Entry(timestamp, item.temperature.toFloat()))
             if (item.humidity != null) {
-                humiData.add(Entry(timestamp, item.humidity!!.toFloat()))
+                humidityData.add(Entry(timestamp, item.humidity!!.toFloat()))
+            }
+            if (item.pressure != null) {
+                pressureData.add(Entry(timestamp, item.pressure!!.toFloat()))
             }
         }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-            ChartView(tempChart, Modifier.fillMaxSize(), tempData, unitsConverter, from)
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .weight(1f)) {
+            ChartView(tempChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, from)
         }
-        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-            ChartView(humiChart, Modifier.fillMaxSize(), humiData, unitsConverter, from)
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .weight(1f)) {
+            ChartView(humiChart, Modifier.fillMaxSize(), humidityData, unitsConverter, from)
+        }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .weight(1f)) {
+            ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, from)
         }
     }
 
@@ -120,8 +131,6 @@ fun ChartView(
             addDataToChart(context, chartData, view, "temp")
         }
     )
-
-
 }
 
 fun setupChart(chart: LineChart) {
@@ -264,8 +273,8 @@ private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressu
 
     val offsetLeft = computeSize.width * 1.1f
     val offsetBottom = computeHeight * 2
-    val offsetTop = tempChart.viewPortHandler.offsetTop() / 2f
-    val offsetRight = tempChart.viewPortHandler.offsetRight() / 2f
+    val offsetTop = offsetBottom / 2f
+    val offsetRight = offsetBottom / 2f
 
     Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
 
