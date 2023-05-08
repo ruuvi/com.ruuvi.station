@@ -158,6 +158,7 @@ fun SensorsPager(
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
+                userScrollEnabled = !chartsEnabled,
                 count = sensors.size
             ) { page ->
                 val sensor = sensors.getOrNull(page)
@@ -187,7 +188,8 @@ fun SensorsPager(
                                 humiChart,
                                 pressureChart,
                                 getHistory = getHistory,
-                                unitsConverter = unitsConverter
+                                unitsConverter = unitsConverter,
+                                selected = pagerSensor?.id == sensor.id
                             )
                         } else {
                             SensorCard(sensor = sensor)

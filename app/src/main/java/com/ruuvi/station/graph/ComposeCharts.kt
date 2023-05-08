@@ -40,6 +40,7 @@ fun ChartsView(
     humiChart: LineChart,
     pressureChart: LineChart,
     unitsConverter: UnitsConverter,
+    selected: Boolean,
     getHistory: (String) -> List<TagSensorReading>
 ) {
     normalizeOffsets(tempChart, humiChart, pressureChart)
@@ -93,7 +94,7 @@ fun ChartsView(
     }
 
     LaunchedEffect(key1 = Unit) {
-        while (true) {
+        while (selected) {
             Timber.d("ChartView - get history $sensorId")
             history = getHistory.invoke(sensorId)
             delay(1000)
