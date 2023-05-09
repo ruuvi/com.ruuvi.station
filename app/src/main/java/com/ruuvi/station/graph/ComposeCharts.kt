@@ -21,12 +21,17 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -36,14 +41,22 @@ import java.util.*
 @Composable
 fun ChartsView(
     sensorId: String,
-    tempChart: LineChart,
-    humiChart: LineChart,
+    temperatureChart: LineChart,
+    humidityChart: LineChart,
     pressureChart: LineChart,
     unitsConverter: UnitsConverter,
     selected: Boolean,
     getHistory: (String) -> List<TagSensorReading>
 ) {
-    normalizeOffsets(tempChart, humiChart, pressureChart)
+    Timber.d("ChartView - top $sensorId $selected")
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = sensorId) {
+        Timber.d("ChartView - initial setup $sensorId")
+        normalizeOffsets(temperatureChart, humidityChart, pressureChart)
+        synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
+        setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
+    }
 
     var history by remember {
         mutableStateOf<List<TagSensorReading>>(listOf())
@@ -53,50 +66,77 @@ fun ChartsView(
         mutableStateOf(0L)
     }
 
-    val context = LocalContext.current
+    var to by remember {
+        mutableStateOf(0L)
+    }
 
-    val temperatureData: MutableList<Entry> = ArrayList()
-    val humidityData: MutableList<Entry> = ArrayList()
-    val pressureData: MutableList<Entry> = ArrayList()
-
-    synchronizeChartGestures(setOf(tempChart, humiChart, pressureChart))
-
-    if (history.isNotEmpty()) {
-        from = history[0].createdAt.time
-        history.forEach { item ->
-            val timestamp = (item.createdAt.time - from).toFloat()
-            temperatureData.add(Entry(timestamp, item.temperature.toFloat()))
-            if (item.humidity != null) {
-                humidityData.add(Entry(timestamp, item.humidity!!.toFloat()))
-            }
-            if (item.pressure != null) {
-                pressureData.add(Entry(timestamp, item.pressure!!.toFloat()))
-            }
-        }
+    var temperatureData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
+    }
+    var humidityData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
+    }
+    var pressureData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier
             .fillMaxSize()
             .weight(1f)) {
-            ChartView(tempChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, from)
+            ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
         }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .weight(1f)) {
-            ChartView(humiChart, Modifier.fillMaxSize(), humidityData, unitsConverter, from)
+        if (humidityData.isNotEmpty()){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)) {
+                ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
+            }
         }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .weight(1f)) {
-            ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, from)
+        if (pressureData.isNotEmpty()) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)) {
+                ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
+            }
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = selected) {
+        Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             Timber.d("ChartView - get history $sensorId")
-            history = getHistory.invoke(sensorId)
+            val freshHistory = getHistory.invoke(sensorId)
+
+            if (history.isEmpty() ||
+                temperatureChart.highestVisibleX >= (temperatureChart.data?.xMax ?: Float.MIN_VALUE)) {
+                history = freshHistory
+
+                if (history.isNotEmpty()) {
+                    Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size}")
+                    from = history[0].createdAt.time
+                    to = Date().time
+
+                    val temperatureDataTemp = mutableListOf<Entry>()
+                    val humidityDataTemp = mutableListOf<Entry>()
+                    val pressureDataTemp = mutableListOf<Entry>()
+                    history.forEach { item ->
+                        val timestamp = (item.createdAt.time - from).toFloat()
+                        temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(item.temperature).toFloat()))
+                        item.humidity?.let { humidity ->
+                            humidityDataTemp.add(Entry(timestamp, unitsConverter.getHumidityValue(humidity, item.temperature).toFloat()))
+                        }
+                        item.pressure?.let {pressure ->
+                            pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
+                        }
+                    }
+                    temperatureData = temperatureDataTemp
+                    humidityData = humidityDataTemp
+                    pressureData = pressureDataTemp
+                }
+            } else {
+
+            }
             delay(1000)
         }
     }
@@ -108,7 +148,9 @@ fun ChartView(
     modifier: Modifier,
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType,
     from: Long,
+    to: Long,
 ) {
     val context = LocalContext.current
 
@@ -117,27 +159,51 @@ fun ChartView(
         factory = { context ->
             Timber.d("ChartView - factory")
             val chart = lineChart
-            setupChart(chart)
+            setupChart(chart, unitsConverter, chartSensorType)
             applyChartStyle(
                 context = context,
                 chart = chart,
                 unitsConverter = unitsConverter,
-                chartSensorType = ChartSensorType.TEMPERATURE) {
+                chartSensorType = chartSensorType) {
                 from
             }
             chart
         },
         update = { view ->
-            Timber.d("ChartView - update")
-            addDataToChart(context, chartData, view, "temp")
+            Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
+            val latestPoint = chartData.lastOrNull()
+            val chartCaption = if (latestPoint != null) {
+                val latestValue = when (chartSensorType) {
+                    ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+                    ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+                    ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+                }
+                context.getString(chartSensorType.captionTemplate, latestValue)
+            } else {
+                context.getString(chartSensorType.captionTemplate, "")
+            }
+            addDataToChart(context, chartData, view, chartCaption, from, to)
         }
     )
 }
 
-fun setupChart(chart: LineChart) {
-
-    chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
-    chart.axisLeft.granularity = 0.01f
+fun setupChart(
+    chart: LineChart,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType
+) {
+    if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
+        chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
+        chart.axisLeft.granularity = 0.01f
+    } else {
+        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#")
+            chart.axisLeft.granularity = 1f
+        } else {
+            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
+            chart.axisLeft.granularity = 0.01f
+        }
+    }
 }
 
 private fun applyChartStyle(
@@ -196,7 +262,9 @@ private fun addDataToChart(
     context: Context,
     data: MutableList<Entry>,
     chart: LineChart,
-    label: String
+    label: String,
+    from: Long,
+    to: Long
 ) {
     val set = LineDataSet(data, label)
     setLabelCount(chart)
@@ -209,7 +277,7 @@ private fun addDataToChart(
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
-            0,//from,
+            from,
             chart.viewPortHandler,
             chart.xAxis,
             chart.getTransformer(YAxis.AxisDependency.LEFT)
@@ -224,7 +292,7 @@ private fun addDataToChart(
     set.setDrawHighlightIndicators(true)
     set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
 
-    //chart.xAxis.axisMaximum = (to - from).toFloat()
+    chart.xAxis.axisMaximum = (to - from).toFloat()
     chart.xAxis.axisMinimum = 0f
 
     chart.description.text = label
@@ -236,7 +304,7 @@ private fun addDataToChart(
     chart.data.isHighlightEnabled = true
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
-            val date = Date(value.toLong() + 0)//from)
+            val date = Date(value.toLong() + from)
             return if (date.isStartOfTheDay()) {
                 val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
                 DateUtils.formatDateTime(context, date.time, flags)
@@ -265,7 +333,7 @@ private fun setLabelCount(chart: LineChart) {
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
-private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressureChart: LineChart) {
+private fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pressureChart: LineChart) {
     val computePaint = Paint(1)
     computePaint.typeface = pressureChart.axisLeft.typeface
     computePaint.textSize = pressureChart.axisLeft.textSize
@@ -279,14 +347,14 @@ private fun normalizeOffsets(tempChart: LineChart, humidChart: LineChart, pressu
 
     Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
 
-    tempChart.setViewPortOffsets(
+    temperatureChart.setViewPortOffsets(
         offsetLeft,
         offsetTop,
         offsetRight,
         offsetBottom
     )
 
-    humidChart.setViewPortOffsets(
+    humidityChart.setViewPortOffsets(
         offsetLeft,
         offsetTop,
         offsetRight,
@@ -353,5 +421,24 @@ private fun synchronizeChartGestures(charts: Set<LineChart>) {
                 synchronizeCharts(chart)
             }
         }
+    }
+}
+
+private fun setupHighLighting(charts: Set<LineChart>) {
+    for (chart in charts) {
+        val otherCharts = charts.filter { it != chart }
+        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onValueSelected(entry: Entry, highlight: Highlight) {
+                for (otherChart in otherCharts) {
+                    otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                }
+            }
+
+            override fun onNothingSelected() {
+                for (otherChart in otherCharts) {
+                    otherChart.highlightValue(0f, -1, false)
+                }
+            }
+        })
     }
 }

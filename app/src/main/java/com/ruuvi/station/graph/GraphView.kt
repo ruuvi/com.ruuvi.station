@@ -28,6 +28,7 @@ import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.graph.model.GraphEntry
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit

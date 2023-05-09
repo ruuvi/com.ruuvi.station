@@ -164,11 +164,11 @@ fun SensorsPager(
                 val sensor = sensors.getOrNull(page)
                 if (sensor != null) {
 
-                    val tempChart by remember {
+                    val temperatureChart by remember {
                         mutableStateOf(LineChart(context))
                     }
 
-                    val humiChart by remember {
+                    val humidityChart by remember {
                         mutableStateOf(LineChart(context))
                     }
 
@@ -184,8 +184,8 @@ fun SensorsPager(
                         if (chartsEnabled) {
                             ChartsView(
                                 sensorId = sensor.id,
-                                tempChart,
-                                humiChart,
+                                temperatureChart,
+                                humidityChart,
                                 pressureChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
