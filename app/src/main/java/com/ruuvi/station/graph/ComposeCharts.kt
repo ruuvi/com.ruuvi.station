@@ -7,9 +7,13 @@ import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -27,6 +31,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -51,13 +56,6 @@ fun ChartsView(
     Timber.d("ChartView - top $sensorId $selected")
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = sensorId) {
-        Timber.d("ChartView - initial setup $sensorId")
-        normalizeOffsets(temperatureChart, humidityChart, pressureChart)
-        synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
-        setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
-    }
-
     var history by remember {
         mutableStateOf<List<TagSensorReading>>(listOf())
     }
@@ -80,26 +78,11 @@ fun ChartsView(
         mutableStateOf<MutableList<Entry>>(ArrayList())
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .weight(1f)) {
-            ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
-        }
-        if (humidityData.isNotEmpty()){
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)) {
-                ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
-            }
-        }
-        if (pressureData.isNotEmpty()) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)) {
-                ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
-            }
-        }
+    LaunchedEffect(key1 = sensorId) {
+        Timber.d("ChartView - initial setup $sensorId")
+        normalizeOffsets(temperatureChart, humidityChart, pressureChart)
+        synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
+        setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
     }
 
     LaunchedEffect(key1 = selected) {
@@ -139,6 +122,60 @@ fun ChartsView(
             }
             delay(1000)
         }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
+            EmptyCharts()
+        } else {
+            val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
+            if (onlyOneChart) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(0.5f))
+            }
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)) {
+                ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
+            }
+            if (onlyOneChart) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(0.5f))
+            }
+            if (humidityData.isNotEmpty()){
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)) {
+                    ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
+                }
+            }
+            if (pressureData.isNotEmpty()) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)) {
+                    ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyCharts() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.extended),
+            style = RuuviStationTheme.typography.onboardingSubtitle,
+            text = stringResource(id = R.string.empty_chart_message),
+            textAlign = TextAlign.Center
+        )
     }
 }
 

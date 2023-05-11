@@ -40,14 +40,17 @@ import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.Days
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.generic.instance
 import timber.log.Timber
@@ -73,11 +76,23 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
+                val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
+
                 SensorsPager(
                     selectedIndex = selectedIndex,
                     sensors = sensors,
                     getHistory = viewModel::getSensorHistory,
-                    unitsConverter = unitsConverter
+                    unitsConverter = unitsConverter,
+                    viewPeriod = viewPeriod,
+                    getSyncStatusFlow = viewModel::getGattEvents,
+                    disconnectGattAction = viewModel::disconnectGatt,
+                    shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
+                    syncGatt = viewModel::syncGatt,
+                    setViewPeriod = viewModel::setViewPeriod,
+                    exportToCsv = viewModel::exportToCsv ,
+                    removeTagData= viewModel::removeTagData,
+                    refreshStatus = viewModel::refreshStatus,
+                    dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription
                 )
             }
         }
@@ -102,7 +117,17 @@ fun SensorsPager(
     selectedIndex: Int,
     sensors: List<RuuviTag>,
     getHistory: (String) -> List<TagSensorReading>,
-    unitsConverter: UnitsConverter
+    unitsConverter: UnitsConverter,
+    viewPeriod: Days,
+    getSyncStatusFlow: (String) -> Flow<SyncStatus>,
+    disconnectGattAction: (String) -> Unit,
+    shouldSkipGattSyncDialog: () -> Boolean,
+    syncGatt: (String) -> Unit,
+    setViewPeriod: (Int) -> Unit,
+    exportToCsv: (String) -> Uri?,
+    removeTagData: (String) -> Unit,
+    refreshStatus: () -> Unit,
+    dontShowGattSyncDescription: () -> Unit
 ) {
     Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
@@ -182,11 +207,25 @@ fun SensorsPager(
                     ) {
                         SensorTitle(sensor = sensor)
                         if (chartsEnabled) {
+                            ChartControlElement2(
+                                sensorId = sensor.id,
+                                viewPeriod = viewPeriod,
+                                syncStatus = getSyncStatusFlow.invoke(sensor.id),
+                                disconnectGattAction = disconnectGattAction,
+                                shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
+                                syncGatt = syncGatt,
+                                setViewPeriod = setViewPeriod,
+                                exportToCsv = exportToCsv,
+                                removeTagData = removeTagData,
+                                refreshStatus = refreshStatus,
+                                dontShowGattSyncDescription = dontShowGattSyncDescription
+                            )
+
                             ChartsView(
                                 sensorId = sensor.id,
-                                temperatureChart,
-                                humidityChart,
-                                pressureChart,
+                                temperatureChart = temperatureChart,
+                                humidityChart = humidityChart,
+                                pressureChart = pressureChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
                                 selected = pagerSensor?.id == sensor.id

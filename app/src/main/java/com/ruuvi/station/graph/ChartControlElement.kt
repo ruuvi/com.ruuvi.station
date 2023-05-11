@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,9 +23,11 @@ import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
+import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.util.Days
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 @Composable
 fun ChartControlElement(
@@ -37,8 +38,6 @@ fun ChartControlElement(
     val context = LocalContext.current
 
     val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
-
-    val canUseGatt by viewModel.canUseGattSync.observeAsState(false)
 
     val syncInProgress by viewModel.gattSyncInProgress.collectAsState(false)
 
@@ -186,15 +185,13 @@ fun ChartControlElement(
 fun ChartControlElement2(
     sensorId: String,
     viewPeriod: Days,
-    syncInProgress: Boolean,
-    syncMessage: UiText,
-    syncStatus: SharedFlow<SyncProgress>,
-    disconnectGattAction: () -> Unit,
+    syncStatus: Flow<SyncStatus>,
+    disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
-    syncGatt: () -> Unit,
+    syncGatt: (String) -> Unit,
     setViewPeriod: (Int) -> Unit,
-    exportToCsv: () -> Uri?,
-    removeTagData: () -> Unit,
+    exportToCsv: (String) -> Uri?,
+    removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit
 ) {
@@ -206,10 +203,40 @@ fun ChartControlElement2(
         mutableStateOf(false)
     }
 
+    var syncInProgress by remember {
+        mutableStateOf(false)
+    }
+
+    var syncMessage by remember {
+        mutableStateOf<UiText>(UiText.EmptyString)
+    }
+
+    var uiEvent by remember {
+        mutableStateOf<SyncProgress?>(null)
+    }
+
+    LaunchedEffect(key1 = true) {
+        syncStatus.collect() { event ->
+            Timber.d("SyncEvent collected $event")
+
+            if (listOf(
+                    SyncProgress.ERROR,
+                    SyncProgress.NOT_FOUND,
+                    SyncProgress.NOT_SUPPORTED,
+                    SyncProgress.DISCONNECTED
+                ).contains(event.syncProgress)
+            ) {
+                uiEvent = event.syncProgress
+            }
+            syncInProgress = event.syncInProgress
+            syncMessage = event.statusMessage
+        }
+    }
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (syncInProgress) {
             IconButton(onClick = {
-                disconnectGattAction.invoke()
+                disconnectGattAction(sensorId)
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_clear_24),
@@ -226,7 +253,7 @@ fun ChartControlElement2(
                 if (!shouldSkipGattSyncDialog()) {
                     gattSyncDialogOpened = true
                 }
-                syncGatt()
+                syncGatt(sensorId)
             }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -259,8 +286,8 @@ fun ChartControlElement2(
 
             ThreeDotsMenu(
                 sensorId = sensorId,
-                exportToCsv = exportToCsv,
-                clearHistory = removeTagData
+                exportToCsv = { exportToCsv(sensorId) },
+                clearHistory = { removeTagData(sensorId) }
             )
         }
     }
@@ -279,15 +306,7 @@ fun ChartControlElement2(
         }
     }
 
-    var uiEvent by remember {
-        mutableStateOf<SyncProgress?>(null)
-    }
 
-    LaunchedEffect(key1 = true) {
-        syncStatus.collect() { event ->
-            uiEvent = event
-        }
-    }
     if (uiEvent != null) {
         when (uiEvent) {
             SyncProgress.DISCONNECTED -> {
@@ -312,7 +331,7 @@ fun ChartControlElement2(
                         }
                     ) {
                         uiEvent = null
-                        syncGatt()
+                        syncGatt(sensorId)
                     }
                 }
             }
