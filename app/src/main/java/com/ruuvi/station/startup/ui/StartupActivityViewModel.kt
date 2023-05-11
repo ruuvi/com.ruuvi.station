@@ -18,8 +18,6 @@ class StartupActivityViewModel(
 
     fun isFirstStart(): Boolean = startupInteractor.isFirstStart()
 
-    fun isDashboardEnabled(): Boolean = startupInteractor.isDashboardEnabled()
-
     fun generateDeviceId() {
         preferencesRepository.getDeviceId()
     }

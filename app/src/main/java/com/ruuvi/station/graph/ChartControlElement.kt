@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -15,13 +16,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiText
-import com.ruuvi.station.app.ui.components.Paragraph
-import com.ruuvi.station.app.ui.components.RuuviConfirmDialog
-import com.ruuvi.station.app.ui.components.RuuviMessageDialog
+import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.TagViewModel
@@ -64,14 +64,17 @@ fun ChartControlElement(
             )
         } else {
             IconButton(onClick = {
-                gattSyncDialogOpened = true
+                if (!viewModel.shouldSkipGattSyncDialog()) {
+                    gattSyncDialogOpened = true
+                }
+                viewModel.syncGatt()
             }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.medium)
+                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extended)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_sync_24),
+                        painter = painterResource(id = R.drawable.gatt_sync),
                         contentDescription = null,
                         tint = RuuviStationTheme.colors.buttonText
                     )
@@ -139,15 +142,19 @@ fun ChartControlElement(
                  }
              }
              SyncProgress.NOT_FOUND -> {
-                 RuuviConfirmDialog(
-                     title = stringResource(id = R.string.error),
-                     message = stringResource(id = R.string.gatt_not_in_range_description),
-                     noButtonCaption = stringResource(id = R.string.close),
-                     yesButtonCaption = stringResource(id = R.string.try_again),
-                     onDismissRequest = { uiEvent = null }
-                 ) {
-                     uiEvent = null
-                     gattSyncDialogOpened = true
+                 if (!gattSyncDialogOpened) {
+                     RuuviConfirmDialog(
+                         title = stringResource(id = R.string.error),
+                         message = stringResource(id = R.string.gatt_not_in_range_description),
+                         noButtonCaption = stringResource(id = R.string.close),
+                         yesButtonCaption = stringResource(id = R.string.try_again),
+                         onDismissRequest = {
+                             uiEvent = null
+                         }
+                     ) {
+                         uiEvent = null
+                         viewModel.syncGatt()
+                     }
                  }
              }
              SyncProgress.ERROR -> {
@@ -162,9 +169,12 @@ fun ChartControlElement(
      }
 
     if (gattSyncDialogOpened) {
-        GattSyncDialog(
-            syncGatt = viewModel::syncGatt,
-            dismissAction = {
+        GattSyncDescriptionDialog(
+            doNotShowAgain = {
+                gattSyncDialogOpened = false
+                viewModel.dontShowGattSyncDescription()
+            },
+            onDismissRequest = {
                 gattSyncDialogOpened = false
             }
         )
@@ -299,19 +309,54 @@ fun ThreeDotsMenu(
 }
 
 @Composable
-fun GattSyncDialog(
-    syncGatt: () -> Unit,
-    dismissAction: () -> Unit
+fun GattSyncDescriptionDialog(
+    onDismissRequest : () -> Unit,
+    doNotShowAgain: () -> Unit,
 ) {
-    RuuviConfirmDialog(
-        title = stringResource(id = R.string.bluetooth_download),
-        message = stringResource(id = R.string.bluetooth_download_description),
-        yesButtonCaption = stringResource(id = R.string.download),
-        noButtonCaption = stringResource(id = R.string.cancel),
-        onDismissRequest = { dismissAction.invoke() }
-    ) {
-        dismissAction.invoke()
-        syncGatt.invoke()
+
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(RuuviStationTheme.dimensions.medium),
+            backgroundColor = RuuviStationTheme.colors.background
+        )
+        {
+            Column(
+                modifier = Modifier
+                    .padding(all = RuuviStationTheme.dimensions.extended)
+            ) {
+                SubtitleWithPadding(text = stringResource(id = R.string.synchronisation))
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                
+                ParagraphWithPadding(text = stringResource(id = R.string.gatt_sync_description))
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    RuuviTextButton(
+                        text = stringResource(id = R.string.do_not_show_again),
+                        onClick = {
+                            doNotShowAgain.invoke()
+                        }
+                    )
+
+                    RuuviTextButton(
+                        text = stringResource(id = R.string.close),
+                        onClick = {
+                            onDismissRequest.invoke()
+                        }
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                
+            }
+        }
     }
 }
 

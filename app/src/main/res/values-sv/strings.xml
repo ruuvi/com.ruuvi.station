@@ -97,6 +97,8 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kunde inte öppna kameran</string>
     <string name="cancel">Avbryt</string>
+    <string name="card_action">Kortåtgärd</string>
+    <string name="card_type">Kort typ</string>
     <string name="change_background">Byt bakgrund</string>
     <string name="change_background_image">Ändra bakgrundsbild</string>
     <string name="change_background_message">Välj bakgrundsbild. Om du inte är inloggad kommer du att förlora bilden vid appominstallation.</string>
@@ -190,6 +192,7 @@
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
     <string name="disconnected">Frånkopplad</string>
+    <string name="do_not_show_again">Visa inte detta igen</string>
     <string name="done">Klar</string>
     <string name="download">Ladda ner</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
@@ -225,6 +228,7 @@
     <string name="gateway_test_success">Vidarebefordran fungerar! HTTP svarskod: %1$d</string>
     <string name="gateway_testing">Testar...</string>
     <string name="gatt_not_in_range_description">Nedladdning av Bluetooth-historik misslyckades. Kontrollera att du är inom Bluetooth-räckvidd, att din sensor har firmware som stöder nedladdning och att sensorn inte samtidigt är ansluten till en annan iOS-enhet. Sensoranslutning är reserverad för Ruuvi Station vid användning av anslutet läge i iOS.</string>
+    <string name="gatt_sync_description">Ruuvi Station laddar ner sensorns interna historik för de senaste 10 dagarna om mäthistoriken är tillgänglig.\n\nHistorien laddas ner med en Bluetooth-anslutning. Se till att du är nära sensorn.</string>
     <string name="general">Allmänt</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station är en lättanvänt och kraftfullt program för Ruuvi sensorer. Sätt igång genom att lägga till sensorer.</string>
@@ -255,6 +259,7 @@
     <string name="humidity_relative_name">Relativ (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfuktighet (%1$s)</string>
+    <string name="image_cards">Bildkort</string>
     <string name="image_view">Bildvy</string>
     <string name="information">Information</string>
     <string name="language_english">English</string>
@@ -337,6 +342,8 @@
     <string name="onboarding_web_pros">Stor instrumentpanel, flerårig historik, e-postvarningar och mer på</string>
     <string name="onboarding_with_ruuvi_sensors">Lär känna din Ruuvi Station -applikation.</string>
     <string name="onboarding_your_sensors">din app med anpassade namn och bakgrunder.</string>
+    <string name="open_history_view">Öppna historikvy</string>
+    <string name="open_sensor_view">Öppna sensorvy</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
@@ -379,7 +386,6 @@
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
-    <string name="rssi">Signalstyrka (RSSI)</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -418,11 +424,11 @@
     <string name="settings_background_scan_interval">Dataloggningsintervall</string>
     <string name="settings_background_scan_interval_description">Ange intervallet för bakgrundsskanning</string>
     <string name="settings_chart">Historik</string>
-    <string name="settings_chart_all_points">Visa all insamlad data i graferna</string>
+    <string name="settings_chart_all_points">Visa alla mätningar</string>
     <string name="settings_chart_all_points_description">Den här funktionen kan göra appen laddar historik långsammare.</string>
     <string name="settings_chart_description">Ange visningsintervallet för datapunkter</string>
     <string name="settings_chart_draw_dots">Visa datapunkter</string>
-    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation</string>
+    <string name="settings_chart_draw_dots_description">Datapunkter gör det lättare att utforska lagrad historikinformation.</string>
     <string name="settings_chart_interval">Historikens noggrannhet</string>
     <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser.</string>
     <string name="settings_chart_view_period">Historik</string>
@@ -455,6 +461,7 @@
     <string name="sign_in_benefits_description">Fördelar:\n\n ● Sensornamn, bakgrundsbilder, kalibrering och larminformation från en säker molntjänst\n\n ● Läs sensorinformation på distans online ( kräver Ruuvi Gateway-router)\n\n ● Dela sensorer med vänner och familj (kräver Ruuvi Gateway)\n\n ● Upp till 2 års historik från station.ruuvi.com (kräver Ruuvi Gateway)</string>
     <string name="sign_in_check_email">Vi har skickat ett engångslösenord till din e-post. Logga in genom att ange den här:</string>
     <string name="sign_in_code_hint">Kod</string>
+    <string name="sign_in_continue">Fortsätta</string>
     <string name="sign_in_email_sent">E-post skickat</string>
     <string name="sign_in_login_button">Logga in</string>
     <string name="sign_in_manual_code">Ange kod manuellt</string>
@@ -468,8 +475,12 @@
     <string name="sign_out_confirm">Sensorer som du har verifierat äganderätten till på inställningssidan tas automatiskt bort från appen när du loggar ut. Sensordata hämtas från molnet igen om du loggar in med samma e-postadress.\n\nÄr du säker på att du vill logga ut? </string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signalstyrka (dBm)</string>
+    <string name="signal_strength_rssi">Signalstyrka (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Inloggad</string>
+    <string name="signing_in_is_optional">(Inloggning är inte obligatoriskt)</string>
+    <string name="simple_cards">Enkla kort</string>
     <string name="simple_view">Enkel vy</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
@@ -481,6 +492,7 @@
     <string name="sync">Synk</string>
     <string name="sync_complete">Synkronisering klar</string>
     <string name="sync_confirm">Ladda ner historik-data från sensorn?</string>
+    <string name="synchronisation">Synkronisering</string>
     <string name="synchronizing">Synkroniserar</string>
     <string name="tag_name">Sensornamn</string>
     <string name="tag_not_in_range">Sensorn hittades inte, är den innom räckvidd?</string>
@@ -512,7 +524,7 @@
     <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
     <string name="updating">Uppdaterar...</string>
-    <string name="use_without_account">Nej tack, jag fortsätter utan konto</string>
+    <string name="use_without_account">Nej tack, hoppa över</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

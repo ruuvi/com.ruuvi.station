@@ -97,6 +97,8 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kamera konnte nicht gestartet werden</string>
     <string name="cancel">Abbrechen</string>
+    <string name="card_action">Kartenaktion</string>
+    <string name="card_type">Speicherkarten-Typ</string>
     <string name="change_background">Einstellungen und Warnungen</string>
     <string name="change_background_image">Hintergrundbild ändern</string>
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
@@ -189,6 +191,7 @@
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
     <string name="disconnected">Getrennt</string>
+    <string name="do_not_show_again">Zeige das nicht noch einmal</string>
     <string name="done">Fertig</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
@@ -235,6 +238,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="gateway_test_success">Datenweiterleitung funktioniert! Antwortcode: %1$d</string>
     <string name="gateway_testing">Testen...</string>
     <string name="gatt_not_in_range_description">Download der Bluetooth-Historie fehlgeschlagen. Stellen Sie sicher, dass Sie sich in Bluetooth-Reichweite befinden, dass Ihr Sensor über eine Firmware verfügt, die das Herunterladen unterstützt, und dass der Sensor nicht gleichzeitig mit einem anderen iOS-Gerät verbunden ist. Die Sensorverbindung ist für die Ruuvi Station reserviert, wenn der Verbindungsmodus in iOS verwendet wird.</string>
+    <string name="gatt_sync_description">Ruuvi Station lädt den internen Verlauf des Sensors für die letzten 10 Tage herunter, wenn der Messverlauf verfügbar ist.\n\nDer Verlauf wird über eine Bluetooth-Verbindung heruntergeladen. Stellen Sie sicher, dass Sie sich in der Nähe des Sensors befinden.</string>
     <string name="general">Allgemein</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station ist ein benutzerfreundliches, aber leistungsstarkes Werkzeug, um Ihre Ruuvi-Sensoren aufzuladen. Fügen Sie einfach einige Sensoren hinzu und schon können Sie loslegen.</string>
@@ -265,6 +269,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfeuchtigkeit (%1$s)</string>
+    <string name="image_cards">Bildkarten</string>
     <string name="image_view">Bildansicht</string>
     <string name="information">Information</string>
     <string name="language_english">Englisch</string>
@@ -347,6 +352,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="onboarding_web_pros">Großes Dashboard, mehrjähriger Verlauf, E-Mail-Benachrichtigungen und mehr in der</string>
     <string name="onboarding_with_ruuvi_sensors">Lernen Sie Ihre Ruuvi Station -App kennen.</string>
     <string name="onboarding_your_sensors">Sie Ihre App mit benutzerdefinierten Namen und Hintergründen.</string>
+    <string name="open_history_view">Verlaufsansicht öffnen</string>
+    <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="owner_none">Keiner</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
@@ -389,7 +396,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Schwache Batterie</string>
     <string name="request_code">Anfrage Code</string>
-    <string name="rssi">Signalstärke (RSSI)</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -428,11 +434,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_background_scan_interval">Datenprotokollierungsintervall</string>
     <string name="settings_background_scan_interval_description">Definieren Sie, wie oft der Hintergrundscan ausgeführt wird</string>
     <string name="settings_chart">Diagramm Einstellungen</string>
-    <string name="settings_chart_all_points">Alle Daten im Diagramm anzeigen</string>
+    <string name="settings_chart_all_points">Alle Messungen anzeigen</string>
     <string name="settings_chart_all_points_description">Die Aktivierung kann dazu führen, dass Diagramme langsam aktualisiert werden.</string>
     <string name="settings_chart_description">Konfigurieren Sie das Intervall zwischen den auf dem Diagramm angezeigten Punkten</string>
-    <string name="settings_chart_draw_dots">Punkte im Diagramm zeichnen</string>
-    <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden</string>
+    <string name="settings_chart_draw_dots">Datenpunkte anzeigen</string>
+    <string name="settings_chart_draw_dots_description">Kleine Punkte helfen zu verstehen, wann Messungen erfasst wurden.</string>
     <string name="settings_chart_interval">Diagrammintervall</string>
     <string name="settings_chart_interval_description">Stellen Sie das Intervall zwischen den Punkten für das Diagramm von 1 bis 60 Minuten ein. Kleinere Werte bedeuten ein genaueres Diagramm, aber auch einen höheren Leistungsbedarf für Ihr Gerät.</string>
     <string name="settings_chart_view_period">Anzeigezeitraum des Diagrammverlaufs</string>
@@ -465,6 +471,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
     <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet. Melden Sie sich an, indem Sie es hier eingeben:</string>
     <string name="sign_in_code_hint">Code</string>
+    <string name="sign_in_continue">Weitermachen</string>
     <string name="sign_in_email_sent">E-Mail gesendet</string>
     <string name="sign_in_login_button">Anmeldung</string>
     <string name="sign_in_manual_code">Code manuell eingeben</string>
@@ -478,8 +485,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_out_confirm">Wenn Sie sich abmelden, werden Sensoren, deren Eigentum Sie mit den Sensoreinstellungen bestätigt haben, automatisch aus der App entfernt. Wenn Sie sich erneut mit derselben E-Mail-Adresse anmelden, werden die Sensoren aus der Cloud zurückgegeben.\n\nMöchten Sie sich abmelden?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Signalstärke (dBm)</string>
+    <string name="signal_strength_rssi">Signalstärke (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Angemeldeter Benutzer</string>
+    <string name="signing_in_is_optional">(Die Anmeldung ist optional)</string>
+    <string name="simple_cards">Einfache Karten</string>
     <string name="simple_view">Einfache Ansicht</string>
     <string name="skip">ÜBERSPRINGEN</string>
     <string name="something_went_wrong">Something went wrong</string>
@@ -491,6 +502,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sync">Sync</string>
     <string name="sync_complete">Synchronisierung abgeschlossen</string>
     <string name="sync_confirm">Daten vom Sensor herunterladen?</string>
+    <string name="synchronisation">Synchronisation</string>
     <string name="synchronizing">Synchronisieren</string>
     <string name="tag_name">Name</string>
     <string name="tag_not_in_range">Sensor nicht gefunden, ist er in Reichweite?</string>
@@ -522,7 +534,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
-    <string name="use_without_account">Nein danke, ich fahre ohne Konto fort</string>
+    <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

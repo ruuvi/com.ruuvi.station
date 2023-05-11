@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
@@ -166,12 +167,6 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_WAKELOCK, enabled).apply()
         }
 
-    var dashboardEnabled: Boolean
-        get() = sharedPreferences.getBoolean(PREF_DASHBOARD_ENABLED, false)
-        set(enabled) {
-            sharedPreferences.edit().putBoolean(PREF_DASHBOARD_ENABLED, enabled).apply()
-        }
-
     var batterySaverEnabled: Boolean
         get() = sharedPreferences.getBoolean(PREF_BGSCAN_BATTERY_SAVING, false)
         set(enabled) {
@@ -308,6 +303,14 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_DASHBOARD_TYPE, type.code).apply()
         }
 
+    var dashboardTapAction: DashboardTapAction
+        get() {
+            return DashboardTapAction.getByCode(sharedPreferences.getString(PREF_DASHBOARD_TAP_ACTION, "") ?: "")
+        }
+        set(type) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_TAP_ACTION, type.code).apply()
+        }
+
     var registeredToken: String
         get() = sharedPreferences.getString(PREF_REGISTERED_DEVICE_TOKEN, "") ?: ""
         set(token) {
@@ -338,6 +341,12 @@ class Preferences constructor(val context: Context) {
             ).apply()
         }
 
+    var dontShowGattSync: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DONT_SHOW_GATT_SYNC, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_DONT_SHOW_GATT_SYNC, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -365,7 +374,6 @@ class Preferences constructor(val context: Context) {
             "pref_backend_forwarding_during_sync"
         private const val PREF_DEVICE_ID = "pref_device_id"
         private const val PREF_WAKELOCK = "pref_wakelock"
-        private const val PREF_DASHBOARD_ENABLED = "DASHBOARD_ENABLED_PREF"
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
         private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
@@ -382,10 +390,12 @@ class Preferences constructor(val context: Context) {
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
         private const val PREF_DARKMODE = "pref_darkmode"
         private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
+        private const val PREF_DASHBOARD_TAP_ACTION = "pref_dashboard_tap_action"
         private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
+        private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

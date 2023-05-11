@@ -1,6 +1,7 @@
 package com.ruuvi.station.alarm.domain
 
 import com.ruuvi.station.database.tables.Alarm
+import timber.log.Timber
 import java.util.*
 
 data class AlarmItemState(
@@ -17,18 +18,22 @@ data class AlarmItemState(
     var mutedTill: Date? = null,
     var triggered: Boolean = false
 ) {
-    fun getPossibleRange() = type.possibleRange
-
     companion object {
         fun getStateForDbAlarm(alarm: Alarm, alarmsInteractor: AlarmsInteractor): AlarmItemState {
-            val rangeLow = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.min.toFloat())
-            val rangeHigh = alarmsInteractor.getRangeValue(alarm.alarmType, alarm.max.toFloat())
-            return AlarmItemState(
+            val type = alarm.alarmType
+            val alarmMin = minOf(alarm.min, alarm.max)
+            val alarmMax = maxOf(alarm.min, alarm.max)
+            val min = if (type.valueInRange(alarmMin)) alarmMin else type.possibleRange.first
+            val max = if (type.valueInRange(alarmMin)) alarmMax else min
+            val rangeLow = alarmsInteractor.getRangeValue(type, min.toFloat())
+            val rangeHigh = alarmsInteractor.getRangeValue(type, max.toFloat())
+
+            val state = AlarmItemState(
                 sensorId = alarm.ruuviTagId,
-                type = alarm.alarmType,
+                type = type,
                 isEnabled = alarm.enabled,
-                min = alarm.min,
-                max = alarm.max,
+                min = min.toDouble(),
+                max = max.toDouble(),
                 rangeLow = rangeLow,
                 rangeHigh = rangeHigh,
                 displayLow = alarmsInteractor.getDisplayValue(rangeLow),
@@ -36,6 +41,8 @@ data class AlarmItemState(
                 customDescription = alarm.customDescription,
                 mutedTill = alarm.mutedTill
             )
+            Timber.d("getStateForDbAlarm $alarm \n $state")
+            return state
         }
 
         fun getDefaultState(sensorId: String, alarmType: AlarmType, alarmsInteractor: AlarmsInteractor): AlarmItemState {

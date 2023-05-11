@@ -112,7 +112,7 @@ class AlarmsInteractor(
             AlarmType.TEMPERATURE -> context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
             AlarmType.HUMIDITY -> context.getString(R.string.humidity_with_unit, context.getString(R.string.humidity_relative_unit))
             AlarmType.PRESSURE -> context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
-            AlarmType.RSSI -> context.getString(R.string.rssi)
+            AlarmType.RSSI -> context.getString(R.string.signal_strength_dbm)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
         }
     }

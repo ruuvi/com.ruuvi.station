@@ -55,12 +55,13 @@ package="com.ruuvi.station">
     <activity
         android:name=".onboarding.ui.OnboardingActivity"
         android:screenOrientation="portrait"
-        android:exported="false">
-    </activity>
+        android:theme="@style/AppTheme.Animated"
+        android:exported="false" />
 
     <activity
         android:name=".network.ui.SignInActivity"
         android:exported="false"
+        android:theme="@style/AppTheme.Animated"
         android:screenOrientation="portrait" />
 
     <activity
@@ -110,6 +111,7 @@ package="com.ruuvi.station">
 
     <activity
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
+        android:theme="@style/AppTheme.Animated"
         android:exported="false" />
 
     <activity
@@ -168,7 +170,7 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.tagsettings.ui.BackgroundActivity"
         android:exported="false"
         android:label="@string/change_background"
-        android:theme="@style/AppTheme.NoActionBar"></activity>
+        android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
         android:name="com.ruuvi.station.nfc.NfcScanActivity"

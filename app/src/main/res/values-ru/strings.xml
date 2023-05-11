@@ -151,6 +151,7 @@
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
+    <string name="do_not_show_again">Больше не показывать</string>
     <string name="done">Готово</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
@@ -279,7 +280,6 @@
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
-    <string name="rssi">Сила сигнала (RSSI)</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
     <string name="sec">сек</string>
@@ -315,7 +315,7 @@
     <string name="settings_chart_all_points_description">Это может привести к медленному обновлению графиков.</string>
     <string name="settings_chart_description">Установите интервал между точками и диапазон истории для графиков</string>
     <string name="settings_chart_draw_dots">Показывать точки на графике</string>
-    <string name="settings_chart_draw_dots_description">Маленькие точки помогут точно понять когда были получены данные</string>
+    <string name="settings_chart_draw_dots_description">Маленькие точки помогут точно понять когда были получены данные.</string>
     <string name="settings_chart_interval">Интервал Графиков</string>
     <string name="settings_chart_interval_description">Установите интервал между точками на графиках от 1 до 60 минут. Чем меньше значение, тем выше точность отображения. Но в тоже время повышаются требования к быстродействию вашего телефона.</string>
     <string name="settings_chart_view_period">Диапазон отображения графиков</string>
@@ -347,6 +347,7 @@
     <string name="sign_in_benefits_description">Преимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="sign_in_check_email">Мы отправили одноразовый пароль на вашу электронную почту. Войдите, введя его здесь:</string>
     <string name="sign_in_code_hint">Код для входа</string>
+    <string name="sign_in_continue">Продолжить</string>
     <string name="sign_in_email_sent">Email отправлен</string>
     <string name="sign_in_login_button">Войти</string>
     <string name="sign_in_manual_code">Ввести код вручную</string>
@@ -359,7 +360,10 @@
     <string name="sign_out_confirm">После выхода все датчики, которые зарегистрованы на вас, будут удалены из приложения. Если вы повторно войдете с тем же email адресом, список ваших датчиков будет загружен из облака. \n\nВы хотите выйти из сети?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Сила сигнала (dBm)</string>
+    <string name="signal_strength_rssi">Сила сигнала (RSSI)</string>
     <string name="signal_unit">дБм</string>
+    <string name="signing_in_is_optional">(Авторизация не обязательна)</string>
     <string name="skip">ПРОПУСТИТЬ</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="start_update_process">Начать процесс обновления</string>
@@ -368,6 +372,7 @@
     <string name="sync">Скачать</string>
     <string name="sync_complete">Синхронизация завершена</string>
     <string name="sync_confirm">Вы уверены что хотите синхронизировать данные с устройством?</string>
+    <string name="synchronisation">Синхронизация</string>
     <string name="synchronizing">Обмениваюсь</string>
     <string name="tag_name">Имя</string>
     <string name="tag_not_in_range">Датчик не найден</string>
