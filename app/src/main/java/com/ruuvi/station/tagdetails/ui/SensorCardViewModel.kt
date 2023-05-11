@@ -2,6 +2,7 @@ package com.ruuvi.station.tagdetails.ui
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -19,6 +20,7 @@ import com.ruuvi.station.util.Days
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
@@ -46,13 +48,15 @@ class SensorCardViewModel(
     private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
 
-    fun pageChanged(page: Int) {
-        _selectedIndex.value = page
-    }
+    private val _chartCleared = MutableSharedFlow<String>()
+    private val chartCleared: SharedFlow<String> = _chartCleared
 
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
+
+    fun getChartCleared(sensorId: String):Flow<String> = chartCleared.filter { it == sensorId }
+
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.syncStatusFlow.filter { it?.sensorId == sensorId }.collect{ status ->
             Timber.d("getGattEvents gattInteractor.syncStatusFlow $status")
@@ -172,9 +176,9 @@ class SensorCardViewModel(
     fun removeTagData(sensorId: String) {
         sensorHistoryRepository.removeForSensor(sensorId)
         tagDetailsInteractor.clearLastSync(sensorId)
-//        viewModelScope.launch {
-//            _clearChart.emit(true)
-//        }
+        viewModelScope.launch {
+            _chartCleared.emit(sensorId)
+        }
     }
 
     fun refreshStatus() {

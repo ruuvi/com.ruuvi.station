@@ -85,6 +85,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                     unitsConverter = unitsConverter,
                     viewPeriod = viewPeriod,
                     getSyncStatusFlow = viewModel::getGattEvents,
+                    getChartClearedFlow = viewModel::getChartCleared,
                     disconnectGattAction = viewModel::disconnectGatt,
                     shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
                     syncGatt = viewModel::syncGatt,
@@ -120,6 +121,7 @@ fun SensorsPager(
     unitsConverter: UnitsConverter,
     viewPeriod: Days,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
+    getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
     syncGatt: (String) -> Unit,
@@ -228,7 +230,8 @@ fun SensorsPager(
                                 pressureChart = pressureChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
-                                selected = pagerSensor?.id == sensor.id
+                                selected = pagerSensor?.id == sensor.id,
+                                chartCleared = getChartClearedFlow(sensor.id)
                             )
                         } else {
                             SensorCard(sensor = sensor)

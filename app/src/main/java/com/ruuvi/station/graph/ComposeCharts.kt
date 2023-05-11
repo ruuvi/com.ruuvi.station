@@ -39,6 +39,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -51,6 +52,7 @@ fun ChartsView(
     pressureChart: LineChart,
     unitsConverter: UnitsConverter,
     selected: Boolean,
+    chartCleared: Flow<String>,
     getHistory: (String) -> List<TagSensorReading>
 ) {
     Timber.d("ChartView - top $sensorId $selected")
@@ -83,6 +85,16 @@ fun ChartsView(
         normalizeOffsets(temperatureChart, humidityChart, pressureChart)
         synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
         setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
+
+        chartCleared.collect{
+            Timber.d("ChartView - chart cleared $it")
+            temperatureData.clear()
+            humidityData.clear()
+            pressureData.clear()
+            temperatureChart.fitScreen()
+            humidityChart.fitScreen()
+            pressureChart.fitScreen()
+        }
     }
 
     LaunchedEffect(key1 = selected) {
