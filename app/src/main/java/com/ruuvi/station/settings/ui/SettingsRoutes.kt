@@ -9,6 +9,7 @@ object SettingsRoutes {
     const val HUMIDITY = "humidity"
     const val PRESSURE = "pressure"
     const val APPEARANCE = "appearance"
+    const val ALERT_NOTIFICATIONS = "alert_notifications"
     const val BACKGROUNDSCAN = "backgroundscan"
     const val CHARTS = "charts"
     const val CLOUD = "cloud"
@@ -25,6 +26,7 @@ object SettingsRoutes {
             CHARTS -> context.getString(R.string.settings_chart)
             CLOUD -> context.getString(R.string.ruuvi_cloud)
             DATAFORWARDING -> context.getString(R.string.settings_data_forwarding)
+            ALERT_NOTIFICATIONS -> context.getString(R.string.settings_alert_notifications)
             else -> context.getString(R.string.menu_app_settings)
         }
     }

@@ -3,7 +3,10 @@ package com.ruuvi.station.firebase.domain
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.network.ui.model.ShareOperationStatus
+import com.ruuvi.station.network.ui.model.ShareOperationType
 import com.ruuvi.station.util.extensions.diffGreaterThan
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,8 +21,12 @@ class PushRegisterInteractor(
         Timber.d("checkAndRegisterDeviceToken")
         var registeredToken = preferencesRepository.getRegisteredToken()
 
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Timber.e(exception)
+        }
+
         if (registeredToken.isNotEmpty() && !ruuviNetworkInteractor.signedIn) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO + handler).launch {
                 unregisterToken(registeredToken)
             }
         }
@@ -37,7 +44,7 @@ class PushRegisterInteractor(
 
                     val timeToRefreshToken = Date(lastRefresh).diffGreaterThan(refreshInterval)
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO + handler).launch {
                         Timber.d("checkAndRegisterDeviceToken tokenChanged = $tokenChanged timeToRefreshToken = $timeToRefreshToken")
                         if (tokenChanged && registeredToken.isNotEmpty()) {
                             unregisterToken(registeredToken)

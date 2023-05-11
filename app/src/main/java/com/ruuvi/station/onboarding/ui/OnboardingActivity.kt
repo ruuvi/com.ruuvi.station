@@ -60,13 +60,13 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
                 val isDarkTheme = isSystemInDarkTheme()
 
                 OnboardingBody(onboardingViewModel.signedIn) {
-                    finish()
                     onboardingViewModel.onboardingFinished()
                     if (onboardingViewModel.signedIn) {
                         StartupActivity.start(this, true)
                     } else {
                         SignInActivity.start(this)
                     }
+                    finish()
                 }
 
                 SideEffect {

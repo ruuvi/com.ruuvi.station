@@ -13,7 +13,7 @@ data class RuuviDimensions(
     val big: Dp = 24.dp,
     val extraBig: Dp = 32.dp,
     val huge: Dp = 64.dp,
-    val screenPadding: Dp = extended,
+    val screenPadding: Dp = mediumPlus,
     val textTopPadding: Dp = medium,
     val textBottomPadding: Dp = medium,
     val buttonHeight: Dp = 48.dp,

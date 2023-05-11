@@ -3,8 +3,8 @@ package com.ruuvi.station.widgets.complexWidget
 import androidx.compose.runtime.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -23,11 +23,11 @@ class ComplexWidgetConfigureViewModel(
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
 
-    private val cloudSensors = Transformations.map(_allSensors) { allSensors ->
+    private val cloudSensors = _allSensors.map { allSensors ->
         allSensors.filter { it.networkLastSync != null }
     }
 
-    val gotFilteredSensors = Transformations.map(_allSensors) { allSensors ->
+    val gotFilteredSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }
     }
 
@@ -39,7 +39,7 @@ class ComplexWidgetConfigureViewModel(
 
     override val userLoggedIn: LiveData<Boolean> = MutableLiveData<Boolean> (networkInteractor.signedIn)
 
-    override val userHasCloudSensors: LiveData<Boolean> = Transformations.map(cloudSensors) {
+    override val userHasCloudSensors: LiveData<Boolean> = cloudSensors.map {
         it.isNotEmpty()
     }
 

@@ -16,5 +16,16 @@ data class SensorsDenseInfo (
     val offsetTemperature: Double,
     val offsetHumidity: Double,
     val offsetPressure: Double,
-    val measurements: List<SensorDataMeasurementResponse>
+    val measurements: List<SensorDataMeasurementResponse>,
+    val alerts: List<NetworkAlertItem>,
+    val sharedTo: List<String>,
+    val subscription: SensorSubscription
+)
+
+data class SensorSubscription(
+    val maxHistoryDays: Int,
+    val maxResolutionMinutes: Int,
+    val emailAlertAllowed: Boolean,
+    val pushAlertAllowed: Boolean,
+    val subscriptionName: String
 )

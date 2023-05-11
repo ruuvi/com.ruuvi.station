@@ -97,6 +97,8 @@
     <string name="camera">Appareil photo</string>
     <string name="camera_fail">Impossible d\'accéder à l\'appareil photo</string>
     <string name="cancel">Annuler</string>
+    <string name="card_action">Action de la carte</string>
+    <string name="card_type">Type de carte</string>
     <string name="change_background">Paramètres et alertes</string>
     <string name="change_background_image">Modifier l\'image de fond</string>
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
@@ -115,7 +117,7 @@
     <string name="clear_confirm">Supprimer l\'historique de l\'application ?</string>
     <string name="clear_local_history">Effacer l\'histoire locale</string>
     <string name="clear_local_history_description">Voulez-vous effacer les données historiques stockées localement dans l\'application ? Cela n\'effacera pas l\'historique stocké en interne par le capteur ou les données historiques stockées sur le service Ruuvi Cloud.</string>
-    <string name="clear_view">Vue dégagée</string>
+    <string name="clear_view">Vue historique vide</string>
     <string name="close">Fermer</string>
     <string name="cloud_er_forbidden">Interdit</string>
     <string name="cloud_er_internal">Erreur interne</string>
@@ -189,6 +191,7 @@
     <string name="dfu_no_internet">Echec du téléchargement de la mise à jour. Veuillez vérifier votre connexion Internet.</string>
     <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour.</string>
     <string name="disconnected">Déconnecté</string>
+    <string name="do_not_show_again">Ne plus afficher ça</string>
     <string name="done">Prêt</string>
     <string name="download">Téléchargement</string>
     <string name="downloading_latest_firmware">Téléchargement de la dernière version pour la mise à jour...</string>
@@ -229,6 +232,7 @@
     <string name="gateway_test_success">Le routeur fonctionne ! Réponse : %1$d</string>
     <string name="gateway_testing">Test en cours...</string>
     <string name="gatt_not_in_range_description">Le téléchargement de l\'historique Bluetooth a échoué. Vérifiez que vous êtes à portée Bluetooth, que votre capteur possède un micrologiciel prenant en charge le téléchargement et que le capteur n\'est pas simultanément connecté à un autre appareil iOS. La connexion du capteur est réservée à la Ruuvi Station lorsque vous utilisez le mode connecté dans iOS.</string>
+    <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="general">Général</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station est une application intuitive pour contôler vos capteurs Ruuvi. Commencez en jumelant des capteurs.</string>
@@ -259,6 +263,7 @@
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Humidité de l\'air (%1$s)</string>
+    <string name="image_cards">Cartes-images</string>
     <string name="image_view">Vue de l\'image</string>
     <string name="information">Information</string>
     <string name="language_english">English</string>
@@ -341,6 +346,8 @@
     <string name="onboarding_web_pros">Grand tableau de bord, historique pluriannuel, alertes par e-mail et plus encore sur</string>
     <string name="onboarding_with_ruuvi_sensors">Apprenez à connaître votre application Ruuvi Station.</string>
     <string name="onboarding_your_sensors">votre application avec des noms et des arrière-plans personnalisés.</string>
+    <string name="open_history_view">Ouvrir la vue de l\'historique</string>
+    <string name="open_sensor_view">Ouvrir la vue du capteur</string>
     <string name="open_settings">Ouvrir les réglages</string>
     <string name="owner_none">Pas de propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
@@ -374,7 +381,7 @@
     <string name="pressure_with_unit">Pression de l\'air (%1$s)</string>
     <string name="reading_history">Analyse de l\'historique</string>
     <string name="reading_history_not_supported">Firmware non supporté</string>
-    <string name="reading_history_x">Analyse de l\'historique.. %1$s</string>
+    <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="remove">Supprimer</string>
     <string name="remove_claimed_sensor">Le propriétaire sera réinitialisé en supprimant le capteur. N\'importe qui pourra alors s\'approprier le capteur. Chaque capteur Ruuvi ne pouvant avoir qu\'un propriétaire.</string>
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
@@ -383,7 +390,6 @@
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
     <string name="replace_battery">Batterie faible</string>
     <string name="request_code">Demander un code</string>
-    <string name="rssi">Puissance du signal (RSSI)</string>
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode nuage lorsque vous souhaitez enregistrer les données de puissance du signal uniquement via la passerelle Ruuvi.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -402,6 +408,7 @@
     <string name="sensor_shared">Partagé</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">La connexion à l\'application présente de nombreux avantages. Les paramètres seront stockés en toute sécurité sur votre compte:</string>
     <string name="settings">Réglages</string>
+    <string name="settings_alert_notifications">Notifications d\'alerte</string>
     <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
     <string name="settings_background_battery_optimization">Si le balayage en arrière plan ne fonctionne pas, désactivez le mode économie d\'énergie de votre téléphone.</string>
@@ -421,11 +428,11 @@
     <string name="settings_background_scan_interval">Intervalle d\'acquisition des données</string>
     <string name="settings_background_scan_interval_description">Définir l\'intervalle d\'acquisition</string>
     <string name="settings_chart">Paramètres de l\'histogramme</string>
-    <string name="settings_chart_all_points">Afficher toutes les données mesurées</string>
+    <string name="settings_chart_all_points">Afficher toutes les mesures</string>
     <string name="settings_chart_all_points_description">L\'utilisation de cette fonction peut ralentir la mise à jour de l\'histogramme.</string>
     <string name="settings_chart_description">Définir l\'intervalle entre deux mesures</string>
-    <string name="settings_chart_draw_dots">Afficher les points</string>
-    <string name="settings_chart_draw_dots_description">L\'affichage des points facilite l\'analyse de l\'histogramme</string>
+    <string name="settings_chart_draw_dots">Afficher les points de données</string>
+    <string name="settings_chart_draw_dots_description">L\'affichage des points facilite l\'analyse de l\'histogramme.</string>
     <string name="settings_chart_interval">Précision de l\'histogramme</string>
     <string name="settings_chart_interval_description">Définir l\'intervalle de l\'histogramme 1 - 60 minutes. Un intervalle plus faible permet une analyse plus précise mais utilise d\'avantage les ressources de votre appareil.</string>
     <string name="settings_chart_view_period">Période de l\'histogramme</string>
@@ -442,19 +449,23 @@
     <string name="settings_language">Langue</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
+    <string name="settings_sound">Paramètres du son</string>
+    <string name="settings_sound_description">Configurer les paramètres de son et de vibration de l\'application.</string>
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température.</string>
     <string name="share">Partager</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
-    <string name="share_sensor_already_shared">Le capteur est déjà partagé %1$,d/%2$,d</string>
+    <string name="share_sensor_already_shared">Vous avez utilisé %1$,d/%2$,d du nombre maximum de divisions pour ce capteur. Le capteur est partagé avec les utilisateurs suivants :</string>
     <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
     <string name="share_sensor_send_button">Envoyer</string>
     <string name="share_sensor_title">Partager le capteur</string>
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
+    <string name="shared_to_x">Partagé %1$,d/%2$,d</string>
     <string name="sign_in">Connexion</string>
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail. Connectez-vous en le saisissant ici:</string>
     <string name="sign_in_code_hint">Code</string>
+    <string name="sign_in_continue">Continuer</string>
     <string name="sign_in_email_sent">Email envoyé</string>
     <string name="sign_in_login_button">Connexion</string>
     <string name="sign_in_manual_code">Entrer le code</string>
@@ -468,8 +479,12 @@
     <string name="sign_out_confirm">Les capteurs dont vous êtes propriétaire seront suspprimés de l\'application lorsque vous vous déconnectez de votre compte Ruuvi. Les données seront importées du cloud lorsque vous vous connectez à nouveau.\n\nSouhaitez vous vous déconnecter ?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength_dbm">Puissance du signal (dBm)</string>
+    <string name="signal_strength_rssi">Puissance du signal (RSSI)</string>
     <string name="signal_unit">dBm</string>
     <string name="signed_in_user">Utilisateur connecté</string>
+    <string name="signing_in_is_optional">(La connexion est facultative)</string>
+    <string name="simple_cards">Cartes simples</string>
     <string name="simple_view">Vue simple</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
@@ -481,6 +496,7 @@
     <string name="sync">Synchroniser</string>
     <string name="sync_complete">Synchronisation terminée</string>
     <string name="sync_confirm">Souhaitez vous importer les données du capteur ?</string>
+    <string name="synchronisation">Synchronisation</string>
     <string name="synchronizing">Synchronisation</string>
     <string name="tag_name">Nom du capteur</string>
     <string name="tag_not_in_range">Capteur introuvable. Le capteur est-il à proximité ?</string>
@@ -512,7 +528,7 @@
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
-    <string name="use_without_account">Non merci, je continue sans compte</string>
+    <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

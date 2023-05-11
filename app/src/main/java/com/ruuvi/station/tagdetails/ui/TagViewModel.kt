@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import androidx.lifecycle.*
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -10,7 +11,6 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.network.data.response.SensorDataResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -46,20 +46,18 @@ class TagViewModel(
 
     private val networkSyncInProgress = MutableLiveData<Boolean>(false)
 
-    private var networkStatus = MutableLiveData<SensorDataResponse?>(networkInteractor.getSensorNetworkStatus(sensorId))
-
-    val isNetworkTagObserve: LiveData<Boolean> = Transformations.map(networkStatus) {
-        it != null
+    val isNetworkSensor: LiveData<Boolean> = _tagEntry.map {
+        it?.networkSensor ?: false
     }
 
-    val canUseGattSync: LiveData<Boolean> = Transformations.map(_tagEntry) {
+    val canUseGattSync: LiveData<Boolean> = _tagEntry.map {
         it?.connectable == true
     }
 
     private val _gattSyncInProgress = MutableStateFlow<Boolean>(false)
     val gattSyncInProgress: StateFlow<Boolean> = _gattSyncInProgress
 
-    private val _gattSyncStatus = MutableStateFlow<UiText>(UiText.EmptyString())
+    private val _gattSyncStatus = MutableStateFlow<UiText>(UiText.EmptyString)
     val gattSyncStatus: StateFlow<UiText> = _gattSyncStatus
 
     private val _event = MutableSharedFlow<SyncProgress>()
@@ -86,15 +84,18 @@ class TagViewModel(
 
         viewModelScope.launch {
             networkDataSyncInteractor.syncInProgressFlow.collect {
+                Timber.d("syncStatusFlow networkDataSyncInteractor collected $it")
                 networkSyncInProgress.value = it
             }
         }
 
         syncStatus.addSource(networkSyncInProgress) { syncStatus.value = isSyncInProgress() }
-        syncStatus.addSource(isNetworkTagObserve) { syncStatus.value = isSyncInProgress() }
+        syncStatus.addSource(isNetworkSensor) { syncStatus.value = isSyncInProgress() }
     }
 
-    private fun isSyncInProgress(): Boolean = networkSyncInProgress.value ?: false && isNetworkTagObserve.value ?: false
+    private fun isSyncInProgress(): Boolean = networkSyncInProgress.value ?: false && isNetworkSensor.value ?: false
+
+    fun shouldSkipGattSyncDialog() = preferencesRepository.getDontShowGattSync()
 
     private fun collectGattSyncStatus() {
         viewModelScope.launch {
@@ -105,7 +106,7 @@ class TagViewModel(
                         when (gattStatus.syncProgress) {
                             SyncProgress.STILL, SyncProgress.DONE -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                             }
                             SyncProgress.CONNECTING -> {
                                 _gattSyncInProgress.value = true
@@ -117,7 +118,7 @@ class TagViewModel(
                             }
                             SyncProgress.DISCONNECTED -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.DISCONNECTED)
                                 resetGattStatus()
                             }
@@ -139,19 +140,19 @@ class TagViewModel(
                             }
                             SyncProgress.NOT_SUPPORTED -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_SUPPORTED)
                                 resetGattStatus()
                             }
                             SyncProgress.NOT_FOUND -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_FOUND)
                                 resetGattStatus()
                             }
                             SyncProgress.ERROR -> {
                                 _gattSyncInProgress.value = false
-                                _gattSyncStatus.value = UiText.EmptyString()
+                                _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.ERROR)
                                 resetGattStatus()
                             }
@@ -175,7 +176,7 @@ class TagViewModel(
     fun syncGatt() {
         tagEntry.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * preferencesRepository.getGraphViewPeriodDays())
+            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
             if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }
@@ -230,7 +231,6 @@ class TagViewModel(
                 ?.let {
                     withContext(Dispatchers.Main) {
                         _tagEntry.value = it
-                        networkStatus.value = status
                     }
                 }
         }
@@ -271,5 +271,9 @@ class TagViewModel(
     fun refreshStatus() {
         Timber.d("refreshStatus")
         _chartViewPeriod.value = getGraphViewPeriod()
+    }
+
+    fun dontShowGattSyncDescription() {
+        preferencesRepository.setDontShowGattSync(true)
     }
 }

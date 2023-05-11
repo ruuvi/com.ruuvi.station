@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.preferences
 
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
@@ -106,13 +107,6 @@ class PreferencesRepository(
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
         preferences.backgroundScanMode = mode
-    }
-
-    fun isDashboardEnabled(): Boolean =
-        preferences.dashboardEnabled
-
-    fun setIsDashboardEnabled(isEnabled: Boolean) {
-        preferences.dashboardEnabled = isEnabled
     }
 
     fun getBackgroundScanInterval(): Int =
@@ -225,6 +219,12 @@ class PreferencesRepository(
         preferences.dashboardType = dashboardType
     }
 
+    fun getDashboardTapAction(): DashboardTapAction = preferences.dashboardTapAction
+
+    fun updateDashboardTapAction(dashboardTapAction: DashboardTapAction) {
+        preferences.dashboardTapAction = dashboardTapAction
+    }
+
     fun getRegisteredToken(): String = preferences.registeredToken
 
     fun updateRegisteredToken(token: String) {
@@ -236,5 +236,26 @@ class PreferencesRepository(
 
     fun setDeviceTokenRefreshDate(refreshDate: Long) {
         preferences.deviceTokenRefreshDate = refreshDate
+    }
+
+    fun getSubscriptionRefreshDate(): Long =
+        preferences.subscriptionRefreshDate
+
+    fun setSubscriptionRefreshDate(refreshDate: Long) {
+        preferences.subscriptionRefreshDate = refreshDate
+    }
+
+    fun getSubscriptionMaxSharesPerSensor(): Int =
+        preferences.subscriptionMaxSharesPerSensor
+
+    fun setSubscriptionMaxSharesPerSensor(maxShares: Int) {
+        preferences.subscriptionMaxSharesPerSensor = maxShares
+    }
+
+    fun getDontShowGattSync(): Boolean =
+        preferences.dontShowGattSync
+
+    fun setDontShowGattSync(value: Boolean) {
+        preferences.dontShowGattSync = value
     }
 }

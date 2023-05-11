@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = '1.7.20'
+        kotlin_version = '1.8.0'
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
         coroutines_version = "1.4.0"
         lifecycle_version = "2.5.1"
         retrofit_version = "2.9.0"
         navigation_version = '2.5.3'
-        compose_version = '1.3.2'
+        compose_version = '1.4.1'
         accomponist_version = '0.28.0'
     }
     repositories {

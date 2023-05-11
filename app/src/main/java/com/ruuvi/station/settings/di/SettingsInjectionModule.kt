@@ -21,8 +21,6 @@ object SettingsInjectionModule {
 
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
 
-        bind<AppSettingsExperimentalViewModel>() with provider { AppSettingsExperimentalViewModel(instance()) }
-
         bind<AppSettingsInteractor>() with singleton {
             AppSettingsInteractor(instance(), instance(), instance(), instance(), instance())
         }
