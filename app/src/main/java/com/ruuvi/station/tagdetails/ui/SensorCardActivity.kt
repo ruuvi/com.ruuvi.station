@@ -39,6 +39,7 @@ import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
@@ -312,19 +313,21 @@ fun SensorCardTopAppBar(
                 )
             }
             val chartIconRes = if (chartsEnabled) {
-                R.drawable.ic_ruuvi_app_notification_icon_v2
+                R.drawable.icon_temperature
             } else {
                 R.drawable.ic_ruuvi_graphs_icon
             }
             IconButton(onClick = { chartsAction.invoke() }) {
                 Icon(
                     painter = painterResource(id = chartIconRes),
+                    tint = White,
                     contentDescription = ""
                 )
             }
             IconButton(onClick = { settingsAction.invoke() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_settings_24px),
+                    tint = White,
                     contentDescription = stringResource(id = R.string.sensor_settings)
                 )
             }
