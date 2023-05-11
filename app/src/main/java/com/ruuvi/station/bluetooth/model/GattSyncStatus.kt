@@ -9,6 +9,16 @@ data class GattSyncStatus (
     var syncedDataPoints: Int = 0
 )
 
-enum class SyncProgress {
-    STILL, CONNECTING, CONNECTED, DISCONNECTED, READING_INFO, READING_DATA, SAVING_DATA, NOT_SUPPORTED, NOT_FOUND, ERROR, DONE
+enum class SyncProgress (val syncInProgress: Boolean) {
+    STILL(false),
+    CONNECTING(true),
+    CONNECTED(true),
+    DISCONNECTED(false),
+    READING_INFO(true),
+    READING_DATA(true),
+    SAVING_DATA(true),
+    NOT_SUPPORTED(false),
+    NOT_FOUND(false),
+    ERROR(false),
+    DONE(false)
 }

@@ -8,6 +8,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.ruuvi.station.R
+import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import java.text.DateFormat
@@ -48,10 +49,4 @@ class ChartMarkerView @JvmOverloads
 
         super.refreshContent(e, highlight)
     }
-}
-
-enum class ChartSensorType {
-    TEMPERATURE,
-    HUMIDITY,
-    PRESSURE
 }

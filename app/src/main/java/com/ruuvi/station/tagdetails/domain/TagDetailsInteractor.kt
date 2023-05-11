@@ -22,7 +22,7 @@ class TagDetailsInteractor(
     fun clearLastSync(sensorId: String) =
         sensorSettingsRepository.clearLastSync(sensorId)
 
-    fun getTagReadings(tagId: String): List<TagSensorReading>? {
+    fun getTagReadings(tagId: String): List<TagSensorReading> {
         return if (preferences.isShowAllGraphPoint()) {
             sensorHistoryRepository.getHistory(tagId, preferences.getGraphViewPeriodDays())
         } else {

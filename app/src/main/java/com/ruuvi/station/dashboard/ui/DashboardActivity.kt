@@ -7,10 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -75,6 +72,7 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -370,6 +368,7 @@ fun DashboardItems(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardItem(
     itemHeight: Dp,
@@ -383,13 +382,18 @@ fun DashboardItem(
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
-            .clickable {
-                TagDetailsActivity.start(
-                    context = context,
-                    tagId = sensor.id,
-                    showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
-                )
-            },
+            .combinedClickable (
+                onClick = {
+                    TagDetailsActivity.start(
+                        context = context,
+                        tagId = sensor.id,
+                        showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
+                },
+                onLongClick = {
+                    SensorCardActivity.start(context, sensor.id)
+                }
+            ),
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
