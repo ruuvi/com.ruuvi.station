@@ -51,6 +51,9 @@ class SensorCardViewModel(
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
 
+    private val _showCharts = MutableStateFlow<Boolean> (arguments.showChart)
+    val showCharts: SharedFlow<Boolean> = _showCharts
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
@@ -188,6 +191,10 @@ class SensorCardViewModel(
 
     fun dontShowGattSyncDescription() {
         preferencesRepository.setDontShowGattSync(true)
+    }
+
+    fun setShowCharts(showCharts: Boolean) {
+        _showCharts.value = showCharts
     }
 
     init {

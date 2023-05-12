@@ -78,10 +78,13 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
                 val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
+                val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
 
                 SensorsPager(
                     selectedIndex = selectedIndex,
                     sensors = sensors,
+                    showCharts = showCharts,
+                    setShowCharts = viewModel::setShowCharts,
                     getHistory = viewModel::getSensorHistory,
                     unitsConverter = unitsConverter,
                     viewPeriod = viewPeriod,
@@ -118,6 +121,8 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
 fun SensorsPager(
     selectedIndex: Int,
     sensors: List<RuuviTag>,
+    showCharts: Boolean,
+    setShowCharts: (Boolean) -> Unit,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
     viewPeriod: Days,
@@ -138,9 +143,7 @@ fun SensorsPager(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(selectedIndex)
-    var chartsEnabled by remember {
-        mutableStateOf(false)
-    }
+
     var pagerSensor by remember {
         mutableStateOf(sensors.getOrNull(selectedIndex))
     }
@@ -161,7 +164,7 @@ fun SensorsPager(
             if (uri.path != null) {
                 Crossfade(targetState = uri) {
                     Timber.d("image for sensor ${sensor.displayName}")
-                    SensorCardImage(it, chartsEnabled)
+                    SensorCardImage(it, showCharts)
                 }
             }
         }
@@ -173,9 +176,9 @@ fun SensorsPager(
                 navigationCallback = {
                     (context as Activity).onBackPressed()
                 },
-                chartsEnabled = chartsEnabled,
+                chartsEnabled = showCharts,
                 alertAction = {},
-                chartsAction = { chartsEnabled = !chartsEnabled },
+                chartsAction = { setShowCharts(!showCharts) },
                 settingsAction = {
                     if (pagerSensor != null) {
                         TagSettingsActivity.start(context, pagerSensor?.id)
@@ -186,7 +189,7 @@ fun SensorsPager(
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
-                userScrollEnabled = !chartsEnabled,
+                userScrollEnabled = !showCharts,
                 count = sensors.size
             ) { page ->
                 val sensor = sensors.getOrNull(page)
@@ -209,7 +212,7 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         SensorTitle(sensor = sensor)
-                        if (chartsEnabled) {
+                        if (showCharts) {
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 viewPeriod = viewPeriod,
