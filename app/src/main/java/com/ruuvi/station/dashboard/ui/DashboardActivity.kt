@@ -391,7 +391,7 @@ fun DashboardItem(
                     )
                 },
                 onLongClick = {
-                    SensorCardActivity.start(context, sensor.id)
+                    SensorCardActivity.start(context, sensor.id, dashboardTapAction == DashboardTapAction.SHOW_CHART)
                 }
             ),
         shape = RoundedCornerShape(10.dp),
@@ -483,6 +483,7 @@ fun DashboardItem(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardItemSimple(
     sensor: RuuviTag,
@@ -494,13 +495,18 @@ fun DashboardItemSimple(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                TagDetailsActivity.start(
-                    context = context,
-                    tagId = sensor.id,
-                    showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
-                )
-            },
+            .combinedClickable (
+                onClick = {
+                    TagDetailsActivity.start(
+                        context = context,
+                        tagId = sensor.id,
+                        showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
+                },
+                onLongClick = {
+                    SensorCardActivity.start(context, sensor.id, dashboardTapAction == DashboardTapAction.SHOW_CHART)
+                }
+            ),
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
