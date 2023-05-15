@@ -23,11 +23,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.whenStarted
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
@@ -229,6 +231,7 @@ fun SensorsPager(
                             )
 
                             ChartsView(
+                                modifier = Modifier.weight(1f),
                                 sensorId = sensor.id,
                                 temperatureChart = temperatureChart,
                                 humidityChart = humidityChart,
@@ -239,8 +242,16 @@ fun SensorsPager(
                                 chartCleared = getChartClearedFlow(sensor.id)
                             )
                         } else {
-                            SensorCard(sensor = sensor)
+                            SensorCard(
+                                sensor = sensor,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
+                        SensorCardBottom(
+                            sensor = sensor,
+                            modifier = Modifier
+                                .height(intrinsicSize = IntrinsicSize.Min)
+                        )
                     }
                 }
             }
@@ -272,9 +283,12 @@ fun SensorTitle(sensor: RuuviTag) {
 }
 
 @Composable
-fun SensorCard(sensor: RuuviTag) {
+fun SensorCard(
+    modifier: Modifier = Modifier,
+    sensor: RuuviTag
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(bottom = 64.dp),
         horizontalAlignment = Alignment.Start,
@@ -372,6 +386,55 @@ fun SensorCardImage(
                     .fillMaxSize()
                     .background(color = Color(0xCC001D1B))
             )
+        }
+    }
+}
+
+@Composable
+fun SensorCardBottom(
+    sensor: RuuviTag,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current
+
+    var updatedText by remember {
+        mutableStateOf(sensor.updatedAt?.describingTimeSince(context) ?: "")
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier.padding(RuuviStationTheme.dimensions.medium).fillMaxWidth()
+    ) {
+        val icon = if (sensor.updatedAt == sensor.networkLastSync) {
+            R.drawable.ic_icon_gateway
+        } else {
+            R.drawable.ic_icon_bluetooth
+        }
+
+        Text(
+            style = RuuviStationTheme.typography.dashboardSecondary,
+            fontSize = RuuviStationTheme.fontSizes.small,
+            text = updatedText,
+        )
+        
+        Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+
+        Icon(
+            modifier = Modifier.height(20.dp).width(24.dp),
+            painter = painterResource(id = icon),
+            tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+            contentDescription = null,
+        )
+    }
+
+    LaunchedEffect(key1 = lifecycle, key2 = sensor.updatedAt) {
+        lifecycle.whenStarted {
+            while (true) {
+                updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
+                delay(500)
+            }
         }
     }
 }

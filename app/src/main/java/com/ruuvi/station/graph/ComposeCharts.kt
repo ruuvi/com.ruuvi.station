@@ -51,6 +51,7 @@ import java.util.*
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChartsView(
+    modifier: Modifier,
     sensorId: String,
     temperatureChart: LineChart,
     humidityChart: LineChart,
@@ -150,8 +151,9 @@ fun ChartsView(
         if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
 
         VerticalPager(
-            modifier = Modifier.fillMaxSize(),
-            pageCount = chartTypes.size
+            modifier = modifier.fillMaxSize(),
+            pageCount = chartTypes.size,
+            beyondBoundsPageCount = 3
         ) {page ->
             val chartSensorType = chartTypes[page]
 
@@ -169,7 +171,7 @@ fun ChartsView(
         }
     }
     else {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = modifier.fillMaxSize()) {
             if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
                 EmptyCharts()
             } else {
