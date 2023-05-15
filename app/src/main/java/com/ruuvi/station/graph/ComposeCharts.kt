@@ -1,16 +1,20 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +48,7 @@ import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChartsView(
     sensorId: String,
@@ -136,38 +141,67 @@ fun ChartsView(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts()
-        } else {
-            val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
-            if (onlyOneChart) {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.5f))
-            }
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)) {
-                ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
-            }
-            if (onlyOneChart) {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.5f))
-            }
-            if (humidityData.isNotEmpty()){
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    if (isLandscape) {
+        val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
+        if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
+        if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
+
+        VerticalPager(
+            modifier = Modifier.fillMaxSize(),
+            pageCount = chartTypes.size
+        ) {page ->
+            val chartSensorType = chartTypes[page]
+
+            when (chartSensorType) {
+                ChartSensorType.TEMPERATURE -> {
+                    ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
+                }
+                ChartSensorType.HUMIDITY -> {
                     ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
                 }
+                ChartSensorType.PRESSURE -> {
+                    ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
+                }
             }
-            if (pressureData.isNotEmpty()) {
+        }
+    }
+    else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
+                EmptyCharts()
+            } else {
+                val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
+                if (onlyOneChart) {
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.5f))
+                }
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)) {
-                    ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
+                    ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
+                }
+                if (onlyOneChart) {
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.5f))
+                }
+                if (humidityData.isNotEmpty()){
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)) {
+                        ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
+                    }
+                }
+                if (pressureData.isNotEmpty()) {
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)) {
+                        ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
+                    }
                 }
             }
         }

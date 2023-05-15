@@ -7,7 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -315,12 +316,13 @@ fun SensorCardTopAppBar(
                     contentDescription = ""
                 )
             }
-            val chartIconRes = if (chartsEnabled) {
-                R.drawable.icon_temperature
-            } else {
-                R.drawable.ic_ruuvi_graphs_icon
-            }
+
             IconButton(onClick = { chartsAction.invoke() }) {
+                val chartIconRes = if (chartsEnabled) {
+                    R.drawable.icon_temperature
+                } else {
+                    R.drawable.ic_ruuvi_graphs_icon
+                }
                 Icon(
                     painter = painterResource(id = chartIconRes),
                     tint = White,
@@ -363,13 +365,13 @@ fun SensorCardImage(
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
-
-    if (chartsEnabled) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xCC001D1B))
-        )
+    Crossfade(targetState = chartsEnabled, animationSpec = tween(1000)) {
+        if (it) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xCC001D1B))
+            )
+        }
     }
-
 }
