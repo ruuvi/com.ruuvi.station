@@ -1,23 +1,14 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -35,197 +26,13 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ChartsView(
-    modifier: Modifier,
-    sensorId: String,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    unitsConverter: UnitsConverter,
-    selected: Boolean,
-    chartCleared: Flow<String>,
-    getHistory: (String) -> List<TagSensorReading>
-) {
-    Timber.d("ChartView - top $sensorId $selected")
-    val context = LocalContext.current
-
-    var history by remember {
-        mutableStateOf<List<TagSensorReading>>(listOf())
-    }
-
-    var from by remember {
-        mutableStateOf(0L)
-    }
-
-    var to by remember {
-        mutableStateOf(0L)
-    }
-
-    var temperatureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var humidityData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var pressureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-
-    LaunchedEffect(key1 = sensorId) {
-        Timber.d("ChartView - initial setup $sensorId")
-        normalizeOffsets(temperatureChart, humidityChart, pressureChart)
-        synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
-        setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
-
-        chartCleared.collect{
-            Timber.d("ChartView - chart cleared $it")
-            temperatureData.clear()
-            humidityData.clear()
-            pressureData.clear()
-            temperatureChart.fitScreen()
-            humidityChart.fitScreen()
-            pressureChart.fitScreen()
-        }
-    }
-
-    LaunchedEffect(key1 = selected) {
-        Timber.d("ChartView - LaunchedEffect $sensorId")
-        while (selected) {
-            Timber.d("ChartView - get history $sensorId")
-            val freshHistory = getHistory.invoke(sensorId)
-
-            if (history.isEmpty() ||
-                temperatureChart.highestVisibleX >= (temperatureChart.data?.xMax ?: Float.MIN_VALUE)) {
-                history = freshHistory
-
-                if (history.isNotEmpty()) {
-                    Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size}")
-                    from = history[0].createdAt.time
-                    to = Date().time
-
-                    val temperatureDataTemp = mutableListOf<Entry>()
-                    val humidityDataTemp = mutableListOf<Entry>()
-                    val pressureDataTemp = mutableListOf<Entry>()
-                    history.forEach { item ->
-                        val timestamp = (item.createdAt.time - from).toFloat()
-                        temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(item.temperature).toFloat()))
-                        item.humidity?.let { humidity ->
-                            humidityDataTemp.add(Entry(timestamp, unitsConverter.getHumidityValue(humidity, item.temperature).toFloat()))
-                        }
-                        item.pressure?.let {pressure ->
-                            pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
-                        }
-                    }
-                    temperatureData = temperatureDataTemp
-                    humidityData = humidityDataTemp
-                    pressureData = pressureDataTemp
-                }
-            } else {
-
-            }
-            delay(1000)
-        }
-    }
-
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    if (isLandscape) {
-        val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
-        if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
-        if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
-
-        VerticalPager(
-            modifier = modifier.fillMaxSize(),
-            pageCount = chartTypes.size,
-            beyondBoundsPageCount = 3
-        ) {page ->
-            val chartSensorType = chartTypes[page]
-
-            when (chartSensorType) {
-                ChartSensorType.TEMPERATURE -> {
-                    ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
-                }
-                ChartSensorType.HUMIDITY -> {
-                    ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
-                }
-                ChartSensorType.PRESSURE -> {
-                    ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
-                }
-            }
-        }
-    }
-    else {
-        Column(modifier = modifier.fillMaxSize()) {
-            if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-                EmptyCharts()
-            } else {
-                val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
-                if (onlyOneChart) {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.5f))
-                }
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)) {
-                    ChartView(temperatureChart, Modifier.fillMaxSize(), temperatureData, unitsConverter, ChartSensorType.TEMPERATURE, from, to)
-                }
-                if (onlyOneChart) {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.5f))
-                }
-                if (humidityData.isNotEmpty()){
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)) {
-                        ChartView(humidityChart, Modifier.fillMaxSize(), humidityData, unitsConverter, ChartSensorType.HUMIDITY, from, to)
-                    }
-                }
-                if (pressureData.isNotEmpty()) {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)) {
-                        ChartView(pressureChart, Modifier.fillMaxSize(), pressureData, unitsConverter, ChartSensorType.PRESSURE, from, to)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun EmptyCharts() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.extended),
-            style = RuuviStationTheme.typography.onboardingSubtitle,
-            text = stringResource(id = R.string.empty_chart_message),
-            textAlign = TextAlign.Center
-        )
-    }
-}
 
 @Composable
 fun ChartView(
@@ -270,25 +77,6 @@ fun ChartView(
             addDataToChart(context, chartData, view, chartCaption, from, to)
         }
     )
-}
-
-fun setupChart(
-    chart: LineChart,
-    unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType
-) {
-    if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
-        chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
-        chart.axisLeft.granularity = 0.01f
-    } else {
-        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
-            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#")
-            chart.axisLeft.granularity = 1f
-        } else {
-            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
-            chart.axisLeft.granularity = 0.01f
-        }
-    }
 }
 
 private fun applyChartStyle(
@@ -418,7 +206,7 @@ private fun setLabelCount(chart: LineChart) {
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
-private fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pressureChart: LineChart) {
+fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pressureChart: LineChart) {
     val computePaint = Paint(1)
     computePaint.typeface = pressureChart.axisLeft.typeface
     computePaint.textSize = pressureChart.axisLeft.textSize
@@ -454,7 +242,7 @@ private fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineCha
     )
 }
 
-private fun synchronizeChartGestures(charts: Set<LineChart>) {
+fun synchronizeChartGestures(charts: Set<LineChart>) {
     fun synchronizeCharts(sourceChart: LineChart) {
         val sourceMatrixValues = FloatArray(9)
         sourceChart.viewPortHandler.matrixTouch.getValues(sourceMatrixValues)
@@ -509,19 +297,23 @@ private fun synchronizeChartGestures(charts: Set<LineChart>) {
     }
 }
 
-private fun setupHighLighting(charts: Set<LineChart>) {
+fun setupHighLighting(charts: Set<LineChart>) {
     for (chart in charts) {
         val otherCharts = charts.filter { it != chart }
         chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(entry: Entry, highlight: Highlight) {
                 for (otherChart in otherCharts) {
-                    otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                    if (!otherChart.isEmpty) {
+                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
+                    }
                 }
             }
 
             override fun onNothingSelected() {
                 for (otherChart in otherCharts) {
-                    otherChart.highlightValue(0f, -1, false)
+                    if (!otherChart.isEmpty) {
+                        otherChart.highlightValue(0f, -1, false)
+                    }
                 }
             }
         })
