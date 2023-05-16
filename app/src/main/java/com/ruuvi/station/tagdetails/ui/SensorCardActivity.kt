@@ -23,11 +23,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.whenStarted
@@ -39,12 +43,10 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.components.Paragraph
-import com.ruuvi.station.app.ui.components.Subtitle
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.app.ui.theme.White
+import com.ruuvi.station.app.ui.theme.*
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -295,16 +297,123 @@ fun SensorCard(
     modifier: Modifier = Modifier,
     sensor: RuuviTag
 ) {
-    Column(
+    ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .padding(bottom = 64.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Bottom
     ) {
-        Paragraph(text = sensor.temperatureString)
-        Paragraph(text = sensor.humidityString)
-        Paragraph(text = sensor.pressureString)
+        val (temperatureValue, temperatureUnit, otherValues, lowBattery) = createRefs()
+
+        Text(
+            modifier = Modifier
+                .constrainAs(temperatureValue) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .padding(top = 48.dp),
+            fontSize = 72.sp,
+            fontFamily = ruuviStationFonts.oswaldBold,
+            text = sensor.temperatureValue.valueWithoutUnit,
+            lineHeight = 10.sp,
+            color = Color.White
+        )
+
+        Text(
+            modifier = Modifier
+                .constrainAs(temperatureUnit) {
+                    top.linkTo(temperatureValue.top)
+                    start.linkTo(temperatureValue.end)
+                }
+                .padding(
+                    top = 48.dp + 18.dp * LocalDensity.current.fontScale,
+                    start = 2.dp
+                ),
+            fontSize = 36.sp,
+            fontFamily = ruuviStationFonts.oswaldRegular,
+            text = sensor.temperatureValue.unitString,
+            color = Color.White
+        )
+
+        SensorValues(
+            modifier = Modifier
+                .constrainAs(otherValues) {
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    top.linkTo(parent.top)
+                }
+                .padding(
+                    start = RuuviStationTheme.dimensions.extended
+                ),
+            sensor = sensor
+        )
+
+        if (sensor.isLowBattery()) {
+            SensorCardLowBattery(
+                modifier = Modifier
+                    .constrainAs(lowBattery) {
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
+            )
+        }
+    }
+}
+
+@Composable
+fun SensorValues(
+    modifier: Modifier,
+    sensor: RuuviTag
+) {
+    Column(
+        modifier = modifier.fillMaxHeight(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.Start
+    ) {
+        sensor.humidityValue?.let {
+            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithUnit)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        }
+
+        sensor.pressureValue?.let {
+            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithUnit)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        }
+
+        sensor.movementValue?.let {
+            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithUnit)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+        }
+    }
+}
+
+@Composable
+fun SensorValueItem(
+    icon: Int,
+    title: String
+) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+            ) {
+        Icon(
+            modifier = Modifier.size(56.dp),
+            painter = painterResource(id = icon),
+            tint = Color.White,
+            contentDescription = ""
+        )
+        Text(
+            modifier = Modifier
+                .padding(
+                    start = RuuviStationTheme.dimensions.extended
+                ),
+            fontSize = RuuviStationTheme.fontSizes.extended,
+            style = RuuviStationTheme.typography.dashboardBigValueUnit,
+            fontFamily = ruuviStationFonts.montserratRegular,
+            fontWeight = FontWeight.Bold,
+            text = title,
+            color = Color.White
+        )
     }
 }
 
@@ -364,6 +473,31 @@ fun SensorCardTopAppBar(
         contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
     )
+}
+
+@Composable
+fun SensorCardLowBattery(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier.padding(end = RuuviStationTheme.dimensions.mediumPlus)
+    ) {
+        Text(
+            color = colors.secondaryTextColor,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = RuuviStationTheme.fontSizes.small,
+            textAlign = TextAlign.Right,
+            text = stringResource(id = R.string.low_battery),
+        )
+        Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+        Image(
+            modifier = Modifier
+                .size(16.dp)
+                .align(Alignment.CenterVertically),
+            painter = painterResource(id = R.drawable.icon_battery_low),
+            contentDescription = null
+        )
+    }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
