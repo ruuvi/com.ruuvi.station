@@ -82,11 +82,13 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                 val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
                 val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
+                val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
 
                 SensorsPager(
                     selectedIndex = selectedIndex,
                     sensors = sensors,
                     showCharts = showCharts,
+                    syncInProgress = syncInProcess,
                     setShowCharts = viewModel::setShowCharts,
                     getHistory = viewModel::getSensorHistory,
                     unitsConverter = unitsConverter,
@@ -125,6 +127,7 @@ fun SensorsPager(
     selectedIndex: Int,
     sensors: List<RuuviTag>,
     showCharts: Boolean,
+    syncInProgress: Boolean,
     setShowCharts: (Boolean) -> Unit,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
@@ -249,6 +252,7 @@ fun SensorsPager(
                         }
                         SensorCardBottom(
                             sensor = sensor,
+                            syncInProgress = syncInProgress,
                             modifier = Modifier
                                 .height(intrinsicSize = IntrinsicSize.Min)
                         )
@@ -393,6 +397,7 @@ fun SensorCardImage(
 @Composable
 fun SensorCardBottom(
     sensor: RuuviTag,
+    syncInProgress: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
