@@ -281,8 +281,11 @@ fun SensorTitle(sensor: RuuviTag) {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Subtitle(
-            text = sensor.displayName
+        Text(
+            fontSize =  RuuviStationTheme.fontSizes.extended,
+            fontFamily = RuuviStationTheme.fonts.montserratExtraBold,
+            text = sensor.displayName,
+            color = Color.White
         )
     }
 }
