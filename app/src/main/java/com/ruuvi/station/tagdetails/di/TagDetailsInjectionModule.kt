@@ -27,7 +27,7 @@ object TagDetailsInjectionModule {
         }
 
         bind<SensorCardViewModel>() with factory { arguments: SensorCardViewModelArguments ->
-            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<CsvExporter>() with singleton { CsvExporter(instance(), instance(), instance(), instance(), instance()) }

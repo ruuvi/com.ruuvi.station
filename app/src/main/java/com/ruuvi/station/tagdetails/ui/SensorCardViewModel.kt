@@ -11,6 +11,7 @@ import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
@@ -28,6 +29,7 @@ class SensorCardViewModel(
     private val arguments: SensorCardViewModelArguments,
     private val tagInteractor: TagInteractor,
     private val tagDetailsInteractor: TagDetailsInteractor,
+    private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val appSettingsInteractor: AppSettingsInteractor,
     private val preferencesRepository: PreferencesRepository,
     private val gattInteractor: BluetoothGattInteractor,
@@ -50,6 +52,11 @@ class SensorCardViewModel(
 
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
+
+    private val _showCharts = MutableStateFlow<Boolean> (arguments.showChart)
+    val showCharts: SharedFlow<Boolean> = _showCharts
+
+    val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
 
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
@@ -188,6 +195,10 @@ class SensorCardViewModel(
 
     fun dontShowGattSyncDescription() {
         preferencesRepository.setDontShowGattSync(true)
+    }
+
+    fun setShowCharts(showCharts: Boolean) {
+        _showCharts.value = showCharts
     }
 
     init {
