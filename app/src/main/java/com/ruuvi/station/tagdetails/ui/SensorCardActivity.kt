@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -407,10 +408,13 @@ fun SensorCardBottom(
         mutableStateOf(sensor.updatedAt?.describingTimeSince(context) ?: "")
     }
 
+    var syncText by remember { mutableStateOf("") }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
-        modifier = modifier.padding(RuuviStationTheme.dimensions.medium).fillMaxWidth()
+        modifier = modifier
+            .padding(RuuviStationTheme.dimensions.medium)
+            .fillMaxWidth()
     ) {
         val icon = if (sensor.updatedAt == sensor.networkLastSync) {
             R.drawable.ic_icon_gateway
@@ -418,16 +422,29 @@ fun SensorCardBottom(
             R.drawable.ic_icon_bluetooth
         }
 
+        if (syncInProgress) {
+            Text(
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                fontSize = RuuviStationTheme.fontSizes.small,
+                textAlign = TextAlign.Left,
+                text = syncText,
+            )
+        }
+
         Text(
+            modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
             fontSize = RuuviStationTheme.fontSizes.small,
+            textAlign = TextAlign.Right,
             text = updatedText,
         )
         
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
 
         Icon(
-            modifier = Modifier.height(20.dp).width(24.dp),
+            modifier = Modifier
+                .height(20.dp)
+                .width(24.dp),
             painter = painterResource(id = icon),
             tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
             contentDescription = null,
@@ -440,6 +457,23 @@ fun SensorCardBottom(
                 updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
                 delay(500)
             }
+        }
+    }
+
+    val baseSyncText = stringResource(id = R.string.synchronizing)
+    LaunchedEffect(key1 = syncInProgress) {
+        var dotsCount = 0
+        while (syncInProgress) {
+            var syncTextTemp = baseSyncText
+
+            for (j in 1 .. dotsCount) {
+                syncTextTemp = syncTextTemp + "."
+            }
+
+            syncText = syncTextTemp
+            dotsCount++
+            if (dotsCount > 3) dotsCount = 0
+            delay(700)
         }
     }
 }
