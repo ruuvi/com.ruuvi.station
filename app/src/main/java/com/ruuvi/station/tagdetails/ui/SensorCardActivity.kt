@@ -43,6 +43,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.database.tables.TagSensorReading
@@ -159,6 +161,7 @@ fun SensorsPager(
         mutableStateOf(sensors.getOrNull(selectedIndex))
     }
 
+    pagerSensor = sensors.getOrNull(pagerState.currentPage)
     LaunchedEffect(pagerState, sensors.size) {
         snapshotFlow { pagerState.currentPage }.collectLatest { page ->
             Timber.d("page changed to $page")
@@ -167,7 +170,7 @@ fun SensorsPager(
         }
     }
 
-    Timber.d("page sensor $pagerSensor sensors = $sensors")
+    Timber.d("page sensor $pagerSensor bg= ${pagerSensor?.userBackground}")
 
     pagerSensor?.let { sensor ->
         if (sensor.userBackground != null) {
@@ -188,7 +191,12 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
-                alertAction = {},
+                alarmStatus = pagerSensor?.status ?: AlarmSensorStatus.NoAlarms,
+                alarmAction = {
+                    if (pagerSensor != null) {
+                        TagSettingsActivity.start(context, pagerSensor?.id)
+                    }
+                },
                 chartsAction = { setShowCharts(!showCharts) },
                 settingsAction = {
                     if (pagerSensor != null) {
@@ -218,50 +226,53 @@ fun SensorsPager(
                         mutableStateOf(LineChart(context))
                     }
 
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        SensorTitle(sensor = sensor)
-                        if (showCharts) {
-                            ChartControlElement2(
-                                sensorId = sensor.id,
-                                viewPeriod = viewPeriod,
-                                syncStatus = getSyncStatusFlow.invoke(sensor.id),
-                                disconnectGattAction = disconnectGattAction,
-                                shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
-                                syncGatt = syncGatt,
-                                setViewPeriod = setViewPeriod,
-                                exportToCsv = exportToCsv,
-                                removeTagData = removeTagData,
-                                refreshStatus = refreshStatus,
-                                dontShowGattSyncDescription = dontShowGattSyncDescription
-                            )
+                    Crossfade(showCharts) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            SensorTitle(sensor = sensor)
+                            if (it) {
+                                ChartControlElement2(
+                                    sensorId = sensor.id,
+                                    viewPeriod = viewPeriod,
+                                    syncStatus = getSyncStatusFlow.invoke(sensor.id),
+                                    disconnectGattAction = disconnectGattAction,
+                                    shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
+                                    syncGatt = syncGatt,
+                                    setViewPeriod = setViewPeriod,
+                                    exportToCsv = exportToCsv,
+                                    removeTagData = removeTagData,
+                                    refreshStatus = refreshStatus,
+                                    dontShowGattSyncDescription = dontShowGattSyncDescription
+                                )
 
-                            ChartsView(
-                                modifier = Modifier.weight(1f),
-                                sensorId = sensor.id,
-                                temperatureChart = temperatureChart,
-                                humidityChart = humidityChart,
-                                pressureChart = pressureChart,
-                                getHistory = getHistory,
-                                unitsConverter = unitsConverter,
-                                graphDrawDots = graphDrawDots,
-                                selected = pagerSensor?.id == sensor.id,
-                                chartCleared = getChartClearedFlow(sensor.id)
-                            )
-                        } else {
-                            SensorCard(
+                                ChartsView(
+                                    modifier = Modifier.weight(1f),
+                                    sensorId = sensor.id,
+                                    temperatureChart = temperatureChart,
+                                    humidityChart = humidityChart,
+                                    pressureChart = pressureChart,
+                                    getHistory = getHistory,
+                                    unitsConverter = unitsConverter,
+                                    graphDrawDots = graphDrawDots,
+                                    selected = pagerSensor?.id == sensor.id,
+                                    chartCleared = getChartClearedFlow(sensor.id)
+                                )
+                            } else {
+                                SensorCard(
+                                    sensor = sensor,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            SensorCardBottom(
                                 sensor = sensor,
-                                modifier = Modifier.weight(1f)
+                                syncInProgress = syncInProgress,
+                                modifier = Modifier
+                                    .height(intrinsicSize = IntrinsicSize.Min)
                             )
                         }
-                        SensorCardBottom(
-                            sensor = sensor,
-                            syncInProgress = syncInProgress,
-                            modifier = Modifier
-                                .height(intrinsicSize = IntrinsicSize.Min)
-                        )
                     }
                 }
             }
@@ -424,7 +435,8 @@ fun SensorValueItem(
 fun SensorCardTopAppBar(
     navigationCallback: () -> Unit,
     chartsEnabled: Boolean,
-    alertAction: () -> Unit,
+    alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
+    alarmAction: () -> Unit,
     chartsAction: () -> Unit,
     settingsAction: () -> Unit
 ) {
@@ -444,11 +456,26 @@ fun SensorCardTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                    contentDescription = ""
-                )
+            IconButton(onClick = { alarmAction.invoke() }) {
+                when (alarmStatus) {
+                    AlarmSensorStatus.NoAlarms ->
+                        Icon(
+                        painter = painterResource(id = R.drawable.ic_notifications_off_24px),
+                        contentDescription = "")
+                    AlarmSensorStatus.NotTriggered ->
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                            tint = Color.White,
+                            contentDescription = "")
+                    is AlarmSensorStatus.Triggered ->
+                        BlinkingEffect() {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                contentDescription = null,
+                                tint = RuuviStationTheme.colors.activeAlert
+                            )
+                        }
+                }
             }
 
             IconButton(onClick = { chartsAction.invoke() }) {
