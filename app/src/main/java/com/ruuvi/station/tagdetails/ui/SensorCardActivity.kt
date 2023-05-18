@@ -91,6 +91,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                     selectedIndex = selectedIndex,
                     sensors = sensors,
                     showCharts = showCharts,
+                    graphDrawDots = viewModel.graphDrawDots,
                     syncInProgress = syncInProcess,
                     setShowCharts = viewModel::setShowCharts,
                     getHistory = viewModel::getSensorHistory,
@@ -131,6 +132,7 @@ fun SensorsPager(
     sensors: List<RuuviTag>,
     showCharts: Boolean,
     syncInProgress: Boolean,
+    graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
@@ -244,6 +246,7 @@ fun SensorsPager(
                                 pressureChart = pressureChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
+                                graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,
                                 chartCleared = getChartClearedFlow(sensor.id)
                             )
