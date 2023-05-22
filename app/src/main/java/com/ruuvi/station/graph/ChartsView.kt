@@ -38,6 +38,7 @@ fun ChartsView(
     pressureChart: LineChart,
     unitsConverter: UnitsConverter,
     selected: Boolean,
+    graphDrawDots: Boolean,
     chartCleared: Flow<String>,
     getHistory: (String) -> List<TagSensorReading>
 ) {
@@ -160,6 +161,7 @@ fun ChartsView(
                             temperatureData,
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
+                            graphDrawDots,
                             from,
                             to
                         )
@@ -171,6 +173,7 @@ fun ChartsView(
                             humidityData,
                             unitsConverter,
                             ChartSensorType.HUMIDITY,
+                            graphDrawDots,
                             from,
                             to
                         )
@@ -182,6 +185,7 @@ fun ChartsView(
                             pressureData,
                             unitsConverter,
                             ChartSensorType.PRESSURE,
+                            graphDrawDots,
                             from,
                             to
                         )
@@ -212,6 +216,7 @@ fun ChartsView(
                             temperatureData,
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
+                            graphDrawDots,
                             from,
                             to
                         )
@@ -235,6 +240,7 @@ fun ChartsView(
                                 humidityData,
                                 unitsConverter,
                                 ChartSensorType.HUMIDITY,
+                                graphDrawDots,
                                 from,
                                 to
                             )
@@ -252,6 +258,7 @@ fun ChartsView(
                                 pressureData,
                                 unitsConverter,
                                 ChartSensorType.PRESSURE,
+                                graphDrawDots,
                                 from,
                                 to
                             )

@@ -41,6 +41,7 @@ fun ChartView(
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
+    graphDrawDots: Boolean,
     from: Long,
     to: Long,
 ) {
@@ -74,7 +75,7 @@ fun ChartView(
             } else {
                 context.getString(chartSensorType.captionTemplate, "")
             }
-            addDataToChart(context, chartData, view, chartCaption, from, to)
+            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
         }
     )
 }
@@ -136,12 +137,13 @@ private fun addDataToChart(
     data: MutableList<Entry>,
     chart: LineChart,
     label: String,
+    graphDrawDots: Boolean,
     from: Long,
     to: Long
 ) {
     val set = LineDataSet(data, label)
     setLabelCount(chart)
-    //set.setDrawCircles(preferencesRepository.graphDrawDots())
+    set.setDrawCircles(graphDrawDots)
     set.setDrawValues(false)
     set.setDrawFilled(true)
     set.circleRadius = 1f

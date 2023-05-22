@@ -58,6 +58,8 @@ class SensorCardViewModel(
 
     val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
 
+    val graphDrawDots = preferencesRepository.graphDrawDots()
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }

@@ -43,8 +43,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.graph.ChartControlElement2
@@ -91,6 +92,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                     selectedIndex = selectedIndex,
                     sensors = sensors,
                     showCharts = showCharts,
+                    graphDrawDots = viewModel.graphDrawDots,
                     syncInProgress = syncInProcess,
                     setShowCharts = viewModel::setShowCharts,
                     getHistory = viewModel::getSensorHistory,
@@ -131,6 +133,7 @@ fun SensorsPager(
     sensors: List<RuuviTag>,
     showCharts: Boolean,
     syncInProgress: Boolean,
+    graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
@@ -157,6 +160,14 @@ fun SensorsPager(
         mutableStateOf(sensors.getOrNull(selectedIndex))
     }
 
+    Surface(
+        color = DefaultSensorBackgroundDark,
+        modifier = Modifier.fillMaxSize()
+        ) {
+
+    }
+
+    pagerSensor = sensors.getOrNull(pagerState.currentPage)
     LaunchedEffect(pagerState, sensors.size) {
         snapshotFlow { pagerState.currentPage }.collectLatest { page ->
             Timber.d("page changed to $page")
@@ -165,7 +176,7 @@ fun SensorsPager(
         }
     }
 
-    Timber.d("page sensor $pagerSensor sensors = $sensors")
+    Timber.d("page sensor $pagerSensor bg= ${pagerSensor?.userBackground}")
 
     pagerSensor?.let { sensor ->
         if (sensor.userBackground != null) {
@@ -186,7 +197,12 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
-                alertAction = {},
+                alarmStatus = pagerSensor?.status ?: AlarmSensorStatus.NoAlarms,
+                alarmAction = {
+                    if (pagerSensor != null) {
+                        TagSettingsActivity.start(context, pagerSensor?.id)
+                    }
+                },
                 chartsAction = { setShowCharts(!showCharts) },
                 settingsAction = {
                     if (pagerSensor != null) {
@@ -216,49 +232,53 @@ fun SensorsPager(
                         mutableStateOf(LineChart(context))
                     }
 
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        SensorTitle(sensor = sensor)
-                        if (showCharts) {
-                            ChartControlElement2(
-                                sensorId = sensor.id,
-                                viewPeriod = viewPeriod,
-                                syncStatus = getSyncStatusFlow.invoke(sensor.id),
-                                disconnectGattAction = disconnectGattAction,
-                                shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
-                                syncGatt = syncGatt,
-                                setViewPeriod = setViewPeriod,
-                                exportToCsv = exportToCsv,
-                                removeTagData = removeTagData,
-                                refreshStatus = refreshStatus,
-                                dontShowGattSyncDescription = dontShowGattSyncDescription
-                            )
+                    Crossfade(showCharts) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            SensorTitle(sensor = sensor)
+                            if (it) {
+                                ChartControlElement2(
+                                    sensorId = sensor.id,
+                                    viewPeriod = viewPeriod,
+                                    syncStatus = getSyncStatusFlow.invoke(sensor.id),
+                                    disconnectGattAction = disconnectGattAction,
+                                    shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
+                                    syncGatt = syncGatt,
+                                    setViewPeriod = setViewPeriod,
+                                    exportToCsv = exportToCsv,
+                                    removeTagData = removeTagData,
+                                    refreshStatus = refreshStatus,
+                                    dontShowGattSyncDescription = dontShowGattSyncDescription
+                                )
 
-                            ChartsView(
-                                modifier = Modifier.weight(1f),
-                                sensorId = sensor.id,
-                                temperatureChart = temperatureChart,
-                                humidityChart = humidityChart,
-                                pressureChart = pressureChart,
-                                getHistory = getHistory,
-                                unitsConverter = unitsConverter,
-                                selected = pagerSensor?.id == sensor.id,
-                                chartCleared = getChartClearedFlow(sensor.id)
-                            )
-                        } else {
-                            SensorCard(
+                                ChartsView(
+                                    modifier = Modifier.weight(1f),
+                                    sensorId = sensor.id,
+                                    temperatureChart = temperatureChart,
+                                    humidityChart = humidityChart,
+                                    pressureChart = pressureChart,
+                                    getHistory = getHistory,
+                                    unitsConverter = unitsConverter,
+                                    graphDrawDots = graphDrawDots,
+                                    selected = pagerSensor?.id == sensor.id,
+                                    chartCleared = getChartClearedFlow(sensor.id)
+                                )
+                            } else {
+                                SensorCard(
+                                    sensor = sensor,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            SensorCardBottom(
                                 sensor = sensor,
-                                modifier = Modifier.weight(1f)
+                                syncInProgress = syncInProgress,
+                                modifier = Modifier
+                                    .height(intrinsicSize = IntrinsicSize.Min)
                             )
                         }
-                        SensorCardBottom(
-                            sensor = sensor,
-                            syncInProgress = syncInProgress,
-                            modifier = Modifier
-                                .height(intrinsicSize = IntrinsicSize.Min)
-                        )
                     }
                 }
             }
@@ -268,7 +288,7 @@ fun SensorsPager(
     SideEffect {
         systemUiController.setStatusBarColor(
             color = Color.Transparent,
-            darkIcons = !isDarkTheme
+            darkIcons = false
         )
         systemUiController.setNavigationBarColor(
             color = Color.Transparent,
@@ -421,7 +441,8 @@ fun SensorValueItem(
 fun SensorCardTopAppBar(
     navigationCallback: () -> Unit,
     chartsEnabled: Boolean,
-    alertAction: () -> Unit,
+    alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
+    alarmAction: () -> Unit,
     chartsAction: () -> Unit,
     settingsAction: () -> Unit
 ) {
@@ -441,11 +462,26 @@ fun SensorCardTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                    contentDescription = ""
-                )
+            IconButton(onClick = { alarmAction.invoke() }) {
+                when (alarmStatus) {
+                    AlarmSensorStatus.NoAlarms ->
+                        Icon(
+                        painter = painterResource(id = R.drawable.ic_notifications_off_24px),
+                        contentDescription = "")
+                    AlarmSensorStatus.NotTriggered ->
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                            tint = Color.White,
+                            contentDescription = "")
+                    is AlarmSensorStatus.Triggered ->
+                        BlinkingEffect() {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                contentDescription = null,
+                                tint = RuuviStationTheme.colors.activeAlert
+                            )
+                        }
+                }
             }
 
             IconButton(onClick = { chartsAction.invoke() }) {
@@ -483,7 +519,7 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
         modifier = modifier.padding(end = RuuviStationTheme.dimensions.mediumPlus)
     ) {
         Text(
-            color = colors.secondaryTextColor,
+            color = White50,
             fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = RuuviStationTheme.fontSizes.small,
             textAlign = TextAlign.Right,
@@ -562,6 +598,7 @@ fun SensorCardBottom(
         if (syncInProgress) {
             Text(
                 style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White50,
                 fontSize = RuuviStationTheme.fontSizes.small,
                 textAlign = TextAlign.Left,
                 text = syncText,
@@ -571,6 +608,7 @@ fun SensorCardBottom(
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
+            color = White50,
             fontSize = RuuviStationTheme.fontSizes.small,
             textAlign = TextAlign.Right,
             text = updatedText,
@@ -583,7 +621,7 @@ fun SensorCardBottom(
                 .height(20.dp)
                 .width(24.dp),
             painter = painterResource(id = icon),
-            tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+            tint = White50,
             contentDescription = null,
         )
     }
