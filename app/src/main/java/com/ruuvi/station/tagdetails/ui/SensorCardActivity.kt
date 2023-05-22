@@ -46,7 +46,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.graph.ChartControlElement2
@@ -159,6 +158,13 @@ fun SensorsPager(
 
     var pagerSensor by remember {
         mutableStateOf(sensors.getOrNull(selectedIndex))
+    }
+
+    Surface(
+        color = DefaultSensorBackgroundDark,
+        modifier = Modifier.fillMaxSize()
+        ) {
+
     }
 
     pagerSensor = sensors.getOrNull(pagerState.currentPage)
@@ -282,7 +288,7 @@ fun SensorsPager(
     SideEffect {
         systemUiController.setStatusBarColor(
             color = Color.Transparent,
-            darkIcons = !isDarkTheme
+            darkIcons = false
         )
         systemUiController.setNavigationBarColor(
             color = Color.Transparent,
@@ -513,7 +519,7 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
         modifier = modifier.padding(end = RuuviStationTheme.dimensions.mediumPlus)
     ) {
         Text(
-            color = colors.secondaryTextColor,
+            color = White50,
             fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = RuuviStationTheme.fontSizes.small,
             textAlign = TextAlign.Right,
@@ -592,6 +598,7 @@ fun SensorCardBottom(
         if (syncInProgress) {
             Text(
                 style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White50,
                 fontSize = RuuviStationTheme.fontSizes.small,
                 textAlign = TextAlign.Left,
                 text = syncText,
@@ -601,6 +608,7 @@ fun SensorCardBottom(
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
+            color = White50,
             fontSize = RuuviStationTheme.fontSizes.small,
             textAlign = TextAlign.Right,
             text = updatedText,
@@ -613,7 +621,7 @@ fun SensorCardBottom(
                 .height(20.dp)
                 .width(24.dp),
             painter = painterResource(id = icon),
-            tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+            tint = White50,
             contentDescription = null,
         )
     }
