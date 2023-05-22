@@ -83,7 +83,8 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                         saveRange = viewModel::saveRange,
                         getPossibleRange = viewModel::getPossibleRange,
                         validateRange = viewModel::validateRange,
-                        manualRangeSave = viewModel::manualRangeSave
+                        manualRangeSave = viewModel::manualRangeSave,
+                        getUnit = viewModel::getUnit
                     )
                 AlarmType.RSSI ->
                     RssiAlertEditItem(
@@ -95,7 +96,8 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                         saveRange = viewModel::saveRange,
                         getPossibleRange = viewModel::getPossibleRange,
                         validateRange = viewModel::validateRange,
-                        manualRangeSave = viewModel::manualRangeSave
+                        manualRangeSave = viewModel::manualRangeSave,
+                        getUnit = viewModel::getUnit
                     )
                 AlarmType.MOVEMENT ->
                     MovementAlertEditItem(
@@ -122,6 +124,7 @@ fun AlertEditItem(
     getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
     validateRange: (AlarmType, Double?, Double?) -> Boolean,
     manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+    getUnit: (AlarmType) -> String
 ) {
     var openDescriptionDialog by remember { mutableStateOf(false) }
     var openAlarmEditDialog by remember { mutableStateOf(false) }
@@ -186,7 +189,8 @@ fun AlertEditItem(
             alarmState = alarmState,
             getPossibleRange = getPossibleRange,
             validateRange = validateRange,
-            manualRangeSave = manualRangeSave
+            manualRangeSave = manualRangeSave,
+            getUnit = getUnit
         ) {
             openAlarmEditDialog = false
         }
@@ -205,6 +209,7 @@ fun RssiAlertEditItem(
     getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
     validateRange: (AlarmType, Double?, Double?) -> Boolean,
     manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+    getUnit: (AlarmType) -> String
 ) {
     var openDescriptionDialog by remember { mutableStateOf(false) }
     var openAlarmEditDialog by remember { mutableStateOf(false) }
@@ -273,7 +278,8 @@ fun RssiAlertEditItem(
             alarmState = alarmState,
             getPossibleRange = getPossibleRange,
             validateRange = validateRange,
-            manualRangeSave = manualRangeSave
+            manualRangeSave = manualRangeSave,
+            getUnit = getUnit
         ) {
             openAlarmEditDialog = false
         }
@@ -419,7 +425,8 @@ fun AlarmEditDialog(
     getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
     validateRange: (AlarmType, Double?, Double?) -> Boolean,
     manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
-    onDismissRequest : () -> Unit
+    getUnit: (AlarmType) -> String,
+    onDismissRequest : () -> Unit,
 ) {
     val title = when (alarmState.type) {
         AlarmType.TEMPERATURE -> stringResource(id = R.string.alert_dialog_title_temperature)
@@ -457,7 +464,8 @@ fun AlarmEditDialog(
 
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-        Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleRange.start.toInt().toString()))
+        val possibleMinString  = possibleRange.start.toInt().toString() + " " + getUnit(alarmState.type)
+        Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleMinString))
         NumberTextFieldRuuvi(
             value = alarmState.displayLow,
             keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
@@ -467,7 +475,8 @@ fun AlarmEditDialog(
 
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
-        Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleRange.endInclusive.toInt().toString()))
+        val possibleMaxString  = possibleRange.endInclusive.toInt().toString() + " " + getUnit(alarmState.type)
+        Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleMaxString))
         NumberTextFieldRuuvi(
             value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
