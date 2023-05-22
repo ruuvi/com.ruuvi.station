@@ -78,7 +78,11 @@ class NetworkRequestExecutor (
                     if (response?.isSuccess() == true) {
                         disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
                     } else {
-                        registerFailedAttempt(networkRequest)
+                        if (response?.code == ER_CONFLICT) {
+                            disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
+                        } else {
+                            registerFailedAttempt(networkRequest)
+                        }
                     }
                 } catch (e: Exception) {
                     Timber.d("Exception catched: ${e.message}")
@@ -250,5 +254,9 @@ class NetworkRequestExecutor (
             }
             return false
         }
+    }
+
+    companion object {
+        private val ER_CONFLICT = "ER_CONFLICT"
     }
 }
