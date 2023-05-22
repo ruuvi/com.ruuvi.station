@@ -117,6 +117,16 @@ class AlarmsInteractor(
         }
     }
 
+    fun getAlarmUnit(alarmType: AlarmType): String {
+        return when (alarmType) {
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureUnitString()
+            AlarmType.HUMIDITY -> context.getString(R.string.humidity_relative_unit)
+            AlarmType.PRESSURE -> unitsConverter.getPressureUnitString()
+            AlarmType.RSSI -> context.getString(R.string.signal_unit)
+            AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
+        }
+    }
+
     fun saveAlarm(state: AlarmItemState) {
         val alarm = alarmRepository.upsertAlarm(
             sensorId = state.sensorId,

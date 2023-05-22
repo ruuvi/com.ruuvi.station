@@ -159,6 +159,8 @@ class AlarmItemsViewModel(
 
     fun getTitle(alarmType: AlarmType): String = alarmsInteractor.getAlarmTitle(alarmType)
 
+    fun getUnit(alarmType: AlarmType): String = alarmsInteractor.getAlarmUnit(alarmType)
+
     fun saveAlarm(alarmItemState: AlarmItemState) {
         alarmsInteractor.saveAlarm(alarmItemState)
     }
