@@ -19,9 +19,9 @@ object SettingsRoutes {
         return when (route) {
             APPEARANCE -> context.getString(R.string.settings_appearance)
             LIST -> context.getString(R.string.menu_app_settings)
-            TEMPERATURE -> context.getString(R.string.settings_temperature_unit)
-            HUMIDITY -> context.getString(R.string.settings_humidity_unit)
-            PRESSURE -> context.getString(R.string.settings_pressure_unit)
+            TEMPERATURE -> context.getString(R.string.settings_temperature)
+            HUMIDITY -> context.getString(R.string.settings_humidity)
+            PRESSURE -> context.getString(R.string.settings_pressure)
             BACKGROUNDSCAN -> context.getString(R.string.settings_background_scan)
             CHARTS -> context.getString(R.string.settings_chart)
             CLOUD -> context.getString(R.string.ruuvi_cloud)

@@ -98,7 +98,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_temperature_unit),
+                name = stringResource(id = R.string.settings_temperature),
                 value = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
@@ -106,7 +106,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_humidity_unit),
+                name = stringResource(id = R.string.settings_humidity),
                 value = stringResource(id = viewModel.getHumidityUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
@@ -114,7 +114,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_pressure_unit),
+                name = stringResource(id = R.string.settings_pressure),
                 value = stringResource(id = viewModel.getPressureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
