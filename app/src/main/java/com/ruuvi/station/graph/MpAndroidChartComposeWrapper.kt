@@ -52,12 +52,7 @@ fun ChartView(
         factory = { context ->
             Timber.d("ChartView - factory")
             val chart = lineChart
-            setupChart(chart, unitsConverter, chartSensorType)
-            applyChartStyle(
-                context = context,
-                chart = chart,
-                unitsConverter = unitsConverter,
-                chartSensorType = chartSensorType) {
+            setupMarker(context, chart, unitsConverter, chartSensorType) {
                 from
             }
             chart
@@ -80,12 +75,40 @@ fun ChartView(
     )
 }
 
-private fun applyChartStyle(
+fun chartsInitialSetup(
     context: Context,
-    chart: LineChart,
     unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType,
-    getFrom: () -> Long
+    temperatureChart: LineChart,
+    humidityChart: LineChart,
+    pressureChart: LineChart,
+) {
+    setupChart(temperatureChart, unitsConverter, ChartSensorType.TEMPERATURE)
+    applyChartStyle(
+        context = context,
+        chart = temperatureChart,
+    )
+
+    setupChart(humidityChart, unitsConverter, ChartSensorType.HUMIDITY)
+    applyChartStyle(
+        context = context,
+        chart = humidityChart,
+    )
+
+    setupChart(pressureChart, unitsConverter, ChartSensorType.PRESSURE)
+    applyChartStyle(
+        context = context,
+        chart = pressureChart
+    )
+
+    normalizeOffsets(temperatureChart, humidityChart, pressureChart)
+    synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
+    setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
+}
+
+
+fun applyChartStyle(
+    context: Context,
+    chart: LineChart
 ) {
     chart.axisRight.isEnabled = false
 
@@ -106,16 +129,6 @@ private fun applyChartStyle(
     chart.isDoubleTapToZoomEnabled = false
     chart.isHighlightPerTapEnabled = true
 
-    val markerView = ChartMarkerView(
-        context = context,
-        layoutResource = R.layout.custom_marker_view,
-        chartSensorType = chartSensorType,
-        unitsConverter = unitsConverter,
-        getFrom = getFrom
-    )
-    markerView.chartView = chart
-    chart.marker = markerView
-
     try {
         val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
         chart.description.typeface = font
@@ -130,6 +143,24 @@ private fun applyChartStyle(
     chart.axisLeft.textSize = textSize
     chart.xAxis.textSize = textSize
     chart.legend.isEnabled = false
+}
+
+fun setupMarker(
+    context: Context,
+    chart: LineChart,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType,
+    getFrom: () -> Long,
+) {
+    val markerView = ChartMarkerView(
+        context = context,
+        layoutResource = R.layout.custom_marker_view,
+        chartSensorType = chartSensorType,
+        unitsConverter = unitsConverter,
+        getFrom = getFrom
+    )
+    markerView.chartView = chart
+    chart.marker = markerView
 }
 
 private fun addDataToChart(

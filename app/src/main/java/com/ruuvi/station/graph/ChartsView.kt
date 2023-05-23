@@ -73,9 +73,13 @@ fun ChartsView(
 
     LaunchedEffect(key1 = sensorId) {
         Timber.d("ChartView - initial setup $sensorId")
-        normalizeOffsets(temperatureChart, humidityChart, pressureChart)
-        synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
-        setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
+        chartsInitialSetup(
+            temperatureChart = temperatureChart,
+            humidityChart = humidityChart,
+            pressureChart = pressureChart,
+            unitsConverter = unitsConverter,
+            context = context
+        )
 
         chartCleared.collect{
             Timber.d("ChartView - chart cleared $it")
