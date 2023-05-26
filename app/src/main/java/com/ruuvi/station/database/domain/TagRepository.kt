@@ -2,7 +2,6 @@ package com.ruuvi.station.database.domain
 
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.config.DatabaseDefinition
-import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.*
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -52,7 +51,7 @@ class TagRepository(
         return SQLite
             .select(*FavouriteSensorQuery.queryFields)
             .from(SensorSettings::class.java)
-            .innerJoin(RuuviTagEntity::class.java)
+            .leftOuterJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
@@ -63,7 +62,7 @@ class TagRepository(
         val queryResult = SQLite
             .select(*FavouriteSensorQuery.queryFields)
             .from(SensorSettings::class.java)
-            .innerJoin(RuuviTagEntity::class.java)
+            .leftOuterJoin(RuuviTagEntity::class.java)
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
             .where(SensorSettings_Table.id.withTable().eq(id))
             .orderBy(SensorSettings_Table.createDate.withTable(), true)

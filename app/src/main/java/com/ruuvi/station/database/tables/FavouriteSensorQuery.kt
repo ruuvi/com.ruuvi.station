@@ -45,6 +45,8 @@ data class FavouriteSensorQuery(
     var firmware: String? = null,
     // RuuviTagEntity
     @Column
+    var latestId: String? = null,
+    @Column
     var rssi: Int = 0,
     @Column
     var temperature: Double = 0.0,
@@ -92,6 +94,7 @@ data class FavouriteSensorQuery(
             SensorSettings_Table.networkLastSync.withTable(),
             SensorSettings_Table.networkSensor.withTable(),
             SensorSettings_Table.firmware.withTable(),
+            RuuviTagEntity_Table.id.withTable().`as`("latestId"),
             RuuviTagEntity_Table.rssi.withTable(),
             RuuviTagEntity_Table.temperature.withTable(),
             RuuviTagEntity_Table.humidity.withTable(),

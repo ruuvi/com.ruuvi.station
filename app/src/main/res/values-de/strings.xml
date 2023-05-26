@@ -318,6 +318,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="never">Nie</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
+    <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
     <string name="no_new_data_points">Keine neuen Datenpunkte verfügbar</string>
     <string name="no_password_needed">Für diese E-Mail wird ein kostenloses Konto erstellt, falls Sie noch keines haben. Es ist nur eine E-Mail-Adresse erforderlich. Wir bewahren Ihre Informationen sicher auf.</string>
     <string name="none">keiner</string>

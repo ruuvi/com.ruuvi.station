@@ -308,6 +308,7 @@
     <string name="never">aldrig</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
+    <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>
     <string name="no_new_data_points">Inga nya mätningar tillgängliga</string>
     <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
