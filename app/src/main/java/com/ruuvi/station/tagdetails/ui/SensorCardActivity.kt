@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.app.TaskStackBuilder
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.whenStarted
@@ -46,11 +48,12 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
+import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.tables.TagSensorReading
-import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Days
@@ -122,6 +125,19 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
             intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
             context.startActivity(intent)
+        }
+
+        fun createPendingIntent(context: Context, sensorId: String, requestCode: Int): PendingIntent? {
+            val intent = Intent(context, SensorCardActivity::class.java)
+            intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
+
+            val stackBuilder = TaskStackBuilder.create(context)
+            val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+            stackBuilder.addNextIntent(intentDashboardActivity)
+            stackBuilder.addNextIntent(intent)
+
+            return stackBuilder
+                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
 }
@@ -197,7 +213,7 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
-                alarmStatus = pagerSensor?.status ?: AlarmSensorStatus.NoAlarms,
+                alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
                 alarmAction = {
                     if (pagerSensor != null) {
                         TagSettingsActivity.start(context, pagerSensor?.id)
@@ -323,36 +339,38 @@ fun SensorCard(
     ) {
         val (temperatureValue, temperatureUnit, otherValues, lowBattery) = createRefs()
 
-        Text(
-            modifier = Modifier
-                .constrainAs(temperatureValue) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-                .padding(top = 48.dp),
-            fontSize = 72.sp,
-            fontFamily = ruuviStationFonts.oswaldBold,
-            text = sensor.temperatureValue.valueWithoutUnit,
-            lineHeight = 10.sp,
-            color = Color.White
-        )
+        if (sensor.latestMeasurement != null) {
+            Text(
+                modifier = Modifier
+                    .constrainAs(temperatureValue) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(top = 48.dp),
+                fontSize = 72.sp,
+                fontFamily = ruuviStationFonts.oswaldBold,
+                text = sensor.latestMeasurement.temperatureValue.valueWithoutUnit,
+                lineHeight = 10.sp,
+                color = Color.White
+            )
 
-        Text(
-            modifier = Modifier
-                .constrainAs(temperatureUnit) {
-                    top.linkTo(temperatureValue.top)
-                    start.linkTo(temperatureValue.end)
-                }
-                .padding(
-                    top = 48.dp + 18.dp * LocalDensity.current.fontScale,
-                    start = 2.dp
-                ),
-            fontSize = 36.sp,
-            fontFamily = ruuviStationFonts.oswaldRegular,
-            text = sensor.temperatureValue.unitString,
-            color = Color.White
-        )
+            Text(
+                modifier = Modifier
+                    .constrainAs(temperatureUnit) {
+                        top.linkTo(temperatureValue.top)
+                        start.linkTo(temperatureValue.end)
+                    }
+                    .padding(
+                        top = 48.dp + 18.dp * LocalDensity.current.fontScale,
+                        start = 2.dp
+                    ),
+                fontSize = 36.sp,
+                fontFamily = ruuviStationFonts.oswaldRegular,
+                text = sensor.latestMeasurement.temperatureValue.unitString,
+                color = Color.White
+            )
+        }
 
         SensorValues(
             modifier = Modifier
@@ -389,17 +407,17 @@ fun SensorValues(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.Start
     ) {
-        sensor.humidityValue?.let {
+        sensor.latestMeasurement?.humidityValue?.let {
             SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithUnit)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
-        sensor.pressureValue?.let {
+        sensor.latestMeasurement?.pressureValue?.let {
             SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithUnit)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
-        sensor.movementValue?.let {
+        sensor.latestMeasurement?.movementValue?.let {
             SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithUnit)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
@@ -574,81 +592,101 @@ fun SensorCardBottom(
     syncInProgress: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current
+    if (sensor.latestMeasurement != null) {
+        val context = LocalContext.current
+        val lifecycle = LocalLifecycleOwner.current
 
-    var updatedText by remember {
-        mutableStateOf(sensor.updatedAt?.describingTimeSince(context) ?: "")
-    }
-
-    var syncText by remember { mutableStateOf("") }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(RuuviStationTheme.dimensions.medium)
-            .fillMaxWidth()
-    ) {
-        val icon = if (sensor.updatedAt == sensor.networkLastSync) {
-            R.drawable.ic_icon_gateway
-        } else {
-            R.drawable.ic_icon_bluetooth
+        var updatedText by remember {
+            mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
-        if (syncInProgress) {
+        var syncText by remember { mutableStateOf("") }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .padding(RuuviStationTheme.dimensions.medium)
+                .fillMaxWidth()
+        ) {
+            val icon = if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
+                R.drawable.ic_icon_gateway
+            } else {
+                R.drawable.ic_icon_bluetooth
+            }
+
+            if (syncInProgress) {
+                Text(
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    color = White50,
+                    fontSize = RuuviStationTheme.fontSizes.small,
+                    textAlign = TextAlign.Left,
+                    text = syncText,
+                )
+            }
+
             Text(
+                modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
                 fontSize = RuuviStationTheme.fontSizes.small,
-                textAlign = TextAlign.Left,
-                text = syncText,
+                textAlign = TextAlign.Right,
+                text = updatedText,
+            )
+
+            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+
+            Icon(
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(24.dp),
+                painter = painterResource(id = icon),
+                tint = White50,
+                contentDescription = null,
             )
         }
 
-        Text(
-            modifier = Modifier.weight(1f),
-            style = RuuviStationTheme.typography.dashboardSecondary,
-            color = White50,
-            fontSize = RuuviStationTheme.fontSizes.small,
-            textAlign = TextAlign.Right,
-            text = updatedText,
-        )
-        
-        Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-
-        Icon(
-            modifier = Modifier
-                .height(20.dp)
-                .width(24.dp),
-            painter = painterResource(id = icon),
-            tint = White50,
-            contentDescription = null,
-        )
-    }
-
-    LaunchedEffect(key1 = lifecycle, key2 = sensor.updatedAt) {
-        lifecycle.whenStarted {
-            while (true) {
-                updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
-                delay(500)
+        LaunchedEffect(key1 = lifecycle, key2 = sensor.latestMeasurement.updatedAt) {
+            lifecycle.whenStarted {
+                while (true) {
+                    updatedText =
+                        sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: ""
+                    delay(500)
+                }
             }
         }
-    }
 
-    val baseSyncText = stringResource(id = R.string.synchronizing)
-    LaunchedEffect(key1 = syncInProgress) {
-        var dotsCount = 0
-        while (syncInProgress) {
-            var syncTextTemp = baseSyncText
+        val baseSyncText = stringResource(id = R.string.synchronizing)
+        LaunchedEffect(key1 = syncInProgress) {
+            var dotsCount = 0
+            while (syncInProgress) {
+                var syncTextTemp = baseSyncText
 
-            for (j in 1 .. dotsCount) {
-                syncTextTemp = syncTextTemp + "."
+                for (j in 1..dotsCount) {
+                    syncTextTemp = syncTextTemp + "."
+                }
+
+                syncText = syncTextTemp
+                dotsCount++
+                if (dotsCount > 3) dotsCount = 0
+                delay(700)
             }
-
-            syncText = syncTextTemp
-            dotsCount++
-            if (dotsCount > 3) dotsCount = 0
-            delay(700)
+        }
+    } else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = modifier
+                .padding(RuuviStationTheme.dimensions.medium)
+                .fillMaxWidth()
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White50,
+                fontSize = RuuviStationTheme.fontSizes.small,
+                textAlign = TextAlign.Center,
+                text = stringResource(id = R.string.no_data_10_days),
+            )
         }
     }
 }

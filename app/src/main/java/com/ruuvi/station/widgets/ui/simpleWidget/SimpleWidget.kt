@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.ruuvi.station.R
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
 import kotlinx.coroutines.CoroutineScope
@@ -90,7 +90,7 @@ class SimpleWidget: AppWidgetProvider() {
 
                     views.setOnClickPendingIntent(
                         R.id.simpleWidgetLayout,
-                        TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId)
+                        SensorCardActivity.createPendingIntent(context, sensorId, appWidgetId)
                     )
                     views.setOnClickPendingIntent(
                         R.id.refreshButton,

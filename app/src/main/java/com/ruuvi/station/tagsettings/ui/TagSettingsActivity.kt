@@ -25,7 +25,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.databinding.ActivityTagSettingsBinding
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -135,8 +135,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         fun startAfterAddingNewSensor(context: Activity, tagId: String?) {
             val dashboardIntent = Intent(context, DashboardActivity::class.java)
 
-            val sensorCardIntent = Intent(context, TagDetailsActivity::class.java)
-            sensorCardIntent.putExtra(TagDetailsActivity.ARGUMENT_TAG_ID, tagId)
+            val sensorCardIntent = Intent(context, SensorCardActivity::class.java)
+            sensorCardIntent.putExtra(SensorCardActivity.ARGUMENT_SENSOR_ID, tagId)
 
             val settingsIntent = Intent(context, TagSettingsActivity::class.java)
             settingsIntent.putExtra(TAG_ID, tagId)

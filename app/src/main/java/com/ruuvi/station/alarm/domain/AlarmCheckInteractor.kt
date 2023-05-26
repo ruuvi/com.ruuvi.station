@@ -11,6 +11,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.extensions.diff
 import timber.log.Timber
@@ -164,35 +165,37 @@ class AlarmCheckInteractor(
         private fun compareWithAlarmRange() {
             when (alarm.type) {
                 Alarm.TEMPERATURE ->
-                    if (ruuviTag.temperature != null) {
+                    if (ruuviTag.latestMeasurement?.temperatureValue != null) {
                         compareValues(
-                            ruuviTag.temperature,
+                            ruuviTag.latestMeasurement.temperatureValue,
                             R.string.alert_notification_temperature_low_threshold to
                                 R.string.alert_notification_temperature_high_threshold
                         )
                     }
                 Alarm.HUMIDITY ->
-                    if (ruuviTag.humidity != null) {
+                    if (ruuviTag.latestMeasurement?.humidityValue != null) {
                         compareValues(
-                            ruuviTag.humidity,
+                            ruuviTag.latestMeasurement.humidityValue,
                             R.string.alert_notification_humidity_low_threshold to
                                 R.string.alert_notification_humidity_high_threshold
                         )
                     }
                 Alarm.PRESSURE ->
-                    if (ruuviTag.pressure != null) {
+                    if (ruuviTag.latestMeasurement?.pressureValue != null) {
                         compareValues(
-                            ruuviTag.pressure,
+                            ruuviTag.latestMeasurement.pressureValue,
                             R.string.alert_notification_pressure_low_threshold to
                                 R.string.alert_notification_pressure_high_threshold
                         )
                     }
                 Alarm.RSSI ->
-                    compareValues(
-                        ruuviTag.rssi,
-                        R.string.alert_notification_rssi_low_threshold to
-                            R.string.alert_notification_rssi_high_threshold
-                    )
+                    if (ruuviTag.latestMeasurement?.rssiValue != null) {
+                        compareValues(
+                            ruuviTag.latestMeasurement.rssiValue,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_high_threshold
+                        )
+                    }
             }
         }
 
@@ -201,24 +204,24 @@ class AlarmCheckInteractor(
                 sensorHistoryRepository.getLatestForSensor(ruuviTag.id, 2)
             if (readings.size == 2) {
                 alarmResource = when {
-                    ruuviTag.dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
-                    ruuviTag.dataFormat != FORMAT5 && hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
+                    readings.first().dataFormat == FORMAT5 && readings.first().movementCounter != readings.last().movementCounter -> R.string.alert_notification_movement
+                    readings.first().dataFormat != FORMAT5 && hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
                     else -> null
                 }
             }
         }
 
         private fun compareValues(
-            comparedValue: Number,
+            comparedValue: EnvironmentValue,
             resources: Pair<Int, Int>
         ) {
             val (lowResourceId, highResourceId) = resources
             when {
-                comparedValue.toDouble() < alarm.min -> {
+                comparedValue.value < alarm.min -> {
                     alarmResource = lowResourceId
                     thresholdValue = alarm.min
                 }
-                comparedValue.toDouble() > alarm.max -> {
+                comparedValue.value > alarm.max -> {
                     alarmResource = highResourceId
                     thresholdValue = alarm.max
                 }

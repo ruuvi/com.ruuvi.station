@@ -80,12 +80,6 @@ package="com.ruuvi.station">
         android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
-        android:name=".tagdetails.ui.TagDetailsActivity"
-        android:exported="false"
-        android:launchMode="singleTop"
-        android:theme="@style/AppTheme.NoActionBar.TransparentNavigation" />
-
-    <activity
         android:name=".tagsettings.ui.TagSettingsActivity"
         android:configChanges="orientation|screenSize|locale"
         android:exported="false"
@@ -118,11 +112,6 @@ package="com.ruuvi.station">
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
         android:theme="@style/AppTheme.Animated"
         android:exported="false" />
-
-    <activity
-        android:name=".dashboard.ui.DashboardActivityOld"
-        android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
 
     <activity
         android:name=".network.ui.ShareSensorActivity"

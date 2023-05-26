@@ -50,10 +50,6 @@ class TagViewModel(
         it?.networkSensor ?: false
     }
 
-    val canUseGattSync: LiveData<Boolean> = _tagEntry.map {
-        it?.connectable == true
-    }
-
     private val _gattSyncInProgress = MutableStateFlow<Boolean>(false)
     val gattSyncInProgress: StateFlow<Boolean> = _gattSyncInProgress
 
@@ -235,24 +231,6 @@ class TagViewModel(
                 }
         }
     }
-
-    fun getTemperatureString(tag: RuuviTag): String =
-        tagDetailsInteractor.getTemperatureString(tag)
-
-    fun getTemperatureStringWithoutUnit(tag: RuuviTag): String =
-        tagDetailsInteractor.getTemperatureStringWithoutUnit(tag)
-
-    fun getTemperatureUnitString(): String =
-        tagDetailsInteractor.getTemperatureUnitString()
-
-    fun getHumidityString(tag: RuuviTag): String =
-        tagDetailsInteractor.getHumidityString(tag)
-
-    fun getPressureString(tag: RuuviTag): String =
-        tagDetailsInteractor.getPressureString(tag)
-
-    fun getSignalString(tag: RuuviTag): String =
-        tagDetailsInteractor.getSignalString(tag)
 
     fun exportToCsv(): Uri? = csvExporter.toCsv(sensorId)
 

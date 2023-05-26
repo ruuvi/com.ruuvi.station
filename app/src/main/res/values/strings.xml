@@ -309,6 +309,7 @@
     <string name="never">never</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
+    <string name="no_data_10_days">No data during the last 10 days</string>
     <string name="no_new_data_points">No new data points available</string>
     <string name="no_password_needed">A free account will be created for this email if you don\'t already have one. Only email address is required. We keep your information safe.</string>
     <string name="none">none</string>
