@@ -573,14 +573,12 @@ fun SensorCardImage(
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
-    Crossfade(targetState = chartsEnabled, animationSpec = tween(600)) {
-        if (it) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xCC001D1B))
-            )
-        }
+    if (chartsEnabled) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xCC001D1B))
+        )
     }
 }
 
