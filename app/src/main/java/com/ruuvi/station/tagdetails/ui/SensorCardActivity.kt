@@ -248,53 +248,51 @@ fun SensorsPager(
                         mutableStateOf(LineChart(context))
                     }
 
-                    Crossfade(showCharts) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            SensorTitle(sensor = sensor)
-                            if (it) {
-                                ChartControlElement2(
-                                    sensorId = sensor.id,
-                                    viewPeriod = viewPeriod,
-                                    syncStatus = getSyncStatusFlow.invoke(sensor.id),
-                                    disconnectGattAction = disconnectGattAction,
-                                    shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
-                                    syncGatt = syncGatt,
-                                    setViewPeriod = setViewPeriod,
-                                    exportToCsv = exportToCsv,
-                                    removeTagData = removeTagData,
-                                    refreshStatus = refreshStatus,
-                                    dontShowGattSyncDescription = dontShowGattSyncDescription
-                                )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        SensorTitle(sensor = sensor)
+                        if (showCharts) {
+                            ChartControlElement2(
+                                sensorId = sensor.id,
+                                viewPeriod = viewPeriod,
+                                syncStatus = getSyncStatusFlow.invoke(sensor.id),
+                                disconnectGattAction = disconnectGattAction,
+                                shouldSkipGattSyncDialog = shouldSkipGattSyncDialog,
+                                syncGatt = syncGatt,
+                                setViewPeriod = setViewPeriod,
+                                exportToCsv = exportToCsv,
+                                removeTagData = removeTagData,
+                                refreshStatus = refreshStatus,
+                                dontShowGattSyncDescription = dontShowGattSyncDescription
+                            )
 
-                                ChartsView(
-                                    modifier = Modifier.weight(1f),
-                                    sensorId = sensor.id,
-                                    temperatureChart = temperatureChart,
-                                    humidityChart = humidityChart,
-                                    pressureChart = pressureChart,
-                                    getHistory = getHistory,
-                                    unitsConverter = unitsConverter,
-                                    graphDrawDots = graphDrawDots,
-                                    selected = pagerSensor?.id == sensor.id,
-                                    chartCleared = getChartClearedFlow(sensor.id)
-                                )
-                            } else {
-                                SensorCard(
-                                    sensor = sensor,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            SensorCardBottom(
+                            ChartsView(
+                                modifier = Modifier.weight(1f),
+                                sensorId = sensor.id,
+                                temperatureChart = temperatureChart,
+                                humidityChart = humidityChart,
+                                pressureChart = pressureChart,
+                                getHistory = getHistory,
+                                unitsConverter = unitsConverter,
+                                graphDrawDots = graphDrawDots,
+                                selected = pagerSensor?.id == sensor.id,
+                                chartCleared = getChartClearedFlow(sensor.id)
+                            )
+                        } else {
+                            SensorCard(
                                 sensor = sensor,
-                                syncInProgress = syncInProgress,
-                                modifier = Modifier
-                                    .height(intrinsicSize = IntrinsicSize.Min)
+                                modifier = Modifier.weight(1f)
                             )
                         }
+
+                        SensorCardBottom(
+                            sensor = sensor,
+                            syncInProgress = syncInProgress,
+                            modifier = Modifier
+                                .height(intrinsicSize = IntrinsicSize.Min)
+                        )
                     }
                 }
             }
@@ -575,14 +573,12 @@ fun SensorCardImage(
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
-    Crossfade(targetState = chartsEnabled, animationSpec = tween(1000)) {
-        if (it) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xCC001D1B))
-            )
-        }
+    if (chartsEnabled) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xCC001D1B))
+        )
     }
 }
 
