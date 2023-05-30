@@ -71,29 +71,24 @@ class TagRepository(
     }
 
     fun deleteSensorAndRelatives(sensorId: String) {
-        getTagById(sensorId)?.let {
-            deleteSensorAndRelatives(it)
-        }
-    }
-
-    fun deleteSensorAndRelatives(sensor: RuuviTagEntity) {
         SQLite.delete(Alarm::class.java)
-            .where(Alarm_Table.ruuviTagId.eq(sensor.id))
+            .where(Alarm_Table.ruuviTagId.eq(sensorId))
             .execute()
 
         SQLite.delete(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.ruuviTagId.eq(sensor.id))
+            .where(TagSensorReading_Table.ruuviTagId.eq(sensorId))
             .execute()
 
         SQLite.delete(SensorSettings::class.java)
-            .where(SensorSettings_Table.id.eq(sensor.id))
+            .where(SensorSettings_Table.id.eq(sensorId))
             .execute()
 
         SQLite.delete(SensorsShareList::class.java)
-            .where(SensorsShareList_Table.sensorId.eq(sensor.id))
+            .where(SensorsShareList_Table.sensorId.eq(sensorId))
             .execute()
 
-        sensor.delete()
+        SQLite.delete(RuuviTagEntity::class.java)
+            .where(RuuviTagEntity_Table.id.eq(sensorId))
     }
 
     fun updateTag(tag: RuuviTagEntity) {
