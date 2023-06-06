@@ -29,13 +29,14 @@ Ruuvi Station is an open-source Android app [available](https://play.google.com/
 
 ## Features
 
-- [x] Temperature (°C, °F)
-- [x] Humidity (%)
-- [x] Air Pressure (hPa)
+- [x] Temperature (°C, °F, K)
+- [x] Humidity (%, g/m3, °C)
+- [x] Air Pressure (Pa, hPa, mmHg, inHg)
 - [x] Acceleration (g)
-- [x] Data Logger
+- [x] 10 days sensor data storage
 - [x] Charts
-- [x] Gateway
+- [x] Cloud Features
+- [x] Data Forwarding
 
 ## Get in touch
 
