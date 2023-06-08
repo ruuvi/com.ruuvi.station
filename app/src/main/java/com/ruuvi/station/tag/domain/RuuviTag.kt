@@ -8,39 +8,49 @@ data class RuuviTag(
     val id: String,
     val name: String,
     val displayName: String,
-    val rssi: Int,
-    val temperature: Double,
-    val humidity: Double?,
-    val pressure: Double?,
-    val movementCounter: Int?,
-    val temperatureString: String,
-    val humidityString: String,
-    val pressureString: String,
     var temperatureOffset: Double?,
     var humidityOffset: Double?,
     var pressureOffset: Double?,
-    val voltage: Double,
-    val accelerationX: Double?,
-    val accelerationY: Double?,
-    val accelerationZ: Double?,
-    val txPower: Double,
-    val measurementSequenceNumber: Int,
-    val movementCounterString: String,
     val defaultBackground: Int,
-    val dataFormat: Int,
-    val updatedAt: Date?,
     val userBackground: String?,
     val networkBackground: String?,
-    val status: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
-    val connectable: Boolean?,
+    val alarmSensorStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     val lastSync: Date?,
     val networkLastSync: Date?,
     val networkSensor: Boolean,
     val owner: String?,
     var firmware: String?,
+    val latestMeasurement: SensorMeasurements?
+)
+
+data class SensorMeasurements(
     val temperatureValue: EnvironmentValue,
     val humidityValue: EnvironmentValue?,
     val pressureValue: EnvironmentValue?,
     val movementValue: EnvironmentValue?,
-    val voltageValue: EnvironmentValue
+    val voltageValue: EnvironmentValue,
+    val rssiValue: EnvironmentValue,
+    val accelerationX: Double?,
+    val accelerationY: Double?,
+    val accelerationZ: Double?,
+    val measurementSequenceNumber: Int,
+    val txPower: Double,
+    val connectable: Boolean?,
+    val dataFormat: Int,
+    val updatedAt: Date?,
 )
+
+fun SensorMeasurements.isLowBattery(): Boolean {
+    val temperature = temperatureValue.value
+    val voltage = voltageValue.value
+    return when {
+        temperature <= -20 && voltage < 2 && voltage > 0 -> true
+        temperature > -20 && temperature < 0 && voltage < 2.3 && voltage > 0 -> true
+        temperature >= 0 && voltage < 2.5 && voltage > 0 -> true
+        else -> false
+    }
+}
+
+fun RuuviTag.isLowBattery(): Boolean {
+    return this.latestMeasurement?.isLowBattery() ?: false
+}

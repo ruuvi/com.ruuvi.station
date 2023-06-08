@@ -7,10 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -66,7 +63,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
-import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -74,7 +70,8 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tag.domain.isLowBattery
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -370,6 +367,7 @@ fun DashboardItems(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardItem(
     itemHeight: Dp,
@@ -383,13 +381,15 @@ fun DashboardItem(
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
-            .clickable {
-                TagDetailsActivity.start(
-                    context = context,
-                    tagId = sensor.id,
-                    showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
-                )
-            },
+            .combinedClickable(
+                onClick = {
+                    SensorCardActivity.start(
+                        context,
+                        sensor.id,
+                        dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
+                }
+            ),
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
@@ -444,15 +444,17 @@ fun DashboardItem(
                         }
                 )
 
-                BigValueDisplay(
-                    value = sensor.temperatureValue,
-                    alertTriggered = sensor.status.triggered(AlarmType.TEMPERATURE),
-                    modifier = Modifier
-                        .constrainAs(bigTemperature) {
-                            top.linkTo(title.bottom)
-                            start.linkTo(parent.start)
-                        }
-                )
+                if (sensor.latestMeasurement?.temperatureValue != null) {
+                    BigValueDisplay(
+                        value = sensor.latestMeasurement.temperatureValue,
+                        alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                        modifier = Modifier
+                            .constrainAs(bigTemperature) {
+                                top.linkTo(title.bottom)
+                                start.linkTo(parent.start)
+                            }
+                    )
+                }
 
                 ItemValuesWithoutTemperature(
                     sensor = sensor,
@@ -479,6 +481,7 @@ fun DashboardItem(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardItemSimple(
     sensor: RuuviTag,
@@ -490,13 +493,15 @@ fun DashboardItemSimple(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                TagDetailsActivity.start(
-                    context = context,
-                    tagId = sensor.id,
-                    showHistory = dashboardTapAction == DashboardTapAction.SHOW_CHART
-                )
-            },
+            .combinedClickable(
+                onClick = {
+                    SensorCardActivity.start(
+                        context,
+                        sensor.id,
+                        dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
+                }
+            ),
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
@@ -589,7 +594,7 @@ fun ItemButtons(
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
-            if (sensor.status is AlarmSensorStatus.NotTriggered) {
+            if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
                 IconButton(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
                     onClick = {
@@ -602,7 +607,7 @@ fun ItemButtons(
                         tint = RuuviStationTheme.colors.accent
                     )
                 }
-            } else if (sensor.status is AlarmSensorStatus.Triggered) {
+            } else if (sensor.alarmSensorStatus is AlarmSensorStatus.Triggered) {
                 BlinkingEffect() {
                     IconButton(
                         modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
@@ -635,40 +640,42 @@ fun ItemValues(
         verticalAlignment = Top,
         modifier = modifier
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
-        ) {
-            ValueDisplay(
-                value = sensor.temperatureValue,
-                sensor.status.triggered(AlarmType.TEMPERATURE)
-            )
-            if (sensor.humidityValue != null) {
+        if (sensor.latestMeasurement != null) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Bottom,
+            ) {
                 ValueDisplay(
-                    value = sensor.humidityValue,
-                    sensor.status.triggered(AlarmType.HUMIDITY)
+                    value = sensor.latestMeasurement.temperatureValue,
+                    sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
                 )
-            }
-        }
-
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
-        ) {
-            if (sensor.pressureValue != null) {
-                ValueDisplay(
-                    value = sensor.pressureValue,
-                    sensor.status.triggered(AlarmType.PRESSURE)
-                )
+                if (sensor.latestMeasurement.humidityValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.humidityValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
+                    )
+                }
             }
 
-            if (sensor.movementValue != null) {
-                ValueDisplay(
-                    value = sensor.movementValue,
-                    sensor.status.triggered(AlarmType.MOVEMENT)
-                )
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                if (sensor.latestMeasurement.pressureValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.pressureValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
+                    )
+                }
+
+                if (sensor.latestMeasurement.movementValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.movementValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                    )
+                }
             }
         }
     }
@@ -679,39 +686,42 @@ fun ItemValuesWithoutTemperature(
     sensor: RuuviTag,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Top,
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top,
+    if (sensor.latestMeasurement != null) {
+        Row(
+            verticalAlignment = Top,
+            modifier = modifier
         ) {
-            if (sensor.humidityValue != null) {
-                ValueDisplay(
-                    value = sensor.humidityValue,
-                    sensor.status.triggered(AlarmType.HUMIDITY)
-                )
-            }
-            if (sensor.movementValue != null) {
-                ValueDisplay(
-                    value = sensor.movementValue,
-                    sensor.status.triggered(AlarmType.MOVEMENT)
-                )
-            }
-        }
 
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top,
-        ) {
-            if (sensor.pressureValue != null) {
-                ValueDisplay(
-                    value = sensor.pressureValue,
-                    sensor.status.triggered(AlarmType.PRESSURE)
-                )
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top,
+            ) {
+                if (sensor.latestMeasurement.humidityValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.humidityValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
+                    )
+                }
+                if (sensor.latestMeasurement.movementValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.movementValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top,
+            ) {
+                if (sensor.latestMeasurement.pressureValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.pressureValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
+                    )
+                }
             }
         }
     }
@@ -722,47 +732,80 @@ fun ItemBottom(
     sensor: RuuviTag,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current
-
-    var updatedText by remember {
-        mutableStateOf(sensor.updatedAt?.describingTimeSince(context) ?: "")
+    if (sensor.latestMeasurement != null) {
+        ItemBottomUpdatedInfo(sensor = sensor, modifier = modifier)
+    } else {
+        ItemBottomNoData(modifier = modifier)
     }
+}
 
+@Composable
+fun ItemBottomNoData(
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier.padding(top = 2.dp)
     ) {
-        val icon = if (sensor.updatedAt == sensor.networkLastSync) {
-            R.drawable.ic_icon_gateway
-        } else {
-            R.drawable.ic_icon_bluetooth
-        }
-        Icon(
-            modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
-            painter = painterResource(id = icon),
-            tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
-            contentDescription = null,
-        )
-        
-        Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
-
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
-            text = updatedText,
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.no_data_10_days),
         )
-
-        if (sensor.isLowBattery()) {
-            LowBattery(modifier = Modifier.weight(1f))
-        }
     }
+}
 
-    LaunchedEffect(key1 = lifecycle, key2 = sensor.updatedAt) {
-        lifecycle.whenStarted {
-            while (true) {
-                updatedText = sensor.updatedAt?.describingTimeSince(context) ?: ""
-                delay(500)
+@Composable
+fun ItemBottomUpdatedInfo(
+    sensor: RuuviTag,
+    modifier: Modifier = Modifier
+) {
+    if (sensor.latestMeasurement != null) {
+
+        val context = LocalContext.current
+        val lifecycle = LocalLifecycleOwner.current
+
+        var updatedText by remember {
+            mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier.padding(top = 2.dp)
+        ) {
+            val icon = if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
+                R.drawable.ic_icon_gateway
+            } else {
+                R.drawable.ic_icon_bluetooth
+            }
+            Icon(
+                modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                painter = painterResource(id = icon),
+                tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                contentDescription = null,
+            )
+
+            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
+
+            Text(
+                modifier = Modifier.weight(1f),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                text = updatedText,
+            )
+
+            if (sensor.isLowBattery()) {
+                LowBattery(modifier = Modifier.weight(1f))
+            }
+        }
+
+        LaunchedEffect(key1 = lifecycle, key2 = sensor.latestMeasurement.updatedAt) {
+            lifecycle.whenStarted {
+                while (true) {
+                    updatedText = sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: ""
+                    delay(500)
+                }
             }
         }
     }
@@ -879,7 +922,7 @@ fun DashboardItemDropdownMenu(
             onDismissRequest = { threeDotsMenuExpanded = false }
         ) {
             DropdownMenuItem(onClick = {
-                TagDetailsActivity.start(context, sensor.id)
+                SensorCardActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
@@ -888,7 +931,7 @@ fun DashboardItemDropdownMenu(
             }
 
             DropdownMenuItem(onClick = {
-                TagDetailsActivity.start(context, sensor.id, true)
+                SensorCardActivity.start(context, sensor.id, true)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(

@@ -76,7 +76,7 @@ fun SensorSettings(
             setName = viewModel::setName
         )
         AlarmsGroup(alarmsViewModel)
-        if (sensorOwnedOrOffline) {
+        if (sensorOwnedOrOffline && sensorState.latestMeasurement != null) {
             CalibrationSettingsGroup(
                 sensorState = sensorState,
                 getTemperatureOffsetString = viewModel::getTemperatureOffsetString,
@@ -367,38 +367,38 @@ fun MoreInfoGroup(
             title = stringResource(id = R.string.mac_address),
             value = sensorState.id
         )
-        if (sensorState.dataFormat == 3 || sensorState.dataFormat == 5) {
+        if (sensorState.latestMeasurement?.dataFormat == 3 || sensorState.latestMeasurement?.dataFormat == 5) {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
-                value = sensorState.dataFormat.toString()
+                value = sensorState.latestMeasurement.dataFormat.toString()
             )
             BatteryInfoItem(
-                voltage = sensorState.voltage,
+                voltage = sensorState.latestMeasurement.voltageValue.value,
                 isLowBattery = isLowBattery
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.acceleration_x),
-                value = getAccelerationString(sensorState.accelerationX)
+                value = getAccelerationString(sensorState.latestMeasurement.accelerationX)
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.acceleration_y),
-                value = getAccelerationString(sensorState.accelerationY)
+                value = getAccelerationString(sensorState.latestMeasurement.accelerationY)
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.acceleration_z),
-                value = getAccelerationString(sensorState.accelerationZ)
+                value = getAccelerationString(sensorState.latestMeasurement.accelerationZ)
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.tx_power),
-                value = stringResource(id = R.string.tx_power_reading, sensorState.txPower)
+                value = stringResource(id = R.string.tx_power_reading, sensorState.latestMeasurement.txPower)
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.signal_strength_rssi),
-                value = getSignalString(sensorState.rssi)
+                value = sensorState.latestMeasurement.rssiValue.valueWithUnit
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.measurement_sequence_number),
-                value = sensorState.measurementSequenceNumber.toString()
+                value = sensorState.latestMeasurement.measurementSequenceNumber.toString()
             )
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))

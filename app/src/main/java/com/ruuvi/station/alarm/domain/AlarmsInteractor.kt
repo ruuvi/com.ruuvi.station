@@ -78,10 +78,12 @@ class AlarmsInteractor(
 
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
-            val alarmTypes = mutableSetOf(AlarmType.TEMPERATURE, AlarmType.RSSI)
-            if (sensor.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
-            if (sensor.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (sensor.movementCounter != null) alarmTypes.add(AlarmType.MOVEMENT)
+            val alarmTypes = mutableSetOf<AlarmType>()
+            if (sensor.latestMeasurement?.temperatureValue != null) alarmTypes.add(AlarmType.TEMPERATURE)
+            if (sensor.latestMeasurement?.rssiValue != null) alarmTypes.add(AlarmType.RSSI)
+            if (sensor.latestMeasurement?.humidityValue != null) alarmTypes.add(AlarmType.HUMIDITY)
+            if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
+            if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
             alarmTypes
         } else {
             emptySet()
@@ -113,6 +115,16 @@ class AlarmsInteractor(
             AlarmType.HUMIDITY -> context.getString(R.string.humidity_with_unit, context.getString(R.string.humidity_relative_unit))
             AlarmType.PRESSURE -> context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
             AlarmType.RSSI -> context.getString(R.string.signal_strength_dbm)
+            AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
+        }
+    }
+
+    fun getAlarmUnit(alarmType: AlarmType): String {
+        return when (alarmType) {
+            AlarmType.TEMPERATURE -> unitsConverter.getTemperatureUnitString()
+            AlarmType.HUMIDITY -> context.getString(R.string.humidity_relative_unit)
+            AlarmType.PRESSURE -> unitsConverter.getPressureUnitString()
+            AlarmType.RSSI -> context.getString(R.string.signal_unit)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
         }
     }

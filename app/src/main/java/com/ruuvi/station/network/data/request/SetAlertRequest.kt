@@ -1,6 +1,7 @@
 package com.ruuvi.station.network.data.request
 
 import com.ruuvi.station.database.tables.Alarm
+import java.util.*
 
 data class SetAlertRequest(
     val sensor: String,
@@ -8,7 +9,8 @@ data class SetAlertRequest(
     val min: Double,
     val max: Double,
     val enabled: Boolean,
-    val description: String
+    val description: String,
+    val timestamp: Long = Date().time / 1000
 ) {
     companion object {
         fun getAlarmRequest(alarm: Alarm): SetAlertRequest {

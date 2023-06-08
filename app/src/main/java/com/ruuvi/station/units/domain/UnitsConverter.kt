@@ -224,9 +224,9 @@ class UnitsConverter (
 
     fun getSignalString(rssi: Int): String =
         if (rssi != 0) {
-            context.getString(R.string.signal_reading, rssi, context.getString(R.string.signal_unit))
+            context.getString(R.string.signal_reading, rssi, getSignalUnit())
         } else {
-            context.getString(R.string.signal_reading_zero, context.getString(R.string.signal_unit))
+            context.getString(R.string.signal_reading_zero, getSignalUnit())
         }
 
     fun getSignalUnit(): String {
@@ -261,6 +261,18 @@ class UnitsConverter (
             valueWithUnit = context.getString(R.string.voltage_reading, voltage, context.getString(R.string.voltage_unit)),
             valueWithoutUnit = context.getString(R.string.voltage_reading, voltage, "").trim(),
             unitString = context.getString(R.string.voltage_unit)
+        )
+
+
+    fun getSignalEnvironmentValue(
+        rssi: Int
+    ): EnvironmentValue =
+        EnvironmentValue (
+            value = rssi.toDouble(),
+            accuracy = Accuracy.Accuracy0,
+            valueWithUnit = getSignalString(rssi),
+            valueWithoutUnit = context.getString(R.string.signal_reading, rssi, "").trim(),
+            unitString = getSignalUnit()
         )
 
     companion object {

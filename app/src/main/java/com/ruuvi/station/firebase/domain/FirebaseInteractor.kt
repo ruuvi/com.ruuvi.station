@@ -97,10 +97,10 @@ class FirebaseInteractor(
                 firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
                 firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())
 
-                firebaseAnalytics.setUserProperty(USE_DF2, ownedSensors.count { it.dataFormat == 2 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF3, ownedSensors.count { it.dataFormat == 3 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF4, ownedSensors.count { it.dataFormat == 4 }.toString())
-                firebaseAnalytics.setUserProperty(USE_DF5, ownedSensors.count { it.dataFormat == 5 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF2, ownedSensors.count { it.latestMeasurement?.dataFormat == 2 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF3, ownedSensors.count { it.latestMeasurement?.dataFormat == 3 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF4, ownedSensors.count { it.latestMeasurement?.dataFormat == 4 }.toString())
+                firebaseAnalytics.setUserProperty(USE_DF5, ownedSensors.count { it.latestMeasurement?.dataFormat == 5 }.toString())
 
                 registerAlarmStats()
 
