@@ -19,6 +19,7 @@ class UnitsConverter (
         accuracy: Accuracy = getTemperatureAccuracy()
     ): EnvironmentValue =
         EnvironmentValue (
+            original = temperatureCelsius,
             value = getTemperatureValue(temperatureCelsius),
             accuracy = accuracy,
             valueWithUnit = getTemperatureString(temperatureCelsius, accuracy),
@@ -86,6 +87,7 @@ class UnitsConverter (
         accuracy: Accuracy = getPressureAccuracy()
     ): EnvironmentValue =
         EnvironmentValue (
+            original = pressurePascal,
             value = getPressureValue(pressurePascal),
             accuracy = accuracy,
             valueWithUnit = getPressureString(pressurePascal, accuracy),
@@ -156,6 +158,7 @@ class UnitsConverter (
         accuracy: Accuracy = getHumidityAccuracy()
     ): EnvironmentValue =
         EnvironmentValue (
+            original = humidity,
             value = getHumidityValue(humidity, temperature),
             accuracy = accuracy,
             valueWithUnit = getHumidityString(humidity, temperature),
@@ -256,6 +259,7 @@ class UnitsConverter (
         voltage: Double
     ): EnvironmentValue =
         EnvironmentValue (
+            original = voltage,
             value = voltage,
             accuracy = Accuracy.Accuracy2,
             valueWithUnit = context.getString(R.string.voltage_reading, voltage, context.getString(R.string.voltage_unit)),
@@ -268,6 +272,7 @@ class UnitsConverter (
         rssi: Int
     ): EnvironmentValue =
         EnvironmentValue (
+            original = rssi.toDouble(),
             value = rssi.toDouble(),
             accuracy = Accuracy.Accuracy0,
             valueWithUnit = getSignalString(rssi),
