@@ -217,11 +217,11 @@ class AlarmCheckInteractor(
         ) {
             val (lowResourceId, highResourceId) = resources
             when {
-                comparedValue.value < alarm.min -> {
+                comparedValue.original < alarm.min -> {
                     alarmResource = lowResourceId
                     thresholdValue = alarm.min
                 }
-                comparedValue.value > alarm.max -> {
+                comparedValue.original > alarm.max -> {
                     alarmResource = highResourceId
                     thresholdValue = alarm.max
                 }
