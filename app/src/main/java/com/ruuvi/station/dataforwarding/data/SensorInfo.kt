@@ -62,7 +62,6 @@ data class SensorInfo(
             reading.humidity = logReading.humidity
             reading.pressure = logReading.pressure
             reading.createdAt = logReading.date
-            sensorSettings.calibrateSensor(reading)
 
             return SensorInfo(
                 id = reading.ruuviTagId,
