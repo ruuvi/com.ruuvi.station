@@ -25,13 +25,25 @@ class CsvExporter(
 
     fun toCsv(tagId: String): Uri? {
         val tag = repository.getTagById(tagId)
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(tagId)
+
         val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthDays)
+            .map {
+                it.copy(
+                    temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+                    humidity = it.humidity?.let { humidity ->
+                        humidity + (sensorSettings?.humidityOffset ?: 0.0)
+                    },
+                    pressure = it.pressure?.let { pressure ->
+                        pressure + (sensorSettings?.pressureOffset ?: 0.0)
+                    }
+                )
+            }
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
 
         val filenameDateFormat = SimpleDateFormat("yyyyMMdd-HHmm")
         val filenameDate = filenameDateFormat.format(Date())
-        val sensorSettings = sensorSettingsRepository.getSensorSettings(tagId)
 
         val filename = if (sensorSettings?.name.isNullOrEmpty()) {
             "$cacheDir/${tag?.id}_${filenameDate}.csv"

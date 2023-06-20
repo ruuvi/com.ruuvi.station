@@ -102,7 +102,6 @@ class BluetoothGattInteractor (
             reading.humidity = logReading.humidity
             reading.pressure = logReading.pressure
             reading.createdAt = logReading.date
-            sensorSettings?.calibrateSensor(reading)
             tagReadingList.add(reading)
         }
         sensorHistoryRepository.bulkInsert(sensorId, tagReadingList)

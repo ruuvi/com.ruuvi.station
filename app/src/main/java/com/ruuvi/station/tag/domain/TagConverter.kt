@@ -11,8 +11,12 @@ class TagConverter(
     private val movementConverter: MovementConverter
 ) {
 
-    fun fromDatabase(entity: RuuviTagEntity, sensorSettings: SensorSettings): RuuviTag =
-        RuuviTag(
+    fun fromDatabase(entity: RuuviTagEntity, sensorSettings: SensorSettings): RuuviTag {
+        val temperature = entity.temperature + (sensorSettings.temperatureOffset ?: 0.0)
+        val humidity = entity.humidity?.let {it + (sensorSettings.humidityOffset ?: 0.0)}
+        val pressure = entity.pressure?.let {it + (sensorSettings.pressureOffset ?: 0.0)}
+
+        return RuuviTag(
             id = entity.id.orEmpty(),
             name = sensorSettings.name.orEmpty(),
             displayName = if (sensorSettings.name.isNullOrEmpty()) entity.id.toString() else sensorSettings.name.toString(),
@@ -27,26 +31,40 @@ class TagConverter(
             networkSensor = sensorSettings.networkSensor,
             owner = sensorSettings.owner,
             firmware = sensorSettings.firmware,
-            latestMeasurement = SensorMeasurements (
-                    temperatureValue = unitsConverter.getTemperatureEnvironmentValue(entity.temperature),
-                    pressureValue = entity.pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
-                    humidityValue = entity.humidity?.let { unitsConverter.getHumidityEnvironmentValue(it, entity.temperature) },
-                    movementValue = entity.movementCounter?.let { movementConverter.getMovementEnvironmentValue(it) },
-                    rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),
-                    voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
-                    accelerationX = entity.accelX,
-                    accelerationY = entity.accelY,
-                    accelerationZ = entity.accelZ,
-                    txPower = entity.txPower,
-                    dataFormat = entity.dataFormat,
-                    measurementSequenceNumber = entity.measurementSequenceNumber,
-                    connectable = entity.connectable,
-                    updatedAt = entity.updateAt,
+            latestMeasurement = SensorMeasurements(
+                temperatureValue = unitsConverter.getTemperatureEnvironmentValue(temperature),
+                pressureValue = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
+                humidityValue = humidity?.let {
+                    unitsConverter.getHumidityEnvironmentValue(
+                        it,
+                        temperature
+                    )
+                },
+                movementValue = entity.movementCounter?.let {
+                    movementConverter.getMovementEnvironmentValue(
+                        it
+                    )
+                },
+                rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),
+                voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
+                accelerationX = entity.accelX,
+                accelerationY = entity.accelY,
+                accelerationZ = entity.accelZ,
+                txPower = entity.txPower,
+                dataFormat = entity.dataFormat,
+                measurementSequenceNumber = entity.measurementSequenceNumber,
+                connectable = entity.connectable,
+                updatedAt = entity.updateAt,
             )
         )
+    }
 
-    fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag =
-        RuuviTag(
+    fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag {
+        val temperature = entity.temperature + (entity.temperatureOffset ?: 0.0)
+        val humidity = entity.humidity?.let {it + (entity.humidityOffset ?: 0.0)}
+        val pressure = entity.pressure?.let {it + (entity.pressureOffset ?: 0.0)}
+
+        return RuuviTag(
             id = entity.id,
             name = entity.name.orEmpty(),
             displayName = if (entity.name.isNullOrEmpty()) entity.id else entity.name.orEmpty(),
@@ -63,10 +81,23 @@ class TagConverter(
             firmware = entity.firmware,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(
-                    temperatureValue = unitsConverter.getTemperatureEnvironmentValue(entity.temperature),
-                    pressureValue = entity.pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
-                    humidityValue = entity.humidity?.let { unitsConverter.getHumidityEnvironmentValue(it, entity.temperature) },
-                    movementValue = entity.movementCounter?.let { movementConverter.getMovementEnvironmentValue(it) },
+                    temperatureValue = unitsConverter.getTemperatureEnvironmentValue(temperature),
+                    pressureValue = pressure?.let {
+                        unitsConverter.getPressureEnvironmentValue(
+                            it
+                        )
+                    },
+                    humidityValue = humidity?.let {
+                        unitsConverter.getHumidityEnvironmentValue(
+                            it,
+                            temperature
+                        )
+                    },
+                    movementValue = entity.movementCounter?.let {
+                        movementConverter.getMovementEnvironmentValue(
+                            it
+                        )
+                    },
                     voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
                     rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),
                     accelerationX = entity.accelX,
@@ -77,7 +108,8 @@ class TagConverter(
                     measurementSequenceNumber = entity.measurementSequenceNumber,
                     connectable = entity.connectable,
                     updatedAt = entity.updateAt,
-                    )
+                )
             }
         )
+    }
 }

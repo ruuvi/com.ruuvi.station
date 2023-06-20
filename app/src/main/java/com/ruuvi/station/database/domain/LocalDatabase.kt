@@ -13,8 +13,30 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 30
+        const val VERSION = 31
     }
+
+    @Migration(version = 31, database = LocalDatabase::class)
+    class Migration31Data : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL("UPDATE TagSensorReading SET " +
+                    "temperature = round(temperature - temperatureOffset, 4), " +
+                    "humidity = round(humidity - humidityOffset, 4)," +
+                    "pressure = round(pressure - pressureOffset, 4), " +
+                    "temperatureOffset = 0," +
+                    "humidityOffset = 0," +
+                    "pressureOffset = 0")
+
+            database.execSQL("UPDATE RuuviTag SET " +
+                    "temperature = round(temperature - temperatureOffset, 4), " +
+                    "humidity = round(humidity - humidityOffset, 4)," +
+                    "pressure = round(pressure - pressureOffset, 4)," +
+                    "temperatureOffset = 0," +
+                    "humidityOffset = 0," +
+                    "pressureOffset = 0")
+        }
+    }
+
 
     @Migration(version = 30, database = LocalDatabase::class)
     class Migration30(table: Class<SensorSettings?>?) : AlterTableMigration<SensorSettings?>(table) {
