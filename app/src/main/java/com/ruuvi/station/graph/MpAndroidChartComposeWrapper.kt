@@ -71,6 +71,7 @@ fun ChartView(
                 context.getString(chartSensorType.captionTemplate, "")
             }
             addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
+            (view.marker as ChartMarkerView).getFrom = {from}
         }
     )
 }
