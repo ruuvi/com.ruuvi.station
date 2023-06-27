@@ -20,7 +20,7 @@ class ChartMarkerView @JvmOverloads
     layoutResource: Int,
     val chartSensorType: ChartSensorType,
     val unitsConverter: UnitsConverter,
-    val getFrom: () -> Long
+    var getFrom: () -> Long
 ): MarkerView(context, layoutResource) {
 
     private var tvContent: TextView = findViewById(R.id.tvContent)
