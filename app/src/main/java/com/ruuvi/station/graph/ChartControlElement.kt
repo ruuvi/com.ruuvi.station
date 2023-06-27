@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,8 +23,11 @@ import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
+import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.util.Days
+import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 @Composable
 fun ChartControlElement(
@@ -36,8 +38,6 @@ fun ChartControlElement(
     val context = LocalContext.current
 
     val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
-
-    val canUseGatt by viewModel.canUseGattSync.observeAsState(false)
 
     val syncInProgress by viewModel.gattSyncInProgress.collectAsState(false)
 
@@ -173,6 +173,184 @@ fun ChartControlElement(
             doNotShowAgain = {
                 gattSyncDialogOpened = false
                 viewModel.dontShowGattSyncDescription()
+            },
+            onDismissRequest = {
+                gattSyncDialogOpened = false
+            }
+        )
+    }
+}
+
+@Composable
+fun ChartControlElement2(
+    sensorId: String,
+    viewPeriod: Days,
+    syncStatus: Flow<SyncStatus>,
+    disconnectGattAction: (String) -> Unit,
+    shouldSkipGattSyncDialog: () -> Boolean,
+    syncGatt: (String) -> Unit,
+    setViewPeriod: (Int) -> Unit,
+    exportToCsv: (String) -> Uri?,
+    removeTagData: (String) -> Unit,
+    refreshStatus: () -> Unit,
+    dontShowGattSyncDescription: () -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val context = LocalContext.current
+
+    var gattSyncDialogOpened by remember {
+        mutableStateOf(false)
+    }
+
+    var syncInProgress by remember {
+        mutableStateOf(false)
+    }
+
+    var syncMessage by remember {
+        mutableStateOf<UiText>(UiText.EmptyString)
+    }
+
+    var uiEvent by remember {
+        mutableStateOf<SyncProgress?>(null)
+    }
+
+    LaunchedEffect(key1 = true) {
+        syncStatus.collect() { event ->
+            Timber.d("SyncEvent collected $event")
+
+            if (listOf(
+                    SyncProgress.ERROR,
+                    SyncProgress.NOT_FOUND,
+                    SyncProgress.NOT_SUPPORTED,
+                    SyncProgress.DISCONNECTED
+                ).contains(event.syncProgress)
+            ) {
+                uiEvent = event.syncProgress
+            }
+            syncInProgress = event.syncInProgress
+            syncMessage = event.statusMessage
+        }
+    }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (syncInProgress) {
+            IconButton(onClick = {
+                disconnectGattAction(sensorId)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.buttonText
+                )
+            }
+            Text(
+                style = RuuviStationTheme.typography.syncStatusText,
+                text = syncMessage.asString(context)
+            )
+        } else {
+            IconButton(onClick = {
+                if (!shouldSkipGattSyncDialog()) {
+                    gattSyncDialogOpened = true
+                }
+                syncGatt(sensorId)
+            }) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extended)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.gatt_sync),
+                        contentDescription = null,
+                        tint = RuuviStationTheme.colors.buttonText
+                    )
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+                    Text(
+                        style = RuuviStationTheme.typography.subtitle,
+                        text = stringResource(id = R.string.sync),
+                        color = RuuviStationTheme.colors.buttonText
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            ViewPeriodMenu(
+                viewPeriod = viewPeriod,
+                setViewPeriod = setViewPeriod
+            )
+
+            ThreeDotsMenu(
+                sensorId = sensorId,
+                exportToCsv = { exportToCsv(sensorId) },
+                clearHistory = { removeTagData(sensorId) }
+            )
+        }
+    }
+
+    DisposableEffect( key1 = lifecycleOwner ) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshStatus()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+
+    if (uiEvent != null) {
+        when (uiEvent) {
+            SyncProgress.DISCONNECTED -> {
+                RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
+                    uiEvent = null
+                }
+            }
+            SyncProgress.NOT_SUPPORTED -> {
+                RuuviMessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
+                    uiEvent = null
+                }
+            }
+            SyncProgress.NOT_FOUND -> {
+                if (!gattSyncDialogOpened) {
+                    RuuviConfirmDialog(
+                        title = stringResource(id = R.string.error),
+                        message = stringResource(id = R.string.gatt_not_in_range_description),
+                        noButtonCaption = stringResource(id = R.string.close),
+                        yesButtonCaption = stringResource(id = R.string.try_again),
+                        onDismissRequest = {
+                            uiEvent = null
+                        }
+                    ) {
+                        uiEvent = null
+                        syncGatt(sensorId)
+                    }
+                }
+            }
+            SyncProgress.ERROR -> {
+                RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
+                    uiEvent = null
+                }
+            }
+            else -> {
+                uiEvent = null
+            }
+        }
+    }
+
+    if (gattSyncDialogOpened) {
+        GattSyncDescriptionDialog(
+            doNotShowAgain = {
+                gattSyncDialogOpened = false
+                dontShowGattSyncDescription()
             },
             onDismissRequest = {
                 gattSyncDialogOpened = false

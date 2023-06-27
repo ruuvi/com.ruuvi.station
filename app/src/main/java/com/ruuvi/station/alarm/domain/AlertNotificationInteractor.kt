@@ -15,7 +15,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.receiver.CancelAlarmReceiver
 import com.ruuvi.station.alarm.receiver.MuteAlarmReceiver
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import timber.log.Timber
 
 class AlertNotificationInteractor(
@@ -44,7 +44,7 @@ class AlertNotificationInteractor(
     private fun createNotification(notificationData: AlertNotificationData): Notification? {
         val alertId = notificationData.alarmId ?: -1
         val tagDetailsPendingIntent =
-            TagDetailsActivity.createPendingIntent(
+            SensorCardActivity.createPendingIntent(
                 context,
                 notificationData.sensorId,
                 alertId

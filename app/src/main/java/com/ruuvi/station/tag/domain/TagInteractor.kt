@@ -20,7 +20,7 @@ class TagInteractor constructor(
     fun getTags(): List<RuuviTag> =
         tagRepository
             .getFavoriteSensors()
-            .map { it.copy(status = alarmCheckInteractor.getAlarmStatus(it)) }
+            .map { it.copy(alarmSensorStatus = alarmCheckInteractor.getAlarmStatus(it)) }
             .also { Timber.d("TagInteractor - getTags") }
 
     fun getTagEntities(isFavorite: Boolean = true): List<RuuviTagEntity> =

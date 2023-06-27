@@ -10,7 +10,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import com.ruuvi.station.R
-import com.ruuvi.station.tagdetails.ui.TagDetailsActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import timber.log.Timber
 
 class ComplexWidgetProvider: AppWidgetProvider() {
@@ -37,7 +37,7 @@ class ComplexWidgetProvider: AppWidgetProvider() {
             ITEM_CLICK -> {
                 val sensorId = intent.getStringExtra(EXTRA_SENSOR_ID) ?: ""
                 val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                TagDetailsActivity.createPendingIntent(context, sensorId, appWidgetId)?.send()
+                SensorCardActivity.createPendingIntent(context, sensorId, appWidgetId)?.send()
             }
             else -> super.onReceive(context, intent)
         }

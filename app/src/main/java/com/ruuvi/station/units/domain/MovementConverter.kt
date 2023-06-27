@@ -28,6 +28,7 @@ class MovementConverter(val context: Context) {
         movement: Int
     ): EnvironmentValue =
         EnvironmentValue (
+            original = movement.toDouble(),
             value = movement.toDouble(),
             accuracy = Accuracy.Accuracy0,
             valueWithUnit = getMovementString(movement),

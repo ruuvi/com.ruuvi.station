@@ -39,7 +39,7 @@ fun CalibrationSettingsGroup(
         ) {
             CalibrationActivity.start(context, sensorState.id, CalibrationType.TEMPERATURE)
         }
-        if (sensorState.humidity != null) {
+        if (sensorState.latestMeasurement?.humidityValue != null) {
             DividerRuuvi()
             CalibrationItem(
                 title = stringResource(id = R.string.humidity),
@@ -48,7 +48,7 @@ fun CalibrationSettingsGroup(
                 CalibrationActivity.start(context, sensorState.id, CalibrationType.HUMIDITY)
             }
         }
-        if (sensorState.pressure != null) {
+        if (sensorState.latestMeasurement?.pressureValue != null) {
             DividerRuuvi()
             CalibrationItem(
                 title = stringResource(id = R.string.pressure),

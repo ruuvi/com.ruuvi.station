@@ -10,9 +10,9 @@ import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.database.tables.isLowBattery
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -79,7 +79,10 @@ class TagSettingsViewModel(
 
     private fun getFirmware(firmware: String?): UiText? {
         Timber.d("getFirmware")
-        if (firmware.isNullOrEmpty() && sensorState.value.dataFormat != 5) {
+        if (firmware.isNullOrEmpty() &&
+            sensorState.value.latestMeasurement != null &&
+            sensorState.value.latestMeasurement?.dataFormat != 5
+        ) {
             return UiText.StringResource(R.string.firmware_very_old)
         }
         return firmware?.let { UiText.DynamicString(firmware) }
@@ -99,7 +102,7 @@ class TagSettingsViewModel(
         Timber.d("updateSensorFirmwareVersion")
         CoroutineScope(Dispatchers.IO).launch {
             val storredFw = sensorState.value.firmware
-            if (storredFw.isNullOrEmpty() && sensorState.value.connectable == true) {
+            if (storredFw.isNullOrEmpty() && sensorState.value.latestMeasurement?.connectable == true) {
                 val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
                 if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
                     interactor.setSensorFirmware(sensorId, fwResult.fw)
