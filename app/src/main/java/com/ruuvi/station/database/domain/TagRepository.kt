@@ -89,6 +89,7 @@ class TagRepository(
 
         SQLite.delete(RuuviTagEntity::class.java)
             .where(RuuviTagEntity_Table.id.eq(sensorId))
+            .execute()
     }
 
     fun updateTag(tag: RuuviTagEntity) {
