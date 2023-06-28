@@ -11,14 +11,28 @@
 
     <ListView
         android:id="@+id/tagListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:divider="?attr/colorDivider"
+        android:footerDividersEnabled="true"
         android:dividerHeight="@dimen/divider"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider"
+        android:background="?attr/colorDivider"
+        app:layout_constraintTop_toBottomOf="@+id/tagListView"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ParagraphSmall"
+        android:padding="@dimen/extended"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/tagListView"
+        android:text="@string/add_sensor_via_nfc"
+        />
 
     <LinearLayout
         android:id="@+id/noSensorsLayout"
