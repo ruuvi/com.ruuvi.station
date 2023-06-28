@@ -1,6 +1,7 @@
 package com.ruuvi.station.dashboard.ui
 
 import androidx.lifecycle.*
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -8,6 +9,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
+import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.*
@@ -19,8 +21,9 @@ class DashboardActivityViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val permissionLogicInteractor: PermissionLogicInteractor,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val networkSignInInteractor: NetworkSignInInteractor
-    ) : ViewModel() {
+    private val networkSignInInteractor: NetworkSignInInteractor,
+    private val nfcResultInteractor: NfcResultInteractor
+) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
         while (true) {
@@ -71,5 +74,13 @@ class DashboardActivityViewModel(
         preferencesRepository.updateDashboardTapAction(dashboardTapAction)
         networkApplicationSettings.updateDashboardTapAction()
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
+    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
+
+    fun addSensor(sensorId: String) {
+        tagInteractor.getTagEntityById(sensorId)?.let {
+            tagInteractor.makeSensorFavorite(it)
+        }
     }
 }

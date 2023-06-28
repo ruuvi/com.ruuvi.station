@@ -307,6 +307,11 @@
     <string name="network_syncing">Loading history from the cloud...</string>
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
+    <string name="nfc_dialog_add_sensor">Add Sensor</string>
+    <string name="nfc_dialog_firmware_version">Firmware Version:</string>
+    <string name="nfc_dialog_mac_address">Mac Address:</string>
+    <string name="nfc_dialog_name">Name:</string>
+    <string name="nfc_dialog_unique_id">Unique ID:</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
     <string name="no_data_10_days">No data during the last 10 days</string>
@@ -401,6 +406,7 @@
     <string name="select_sensor">Select sensor</string>
     <string name="send_email">Send email</string>
     <string name="sensor_already_added">Sensor is already added</string>
+    <string name="sensor_details">Sensor Details</string>
     <string name="sensor_not_shared">Not shared</string>
     <string name="sensor_settings">Sensor Settings</string>
     <string name="sensor_shared">Shared</string>

@@ -292,6 +292,7 @@
     <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
+    <string name="muted_till">Poissa käytöstä %1$s saakka</string>
     <string name="my_ruuvi_account">Minun Ruuvi-tilini</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>

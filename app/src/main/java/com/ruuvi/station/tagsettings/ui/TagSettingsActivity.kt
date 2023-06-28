@@ -132,7 +132,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             context.startActivity(intent)
         }
 
-        fun startAfterAddingNewSensor(context: Activity, tagId: String?) {
+        fun startAfterAddingNewSensor(context: Context, tagId: String?) {
             val dashboardIntent = Intent(context, DashboardActivity::class.java)
 
             val sensorCardIntent = Intent(context, SensorCardActivity::class.java)
