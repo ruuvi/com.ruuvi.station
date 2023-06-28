@@ -71,6 +71,7 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
+import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -240,6 +241,12 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                         }
                     }
                 }
+
+                NfcInteractor(
+                    currentSensorId = "",
+                    getNfcScanResponse = dashboardViewModel::getNfcScanResponse,
+                    addSensor = dashboardViewModel::addSensor
+                )
 
                 SideEffect {
                     systemUiController.setStatusBarColor(

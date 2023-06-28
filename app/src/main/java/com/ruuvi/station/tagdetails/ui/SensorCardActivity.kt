@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,8 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.whenStarted
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
@@ -44,6 +43,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.BlinkingEffect
@@ -52,6 +52,9 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
+import com.ruuvi.station.nfc.NfcScanReciever
+import com.ruuvi.station.nfc.domain.NfcScanResponse
+import com.ruuvi.station.nfc.ui.NfcDialog
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -63,6 +66,7 @@ import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -110,7 +114,9 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                     exportToCsv = viewModel::exportToCsv ,
                     removeTagData= viewModel::removeTagData,
                     refreshStatus = viewModel::refreshStatus,
-                    dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription
+                    dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
+                    getNfcScanResponse = viewModel::getNfcScanResponse,
+                    addSensor = viewModel::addSensor
                 )
             }
         }
@@ -125,6 +131,19 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
             intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
             context.startActivity(intent)
+        }
+
+        fun startWithDashboard(context: Context, sensorId: String, showChart: Boolean = false) {
+            val intent = Intent(context, SensorCardActivity::class.java)
+            intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
+            intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
+
+            val stackBuilder = TaskStackBuilder.create(context)
+            val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
+            stackBuilder.addNextIntent(intentDashboardActivity)
+            stackBuilder.addNextIntent(intent)
+
+            stackBuilder.startActivities()
         }
 
         fun createPendingIntent(context: Context, sensorId: String, requestCode: Int): PendingIntent? {
@@ -163,7 +182,9 @@ fun SensorsPager(
     exportToCsv: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
-    dontShowGattSyncDescription: () -> Unit
+    dontShowGattSyncDescription: () -> Unit,
+    getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
+    addSensor: (String) -> Unit
 ) {
     Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
@@ -205,6 +226,12 @@ fun SensorsPager(
             }
         }
     }
+
+    NfcInteractor(
+        currentSensorId = pagerSensor?.id,
+        addSensor = addSensor,
+        getNfcScanResponse = getNfcScanResponse
+    )
 
     Box(modifier = Modifier.systemBarsPadding()) {
         Column() {
@@ -308,6 +335,59 @@ fun SensorsPager(
             color = Color.Transparent,
             darkIcons = !isDarkTheme
         )
+    }
+}
+
+@Composable
+fun NfcInteractor(
+    currentSensorId: String?,
+    getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
+    addSensor: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var nfcDialog by remember { mutableStateOf(false) }
+    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse.NewSensor?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+
+    LaunchedEffect(key1 = lifecycleOwner.lifecycle) {
+        lifecycleOwner.lifecycleScope.launch {
+            Timber.d("nfc scanned launch")
+
+            NfcScanReciever.nfcSensorScanned
+                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { scanInfo ->
+                    Timber.d("nfc scanned: $scanInfo")
+                    if (scanInfo != null) {
+                        val response = getNfcScanResponse.invoke(scanInfo)
+                        Timber.d("nfc scanned response: $response")
+                        if (response is NfcScanResponse.ExistingSensor && currentSensorId != response.sensorId) {
+                            SensorCardActivity.startWithDashboard(context, response.sensorId)
+                        }
+                        if (response is NfcScanResponse.NewSensor) {
+                            nfcScanResponse = response
+                            nfcDialog = true
+                        }
+                    }
+                }
+        }
+    }
+
+    if (nfcDialog && nfcScanResponse != null) {
+        val response = nfcScanResponse
+        if (response != null) {
+            NfcDialog(
+                sensorInfo = response,
+                addSensorAction = {
+                    addSensor(response.sensorId)
+                    TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
+                },
+                onDismissRequest = {
+                    nfcDialog = false
+                    nfcScanResponse = null
+                }
+            )
+        }
     }
 }
 

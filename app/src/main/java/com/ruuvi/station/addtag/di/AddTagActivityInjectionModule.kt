@@ -10,7 +10,7 @@ object AddTagActivityInjectionModule {
 
     val module = Kodein.Module(AddTagActivityInjectionModule.javaClass.name) {
         bind<AddTagActivityViewModel>() with provider {
-            AddTagActivityViewModel(instance())
+            AddTagActivityViewModel(instance(), instance())
         }
     }
 }

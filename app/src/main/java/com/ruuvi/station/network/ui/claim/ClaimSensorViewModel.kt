@@ -140,10 +140,8 @@ class ClaimSensorViewModel (
         var bluetoothJob: Job? = null
 
         val nfcJob = viewModelScope.launch {
-            sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
-
             NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
-                Timber.d("NFC VM $scanInfo")
+                Timber.d("nfc scanned: $scanInfo")
                 if (scanInfo != null && scanInfo.mac != sensorId) {
                     viewModelScope.launch {
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
