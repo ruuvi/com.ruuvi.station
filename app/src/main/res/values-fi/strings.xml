@@ -72,6 +72,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/fi/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/fi/tuotteet?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibroi</string>
     <string name="calibrated">Kalibroitu: %1$s</string>
     <string name="calibration_clear_confirm">Poista kalibrointiasetukset?</string>

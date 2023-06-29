@@ -72,6 +72,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibrieren</string>
     <string name="calibrated">Kalibriert: %1$s</string>
     <string name="calibration_clear_confirm">Kalibrierungseinstellungen löschen?</string>
