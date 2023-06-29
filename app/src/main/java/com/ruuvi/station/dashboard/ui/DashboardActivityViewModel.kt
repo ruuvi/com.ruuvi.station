@@ -32,13 +32,21 @@ class DashboardActivityViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private var _dashBoardType = MutableStateFlow<DashboardType> (preferencesRepository.getDashboardType())
+    private var _dashBoardType =
+        MutableStateFlow<DashboardType>(preferencesRepository.getDashboardType())
     val dashboardType: StateFlow<DashboardType> = _dashBoardType
 
-    private var _dashBoardTapAction = MutableStateFlow<DashboardTapAction> (preferencesRepository.getDashboardTapAction())
+    private var _dashBoardTapAction =
+        MutableStateFlow<DashboardTapAction>(preferencesRepository.getDashboardTapAction())
     val dashboardTapAction: StateFlow<DashboardTapAction> = _dashBoardTapAction
 
+    private var manualSyncJob: Job? = null
+
     val syncEvents = networkDataSyncInteractor.syncEvents
+
+    val syncInProgress:Flow<Boolean> = networkDataSyncInteractor.syncInProgressFlow.map {
+        it && manualSyncJob?.isActive ?: false
+    }
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
@@ -64,6 +72,12 @@ class DashboardActivityViewModel(
         networkSignInInteractor.signOut { }
     }
 
+    fun syncCloud() {
+        viewModelScope.launch {
+            manualSyncJob = networkDataSyncInteractor.syncNetworkData()
+        }
+    }
+
     fun changeDashboardType(dashboardType: DashboardType) {
         preferencesRepository.updateDashboardType(dashboardType)
         networkApplicationSettings.updateDashboardType()
@@ -76,7 +90,8 @@ class DashboardActivityViewModel(
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
 
-    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
+    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) =
+        nfcResultInteractor.getNfcScanResponse(scanInfo)
 
     fun addSensor(sensorId: String) {
         tagInteractor.getTagEntityById(sensorId)?.let {

@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -114,7 +117,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val sensors by remember(dashboardViewModel.tagsFlow, lifecycleOwner) {
                     dashboardViewModel.tagsFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 }.collectAsState(null)
-
+                val refreshing by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
 
@@ -234,7 +237,9 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         items = it,
                                         userEmail = userEmail,
                                         dashboardType = dashboardType,
-                                        dashboardTapAction = dashboardTapAction
+                                        dashboardTapAction = dashboardTapAction,
+                                        syncCloud = dashboardViewModel::syncCloud,
+                                        refreshing = refreshing
                                     )
                                 }
                             }
@@ -337,40 +342,59 @@ fun EmptyDashboard(buySensors: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DashboardItems(
     items: List<RuuviTag>,
     userEmail: String?,
     dashboardType: DashboardType,
-    dashboardTapAction: DashboardTapAction
+    dashboardTapAction: DashboardTapAction,
+    syncCloud: ()-> Unit,
+    refreshing: Boolean
 ) {
     val itemHeight = 156.dp * LocalDensity.current.fontScale
 
-    LazyVerticalGrid(
-        modifier = Modifier
-            .padding(horizontal = RuuviStationTheme.dimensions.medium),
-        columns = GridCells.Adaptive(300.dp),
-        verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
-        horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium)
-    ) {
-        items(items, key = {it.id}) { sensor ->
-            when (dashboardType) {
-                DashboardType.SIMPLE_VIEW ->
-                    DashboardItemSimple(
-                        sensor = sensor,
-                        userEmail = userEmail,
-                        dashboardTapAction = dashboardTapAction
-                    )
-                DashboardType.IMAGE_VIEW ->
-                    DashboardItem(
-                        itemHeight = itemHeight,
-                        sensor = sensor,
-                        userEmail = userEmail,
-                        dashboardTapAction = dashboardTapAction
-                    )
-            }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            syncCloud.invoke()
         }
-        item(span = { GridItemSpan(Int.MAX_VALUE) }) { Box(modifier = Modifier.navigationBarsPadding()) }
+    )
+
+    val pullToRefreshModifier = if (userEmail.isNullOrEmpty()) {
+        Modifier
+    } else {
+        Modifier.pullRefresh(pullRefreshState)
+    }
+
+    Box(modifier = pullToRefreshModifier) {
+        LazyVerticalGrid(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
+            columns = GridCells.Adaptive(300.dp),
+            verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
+            horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium)
+        ) {
+            items(items, key = { it.id }) { sensor ->
+                when (dashboardType) {
+                    DashboardType.SIMPLE_VIEW ->
+                        DashboardItemSimple(
+                            sensor = sensor,
+                            userEmail = userEmail,
+                            dashboardTapAction = dashboardTapAction
+                        )
+                    DashboardType.IMAGE_VIEW ->
+                        DashboardItem(
+                            itemHeight = itemHeight,
+                            sensor = sensor,
+                            userEmail = userEmail,
+                            dashboardTapAction = dashboardTapAction
+                        )
+                }
+            }
+            item(span = { GridItemSpan(Int.MAX_VALUE) }) { Box(modifier = Modifier.navigationBarsPadding()) }
+        }
+        PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
 }
 
