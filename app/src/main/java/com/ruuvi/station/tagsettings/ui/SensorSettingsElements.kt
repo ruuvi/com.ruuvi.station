@@ -115,6 +115,7 @@ fun SensorSettingsImage(
     sensorState: RuuviTag,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Box(
         Modifier
             .fillMaxWidth()
@@ -143,34 +144,15 @@ fun SensorSettingsImage(
                 )
             }
         }
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(modifier = Modifier
-                .clip(CircleShape)
-                .size(RuuviStationTheme.dimensions.huge)
-                .background(RuuviStationTheme.colors.accent),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    modifier = Modifier.size(RuuviStationTheme.dimensions.extraBig),
-                    painter = painterResource(id = R.drawable.camera_24),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-            Text(
-                style = RuuviStationTheme.typography.subtitle,
-                text = stringResource(id = R.string.change_background_image),
-                color = RuuviStationTheme.colors.buttonText
-            )
-        }
     }
 
+    TextEditWithCaptionButton(
+        title = stringResource(id = R.string.background_image),
+        icon = painterResource(id = R.drawable.camera_24),
+        tint = RuuviStationTheme.colors.accent
+    ) {
+        BackgroundActivity.start(context, sensorState.id)
+    }
 }
 
 @Composable
@@ -184,7 +166,7 @@ fun GeneralSettingsGroup(
     val context = LocalContext.current
     var setNameDialog by remember { mutableStateOf(false) }
 
-    SensorSettingsTitle(title = stringResource(id = R.string.general))
+    DividerRuuvi()
     TextEditWithCaptionButton(
         title = stringResource(id = R.string.tag_name),
         value = sensorState.displayName,
@@ -229,6 +211,7 @@ fun GeneralSettingsGroup(
             }
         }
     } else {
+        DividerRuuvi()
         TextEditWithCaptionButton(
             title = stringResource(id = R.string.tagsettings_owner),
             value = stringResource(id = R.string.owner_none),
@@ -331,7 +314,6 @@ fun RemoveGroup(
         backgroundColor = RuuviStationTheme.colors.settingsTitle
     ) {
         TextEditWithCaptionButton(
-            value = null,
             title = stringResource(id = R.string.remove_this_sensor),
             icon = painterResource(id = R.drawable.arrow_forward_16),
             tint = RuuviStationTheme.colors.trackInactive

@@ -67,27 +67,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     modifier = Modifier.fillMaxSize(),
                     backgroundColor = RuuviStationTheme.colors.background,
                     topBar = { RuuviTopAppBar(
-                        title = stringResource(id = R.string.sensor_settings),
-                        actions = {
-                            Icon(
-                                modifier = Modifier
-                                    .clickable {
-                                        showExportDialog = true
-                                    },
-                                painter = painterResource(id = R.drawable.upload_24),
-                                contentDescription = "",
-                                tint = RuuviStationTheme.colors.buttonText
-                            )
-                            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-                            if (showExportDialog) {
-                                RuuviMessageDialog(
-                                    title = stringResource(id = R.string.export_history),
-                                    message = stringResource(id = R.string.export_csv_feature_location),
-                                    onDismissRequest = { showExportDialog = false }
-                                )
-                            }
-                        }
-                    )},
+                        title = stringResource(id = R.string.sensor_settings))
+                    },
                     scaffoldState = scaffoldState
                 ) { paddingValues ->
                     SensorSettings(

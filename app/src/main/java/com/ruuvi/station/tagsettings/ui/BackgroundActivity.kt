@@ -170,7 +170,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             DividerRuuvi()
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.take_photo),
-                value = null,
                 icon = painterResource(id = R.drawable.camera_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
@@ -183,7 +182,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             DividerRuuvi()
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.select_from_gallery),
-                value = null,
                 icon = painterResource(id = R.drawable.gallery_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
