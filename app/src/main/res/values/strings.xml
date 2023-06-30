@@ -311,6 +311,7 @@
     <string name="never">never</string>
     <string name="nfc_dialog_add_sensor">Add Sensor</string>
     <string name="nfc_dialog_firmware_version">Firmware Version:</string>
+    <string name="nfc_dialog_go_to_sensor">Go to sensor card</string>
     <string name="nfc_dialog_mac_address">Mac Address:</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Unique ID:</string>

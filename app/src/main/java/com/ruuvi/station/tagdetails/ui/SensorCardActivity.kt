@@ -228,7 +228,6 @@ fun SensorsPager(
     }
 
     NfcInteractor(
-        currentSensorId = pagerSensor?.id,
         addSensor = addSensor,
         getNfcScanResponse = getNfcScanResponse
     )
@@ -340,13 +339,12 @@ fun SensorsPager(
 
 @Composable
 fun NfcInteractor(
-    currentSensorId: String?,
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
     addSensor: (String) -> Unit
 ) {
     val context = LocalContext.current
     var nfcDialog by remember { mutableStateOf(false) }
-    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse.NewSensor?>(null) }
+    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse?>(null) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
 
@@ -361,13 +359,8 @@ fun NfcInteractor(
                     if (scanInfo != null) {
                         val response = getNfcScanResponse.invoke(scanInfo)
                         Timber.d("nfc scanned response: $response")
-                        if (response is NfcScanResponse.ExistingSensor && currentSensorId != response.sensorId) {
-                            SensorCardActivity.startWithDashboard(context, response.sensorId)
-                        }
-                        if (response is NfcScanResponse.NewSensor) {
-                            nfcScanResponse = response
-                            nfcDialog = true
-                        }
+                        nfcScanResponse = response
+                        nfcDialog = true
                     }
                 }
         }
@@ -381,6 +374,9 @@ fun NfcInteractor(
                 addSensorAction = {
                     addSensor(response.sensorId)
                     TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
+                },
+                goToSensorAction = {
+                    SensorCardActivity.startWithDashboard(context, response.sensorId)
                 },
                 onDismissRequest = {
                     nfcDialog = false

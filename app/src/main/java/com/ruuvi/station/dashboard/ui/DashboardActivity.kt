@@ -248,7 +248,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 }
 
                 NfcInteractor(
-                    currentSensorId = "",
                     getNfcScanResponse = dashboardViewModel::getNfcScanResponse,
                     addSensor = dashboardViewModel::addSensor
                 )

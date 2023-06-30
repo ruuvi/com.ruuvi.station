@@ -91,10 +91,9 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
                 if (scanInfo != null) {
                     val response = viewModel.getNfcScanResponse(scanInfo)
                     Timber.d("nfc scanned response: $response")
-                    if (response is NfcScanResponse.ExistingSensor) {
+                    if (response.existingSensor) {
                         SensorCardActivity.startWithDashboard(this@AddTagActivity, response.sensorId)
-                    }
-                    if (response is NfcScanResponse.NewSensor) {
+                    } else {
                         viewModel.addSensor(response.sensorId)
                         TagSettingsActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
                     }

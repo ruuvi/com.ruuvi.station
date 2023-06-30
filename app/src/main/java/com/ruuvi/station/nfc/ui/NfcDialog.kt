@@ -21,9 +21,10 @@ import com.ruuvi.station.nfc.domain.NfcScanResponse
 
 @Composable
 fun NfcDialog(
-    sensorInfo: NfcScanResponse.NewSensor,
+    sensorInfo: NfcScanResponse,
     onDismissRequest : () -> Unit,
-    addSensorAction: () -> Unit
+    addSensorAction: () -> Unit,
+    goToSensorAction: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -38,9 +39,9 @@ fun NfcDialog(
                 modifier = Modifier
                     .padding(all = RuuviStationTheme.dimensions.extended)
             ) {
-                
+
                 SubtitleWithPadding(text = stringResource(id = R.string.sensor_details))
-                
+
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
                 ValueElement(
@@ -73,12 +74,22 @@ fun NfcDialog(
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     RuuviTextButton(
-                        text = stringResource(id = R.string.nfc_dialog_add_sensor),
+                        text = stringResource(
+                            id = if (sensorInfo.existingSensor) {
+                                R.string.nfc_dialog_go_to_sensor
+                            } else {
+                                R.string.nfc_dialog_add_sensor
+                            }
+                        ),
                         onClick = {
-                            addSensorAction.invoke()
+                            if (sensorInfo.existingSensor) {
+                                goToSensorAction.invoke()
+                            } else {
+                                addSensorAction.invoke()
+                            }
                         }
                     )
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
