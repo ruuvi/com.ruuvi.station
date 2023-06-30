@@ -45,7 +45,7 @@ fun TextEditButton(
 
 @Composable
 fun TextEditWithCaptionButton(
-    value: String?,
+    value: String? = null,
     title: String,
     icon: Painter,
     tint: Color,

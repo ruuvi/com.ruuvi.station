@@ -1,7 +1,5 @@
 package com.ruuvi.station.network.ui.claim
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.R
@@ -14,9 +12,7 @@ import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 
 class ClaimSensorViewModel (
