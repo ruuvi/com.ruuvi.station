@@ -41,6 +41,9 @@ class CalibrationEditDialog(
         val confirmButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         confirmButton.isEnabled = false
 
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).isAllCaps = false
+
         binding.dialogTitle.text = when (calibrationType) {
             CalibrationType.PRESSURE -> getString(R.string.calibration_enter_pressure, unit)
             CalibrationType.TEMPERATURE -> getString(R.string.calibration_enter_temperature, unit)
