@@ -29,6 +29,7 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -56,6 +57,8 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 Body()
             }
         }
+
+        viewModel.checkClaimState()
     }
 
     @Composable
@@ -67,8 +70,6 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         val systemUiController = rememberSystemUiController()
         val systemBarsColor = RuuviStationTheme.colors.systemBars
         var title by remember { mutableStateOf(titleString) }
-
-        val claimState by viewModel.claimState.collectAsState()
 
         LaunchedEffect(null) {
             viewModel.uiEvent.collect { uiEvent ->
@@ -106,6 +107,14 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 navController = navController,
                 startDestination = ClaimRoutes.CHECK_CLAIM_STATE
             ) {
+                composable(
+                    route = ClaimRoutes.NOT_SIGNED_IN,
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                ) {
+                    NotSignedInScreen()
+                }
+
                 composable(
                     route = ClaimRoutes.CHECK_CLAIM_STATE,
                     enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
@@ -146,30 +155,6 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                     ForceClaimGettingId()
                 }
             }
-
-//            when (claimState) {
-//                is ClaimSensorState.InProgress -> {
-//                    val state = claimState as ClaimSensorState.InProgress
-//                    title = stringResource(id = state.title)
-//                    LoadingScreen(status = stringResource(id = (claimState as ClaimSensorState.InProgress).status))
-//                }
-//                is ClaimSensorState.FreeToClaim -> {
-//                    title = stringResource(id = R.string.claim_sensor)
-//                    ClaimSensor()
-//                }
-//                is ClaimSensorState.ForceClaimInit -> {
-//                    title = stringResource(id = R.string.force_claim_sensor)
-//                    ForceClaimInit()
-//                }
-//                is ClaimSensorState.ForceClaimGettingId -> {
-//                    title = stringResource(id = R.string.force_claim_sensor)
-//                    ForceClaimGettingId()
-//                }
-//                is ClaimSensorState.ClaimFinished -> finish()
-//                is ClaimSensorState.ErrorWhileChecking -> {
-//                    Paragraph(text = "error ${(claimState as ClaimSensorState.ErrorWhileChecking).error}")
-//                }
-//            }
         }
 
         SideEffect {
@@ -179,6 +164,21 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    @Composable
+    fun NotSignedInScreen() {
+        val context = LocalContext.current
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.claim_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.claim_ownership)) {
+                        SignInActivity.start(context)
+                    }
+                }
+            }
+        }
+    }
 
     @Composable
     fun ClaimSensor() {
@@ -218,28 +218,6 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-    }
-    
-    private fun setupViewModel() {
-        viewModel.claimResultObserve.observe(this) { claimResult ->
-            if (claimResult != null) {
-                if (claimResult.first) {
-                    finish()
-                } else {
-                    //Snackbar.make(binding.root, claimResult.second, Snackbar.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        viewModel.claimInProgress.observe(this) {
-            //binding.claimButton.isEnabled = !it
-        }
-    }
-
-    private fun setupUI() {
-//        binding.claimButton.setDebouncedOnClickListener {
-//            viewModel.claimSensor()
-//        }
     }
 
     private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =

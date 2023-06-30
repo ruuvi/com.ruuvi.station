@@ -109,7 +109,7 @@
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön Bluetooth-taustaskannauksen?</string>
     <string name="check_claim_state">Omistajuuden tilaa haetaan</string>
-    <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
+    <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja. Vahvistaaksesi omistajuuden, sinun täytyy olla kirjautuneena sisälle.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
     <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
