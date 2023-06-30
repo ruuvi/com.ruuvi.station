@@ -200,7 +200,6 @@ fun GeneralSettingsGroup(
         } else {
             sensorState.owner
         }
-
         if (sensorOwnedByUser) {
             ValueWithCaption(
                 title = stringResource(id = R.string.tagsettings_owner),
@@ -228,6 +227,15 @@ fun GeneralSettingsGroup(
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
+        }
+    } else {
+        TextEditWithCaptionButton(
+            title = stringResource(id = R.string.tagsettings_owner),
+            value = stringResource(id = R.string.owner_none),
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
+        ) {
+            ClaimSensorActivity.start(context, sensorState.id)
         }
     }
 

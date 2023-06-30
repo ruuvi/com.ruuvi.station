@@ -109,7 +109,7 @@
     <string name="charts_background_dialog_description">Historiken fungerar bäst när bakgrundsskanning är aktiverad.</string>
     <string name="charts_background_dialog_title_question">Vill du aktivera Bluetooth-bakgrundsskanning?</string>
     <string name="check_claim_state">Kontrollerar anspråkstillstånd</string>
-    <string name="claim_description">Äger du den här sensorn? Bekräfta ägandet och så läggs sensorn till på ditt Ruuvi-konto. Varje Ruuvi-sensor kan bara ha en ägare.\n\nFördelar:\n\n ● Sensornamn, bakgrundsbilder, kalibrering och larminformation från en säker molntjänst\n\n ● Läs sensorinformation på distans online ( kräver Ruuvi Gateway-router)\n\n ● Dela sensorer med vänner och familj (kräver Ruuvi Gateway)\n\n ● Upp till 2 års historik från station.ruuvi.com (kräver Ruuvi Gateway)</string>
+    <string name="claim_description">Äger du den här sensorn? Bekräfta ägandet och så läggs sensorn till på ditt Ruuvi-konto. Varje Ruuvi-sensor kan bara ha en ägare. För att göra anspråk på äganderätt måste du vara inloggad.\n\nFördelar:\n\n ● Sensornamn, bakgrundsbilder, kalibrering och larminformation från en säker molntjänst\n\n ● Läs sensorinformation på distans online ( kräver Ruuvi Gateway-router)\n\n ● Dela sensorer med vänner och familj (kräver Ruuvi Gateway)\n\n ● Upp till 2 års historik från station.ruuvi.com (kräver Ruuvi Gateway)</string>
     <string name="claim_in_progress">Anspråk pågår</string>
     <string name="claim_ownership">Bekräfta Ägandet</string>
     <string name="claim_sensor">Bekräfta ägandet</string>
