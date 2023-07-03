@@ -532,6 +532,9 @@
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Type your email..</string>
+    <string name="unclaim">Unclaim</string>
+    <string name="unclaim_sensor">Unclaim sensor</string>
+    <string name="unclaim_sensor_description">Ownership of this sensor has been claimed to your Ruuvi account. Press Unclaim to remove this sensor\'s settings and related data from your Ruuvi account.</string>
     <string name="unknown_error">Unknown error</string>
     <string name="update_action">RESTART</string>
     <string name="update_downloaded_message">An update has just been downloaded.</string>

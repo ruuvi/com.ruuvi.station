@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Välj hur exakt du vill se sensorernas livemätvärden i appen. Den här inställningen påverkar inte histogram eller varningar.</string>
+    <string name="add_sensor_via_nfc">Du kan också använda NFC för att lägga till nya sensorer till Ruuvi Station</string>
     <string name="add_tag_not_found">Inga sensorer hittades</string>
     <string name="add_tag_title">Ruuvi sensorer i närheten</string>
     <string name="add_your_first_sensor">Lägg till din första sensor.</string>
@@ -307,6 +308,12 @@
     <string name="network_syncing">Synkroniserar...</string>
     <string name="network_user">Användare: %1$s</string>
     <string name="never">aldrig</string>
+    <string name="nfc_dialog_add_sensor">Lägg till sensor</string>
+    <string name="nfc_dialog_firmware_version">Firmwareversion:</string>
+    <string name="nfc_dialog_go_to_sensor">Gå till sensorkortet</string>
+    <string name="nfc_dialog_mac_address">MAC-adress:</string>
+    <string name="nfc_dialog_name">Namn:</string>
+    <string name="nfc_dialog_unique_id">Unikt ID:</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>
@@ -401,6 +408,7 @@
     <string name="select_sensor">Välj sensor</string>
     <string name="send_email">Skicka e-post</string>
     <string name="sensor_already_added">Sensorn har redan lagts till</string>
+    <string name="sensor_details">Sensordetaljer</string>
     <string name="sensor_not_shared">Inte delad</string>
     <string name="sensor_settings">Sensorinställningar</string>
     <string name="sensor_shared">Delad</string>
@@ -523,6 +531,9 @@
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Skriv in din e-postadress...</string>
+    <string name="unclaim">Ta bort anspråk</string>
+    <string name="unclaim_sensor">Ta bort äganderätten</string>
+    <string name="unclaim_sensor_description">Äganderätten till denna sensor har gjorts anspråk på ditt Ruuvi-konto. Tryck på Unclaim för att ta bort sensorns inställningar och relaterade data från ditt Ruuvi-konto.</string>
     <string name="unknown_error">Okänt fel</string>
     <string name="update_action">STARTA OM</string>
     <string name="update_downloaded_message">En uppdatering har laddats ner.</string>

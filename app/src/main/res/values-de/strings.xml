@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Wählen Sie aus, wie genau Sie die Live-Messwerte der Sensoren in der App sehen möchten. Diese Einstellung hat keinen Einfluss auf Verlaufsdiagramme oder Alarme.</string>
+    <string name="add_sensor_via_nfc">Sie können NFC auch verwenden, um der Ruuvi Station neue Sensoren hinzuzufügen</string>
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
     <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
@@ -318,6 +319,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="network_syncing">Synchronisierung...</string>
     <string name="network_user">Benutzer: %1$s</string>
     <string name="never">Nie</string>
+    <string name="nfc_dialog_add_sensor">Sensor hinzufügen</string>
+    <string name="nfc_dialog_firmware_version">Firmware Version:</string>
+    <string name="nfc_dialog_go_to_sensor">Gehen Sie zur Sensorkarte</string>
+    <string name="nfc_dialog_mac_address">MAC-Adresse:</string>
+    <string name="nfc_dialog_name">Name:</string>
+    <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -412,6 +419,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="select_sensor">Sensor auswählen</string>
     <string name="send_email">Email schicken</string>
     <string name="sensor_already_added">Sensor ist bereits hinzugefügt</string>
+    <string name="sensor_details">Sensordetails</string>
     <string name="sensor_not_shared">Nicht geteilt</string>
     <string name="sensor_settings">Sensoreinstellungen</string>
     <string name="sensor_shared">Geteilt</string>
@@ -534,6 +542,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Geben Sie Ihre E-Mail ein..</string>
+    <string name="unclaim">Anspruch aufheben</string>
+    <string name="unclaim_sensor">Anspruch auf Eigentum zurückziehen</string>
+    <string name="unclaim_sensor_description">Das Eigentum an diesem Sensor wurde Ihrem Ruuvi-Konto zugeordnet. Klicken Sie auf „Anspruch aufheben“, um die Einstellungen dieses Sensors und die zugehörigen Daten aus Ihrem Ruuvi-Konto zu entfernen.</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="update_action">NEUSTART</string>
     <string name="update_downloaded_message">Ein Update wurde soeben heruntergeladen.</string>

@@ -132,6 +132,14 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 }
 
                 composable(
+                    route = ClaimRoutes.UNCLAIM,
+                    enterTransition = enterTransition,
+                    exitTransition = exitTransition
+                ) {
+                    UnclaimSensor()
+                }
+
+                composable(
                     route = ClaimRoutes.CLAIM_IN_PROGRESS,
                     enterTransition = enterTransition,
                     exitTransition = exitTransition
@@ -189,6 +197,21 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     RuuviButton(text = stringResource(id = R.string.claim_ownership)) {
                         viewModel.claimSensor()
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun UnclaimSensor() {
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.unclaim_sensor_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.unclaim)) {
+                        viewModel.unclaimSensor()
                     }
                 }
             }
