@@ -42,7 +42,7 @@ class ClaimSensorViewModel (
                     }
 
                     if (it.data?.email == ruuviNetworkInteractor.getEmail()) {
-                        emitUiEvent(UiEvent.NavigateUp)
+                        emitUiEvent(UiEvent.Navigate(ClaimRoutes.UNCLAIM, true))
                         return@getSensorOwner
                     }
 
@@ -65,6 +65,31 @@ class ClaimSensorViewModel (
                     val settings = interactor.getSensorSettings(sensorId)
                     settings?.let {
                         sensorClaimInteractor.claimSensor(settings.id, settings.displayName) {
+                            if (it?.isSuccess() == true) {
+                                emitUiEvent(UiEvent.NavigateUp)
+                            } else {
+                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.NavigateUp)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.d(e)
+                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "Error")))
+            }
+        }
+    }
+
+    fun unclaimSensor() {
+        Timber.d("unclaimSensor")
+        emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val settings = interactor.getSensorSettings(sensorId)
+                    settings?.let {
+                        sensorClaimInteractor.unclaimSensor(settings.id) {
                             if (it?.isSuccess() == true) {
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {

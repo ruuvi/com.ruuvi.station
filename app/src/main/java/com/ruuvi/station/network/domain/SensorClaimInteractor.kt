@@ -4,6 +4,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.network.data.request.ClaimSensorRequest
 import com.ruuvi.station.network.data.request.ContestSensorRequest
+import com.ruuvi.station.network.data.request.UnclaimSensorRequest
 import com.ruuvi.station.network.data.response.ClaimSensorResponse
 import com.ruuvi.station.network.data.response.ContestSensorResponse
 import com.ruuvi.station.network.data.response.RuuviNetworkResponse
@@ -37,6 +38,32 @@ class SensorClaimInteractor(
                     }
                     onResult(claimResponse)
                 }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onResult(
+                        ClaimSensorResponse(
+                            RuuviNetworkResponse.errorResult,
+                            e.message.toString(),
+                            null,
+                            null
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    suspend fun unclaimSensor(sensorId: String, onResult: (ClaimSensorResponse?) -> Unit) {
+        val token = getToken()?.token
+        token?.let {
+            val request = UnclaimSensorRequest(sensorId)
+            try {
+                val response = networkRepository.unclaimSensor(request, token)
+                tryToParseOwnerEmail(sensorId, response?.error ?: "")
+                if (response?.isSuccess() == true) {
+                    sensorSettingsRepository.setSensorOwner(sensorId, isNetworkSensor = false, owner = null)
+                }
+                onResult(response)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     onResult(

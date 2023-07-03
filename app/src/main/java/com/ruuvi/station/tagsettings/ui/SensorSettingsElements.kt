@@ -182,20 +182,13 @@ fun GeneralSettingsGroup(
         } else {
             sensorState.owner
         }
-        if (sensorOwnedByUser) {
-            ValueWithCaption(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = owner
-            )
-        } else {
-            TextEditWithCaptionButton(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = owner,
-                icon = painterResource(id = R.drawable.arrow_forward_16),
-                tint = RuuviStationTheme.colors.trackInactive
-            ) {
-                ClaimSensorActivity.start(context, sensorState.id)
-            }
+        TextEditWithCaptionButton(
+            title = stringResource(id = R.string.tagsettings_owner),
+            value = owner,
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
+        ) {
+            ClaimSensorActivity.start(context, sensorState.id)
         }
         if (sensorOwnedByUser) {
             val sharedText = sensorIsShared.asString(context)
