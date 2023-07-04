@@ -166,6 +166,16 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = dataForwardingSettingsViewModel
                             )
                         }
+                        composable(SettingsRoutes.DEVELOPER,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
+                            DeveloperSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = developerSettingsViewModel
+                            )
+                        }
                     }
                 }
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,6 +53,8 @@ fun SettingsList(
     } else {
         intervalText = stringResource(id = R.string.alert_subtitle_off)
     }
+
+    val developerSettings = viewModel.developerFeatures.observeAsState()
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (Build.VERSION.SDK_INT >= TIRAMISU) {
@@ -144,6 +147,16 @@ fun SettingsList(
                 value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
             )
+        }
+
+        if (developerSettings.value == true) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_developer),
+                    value = null,
+                    onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DEVELOPER)) }
+                )
+            }
         }
     }
 }
