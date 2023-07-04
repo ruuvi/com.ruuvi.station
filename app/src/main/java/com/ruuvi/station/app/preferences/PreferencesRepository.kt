@@ -157,6 +157,13 @@ class PreferencesRepository(
         preferences.experimentalFeatures = experimentalEnabled
     }
 
+    fun isDeveloperSettingsEnabled(): Boolean =
+        preferences.developerSettings
+
+    fun setDeveloperFeaturesEnabled(developerSettingsEnabled: Boolean) {
+        preferences.developerSettings = developerSettingsEnabled
+    }
+
     fun isFirstStart(): Boolean =
         preferences.isFirstStart
 
@@ -176,6 +183,8 @@ class PreferencesRepository(
     fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
 
     fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
+
+    fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
 
     fun getLocale(): String =
         preferences.locale
@@ -205,6 +214,13 @@ class PreferencesRepository(
 
     fun setIsCloudModeEnabled(isEnabled: Boolean) {
         preferences.cloudModeEnabled = isEnabled
+    }
+
+    fun isDevServerEnabled(): Boolean =
+        preferences.useDevServer
+
+    fun setDevServerEnabled(isEnabled: Boolean) {
+        preferences.useDevServer = isEnabled
     }
 
     fun getDarkMode(): DarkModeState = preferences.darkMode

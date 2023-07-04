@@ -540,6 +540,7 @@
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
+    <string name="use_dev_server">Käytä dev-palvelinta</string>
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>

@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
@@ -25,7 +26,8 @@ import java.lang.Exception
 class RuuviNetworkRepository
     @VisibleForTesting internal constructor(
         private val dispatcher: CoroutineDispatcher,
-        private val imageInteractor: ImageInteractor
+        private val imageInteractor: ImageInteractor,
+        private val preferencesRepository: PreferencesRepository
     )
 {
     val ioScope = CoroutineScope(Dispatchers.IO)
@@ -36,14 +38,24 @@ class RuuviNetworkRepository
 
     private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(client)
-        .build()
+    private var retrofit = buildRetrofit()
 
-    private val retrofitService: RuuviNetworkApi by lazy {
-        retrofit.create(RuuviNetworkApi::class.java)
+    private var retrofitService: RuuviNetworkApi = getRetrofitService()
+
+    fun reinitialize() {
+        retrofit = buildRetrofit()
+        retrofitService = getRetrofitService()
+    }
+    private fun buildRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(if (preferencesRepository.isDevServerEnabled()) DEV_URL else BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+    }
+
+    private fun getRetrofitService(): RuuviNetworkApi {
+        return retrofit.create(RuuviNetworkApi::class.java)
     }
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
@@ -435,7 +447,7 @@ class RuuviNetworkRepository
 
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/" //production
-        //private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
+        private const val DEV_URL = "https://testnet.ruuvi.com/" //testing
         fun getAuth(token: String) = "Bearer $token"
     }
 }

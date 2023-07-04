@@ -9,7 +9,7 @@ import org.kodein.di.generic.*
 
 object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
-        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance()) }
+        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance(), instance()) }
 
         bind<SensorClaimInteractor>() with singleton { SensorClaimInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 

@@ -13,7 +13,7 @@ class AppSettingsListViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
-    val experimentalFeatures = preferencesRepository.getExperimentalFeaturesLiveData()
+    val developerFeatures = preferencesRepository.getDeveloperSettingsLiveData()
 
     fun getBackgroundScanMode(): BackgroundScanModes =
         interactor.getBackgroundScanMode()

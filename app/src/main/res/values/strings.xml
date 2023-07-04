@@ -446,6 +446,7 @@
     <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days.</string>
     <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
+    <string name="settings_developer">Developer settings</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
@@ -541,6 +542,8 @@
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
+    <string name="use_dev_server">Use Dev Server</string>
+    <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
     <string name="use_without_account">No thanks, skip</string>
     <string name="version">Version: %1$s</string>
     <string name="view">View</string>

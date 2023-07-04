@@ -545,6 +545,7 @@
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
+    <string name="use_dev_server">Utiliser le serveur de développement</string>
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
