@@ -540,6 +540,7 @@
     <string name="update_successful">Uppdateringen lyckades</string>
     <string name="updated">Uppdaterad %1$s</string>
     <string name="updating">Uppdaterar...</string>
+    <string name="use_dev_server">Använd dev-server</string>
     <string name="use_without_account">Nej tack, hoppa över</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>

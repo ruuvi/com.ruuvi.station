@@ -9,6 +9,6 @@ import org.kodein.di.generic.provider
 object AboutActivityInjectionModule {
     val module = Kodein.Module(AboutActivityInjectionModule.javaClass.name) {
 
-        bind<AboutActivityViewModel>() with provider { AboutActivityViewModel(instance()) }
+        bind<AboutActivityViewModel>() with provider { AboutActivityViewModel(instance(), instance()) }
     }
 }

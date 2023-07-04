@@ -258,6 +258,13 @@ class Preferences constructor(val context: Context) {
                 .apply()
         }
 
+    var developerSettings: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DEVELOPER_SETTINGS, false)
+        set(developerSettings) {
+            sharedPreferences.edit().putBoolean(PREF_DEVELOPER_SETTINGS, developerSettings)
+                .apply()
+        }
+
     var requestForReviewDate: Long
         get() = sharedPreferences.getLong(
             PREF_REQUEST_FOR_REVIEW_DATE,
@@ -280,6 +287,12 @@ class Preferences constructor(val context: Context) {
         get() = sharedPreferences.getBoolean(PREF_CLOUD_MODE, false)
         set(enabled) {
             sharedPreferences.edit().putBoolean(PREF_CLOUD_MODE, enabled).apply()
+        }
+
+    var useDevServer: Boolean
+        get() = sharedPreferences.getBoolean(PREF_USE_DEVSERVER, false)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_USE_DEVSERVER, enabled).apply()
         }
 
     var darkMode: DarkModeState
@@ -356,6 +369,9 @@ class Preferences constructor(val context: Context) {
     fun getExperimentalFeaturesLiveData() =
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
 
+    fun getDeveloperSettingsLiveData() =
+        SharedPreferenceBooleanLiveData(sharedPreferences, PREF_DEVELOPER_SETTINGS, false)
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -385,6 +401,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
+        private const val PREF_DEVELOPER_SETTINGS = "pref_developer_settings"
         private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
@@ -396,6 +413,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
+        private const val PREF_USE_DEVSERVER = "pref_use_devserver"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

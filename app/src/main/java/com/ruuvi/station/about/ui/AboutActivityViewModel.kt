@@ -3,6 +3,7 @@ package com.ruuvi.station.about.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.about.model.AppStats
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AboutActivityViewModel(
-    private val tagInteractor: TagInteractor
+    private val tagInteractor: TagInteractor,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _appStats = MutableStateFlow<AppStats?>(null)
@@ -29,4 +31,10 @@ class AboutActivityViewModel(
             )
         }
     }
+
+    fun enableDeveloperSettings() {
+        preferencesRepository.setDeveloperFeaturesEnabled(true)
+    }
+
+    fun isDeveloperSettingsEnabled(): Boolean = preferencesRepository.isDeveloperSettingsEnabled()
 }
