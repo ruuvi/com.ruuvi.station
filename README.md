@@ -7,9 +7,10 @@
 Ruuvi Station is an open-source Android app [available](https://play.google.com/store/apps/details?id=com.ruuvi.station) on the Google Play. You can observe the weather parameters, such as temperature, humidity, air pressure (and more) right on your Android device. Ruuvi Station is a companion app for open-source IoT BLE devices made by [Ruuvi](https://ruuvi.com).
 
 <p align="center">
-  <img src="/docs/screenshot0.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
-  <img src="/docs/screenshot1.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
-  <img src="/docs/screenshot2.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/v2_screenshot0.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/v2_screenshot1.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/v2_screenshot2.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
+  <img src="/docs/v2_screenshot3.jpg?raw=true" alt="Ruuvi Station for Android" height="400"/>
 </p>
 
 <p align="center">
@@ -28,13 +29,14 @@ Ruuvi Station is an open-source Android app [available](https://play.google.com/
 
 ## Features
 
-- [x] Temperature (°C, °F)
-- [x] Humidity (%)
-- [x] Air Pressure (hPa)
+- [x] Temperature (°C, °F, K)
+- [x] Humidity (%, g/m3, °C)
+- [x] Air Pressure (Pa, hPa, mmHg, inHg)
 - [x] Acceleration (g)
-- [x] Data Logger
+- [x] 10 days sensor data storage
 - [x] Charts
-- [x] Gateway
+- [x] Cloud Features
+- [x] Data Forwarding
 
 ## Get in touch
 
