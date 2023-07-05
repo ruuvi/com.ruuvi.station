@@ -44,9 +44,8 @@ class DashboardActivityViewModel(
 
     val syncEvents = networkDataSyncInteractor.syncEvents
 
-    val syncInProgress:Flow<Boolean> = networkDataSyncInteractor.syncInProgressFlow.map {
-        it && manualSyncJob?.isActive ?: false
-    }
+    val _dataRefreshing = MutableStateFlow<Boolean>(false)
+    val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
@@ -74,7 +73,13 @@ class DashboardActivityViewModel(
 
     fun syncCloud() {
         viewModelScope.launch {
-            manualSyncJob = networkDataSyncInteractor.syncNetworkData()
+            _dataRefreshing.value = true
+            val job = networkDataSyncInteractor.syncNetworkData()
+            job.invokeOnCompletion {
+                _dataRefreshing.value = false
+            }
+            delay(5000)
+            if (job.isActive) _dataRefreshing.value = false
         }
     }
 

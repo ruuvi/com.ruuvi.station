@@ -117,7 +117,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                 val sensors by remember(dashboardViewModel.tagsFlow, lifecycleOwner) {
                     dashboardViewModel.tagsFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 }.collectAsState(null)
-                val refreshing by dashboardViewModel.syncInProgress.collectAsState(false)
+                val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
 
