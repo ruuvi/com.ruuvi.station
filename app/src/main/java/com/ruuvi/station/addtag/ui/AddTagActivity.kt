@@ -125,6 +125,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
         binding.content.buySensorsButton2.setOnClickListener {
             openUrl(getString(R.string.buy_sensors_link))
         }
+
+        binding.content.nfcHintTextView.isVisible = viewModel.nfcSupported
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -44,7 +44,7 @@ class DashboardActivityViewModel(
 
     val syncEvents = networkDataSyncInteractor.syncEvents
 
-    val _dataRefreshing = MutableStateFlow<Boolean>(false)
+    private val _dataRefreshing = MutableStateFlow<Boolean>(false)
     val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
     val userEmail = preferencesRepository.getUserEmailLiveData()

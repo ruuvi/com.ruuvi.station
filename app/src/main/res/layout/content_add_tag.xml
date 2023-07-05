@@ -25,6 +25,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tagListView"/>
 
     <TextView
+        android:id="@+id/nfcHintTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/ParagraphSmall"

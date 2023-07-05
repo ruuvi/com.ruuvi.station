@@ -35,6 +35,7 @@ class AddTagActivityViewModel(
     }
         .flowOn(Dispatchers.IO)
 
+    val nfcSupported = nfcResultInteractor.nfcSupported
 
     fun getTagById(tagId: String): RuuviTagEntity? =
         tagInteractor.getTagEntityById(tagId)

@@ -1,11 +1,18 @@
 package com.ruuvi.station.nfc.domain
 
+import android.content.Context
+import android.nfc.NfcManager
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 
 class NfcResultInteractor(
+    val context: Context,
     val sensorSettingsRepository: SensorSettingsRepository
 ) {
+    val nfcSupported: Boolean by lazy {
+        val manager = context.getSystemService(Context.NFC_SERVICE) as NfcManager
+        return@lazy manager.defaultAdapter != null
+    }
 
     fun getNfcScanResponse(info: SensorNfсScanInfo): NfcScanResponse {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(info.mac)
