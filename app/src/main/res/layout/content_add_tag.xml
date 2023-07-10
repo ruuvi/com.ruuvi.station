@@ -9,30 +9,53 @@
     tools:context="com.ruuvi.station.addtag.ui.AddTagActivity"
     tools:showIn="@layout/activity_add_tag">
 
+    <LinearLayout
+        android:id="@+id/instructionsLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/addSenSorDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/ParagraphSmall"
+            android:padding="@dimen/extended"
+            app:layout_constraintTop_toBottomOf="@id/tagListView"
+            android:text="@string/add_sensor_description"
+            />
+
+        <TextView
+            android:id="@+id/nfcHintTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/ParagraphSmall"
+            android:paddingHorizontal="@dimen/extended"
+            android:paddingBottom="@dimen/extended"
+            app:layout_constraintTop_toBottomOf="@id/tagListView"
+            android:text="@string/add_sensor_via_nfc"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider"
+            android:background="?attr/colorDivider"
+            app:layout_constraintTop_toBottomOf="@+id/tagListView"/>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/tagListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:divider="?attr/colorDivider"
         android:footerDividersEnabled="true"
         android:dividerHeight="@dimen/divider"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider"
-        android:background="?attr/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/tagListView"/>
-
-    <TextView
-        android:id="@+id/nfcHintTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/ParagraphSmall"
-        android:padding="@dimen/extended"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/tagListView"
-        android:text="@string/add_sensor_via_nfc"
+        app:layout_constraintTop_toBottomOf="@+id/instructionsLinearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
     <LinearLayout

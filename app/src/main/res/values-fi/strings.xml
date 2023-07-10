@@ -13,7 +13,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
-    <string name="add_sensor_via_nfc">Voit myös lisätä antureita Ruuvi Stationiin NFC-yhteydellä</string>
+    <string name="add_sensor_description">Tällä sivulla näet lähelläsi olevat Ruuvi-anturit, joita ei ole vielä lisätty sovellukseen. Lisää listattu anturi napauttamalla.</string>
+    <string name="add_sensor_via_nfc">Voit vaihtoehtoisesti lisätä anturin sovellukseen NFC:llä koskettamalla sitä, mikäli NFC on otettu käyttöön laitteessasi.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
@@ -533,7 +534,7 @@
     <string name="type_your_email">Anna sähköpostiosoite...</string>
     <string name="unclaim">Poista omistajuus</string>
     <string name="unclaim_sensor">Poista omistajuus</string>
-    <string name="unclaim_sensor_description">Tämän anturin omistajuus on merkitty Ruuvi-tilillesi. Poista anturin asetukset ja anturin tiedot Ruuvi-tililtä valitsemalla Poista omistajuus</string>
+    <string name="unclaim_sensor_description">Tämän anturin omistajuus on merkitty Ruuvi-tilillesi. Poista anturin asetukset ja anturin tiedot Ruuvi-tililtä valitsemalla Poista omistajuus.</string>
     <string name="unknown_error">Tuntematon virhe</string>
     <string name="update_action">KÄYNNISTÄ UUDELLEEN</string>
     <string name="update_downloaded_message">Päivitys on ladattu.</string>
