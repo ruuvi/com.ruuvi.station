@@ -19,14 +19,12 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 class TagSettingsViewModel(
     val sensorId: String,
+    var newSensor: Boolean,
     private val interactor: TagSettingsInteractor,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val networkInteractor: RuuviNetworkInteractor,
@@ -64,6 +62,9 @@ class TagSettingsViewModel(
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner == networkInteractor.getEmail()
     }
 
+    private val _askToClaim =  MutableSharedFlow<Boolean>()
+    val askToClaim: SharedFlow<Boolean> = _askToClaim
+
     val firmware: Flow<UiText?>  = sensorState.mapNotNull {
         getFirmware(it.firmware)
     }
@@ -72,7 +73,13 @@ class TagSettingsViewModel(
         if (!_sensorState.value.networkSensor && sensorState.value.owner.isNullOrEmpty()) {
             Timber.d("checkSensorOwner")
             viewModelScope.launch {
-                networkInteractor.getSensorOwner(sensorId) {}
+                networkInteractor.getSensorOwner(sensorId) {
+                    if (newSensor && it?.isSuccess() == true && networkInteractor.signedIn && it.data?.email.isNullOrEmpty()) {
+                        viewModelScope.launch {
+                            _askToClaim.emit(true)
+                        }
+                    }
+                }
             }
         }
     }
@@ -118,15 +125,6 @@ class TagSettingsViewModel(
         } catch (e: Exception) {
             Timber.e(e)
         }
-    }
-
-    private val handler = CoroutineExceptionHandler() { _, exception ->
-        Timber.d("CoroutineExceptionHandler: ${exception.message}")
-
-//        CoroutineScope(Dispatchers.Main).launch {
-//            operationStatus.value = exception.message
-//            Timber.d("CoroutineExceptionHandler: ${exception.message}")
-//        }
     }
 
     fun getSensorSharedEmails() {
