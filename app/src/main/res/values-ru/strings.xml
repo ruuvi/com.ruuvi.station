@@ -11,6 +11,8 @@
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="add_sensor_description">Здесь показаны датчики Ruuvi, которые еще не были добавлены в приложение. Нажмите на сенсор, чтобы добавить его.</string>
+    <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="ago">назад</string>
@@ -58,6 +60,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -88,7 +91,7 @@
     <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
     <string name="charts_background_dialog_title_question">Включить фоновое сканирование Bluetooth?</string>
-    <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
+    <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца. Чтобы заявить права собственности, вам необходимо войти в систему.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="claim_ownership">Заявить о владении</string>
     <string name="claim_sensor">Заявить о собственности</string>
     <string name="clear">Очистить</string>

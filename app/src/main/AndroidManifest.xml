@@ -100,7 +100,7 @@ package="com.ruuvi.station">
     <activity
         android:name=".addtag.ui.AddTagActivity"
         android:exported="false"
-        android:label="@string/add_tag_title"
+        android:label="@string/menu_add_new_sensor"
         android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
     <activity
         android:name="com.ruuvi.station.settings.ui.SettingsActivity"

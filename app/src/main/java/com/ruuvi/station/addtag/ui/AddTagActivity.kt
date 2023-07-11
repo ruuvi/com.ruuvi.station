@@ -18,11 +18,15 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
+import com.ruuvi.station.nfc.NfcScanReciever
+import com.ruuvi.station.nfc.domain.NfcScanResponse
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.util.extensions.openUrl
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.util.*
 
 class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
@@ -80,6 +84,22 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
                 adapter.notifyDataSetChanged()
             }
         }
+        lifecycleScope.launchWhenStarted {
+            NfcScanReciever.nfcSensorScanned.collect{
+                    scanInfo ->
+                Timber.d("nfc scanned: $scanInfo")
+                if (scanInfo != null) {
+                    val response = viewModel.getNfcScanResponse(scanInfo)
+                    Timber.d("nfc scanned response: $response")
+                    if (response.existingSensor) {
+                        SensorCardActivity.startWithDashboard(this@AddTagActivity, response.sensorId)
+                    } else {
+                        viewModel.addSensor(response.sensorId)
+                        TagSettingsActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
+                    }
+                }
+            }
+        }
     }
 
     private fun setupUI() {
@@ -105,6 +125,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
         binding.content.buySensorsButton2.setOnClickListener {
             openUrl(getString(R.string.buy_sensors_link))
         }
+
+        binding.content.nfcHintTextView.isVisible = viewModel.nfcSupported
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -1,6 +1,7 @@
 package com.ruuvi.station.dashboard.ui
 
 import androidx.lifecycle.*
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -8,6 +9,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
+import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.*
@@ -19,8 +21,9 @@ class DashboardActivityViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val permissionLogicInteractor: PermissionLogicInteractor,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val networkSignInInteractor: NetworkSignInInteractor
-    ) : ViewModel() {
+    private val networkSignInInteractor: NetworkSignInInteractor,
+    private val nfcResultInteractor: NfcResultInteractor
+) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
         while (true) {
@@ -29,13 +32,20 @@ class DashboardActivityViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private var _dashBoardType = MutableStateFlow<DashboardType> (preferencesRepository.getDashboardType())
+    private var _dashBoardType =
+        MutableStateFlow<DashboardType>(preferencesRepository.getDashboardType())
     val dashboardType: StateFlow<DashboardType> = _dashBoardType
 
-    private var _dashBoardTapAction = MutableStateFlow<DashboardTapAction> (preferencesRepository.getDashboardTapAction())
+    private var _dashBoardTapAction =
+        MutableStateFlow<DashboardTapAction>(preferencesRepository.getDashboardTapAction())
     val dashboardTapAction: StateFlow<DashboardTapAction> = _dashBoardTapAction
 
+    private var manualSyncJob: Job? = null
+
     val syncEvents = networkDataSyncInteractor.syncEvents
+
+    private val _dataRefreshing = MutableStateFlow<Boolean>(false)
+    val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
@@ -61,6 +71,18 @@ class DashboardActivityViewModel(
         networkSignInInteractor.signOut { }
     }
 
+    fun syncCloud() {
+        viewModelScope.launch {
+            _dataRefreshing.value = true
+            val job = networkDataSyncInteractor.syncNetworkData()
+            job.invokeOnCompletion {
+                _dataRefreshing.value = false
+            }
+            delay(5000)
+            if (job.isActive) _dataRefreshing.value = false
+        }
+    }
+
     fun changeDashboardType(dashboardType: DashboardType) {
         preferencesRepository.updateDashboardType(dashboardType)
         networkApplicationSettings.updateDashboardType()
@@ -71,5 +93,14 @@ class DashboardActivityViewModel(
         preferencesRepository.updateDashboardTapAction(dashboardTapAction)
         networkApplicationSettings.updateDashboardTapAction()
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
+    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) =
+        nfcResultInteractor.getNfcScanResponse(scanInfo)
+
+    fun addSensor(sensorId: String) {
+        tagInteractor.getTagEntityById(sensorId)?.let {
+            tagInteractor.makeSensorFavorite(it)
+        }
     }
 }

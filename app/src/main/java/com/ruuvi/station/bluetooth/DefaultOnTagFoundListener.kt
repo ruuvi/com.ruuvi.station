@@ -50,7 +50,6 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-                    sensorSettings?.calibrateSensor(ruuviTag)
                     if (shouldSkipForCloudMode(sensorSettings) == false) {
                         repository.updateTag(ruuviTag)
                         if (dbTag.favorite == true && sensorSettings != null) {

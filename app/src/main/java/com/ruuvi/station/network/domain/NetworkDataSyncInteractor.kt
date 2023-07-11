@@ -292,7 +292,6 @@ class NetworkDataSyncInteractor (
                     BluetoothLibrary.decode(sensorSettings.id, measurement.data, measurement.rssi),
                     Date(measurement.timestamp * 1000)
                 )
-                sensorSettings.calibrateSensor(reading)
                 reading
             } else {
                 null
@@ -308,7 +307,7 @@ class NetworkDataSyncInteractor (
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            sensorSettings.updateFromNetwork(sensor, calibrationInteractor)
+            sensorSettings.updateFromNetwork(sensor)
 
             val tagEntry = tagRepository.getTagById(sensor.sensor)
             if (tagEntry?.favorite == false) {

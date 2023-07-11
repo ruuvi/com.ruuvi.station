@@ -13,6 +13,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Sélectionnez la précision avec laquelle vous souhaitez voir les valeurs de mesure en direct des capteurs dans l\'application. Ce paramètre n\'affecte pas les graphiques d\'historique ni les alertes.</string>
+    <string name="add_sensor_description">Cette page montre les capteurs Ruuvi à proximité qui n\'ont pas encore été ajoutés à l\'application. Appuyez sur un capteur pour l\'ajouter.</string>
+    <string name="add_sensor_via_nfc">Alternativement, si votre NFC est activé, vous pouvez ajouter un capteur à l\'aide de NFC en le touchant avec votre téléphone.</string>
     <string name="add_tag_not_found">Aucun capteur détecté</string>
     <string name="add_tag_title">Capteurs Ruuvi à proximité</string>
     <string name="add_your_first_sensor">Ajoutez votre premier capteur</string>
@@ -72,6 +74,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Calibrer</string>
     <string name="calibrated">Calibré : %1$s</string>
     <string name="calibration_clear_confirm">Supprimer la calibration ?</string>
@@ -108,7 +111,8 @@
     <string name="charts_background_dialog_description">L\'histogramme fonctionne mieux avec le balayage en arrière-plan activé.</string>
     <string name="charts_background_dialog_title_question">Souhaitez-vous activer le balayage en arrière plan Bluetooth?</string>
     <string name="check_claim_state">Vérification de l\'état de la demande</string>
-    <string name="claim_description">Êtes-vous propriétaire de ce capteur ? En devenant propriétaire, le capteur sera associé à votre compte Ruuvi. Chaque capteur ne peut avoir qu\'un seul propriétaire.\n\nAvantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
+    <string name="claim_description">Êtes-vous propriétaire de ce capteur ? En devenant propriétaire, le capteur sera associé à votre compte Ruuvi. Chaque capteur ne peut avoir qu\'un seul propriétaire. Pour revendiquer la propriété, vous devez être connecté.\n\nAvantages:\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
+    <string name="claim_in_progress">Réclamation en cours</string>
     <string name="claim_ownership">Confirmer l\'appropriation</string>
     <string name="claim_sensor">Confirmer l\'appropriation</string>
     <string name="claim_warning">Sécurisez les informations de propriété de vos capteurs en revendiquant leurs propriétés dans l\'application.</string>
@@ -310,6 +314,12 @@
     <string name="network_syncing">Synchronisation...</string>
     <string name="network_user">Utilisateur : %1$s</string>
     <string name="never">jamais</string>
+    <string name="nfc_dialog_add_sensor">Ajouter un capteur</string>
+    <string name="nfc_dialog_firmware_version">Version du firmware:</string>
+    <string name="nfc_dialog_go_to_sensor">Aller à la carte du capteur</string>
+    <string name="nfc_dialog_mac_address">Adresse Mac:</string>
+    <string name="nfc_dialog_name">Nom:</string>
+    <string name="nfc_dialog_unique_id">Identifiant unique:</string>
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_data_10_days">Aucune donnée au cours des 10 derniers jours</string>
@@ -404,6 +414,7 @@
     <string name="select_sensor">Choisissez le capteur</string>
     <string name="send_email">Envoyer un email</string>
     <string name="sensor_already_added">Ce capteur a déjà été ajouté</string>
+    <string name="sensor_details">Détails du capteur</string>
     <string name="sensor_not_shared">Non partagé</string>
     <string name="sensor_settings">Paramètres</string>
     <string name="sensor_shared">Partagé</string>
@@ -526,12 +537,16 @@
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Tapez votre e-mail...</string>
+    <string name="unclaim">Annuler la réclamation</string>
+    <string name="unclaim_sensor">Annuler la revendication du capteur</string>
+    <string name="unclaim_sensor_description">La propriété de ce capteur a été revendiquée sur votre compte Ruuvi. Appuyez sur Annuler la revendication pour supprimer les paramètres de ce capteur et les données associées de votre compte Ruuvi.</string>
     <string name="unknown_error">Erreur inconnue</string>
     <string name="update_action">REDÉMARRER</string>
     <string name="update_downloaded_message">La mise à jour a été téléchargée.</string>
     <string name="update_successful">Mise à jour réussie</string>
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
+    <string name="use_dev_server">Utiliser le serveur de développement</string>
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>

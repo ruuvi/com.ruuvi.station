@@ -38,7 +38,6 @@ fun FirmwareGroup(
         }
 
         TextEditWithCaptionButton(
-            value = null,
             title = stringResource(id = R.string.firmware_update),
             icon = painterResource(id = R.drawable.arrow_forward_16),
             tint = RuuviStationTheme.colors.trackInactive

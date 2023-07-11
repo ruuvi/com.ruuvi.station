@@ -13,6 +13,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
+    <string name="add_sensor_description">Tällä sivulla näet lähelläsi olevat Ruuvi-anturit, joita ei ole vielä lisätty sovellukseen. Lisää listattu anturi napauttamalla.</string>
+    <string name="add_sensor_via_nfc">Voit vaihtoehtoisesti lisätä anturin sovellukseen NFC:llä koskettamalla sitä, mikäli NFC on otettu käyttöön laitteessasi.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
@@ -72,6 +74,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/fi/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/fi/tuotteet?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/fi/tuotteet?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibroi</string>
     <string name="calibrated">Kalibroitu: %1$s</string>
     <string name="calibration_clear_confirm">Poista kalibrointiasetukset?</string>
@@ -108,7 +111,7 @@
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön Bluetooth-taustaskannauksen?</string>
     <string name="check_claim_state">Omistajuuden tilaa haetaan</string>
-    <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
+    <string name="claim_description">Omistatko tämän anturin? Vahvista omistajuus ja anturi lisätään Ruuvi-tilillesi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja. Vahvistaaksesi omistajuuden, sinun täytyy olla kirjautuneena sisälle.\n\nHyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
     <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
@@ -292,6 +295,7 @@
     <string name="more_info">Lisätietoa</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
+    <string name="muted_till">Poissa käytöstä %1$s saakka</string>
     <string name="my_ruuvi_account">Minun Ruuvi-tilini</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
@@ -305,6 +309,12 @@
     <string name="network_syncing">Ladataan historiaa pilvestä...</string>
     <string name="network_user">Käyttäjä: %1$s</string>
     <string name="never">ei koskaan</string>
+    <string name="nfc_dialog_add_sensor">Lisää anturi</string>
+    <string name="nfc_dialog_firmware_version">Laiteohjelmistoversio:</string>
+    <string name="nfc_dialog_go_to_sensor">Siirry anturikortille</string>
+    <string name="nfc_dialog_mac_address">MAC-osoite:</string>
+    <string name="nfc_dialog_name">Nimi:</string>
+    <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
     <string name="no">Ei</string>
     <string name="no_data">Ei tietoja</string>
     <string name="no_data_10_days">Ei tietoja viimeiseltä 10 päivältä</string>
@@ -399,6 +409,7 @@
     <string name="select_sensor">Valitse anturi</string>
     <string name="send_email">Lähetä sähköpostia</string>
     <string name="sensor_already_added">Anturi on jo lisätty</string>
+    <string name="sensor_details">Anturin tiedot</string>
     <string name="sensor_not_shared">Ei jaettu</string>
     <string name="sensor_settings">Asetukset</string>
     <string name="sensor_shared">Jaettu</string>
@@ -521,12 +532,16 @@
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Anna sähköpostiosoite...</string>
+    <string name="unclaim">Poista omistajuus</string>
+    <string name="unclaim_sensor">Poista omistajuus</string>
+    <string name="unclaim_sensor_description">Tämän anturin omistajuus on merkitty Ruuvi-tilillesi. Poista anturin asetukset ja anturin tiedot Ruuvi-tililtä valitsemalla Poista omistajuus.</string>
     <string name="unknown_error">Tuntematon virhe</string>
     <string name="update_action">KÄYNNISTÄ UUDELLEEN</string>
     <string name="update_downloaded_message">Päivitys on ladattu.</string>
     <string name="update_successful">Päivitys onnistui</string>
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
+    <string name="use_dev_server">Käytä dev-palvelinta</string>
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>

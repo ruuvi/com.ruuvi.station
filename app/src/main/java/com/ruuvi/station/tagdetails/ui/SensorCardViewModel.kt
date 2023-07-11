@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -12,6 +13,7 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
@@ -35,6 +37,7 @@ class SensorCardViewModel(
     private val gattInteractor: BluetoothGattInteractor,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val csvExporter: CsvExporter,
+    private val nfcResultInteractor: NfcResultInteractor
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -201,6 +204,14 @@ class SensorCardViewModel(
 
     fun setShowCharts(showCharts: Boolean) {
         _showCharts.value = showCharts
+    }
+
+    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
+
+    fun addSensor(sensorId: String) {
+        tagInteractor.getTagEntityById(sensorId)?.let {
+            tagInteractor.makeSensorFavorite(it)
+        }
     }
 
     init {

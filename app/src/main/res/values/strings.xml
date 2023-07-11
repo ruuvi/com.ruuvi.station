@@ -13,6 +13,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Select how accurately you\'d like to see the sensors\' live measurement values in the app. This setting doesn\'t affect history charts or alerts.</string>
+    <string name="add_sensor_description">This page shows nearby Ruuvi sensors not yet added to the app. Tap a sensor to add it.</string>
+    <string name="add_sensor_via_nfc">Alternatively, if your NFC is enabled, you can add a sensor using NFC by touching it with your phone.</string>
     <string name="add_tag_not_found">No sensors found</string>
     <string name="add_tag_title">Nearby Ruuvi sensors</string>
     <string name="add_your_first_sensor">Add Your First Sensor</string>
@@ -72,6 +74,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrated">Calibrated: %1$s</string>
     <string name="calibration_clear_confirm">Clear calibration settings?</string>
@@ -109,7 +112,7 @@
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable Bluetooth background scanning?</string>
     <string name="check_claim_state">Checking claim state</string>
-    <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Each Ruuvi sensor can have only one owner.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored on the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
+    <string name="claim_description">Do you own this sensor? If yes, please claim ownership of the sensor and it\'ll be added to your Ruuvi account. Each Ruuvi sensor can have only one owner. To claim ownership, you need to be signed in.\n\nBenefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored on the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
     <string name="claim_in_progress">Claiming in progress</string>
     <string name="claim_ownership">Claim ownership</string>
     <string name="claim_sensor">Claim sensor</string>
@@ -307,6 +310,12 @@
     <string name="network_syncing">Loading history from the cloud...</string>
     <string name="network_user">User: %1$s</string>
     <string name="never">never</string>
+    <string name="nfc_dialog_add_sensor">Add Sensor</string>
+    <string name="nfc_dialog_firmware_version">Firmware Version:</string>
+    <string name="nfc_dialog_go_to_sensor">Go to sensor card</string>
+    <string name="nfc_dialog_mac_address">Mac Address:</string>
+    <string name="nfc_dialog_name">Name:</string>
+    <string name="nfc_dialog_unique_id">Unique ID:</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
     <string name="no_data_10_days">No data during the last 10 days</string>
@@ -401,6 +410,7 @@
     <string name="select_sensor">Select sensor</string>
     <string name="send_email">Send email</string>
     <string name="sensor_already_added">Sensor is already added</string>
+    <string name="sensor_details">Sensor Details</string>
     <string name="sensor_not_shared">Not shared</string>
     <string name="sensor_settings">Sensor Settings</string>
     <string name="sensor_shared">Shared</string>
@@ -437,6 +447,7 @@
     <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days.</string>
     <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
+    <string name="settings_developer">Developer settings</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
@@ -523,12 +534,17 @@
     <string name="tx_power">Tx Power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Type your email..</string>
+    <string name="unclaim">Unclaim</string>
+    <string name="unclaim_sensor">Unclaim sensor</string>
+    <string name="unclaim_sensor_description">Ownership of this sensor has been claimed to your Ruuvi account. Press Unclaim to remove this sensor\'s settings and related data from your Ruuvi account.</string>
     <string name="unknown_error">Unknown error</string>
     <string name="update_action">RESTART</string>
     <string name="update_downloaded_message">An update has just been downloaded.</string>
     <string name="update_successful">Update successful</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
+    <string name="use_dev_server">Use Dev Server</string>
+    <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
     <string name="use_without_account">No thanks, skip</string>
     <string name="version">Version: %1$s</string>
     <string name="view">View</string>

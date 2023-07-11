@@ -54,46 +54,14 @@ data class SensorSettings(
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
-    fun calibrateSensor(sensor: RuuviTagEntity) {
-        sensor.temperature = sensor.temperature - sensor.temperatureOffset + (temperatureOffset ?: 0.0)
-        sensor.temperatureOffset = temperatureOffset ?: 0.0
-
-        sensor.pressure?.let { pressure ->
-            sensor.pressure = pressure - sensor.pressureOffset + (pressureOffset ?: 0.0)
-        }
-        sensor.pressureOffset = pressureOffset ?: 0.0
-
-        sensor.humidity?.let { humidity ->
-            sensor.humidity = humidity - sensor.humidityOffset + (humidityOffset ?: 0.0)
-        }
-        sensor.humidityOffset = humidityOffset ?: 0.0
-    }
-
-    fun calibrateSensor(sensorReading: TagSensorReading) {
-        sensorReading.temperature += (temperatureOffset ?: 0.0)
-        sensorReading.temperatureOffset = temperatureOffset ?: 0.0
-
-        sensorReading.pressure?.let { pressure ->
-            sensorReading.pressure = pressure + (pressureOffset ?: 0.0)
-        }
-        sensorReading.pressureOffset = pressureOffset ?: 0.0
-
-        sensorReading.humidity?.let { humidity ->
-            sensorReading.humidity = humidity + (humidityOffset ?: 0.0)
-        }
-        sensorReading.humidityOffset = humidityOffset ?: 0.0
-    }
-
-    fun updateFromNetwork(sensor: SensorsDenseInfo, calibrationInteractor: CalibrationInteractor) {
+    fun updateFromNetwork(sensor: SensorsDenseInfo) {
         name = sensor.name
         owner = sensor.owner
         canShare = sensor.canShare
-        val recalibrateHistory = humidityOffset != sensor.offsetHumidity || pressureOffset != sensor.offsetPressure || temperatureOffset != sensor.offsetTemperature
         humidityOffset = sensor.offsetHumidity
         pressureOffset = sensor.offsetPressure
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         update()
-        if (recalibrateHistory) calibrationInteractor.recalibrateHistory(this)
     }
 }
