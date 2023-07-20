@@ -3,7 +3,6 @@ package com.ruuvi.station.dataforwarding.data
 import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
-import com.ruuvi.station.database.tables.TagSensorReading
 import java.util.*
 
 data class SensorInfo(
@@ -34,12 +33,12 @@ data class SensorInfo(
                 id = tagEntity.id,
                 rssi = tagEntity.rssi,
                 name = sensorSettings.displayName,
-                temperature = tagEntity.temperature,
-                temperatureOffset = tagEntity.temperatureOffset,
-                humidity = tagEntity.humidity,
-                humidityOffset = tagEntity.humidityOffset,
-                pressure = tagEntity.pressure,
-                pressureOffset = tagEntity.pressureOffset,
+                temperature = tagEntity.temperature + (sensorSettings.temperatureOffset ?: 0.0),
+                temperatureOffset = sensorSettings.temperatureOffset ?: 0.0,
+                humidity = tagEntity.humidity?.let {it + (sensorSettings.humidityOffset ?: 0.0)},
+                humidityOffset = sensorSettings.humidityOffset ?: 0.0,
+                pressure = tagEntity.pressure?.let {it + (sensorSettings.pressureOffset ?: 0.0)},
+                pressureOffset = sensorSettings.pressureOffset ?: 0.0,
                 favorite = tagEntity.favorite,
                 accelX = tagEntity.accelX,
                 accelY = tagEntity.accelY,
@@ -56,24 +55,17 @@ data class SensorInfo(
 
     companion object {
         fun fromGattLogReading(logReading: LogReading, sensorSettings: SensorSettings): SensorInfo {
-            val reading = TagSensorReading()
-            reading.ruuviTagId = logReading.id
-            reading.temperature = logReading.temperature
-            reading.humidity = logReading.humidity
-            reading.pressure = logReading.pressure
-            reading.createdAt = logReading.date
-
             return SensorInfo(
-                id = reading.ruuviTagId,
+                id = logReading.id,
                 name = sensorSettings.displayName,
-                temperature = reading.temperature,
-                temperatureOffset = reading.temperatureOffset,
-                humidity = reading.humidity,
-                humidityOffset = reading.humidityOffset,
-                pressure = reading.pressure,
-                pressureOffset = reading.pressureOffset,
+                temperature = logReading.temperature + (sensorSettings.temperatureOffset ?: 0.0),
+                temperatureOffset = sensorSettings.temperatureOffset ?: 0.0,
+                humidity = logReading.humidity?.let {it + (sensorSettings.humidityOffset ?: 0.0)},
+                humidityOffset = sensorSettings.humidityOffset ?: 0.0,
+                pressure = logReading.pressure?.let {it + (sensorSettings.pressureOffset ?: 0.0)},
+                pressureOffset = sensorSettings.pressureOffset ?: 0.0,
                 favorite = true,
-                updateAt = reading.createdAt,
+                updateAt = logReading.date,
                 createDate = sensorSettings.createDate,
                 connectable = true
             )
