@@ -115,6 +115,7 @@
     <string name="claim_in_progress">Omistajuutta vaihdetaan</string>
     <string name="claim_ownership">Vahvista Omistajuus</string>
     <string name="claim_sensor">Vahvista omistajuus</string>
+    <string name="claim_sensor_ownership">Vaadi anturin omistajuutta</string>
     <string name="claim_warning">Turvaa anturiesi omistajuustiedot merkitsemällä niiden omistajuudet sovelluksessa.</string>
     <string name="claim_wrong_sensor_scanned">Olet lukemassa väärää RuuviTagia</string>
     <string name="clear">Pyyhi</string>
@@ -196,6 +197,7 @@
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="do_not_show_again">Älä näytä tätä uudestaan</string>
+    <string name="do_you_own_sensor">Omistatko tämän anturin?</string>
     <string name="done">Valmis</string>
     <string name="download">Lataa</string>
     <string name="downloading_latest_firmware">Ladataan viimeisin laiteohjelmisto päivitystä varten...</string>

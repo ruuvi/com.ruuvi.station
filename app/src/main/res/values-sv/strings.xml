@@ -115,6 +115,7 @@
     <string name="claim_in_progress">Anspråk pågår</string>
     <string name="claim_ownership">Bekräfta Ägandet</string>
     <string name="claim_sensor">Bekräfta ägandet</string>
+    <string name="claim_sensor_ownership">Gör anspråk på sensorägande</string>
     <string name="claim_warning">Säkra ägarinformationen för dina sensorer genom att göra anspråk på deras äganderätt i appen.</string>
     <string name="claim_wrong_sensor_scanned">Du skannar fel RuuviTag</string>
     <string name="clear">Rensa</string>
@@ -196,6 +197,7 @@
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
     <string name="disconnected">Frånkopplad</string>
     <string name="do_not_show_again">Visa inte detta igen</string>
+    <string name="do_you_own_sensor">Äger du denna sensor?</string>
     <string name="done">Klar</string>
     <string name="download">Ladda ner</string>
     <string name="downloading_latest_firmware">Hämtar senaste firmware..</string>
