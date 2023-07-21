@@ -77,6 +77,7 @@ import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
+import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.extensions.*
@@ -239,6 +240,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         dashboardType = dashboardType,
                                         dashboardTapAction = dashboardTapAction,
                                         syncCloud = dashboardViewModel::syncCloud,
+                                        setName = dashboardViewModel::setName,
                                         refreshing = refreshing
                                     )
                                 }
@@ -349,6 +351,7 @@ fun DashboardItems(
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
     syncCloud: ()-> Unit,
+    setName: (String, String?) -> Unit,
     refreshing: Boolean
 ) {
     val itemHeight = 156.dp * LocalDensity.current.fontScale
@@ -380,14 +383,16 @@ fun DashboardItems(
                         DashboardItemSimple(
                             sensor = sensor,
                             userEmail = userEmail,
-                            dashboardTapAction = dashboardTapAction
+                            dashboardTapAction = dashboardTapAction,
+                            setName = setName
                         )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
                             itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
-                            dashboardTapAction = dashboardTapAction
+                            dashboardTapAction = dashboardTapAction,
+                            setName = setName
                         )
                 }
             }
@@ -403,7 +408,8 @@ fun DashboardItem(
     itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
-    dashboardTapAction: DashboardTapAction
+    dashboardTapAction: DashboardTapAction,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -471,7 +477,8 @@ fun DashboardItem(
                         .constrainAs(buttons) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
-                        }
+                        },
+                    setName = setName
                 )
 
                 if (sensor.latestMeasurement?.temperatureValue != null) {
@@ -516,7 +523,8 @@ fun DashboardItem(
 fun DashboardItemSimple(
     sensor: RuuviTag,
     userEmail: String?,
-    dashboardTapAction: DashboardTapAction
+    dashboardTapAction: DashboardTapAction,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -565,7 +573,8 @@ fun DashboardItemSimple(
                     .constrainAs(buttons) {
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
-                    }
+                    },
+                setName = setName
             )
 
             ItemValues(
@@ -613,6 +622,7 @@ fun ItemName(
 fun ItemButtons(
     sensor: RuuviTag,
     userEmail: String?,
+    setName: (String, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -656,7 +666,7 @@ fun ItemButtons(
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
             }
 
-            DashboardItemDropdownMenu(sensor, userEmail)
+            DashboardItemDropdownMenu(sensor, userEmail, setName)
         }
     }
 }
@@ -924,12 +934,15 @@ fun BigValueDisplay(
 @Composable
 fun DashboardItemDropdownMenu(
     sensor: RuuviTag,
-    userEmail: String?
+    userEmail: String?,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
     }
+
+    var setNameDialog by remember { mutableStateOf(false) }
 
     val canBeShared = sensor.owner == userEmail
     val canBeClaimed = sensor.owner.isNullOrEmpty() && userEmail?.isNotEmpty() == true
@@ -985,6 +998,15 @@ fun DashboardItemDropdownMenu(
                 ))
             }
 
+            DropdownMenuItem(onClick = {
+                setNameDialog = true
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.rename
+                ))
+            }
+
             if (canBeClaimed) {
                 DropdownMenuItem(onClick = {
                     ClaimSensorActivity.start(context, sensor.id)
@@ -1004,6 +1026,17 @@ fun DashboardItemDropdownMenu(
                     ))
                 }
             }
+        }
+    }
+
+    if (setNameDialog) {
+        SetSensorName(
+            value = sensor.name,
+            setName = {newName ->
+                setName.invoke(sensor.id, newName)
+            }
+        ) {
+            setNameDialog = false
         }
     }
 }

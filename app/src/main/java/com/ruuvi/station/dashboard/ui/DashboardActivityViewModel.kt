@@ -9,6 +9,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.*
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
+    private val networkInteractor: RuuviNetworkInteractor,
     private val preferencesRepository: PreferencesRepository,
     private val permissionLogicInteractor: PermissionLogicInteractor,
     private val networkApplicationSettings: NetworkApplicationSettings,
@@ -102,5 +104,10 @@ class DashboardActivityViewModel(
         tagInteractor.getTagEntityById(sensorId)?.let {
             tagInteractor.makeSensorFavorite(it)
         }
+    }
+
+    fun setName(sensorId: String, name: String?) {
+        tagInteractor.updateTagName(sensorId, name)
+        networkInteractor.updateSensorName(sensorId)
     }
 }

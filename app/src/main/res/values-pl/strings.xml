@@ -62,6 +62,7 @@
     <string name="claim_description">Czy ten czujnik należy do Ciebie? Jeśli tak, potwierdź prawa własności tego czujnika. Zostanie on dodany do Twojego konta Ruuvi. Każdy czujnik Ruuvi może mieć tylko jednego właściciela.\n\nKorzyści:\n\n ● Nazwy czujnika, obrazy w tle, ustawienia powiadomień i wyrównywania są zapisywane w chmurze\n\n ● Dostęp do czujnika przez internet (wymaga Ruuvi Gateway)\n\n ● Udostępnij czujnik rodzinie i przyjaciołom (wymaga Ruuvi Gateway)\n\n ● Przeglądaj historię użytkowania do 2 lat na stronie station.ruuvi.com (wymaga Ruuvi Gateway)</string>
     <string name="claim_ownership">Potwierdź prawa własności</string>
     <string name="claim_sensor">Zastrzeż czujnik</string>
+    <string name="claim_sensor_ownership">Zgłoś własność czujnika</string>
     <string name="clear">wyczyść</string>
     <string name="clear_confirm">Wyczyścić lokalne dane z historii w aplikacji?</string>
     <string name="close">Zamknij</string>
@@ -100,6 +101,7 @@
     <string name="days">Dni</string>
     <string name="dfu_update_do_not_close_app">Nie wyłączaj aplikacji ani czujnika podczas aktualizacji.</string>
     <string name="disconnected">Rozłączono</string>
+    <string name="do_you_own_sensor">Czy posiadasz ten czujnik?</string>
     <string name="downloading_latest_firmware">Pobieranie najnowszego firmware’u do aktualizacji...</string>
     <string name="email">E-mail</string>
     <string name="error">Błąd</string>

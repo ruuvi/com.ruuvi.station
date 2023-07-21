@@ -4,6 +4,7 @@ import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
@@ -12,6 +13,7 @@ import timber.log.Timber
 class TagInteractor constructor(
     private val tagRepository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
+    private val sensorSettingsRepository: SensorSettingsRepository,
     private val preferencesRepository: PreferencesRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val tagSettingsInteractor: TagSettingsInteractor
@@ -54,4 +56,7 @@ class TagInteractor constructor(
             tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
         }
     }
+
+    fun updateTagName(sensorId: String, sensorName: String?) =
+        sensorSettingsRepository.updateSensorName(sensorId, sensorName)
 }
