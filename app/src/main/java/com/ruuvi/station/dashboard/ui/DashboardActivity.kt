@@ -417,15 +417,13 @@ fun DashboardItem(
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    SensorCardActivity.start(
-                        context,
-                        sensor.id,
-                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-                    )
-                }
-            ),
+            .clickableSingle {
+                SensorCardActivity.start(
+                    context,
+                    sensor.id,
+                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                )
+            },
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
@@ -531,15 +529,13 @@ fun DashboardItemSimple(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    SensorCardActivity.start(
-                        context,
-                        sensor.id,
-                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-                    )
-                }
-            ),
+            .clickableSingle {
+                SensorCardActivity.start(
+                    context,
+                    sensor.id,
+                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                )
+            },
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
