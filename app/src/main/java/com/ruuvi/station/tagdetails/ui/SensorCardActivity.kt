@@ -390,14 +390,18 @@ fun NfcInteractor(
 @Composable
 fun SensorTitle(sensor: RuuviTag) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = RuuviStationTheme.dimensions.extended),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            fontSize =  RuuviStationTheme.fontSizes.extended,
-            fontFamily = RuuviStationTheme.fonts.montserratExtraBold,
+            fontSize =  RuuviStationTheme.fontSizes.big,
+            fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
             text = sensor.displayName,
-            color = Color.White
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            maxLines = 2
         )
     }
 }
@@ -482,17 +486,17 @@ fun SensorValues(
         horizontalAlignment = Alignment.Start
     ) {
         sensor.latestMeasurement?.humidityValue?.let {
-            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithUnit)
+            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
         sensor.latestMeasurement?.pressureValue?.let {
-            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithUnit)
+            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
         sensor.latestMeasurement?.movementValue?.let {
-            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithUnit)
+            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         }
@@ -502,7 +506,8 @@ fun SensorValues(
 @Composable
 fun SensorValueItem(
     icon: Int,
-    title: String
+    value: String,
+    unit: String
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -514,18 +519,33 @@ fun SensorValueItem(
             tint = Color.White,
             contentDescription = ""
         )
-        Text(
-            modifier = Modifier
-                .padding(
-                    start = RuuviStationTheme.dimensions.extended
-                ),
-            fontSize = RuuviStationTheme.fontSizes.extended,
-            style = RuuviStationTheme.typography.dashboardBigValueUnit,
-            fontFamily = ruuviStationFonts.montserratRegular,
-            fontWeight = FontWeight.Bold,
-            text = title,
-            color = Color.White
-        )
+        Row() {
+            Text(
+                modifier = Modifier
+                    .alignByBaseline()
+                    .padding(
+                        start = RuuviStationTheme.dimensions.extended
+                    ),
+                fontSize = RuuviStationTheme.fontSizes.extended,
+                style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                fontFamily = ruuviStationFonts.mulishBold,
+                fontWeight = FontWeight.Bold,
+                text = value,
+                color = Color.White
+            )
+
+            Text(
+                modifier = Modifier
+                    .alignByBaseline()
+                    .padding(
+                        start = RuuviStationTheme.dimensions.small
+                    ),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White80,
+                fontSize = RuuviStationTheme.fontSizes.small,
+                text = unit,
+            )
+        }
     }
 }
 
