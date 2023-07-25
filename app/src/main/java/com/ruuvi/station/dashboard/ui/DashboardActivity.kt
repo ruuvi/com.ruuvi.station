@@ -880,6 +880,7 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
 
     Row(verticalAlignment = Alignment.Bottom) {
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = value.valueWithoutUnit,
             style = RuuviStationTheme.typography.dashboardValue,
             color = textColor,
@@ -887,6 +888,7 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
         )
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = value.unitString,
             style = RuuviStationTheme.typography.dashboardUnit,
             color = textColor,
