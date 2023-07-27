@@ -514,7 +514,7 @@ fun SensorValueItem(
         horizontalArrangement = Arrangement.Start
             ) {
         Icon(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.size(48.dp),
             painter = painterResource(id = icon),
             tint = Color.White,
             contentDescription = ""
