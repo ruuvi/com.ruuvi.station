@@ -41,6 +41,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
@@ -63,10 +64,9 @@ import com.ruuvi.station.util.Days
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -278,7 +278,10 @@ fun SensorsPager(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
                     ) {
-                        SensorTitle(sensor = sensor)
+                        SensorTitle(
+                            sensor = sensor,
+                            pagerState = pagerState
+                        )
                         if (showCharts) {
                             ChartControlElement2(
                                 sensorId = sensor.id,
@@ -387,22 +390,72 @@ fun NfcInteractor(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SensorTitle(sensor: RuuviTag) {
-    Column(
+fun SensorTitle(
+    sensor: RuuviTag,
+    pagerState: PagerState
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = RuuviStationTheme.dimensions.extended),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            fontSize =  RuuviStationTheme.fontSizes.big,
-            fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
-            text = sensor.displayName,
-            textAlign = TextAlign.Center,
-            color = Color.White,
-            maxLines = 2
-        )
+            .padding(horizontal = RuuviStationTheme.dimensions.medium)) {
+        Box(modifier = Modifier
+            .align(Alignment.CenterStart)
+        ) {
+            if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
+                IconButton(onClick = {
+                    if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_back_16),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.huge)
+                .align(Alignment.Center)
+                .width(IntrinsicSize.Max),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                fontSize =  RuuviStationTheme.fontSizes.big,
+                fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
+                text = sensor.displayName,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                maxLines = 2
+            )
+        }
+        Box(modifier = Modifier
+            .align(Alignment.CenterEnd)
+        ) {
+            if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount - 1) {
+                IconButton(onClick = {
+                    if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount -1) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_forward_16),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        }
     }
 }
 
