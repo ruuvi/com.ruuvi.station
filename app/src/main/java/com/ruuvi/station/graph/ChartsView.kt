@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -150,9 +151,13 @@ fun ChartsView(
             if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
             if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
 
+            val pagerState = rememberPagerState {
+                return@rememberPagerState chartTypes.size
+            }
+
             VerticalPager(
                 modifier = modifier.fillMaxSize(),
-                pageCount = chartTypes.size,
+                state = pagerState,
                 beyondBoundsPageCount = 3
             ) { page ->
                 val chartSensorType = chartTypes[page]

@@ -5,10 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -109,16 +106,16 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
             ) {
                 composable(
                     route = ClaimRoutes.NOT_SIGNED_IN,
-                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                 ) {
                     NotSignedInScreen()
                 }
 
                 composable(
                     route = ClaimRoutes.CHECK_CLAIM_STATE,
-                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                 ) {
                     LoadingScreen(status = stringResource(id = R.string.check_claim_state))
                 }
@@ -243,15 +240,15 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
 
     }
 
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 
