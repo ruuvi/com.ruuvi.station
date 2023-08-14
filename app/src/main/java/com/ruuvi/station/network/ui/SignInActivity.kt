@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -100,10 +100,10 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                     AnimatedNavHost(
                         navController = navController,
                         startDestination = SignInRoutes.CLOUD_BENEFITS,
-                        enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
-                        exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
-                        popEnterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                        popExitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) }
+                        enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
+                        exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
+                        popEnterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                        popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) }
                     ) {
                         composable(
                             route = SignInRoutes.CLOUD_BENEFITS

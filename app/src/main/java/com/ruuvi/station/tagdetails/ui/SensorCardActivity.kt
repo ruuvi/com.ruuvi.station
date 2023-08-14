@@ -9,10 +9,14 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -39,10 +43,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
@@ -161,7 +161,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorsPager(
     selectedIndex: Int,
@@ -191,7 +191,12 @@ fun SensorsPager(
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(selectedIndex)
+    val pagerState = rememberPagerState(
+        initialPage = selectedIndex,
+        initialPageOffsetFraction = 0f
+    ) {
+        return@rememberPagerState sensors.size
+    }
 
     var pagerSensor by remember {
         mutableStateOf(sensors.getOrNull(selectedIndex))
@@ -257,7 +262,6 @@ fun SensorsPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
                 userScrollEnabled = !showCharts,
-                count = sensors.size
             ) { page ->
                 val sensor = sensors.getOrNull(page)
                 if (sensor != null) {
@@ -390,7 +394,7 @@ fun NfcInteractor(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorTitle(
     sensor: RuuviTag,
