@@ -227,7 +227,7 @@ fun SensorsPager(
                 if (showCharts) {
                     SensorCardImage(uri, showCharts)
                 } else {
-                    Crossfade(targetState = uri) {
+                    Crossfade(targetState = uri, label = "switch background") {
                         Timber.d("image for sensor ${sensor.displayName}")
                         SensorCardImage(it, showCharts)
                     }
