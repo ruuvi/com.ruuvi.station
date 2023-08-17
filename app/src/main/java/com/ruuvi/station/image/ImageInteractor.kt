@@ -89,7 +89,7 @@ class ImageInteractor (
 
     fun isImage(uri: Uri?): Boolean {
         val mime = uri?.let { getMimeType(it) }
-        return mime == "jpeg" || mime == "jpg" || mime == "png" || mime == "heic"
+        return mime == "jpeg" || mime == "jpg" || mime == "png" || mime == "heic" || mime == "heif"
     }
 
     fun getMimeType(uri: Uri): String? {
