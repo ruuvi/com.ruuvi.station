@@ -224,9 +224,13 @@ fun SensorsPager(
         if (sensor.userBackground != null) {
             val uri = Uri.parse(sensor.userBackground)
             if (uri.path != null) {
-                Crossfade(targetState = uri) {
-                    Timber.d("image for sensor ${sensor.displayName}")
-                    SensorCardImage(it, showCharts)
+                if (showCharts) {
+                    SensorCardImage(uri, showCharts)
+                } else {
+                    Crossfade(targetState = uri) {
+                        Timber.d("image for sensor ${sensor.displayName}")
+                        SensorCardImage(it, showCharts)
+                    }
                 }
             }
         }
