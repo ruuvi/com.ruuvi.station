@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 33
         compileSdk 34
         versionCode 205001
         versionName "2.5.1"
@@ -63,7 +63,6 @@ android {
         }
     }
     composeOptions {
-        kotlinCompilerVersion kotlin_version
         kotlinCompilerExtensionVersion compose_compiler_version
     }
     packagingOptions {
@@ -192,6 +191,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 }
