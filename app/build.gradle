@@ -82,8 +82,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.4'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.9'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.7'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.13'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:1.12.0'
