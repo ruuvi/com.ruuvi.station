@@ -97,6 +97,7 @@ fun ChartsView(
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             Timber.d("ChartView - get history $sensorId")
+            delay(300)
             val freshHistory = getHistory.invoke(sensorId)
 
             if (history.isEmpty() ||
