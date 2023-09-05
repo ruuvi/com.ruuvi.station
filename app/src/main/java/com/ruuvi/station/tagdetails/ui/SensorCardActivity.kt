@@ -262,6 +262,13 @@ fun SensorsPager(
                 }
             )
 
+            pagerSensor?.let {
+                SensorTitle(
+                    sensor = it,
+                    pagerState = pagerState
+                )
+            }
+
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
@@ -286,10 +293,6 @@ fun SensorsPager(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
                     ) {
-                        SensorTitle(
-                            sensor = sensor,
-                            pagerState = pagerState
-                        )
                         if (showCharts) {
                             ChartControlElement2(
                                 sensorId = sensor.id,
@@ -408,13 +411,13 @@ fun SensorTitle(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = RuuviStationTheme.dimensions.medium)) {
+            .fillMaxWidth()) {
         Box(modifier = Modifier
-            .align(Alignment.CenterStart)
+            .align(Alignment.TopStart)
+            .padding(start = 6.dp)
         ) {
             if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
-                IconButton(onClick = {
+                IconButton(modifier = Modifier.size(RuuviStationTheme.dimensions.buttonHeightSmall), onClick = {
                     if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage - 1)
@@ -446,10 +449,11 @@ fun SensorTitle(
             )
         }
         Box(modifier = Modifier
-            .align(Alignment.CenterEnd)
+            .align(Alignment.TopEnd)
+            .padding(end = 6.dp)
         ) {
             if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount - 1) {
-                IconButton(onClick = {
+                IconButton(modifier = Modifier.size(RuuviStationTheme.dimensions.buttonHeightSmall), onClick = {
                     if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount -1) {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
