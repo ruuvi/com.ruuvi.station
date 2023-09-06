@@ -192,7 +192,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 text = stringResource(id = R.string.select_default_image),
                 modifier = Modifier.padding(
                     vertical = RuuviStationTheme.dimensions.extended,
-                    horizontal = RuuviStationTheme.dimensions.medium
+                    horizontal = RuuviStationTheme.dimensions.screenPadding
                 ))
         }
     }
