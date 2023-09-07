@@ -399,11 +399,11 @@ class RuuviNetworkRepository
         result
     }
 
-    suspend fun registerPush(token: String, fcmToken: String): PushRegisterResponse?
+    suspend fun registerPush(token: String, fcmToken: String, language: String): PushRegisterResponse?
     {
         val response = retrofitService.pushRegister(
             auth = getAuth(token),
-            request = PushRegisterRequest(token = fcmToken)
+            request = PushRegisterRequest(token = fcmToken, params = PushRegisterParams(language))
         )
         val result: PushRegisterResponse? = if (response.isSuccessful) {
             response.body()

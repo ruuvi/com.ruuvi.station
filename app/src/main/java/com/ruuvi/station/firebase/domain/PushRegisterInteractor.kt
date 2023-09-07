@@ -1,10 +1,9 @@
 package com.ruuvi.station.firebase.domain
 
 import com.google.firebase.messaging.FirebaseMessaging
+import com.ruuvi.station.app.locale.LocaleInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
-import com.ruuvi.station.network.ui.model.ShareOperationStatus
-import com.ruuvi.station.network.ui.model.ShareOperationType
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +15,7 @@ import java.util.*
 class PushRegisterInteractor(
     val preferencesRepository: PreferencesRepository,
     val ruuviNetworkInteractor: RuuviNetworkInteractor,
+    val localeInteractor: LocaleInteractor
 ) {
     fun checkAndRegisterDeviceToken() {
         Timber.d("checkAndRegisterDeviceToken")
@@ -36,11 +36,15 @@ class PushRegisterInteractor(
                 Timber.d("checkAndRegisterDeviceToken - addOnCompleteListener $task")
                 if (task.isSuccessful) {
                     val currentToken = task.result
+                    val language = localeInteractor.getCurrentLocaleLanguage()
+
                     registeredToken = preferencesRepository.getRegisteredToken()
+                    val registeredLanguage = preferencesRepository.getRegisteredTokenLanguage()
 
                     val lastRefresh = preferencesRepository.getDeviceTokenRefreshDate()
 
                     val tokenChanged = registeredToken != currentToken
+                    val languageChanged = registeredLanguage != language
 
                     val timeToRefreshToken = Date(lastRefresh).diffGreaterThan(refreshInterval)
 
@@ -50,8 +54,8 @@ class PushRegisterInteractor(
                             unregisterToken(registeredToken)
                         }
 
-                        if (currentToken.isNotEmpty() && (tokenChanged || timeToRefreshToken)) {
-                            registerToken(currentToken)
+                        if (currentToken.isNotEmpty() && (tokenChanged || languageChanged || timeToRefreshToken)) {
+                            registerToken(currentToken, language)
                         }
                     }
                 }
@@ -59,12 +63,13 @@ class PushRegisterInteractor(
         }
     }
 
-    private suspend fun registerToken(currentToken: String) {
+    private suspend fun registerToken(currentToken: String, language: String) {
         Timber.d("registerToken $currentToken")
-        val registerResult = ruuviNetworkInteractor.registerPush(currentToken)
+        val registerResult = ruuviNetworkInteractor.registerPush(currentToken, language)
         Timber.d("registerToken result $registerResult")
         if (registerResult?.isSuccess() == true) {
             preferencesRepository.updateRegisteredToken(currentToken)
+            preferencesRepository.updateRegisteredTokenLanguage(language)
             preferencesRepository.setDeviceTokenRefreshDate(Date().time)
         }
     }
