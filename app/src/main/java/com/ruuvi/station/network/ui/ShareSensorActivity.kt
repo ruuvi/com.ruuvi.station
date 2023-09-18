@@ -3,25 +3,65 @@ package com.ruuvi.station.network.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import com.google.android.material.snackbar.Snackbar
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.databinding.ActivityShareSensorBinding
-import com.ruuvi.station.databinding.ItemSharedToEmailBinding
-import com.ruuvi.station.network.ui.model.ShareOperationType
-import com.ruuvi.station.util.extensions.hideKeyboard
+import com.ruuvi.station.app.ui.RuuviTopAppBar
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.components.DividerRuuvi
+import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.ParagraphWithPadding
+import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.RuuviDialog
+import com.ruuvi.station.app.ui.components.SubtitleWithPadding
+import com.ruuvi.station.app.ui.components.TextFieldRuuvi
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import timber.log.Timber
 
-class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , KodeinAware {
+class ShareSensorActivity : AppCompatActivity() , KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -31,90 +71,41 @@ class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , 
         }
     }
 
-    private lateinit var binding: ActivityShareSensorBinding
-
-    val emailsList = mutableListOf<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        binding = ActivityShareSensorBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContent {
+            RuuviTheme {
+                val canShare by viewModel.canShareObserve.observeAsState(true)
+                val emails by viewModel.emailsObserve.observeAsState(emptyList())
+                val scaffoldState = rememberScaffoldState()
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+                ShareBody(
+                    scaffoldState,
+                    canShare,
+                    emails,
+                    viewModel::shareTag,
+                    viewModel::unshareTag
+                )
 
-        setupUI()
-        setupViewModel()
-    }
-
-    private fun setupUI() {
-        binding.shareButton.setOnClickListener {
-            viewModel.shareTag(binding.friendEmailEditText.text.toString())
-            binding.friendEmailEditText.setText("")
-            hideKeyboard()
-        }
-    }
-
-    private fun setupViewModel() {
-        val adapter = TestListAdapter(this, emailsList) { email ->
-            confirmUnshareSensor(email)
-        }
-
-        binding.sensorRecipientsListView.adapter = adapter
-
-        viewModel.emailsObserve.observe(this){
-            emailsList.clear()
-            emailsList.addAll(it)
-            binding.sharedTextView.isVisible = emailsList.isNotEmpty()
-            binding.sharedTextView.text = getString(R.string.share_sensor_already_shared, emailsList.size, 10)
-            adapter.notifyDataSetChanged()
-        }
-
-        viewModel.operationStatusObserve.observe(this) {
-            it?.let { status ->
-                when (status.type) {
-                    ShareOperationType.SHARING_SUCCESS ->
-                        Snackbar.make(
-                            binding.sensorRecipientsListView,
-                            getString(R.string.successfully_shared),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    ShareOperationType.SHARING_ERROR ->
-                        if (!it.message.isNullOrEmpty()) {
-                            Snackbar.make(
-                                binding.sensorRecipientsListView,
-                                it.message ?: "",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
+                LaunchedEffect(null) {
+                    viewModel.uiEvent.collect { uiEvent ->
+                        Timber.d("uiEvent $uiEvent")
+                        when (uiEvent) {
+                            is UiEvent.ShowSnackbar -> {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = uiEvent.message.asString(this@ShareSensorActivity),
+                                    actionLabel = getString(R.string.ok)
+                                )
+                            }
+                            else -> {}
                         }
+                    }
                 }
-                viewModel.statusProcessed()
             }
         }
-
-        viewModel.canShareObserve.observe(this) {
-            binding.shareSensorDisabledTitleTextView.isVisible = !it
-            binding.sharingLayout.isVisible = it
-            binding.shareSeparator.isVisible = it
-        }
-    }
-
-    private fun confirmUnshareSensor(email: String) {
-        val simpleAlert = androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-        simpleAlert.setTitle(getString(R.string.confirm))
-        simpleAlert.setMessage(getString(R.string.share_sensor_unshare_confirm, email))
-        simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, resources.getText(R.string.yes)) { _, _ ->
-            viewModel.unshareTag(email)
-        }
-        simpleAlert.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, resources.getText(R.string.no)) { _, _ -> }
-        simpleAlert.show()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        finish()
-        return super.onOptionsItemSelected(item)
     }
 
     companion object {
@@ -128,23 +119,140 @@ class ShareSensorActivity : AppCompatActivity(R.layout.activity_share_sensor) , 
     }
 }
 
-class TestListAdapter (
-    context: Context,
-    items: List<String>,
-    val clickListener: (recipientEmail: String) -> Unit
-): ArrayAdapter<String>(context, 0, items) {
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val item = getItem(position)
-        val binding = if (convertView != null) {
-            ItemSharedToEmailBinding.bind(convertView)
-        } else {
-            ItemSharedToEmailBinding.inflate(LayoutInflater.from(context), parent, false)
+@Composable
+fun ShareBody(
+    scaffoldState: ScaffoldState,
+    canShare: Boolean,
+    emails: List<String>,
+    shareToUser: (String) -> Unit,
+    unshare: (String) -> Unit
+) {
+    val systemUiController = rememberSystemUiController()
+    val systemBarsColor = RuuviStationTheme.colors.systemBars
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        backgroundColor = RuuviStationTheme.colors.background,
+        topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
+        scaffoldState = scaffoldState
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(RuuviStationTheme.dimensions.screenPadding)
+        ) {
+            if (canShare) {
+                item {
+                    AddFriend(shareToUser = shareToUser)
+                }
+            }
+            if (emails.size > 0) {
+                item {
+                    SubtitleWithPadding(
+                        text = stringResource(
+                            id = R.string.share_sensor_already_shared,
+                            emails.size,
+                            10
+                        )
+                    )
+                }
+                items(emails) { email ->
+                    SharedEmailItem(email = email, unshare = unshare)
+                }
+            }
+
+            item {
+                ParagraphWithPadding(text = stringResource(id = R.string.share_sensor_description))
+            }
         }
 
-        binding.userEmailTextView.text = item
-        item?.let {
-            binding.unshareButton.setOnClickListener { clickListener(item) }
+        SideEffect {
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColor
+            )
         }
-        return binding.root
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun AddFriend(
+    shareToUser: (String) -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    SubtitleWithPadding(text = stringResource(id = R.string.share_sensor_add_friend))
+    var email by remember {
+        mutableStateOf(TextFieldValue())
+    }
+    TextFieldRuuvi(
+        value = email,
+        hint = stringResource(id = R.string.email),
+        onValueChange = {
+            if (it.text.length <= 64) email = it
+        },
+        modifier = Modifier
+            .fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            capitalization = KeyboardCapitalization.None
+        )
+    )
+    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+        RuuviButton(text = stringResource(id = R.string.share)) {
+            shareToUser.invoke(email.text)
+            email = TextFieldValue()
+            keyboardController?.hide()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SharedEmailItem(
+    email: String,
+    unshare: (String) -> Unit
+) {
+    var unshareDialog by remember {
+        mutableStateOf(false)
+    }
+
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Paragraph(
+                modifier = Modifier
+                    .weight(1f),
+                text = email
+            )
+            CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                IconButton(
+                    onClick = { unshareDialog = true }) {
+                    Icon(
+                        modifier = Modifier.height(RuuviStationTheme.dimensions.buttonHeight),
+                        painter = painterResource(id = R.drawable.ic_baseline_clear_24),
+                        contentDescription = "",
+                        tint = RuuviStationTheme.colors.accent
+                    )
+                }
+            }
+        }
+        DividerRuuvi()
+    }
+
+    if (unshareDialog) {
+        RuuviDialog(
+            title = stringResource(id = R.string.confirm),
+            onDismissRequest = { unshareDialog = false },
+            onOkClickAction = {
+                unshare(email)
+            },
+            positiveButtonText = stringResource(id = R.string.yes),
+            negativeButtonText = stringResource(id = R.string.no)
+        ) {
+            Paragraph(text = stringResource(id = R.string.share_sensor_unshare_confirm, email))
+        }
     }
 }

@@ -116,7 +116,7 @@ xmlns:tools="http://schemas.android.com/tools">
         android:name=".network.ui.ShareSensorActivity"
         android:exported="false"
         android:label="@string/share_sensor_title"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
