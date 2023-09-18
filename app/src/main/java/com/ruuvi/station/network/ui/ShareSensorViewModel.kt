@@ -4,14 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.network.data.request.SensorDenseRequest
 import com.ruuvi.station.network.domain.NetworkShareListInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
-import com.ruuvi.station.network.ui.model.ShareOperationStatus
-import com.ruuvi.station.network.ui.model.ShareOperationType
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
 class ShareSensorViewModel (
@@ -25,15 +28,15 @@ class ShareSensorViewModel (
     private val emails = MutableLiveData<List<String>>()
     val emailsObserve: LiveData<List<String>> = emails
 
-    private val operationStatus = MutableLiveData<ShareOperationStatus?> (null)
-    val operationStatusObserve: LiveData<ShareOperationStatus?> = operationStatus
-
     private val canShare = MutableLiveData<Boolean> (false)
     val canShareObserve: LiveData<Boolean> = canShare
 
+    private val _uiEvent = MutableSharedFlow<UiEvent> ()
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
+
     private val handler = CoroutineExceptionHandler { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
-            operationStatus.value = ShareOperationStatus(ShareOperationType.SHARING_ERROR, exception.message ?: "")
+            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(exception.message ?: "")))
         }
     }
 
@@ -73,21 +76,25 @@ class ShareSensorViewModel (
     fun shareTag(email: String) {
         ruuviNetworkInteractor.shareSensor(email, sensorId, handler) { response ->
             if (response?.isError() == true) {
-                operationStatus.value = ShareOperationStatus(ShareOperationType.SHARING_ERROR, response.error)
+                CoroutineScope(Dispatchers.Main).launch{
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(response.error)))
+                }
             } else {
-                operationStatus.value = ShareOperationStatus(ShareOperationType.SHARING_SUCCESS, "")
+                CoroutineScope(Dispatchers.Main).launch{
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
+                }
                 sensorShareListRepository.insertToShareList(sensorId, email)
                 setEmailsFromRepository()
             }
         }
     }
 
-    fun statusProcessed() { operationStatus.value = null }
-
     fun unshareTag(email: String) {
         ruuviNetworkInteractor.unshareSensor(email, sensorId, handler) { response ->
             if (response?.isError() == true) {
-                operationStatus.value = ShareOperationStatus(ShareOperationType.SHARING_ERROR, response.error)
+                CoroutineScope(Dispatchers.Main).launch{
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(response.error)))
+                }
             } else {
                 sensorShareListRepository.deleteFromShareList(sensorId, email)
                 setEmailsFromRepository()
