@@ -161,7 +161,6 @@ class AppSettingsInteractor(
     fun setGraphViewPeriod(newPeriod: Int) {
         if (newPeriod != preferencesRepository.getGraphViewPeriodDays()) {
             preferencesRepository.setGraphViewPeriodDays(newPeriod)
-            networkApplicationSettings.updateChartViewPeriod()
         }
     }
 
