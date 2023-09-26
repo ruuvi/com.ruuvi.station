@@ -1,9 +1,13 @@
 package com.ruuvi.station.dashboard.ui
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.Uri
+import android.nfc.NfcAdapter
+import android.nfc.tech.NfcA
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +75,7 @@ import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
+import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
@@ -93,11 +98,37 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
 
+    private var nfcAdapter: NfcAdapter? = null
+
+    val intentFiltersArray = arrayOf(
+        IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
+        try {
+            addDataType("text/plain")
+        } catch (e: IntentFilter.MalformedMimeTypeException) {
+            throw RuntimeException("fail", e)
+        }}
+    )
+
+    val techListsArray = arrayOf(arrayOf<String>(NfcA::class.java.name))
+
+    var nfcIntent : Intent? = null
+
+    var pendingIntent: PendingIntent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         observeSyncStatus()
+
+        nfcIntent = Intent(this, javaClass).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+
+        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent,
+        PendingIntent.FLAG_MUTABLE)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         setContent {
             var bluetoothCheckReady by remember {
@@ -265,6 +296,24 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     )
                 }
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray)
+
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.type == "text/plain" && intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            NfcScanReciever.nfcScanned(intent)
         }
     }
 
