@@ -20,6 +20,7 @@ xmlns:tools="http://schemas.android.com/tools">
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.NFC" />
 
 <uses-feature android:name="android.hardware.bluetooth" />
 
@@ -164,19 +165,6 @@ xmlns:tools="http://schemas.android.com/tools">
         android:exported="false"
         android:label="@string/change_background"
         android:theme="@style/AppTheme.NoActionBar" />
-
-    <activity
-        android:name="com.ruuvi.station.nfc.NfcScanActivity"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-            <data android:mimeType="text/plain" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-        <meta-data
-            android:name="android.nfc.action.TECH_DISCOVERED"
-            android:resource="@xml/nfc_filter" />
-    </activity>
 
     <provider
         android:name="androidx.core.content.FileProvider"
