@@ -367,10 +367,10 @@ class RuuviNetworkInteractor (
         }
     }
 
-    suspend fun registerPush(fcmToken: String): PushRegisterResponse? {
+    suspend fun registerPush(fcmToken: String, language: String): PushRegisterResponse? {
         val token = getToken()?.token
         token?.let {
-            return networkRepository.registerPush(it, fcmToken)
+            return networkRepository.registerPush(it, fcmToken, language)
         }
         return null
     }

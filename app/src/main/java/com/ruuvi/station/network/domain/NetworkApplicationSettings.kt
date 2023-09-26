@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.app.locale.LocaleInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
@@ -17,7 +18,8 @@ class NetworkApplicationSettings (
     private val networkRepository: RuuviNetworkRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val localeInteractor: LocaleInteractor
     ) {
 
     private fun getToken() = tokenRepository.getTokenInfo()
@@ -42,6 +44,9 @@ class NetworkApplicationSettings (
                     applyTemperatureAccuracy(response.data.settings)
                     applyHumidityAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
+                }
+                if (response.data.settings.PROFILE_LANGUAGE_CODE.isNullOrEmpty()) {
+                    updateProfileLanguage()
                 }
             }
         }
@@ -335,6 +340,17 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateProfileLanguage() {
+        if (networkInteractor.signedIn) {
+            val language = localeInteractor.getCurrentLocaleLanguage()
+            Timber.d("NetworkApplicationSettings-updateProfileLanguage: $language")
+            networkInteractor.updateUserSetting(
+                PROFILE_LANGUAGE_CODE,
+                language
+            )
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
@@ -346,6 +362,7 @@ class NetworkApplicationSettings (
         val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
         val DASHBOARD_TYPE = "DASHBOARD_TYPE"
         val DASHBOARD_TAP_ACTION = "DASHBOARD_TAP_ACTION"
+        val PROFILE_LANGUAGE_CODE = "PROFILE_LANGUAGE_CODE"
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"

@@ -30,7 +30,7 @@ object NetworkInjectionModule {
         bind<NetworkShareListInteractor>() with singleton { NetworkShareListInteractor(instance()) }
 
         bind<NetworkApplicationSettings>() with  singleton {
-            NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance())
+            NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<NetworkAlertsSyncInteractor>() with  singleton {

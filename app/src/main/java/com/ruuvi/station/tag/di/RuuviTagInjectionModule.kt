@@ -12,7 +12,7 @@ object RuuviTagInjectionModule {
     val module = Kodein.Module(RuuviTagInjectionModule.javaClass.name) {
 
         bind<TagInteractor>() with singleton {
-            TagInteractor(instance(), instance(), instance(), instance(), instance())
+            TagInteractor(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<TagConverter>() with singleton {

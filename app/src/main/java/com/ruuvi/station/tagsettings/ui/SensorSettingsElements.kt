@@ -3,18 +3,15 @@ package com.ruuvi.station.tagsettings.ui
 import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -45,6 +42,7 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 @Composable
@@ -61,6 +59,9 @@ fun SensorSettings(
     val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
+    var showAskToClaimDialog by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -104,8 +105,30 @@ fun SensorSettings(
         )
     }
 
-    LaunchedEffect(key1 = 1) {
+    if (showAskToClaimDialog) {
+        RuuviDialog(
+            title = stringResource(id = R.string.claim_sensor_ownership),
+            onDismissRequest = { showAskToClaimDialog = false },
+            positiveButtonText = stringResource(id = R.string.yes),
+            negativeButtonText = stringResource(id = R.string.no),
+            onOkClickAction = {
+                showAskToClaimDialog = false
+                ClaimSensorActivity.start(context, sensorState.id)
+            }
+        ) {
+            Paragraph(text = stringResource(id = R.string.do_you_own_sensor))
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
         viewModel.updateSensorFirmwareVersion()
+    }
+    
+    LaunchedEffect(key1 = Unit) {
+        viewModel.askToClaim.collectLatest {
+            Timber.d("askToClaim collected $it")
+            if (it) showAskToClaimDialog = true
+        }
     }
 }
 

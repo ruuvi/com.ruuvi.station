@@ -16,6 +16,8 @@ fun RuuviDialog(
     validation: () -> Boolean = { true },
     onDismissRequest : () -> Unit,
     onOkClickAction: () -> Unit,
+    positiveButtonText: String = stringResource(id = R.string.ok),
+    negativeButtonText: String = stringResource(id = R.string.cancel),
     content: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -44,7 +46,7 @@ fun RuuviDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     RuuviTextButton(
-                        text = stringResource(id = R.string.cancel),
+                        text = negativeButtonText,
                         onClick = {
                             onDismissRequest.invoke()
                         }
@@ -53,7 +55,7 @@ fun RuuviDialog(
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
 
                     RuuviTextButton(
-                        text = stringResource(id = R.string.ok),
+                        text = positiveButtonText,
                         enabled = validation.invoke(),
                         onClick = {
                             onOkClickAction.invoke()

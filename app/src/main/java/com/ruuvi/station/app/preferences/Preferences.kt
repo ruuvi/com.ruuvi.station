@@ -330,6 +330,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_REGISTERED_DEVICE_TOKEN, token).apply()
         }
 
+    var registeredTokenLanguage: String
+        get() = sharedPreferences.getString(PREF_REGISTERED_TOKEN_LANGUAGE, "") ?: ""
+        set(language) {
+            sharedPreferences.edit().putString(PREF_REGISTERED_TOKEN_LANGUAGE, language).apply()
+        }
+
     var deviceTokenRefreshDate: Long
         get() = sharedPreferences.getLong(PREF_DEVICE_TOKEN_REFRESH_DATE, Long.MIN_VALUE)
         set(refreshDate) {
@@ -409,6 +415,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
         private const val PREF_DASHBOARD_TAP_ACTION = "pref_dashboard_tap_action"
         private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
+        private const val PREF_REGISTERED_TOKEN_LANGUAGE = "pref_registered_token_language"
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"

@@ -4,15 +4,22 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
+import android.nfc.NfcAdapter
+import android.nfc.tech.NfcA
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -39,9 +46,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
@@ -63,10 +67,9 @@ import com.ruuvi.station.util.Days
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -83,9 +86,35 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
         )
     }
 
+    private var nfcAdapter: NfcAdapter? = null
+
+    val intentFiltersArray = arrayOf(
+        IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
+            try {
+                addDataType("text/plain")
+            } catch (e: IntentFilter.MalformedMimeTypeException) {
+                throw RuntimeException("fail", e)
+            }}
+    )
+
+    val techListsArray = arrayOf(arrayOf<String>(NfcA::class.java.name))
+
+    var nfcIntent : Intent? = null
+
+    var pendingIntent: PendingIntent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        nfcIntent = Intent(this, javaClass).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+
+        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent,
+            PendingIntent.FLAG_MUTABLE)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         setContent {
             RuuviTheme {
@@ -119,6 +148,24 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
                     addSensor = viewModel::addSensor
                 )
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray)
+
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.type == "text/plain" && intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            NfcScanReciever.nfcScanned(intent)
         }
     }
 
@@ -161,7 +208,7 @@ class SensorCardActivity : AppCompatActivity(), KodeinAware {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorsPager(
     selectedIndex: Int,
@@ -191,7 +238,12 @@ fun SensorsPager(
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(selectedIndex)
+    val pagerState = rememberPagerState(
+        initialPage = selectedIndex,
+        initialPageOffsetFraction = 0f
+    ) {
+        return@rememberPagerState sensors.size
+    }
 
     var pagerSensor by remember {
         mutableStateOf(sensors.getOrNull(selectedIndex))
@@ -219,9 +271,13 @@ fun SensorsPager(
         if (sensor.userBackground != null) {
             val uri = Uri.parse(sensor.userBackground)
             if (uri.path != null) {
-                Crossfade(targetState = uri) {
-                    Timber.d("image for sensor ${sensor.displayName}")
-                    SensorCardImage(it, showCharts)
+                if (showCharts) {
+                    SensorCardImage(uri, showCharts)
+                } else {
+                    Crossfade(targetState = uri, label = "switch background") {
+                        Timber.d("image for sensor ${sensor.displayName}")
+                        SensorCardImage(it, showCharts)
+                    }
                 }
             }
         }
@@ -253,11 +309,17 @@ fun SensorsPager(
                 }
             )
 
+            pagerSensor?.let {
+                SensorTitle(
+                    sensor = it,
+                    pagerState = pagerState
+                )
+            }
+
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
                 userScrollEnabled = !showCharts,
-                count = sensors.size
             ) { page ->
                 val sensor = sensors.getOrNull(page)
                 if (sensor != null) {
@@ -278,7 +340,6 @@ fun SensorsPager(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
                     ) {
-                        SensorTitle(sensor = sensor)
                         if (showCharts) {
                             ChartControlElement2(
                                 sensorId = sensor.id,
@@ -387,18 +448,73 @@ fun NfcInteractor(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SensorTitle(sensor: RuuviTag) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            fontSize =  RuuviStationTheme.fontSizes.extended,
-            fontFamily = RuuviStationTheme.fonts.montserratExtraBold,
-            text = sensor.displayName,
-            color = Color.White
-        )
+fun SensorTitle(
+    sensor: RuuviTag,
+    pagerState: PagerState
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()) {
+        Box(modifier = Modifier
+            .align(Alignment.TopStart)
+            .padding(start = 6.dp)
+        ) {
+            if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
+                IconButton(modifier = Modifier.size(RuuviStationTheme.dimensions.buttonHeightSmall), onClick = {
+                    if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_back_16),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.huge)
+                .align(Alignment.Center)
+                .width(IntrinsicSize.Max),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                fontSize =  RuuviStationTheme.fontSizes.big,
+                fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
+                text = sensor.displayName,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                maxLines = 2
+            )
+        }
+        Box(modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(end = 6.dp)
+        ) {
+            if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount - 1) {
+                IconButton(modifier = Modifier.size(RuuviStationTheme.dimensions.buttonHeightSmall), onClick = {
+                    if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount -1) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_forward_16),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -482,17 +598,17 @@ fun SensorValues(
         horizontalAlignment = Alignment.Start
     ) {
         sensor.latestMeasurement?.humidityValue?.let {
-            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithUnit)
+            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
         sensor.latestMeasurement?.pressureValue?.let {
-            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithUnit)
+            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
         sensor.latestMeasurement?.movementValue?.let {
-            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithUnit)
+            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, it.unitString)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         }
@@ -502,30 +618,46 @@ fun SensorValues(
 @Composable
 fun SensorValueItem(
     icon: Int,
-    title: String
+    value: String,
+    unit: String
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
             ) {
         Icon(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.size(48.dp),
             painter = painterResource(id = icon),
             tint = Color.White,
             contentDescription = ""
         )
-        Text(
-            modifier = Modifier
-                .padding(
-                    start = RuuviStationTheme.dimensions.extended
-                ),
-            fontSize = RuuviStationTheme.fontSizes.extended,
-            style = RuuviStationTheme.typography.dashboardBigValueUnit,
-            fontFamily = ruuviStationFonts.montserratRegular,
-            fontWeight = FontWeight.Bold,
-            text = title,
-            color = Color.White
-        )
+        Row() {
+            Text(
+                modifier = Modifier
+                    .alignByBaseline()
+                    .padding(
+                        start = RuuviStationTheme.dimensions.extended
+                    ),
+                fontSize = RuuviStationTheme.fontSizes.extended,
+                style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                fontFamily = ruuviStationFonts.mulishBold,
+                fontWeight = FontWeight.Bold,
+                text = value,
+                color = Color.White
+            )
+
+            Text(
+                modifier = Modifier
+                    .alignByBaseline()
+                    .padding(
+                        start = RuuviStationTheme.dimensions.small
+                    ),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White80,
+                fontSize = RuuviStationTheme.fontSizes.small,
+                text = unit,
+            )
+        }
     }
 }
 

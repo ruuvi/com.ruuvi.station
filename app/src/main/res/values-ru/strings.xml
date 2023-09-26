@@ -94,6 +94,7 @@
     <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца. Чтобы заявить права собственности, вам необходимо войти в систему.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="claim_ownership">Заявить о владении</string>
     <string name="claim_sensor">Заявить о собственности</string>
+    <string name="claim_sensor_ownership">Заявить о собственности на датчик</string>
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
@@ -155,6 +156,7 @@
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
     <string name="disconnected">Отсоединен</string>
     <string name="do_not_show_again">Больше не показывать</string>
+    <string name="do_you_own_sensor">Это ваш датчик?</string>
     <string name="done">Готово</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
@@ -282,6 +284,7 @@
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
+    <string name="rename">Переименовать</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>

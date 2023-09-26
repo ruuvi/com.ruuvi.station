@@ -247,6 +247,12 @@ class PreferencesRepository(
         preferences.registeredToken = token
     }
 
+    fun getRegisteredTokenLanguage(): String = preferences.registeredTokenLanguage
+
+    fun updateRegisteredTokenLanguage(language: String) {
+        preferences.registeredTokenLanguage = language
+    }
+
     fun getDeviceTokenRefreshDate(): Long =
         preferences.deviceTokenRefreshDate
 

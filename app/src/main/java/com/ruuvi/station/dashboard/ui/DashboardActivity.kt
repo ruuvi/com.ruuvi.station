@@ -1,9 +1,13 @@
 package com.ruuvi.station.dashboard.ui
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.Uri
+import android.nfc.NfcAdapter
+import android.nfc.tech.NfcA
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -71,12 +75,14 @@ import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
+import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
+import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.extensions.*
@@ -92,11 +98,37 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
 
+    private var nfcAdapter: NfcAdapter? = null
+
+    val intentFiltersArray = arrayOf(
+        IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
+        try {
+            addDataType("text/plain")
+        } catch (e: IntentFilter.MalformedMimeTypeException) {
+            throw RuntimeException("fail", e)
+        }}
+    )
+
+    val techListsArray = arrayOf(arrayOf<String>(NfcA::class.java.name))
+
+    var nfcIntent : Intent? = null
+
+    var pendingIntent: PendingIntent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         observeSyncStatus()
+
+        nfcIntent = Intent(this, javaClass).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+
+        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent,
+        PendingIntent.FLAG_MUTABLE)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         setContent {
             var bluetoothCheckReady by remember {
@@ -239,6 +271,7 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                                         dashboardType = dashboardType,
                                         dashboardTapAction = dashboardTapAction,
                                         syncCloud = dashboardViewModel::syncCloud,
+                                        setName = dashboardViewModel::setName,
                                         refreshing = refreshing
                                     )
                                 }
@@ -263,6 +296,24 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     )
                 }
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray)
+
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.type == "text/plain" && intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            NfcScanReciever.nfcScanned(intent)
         }
     }
 
@@ -349,6 +400,7 @@ fun DashboardItems(
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
     syncCloud: ()-> Unit,
+    setName: (String, String?) -> Unit,
     refreshing: Boolean
 ) {
     val itemHeight = 156.dp * LocalDensity.current.fontScale
@@ -380,14 +432,16 @@ fun DashboardItems(
                         DashboardItemSimple(
                             sensor = sensor,
                             userEmail = userEmail,
-                            dashboardTapAction = dashboardTapAction
+                            dashboardTapAction = dashboardTapAction,
+                            setName = setName
                         )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
                             itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
-                            dashboardTapAction = dashboardTapAction
+                            dashboardTapAction = dashboardTapAction,
+                            setName = setName
                         )
                 }
             }
@@ -403,7 +457,8 @@ fun DashboardItem(
     itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
-    dashboardTapAction: DashboardTapAction
+    dashboardTapAction: DashboardTapAction,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -411,15 +466,13 @@ fun DashboardItem(
         modifier = Modifier
             .height(itemHeight)
             .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    SensorCardActivity.start(
-                        context,
-                        sensor.id,
-                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-                    )
-                }
-            ),
+            .clickableSingle {
+                SensorCardActivity.start(
+                    context,
+                    sensor.id,
+                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                )
+            },
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
@@ -471,7 +524,8 @@ fun DashboardItem(
                         .constrainAs(buttons) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
-                        }
+                        },
+                    setName = setName
                 )
 
                 if (sensor.latestMeasurement?.temperatureValue != null) {
@@ -516,22 +570,21 @@ fun DashboardItem(
 fun DashboardItemSimple(
     sensor: RuuviTag,
     userEmail: String?,
-    dashboardTapAction: DashboardTapAction
+    dashboardTapAction: DashboardTapAction,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    SensorCardActivity.start(
-                        context,
-                        sensor.id,
-                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-                    )
-                }
-            ),
+            .clickableSingle {
+                SensorCardActivity.start(
+                    context,
+                    sensor.id,
+                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                )
+            },
         shape = RoundedCornerShape(10.dp),
         elevation = 0.dp,
         backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
@@ -565,7 +618,8 @@ fun DashboardItemSimple(
                     .constrainAs(buttons) {
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
-                    }
+                    },
+                setName = setName
             )
 
             ItemValues(
@@ -613,6 +667,7 @@ fun ItemName(
 fun ItemButtons(
     sensor: RuuviTag,
     userEmail: String?,
+    setName: (String, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -656,7 +711,7 @@ fun ItemButtons(
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
             }
 
-            DashboardItemDropdownMenu(sensor, userEmail)
+            DashboardItemDropdownMenu(sensor, userEmail, setName)
         }
     }
 }
@@ -870,6 +925,7 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
 
     Row(verticalAlignment = Alignment.Bottom) {
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = value.valueWithoutUnit,
             style = RuuviStationTheme.typography.dashboardValue,
             color = textColor,
@@ -877,6 +933,7 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
         )
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = value.unitString,
             style = RuuviStationTheme.typography.dashboardUnit,
             color = textColor,
@@ -924,12 +981,15 @@ fun BigValueDisplay(
 @Composable
 fun DashboardItemDropdownMenu(
     sensor: RuuviTag,
-    userEmail: String?
+    userEmail: String?,
+    setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
     }
+
+    var setNameDialog by remember { mutableStateOf(false) }
 
     val canBeShared = sensor.owner == userEmail
     val canBeClaimed = sensor.owner.isNullOrEmpty() && userEmail?.isNotEmpty() == true
@@ -985,6 +1045,15 @@ fun DashboardItemDropdownMenu(
                 ))
             }
 
+            DropdownMenuItem(onClick = {
+                setNameDialog = true
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.rename
+                ))
+            }
+
             if (canBeClaimed) {
                 DropdownMenuItem(onClick = {
                     ClaimSensorActivity.start(context, sensor.id)
@@ -1004,6 +1073,17 @@ fun DashboardItemDropdownMenu(
                     ))
                 }
             }
+        }
+    }
+
+    if (setNameDialog) {
+        SetSensorName(
+            value = sensor.name,
+            setName = {newName ->
+                setName.invoke(sensor.id, newName)
+            }
+        ) {
+            setNameDialog = false
         }
     }
 }

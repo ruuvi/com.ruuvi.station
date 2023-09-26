@@ -18,7 +18,8 @@ data class NetworkUserSettings(
     val CHART_DRAW_DOTS: String?,
     val CHART_VIEW_PERIOD: String?,
     val DASHBOARD_TYPE: String?,
-    val DASHBOARD_TAP_ACTION: String?
+    val DASHBOARD_TAP_ACTION: String?,
+    val PROFILE_LANGUAGE_CODE: String?
 ) {
     fun isEmpty() =
                 BACKGROUND_SCAN_MODE == null &&

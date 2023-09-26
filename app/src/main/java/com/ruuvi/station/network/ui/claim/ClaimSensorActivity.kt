@@ -1,14 +1,15 @@
 package com.ruuvi.station.network.ui.claim
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.nfc.NfcAdapter
+import android.nfc.tech.NfcA
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -30,6 +31,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -48,9 +50,35 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    private var nfcAdapter: NfcAdapter? = null
+
+    val intentFiltersArray = arrayOf(
+        IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
+            try {
+                addDataType("text/plain")
+            } catch (e: IntentFilter.MalformedMimeTypeException) {
+                throw RuntimeException("fail", e)
+            }}
+    )
+
+    val techListsArray = arrayOf(arrayOf<String>(NfcA::class.java.name))
+
+    var nfcIntent : Intent? = null
+
+    var pendingIntent: PendingIntent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
+
+        nfcIntent = Intent(this, javaClass).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+
+        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent,
+            PendingIntent.FLAG_MUTABLE)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         setContent {
             RuuviTheme {
@@ -59,6 +87,24 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         }
 
         viewModel.checkClaimState()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray)
+
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.type == "text/plain" && intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            NfcScanReciever.nfcScanned(intent)
+        }
     }
 
     @Composable
@@ -109,16 +155,16 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
             ) {
                 composable(
                     route = ClaimRoutes.NOT_SIGNED_IN,
-                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                 ) {
                     NotSignedInScreen()
                 }
 
                 composable(
                     route = ClaimRoutes.CHECK_CLAIM_STATE,
-                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                 ) {
                     LoadingScreen(status = stringResource(id = R.string.check_claim_state))
                 }
@@ -243,15 +289,15 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
 
     }
 
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 

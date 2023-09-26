@@ -67,8 +67,8 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                         startDestination = SettingsRoutes.LIST
                     ) {
                         composable(SettingsRoutes.LIST,
-                            enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                            exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                            exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                         ) {
                             SettingsList(
                                 scaffoldState = scaffoldState,
@@ -190,14 +190,14 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Right,
+            towards = AnimatedContentTransitionScope.SlideDirection.Right,
             animationSpec = tween(600)
         ) }
 

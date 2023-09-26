@@ -116,6 +116,7 @@
     <string name="claim_in_progress">Claiming in progress</string>
     <string name="claim_ownership">Claim ownership</string>
     <string name="claim_sensor">Claim sensor</string>
+    <string name="claim_sensor_ownership">Claim sensor ownership</string>
     <string name="claim_warning">Secure the ownership information of your sensors by claiming their ownerships in the app.</string>
     <string name="claim_wrong_sensor_scanned">You are scanning different RuuviTag</string>
     <string name="clear">Clear</string>
@@ -197,6 +198,7 @@
     <string name="dfu_update_do_not_close_app">Do not close the app or power off the sensor during the update.</string>
     <string name="disconnected">Disconnected</string>
     <string name="do_not_show_again">Don\'t show this again</string>
+    <string name="do_you_own_sensor">Do you own this sensor?</string>
     <string name="done">Done</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Downloading the latest firmware to be updated...</string>
@@ -394,6 +396,7 @@
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.</string>
     <string name="remove_this_sensor">Remove this sensor</string>
+    <string name="rename">Rename</string>
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>
     <string name="replace_battery">Low battery</string>
     <string name="request_code">Request Code</string>

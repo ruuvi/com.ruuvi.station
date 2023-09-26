@@ -1,22 +1,23 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = '1.8.10'
+        kotlin_version = '1.9.0'
         dbflow_version = "4.2.4"
         kodein_version = "6.5.0"
         coroutines_version = "1.4.0"
         lifecycle_version = "2.6.0"
         retrofit_version = "2.9.0"
         navigation_version = '2.5.3'
-        compose_version = '1.4.3'
-        accomponist_version = '0.28.0'
+        compose_version = '1.5.0'
+        compose_compiler_version = '1.5.1'
+        accomponist_version = '0.31.6-rc'
     }
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.1.1'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"
@@ -29,7 +30,7 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "3.3"
-    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
 }

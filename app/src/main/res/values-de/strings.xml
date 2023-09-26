@@ -115,6 +115,7 @@
     <string name="claim_in_progress">Anspruchserhebung läuft</string>
     <string name="claim_ownership">Inhaberschaft beanspruchen</string>
     <string name="claim_sensor">Sensor beanspruchen</string>
+    <string name="claim_sensor_ownership">Beanspruchen Sie den Besitz des Sensors</string>
     <string name="claim_warning">Sichern Sie die Eigentumsinformationen Ihrer Sensoren, indem Sie ihre Eigentumsrechte in der App beanspruchen.</string>
     <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene RuuviTag</string>
     <string name="clear">Löschen</string>
@@ -196,6 +197,7 @@
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
     <string name="disconnected">Getrennt</string>
     <string name="do_not_show_again">Zeige das nicht noch einmal</string>
+    <string name="do_you_own_sensor">Besitzen Sie diesen Sensor?</string>
     <string name="done">Fertig</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
