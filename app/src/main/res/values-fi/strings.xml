@@ -221,7 +221,7 @@
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
     <string name="firmware_very_old">Hyvin vanha</string>
-    <string name="follow_system_theme">Käytä järjestelmän oletusta</string>
+    <string name="follow_system_theme">Järjestelmä</string>
     <string name="force_claim">Vaadi omistajuutta</string>
     <string name="force_claim_sensor">Vaihda omistajuus</string>
     <string name="force_claim_sensor_description1">Tällä anturilla on jo toinen omistaja. Omistajuus voidaan vaihtaa pakotetusti, mikäli anturi on lähettyvilläsi. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
@@ -395,6 +395,7 @@
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen lukuoikeus päättyy.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
+    <string name="rename">Nimeä uudelleen</string>
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
     <string name="replace_battery">Paristo vähissä</string>
     <string name="request_code">Pyydä kirjautumiskoodi</string>
