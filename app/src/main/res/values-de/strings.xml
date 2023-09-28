@@ -221,7 +221,7 @@
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>
     <string name="firmware_very_old">Sehr alt</string>
-    <string name="follow_system_theme">Dem Systemthema folgen</string>
+    <string name="follow_system_theme">Systemthema</string>
     <string name="force_claim">Kraft-Anspruch</string>
     <string name="force_claim_sensor">Antragstellung in Bearbeitung</string>
     <string name="force_claim_sensor_description1">Dieser Sensor wurde von einem anderen Benutzer beansprucht. Sie können die Eigentümerschaft für Ihr Konto erzwingen, wenn Sie physischen Zugang zu diesem Sensor haben. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
@@ -406,6 +406,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="remove_local_sensor">Möchten Sie den Sensor entfernen? Sie können ihn später bei Bedarf wieder hinzufügen.</string>
     <string name="remove_shared_sensor">Wenn Sie den Sensor entfernen, wird der Besitzer des Sensors benachrichtigt und Sie können nicht mehr auf den Sensor zugreifen.</string>
     <string name="remove_this_sensor">Entfernen Sie diesen Sensor</string>
+    <string name="rename">Umbenennen</string>
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Schwache Batterie</string>
     <string name="request_code">Anfrage Code</string>

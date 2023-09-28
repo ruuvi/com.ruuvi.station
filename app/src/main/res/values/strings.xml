@@ -222,7 +222,7 @@
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Update</string>
     <string name="firmware_very_old">Very old</string>
-    <string name="follow_system_theme">Follow system theme</string>
+    <string name="follow_system_theme">System theme</string>
     <string name="force_claim">Force Claim</string>
     <string name="force_claim_sensor">Force Claim Sensor</string>
     <string name="force_claim_sensor_description1">This sensor has been claimed by another user. You can force the ownership to your account if you have physical access to this sensor. Each Ruuvi sensor can have only one owner.</string>

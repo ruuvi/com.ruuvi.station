@@ -1,16 +1,11 @@
 package com.ruuvi.station.dashboard.ui
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.Uri
-import android.nfc.NfcAdapter
-import android.nfc.tech.NfcA
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -75,7 +70,6 @@ import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
-import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
@@ -85,6 +79,7 @@ import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,43 +87,17 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import timber.log.Timber
 
-class DashboardActivity : AppCompatActivity(), KodeinAware {
+class DashboardActivity : NfcActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
-
-    private var nfcAdapter: NfcAdapter? = null
-
-    val intentFiltersArray = arrayOf(
-        IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
-        try {
-            addDataType("text/plain")
-        } catch (e: IntentFilter.MalformedMimeTypeException) {
-            throw RuntimeException("fail", e)
-        }}
-    )
-
-    val techListsArray = arrayOf(arrayOf<String>(NfcA::class.java.name))
-
-    var nfcIntent : Intent? = null
-
-    var pendingIntent: PendingIntent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         observeSyncStatus()
-
-        nfcIntent = Intent(this, javaClass).apply {
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        }
-
-        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent,
-        PendingIntent.FLAG_MUTABLE)
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         setContent {
             var bluetoothCheckReady by remember {
@@ -296,24 +265,6 @@ class DashboardActivity : AppCompatActivity(), KodeinAware {
                     )
                 }
             }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        nfcAdapter?.disableForegroundDispatch(this)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray)
-
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent.type == "text/plain" && intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
-            NfcScanReciever.nfcScanned(intent)
         }
     }
 

@@ -221,7 +221,7 @@
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>
     <string name="firmware_very_old">Très vieux</string>
-    <string name="follow_system_theme">Suivre le thème du système</string>
+    <string name="follow_system_theme">Thème système</string>
     <string name="force_claim">Revendication de force</string>
     <string name="force_claim_sensor">Revendication en cours</string>
     <string name="force_claim_sensor_description1">Ce capteur a été réclamé par un autre utilisateur. Vous pouvez forcer la propriété à votre compte si vous avez un accès physique à ce capteur. Chaque capteur Ruuvi ne peut avoir qu\'un seul propriétaire.</string>
@@ -400,6 +400,7 @@
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
     <string name="remove_shared_sensor">En supprimant le capteur vous n\'aurez plus accès aux données du capteur et une notification sera envoyée au propriétaire.</string>
     <string name="remove_this_sensor">Supprimer le capteur</string>
+    <string name="rename">Renommer</string>
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
     <string name="replace_battery">Batterie faible</string>
     <string name="request_code">Demander un code</string>

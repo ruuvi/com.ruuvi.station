@@ -221,7 +221,7 @@
     <string name="firmware">Programvara</string>
     <string name="firmware_update">Uppdatera</string>
     <string name="firmware_very_old">Väldigt gammal</string>
-    <string name="follow_system_theme">Följ systemtema</string>
+    <string name="follow_system_theme">Systemtema</string>
     <string name="force_claim">Tvinga fram anspråk</string>
     <string name="force_claim_sensor">Tvinga fram anspråk</string>
     <string name="force_claim_sensor_description1">Den här sensorn ägs av en annan användare. Du kan tvinga ägandeskap till ditt konto om du har fysisk tillgång till den här sensorn. Varje Ruuvi-sensor kan bara ha en ägare.</string>
@@ -395,6 +395,7 @@
     <string name="remove_local_sensor">Är du säker på att du vill ta bort den här sensorn?</string>
     <string name="remove_shared_sensor">Om du tar bort sensorn så meddelas ägaren till sensorn och du kan inte komma åt den längre.</string>
     <string name="remove_this_sensor">Ta bort sensorn</string>
+    <string name="rename">Döp om</string>
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
