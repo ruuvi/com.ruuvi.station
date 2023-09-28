@@ -40,7 +40,6 @@ class NetworkApplicationSettings (
                     applyCloudModeEnabled(response.data.settings)
                     applyChartShowAllPoints(response.data.settings)
                     applyChartDrawDots(response.data.settings)
-                    applyChartViewPeriod(response.data.settings)
                     applyTemperatureAccuracy(response.data.settings)
                     applyHumidityAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
@@ -65,7 +64,6 @@ class NetworkApplicationSettings (
             updateChartShowAllPoints()
             updateCloudModeEnabled()
             updateChartDrawDots()
-            updateChartViewPeriod()
             updateTemperatureAccuracy()
             updateHumidityAccuracy()
             updatePressureAccuracy()
@@ -160,13 +158,6 @@ class NetworkApplicationSettings (
                 Timber.d("NetworkApplicationSettings-applyChartDrawDots: $it")
                 preferencesRepository.setGraphDrawDots(it)
             }
-        }
-    }
-
-    private fun applyChartViewPeriod(settings: NetworkUserSettings) {
-        settings.CHART_VIEW_PERIOD?.toIntOrNull()?.let {
-            Timber.d("NetworkApplicationSettings-applyChartViewPeriod: $it")
-            preferencesRepository.setGraphViewPeriodDays(it)
         }
     }
 
@@ -300,16 +291,6 @@ class NetworkApplicationSettings (
         }
     }
 
-    fun updateChartViewPeriod() {
-        if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updateChartViewPeriod: ${preferencesRepository.getGraphViewPeriodDays()}")
-            networkInteractor.updateUserSetting(
-                CHART_VIEW_PERIOD,
-                preferencesRepository.getGraphViewPeriodDays().toString()
-            )
-        }
-    }
-
     fun updatePressureUnit() {
         if (networkInteractor.signedIn) {
             Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().code}")
@@ -366,6 +347,5 @@ class NetworkApplicationSettings (
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
-        val CHART_VIEW_PERIOD = "CHART_VIEW_PERIOD"
     }
 }
