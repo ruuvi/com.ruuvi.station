@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.viewModel
@@ -19,8 +18,8 @@ import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
 import com.ruuvi.station.nfc.NfcScanReciever
-import com.ruuvi.station.nfc.domain.NfcScanResponse
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.openUrl
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -29,7 +28,7 @@ import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.*
 
-class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
+class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
