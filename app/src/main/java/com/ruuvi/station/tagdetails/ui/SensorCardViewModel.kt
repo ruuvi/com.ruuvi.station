@@ -19,7 +19,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -50,8 +50,8 @@ class SensorCardViewModel(
     private val _selectedIndex = MutableStateFlow<Int>(0)
     val selectedIndex: StateFlow<Int> = _selectedIndex
 
-    private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
-    val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
+    private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
+    val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
 
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
@@ -181,7 +181,7 @@ class SensorCardViewModel(
 
     fun exportToCsv(sensorId: String): Uri? = csvExporter.toCsv(sensorId)
 
-    private fun getGraphViewPeriod() = Days.getInstance(appSettingsInteractor.getGraphViewPeriod())
+    private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod())
 
     fun shouldSkipGattSyncDialog() = preferencesRepository.getDontShowGattSync()
 

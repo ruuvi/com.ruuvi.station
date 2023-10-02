@@ -264,6 +264,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_troubleshooting_text">Hilfe bei der Verwendung der Ruuvi Station-Apps, Ruuvi-Produkte und des Ruuvi Cloud-Dienstes finden Sie in unserem Support-Center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
     <string name="history_view">Ansicht Verlauf</string>
+    <string name="hour">Stunde</string>
+    <string name="hour_1">1 Stunde</string>
+    <string name="hour_12">12 stunden</string>
+    <string name="hour_2">2 stunden</string>
+    <string name="hour_3">3 stunden</string>
+    <string name="hour_x">%1$s tage</string>
     <string name="hours">Stunden</string>
     <string name="humidity">Feuchtigkeit</string>
     <string name="humidity_absolute_name">Absolut (g/m³)</string>

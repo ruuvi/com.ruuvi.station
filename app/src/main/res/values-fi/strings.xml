@@ -253,6 +253,12 @@
     <string name="help_troubleshooting_text">Löydä apua Ruuvi Station -sovellusten, Ruuvi-tuotteiden ja Ruuvi Cloud -palvelun käyttöön tukikeskuksestamme: ruuvi.com/fi/tuki</string>
     <string name="help_troubleshooting_title">Vianetsintä</string>
     <string name="history_view">Historianäkymä</string>
+    <string name="hour">tunti</string>
+    <string name="hour_1">1 tunti</string>
+    <string name="hour_12">12 tuntia</string>
+    <string name="hour_2">2 tuntia</string>
+    <string name="hour_3">3 tuntia</string>
+    <string name="hour_x">%1$s tuntia</string>
     <string name="hours">tuntia</string>
     <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>

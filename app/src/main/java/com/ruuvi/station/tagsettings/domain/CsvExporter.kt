@@ -27,7 +27,7 @@ class CsvExporter(
         val tag = repository.getTagById(tagId)
         val sensorSettings = sensorSettingsRepository.getSensorSettings(tagId)
 
-        val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthDays)
+        val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthHours)
             .map {
                 it.copy(
                     temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),

@@ -59,7 +59,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.base.NfcActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -91,7 +91,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
-                val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
+                val viewPeriod by viewModel.chartViewPeriod.collectAsState(Period.Day10())
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
 
@@ -172,7 +172,7 @@ fun SensorsPager(
     setShowCharts: (Boolean) -> Unit,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
-    viewPeriod: Days,
+    viewPeriod: Period,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
