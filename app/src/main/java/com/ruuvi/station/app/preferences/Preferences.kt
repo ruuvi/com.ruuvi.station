@@ -180,9 +180,11 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_POINT_INTERVAL, interval).apply()
         }
 
-    // chart view period (in hours)
-    var graphViewPeriod: Int
-        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, DEFAULT_GRAPH_VIEW_PERIOD)
+    var graphViewPeriodHours: Int
+        get() = sharedPreferences.getInt(
+            PREF_GRAPH_VIEW_PERIOD,
+            graphViewPeriodDays * 24
+        )
         set(period) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
@@ -398,7 +400,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
-        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period_hours"
         private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
@@ -426,7 +428,6 @@ class Preferences constructor(val context: Context) {
         private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
-        private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false

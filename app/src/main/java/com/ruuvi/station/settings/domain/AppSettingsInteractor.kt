@@ -156,11 +156,11 @@ class AppSettingsInteractor(
         preferencesRepository.setGraphPointInterval(newInterval)
 
     fun getGraphViewPeriod(): Int =
-        preferencesRepository.getGraphViewPeriodDays()
+        preferencesRepository.getGraphViewPeriodHours()
 
     fun setGraphViewPeriod(newPeriod: Int) {
-        if (newPeriod != preferencesRepository.getGraphViewPeriodDays()) {
-            preferencesRepository.setGraphViewPeriodDays(newPeriod)
+        if (newPeriod != preferencesRepository.getGraphViewPeriodHours()) {
+            preferencesRepository.setGraphViewPeriodHours(newPeriod)
         }
     }
 

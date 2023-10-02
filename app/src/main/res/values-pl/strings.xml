@@ -141,6 +141,10 @@
     <string name="help_privacy_policy_title">POLITYKA PRYWATNOŚCI</string>
     <string name="help_seen_tags">Wykryte czujniki: %1$,d</string>
     <string name="help_troubleshooting_title">ROZWIĄZYWANIE PROBLEMÓW</string>
+    <string name="hour_12">12 godziny</string>
+    <string name="hour_2">2 godziny</string>
+    <string name="hour_3">3 godziny</string>
+    <string name="hour_x">%1$s godziny</string>
     <string name="hours">Godziny</string>
     <string name="humidity">Wilgotność</string>
     <string name="humidity_absolute_name">Bezwzględna (g/m³)</string>

@@ -24,14 +24,14 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @Composable
 fun ChartControlElement2(
     sensorId: String,
-    viewPeriod: Days,
+    viewPeriod: Period,
     syncStatus: Flow<SyncStatus>,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
@@ -208,7 +208,7 @@ fun ChartControlElement2(
 
 @Composable
 fun ViewPeriodMenu(
-    viewPeriod: Days,
+    viewPeriod: Period,
     setViewPeriod: (Int) -> Unit
 ) {
     var daysMenuExpanded by remember {
@@ -242,19 +242,23 @@ fun ViewPeriodMenu(
             modifier = Modifier.background(color = RuuviStationTheme.colors.background),
             expanded = daysMenuExpanded,
             onDismissRequest = { daysMenuExpanded = false }) {
-            val daysOptions = listOf(
-                Days.Day1(),
-                Days.Day2(),
-                Days.Day3(),
-                Days.Day4(),
-                Days.Day5(),
-                Days.Day6(),
-                Days.Day7(),
-                Days.Day8(),
-                Days.Day9(),
-                Days.Day10(),
+            val periodOptions = listOf(
+                Period.Hour1(),
+                Period.Hour2(),
+                Period.Hour3(),
+                Period.Hour12(),
+                Period.Day1(),
+                Period.Day2(),
+                Period.Day3(),
+                Period.Day4(),
+                Period.Day5(),
+                Period.Day6(),
+                Period.Day7(),
+                Period.Day8(),
+                Period.Day9(),
+                Period.Day10(),
             )
-            for (day in daysOptions) {
+            for (day in periodOptions) {
                 DropdownMenuItem(onClick = {
                     setViewPeriod.invoke(day.value)
                     daysMenuExpanded = false

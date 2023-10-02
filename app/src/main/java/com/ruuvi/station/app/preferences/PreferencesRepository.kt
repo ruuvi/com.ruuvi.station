@@ -136,11 +136,11 @@ class PreferencesRepository(
         preferences.graphPointInterval = newInterval
     }
 
-    fun getGraphViewPeriodDays(): Int =
-        preferences.graphViewPeriodDays
+    fun getGraphViewPeriodHours(): Int =
+        preferences.graphViewPeriodHours
 
-    fun setGraphViewPeriodDays(newPeriod: Int) {
-        preferences.graphViewPeriodDays = newPeriod
+    fun setGraphViewPeriodHours(newPeriod: Int) {
+        preferences.graphViewPeriodHours = newPeriod
     }
 
     fun isFirstGraphVisit(): Boolean =

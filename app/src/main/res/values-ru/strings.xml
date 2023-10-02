@@ -200,6 +200,12 @@
     <string name="help_seen_tags">Датчиков обнаружено: %1$,d</string>
     <string name="help_troubleshooting_text">Получите помощь по использованию приложений Ruuvi Station, продуктов Ruuvi и облачной службы Ruuvi в нашем центре поддержки: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Решение проблем</string>
+    <string name="hour">час</string>
+    <string name="hour_1">1 час</string>
+    <string name="hour_12">12 часов</string>
+    <string name="hour_2">2 часа</string>
+    <string name="hour_3">3 часа</string>
+    <string name="hour_x">%1$s дней</string>
     <string name="hours">Часов</string>
     <string name="humidity">Влажность</string>
     <string name="humidity_absolute_name">Абсолютная влажность (г/м³)</string>
@@ -232,6 +238,7 @@
     <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
+    <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
     <string name="movements">движений</string>

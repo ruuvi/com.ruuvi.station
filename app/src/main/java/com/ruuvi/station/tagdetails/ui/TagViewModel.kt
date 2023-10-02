@@ -17,7 +17,7 @@ import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -64,8 +64,8 @@ class TagViewModel(
 
     val syncStatus:MediatorLiveData<Boolean>  = MediatorLiveData<Boolean>()
 
-    private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
-    val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
+    private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
+    val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -239,7 +239,7 @@ class TagViewModel(
         _chartViewPeriod.value = getGraphViewPeriod()
     }
 
-    private fun getGraphViewPeriod() = Days.getInstance(appSettingsInteractor.getGraphViewPeriod())
+    private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod())
 
     override fun onCleared() {
         super.onCleared()

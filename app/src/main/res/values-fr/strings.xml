@@ -258,6 +258,12 @@
     <string name="help_troubleshooting_text">Trouvez de l\'aide en utilisant les applications Ruuvi Station, les produits Ruuvi et le service Ruuvi Cloud depuis notre centre d\'assistance : ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Dépannage technique</string>
     <string name="history_view">Vue de l\'histoire</string>
+    <string name="hour">Heure</string>
+    <string name="hour_1">1 heure</string>
+    <string name="hour_12">12 heures</string>
+    <string name="hour_2">2 heures</string>
+    <string name="hour_3">3 heures</string>
+    <string name="hour_x">%1$s heures</string>
     <string name="hours">Heures</string>
     <string name="humidity">Humidité</string>
     <string name="humidity_absolute_name">Absolue (g/m³)</string>

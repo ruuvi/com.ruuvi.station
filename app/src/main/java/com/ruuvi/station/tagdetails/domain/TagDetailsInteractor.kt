@@ -25,9 +25,9 @@ class TagDetailsInteractor(
     fun getTagReadings(sensorId: String): List<TagSensorReading> {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         val history =  if (preferences.isShowAllGraphPoint()) {
-            sensorHistoryRepository.getHistory(sensorId, preferences.getGraphViewPeriodDays())
+            sensorHistoryRepository.getHistory(sensorId, preferences.getGraphViewPeriodHours())
         } else {
-            sensorHistoryRepository.getCompositeHistory(sensorId, preferences.getGraphViewPeriodDays(), preferences.getGraphPointInterval())
+            sensorHistoryRepository.getCompositeHistory(sensorId, preferences.getGraphViewPeriodHours(), preferences.getGraphPointInterval())
         }.map { it.copy(
             temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
             humidity = it.humidity?.let { humidity -> humidity + (sensorSettings?.humidityOffset ?: 0.0)},
