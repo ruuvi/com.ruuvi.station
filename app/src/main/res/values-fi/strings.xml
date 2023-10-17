@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Mykistä tunniksi</string>
     <string name="alarm_notification_disable">Poista tämä hälytys käytöstä</string>
     <string name="alert">Hälytys</string>
+    <string name="alert_cloud_connection_description">Hälytä, jos anturitietoja ei ole päivitetty pilveen yli %1$,d minuuttiin.</string>
+    <string name="alert_cloud_connection_dialog_description">Syötä haluttu viive minuutteina, jonka jälkeen hälytys laukaistaan. Lyhyin valittava arvo on 2 minuuttia.</string>
+    <string name="alert_cloud_connection_dialog_title">Aseta pilviyhteyden hälytys</string>
+    <string name="alert_cloud_connection_title">Yhteys pilveen</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Aseta kosteushälytys</string>
@@ -551,6 +555,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="use_dev_server">Käytä dev-palvelinta</string>
+    <string name="use_dev_server_description">Ota muutokset käyttöön yksinkertaisesti synkronoimalla koontinäytöllä tai odota seuraavaa synkronointia.</string>
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>

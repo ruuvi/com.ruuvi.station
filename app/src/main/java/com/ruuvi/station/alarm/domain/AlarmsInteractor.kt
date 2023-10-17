@@ -84,6 +84,8 @@ class AlarmsInteractor(
             if (sensor.latestMeasurement?.humidityValue != null) alarmTypes.add(AlarmType.HUMIDITY)
             if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
             if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
+            //TODO add check for subscription
+            if (sensor.networkSensor) alarmTypes.add(AlarmType.OFFLINE)
             alarmTypes
         } else {
             emptySet()
@@ -116,6 +118,7 @@ class AlarmsInteractor(
             AlarmType.PRESSURE -> context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
             AlarmType.RSSI -> context.getString(R.string.signal_strength_dbm)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
+            AlarmType.OFFLINE -> context.getString(R.string.alert_cloud_connection_title)
         }
     }
 
@@ -126,6 +129,7 @@ class AlarmsInteractor(
             AlarmType.PRESSURE -> unitsConverter.getPressureUnitString()
             AlarmType.RSSI -> context.getString(R.string.signal_unit)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
+            AlarmType.OFFLINE -> ""
         }
     }
 

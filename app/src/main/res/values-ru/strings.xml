@@ -27,6 +27,7 @@
     <string name="alert_notification_humidity_low">Низкая Влажность!</string>
     <string name="alert_notification_humidity_low_threshold">Влажность ниже %1$s</string>
     <string name="alert_notification_movement">Сработал Датчик Движения!</string>
+    <string name="alert_notification_offline_message">Датчик был оффлайн более предельного порога в %1$s минут</string>
     <string name="alert_notification_pressure_high">Высокое Атмосферное Давление!</string>
     <string name="alert_notification_pressure_high_threshold">Давление выше %1$s</string>
     <string name="alert_notification_pressure_low">Низкое Атмосферное Давление!</string>
@@ -415,6 +416,7 @@
     <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
+    <string name="use_dev_server_description">Чтобы применить изменения, просто синхронизируйте данные с панели управления или дождитесь следующей синхронизации.</string>
     <string name="version">Версия: %1$s</string>
     <string name="view">Вид</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

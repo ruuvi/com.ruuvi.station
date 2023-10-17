@@ -150,7 +150,11 @@ class AlarmItemsViewModel(
     fun validateRange(type: AlarmType, min: Double?, max: Double?): Boolean {
         val possibleRange = getPossibleRange(type)
         val result = if (min != null && max !=null) {
-            min >= possibleRange.start && max <= possibleRange.endInclusive && min < max
+            if (type == AlarmType.OFFLINE) {
+                max >= possibleRange.start && max <= possibleRange.endInclusive
+            } else {
+                min >= possibleRange.start && max <= possibleRange.endInclusive && min < max
+            }
         } else {
             false
         }

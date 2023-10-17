@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Stumm schalten für eine Stunde</string>
     <string name="alarm_notification_disable">Diesen Alarm deaktivieren</string>
     <string name="alert">Alarmierung</string>
+    <string name="alert_cloud_connection_description">Warnung, wenn Sensordaten länger als %1$,d Minuten nicht in der Cloud aktualisiert wurden.</string>
+    <string name="alert_cloud_connection_dialog_description">Geben Sie die gewünschte Verzögerung in Minuten ein, bevor die Warnung ausgelöst wird. Der Mindestwert beträgt 2 Minuten.</string>
+    <string name="alert_cloud_connection_dialog_title">Cloud-Verbindungsalarm einstellen</string>
+    <string name="alert_cloud_connection_title">Cloud-Verbindung</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Feuchtigkeitsalarm einstellen</string>
@@ -562,6 +566,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
     <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
+    <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>
