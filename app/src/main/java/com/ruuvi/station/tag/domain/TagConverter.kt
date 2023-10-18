@@ -31,6 +31,7 @@ class TagConverter(
             networkSensor = sensorSettings.networkSensor,
             owner = sensorSettings.owner,
             firmware = sensorSettings.firmware,
+            subscriptionName = sensorSettings.subscriptionName,
             latestMeasurement = SensorMeasurements(
                 temperatureValue = unitsConverter.getTemperatureEnvironmentValue(temperature),
                 pressureValue = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
@@ -78,6 +79,7 @@ class TagConverter(
             networkLastSync = entity.networkLastSync,
             networkSensor = entity.networkSensor,
             owner = entity.owner,
+            subscriptionName = entity.subscriptionName,
             firmware = entity.firmware,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(

@@ -2,7 +2,6 @@ package com.ruuvi.station.database.tables
 
 import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
-import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.network.data.response.SensorsDenseInfo
 import java.util.*
@@ -40,6 +39,8 @@ data class SensorSettings(
     @Column
     var owner: String? = null,
     @Column
+    var subscriptionName: String? = null,
+    @Column
     var lastSync: Date? = null,
     @Column
     var networkLastSync: Date? = null,
@@ -62,6 +63,7 @@ data class SensorSettings(
         pressureOffset = sensor.offsetPressure
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
+        subscriptionName = sensor.subscription?.subscriptionName
         update()
     }
 }

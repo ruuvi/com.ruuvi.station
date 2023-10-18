@@ -13,6 +13,10 @@
     <string name="alarm_custom_title_hint">Ustaw opis zdefiniowany przez użytkownika...</string>
     <string name="alarm_mute_for_hour">Wycisz na godzinę</string>
     <string name="alarm_notification_disable">Wyłącz alarm</string>
+    <string name="alert_cloud_connection_description">Ostrzegaj, jeśli dane z czujników nie były aktualizowane w chmurze przez dłużej niż %1$,d minut.</string>
+    <string name="alert_cloud_connection_dialog_description">Wprowadź żądane opóźnienie w minutach przed uruchomieniem alertu. Minimalna wartość to 2 minuty.</string>
+    <string name="alert_cloud_connection_dialog_title">Ustaw alarm połączenia z chmurą</string>
+    <string name="alert_cloud_connection_title">Połączenie z chmurą</string>
     <string name="alert_movement">Przesunięcia</string>
     <string name="alert_movement_description">Ostrzeżenie, gdy czujnik jest przesuwany</string>
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
@@ -195,6 +199,7 @@
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
+    <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>
     <string name="permission_dialog_background_request_message">Android wymaga dostępu do lokalizacji w tle, aby skanować znajdujące się w pobliżu urządzenia Bluetooth. \n\nAby użytkować tę funkcję, należy wybrać „zezwalaj zawsze”. \n\nRuuvi nie śledzi ruchu użytkownika. Zapewniamy prywatność.</string>
     <string name="permission_dialog_request_message">Android wymaga dostępu do lokalizacji, aby skanować znajdujące się w pobliżu urządzenia Bluetooth. \n\nRuuvi nie śledzi ruchu użytkownika. Zapewniamy prywatność.</string>
@@ -328,6 +333,7 @@
     <string name="update_successful">Zaktualizowano pomyślnie</string>
     <string name="updated">Zaktualizowano %1$s</string>
     <string name="updating">Aktualizowanie...</string>
+    <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
     <string name="version">Wersja: %1$s</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>

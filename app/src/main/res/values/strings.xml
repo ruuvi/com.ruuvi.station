@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Mute for an hour</string>
     <string name="alarm_notification_disable">Disable this alarm</string>
     <string name="alert">Alert</string>
+    <string name="alert_cloud_connection_description">Alert if sensor data hasn\'t been updated to the cloud for longer than %1$,d minutes.</string>
+    <string name="alert_cloud_connection_dialog_description">Enter the desired delay to be used in minutes before alert is triggered. Minimum value is 2 minutes.</string>
+    <string name="alert_cloud_connection_dialog_title">Set cloud connection alert</string>
+    <string name="alert_cloud_connection_title">Cloud Connection</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Set humidity alert</string>
@@ -37,6 +41,7 @@
     <string name="alert_notification_humidity_low">Air Humidity is too low!</string>
     <string name="alert_notification_humidity_low_threshold">Air Humidity is below %1$s</string>
     <string name="alert_notification_movement">Movement detected!</string>
+    <string name="alert_notification_offline_message">Sensor was offline over threshold of %1$s minutes</string>
     <string name="alert_notification_pressure_high">Air Pressure is too high!</string>
     <string name="alert_notification_pressure_high_threshold">Air Pressure is above %1$s</string>
     <string name="alert_notification_pressure_low">Air Pressure is too low!</string>
@@ -365,6 +370,7 @@
     <string name="open_sensor_view">Open sensor view</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
+    <string name="owners_plan">Owner\'s Ruuvi Plan</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>

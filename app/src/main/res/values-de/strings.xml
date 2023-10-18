@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Stumm schalten für eine Stunde</string>
     <string name="alarm_notification_disable">Diesen Alarm deaktivieren</string>
     <string name="alert">Alarmierung</string>
+    <string name="alert_cloud_connection_description">Warnung, wenn Sensordaten länger als %1$,d Minuten nicht in der Cloud aktualisiert wurden.</string>
+    <string name="alert_cloud_connection_dialog_description">Geben Sie die gewünschte Verzögerung in Minuten ein, bevor die Warnung ausgelöst wird. Der Mindestwert beträgt 2 Minuten.</string>
+    <string name="alert_cloud_connection_dialog_title">Cloud-Verbindungsalarm einstellen</string>
+    <string name="alert_cloud_connection_title">Cloud-Verbindung</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Feuchtigkeitsalarm einstellen</string>
@@ -375,6 +379,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="owner_none">Keiner</string>
+    <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
@@ -562,6 +567,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
     <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
+    <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>

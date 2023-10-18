@@ -14,6 +14,7 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.extensions.diff
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import timber.log.Timber
 import java.util.*
 
@@ -159,6 +160,7 @@ class AlarmCheckInteractor(
                 AlarmType.TEMPERATURE,
                 AlarmType.RSSI -> compareWithAlarmRange()
                 AlarmType.MOVEMENT -> checkMovementData()
+                AlarmType.OFFLINE -> checkOfflineData()
             }
         }
 
@@ -208,6 +210,12 @@ class AlarmCheckInteractor(
                     readings.first().dataFormat != FORMAT5 && hasTagMoved(readings.first(), readings.last()) -> R.string.alert_notification_movement
                     else -> null
                 }
+            }
+        }
+
+        private fun checkOfflineData() {
+            if (ruuviTag.networkLastSync?.diffGreaterThan(alarm.max.toLong() * 1000) == true) {
+                alarmResource = R.string.alert_notification_offline_message
             }
         }
 

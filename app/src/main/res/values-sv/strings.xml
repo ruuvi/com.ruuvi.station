@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Pausa alarmet i en timme</string>
     <string name="alarm_notification_disable">Inaktivera alarm</string>
     <string name="alert">Alert</string>
+    <string name="alert_cloud_connection_description">Varning om sensordata inte har uppdaterats till molnet på mer än %1$,d minuter.</string>
+    <string name="alert_cloud_connection_dialog_description">Ange önskad fördröjning som ska användas i minuter innan larmet utlöses. Minsta värde är 2 minuter.</string>
+    <string name="alert_cloud_connection_dialog_title">Ställ in molnanslutningsvarning</string>
+    <string name="alert_cloud_connection_title">Molnuppkoppling</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Ställ in fuktighetsalarm</string>
@@ -364,6 +368,7 @@
     <string name="open_sensor_view">Öppna sensorvy</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
+    <string name="owners_plan">Ägarens Ruuvi-plan</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
@@ -551,6 +556,7 @@
     <string name="updated">Uppdaterad %1$s</string>
     <string name="updating">Uppdaterar...</string>
     <string name="use_dev_server">Använd dev-server</string>
+    <string name="use_dev_server_description">För att tillämpa ändringar synkronisera helt enkelt data från instrumentpanelen eller vänta till nästa synkronisering.</string>
     <string name="use_without_account">Nej tack, hoppa över</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>

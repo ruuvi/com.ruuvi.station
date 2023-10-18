@@ -57,6 +57,7 @@ class PushAlertInteractor(
                 getRssiMessage(message, context)
             }
             AlarmType.MOVEMENT -> context.getString(R.string.alert_notification_movement)
+            AlarmType.OFFLINE -> getOfflineMessage(message, context)
             else -> null
         }
     }
@@ -110,6 +111,11 @@ class PushAlertInteractor(
         val displayThreshold = unitsConverter.getDisplayValue(message.thresholdValue.toFloat())
         return context.getString(resource, "$displayThreshold ${unitsConverter.getSignalUnit()}")
     }
+
+    fun getOfflineMessage(message: AlertMessage, context: Context): String {
+        return context.getString(R.string.alert_notification_offline_message, message.thresholdValue.toInt().toString())
+    }
+
 
     private fun getLocalAlert(sensorId: String, alarmType: AlarmType?): Alarm? {
         return alarmRepository.getForSensor(sensorId).firstOrNull{it.alarmType == alarmType}

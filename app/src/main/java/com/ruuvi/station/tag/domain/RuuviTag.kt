@@ -19,6 +19,7 @@ data class RuuviTag(
     val networkLastSync: Date?,
     val networkSensor: Boolean,
     val owner: String?,
+    val subscriptionName: String?,
     var firmware: String?,
     val latestMeasurement: SensorMeasurements?
 )
@@ -53,4 +54,8 @@ fun SensorMeasurements.isLowBattery(): Boolean {
 
 fun RuuviTag.isLowBattery(): Boolean {
     return this.latestMeasurement?.isLowBattery() ?: false
+}
+
+fun RuuviTag.canUseCloudAlerts(): Boolean {
+    return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }
