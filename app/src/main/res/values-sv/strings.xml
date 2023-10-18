@@ -368,6 +368,7 @@
     <string name="open_sensor_view">Öppna sensorvy</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="owner_none">Ingen</string>
+    <string name="owners_plan">Ägarens Ruuvi-plan</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>

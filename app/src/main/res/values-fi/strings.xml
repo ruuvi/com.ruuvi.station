@@ -368,6 +368,7 @@
     <string name="open_sensor_view">Anturinäkymään</string>
     <string name="open_settings">Avaa asetukset</string>
     <string name="owner_none">Ei omistajaa</string>
+    <string name="owners_plan">Omistajan Ruuvi-tilaus</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>

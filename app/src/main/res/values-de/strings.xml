@@ -379,6 +379,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="owner_none">Keiner</string>
+    <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>

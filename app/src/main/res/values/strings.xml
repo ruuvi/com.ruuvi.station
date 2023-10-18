@@ -370,6 +370,7 @@
     <string name="open_sensor_view">Open sensor view</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
+    <string name="owners_plan">Owner\'s Ruuvi Plan</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>

@@ -373,6 +373,7 @@
     <string name="open_sensor_view">Ouvrir la vue du capteur</string>
     <string name="open_settings">Ouvrir les réglages</string>
     <string name="owner_none">Pas de propriétaire</string>
+    <string name="owners_plan">Plan Ruuvi du propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
     <string name="permission_dialog_background_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nAutorisez l\'utilisation de votre position pour utiliser le balayage en arrière plan. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>

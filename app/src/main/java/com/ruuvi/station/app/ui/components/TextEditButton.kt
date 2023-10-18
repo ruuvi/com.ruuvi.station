@@ -77,3 +77,28 @@ fun TextEditWithCaptionButton(
         )
     }
 }
+
+@Composable
+fun TextWithCaption(
+    value: String? = null,
+    title: String
+) {
+    Row(modifier = Modifier
+        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+            style = RuuviStationTheme.typography.subtitle,
+            textAlign = TextAlign.Start,
+            text = title)
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+            style = RuuviStationTheme.typography.paragraph,
+            textAlign = TextAlign.End,
+            text = value ?: "")
+    }
+}

@@ -6,6 +6,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.canUseCloudAlerts
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
@@ -84,8 +85,7 @@ class AlarmsInteractor(
             if (sensor.latestMeasurement?.humidityValue != null) alarmTypes.add(AlarmType.HUMIDITY)
             if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
             if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
-            //TODO add check for subscription
-            if (sensor.networkSensor) alarmTypes.add(AlarmType.OFFLINE)
+            if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
             alarmTypes
         } else {
             emptySet()

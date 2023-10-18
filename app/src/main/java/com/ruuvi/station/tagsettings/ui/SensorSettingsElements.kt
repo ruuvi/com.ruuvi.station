@@ -225,6 +225,12 @@ fun GeneralSettingsGroup(
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
+        } else if (sensorState.subscriptionName?.isNotEmpty() == true) {
+            DividerRuuvi()
+            TextWithCaption(
+                title = stringResource(id = R.string.owners_plan),
+                value = sensorState.subscriptionName
+            )
         }
     } else {
         DividerRuuvi()
