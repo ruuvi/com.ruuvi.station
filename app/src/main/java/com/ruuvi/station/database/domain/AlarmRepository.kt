@@ -49,6 +49,11 @@ class AlarmRepository {
         alarm.update()
     }
 
+    fun updateLatestTriggered(alarm: Alarm) {
+        alarm.latestTriggered = Date()
+        alarm.update()
+    }
+
     fun muteAlarm(alarmId: Int, mutedTill: Date) {
         val alarm = getById(alarmId)
         alarm?.let {
@@ -81,6 +86,7 @@ class AlarmRepository {
         alarm.type = type
         alarm.customDescription = description
         alarm.mutedTill = mutedTill
+        alarm.latestTriggered = if (enabled) alarm.latestTriggered else null
         alarm.save()
         return alarm
     }

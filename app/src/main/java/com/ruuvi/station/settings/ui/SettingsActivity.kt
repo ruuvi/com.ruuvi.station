@@ -92,8 +92,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
+                            val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
                             AlertNotificationsSettings(
-                                scaffoldState = scaffoldState
+                                scaffoldState = scaffoldState,
+                                viewModel = alertNotificationsSettingsViewModel
                             )
                         }
                         composable(SettingsRoutes.BACKGROUNDSCAN,

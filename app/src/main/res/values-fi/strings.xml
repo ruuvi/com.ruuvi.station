@@ -429,6 +429,8 @@
     <string name="sensor_shared">Jaettu</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Sisäänkirjautumalla saat useita etuja. Asetukset tallennetaan turvallisesti tilillesi:</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_alert_limit_notification">Rajoita hälytysilmoituksia</string>
+    <string name="settings_alert_limit_notification_description">Näytä Bluetooth-hälytysilmoitus vain kerran tunnissa, vaikka hälytys laukeaisi useammin.</string>
     <string name="settings_alert_notifications">Hälytysilmoitukset</string>
     <string name="settings_and_alerts">Asetukset \u0026 hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>

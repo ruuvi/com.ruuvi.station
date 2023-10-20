@@ -306,6 +306,8 @@
     <string name="sensor_settings">Настройки датчика</string>
     <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
+    <string name="settings_alert_limit_notification">Ограничить количество уведомлений</string>
+    <string name="settings_alert_limit_notification_description">Показывать уведомления не чаще одного раза в час, даже если тревога сработала повторно.</string>
     <string name="settings_alert_notifications">Уведомления о тревогах</string>
     <string name="settings_appearance">Внешний вид</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>

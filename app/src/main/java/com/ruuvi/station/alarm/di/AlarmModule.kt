@@ -13,7 +13,7 @@ import org.kodein.di.generic.singleton
 object AlarmModule {
 
     val module = Kodein.Module(this.javaClass.name) {
-        bind<AlarmCheckInteractor>() with singleton { AlarmCheckInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
+        bind<AlarmCheckInteractor>() with singleton { AlarmCheckInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<AlarmsInteractor>() with singleton { AlarmsInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 

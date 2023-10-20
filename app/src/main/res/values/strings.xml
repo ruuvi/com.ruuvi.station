@@ -431,6 +431,8 @@
     <string name="sensor_shared">Shared</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Signing in to the app has many advantages. Settings will be safely stored to your account:</string>
     <string name="settings">Settings</string>
+    <string name="settings_alert_limit_notification">Limit alert notifications</string>
+    <string name="settings_alert_limit_notification_description">Trigger Bluetooth alert notification only once per hour even if alert was retriggered.</string>
     <string name="settings_alert_notifications">Alert Notifications</string>
     <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="settings_appearance">Appearance</string>
