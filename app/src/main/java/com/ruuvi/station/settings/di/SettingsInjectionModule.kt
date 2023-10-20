@@ -35,6 +35,8 @@ object SettingsInjectionModule {
 
         bind<CloudSettingsViewModel>() with provider { CloudSettingsViewModel(instance()) }
 
+        bind<AlertNotificationsSettingsViewModel>() with provider { AlertNotificationsSettingsViewModel(instance()) }
+
         bind<DeveloperSettingsViewModel>() with provider { DeveloperSettingsViewModel(instance(), instance()) }
     }
 }

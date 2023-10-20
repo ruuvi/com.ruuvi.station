@@ -32,7 +32,9 @@ data class Alarm (
     @Column
     var mutedTill: Date? = null,
     @Column
-    var customDescription: String = ""
+    var customDescription: String = "",
+    @Column
+    var latestTriggered: Date? = null
 ) {
     val alarmType: AlarmType
         get() = AlarmType.getByDbCode(type)

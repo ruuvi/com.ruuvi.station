@@ -2,6 +2,7 @@ package com.ruuvi.station.alarm.domain
 
 import android.content.Context
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.Alarm
@@ -23,11 +24,10 @@ class AlarmCheckInteractor(
     private val tagConverter: TagConverter,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val alarmRepository: AlarmRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val unitsConverter: UnitsConverter,
     private val alertNotificationInteractor: AlertNotificationInteractor
 ) {
-    private val lastFiredNotification = mutableMapOf<Int, Long>()
-
     fun getStatus(ruuviTag: RuuviTag): AlarmStatus {
         val alarms = getEnabledAlarms(ruuviTag)
         if (alarms.isEmpty()) return AlarmStatus.NO_ALARM
@@ -76,19 +76,13 @@ class AlarmCheckInteractor(
         alarmRepository.getForSensor(ruuviTag.id).filter { it.enabled }
 
     private fun canNotify(alarm: Alarm): Boolean {
-        val lastNotificationTime = lastFiredNotification[alarm.id]
-        val calendar = Calendar.getInstance()
-        val now = calendar.timeInMillis
-        calendar.add(Calendar.SECOND, -NOTIFICATION_THRESHOLD_SECONDS)
-        val notificationThreshold = calendar.timeInMillis
-        val alarmMutedTill = alarm.mutedTill
-        val muted = alarmMutedTill != null && alarmMutedTill.time > now
-        return if (!muted && (lastNotificationTime == null || lastNotificationTime < notificationThreshold)) {
-            lastFiredNotification[alarm.id] = now
-            true
-        } else {
-            false
-        }
+        val dosingAlert = alarm.latestTriggered?.diffGreaterThan(NOTIFICATION_THRESHOLD_DOSING) == false
+        val limitLocalAlerts = preferencesRepository.getLimitLocalAlerts() &&
+                alarm.latestTriggered?.diffGreaterThan(LIMIT_LOCAL_ALERTS_THRESHOLD) == false
+        val mutedAlarm = alarm.mutedTill?.let { it > Date()} ?: false
+
+        Timber.d("canNotify mutedAlarm = $mutedAlarm limitLocalAlerts = $limitLocalAlerts dosingAlert = $dosingAlert ${alarm.latestTriggered}")
+        return !(mutedAlarm || limitLocalAlerts || dosingAlert)
     }
 
     private fun sendAlert(checker: AlarmChecker) {
@@ -104,6 +98,7 @@ class AlarmCheckInteractor(
             )
 
             alertNotificationInteractor.notify(checker.alarm.id, notificationData)
+            alarmRepository.updateLatestTriggered(checker.alarm)
         }
     }
 
@@ -252,7 +247,8 @@ class AlarmCheckInteractor(
     companion object {
         private const val FORMAT5 = 5
         private const val MOVEMENT_THRESHOLD = 0.03
-        private const val NOTIFICATION_THRESHOLD_SECONDS = 30
+        private const val NOTIFICATION_THRESHOLD_DOSING = 30 * 1000L
+        private const val LIMIT_LOCAL_ALERTS_THRESHOLD = 60 * 60 * 1000L
     }
 }
 

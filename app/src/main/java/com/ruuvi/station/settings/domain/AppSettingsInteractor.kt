@@ -202,4 +202,11 @@ class AppSettingsInteractor(
     fun updateDarkMode(darkModeState: DarkModeState) {
         preferencesRepository.updateDarkMode(darkModeState)
     }
+
+    fun isLimitLocalAlertsEnabled(): Boolean =
+        preferencesRepository.getLimitLocalAlerts()
+
+    fun setLimitLocalAlertsEnabled(isEnabled: Boolean) {
+        preferencesRepository.setLimitLocalAlerts(isEnabled)
+    }
 }

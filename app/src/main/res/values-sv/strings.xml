@@ -429,6 +429,8 @@
     <string name="sensor_shared">Delad</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Att logga in på appen har många fördelar. Inställningarna kommer att lagras säkert på ditt konto:</string>
     <string name="settings">Inställningar</string>
+    <string name="settings_alert_limit_notification">Begränsa varningsmeddelanden</string>
+    <string name="settings_alert_limit_notification_description">Utlös Bluetooth-varningsavisering endast en gång i timmen även om varningen återutlöstes.</string>
     <string name="settings_alert_notifications">Varningsmeddelanden</string>
     <string name="settings_and_alerts">Inställningar \u0026 alarm</string>
     <string name="settings_appearance">Utseende</string>

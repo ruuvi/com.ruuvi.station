@@ -241,6 +241,8 @@
     <string name="sensor_settings">Ustawienia czujnika</string>
     <string name="sensor_shared">Udostępnione</string>
     <string name="settings">Ustawienia</string>
+    <string name="settings_alert_limit_notification">Ogranicz powiadomienia o alertach</string>
+    <string name="settings_alert_limit_notification_description">Włącz powiadomienie o alercie Bluetooth tylko raz na godzinę, nawet jeśli alert został uruchomiony ponownie.</string>
     <string name="settings_background_battery_optimization">W przypadku wystąpienia problemów ze skanowaniem w tle należy wyłączyć optymalizację baterii Ruuvi Station. Procedura może różnić się w zależności od dostawcy urządzenia, modelu lub wersji systemu Android.</string>
     <string name="settings_background_battery_optimization_common_instructions">Należy wybrać Android Settings (Ustawienia Androida) -> Apps (Aplikacje) -> Ruuvi Station -> Battery (Bateria) -> Battery Optimisation (Optymalizacja baterii), a następnie zaznaczyć opcję „Don\'t optimise for Ruuvi Station” (Nie optymalizuj dla Ruuvi Station).</string>
     <string name="settings_background_battery_optimization_huawei_instructions">Na urządzeniach Huawei przejdź do Android Settings (Ustawień Androida) -> Apps (Aplikacje) -> Ruuvi Station -> Power usage details (Szczegóły zużycia energii) -> App launch (Uruchomienie aplikacji). Wyłącz funkcję „Manage Automatically” (Automatycznie zarządzanie) i włącz funkcje: „Auto-Launch” (Automatyczne uruchamianie), „Secondary Launch” (Wtórne uruchamianie) oraz „Run in background” (Uruchom w tle).</string>

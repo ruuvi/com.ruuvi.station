@@ -280,4 +280,11 @@ class PreferencesRepository(
     fun setDontShowGattSync(value: Boolean) {
         preferences.dontShowGattSync = value
     }
+
+    fun getLimitLocalAlerts(): Boolean =
+        preferences.limitLocalAlerts
+
+    fun setLimitLocalAlerts(value: Boolean) {
+        preferences.limitLocalAlerts = value
+    }
 }
