@@ -243,6 +243,7 @@ fun ViewPeriodMenu(
             expanded = daysMenuExpanded,
             onDismissRequest = { daysMenuExpanded = false }) {
             val periodOptions = listOf(
+                Period.All(),
                 Period.Hour1(),
                 Period.Hour2(),
                 Period.Hour3(),

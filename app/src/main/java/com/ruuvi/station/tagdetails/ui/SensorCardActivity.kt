@@ -318,6 +318,7 @@ fun SensorsPager(
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,
+                                viewPeriod = viewPeriod,
                                 chartCleared = getChartClearedFlow(sensor.id)
                             )
                         } else {

@@ -57,6 +57,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$s or more than %2$s</string>
     <string name="alerts">Alerts</string>
+    <string name="all">All</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="already_signed_in">Great! You already signed in!</string>

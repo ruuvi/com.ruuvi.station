@@ -3,6 +3,7 @@ package com.ruuvi.station.util
 import com.ruuvi.station.R
 
 sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassValue: Boolean = false) {
+    class All: Period(0, R.string.all)
     class Hour1: Period(1, R.string.hour_1)
     class Hour2: Period(2, R.string.hour_2)
     class Hour3: Period(3, R.string.hour_3)
@@ -22,6 +23,7 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
     companion object {
         fun getInstance(value: Int): Period =
             when (value) {
+                0 -> All()
                 1 -> Hour1()
                 2 -> Hour2()
                 3 -> Hour3()

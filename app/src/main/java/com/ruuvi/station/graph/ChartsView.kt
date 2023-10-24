@@ -24,6 +24,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
@@ -41,6 +42,7 @@ fun ChartsView(
     selected: Boolean,
     graphDrawDots: Boolean,
     chartCleared: Flow<String>,
+    viewPeriod: Period,
     getHistory: (String) -> List<TagSensorReading>
 ) {
     Timber.d("ChartView - top $sensorId $selected")
@@ -106,7 +108,11 @@ fun ChartsView(
 
                 if (history.isNotEmpty()) {
                     Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size}")
-                    from = history[0].createdAt.time
+                    if (viewPeriod is Period.All) {
+                        from = history[0].createdAt.time
+                    } else {
+                        from = Date().time - viewPeriod.value * 60 * 60 * 1000
+                    }
                     to = Date().time
 
                     val temperatureDataTemp = mutableListOf<Entry>()
