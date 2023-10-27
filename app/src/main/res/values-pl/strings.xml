@@ -293,6 +293,7 @@
     <string name="settings_temperature_unit">Jednostka temperatury</string>
     <string name="settings_temperature_unit_details">Wyświetl wybraną jednostkę temperatury.</string>
     <string name="share">Udostępnij</string>
+    <string name="share_pending_message">Udostępnienie zakończone sukcesem! Ten adres e-mail nie jest jeszcze powiązany z kontem Ruuvi. Wysłano zaproszenie do utworzenia bezpłatnego konta. Po utworzeniu konta zobaczysz je na liście udostępniania.</string>
     <string name="share_sensor_add_friend">Dodaj znajomego</string>
     <string name="share_sensor_description">Możesz udostępnić czujnik rodzinie i przyjaciołom jeśli jest to w zasięgu routera Ruuvi Gateway.\n\nOdbiorca zostanie poinformowany wiadomością e-mail. Jeśli odbiorca nie ma konta Ruuvi, darmowe konto Ruuvi zostanie automatycznie utworzone przy pierwszym logowaniu.\n\nNależy pamiętać, że zostanie udostępniona wybrana nazwa czujnika i obraz tła. Synchronizacja nazwy i obrazu jest jednorazowa, a po jej zakończeniu mogą być one spersonalizowane przez odbiorcę. Wartości wyrównania (jeśli są) ustawione przez właściciela, zostaną automatycznie zsynchronizowane, a odbiorca zawsze będzie widział ostateczne skorygowane wartości.</string>
     <string name="share_sensor_send_button">Wyślij</string>

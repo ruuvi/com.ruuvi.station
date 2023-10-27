@@ -490,6 +490,7 @@
     <string name="settings_temperature_unit">Temperaturenhet</string>
     <string name="settings_temperature_unit_details">Välj den temperaturenhet som du vill ska visas.</string>
     <string name="share">Dela</string>
+    <string name="share_pending_message">Delat framgångsrikt! Den här e-postadressen är ännu inte kopplad till ett Ruuvi-konto. En inbjudan att skapa ett gratis konto har skickats. När kontot har skapats kommer du att se det i delningslistan.</string>
     <string name="share_sensor_add_friend">Lägg till vän</string>
     <string name="share_sensor_already_shared">Du har använt %1$,d/%2$,d av det maximala antalet delningar för denna sensor. Sensorn delas med följande användare:</string>
     <string name="share_sensor_description">Du kan dela sensorn med vänner och familj om den är inom räckhåll för en Ruuvi Gateway.\n\nMottagaren meddelas via e-post. Om mottagaren inte har ett Ruuvi-konto skapas ett gratis Ruuvi-konto automatiskt vid första inloggningen.\n\nObservera att sensorns anpassade namn och bakgrundsbild delas. Namnet och bildsynkroniseringen sker endast vid en gång, efteråt kan det anpassas av mottagaren. Kalibreringsvärden (om sådana finns) synkroniseras automatiskt och mottagaren ser alltid de korrigerade värdena.</string>

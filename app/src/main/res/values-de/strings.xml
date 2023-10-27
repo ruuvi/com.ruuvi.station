@@ -501,6 +501,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_temperature_unit">Temperatureinheit</string>
     <string name="settings_temperature_unit_details">Wählen Sie die Temperatureinheit, die angezeigt werden soll.</string>
     <string name="share">Teilen</string>
+    <string name="share_pending_message">Erfolgreich geteilt! Diese E-Mail-Adresse ist noch nicht mit einem Ruuvi-Konto verknüpft. Eine Einladung zur Erstellung eines kostenlosen Kontos wurde gesendet. Nach der Erstellung werden Sie es in der Freigabeliste sehen.</string>
     <string name="share_sensor_add_friend">Freund hinzufügen</string>
     <string name="share_sensor_already_shared">Sie haben %1$,d/%2$,d der maximalen Teilungszahl für diesen Sensor verwendet. Der Sensor wird mit den folgenden Benutzern geteilt:</string>
     <string name="share_sensor_description">Sie können den Sensor mit Freunden und Familie teilen, wenn er sich in Reichweite eines Ruuvi Gateways befindet.\n\nDer Empfänger wird per E-Mail benachrichtigt. Wenn der Empfänger kein Ruuvi-Konto hat, wird beim ersten Anmelden automatisch ein kostenloses Ruuvi-Konto erstellt.\n\nBeachten Sie, dass der benutzerdefinierte Name und das Hintergrundbild des Sensors geteilt werden. Der Name und das Bild werden nur einmal synchronisiert und können danach vom Empfänger privat angepasst werden. Vom Besitzer eingestellte Offset-Werte (sofern vorhanden) werden automatisch synchronisiert und der Empfänger sieht immer die endgültigen korrigierten Werte.</string>

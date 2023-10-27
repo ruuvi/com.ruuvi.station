@@ -495,6 +495,7 @@
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température.</string>
     <string name="share">Partager</string>
+    <string name="share_pending_message">Partagé avec succès ! Cette adresse e-mail n\'est pas encore liée à un compte Ruuvi. Une invitation pour créer un compte gratuit a été envoyée. Une fois créé, vous le verrez dans la liste des partages.</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Vous avez utilisé %1$,d/%2$,d du nombre maximum de divisions pour ce capteur. Le capteur est partagé avec les utilisateurs suivants :</string>
     <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
