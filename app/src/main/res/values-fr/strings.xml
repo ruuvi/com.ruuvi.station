@@ -41,6 +41,7 @@
     <string name="alert_notification_humidity_low">L\'humidité de l\'air est trop basse !</string>
     <string name="alert_notification_humidity_low_threshold">L\'humidité de l\'air est inférieure à %1$s</string>
     <string name="alert_notification_movement">Mouvement détecté !</string>
+    <string name="alert_notification_offline_message">Le capteur est hors ligne depuis %1$s minutes</string>
     <string name="alert_notification_pressure_high">La pression de l\'air est trop haute !</string>
     <string name="alert_notification_pressure_high_threshold">La pression de l\'air est supérieure à %1$s</string>
     <string name="alert_notification_pressure_low">La pression de l\'air est trop basse !</string>
@@ -56,6 +57,7 @@
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$s ou supérieure à %2$s</string>
     <string name="alerts">Notifications</string>
+    <string name="all">Tout</string>
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>
     <string name="already_signed_in">Super ! Vous vous êtes déjà connecté !</string>
@@ -199,6 +201,8 @@
     <string name="dfu_low_battery_warning">La tension de la pile du capteur est faible et risque de faire echouer la mise à jour. Nous vous conseillons de remplacer la batterie avant la mise à jour.</string>
     <string name="dfu_no_internet">Echec du téléchargement de la mise à jour. Veuillez vérifier votre connexion Internet.</string>
     <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour.</string>
+    <string name="dialog_are_you_sure">Êtes-vous sûr ?</string>
+    <string name="dialog_operation_undone">Cette opération ne peut pas être annulée.</string>
     <string name="disconnected">Déconnecté</string>
     <string name="do_not_show_again">Ne plus afficher ça</string>
     <string name="do_you_own_sensor">Possédez-vous ce capteur ?</string>
@@ -408,8 +412,13 @@
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="remove">Supprimer</string>
     <string name="remove_claimed_sensor">Le propriétaire sera réinitialisé en supprimant le capteur. N\'importe qui pourra alors s\'approprier le capteur. Chaque capteur Ruuvi ne pouvant avoir qu\'un propriétaire.</string>
+    <string name="remove_claimed_sensor_description">En supprimant le capteur, votre statut de propriétaire du capteur sera révoqué, et les paramètres du capteur, tels que le nom, l\'image d\'arrière-plan, les paramètres de calibration et les paramètres d\'alerte, seront supprimés. Après la suppression, quelqu\'un d\'autre peut revendiquer la propriété du capteur. Chaque capteur Ruuvi ne peut avoir qu\'un seul propriétaire.</string>
+    <string name="remove_cloud_history_description">Je veux également supprimer les données d\'historique du capteur de Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Supprimer l\'historique cloud</string>
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
+    <string name="remove_local_sensor_description">Si vous choisissez de supprimer ce capteur, cela entraînera la suppression de votre historique de mesures stocké localement, ainsi que la suppression de tous les paramètres du capteur associés tels que le nom, l\'image d\'arrière-plan, l\'étalonnage et les configurations d\'alerte.\n\nVous pouvez ajouter ce capteur plus tard, si nécessaire.</string>
     <string name="remove_shared_sensor">En supprimant le capteur vous n\'aurez plus accès aux données du capteur et une notification sera envoyée au propriétaire.</string>
+    <string name="remove_shared_sensor_description">Si vous choisissez de supprimer ce capteur partagé, le propriétaire du capteur sera averti et vous ne pourrez plus accéder au capteur.\n\nVous perdrez également tous les paramètres du capteur associés, tels que le nom, l\'image d\'arrière-plan et les configurations d\'alerte. .</string>
     <string name="remove_this_sensor">Supprimer le capteur</string>
     <string name="rename">Renommer</string>
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
@@ -467,6 +476,7 @@
     <string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 10 jours</string>
     <string name="settings_data_forwarding">Paramètres du routeur</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
+    <string name="settings_developer">Paramètres du développeur</string>
     <string name="settings_experimental">Options avancées</string>
     <string name="settings_gateway_details">L\'application envoie les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
     <string name="settings_gateway_details_link">page de support.</string>

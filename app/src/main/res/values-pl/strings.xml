@@ -22,6 +22,7 @@
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
     <string name="alert_notification_humidity_low">Zbyt niska wilgotność powietrza!</string>
     <string name="alert_notification_movement">Wykryto przesunięcie!</string>
+    <string name="alert_notification_offline_message">Czujnik był offline przez %1$s minut</string>
     <string name="alert_notification_pressure_high">Zbyt wysokie ciśnienie powietrza!</string>
     <string name="alert_notification_pressure_low">Zbyt niskie ciśnienie powietrza!</string>
     <string name="alert_notification_rssi_high">Zbyt wysoki poziom sygnału!</string>
@@ -31,6 +32,7 @@
     <string name="alert_subtitle_off">Wyłącz</string>
     <string name="alert_subtitle_on">Ostrzeżenie, gdy mniej niż %1$s lub więcej niż %2$s</string>
     <string name="alerts">OSTRZEŻENIA</string>
+    <string name="all">Wszystko</string>
     <string name="already_latest_version">Masz najnowszą wersję firmware, aktualizacja nie jest wymagana.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_notification_message">Możesz wyłączyć skanowanie w tle w ustawieniach</string>
@@ -105,6 +107,7 @@
     <string name="data_points_read">%1$,d pomiary odczytane, zapisywanie...</string>
     <string name="days">Dni</string>
     <string name="dfu_update_do_not_close_app">Nie wyłączaj aplikacji ani czujnika podczas aktualizacji.</string>
+    <string name="dialog_operation_undone">Ta operacja nie może zostać cofnięta.</string>
     <string name="disconnected">Rozłączono</string>
     <string name="do_you_own_sensor">Czy posiadasz ten czujnik?</string>
     <string name="downloading_latest_firmware">Pobieranie najnowszego firmware’u do aktualizacji...</string>
@@ -224,8 +227,13 @@
     <string name="reading_history_not_supported">Oprogramowanie sprzętowe nie jest obsługiwane</string>
     <string name="remove">Usuń</string>
     <string name="remove_claimed_sensor">Usunięcie czujnika spowoduje cofnięcie statusu własności czujnika. Po usunięciu czujnika ktoś inny może zastrzec jego własność. Każdy czujnik Ruuvi może mieć tylko jednego właściciela.</string>
+    <string name="remove_claimed_sensor_description">Usunięcie czujnika spowoduje cofnięcie statusu posiadania czujnika, a ustawienia czujnika, takie jak nazwa, obraz tła, ustawienia kalibracji i ustawienia alertu, zostaną usunięte. Po usunięciu ktoś inny może przejąć własność nad czujnikiem. Każdy czujnik Ruuvi może mieć tylko jednego właściciela.</string>
+    <string name="remove_cloud_history_description">Chcę również usunąć dane historii czujnika z Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Usuń historię chmury</string>
     <string name="remove_local_sensor">Czy chcesz usunąć czujnik? W razie potrzeby możesz go dodać później.</string>
+    <string name="remove_local_sensor_description">Jeśli zdecydujesz się usunąć ten czujnik, spowoduje to usunięcie lokalnie przechowywanej historii pomiarów wraz z usunięciem wszelkich powiązanych ustawień czujnika, takich jak nazwa, obraz tła, kalibracja i konfiguracje alertów.\n\nMożesz dodać ten czujnik później ponownie, jeśli zajdzie taka potrzeba.</string>
     <string name="remove_shared_sensor">Usunięcie czujnika spowoduje powiadomienie właściciela czujnika i uniemożliwi dostęp do czujnika.</string>
+    <string name="remove_shared_sensor_description">Jeśli zdecydujesz się usunąć ten udostępniony czujnik, właściciel czujnika zostanie powiadomiony i nie będziesz już mieć dostępu do czujnika.\n\nUtracisz także wszelkie powiązane ustawienia czujnika, takie jak nazwa, obraz tła i konfiguracje alertów .</string>
     <string name="remove_this_sensor">Usuń ten czujnik</string>
     <string name="rename">Przemianować</string>
     <string name="rename_sensor_message">Czujniki wyświetlane są w kolejności alfabetycznej.</string>
@@ -271,6 +279,7 @@
     <string name="settings_chart_view_period_description">Konfiguruj wyświetlanie historii wykresu na okres od 1 do 10 dni</string>
     <string name="settings_data_forwarding">Ustawienia przesyłania danych</string>
     <string name="settings_data_forwarding_test">Przetestuj przekazywanie danych</string>
+    <string name="settings_developer">Ustawienia programisty</string>
     <string name="settings_experimental">Funkcje eksperymentalne</string>
     <string name="settings_gateway_details">Kiedy wstawisz tutaj URL, aplikacja wyśle żądanie HTTP do połączonych czujników podczas skanowania w tle. \n\nW celu uzyskania dalszych informacji zapoznaj się z dołączonymi instrukcjami.</string>
     <string name="settings_gateway_details_link">dołączonymi instrukcjami</string>

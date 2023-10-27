@@ -41,6 +41,7 @@
     <string name="alert_notification_humidity_low">Suhteellinen ilmankosteus liian alhainen!</string>
     <string name="alert_notification_humidity_low_threshold">Ilmankosteus on alle %1$s</string>
     <string name="alert_notification_movement">Liike havaittu!</string>
+    <string name="alert_notification_offline_message">Anturi on ollut offline-tilassa yli %1$s minuuttia</string>
     <string name="alert_notification_pressure_high">Ilmanpaine liian korkea!</string>
     <string name="alert_notification_pressure_high_threshold">Ilmanpaine on yli %1$s</string>
     <string name="alert_notification_pressure_low">Ilmanpaine liian alhainen!</string>
@@ -56,6 +57,7 @@
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$s tai yli %2$s</string>
     <string name="alerts">Hälytykset</string>
+    <string name="all">Kaikki</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
@@ -199,6 +201,8 @@
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
+    <string name="dialog_are_you_sure">Oletko varma?</string>
+    <string name="dialog_operation_undone">Tätä toimenpidettä ei voi perua.</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="do_not_show_again">Älä näytä tätä uudestaan</string>
     <string name="do_you_own_sensor">Omistatko tämän anturin?</string>
@@ -403,8 +407,12 @@
     <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="remove_claimed_sensor_description">Poistamalla anturin omistusoikeutesi peruutetaan, ja anturin asetukset, kuten nimi, taustakuva, kalibrointiasetukset ja hälytysasetukset poistetaan. Poiston jälkeen joku toinen voi ottaa anturin omistukseensa. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="remove_cloud_history_description">Haluan myös poistaa anturihistoriatiedot Ruuvi Cloudista.</string>
+    <string name="remove_cloud_history_title">Poista pilvihistoria</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen lukuoikeus päättyy.</string>
+    <string name="remove_shared_sensor_description">Jos poistat tämän jaetun anturin, anturin omistajalle lähetetään ilmoitus poistosta, etkä voi enää käyttää anturia.\n\nMenetät myös kaikki tähän anturiin liittyvät anturin asetukset, kuten nimen, taustakuvan ja asetetut hälytykset.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
     <string name="rename">Nimeä uudelleen</string>
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
@@ -462,6 +470,7 @@
     <string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 10 päivää.</string>
     <string name="settings_data_forwarding">Välityspalvelimen asetukset</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
+    <string name="settings_developer">Kehittäjäasetukset</string>
     <string name="settings_experimental">Kokeelliset ominaisuudet</string>
     <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
     <string name="settings_gateway_details_link">ohjesivulta.</string>

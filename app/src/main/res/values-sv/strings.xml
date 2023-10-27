@@ -41,6 +41,7 @@
     <string name="alert_notification_humidity_low">För låg Luftfuktighet!</string>
     <string name="alert_notification_humidity_low_threshold">Luftfuktigheten är under %1$s</string>
     <string name="alert_notification_movement">Rörelse upptäckt!</string>
+    <string name="alert_notification_offline_message">Sensorn har varit offline över %1$s minuter</string>
     <string name="alert_notification_pressure_high">För högt Lufttryck!</string>
     <string name="alert_notification_pressure_high_threshold">Lufttrycket är över %1$s</string>
     <string name="alert_notification_pressure_low">För lågt Lufttryck!</string>
@@ -56,6 +57,7 @@
     <string name="alert_subtitle_off">Av</string>
     <string name="alert_subtitle_on">Alarmera när mindre än %1$s eller mer än %2$s</string>
     <string name="alerts">Alarm</string>
+    <string name="all">Allt</string>
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
@@ -199,6 +201,8 @@
     <string name="dfu_low_battery_warning">Sensorns batterispänning är låg och uppgraderingsprocessen kan misslyckas. Vi rekommenderar att du byter ut batteriet innan du uppdaterar programvaran.</string>
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
+    <string name="dialog_are_you_sure">Är du säker?</string>
+    <string name="dialog_operation_undone">Denna åtgärd kan inte ångras.</string>
     <string name="disconnected">Frånkopplad</string>
     <string name="do_not_show_again">Visa inte detta igen</string>
     <string name="do_you_own_sensor">Äger du denna sensor?</string>
@@ -403,8 +407,13 @@
     <string name="reading_history_x">Läser Bluetooth: %1$s</string>
     <string name="remove">Ta bort</string>
     <string name="remove_claimed_sensor">Om du tar bort sensorn upphör ägarskapet. Vem som helst kan göra anspråk på ägandet av sensorn efter borttagning. Varje Ruuvi-sensor kan bara ha en ägare.</string>
+    <string name="remove_claimed_sensor_description">Genom att ta bort sensorn kommer den inte längre synas i ditt konto och sensorinställningar som namn, bakgrundsbild, kalibreringsinställningar och larminställningar kommer att tas bort. Efter borttagning kan någon annan ta ägande om sensorn. Varje Ruuvi-sensor kan bara ha en ägare.</string>
+    <string name="remove_cloud_history_description">Jag vill också ta bort sensorhistorikdata från Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Ta bort molnhistorik</string>
     <string name="remove_local_sensor">Är du säker på att du vill ta bort den här sensorn?</string>
+    <string name="remove_local_sensor_description">Om du väljer att ta bort den här sensorn kommer det att resultera i radering av din lokalt lagrade mäthistorik, tillsammans med att eventuella relaterade sensorinställningar som namn, bakgrundsbild, kalibrering och varningskonfigurationer tas bort.\n\nDu kan lägga till denna sensor senare igen, om det behövs.</string>
     <string name="remove_shared_sensor">Om du tar bort sensorn så meddelas ägaren till sensorn och du kan inte komma åt den längre.</string>
+    <string name="remove_shared_sensor_description">Om du tar bort den här delade sensorn kommer sensorns ägare att meddelas om borttagningen och du kommer inte längre att kunna använda sensorn.\n\nDu kommer också att förlora alla sensorinställningar som är kopplade till denna sensor, t.ex. namn, bakgrundsbild och ställ in alarm.</string>
     <string name="remove_this_sensor">Ta bort sensorn</string>
     <string name="rename">Döp om</string>
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
@@ -462,6 +471,7 @@
     <string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 10 dagar.</string>
     <string name="settings_data_forwarding">Vidarebefordran av data</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
+    <string name="settings_developer">Utvecklarinställningar</string>
     <string name="settings_experimental">Experimentella funktioner</string>
     <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>
     <string name="settings_gateway_details_link">läs dokumentationen.</string>
