@@ -491,6 +491,7 @@
     <string name="settings_temperature_unit">Temperature Unit</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="share">Share</string>
+    <string name="share_pending_message">Shared successfully! This email address isn\'t linked to a Ruuvi account yet. An invite to create a free account has been sent. Once created, you\'ll see it in the sharee listing.</string>
     <string name="share_sensor_add_friend">Add friend</string>
     <string name="share_sensor_already_shared">You have used %1$,d/%2$,d of maximum shares of this sensor. The sensor has been shared to following users:</string>
     <string name="share_sensor_description">You can share the sensor with friends and family if it\'s in range of a Ruuvi Gateway.\n\nReceiver will be notified by email. If the receiver doesn\'t have a Ruuvi account, a free Ruuvi account will automatically be created at first log in.\n\nNote that the sensor\'s custom name and background image will be shared. The name and image sync is one time only, and after this, they can be privately customised by the receiver. Offset values (if any) set by the owner, will be automatically synced, and the receiver will always see the final corrected values.</string>
