@@ -41,7 +41,7 @@
     <string name="alert_notification_humidity_low">Air Humidity is too low!</string>
     <string name="alert_notification_humidity_low_threshold">Air Humidity is below %1$s</string>
     <string name="alert_notification_movement">Movement detected!</string>
-    <string name="alert_notification_offline_message">Sensor was offline over threshold of %1$s minutes</string>
+    <string name="alert_notification_offline_message">Sensor has been offline over %1$s minutes</string>
     <string name="alert_notification_pressure_high">Air Pressure is too high!</string>
     <string name="alert_notification_pressure_high_threshold">Air Pressure is above %1$s</string>
     <string name="alert_notification_pressure_low">Air Pressure is too low!</string>
@@ -202,6 +202,8 @@
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
     <string name="dfu_update_do_not_close_app">Do not close the app or power off the sensor during the update.</string>
+    <string name="dialog_are_you_sure">Are you sure?</string>
+    <string name="dialog_operation_undone">This operation cannot be undone.</string>
     <string name="disconnected">Disconnected</string>
     <string name="do_not_show_again">Don\'t show this again</string>
     <string name="do_you_own_sensor">Do you own this sensor?</string>
@@ -406,8 +408,13 @@
     <string name="reading_history_x">Reading Bluetooth: %1$s</string>
     <string name="remove">Remove</string>
     <string name="remove_claimed_sensor">By removing the sensor, your sensor ownership status will be revoked. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
+    <string name="remove_claimed_sensor_description">By removing the sensor, your sensor ownership status will be revoked and sensor settings, such as name, background image, calibration settings and alert settings will be removed. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
+    <string name="remove_cloud_history_description">I also want to remove sensor history data from Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Remove cloud history</string>
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
+    <string name="remove_local_sensor_description">If you choose to remove this sensor, it will result in the deletion of your locally stored measurement history, along with the removal of any related sensor settings like name, background image, calibration, and alert configurations.\n\nYou can add this sensor later again, if needed.</string>
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.</string>
+    <string name="remove_shared_sensor_description">If you choose to remove this shared sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.\n\nYou will also lose any related sensor settings like name, background image and alert configurations.</string>
     <string name="remove_this_sensor">Remove this sensor</string>
     <string name="rename">Rename</string>
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>

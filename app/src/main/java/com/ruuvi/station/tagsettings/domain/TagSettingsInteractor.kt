@@ -38,12 +38,12 @@ class TagSettingsInteractor(
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
 
-    fun deleteTagsAndRelatives(sensorId: String) {
+    fun deleteTagsAndRelatives(sensorId: String, deleteData: Boolean) {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         tagRepository.deleteSensorAndRelatives(sensorId)
         if (sensorSettings?.networkSensor == true && sensorSettings.owner?.isNotEmpty() == true) {
             if (sensorSettings.owner == networkInteractor.getEmail()) {
-                networkInteractor.unclaimSensor(sensorId)
+                networkInteractor.unclaimSensor(sensorId, deleteData)
             } else {
                 networkInteractor.unshareSensor(networkInteractor.getEmail() ?: "", sensorId)
             }

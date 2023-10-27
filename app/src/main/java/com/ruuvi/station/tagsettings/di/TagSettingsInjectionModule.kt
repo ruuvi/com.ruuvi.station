@@ -2,6 +2,7 @@ package com.ruuvi.station.tagsettings.di
 
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.tagsettings.ui.BackgroundViewModel
+import com.ruuvi.station.tagsettings.ui.RemoveSensorViewModel
 import com.ruuvi.station.tagsettings.ui.TagSettingsViewModel
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -22,6 +23,10 @@ object TagSettingsInjectionModule {
 
         bind<BackgroundViewModel>() with factory { sensorId: String ->
             BackgroundViewModel(sensorId, instance(), instance())
+        }
+
+        bind<RemoveSensorViewModel>() with factory { args: RemoveSensorViewModelArgs ->
+            RemoveSensorViewModel(args.sensorId, instance(), instance())
         }
     }
 }
