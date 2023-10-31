@@ -157,7 +157,8 @@ fun OfflineAlertEditItem(
             value = stringResource(
                 id = R.string.alert_cloud_connection_description,
                 (alarmState.max / 60.0).roundToInt()),
-            emptyText = ""
+            emptyText = "",
+            applyBoldStyleToDecimals = true
         ) {
             openAlarmEditDialog = true
         }
@@ -227,7 +228,8 @@ fun AlertEditItem(
                 id = R.string.alert_subtitle_on,
                 alarmState.displayLow,
                 alarmState.displayHigh),
-            emptyText = ""
+            emptyText = "",
+            applyBoldStyleToDecimals = true
         ) {
             openAlarmEditDialog = true
         }
@@ -316,7 +318,8 @@ fun RssiAlertEditItem(
                 id = R.string.alert_subtitle_on,
                 alarmState.displayLow,
                 alarmState.displayHigh),
-            emptyText = ""
+            emptyText = "",
+            applyBoldStyleToDecimals = true
         ) {
             openAlarmEditDialog = true
         }
