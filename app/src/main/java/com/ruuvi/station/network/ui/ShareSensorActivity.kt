@@ -22,6 +22,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -97,7 +98,8 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
                             is UiEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = uiEvent.message.asString(this@ShareSensorActivity),
-                                    actionLabel = getString(R.string.ok)
+                                    actionLabel = getString(R.string.ok),
+                                    duration = SnackbarDuration.Long
                                 )
                             }
                             else -> {}
