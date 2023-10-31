@@ -111,7 +111,16 @@ xmlns:tools="http://schemas.android.com/tools">
     <activity
         android:name="com.ruuvi.station.dashboard.ui.DashboardActivity"
         android:theme="@style/AppTheme.Animated"
-        android:exported="false" />
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https"
+                android:host="station.ruuvi.com"
+                android:pathPrefix="/dashboard" />
+        </intent-filter>
+    </activity>
 
     <activity
         android:name=".network.ui.ShareSensorActivity"
