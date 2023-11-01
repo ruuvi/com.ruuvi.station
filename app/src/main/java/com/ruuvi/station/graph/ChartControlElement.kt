@@ -363,7 +363,10 @@ fun GattSyncDescriptionDialog(
                 
                 ParagraphWithPadding(text = stringResource(id = R.string.gatt_sync_description))
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     RuuviTextButton(
                         text = stringResource(id = R.string.do_not_show_again),
                         onClick = {
