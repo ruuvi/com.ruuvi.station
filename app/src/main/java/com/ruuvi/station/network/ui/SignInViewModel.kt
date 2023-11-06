@@ -10,7 +10,9 @@ import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SignInViewModel(
@@ -25,12 +27,17 @@ class SignInViewModel(
     private val _tokenProcessed = MutableSharedFlow<Boolean> ()
     val tokenProcessed: SharedFlow<Boolean> = _tokenProcessed
 
+    private val _email = MutableStateFlow<String> ("")
+    val email: StateFlow<String> = _email
+
     fun submitEmail(email: String) {
         if (email.isNullOrEmpty()) {
             showError(UiText.StringResource(R.string.cloud_er_invalid_email_address))
             return
         }
         setProgress(true)
+
+        _email.value = email
 
         networkInteractor.registerUser(UserRegisterRequest(email = email.trim())) {
             if (it == null) {
