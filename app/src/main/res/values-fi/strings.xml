@@ -411,6 +411,7 @@
     <string name="remove_cloud_history_description">Haluan myös poistaa anturihistoriatiedot Ruuvi Cloudista.</string>
     <string name="remove_cloud_history_title">Poista pilvihistoria</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
+    <string name="remove_local_sensor_description">Jos poistat tämän anturin, paikallisesti tallennettu mittaushistoria ja kaikki tähän anturiin liittyvät asetukset, kuten nimi, taustakuva, kalibrointiasetukset ja hälytysasetukset poistetaan.\n\nVoit lisätä tämän anturin myöhemmin uudelleen tarvittaessa.</string>
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen lukuoikeus päättyy.</string>
     <string name="remove_shared_sensor_description">Jos poistat tämän jaetun anturin, anturin omistajalle lähetetään ilmoitus poistosta, etkä voi enää käyttää anturia.\n\nMenetät myös kaikki tähän anturiin liittyvät anturin asetukset, kuten nimen, taustakuvan ja asetetut hälytykset.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
@@ -499,7 +500,7 @@
     <string name="shared_to_x">Jaettu %1$,d/%2$,d</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Hyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
-    <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan. Kirjaudu syöttämällä se tähän:</string>
+    <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan %1$s. Kirjaudu syöttämällä se tähän:</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_continue">Jatka</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
