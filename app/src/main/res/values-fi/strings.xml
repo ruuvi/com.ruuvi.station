@@ -113,6 +113,7 @@
     <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="changelog">(muutosloki)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Keskiarvo: %3$,.2f</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön Bluetooth-taustaskannauksen?</string>

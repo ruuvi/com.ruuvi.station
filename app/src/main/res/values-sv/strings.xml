@@ -113,6 +113,7 @@
     <string name="change_background_message">Välj bakgrundsbild. Om du inte är inloggad kommer du att förlora bilden vid appominstallation.</string>
     <string name="changelog">(ändringslogg)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Medelvärde: %3$,.2f</string>
     <string name="chart_view_period_days_count">Antal dagar: %1$s</string>
     <string name="charts_background_dialog_description">Historiken fungerar bäst när bakgrundsskanning är aktiverad.</string>
     <string name="charts_background_dialog_title_question">Vill du aktivera Bluetooth-bakgrundsskanning?</string>
