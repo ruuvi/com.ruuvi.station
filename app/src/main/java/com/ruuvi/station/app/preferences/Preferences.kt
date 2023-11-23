@@ -374,6 +374,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_LIMIT_LOCAL_ALERTS, enabled).apply()
         }
 
+    var showChartStats: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SHOW_CHART_STATS, true)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -430,6 +436,8 @@ class Preferences constructor(val context: Context) {
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
         private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
+        private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
+
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

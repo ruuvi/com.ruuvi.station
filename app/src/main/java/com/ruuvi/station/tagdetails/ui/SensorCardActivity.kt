@@ -94,11 +94,13 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val viewPeriod by viewModel.chartViewPeriod.collectAsState(Period.Day10())
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
+                val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
 
                 SensorsPager(
                     selectedIndex = selectedIndex,
                     sensors = sensors,
                     showCharts = showCharts,
+                    showChartStats = showChartStats,
                     graphDrawDots = viewModel.graphDrawDots,
                     syncInProgress = syncInProcess,
                     setShowCharts = viewModel::setShowCharts,
@@ -116,7 +118,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                     refreshStatus = viewModel::refreshStatus,
                     dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
                     getNfcScanResponse = viewModel::getNfcScanResponse,
-                    addSensor = viewModel::addSensor
+                    addSensor = viewModel::addSensor,
+                    changeShowStats = viewModel::changeShowChartStats
                 )
             }
         }
@@ -167,6 +170,7 @@ fun SensorsPager(
     selectedIndex: Int,
     sensors: List<RuuviTag>,
     showCharts: Boolean,
+    showChartStats: Boolean,
     syncInProgress: Boolean,
     graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
@@ -184,7 +188,8 @@ fun SensorsPager(
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit,
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
-    addSensor: (String) -> Unit
+    addSensor: (String) -> Unit,
+    changeShowStats: () -> Unit
 ) {
     Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
@@ -296,6 +301,7 @@ fun SensorsPager(
                         if (showCharts) {
                             ChartControlElement2(
                                 sensorId = sensor.id,
+                                showChartStats = showChartStats,
                                 viewPeriod = viewPeriod,
                                 syncStatus = getSyncStatusFlow.invoke(sensor.id),
                                 disconnectGattAction = disconnectGattAction,
@@ -305,7 +311,9 @@ fun SensorsPager(
                                 exportToCsv = exportToCsv,
                                 removeTagData = removeTagData,
                                 refreshStatus = refreshStatus,
-                                dontShowGattSyncDescription = dontShowGattSyncDescription
+                                dontShowGattSyncDescription = dontShowGattSyncDescription,
+                                changeShowStats = changeShowStats
+
                             )
 
                             ChartsView(
@@ -319,7 +327,8 @@ fun SensorsPager(
                                 graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,
                                 viewPeriod = viewPeriod,
-                                chartCleared = getChartClearedFlow(sensor.id)
+                                chartCleared = getChartClearedFlow(sensor.id),
+                                showChartStats = showChartStats
                             )
                         } else {
                             SensorCard(

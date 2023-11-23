@@ -44,6 +44,7 @@ fun ChartsView(
     unitsConverter: UnitsConverter,
     selected: Boolean,
     graphDrawDots: Boolean,
+    showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
     getHistory: (String) -> List<TagSensorReading>
@@ -183,6 +184,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -195,6 +197,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.HUMIDITY,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -207,6 +210,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.PRESSURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -238,6 +242,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -262,6 +267,7 @@ fun ChartsView(
                                 unitsConverter,
                                 ChartSensorType.HUMIDITY,
                                 graphDrawDots,
+                                showChartStats,
                                 from,
                                 to
                             )
@@ -280,6 +286,7 @@ fun ChartsView(
                                 unitsConverter,
                                 ChartSensorType.PRESSURE,
                                 graphDrawDots,
+                                showChartStats,
                                 from,
                                 to
                             )

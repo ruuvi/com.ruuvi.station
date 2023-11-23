@@ -42,6 +42,7 @@ fun ChartView(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
     graphDrawDots: Boolean,
+    showChartStats: Boolean,
     from: Long,
     to: Long,
 ) {
@@ -59,8 +60,12 @@ fun ChartView(
         },
         update = { view ->
             Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
-            val chartCaption = getMinMaxAverageDescription(context, lineChart, chartData) + System.lineSeparator() +
-                    getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
+            val chartCaption =
+                if (showChartStats) {
+                    getMinMaxAverageDescription(context, lineChart, chartData) + System.lineSeparator()
+                } else {
+                    ""
+                } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
             addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
             (view.marker as ChartMarkerView).getFrom = {from}
         }
