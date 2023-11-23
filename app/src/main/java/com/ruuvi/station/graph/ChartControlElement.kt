@@ -334,6 +334,7 @@ fun ThreeDotsMenu(
                 Paragraph(text = stringResource(id = R.string.clear_view))
             }
             DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
                 changeShowStats()
             }) {
                 val caption = if (showChartStats) {
