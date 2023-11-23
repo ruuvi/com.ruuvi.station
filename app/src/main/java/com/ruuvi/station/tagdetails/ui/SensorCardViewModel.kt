@@ -63,11 +63,19 @@ class SensorCardViewModel(
 
     val graphDrawDots = preferencesRepository.graphDrawDots()
 
+    private val _showChartStats = MutableStateFlow<Boolean>(preferencesRepository.getShowChartStats())
+    val showChartStats: StateFlow<Boolean> = _showChartStats
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
 
     fun getChartCleared(sensorId: String):Flow<String> = chartCleared.filter { it == sensorId }
+
+    fun changeShowChartStats() {
+        preferencesRepository.setShowChartStats(!preferencesRepository.getShowChartStats())
+        _showChartStats.value = preferencesRepository.getShowChartStats()
+    }
 
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.syncStatusFlow.filter { it?.sensorId == sensorId }.collect{ status ->

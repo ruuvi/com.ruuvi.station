@@ -32,6 +32,7 @@ import timber.log.Timber
 fun ChartControlElement2(
     sensorId: String,
     viewPeriod: Period,
+    showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
@@ -40,7 +41,8 @@ fun ChartControlElement2(
     exportToCsv: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
-    dontShowGattSyncDescription: () -> Unit
+    dontShowGattSyncDescription: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -133,8 +135,10 @@ fun ChartControlElement2(
 
             ThreeDotsMenu(
                 sensorId = sensorId,
+                showChartStats = showChartStats,
                 exportToCsv = { exportToCsv(sensorId) },
-                clearHistory = { removeTagData(sensorId) }
+                clearHistory = { removeTagData(sensorId) },
+                changeShowStats = changeShowStats
             )
         }
     }
@@ -290,8 +294,10 @@ fun ViewPeriodMenu(
 @Composable
 fun ThreeDotsMenu(
     sensorId: String,
+    showChartStats: Boolean,
     exportToCsv: () -> Uri?,
     clearHistory: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val context = LocalContext.current
     var clearConfirmOpened by remember {
@@ -326,6 +332,16 @@ fun ThreeDotsMenu(
                 threeDotsMenuExpanded = false
             }) {
                 Paragraph(text = stringResource(id = R.string.clear_view))
+            }
+            DropdownMenuItem(onClick = {
+                changeShowStats()
+            }) {
+                val caption = if (showChartStats) {
+                    stringResource(id = R.string.chart_stat_hide)
+                } else {
+                    stringResource(id = R.string.chart_stat_show)
+                }
+                Paragraph(text = caption)
             }
         }
     }

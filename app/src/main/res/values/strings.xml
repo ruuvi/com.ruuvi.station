@@ -115,6 +115,8 @@
     <string name="changelog">(changelog)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Average: %3$,.2f</string>
+    <string name="chart_stat_hide">Hide min/max/avg</string>
+    <string name="chart_stat_show">Show min/max/avg</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable Bluetooth background scanning?</string>

@@ -63,6 +63,8 @@
     <string name="camera">Aparat</string>
     <string name="camera_fail">Nie można uruchomić aparatu</string>
     <string name="cancel">Anuluj</string>
+    <string name="chart_stat_hide">Ukryj min./maks./śr</string>
+    <string name="chart_stat_show">Pokaż min./maks./śr</string>
     <string name="charts_background_dialog_description">Funkcja wykresów działa najlepiej z włączonym skanowaniem w tle.</string>
     <string name="charts_background_dialog_title_question">Czy chcesz włączyć skanowanie w tle?</string>
     <string name="claim_description">Czy ten czujnik należy do Ciebie? Jeśli tak, potwierdź prawa własności tego czujnika. Zostanie on dodany do Twojego konta Ruuvi. Każdy czujnik Ruuvi może mieć tylko jednego właściciela.\n\nKorzyści:\n\n ● Nazwy czujnika, obrazy w tle, ustawienia powiadomień i wyrównywania są zapisywane w chmurze\n\n ● Dostęp do czujnika przez internet (wymaga Ruuvi Gateway)\n\n ● Udostępnij czujnik rodzinie i przyjaciołom (wymaga Ruuvi Gateway)\n\n ● Przeglądaj historię użytkowania do 2 lat na stronie station.ruuvi.com (wymaga Ruuvi Gateway)</string>

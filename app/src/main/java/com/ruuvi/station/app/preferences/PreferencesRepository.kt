@@ -281,6 +281,13 @@ class PreferencesRepository(
         preferences.dontShowGattSync = value
     }
 
+    fun getShowChartStats(): Boolean =
+        preferences.showChartStats
+
+    fun setShowChartStats(value: Boolean) {
+        preferences.showChartStats = value
+    }
+
     fun getLimitLocalAlerts(): Boolean =
         preferences.limitLocalAlerts
 
