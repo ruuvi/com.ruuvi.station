@@ -9,6 +9,6 @@ import org.kodein.di.generic.singleton
 object NfcInjectionModule {
     val module = Kodein.Module(NfcInjectionModule.javaClass.name) {
 
-        bind<NfcResultInteractor>() with singleton { NfcResultInteractor(instance(), instance()) }
+        bind<NfcResultInteractor>() with singleton { NfcResultInteractor(instance(), instance(), instance()) }
     }
 }
