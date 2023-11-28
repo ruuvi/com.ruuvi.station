@@ -76,22 +76,24 @@ fun NfcDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    RuuviTextButton(
-                        text = stringResource(
-                            id = if (sensorInfo.existingSensor) {
-                                R.string.nfc_dialog_go_to_sensor
-                            } else {
-                                R.string.nfc_dialog_add_sensor
-                            }
-                        ),
-                        onClick = {
-                            if (sensorInfo.existingSensor) {
+                    if (sensorInfo.existingSensor) {
+                        RuuviTextButton(
+                            text = stringResource(R.string.nfc_dialog_go_to_sensor),
+                            onClick = {
                                 goToSensorAction.invoke()
-                            } else {
+                            }
+                        )
+                    } else if (sensorInfo.canBeAdded){
+                        RuuviTextButton(
+                            text = stringResource(id = R.string.nfc_dialog_add_sensor),
+                            onClick = {
                                 addSensorAction.invoke()
                             }
-                        }
-                    )
+                        )
+                    } else {
+                        SubtitleWithPadding(text = stringResource(id = R.string.nfc_enable_bt_to_add_sensor))
+                    }
+
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
                     RuuviTextButton(
                         text = stringResource(id = R.string.close),
