@@ -9,6 +9,8 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -92,9 +94,11 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
                     Timber.d("nfc scanned response: $response")
                     if (response.existingSensor) {
                         SensorCardActivity.startWithDashboard(this@AddTagActivity, response.sensorId)
-                    } else {
+                    } else if (response.canBeAdded){
                         viewModel.addSensor(response.sensorId)
                         TagSettingsActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
+                    } else {
+                        Snackbar.make(this@AddTagActivity, binding.content.root, getText(R.string.nfc_enable_bt_to_add_sensor), LENGTH_LONG).show()
                     }
                 }
             }
