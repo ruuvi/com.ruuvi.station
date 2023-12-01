@@ -167,7 +167,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
 
     private fun closeActivity() {
         finish()
-        StartupActivity.start(this, true)
+        StartupActivity.start(this)
     }
 
     companion object {

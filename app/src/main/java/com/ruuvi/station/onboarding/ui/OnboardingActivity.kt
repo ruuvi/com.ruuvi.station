@@ -62,7 +62,7 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
                 OnboardingBody(onboardingViewModel.signedIn) {
                     onboardingViewModel.onboardingFinished()
                     if (onboardingViewModel.signedIn) {
-                        StartupActivity.start(this, true)
+                        StartupActivity.start(this)
                     } else {
                         SignInActivity.start(this)
                     }
