@@ -339,6 +339,7 @@
     <string name="nfc_dialog_mac_address">Adresse Mac:</string>
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_unique_id">Identifiant unique:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Activez Bluetooth et scannez le capteur pour l\'ajouter</string>
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_data_10_days">Aucune donnée au cours des 10 derniers jours</string>

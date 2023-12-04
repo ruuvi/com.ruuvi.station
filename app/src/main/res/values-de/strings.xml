@@ -345,6 +345,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="nfc_dialog_mac_address">MAC-Adresse:</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>

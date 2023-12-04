@@ -334,6 +334,7 @@
     <string name="nfc_dialog_mac_address">MAC-osoite:</string>
     <string name="nfc_dialog_name">Nimi:</string>
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
     <string name="no">Ei</string>
     <string name="no_data">Ei tietoja</string>
     <string name="no_data_10_days">Ei tietoja viimeiseltä 10 päivältä</string>

@@ -334,6 +334,7 @@
     <string name="nfc_dialog_mac_address">MAC-adress:</string>
     <string name="nfc_dialog_name">Namn:</string>
     <string name="nfc_dialog_unique_id">Unikt ID:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Aktivera Bluetooth och skanningssensor för att lägga till den</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>

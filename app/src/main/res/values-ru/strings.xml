@@ -257,6 +257,7 @@
     <string name="network_syncing">Синхронизация...</string>
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
+    <string name="nfc_enable_bt_to_add_sensor">Включите Bluetooth и отсканируйте датчик чтобы добавить его</string>
     <string name="no">Нет</string>
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>

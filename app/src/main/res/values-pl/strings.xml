@@ -198,6 +198,7 @@
     <string name="network_syncing">Synchronizacja...</string>
     <string name="network_user">Użytkownik: %1$s</string>
     <string name="never">nigdy</string>
+    <string name="nfc_enable_bt_to_add_sensor">Włącz Bluetooth i zeskanuj czujnik, aby go dodać</string>
     <string name="no">Nie</string>
     <string name="no_new_data_points">Brak dostępności nowych punktów danych</string>
     <string name="none">żaden</string>
