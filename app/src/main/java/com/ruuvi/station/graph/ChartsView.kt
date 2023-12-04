@@ -15,7 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -24,9 +26,11 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
+import java.text.DecimalFormat
 import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,10 +44,12 @@ fun ChartsView(
     unitsConverter: UnitsConverter,
     selected: Boolean,
     graphDrawDots: Boolean,
+    showChartStats: Boolean,
     chartCleared: Flow<String>,
+    viewPeriod: Period,
     getHistory: (String) -> List<TagSensorReading>
 ) {
-    Timber.d("ChartView - top $sensorId $selected")
+    Timber.d("ChartView - top $sensorId $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
 
     var history by remember {
@@ -93,7 +99,7 @@ fun ChartsView(
         }
     }
 
-    LaunchedEffect(key1 = selected) {
+    LaunchedEffect(key1 = selected, viewPeriod) {
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             Timber.d("ChartView - get history $sensorId")
@@ -105,8 +111,14 @@ fun ChartsView(
                 history = freshHistory
 
                 if (history.isNotEmpty()) {
-                    Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size}")
-                    from = history[0].createdAt.time
+                    Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size} FROM = $from")
+                    if (viewPeriod is Period.All) {
+                        Timber.d("ChartView - VIEW ALL")
+                        from = history[0].createdAt.time
+                    } else {
+                        Timber.d("ChartView - VIEW ${viewPeriod.value}")
+                        from = Date().time - viewPeriod.value * 60 * 60 * 1000
+                    }
                     to = Date().time
 
                     val temperatureDataTemp = mutableListOf<Entry>()
@@ -172,6 +184,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -184,6 +197,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.HUMIDITY,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -196,6 +210,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.PRESSURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -227,6 +242,7 @@ fun ChartsView(
                             unitsConverter,
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
+                            showChartStats,
                             from,
                             to
                         )
@@ -251,6 +267,7 @@ fun ChartsView(
                                 unitsConverter,
                                 ChartSensorType.HUMIDITY,
                                 graphDrawDots,
+                                showChartStats,
                                 from,
                                 to
                             )
@@ -269,6 +286,7 @@ fun ChartsView(
                                 unitsConverter,
                                 ChartSensorType.PRESSURE,
                                 graphDrawDots,
+                                showChartStats,
                                 from,
                                 to
                             )
@@ -309,11 +327,18 @@ fun setupChart(
         chart.axisLeft.granularity = 0.01f
     } else {
         if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
-            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#")
+            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
             chart.axisLeft.granularity = 1f
         } else {
-            chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
+            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
             chart.axisLeft.granularity = 0.01f
         }
+    }
+}
+
+class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
+    override fun getFormattedValue(value: Double, p1: AxisBase?): String {
+        val decimalFormat = DecimalFormat(formatPattern)
+        return decimalFormat.format(value)
     }
 }

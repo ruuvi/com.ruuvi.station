@@ -180,9 +180,11 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_POINT_INTERVAL, interval).apply()
         }
 
-    // chart view period (in hours)
-    var graphViewPeriod: Int
-        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, DEFAULT_GRAPH_VIEW_PERIOD)
+    var graphViewPeriodHours: Int
+        get() = sharedPreferences.getInt(
+            PREF_GRAPH_VIEW_PERIOD,
+            graphViewPeriodDays * 24
+        )
         set(period) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
@@ -366,6 +368,18 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_DONT_SHOW_GATT_SYNC, value).apply()
         }
 
+    var limitLocalAlerts: Boolean
+        get() = sharedPreferences.getBoolean(PREF_LIMIT_LOCAL_ALERTS, true)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_LIMIT_LOCAL_ALERTS, enabled).apply()
+        }
+
+    var showChartStats: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SHOW_CHART_STATS, true)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -398,7 +412,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
-        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period_hours"
         private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
@@ -421,12 +435,14 @@ class Preferences constructor(val context: Context) {
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
+        private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
+        private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
+
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
-        private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false

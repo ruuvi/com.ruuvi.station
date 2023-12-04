@@ -24,14 +24,15 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @Composable
 fun ChartControlElement2(
     sensorId: String,
-    viewPeriod: Days,
+    viewPeriod: Period,
+    showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
@@ -40,7 +41,8 @@ fun ChartControlElement2(
     exportToCsv: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
-    dontShowGattSyncDescription: () -> Unit
+    dontShowGattSyncDescription: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -133,8 +135,10 @@ fun ChartControlElement2(
 
             ThreeDotsMenu(
                 sensorId = sensorId,
+                showChartStats = showChartStats,
                 exportToCsv = { exportToCsv(sensorId) },
-                clearHistory = { removeTagData(sensorId) }
+                clearHistory = { removeTagData(sensorId) },
+                changeShowStats = changeShowStats
             )
         }
     }
@@ -208,7 +212,7 @@ fun ChartControlElement2(
 
 @Composable
 fun ViewPeriodMenu(
-    viewPeriod: Days,
+    viewPeriod: Period,
     setViewPeriod: (Int) -> Unit
 ) {
     var daysMenuExpanded by remember {
@@ -242,19 +246,24 @@ fun ViewPeriodMenu(
             modifier = Modifier.background(color = RuuviStationTheme.colors.background),
             expanded = daysMenuExpanded,
             onDismissRequest = { daysMenuExpanded = false }) {
-            val daysOptions = listOf(
-                Days.Day1(),
-                Days.Day2(),
-                Days.Day3(),
-                Days.Day4(),
-                Days.Day5(),
-                Days.Day6(),
-                Days.Day7(),
-                Days.Day8(),
-                Days.Day9(),
-                Days.Day10(),
+            val periodOptions = listOf(
+                Period.All(),
+                Period.Hour1(),
+                Period.Hour2(),
+                Period.Hour3(),
+                Period.Hour12(),
+                Period.Day1(),
+                Period.Day2(),
+                Period.Day3(),
+                Period.Day4(),
+                Period.Day5(),
+                Period.Day6(),
+                Period.Day7(),
+                Period.Day8(),
+                Period.Day9(),
+                Period.Day10(),
             )
-            for (day in daysOptions) {
+            for (day in periodOptions) {
                 DropdownMenuItem(onClick = {
                     setViewPeriod.invoke(day.value)
                     daysMenuExpanded = false
@@ -285,8 +294,10 @@ fun ViewPeriodMenu(
 @Composable
 fun ThreeDotsMenu(
     sensorId: String,
+    showChartStats: Boolean,
     exportToCsv: () -> Uri?,
     clearHistory: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val context = LocalContext.current
     var clearConfirmOpened by remember {
@@ -321,6 +332,17 @@ fun ThreeDotsMenu(
                 threeDotsMenuExpanded = false
             }) {
                 Paragraph(text = stringResource(id = R.string.clear_view))
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+                changeShowStats()
+            }) {
+                val caption = if (showChartStats) {
+                    stringResource(id = R.string.chart_stat_hide)
+                } else {
+                    stringResource(id = R.string.chart_stat_show)
+                }
+                Paragraph(text = caption)
             }
         }
     }
@@ -358,7 +380,10 @@ fun GattSyncDescriptionDialog(
                 
                 ParagraphWithPadding(text = stringResource(id = R.string.gatt_sync_description))
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     RuuviTextButton(
                         text = stringResource(id = R.string.do_not_show_again),
                         onClick = {

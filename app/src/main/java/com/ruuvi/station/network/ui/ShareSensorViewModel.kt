@@ -80,11 +80,17 @@ class ShareSensorViewModel (
                     _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(response.error)))
                 }
             } else {
-                CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
+                if (response?.data?.invited == true) {
+                    CoroutineScope(Dispatchers.Main).launch{
+                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.share_pending_message)))
+                    }
+                } else {
+                    CoroutineScope(Dispatchers.Main).launch{
+                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
+                    }
+                    sensorShareListRepository.insertToShareList(sensorId, email)
+                    setEmailsFromRepository()
                 }
-                sensorShareListRepository.insertToShareList(sensorId, email)
-                setEmailsFromRepository()
             }
         }
     }

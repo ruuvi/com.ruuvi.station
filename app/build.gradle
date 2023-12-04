@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 33
         compileSdk 34
-        versionCode 205006
-        versionName "2.5.6"
+        versionCode 206004
+        versionName "2.6.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -29,8 +29,8 @@ android {
 
     lintOptions {
         checkReleaseBuilds false
-        //  Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found :
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        //  but continue the build even when errors are found :
         abortOnError false
     }
 

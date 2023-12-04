@@ -42,6 +42,7 @@ fun ChartView(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
     graphDrawDots: Boolean,
+    showChartStats: Boolean,
     from: Long,
     to: Long,
 ) {
@@ -59,21 +60,69 @@ fun ChartView(
         },
         update = { view ->
             Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
-            val latestPoint = chartData.lastOrNull()
-            val chartCaption = if (latestPoint != null) {
-                val latestValue = when (chartSensorType) {
-                    ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-                    ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-                    ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-                }
-                context.getString(chartSensorType.captionTemplate, latestValue)
-            } else {
-                context.getString(chartSensorType.captionTemplate, "")
-            }
+            val chartCaption =
+                if (showChartStats) {
+                    getMinMaxAverageDescription(context, lineChart, chartData) + System.lineSeparator()
+                } else {
+                    ""
+                } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
             addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
             (view.marker as ChartMarkerView).getFrom = {from}
         }
     )
+}
+
+fun getLatestValueDescription(
+    context: Context,
+    chartData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType
+): String {
+    val latestPoint = chartData.lastOrNull()
+    return if (latestPoint != null) {
+        val latestValue = when (chartSensorType) {
+            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+        }
+        context.getString(chartSensorType.captionTemplate, latestValue)
+    } else {
+        context.getString(chartSensorType.captionTemplate, "")
+    }
+}
+
+fun getMinMaxAverageDescription(context: Context, lineChart: LineChart, chartData: MutableList<Entry>): String {
+    val lowestVisibleX = lineChart.lowestVisibleX
+    val highestVisibleX = lineChart.highestVisibleX
+    val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
+    Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
+
+    if (visibleEntries.isEmpty()) return context.getString(R.string.chart_min_max_avg, 0f, 0f, 0f)
+
+    var totalArea = 0.0
+
+    var min = visibleEntries[0].y
+    var max = visibleEntries[0].y
+
+    for (i in 1 until visibleEntries.size) {
+        val x1 = visibleEntries[i-1].x
+        val y1 = visibleEntries[i-1].y
+        val x2 = visibleEntries[i].x
+        val y2 = visibleEntries[i].y
+
+        val area = (x2 - x1) * (y2 + y1) / 2.0
+        totalArea += area
+
+        if (y2 < min) min = y2
+        if (y2 > max) max = y2
+    }
+    val timespan = visibleEntries.last().x - visibleEntries.first().x
+
+    val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
+
+    Timber.d("calculateCaption average = ${average.toDouble()} min = $min max = $max")
+
+    return context.getString(R.string.chart_min_max_avg, min, max, average)
 }
 
 fun chartsInitialSetup(

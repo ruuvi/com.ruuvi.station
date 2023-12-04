@@ -165,8 +165,12 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun unclaimSensor(sensorId: String) {
-        val networkRequest = NetworkRequest(NetworkRequestType.UNCLAIM, sensorId, UnclaimSensorRequest(sensorId))
+    fun unclaimSensor(sensorId: String, deleteData: Boolean) {
+        val networkRequest = NetworkRequest(
+            NetworkRequestType.UNCLAIM,
+            sensorId,
+            UnclaimSensorRequest(sensorId, deleteData)
+        )
         Timber.d("unclaimSensor $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest)
     }

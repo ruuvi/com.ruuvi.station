@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Stumm schalten für eine Stunde</string>
     <string name="alarm_notification_disable">Diesen Alarm deaktivieren</string>
     <string name="alert">Alarmierung</string>
+    <string name="alert_cloud_connection_description">Warnung, wenn Sensordaten länger als %1$,d Minuten nicht in der Cloud aktualisiert wurden.</string>
+    <string name="alert_cloud_connection_dialog_description">Geben Sie die gewünschte Verzögerung in Minuten ein, bevor die Warnung ausgelöst wird. Der Mindestwert beträgt 2 Minuten.</string>
+    <string name="alert_cloud_connection_dialog_title">Cloud-Verbindungsalarm einstellen</string>
+    <string name="alert_cloud_connection_title">Cloud-Verbindung</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Feuchtigkeitsalarm einstellen</string>
@@ -37,6 +41,7 @@
     <string name="alert_notification_humidity_low">Luftfeuchtigkeit ist zu niedrig!</string>
     <string name="alert_notification_humidity_low_threshold">Luftfeuchtigkeit liegt unter %1$s</string>
     <string name="alert_notification_movement">Bewegung erkannt!</string>
+    <string name="alert_notification_offline_message">Der Sensor war über %1$s Minuten offline</string>
     <string name="alert_notification_pressure_high">Luftdruck ist zu hoch!</string>
     <string name="alert_notification_pressure_high_threshold">Luftdruck liegt über %1$s</string>
     <string name="alert_notification_pressure_low">Luftdruck ist zu niedrig!</string>
@@ -52,6 +57,7 @@
     <string name="alert_subtitle_off">Aus</string>
     <string name="alert_subtitle_on">Warnung bei weniger als %1$s oder mehr als %2$s</string>
     <string name="alerts">Warnungen</string>
+    <string name="all">Alle</string>
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="already_signed_in">Super! Sie haben sich bereits angemeldet!</string>
@@ -107,6 +113,9 @@
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
     <string name="changelog">(änderungsprotokoll)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
+    <string name="chart_stat_hide">Min./Max./Durchschnitt ausblenden</string>
+    <string name="chart_stat_show">Min./Max./Durchschnitt anzeigen</string>
     <string name="chart_view_period_days_count">Anzahl der Tage: %1$s</string>
     <string name="charts_background_dialog_description">Die Diagrammfunktion funktioniert am besten, wenn das Scannen im Hintergrund aktiviert ist.</string>
     <string name="charts_background_dialog_title_question">Möchten Sie die Bluetooth-Hintergrundsuche aktivieren?</string>
@@ -195,6 +204,8 @@
     <string name="dfu_low_battery_warning">Die Batteriespannung des Sensors scheint zu niedrig zu sein, und der Firmware-Aktualisierungsprozess kann fehlschlagen. Wir empfehlen, die Batterie vor der Aktualisierung zu ersetzen.</string>
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
+    <string name="dialog_are_you_sure">Sind Sie sicher?</string>
+    <string name="dialog_operation_undone">Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
     <string name="disconnected">Getrennt</string>
     <string name="do_not_show_again">Zeige das nicht noch einmal</string>
     <string name="do_you_own_sensor">Besitzen Sie diesen Sensor?</string>
@@ -264,6 +275,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_troubleshooting_text">Hilfe bei der Verwendung der Ruuvi Station-Apps, Ruuvi-Produkte und des Ruuvi Cloud-Dienstes finden Sie in unserem Support-Center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
     <string name="history_view">Ansicht Verlauf</string>
+    <string name="hour">Stunde</string>
+    <string name="hour_1">1 Stunde</string>
+    <string name="hour_12">12 stunden</string>
+    <string name="hour_2">2 stunden</string>
+    <string name="hour_3">3 stunden</string>
+    <string name="hour_x">%1$s tage</string>
     <string name="hours">Stunden</string>
     <string name="humidity">Feuchtigkeit</string>
     <string name="humidity_absolute_name">Absolut (g/m³)</string>
@@ -328,6 +345,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="nfc_dialog_mac_address">MAC-Adresse:</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -369,6 +387,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="owner_none">Keiner</string>
+    <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
@@ -403,8 +422,13 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
     <string name="remove">Löschen</string>
     <string name="remove_claimed_sensor">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus widerrufen. Nach dem Entfernen kann eine andere Person das Eigentum an dem Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
+    <string name="remove_claimed_sensor_description">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus aufgehoben, und Sensor-Einstellungen wie Name, Hintergrundbild, Kalibrierungseinstellungen und Alarmeinstellungen werden entfernt. Nach der Entfernung kann jemand anderes das Eigentum am Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
+    <string name="remove_cloud_history_description">Ich möchte auch die Sensorverlaufsdaten aus Ruuvi Cloud entfernen.</string>
+    <string name="remove_cloud_history_title">Cloud-Historie entfernen</string>
     <string name="remove_local_sensor">Möchten Sie den Sensor entfernen? Sie können ihn später bei Bedarf wieder hinzufügen.</string>
+    <string name="remove_local_sensor_description">Wenn Sie diesen Sensor entfernen, führt dies zur Löschung Ihres lokal gespeicherten Messverlaufs sowie zur Entfernung aller zugehörigen Sensoreinstellungen wie Name, Hintergrundbild, Kalibrierung und Alarmkonfigurationen.\n\nSie können hinzufügen diesen Sensor später bei Bedarf erneut.</string>
     <string name="remove_shared_sensor">Wenn Sie den Sensor entfernen, wird der Besitzer des Sensors benachrichtigt und Sie können nicht mehr auf den Sensor zugreifen.</string>
+    <string name="remove_shared_sensor_description">Wenn Sie diesen freigegebenen Sensor entfernen, wird der Eigentümer des Sensors benachrichtigt und Sie können nicht mehr auf den Sensor zugreifen.\n\nSie verlieren außerdem alle zugehörigen Sensoreinstellungen wie Name, Hintergrundbild und Alarmkonfigurationen .</string>
     <string name="remove_this_sensor">Entfernen Sie diesen Sensor</string>
     <string name="rename">Umbenennen</string>
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
@@ -429,6 +453,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sensor_shared">Geteilt</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Die Anmeldung bei der App hat viele Vorteile. Einstellungen werden sicher in deinem Konto gespeichert:</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_alert_limit_notification">Beschränken Sie Warnmeldungen</string>
+    <string name="settings_alert_limit_notification_description">Lösen Sie die Bluetooth-Benachrichtigung nur einmal pro Stunde aus, auch wenn die Warnung erneut ausgelöst wurde.</string>
     <string name="settings_alert_notifications">Alarmbenachrichtigungen</string>
     <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>
@@ -460,6 +486,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 10 Tagen.</string>
     <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
+    <string name="settings_developer">Entwicklereinstellungen</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
     <string name="settings_gateway_details_link">dokumentation.</string>
@@ -478,6 +505,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_temperature_unit">Temperatureinheit</string>
     <string name="settings_temperature_unit_details">Wählen Sie die Temperatureinheit, die angezeigt werden soll.</string>
     <string name="share">Teilen</string>
+    <string name="share_pending_message">Erfolgreich geteilt! Diese E-Mail-Adresse ist noch nicht mit einem Ruuvi-Konto verknüpft. Eine Einladung zur Erstellung eines kostenlosen Kontos wurde gesendet. Nach der Erstellung werden Sie es in der Freigabeliste sehen.</string>
     <string name="share_sensor_add_friend">Freund hinzufügen</string>
     <string name="share_sensor_already_shared">Sie haben %1$,d/%2$,d der maximalen Teilungszahl für diesen Sensor verwendet. Der Sensor wird mit den folgenden Benutzern geteilt:</string>
     <string name="share_sensor_description">Sie können den Sensor mit Freunden und Familie teilen, wenn er sich in Reichweite eines Ruuvi Gateways befindet.\n\nDer Empfänger wird per E-Mail benachrichtigt. Wenn der Empfänger kein Ruuvi-Konto hat, wird beim ersten Anmelden automatisch ein kostenloses Ruuvi-Konto erstellt.\n\nBeachten Sie, dass der benutzerdefinierte Name und das Hintergrundbild des Sensors geteilt werden. Der Name und das Bild werden nur einmal synchronisiert und können danach vom Empfänger privat angepasst werden. Vom Besitzer eingestellte Offset-Werte (sofern vorhanden) werden automatisch synchronisiert und der Empfänger sieht immer die endgültigen korrigierten Werte.</string>
@@ -487,7 +515,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="shared_to_x">Freigegebene %1$,d/%2$,d</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
-    <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet. Melden Sie sich an, indem Sie es hier eingeben:</string>
+    <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet %1$s. Melden Sie sich an, indem Sie es hier eingeben:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_continue">Weitermachen</string>
     <string name="sign_in_email_sent">E-Mail gesendet</string>
@@ -556,6 +584,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
     <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
+    <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>

@@ -142,11 +142,6 @@ class TagSettingsViewModel(
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun deleteSensor() {
-        Timber.d("deleteSensor")
-        interactor.deleteTagsAndRelatives(sensorId)
-    }
-
     fun removeNotificationById(notificationId: Int) {
         alarmCheckInteractor.removeNotificationById(notificationId)
     }

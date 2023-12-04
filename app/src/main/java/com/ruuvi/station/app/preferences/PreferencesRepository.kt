@@ -136,11 +136,11 @@ class PreferencesRepository(
         preferences.graphPointInterval = newInterval
     }
 
-    fun getGraphViewPeriodDays(): Int =
-        preferences.graphViewPeriodDays
+    fun getGraphViewPeriodHours(): Int =
+        preferences.graphViewPeriodHours
 
-    fun setGraphViewPeriodDays(newPeriod: Int) {
-        preferences.graphViewPeriodDays = newPeriod
+    fun setGraphViewPeriodHours(newPeriod: Int) {
+        preferences.graphViewPeriodHours = newPeriod
     }
 
     fun isFirstGraphVisit(): Boolean =
@@ -279,5 +279,19 @@ class PreferencesRepository(
 
     fun setDontShowGattSync(value: Boolean) {
         preferences.dontShowGattSync = value
+    }
+
+    fun getShowChartStats(): Boolean =
+        preferences.showChartStats
+
+    fun setShowChartStats(value: Boolean) {
+        preferences.showChartStats = value
+    }
+
+    fun getLimitLocalAlerts(): Boolean =
+        preferences.limitLocalAlerts
+
+    fun setLimitLocalAlerts(value: Boolean) {
+        preferences.limitLocalAlerts = value
     }
 }

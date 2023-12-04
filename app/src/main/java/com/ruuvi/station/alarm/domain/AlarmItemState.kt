@@ -23,10 +23,15 @@ data class AlarmItemState(
             val type = alarm.alarmType
             val alarmMin = minOf(alarm.min, alarm.max)
             val alarmMax = maxOf(alarm.min, alarm.max)
-            val min = if (type.valueInRange(alarmMin)) alarmMin else type.possibleRange.first
-            val max = if (type.valueInRange(alarmMin)) alarmMax else min
+            var min = if (type.valueInRange(alarmMin)) alarmMin else type.possibleRange.first
+            var max = if (type.valueInRange(alarmMin)) alarmMax else min
             val rangeLow = alarmsInteractor.getRangeValue(type, min.toFloat())
             val rangeHigh = alarmsInteractor.getRangeValue(type, max.toFloat())
+
+            if (type == AlarmType.OFFLINE) {
+                min = 0
+                max = if (type.valueInRange(alarm.max)) alarm.max else 15 * 60
+            }
 
             val state = AlarmItemState(
                 sensorId = alarm.ruuviTagId,
@@ -48,12 +53,14 @@ data class AlarmItemState(
         fun getDefaultState(sensorId: String, alarmType: AlarmType, alarmsInteractor: AlarmsInteractor): AlarmItemState {
             val rangeLow = alarmsInteractor.getRangeValue(alarmType, alarmType.possibleRange.first.toFloat())
             val rangeHigh = alarmsInteractor.getRangeValue(alarmType, alarmType.possibleRange.last.toFloat())
+            val min = if (alarmType == AlarmType.OFFLINE) 0 else alarmType.possibleRange.first
+            val max = if (alarmType == AlarmType.OFFLINE) 15 * 60 else alarmType.possibleRange.last
             return AlarmItemState(
                 sensorId = sensorId,
                 type = alarmType,
                 isEnabled = false,
-                min = alarmType.possibleRange.first.toDouble(),
-                max = alarmType.possibleRange.last.toDouble(),
+                min = min.toDouble(),
+                max = max.toDouble(),
                 rangeLow = rangeLow,
                 rangeHigh = rangeHigh,
                 displayLow = alarmsInteractor.getDisplayValue(rangeLow),

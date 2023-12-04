@@ -36,9 +36,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.core.view.WindowCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
@@ -70,12 +70,13 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            RuuviTheme() {
-                val navController = rememberAnimatedNavController()
+            RuuviTheme {
+                val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
                 var inProgress by remember { mutableStateOf(false) }
+                val email by viewModel.email.collectAsState()
 
                 BackHandler() {
                     if (navController.currentBackStackEntry?.destination?.route == SignInRoutes.CLOUD_BENEFITS) {
@@ -97,7 +98,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                     backgroundColor = Color.Transparent,
                     scaffoldState = scaffoldState
                 ) { padding ->
-                    AnimatedNavHost(
+                    NavHost(
                         navController = navController,
                         startDestination = SignInRoutes.CLOUD_BENEFITS,
                         enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
@@ -126,7 +127,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                         composable(
                             SignInRoutes.ENTER_CODE
                         ) {
-                            EnterCodePage(inProgress, viewModel.tokenProcessed) { token ->
+                            EnterCodePage(inProgress, email, viewModel.tokenProcessed) { token ->
                                 viewModel.verifyCode(token)
                             }
                         }
@@ -166,7 +167,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
 
     private fun closeActivity() {
         finish()
-        StartupActivity.start(this, true)
+        StartupActivity.start(this)
     }
 
     companion object {
@@ -297,6 +298,7 @@ fun CloudBenefitsPage(
 @Composable
 fun EnterCodePage(
     inProgress: Boolean,
+    email: String,
     tokenProcessed: SharedFlow<Boolean>,
     codeEntered: (String) -> Unit
 ) {
@@ -324,7 +326,7 @@ fun EnterCodePage(
             text = stringResource(id = R.string.enter_code)
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email))
+        OnboardingSubTitle(text = stringResource(id = R.string.sign_in_check_email, email))
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
         OtpTextField(
             otpText = code,

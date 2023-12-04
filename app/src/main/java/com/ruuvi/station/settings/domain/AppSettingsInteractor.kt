@@ -156,12 +156,11 @@ class AppSettingsInteractor(
         preferencesRepository.setGraphPointInterval(newInterval)
 
     fun getGraphViewPeriod(): Int =
-        preferencesRepository.getGraphViewPeriodDays()
+        preferencesRepository.getGraphViewPeriodHours()
 
     fun setGraphViewPeriod(newPeriod: Int) {
-        if (newPeriod != preferencesRepository.getGraphViewPeriodDays()) {
-            preferencesRepository.setGraphViewPeriodDays(newPeriod)
-            networkApplicationSettings.updateChartViewPeriod()
+        if (newPeriod != preferencesRepository.getGraphViewPeriodHours()) {
+            preferencesRepository.setGraphViewPeriodHours(newPeriod)
         }
     }
 
@@ -202,5 +201,12 @@ class AppSettingsInteractor(
 
     fun updateDarkMode(darkModeState: DarkModeState) {
         preferencesRepository.updateDarkMode(darkModeState)
+    }
+
+    fun isLimitLocalAlertsEnabled(): Boolean =
+        preferencesRepository.getLimitLocalAlerts()
+
+    fun setLimitLocalAlertsEnabled(isEnabled: Boolean) {
+        preferencesRepository.setLimitLocalAlerts(isEnabled)
     }
 }

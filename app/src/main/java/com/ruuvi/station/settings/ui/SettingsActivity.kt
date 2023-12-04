@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -41,7 +41,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme() {
-                val navController = rememberAnimatedNavController()
+                val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
@@ -62,7 +62,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     topBar = { RuuviTopAppBar(title = title) },
                     scaffoldState = scaffoldState
                 ) { padding ->
-                    AnimatedNavHost(
+                    NavHost(
                         navController = navController,
                         startDestination = SettingsRoutes.LIST
                     ) {
@@ -92,8 +92,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
+                            val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
                             AlertNotificationsSettings(
-                                scaffoldState = scaffoldState
+                                scaffoldState = scaffoldState,
+                                viewModel = alertNotificationsSettingsViewModel
                             )
                         }
                         composable(SettingsRoutes.BACKGROUNDSCAN,

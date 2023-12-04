@@ -32,11 +32,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
-import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
@@ -48,6 +48,7 @@ import timber.log.Timber
 @Composable
 fun SensorSettings(
     scaffoldState: ScaffoldState,
+    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TagSettingsViewModel,
     alarmsViewModel: AlarmItemsViewModel
 ) {
@@ -99,9 +100,7 @@ fun SensorSettings(
         )
         DividerSurfaceColor()
         RemoveGroup(
-            sensorState = sensorState,
-            sensorOwnedByUser = sensorOwnedByUser,
-            deleteSensor = viewModel::deleteSensor
+            deleteSensor = { onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.SENSOR_REMOVE)) }
         )
     }
 
@@ -225,6 +224,12 @@ fun GeneralSettingsGroup(
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
+        } else if (sensorState.subscriptionName?.isNotEmpty() == true) {
+            DividerRuuvi()
+            TextWithCaption(
+                title = stringResource(id = R.string.owners_plan),
+                value = sensorState.subscriptionName
+            )
         }
     } else {
         DividerRuuvi()
@@ -293,61 +298,6 @@ fun SetSensorName(
         LaunchedEffect(key1 = Unit) {
             delay(100)
             focusRequester.requestFocus()
-        }
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun RemoveGroup(
-    sensorState: RuuviTag,
-    sensorOwnedByUser: Boolean,
-    deleteSensor: ()->Unit
-) {
-    val context = LocalContext.current
-    val removeMessage = if (sensorState.networkSensor != true) {
-        stringResource(id = R.string.remove_local_sensor)
-    } else {
-        if (sensorOwnedByUser) {
-            stringResource(id = R.string.remove_claimed_sensor)
-        } else {
-            stringResource(id = R.string.remove_shared_sensor)
-        }
-    }
-
-    var removeDialog by remember {
-        mutableStateOf(false)
-    }
-
-    ExpandableContainer(header = {
-        Text(
-            text = stringResource(id = R.string.remove),
-            style = RuuviStationTheme.typography.title,
-        )
-    },
-        backgroundColor = RuuviStationTheme.colors.settingsTitle
-    ) {
-        TextEditWithCaptionButton(
-            title = stringResource(id = R.string.remove_this_sensor),
-            icon = painterResource(id = R.drawable.arrow_forward_16),
-            tint = RuuviStationTheme.colors.trackInactive
-        ) {
-            removeDialog = true
-        }
-    }
-
-    if (removeDialog) {
-        RuuviDialog(
-            title = stringResource(id = R.string.tagsettings_sensor_remove),
-            onDismissRequest = { removeDialog = false },
-            onOkClickAction = {
-                deleteSensor()
-                DashboardActivity.start(context)
-            }
-        ) {
-            Paragraph(text = removeMessage)
         }
     }
 }

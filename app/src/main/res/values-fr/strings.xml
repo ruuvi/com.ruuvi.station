@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Désactiver les notifications pendant une heure</string>
     <string name="alarm_notification_disable">Désactiver cette notification</string>
     <string name="alert">Alerte</string>
+    <string name="alert_cloud_connection_description">Alerte si les données du capteur n\'ont pas été mises à jour dans le cloud depuis plus de %1$,d minutes.</string>
+    <string name="alert_cloud_connection_dialog_description">Entrez le délai souhaité à utiliser en minutes avant le déclenchement de l\'alerte. La valeur minimale est de 2 minutes.</string>
+    <string name="alert_cloud_connection_dialog_title">Définir une alerte de connexion au cloud</string>
+    <string name="alert_cloud_connection_title">Connexion infonuagique</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Réglage de l\'alerte d\'humidité</string>
@@ -37,6 +41,7 @@
     <string name="alert_notification_humidity_low">L\'humidité de l\'air est trop basse !</string>
     <string name="alert_notification_humidity_low_threshold">L\'humidité de l\'air est inférieure à %1$s</string>
     <string name="alert_notification_movement">Mouvement détecté !</string>
+    <string name="alert_notification_offline_message">Le capteur est hors ligne depuis %1$s minutes</string>
     <string name="alert_notification_pressure_high">La pression de l\'air est trop haute !</string>
     <string name="alert_notification_pressure_high_threshold">La pression de l\'air est supérieure à %1$s</string>
     <string name="alert_notification_pressure_low">La pression de l\'air est trop basse !</string>
@@ -52,6 +57,7 @@
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$s ou supérieure à %2$s</string>
     <string name="alerts">Notifications</string>
+    <string name="all">Tout</string>
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>
     <string name="already_signed_in">Super ! Vous vous êtes déjà connecté !</string>
@@ -107,6 +113,9 @@
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
     <string name="changelog">(journal des modifications)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Moyenne: %3$,.2f</string>
+    <string name="chart_stat_hide">Masquer min/max/moy</string>
+    <string name="chart_stat_show">Afficher min/max/moy</string>
     <string name="chart_view_period_days_count">Nombre de jours : %1$s</string>
     <string name="charts_background_dialog_description">L\'histogramme fonctionne mieux avec le balayage en arrière-plan activé.</string>
     <string name="charts_background_dialog_title_question">Souhaitez-vous activer le balayage en arrière plan Bluetooth?</string>
@@ -195,6 +204,8 @@
     <string name="dfu_low_battery_warning">La tension de la pile du capteur est faible et risque de faire echouer la mise à jour. Nous vous conseillons de remplacer la batterie avant la mise à jour.</string>
     <string name="dfu_no_internet">Echec du téléchargement de la mise à jour. Veuillez vérifier votre connexion Internet.</string>
     <string name="dfu_update_do_not_close_app">Ne pas fermer l\'application ou enlever la pile du capteur pendant la mise à jour.</string>
+    <string name="dialog_are_you_sure">Êtes-vous sûr ?</string>
+    <string name="dialog_operation_undone">Cette opération ne peut pas être annulée.</string>
     <string name="disconnected">Déconnecté</string>
     <string name="do_not_show_again">Ne plus afficher ça</string>
     <string name="do_you_own_sensor">Possédez-vous ce capteur ?</string>
@@ -258,6 +269,12 @@
     <string name="help_troubleshooting_text">Trouvez de l\'aide en utilisant les applications Ruuvi Station, les produits Ruuvi et le service Ruuvi Cloud depuis notre centre d\'assistance : ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Dépannage technique</string>
     <string name="history_view">Vue de l\'histoire</string>
+    <string name="hour">Heure</string>
+    <string name="hour_1">1 heure</string>
+    <string name="hour_12">12 heures</string>
+    <string name="hour_2">2 heures</string>
+    <string name="hour_3">3 heures</string>
+    <string name="hour_x">%1$s heures</string>
     <string name="hours">Heures</string>
     <string name="humidity">Humidité</string>
     <string name="humidity_absolute_name">Absolue (g/m³)</string>
@@ -322,6 +339,7 @@
     <string name="nfc_dialog_mac_address">Adresse Mac:</string>
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_unique_id">Identifiant unique:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Activez Bluetooth et scannez le capteur pour l\'ajouter</string>
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_data_10_days">Aucune donnée au cours des 10 derniers jours</string>
@@ -363,6 +381,7 @@
     <string name="open_sensor_view">Ouvrir la vue du capteur</string>
     <string name="open_settings">Ouvrir les réglages</string>
     <string name="owner_none">Pas de propriétaire</string>
+    <string name="owners_plan">Plan Ruuvi du propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
     <string name="permission_dialog_background_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nAutorisez l\'utilisation de votre position pour utiliser le balayage en arrière plan. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
@@ -397,8 +416,13 @@
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="remove">Supprimer</string>
     <string name="remove_claimed_sensor">Le propriétaire sera réinitialisé en supprimant le capteur. N\'importe qui pourra alors s\'approprier le capteur. Chaque capteur Ruuvi ne pouvant avoir qu\'un propriétaire.</string>
+    <string name="remove_claimed_sensor_description">En supprimant le capteur, votre statut de propriétaire du capteur sera révoqué, et les paramètres du capteur, tels que le nom, l\'image d\'arrière-plan, les paramètres de calibration et les paramètres d\'alerte, seront supprimés. Après la suppression, quelqu\'un d\'autre peut revendiquer la propriété du capteur. Chaque capteur Ruuvi ne peut avoir qu\'un seul propriétaire.</string>
+    <string name="remove_cloud_history_description">Je veux également supprimer les données d\'historique du capteur de Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Supprimer l\'historique cloud</string>
     <string name="remove_local_sensor">Êtes-vous certain de vouloir supprimer ce capteur ?</string>
+    <string name="remove_local_sensor_description">Si vous choisissez de supprimer ce capteur, cela entraînera la suppression de votre historique de mesures stocké localement, ainsi que la suppression de tous les paramètres du capteur associés tels que le nom, l\'image d\'arrière-plan, l\'étalonnage et les configurations d\'alerte.\n\nVous pouvez ajouter ce capteur plus tard, si nécessaire.</string>
     <string name="remove_shared_sensor">En supprimant le capteur vous n\'aurez plus accès aux données du capteur et une notification sera envoyée au propriétaire.</string>
+    <string name="remove_shared_sensor_description">Si vous choisissez de supprimer ce capteur partagé, le propriétaire du capteur sera averti et vous ne pourrez plus accéder au capteur.\n\nVous perdrez également tous les paramètres du capteur associés, tels que le nom, l\'image d\'arrière-plan et les configurations d\'alerte. .</string>
     <string name="remove_this_sensor">Supprimer le capteur</string>
     <string name="rename">Renommer</string>
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
@@ -423,6 +447,8 @@
     <string name="sensor_shared">Partagé</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">La connexion à l\'application présente de nombreux avantages. Les paramètres seront stockés en toute sécurité sur votre compte:</string>
     <string name="settings">Réglages</string>
+    <string name="settings_alert_limit_notification">Limiter les notifications d\'alerte</string>
+    <string name="settings_alert_limit_notification_description">Déclenchez la notification d\'alerte Bluetooth une seule fois par heure, même si l\'alerte a été redéclenchée.</string>
     <string name="settings_alert_notifications">Notifications d\'alerte</string>
     <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="settings_appearance">Apparition</string>
@@ -454,6 +480,7 @@
     <string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 10 jours</string>
     <string name="settings_data_forwarding">Paramètres du routeur</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
+    <string name="settings_developer">Paramètres du développeur</string>
     <string name="settings_experimental">Options avancées</string>
     <string name="settings_gateway_details">L\'application envoie les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
     <string name="settings_gateway_details_link">page de support.</string>
@@ -472,6 +499,7 @@
     <string name="settings_temperature_unit">Unité de température</string>
     <string name="settings_temperature_unit_details">Choisissez l\'unité souhaitée pour la température.</string>
     <string name="share">Partager</string>
+    <string name="share_pending_message">Partagé avec succès ! Cette adresse e-mail n\'est pas encore liée à un compte Ruuvi. Une invitation pour créer un compte gratuit a été envoyée. Une fois créé, vous le verrez dans la liste des partages.</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Vous avez utilisé %1$,d/%2$,d du nombre maximum de divisions pour ce capteur. Le capteur est partagé avec les utilisateurs suivants :</string>
     <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le nom du capteur ainsi que le fond d\'écran sont partgés seulement une fois. Si la fonction calibrage est utilisée, les utilisateurs verront seulement la valeur finale une fois ajustée.</string>
@@ -481,7 +509,7 @@
     <string name="shared_to_x">Partagé %1$,d/%2$,d</string>
     <string name="sign_in">Connexion</string>
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
-    <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail. Connectez-vous en le saisissant ici:</string>
+    <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail %1$s. Connectez-vous en le saisissant ici:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_continue">Continuer</string>
     <string name="sign_in_email_sent">Email envoyé</string>
@@ -550,6 +578,7 @@
     <string name="updated">Mis à jour il y\'a %1$s</string>
     <string name="updating">Mise à jour...</string>
     <string name="use_dev_server">Utiliser le serveur de développement</string>
+    <string name="use_dev_server_description">Pour appliquer les modifications, synchronisez simplement les données du tableau de bord ou attendez la prochaine synchronisation.</string>
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>

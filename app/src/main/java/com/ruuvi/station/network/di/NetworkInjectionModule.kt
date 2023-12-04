@@ -41,14 +41,6 @@ object NetworkInjectionModule {
             SubscriptionInfoSyncInteractor(instance(), instance())
         }
 
-        bind<EmailEnterViewModel>() with provider {
-            EmailEnterViewModel(instance())
-        }
-
-        bind<EnterCodeViewModel>() with provider {
-            EnterCodeViewModel(instance(), instance(), instance())
-        }
-
         bind<ShareSensorViewModel>() with factory { tagId: String ->
             ShareSensorViewModel(tagId, instance(), instance(), instance(), instance())
         }

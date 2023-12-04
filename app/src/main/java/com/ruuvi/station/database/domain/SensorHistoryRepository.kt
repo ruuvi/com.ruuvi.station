@@ -13,10 +13,10 @@ import java.util.*
 import kotlin.math.abs
 
 class SensorHistoryRepository {
-    fun getCompositeHistory(sensorId: String, daysPeriod: Int, interval: Int): List<TagSensorReading> {
+    fun getCompositeHistory(sensorId: String, hoursPeriod: Int, interval: Int): List<TagSensorReading> {
         val fromDate = Calendar.getInstance()
         fromDate.time = Date()
-        fromDate.add(Calendar.DATE, -daysPeriod)
+        fromDate.add(Calendar.HOUR, -hoursPeriod)
         return getCompositeHistory(sensorId, fromDate.time, interval)
     }
 
@@ -29,10 +29,10 @@ class SensorHistoryRepository {
         }
     }
 
-    fun getHistory(sensorId: String, daysPeriod: Int): List<TagSensorReading> {
+    fun getHistory(sensorId: String, hoursPeriod: Int): List<TagSensorReading> {
         val fromDate = Calendar.getInstance()
         fromDate.time = Date()
-        fromDate.add(Calendar.DATE, -daysPeriod)
+        fromDate.add(Calendar.HOUR, -hoursPeriod)
         return getHistory(sensorId, fromDate.time)
     }
 

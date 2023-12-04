@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Mykistä tunniksi</string>
     <string name="alarm_notification_disable">Poista tämä hälytys käytöstä</string>
     <string name="alert">Hälytys</string>
+    <string name="alert_cloud_connection_description">Hälytä, jos anturitietoja ei ole päivitetty pilveen yli %1$,d minuuttiin.</string>
+    <string name="alert_cloud_connection_dialog_description">Syötä haluttu viive minuutteina, jonka jälkeen hälytys laukaistaan. Lyhyin valittava arvo on 2 minuuttia.</string>
+    <string name="alert_cloud_connection_dialog_title">Aseta pilviyhteyden hälytys</string>
+    <string name="alert_cloud_connection_title">Yhteys pilveen</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Aseta kosteushälytys</string>
@@ -37,6 +41,7 @@
     <string name="alert_notification_humidity_low">Suhteellinen ilmankosteus liian alhainen!</string>
     <string name="alert_notification_humidity_low_threshold">Ilmankosteus on alle %1$s</string>
     <string name="alert_notification_movement">Liike havaittu!</string>
+    <string name="alert_notification_offline_message">Anturi on ollut offline-tilassa yli %1$s minuuttia</string>
     <string name="alert_notification_pressure_high">Ilmanpaine liian korkea!</string>
     <string name="alert_notification_pressure_high_threshold">Ilmanpaine on yli %1$s</string>
     <string name="alert_notification_pressure_low">Ilmanpaine liian alhainen!</string>
@@ -52,6 +57,7 @@
     <string name="alert_subtitle_off">Pois käytöstä</string>
     <string name="alert_subtitle_on">Hälytä, mikäli alle %1$s tai yli %2$s</string>
     <string name="alerts">Hälytykset</string>
+    <string name="all">Kaikki</string>
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
@@ -107,6 +113,9 @@
     <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="changelog">(muutosloki)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Keskiarvo: %3$,.2f</string>
+    <string name="chart_stat_hide">Piilota min/maks/ka</string>
+    <string name="chart_stat_show">Näytä min/maks/ka</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön Bluetooth-taustaskannauksen?</string>
@@ -195,6 +204,8 @@
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
     <string name="dfu_update_do_not_close_app">Älä sulje sovellusta tai poista paristoa laitteesta päivityksen aikana.</string>
+    <string name="dialog_are_you_sure">Oletko varma?</string>
+    <string name="dialog_operation_undone">Tätä toimenpidettä ei voi perua.</string>
     <string name="disconnected">Ei yhteyttä</string>
     <string name="do_not_show_again">Älä näytä tätä uudestaan</string>
     <string name="do_you_own_sensor">Omistatko tämän anturin?</string>
@@ -253,6 +264,12 @@
     <string name="help_troubleshooting_text">Löydä apua Ruuvi Station -sovellusten, Ruuvi-tuotteiden ja Ruuvi Cloud -palvelun käyttöön tukikeskuksestamme: ruuvi.com/fi/tuki</string>
     <string name="help_troubleshooting_title">Vianetsintä</string>
     <string name="history_view">Historianäkymä</string>
+    <string name="hour">tunti</string>
+    <string name="hour_1">1 tunti</string>
+    <string name="hour_12">12 tuntia</string>
+    <string name="hour_2">2 tuntia</string>
+    <string name="hour_3">3 tuntia</string>
+    <string name="hour_x">%1$s tuntia</string>
     <string name="hours">tuntia</string>
     <string name="humidity">Kosteus</string>
     <string name="humidity_absolute_name">Absoluuttinen (g/m³)</string>
@@ -317,6 +334,7 @@
     <string name="nfc_dialog_mac_address">MAC-osoite:</string>
     <string name="nfc_dialog_name">Nimi:</string>
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
     <string name="no">Ei</string>
     <string name="no_data">Ei tietoja</string>
     <string name="no_data_10_days">Ei tietoja viimeiseltä 10 päivältä</string>
@@ -358,6 +376,7 @@
     <string name="open_sensor_view">Anturinäkymään</string>
     <string name="open_settings">Avaa asetukset</string>
     <string name="owner_none">Ei omistajaa</string>
+    <string name="owners_plan">Omistajan Ruuvi-tilaus</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
@@ -392,8 +411,13 @@
     <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="remove_claimed_sensor_description">Poistamalla anturin omistusoikeutesi peruutetaan, ja anturin asetukset, kuten nimi, taustakuva, kalibrointiasetukset ja hälytysasetukset poistetaan. Poiston jälkeen joku toinen voi ottaa anturin omistukseensa. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
+    <string name="remove_cloud_history_description">Haluan myös poistaa anturihistoriatiedot Ruuvi Cloudista.</string>
+    <string name="remove_cloud_history_title">Poista pilvihistoria</string>
     <string name="remove_local_sensor">Haluatko varmasti poistaa tämän anturin?</string>
+    <string name="remove_local_sensor_description">Jos poistat tämän anturin, paikallisesti tallennettu mittaushistoria ja kaikki tähän anturiin liittyvät asetukset, kuten nimi, taustakuva, kalibrointiasetukset ja hälytysasetukset poistetaan.\n\nVoit lisätä tämän anturin myöhemmin uudelleen tarvittaessa.</string>
     <string name="remove_shared_sensor">Poistamisesta ilmoitetaan anturin omistajalle ja anturin tietojen lukuoikeus päättyy.</string>
+    <string name="remove_shared_sensor_description">Jos poistat tämän jaetun anturin, anturin omistajalle lähetetään ilmoitus poistosta, etkä voi enää käyttää anturia.\n\nMenetät myös kaikki tähän anturiin liittyvät anturin asetukset, kuten nimen, taustakuvan ja asetetut hälytykset.</string>
     <string name="remove_this_sensor">Poista tämä anturi</string>
     <string name="rename">Nimeä uudelleen</string>
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
@@ -418,6 +442,8 @@
     <string name="sensor_shared">Jaettu</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Sisäänkirjautumalla saat useita etuja. Asetukset tallennetaan turvallisesti tilillesi:</string>
     <string name="settings">Asetukset</string>
+    <string name="settings_alert_limit_notification">Rajoita hälytysilmoituksia</string>
+    <string name="settings_alert_limit_notification_description">Näytä Bluetooth-hälytysilmoitus vain kerran tunnissa, vaikka hälytys laukeaisi useammin.</string>
     <string name="settings_alert_notifications">Hälytysilmoitukset</string>
     <string name="settings_and_alerts">Asetukset \u0026 hälytykset</string>
     <string name="settings_appearance">Sovelluksen ulkoasuasetukset</string>
@@ -449,6 +475,7 @@
     <string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 10 päivää.</string>
     <string name="settings_data_forwarding">Välityspalvelimen asetukset</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
+    <string name="settings_developer">Kehittäjäasetukset</string>
     <string name="settings_experimental">Kokeelliset ominaisuudet</string>
     <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
     <string name="settings_gateway_details_link">ohjesivulta.</string>
@@ -467,6 +494,7 @@
     <string name="settings_temperature_unit">Lämpötilayksikkö</string>
     <string name="settings_temperature_unit_details">Valitse sovelluksessa käytettävä lämpötilayksikkö.</string>
     <string name="share">Jaa</string>
+    <string name="share_pending_message">Jako onnistui! Tämä sähköpostiosoite ei ole vielä liitetty Ruuvi-tiliin. Kutsu ilmaisen tilin luomiseen on lähetetty. Kun tili on luotu, näet sen jakolistanäkymässä.</string>
     <string name="share_sensor_add_friend">Lisää ystävä</string>
     <string name="share_sensor_already_shared">Olet käyttänyt %1$,d/%2$,d tämän anturin enimmäisjakomäärästä. Anturi on jaettu seuraaville käyttäjille:</string>
     <string name="share_sensor_description">Voit jakaa tämän anturin ystäville tai perheenjäsenille, mikäli laite on Ruuvi Gateway -reitittimen kuuluvuusalueella.\n\nVastaanottaja saa jakamisesta ilmoituksen sähköpostilla. Ilmainen Ruuvi-tili luodaan ensimmäisen sisäänkirjautumisen yhteydessä, mikäli vastaanottajalla ei ole vielä Ruuvi-tiliä.\n\nAnturin nimi ja taustakuva jaetaan vastaanottajalle vain kertaalleen. Sen jälkeen kumpikin voivat muokata vain omia anturiasetuksiaan. Kalibrointiarvot (mikäli käytössä) synkronoidaan automaattisesti jaetuille antureille ja vastaanottaja näkee vain lopulliset korjatut arvot.</string>
@@ -476,7 +504,7 @@
     <string name="shared_to_x">Jaettu %1$,d/%2$,d</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Hyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
-    <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan. Kirjaudu syöttämällä se tähän:</string>
+    <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan %1$s. Kirjaudu syöttämällä se tähän:</string>
     <string name="sign_in_code_hint">Koodi</string>
     <string name="sign_in_continue">Jatka</string>
     <string name="sign_in_email_sent">Sähköposti lähetetty</string>
@@ -545,6 +573,7 @@
     <string name="updated">Päivitetty %1$s</string>
     <string name="updating">Päivitetään...</string>
     <string name="use_dev_server">Käytä dev-palvelinta</string>
+    <string name="use_dev_server_description">Ota muutokset käyttöön yksinkertaisesti synkronoimalla koontinäytöllä tai odota seuraavaa synkronointia.</string>
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>

@@ -1,26 +1,36 @@
 package com.ruuvi.station.tagsettings.ui
 
+import android.app.Activity
 import android.content.*
 import android.os.*
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.app.TaskStackBuilder
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.tagsettings.di.RemoveSensorViewModelArgs
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -44,6 +54,17 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     private var timer: Timer? = null
 
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
+        { slideIntoContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+            animationSpec = tween(600)
+        ) }
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
+        { slideOutOfContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Right,
+            animationSpec = tween(600)
+        ) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,21 +74,75 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
-                var showExportDialog by remember {mutableStateOf(false)}
+                val navController = rememberNavController()
+                var title: String by rememberSaveable { mutableStateOf("") }
+                val activity = LocalContext.current as Activity
+
+                LaunchedEffect(navController) {
+                    navController.currentBackStackEntryFlow.collect { backStackEntry ->
+                        title = SensorSettingsRoutes.getTitleByRoute(
+                            activity,
+                            backStackEntry.destination.route ?: ""
+                        )
+                    }
+                }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     backgroundColor = RuuviStationTheme.colors.background,
-                    topBar = { RuuviTopAppBar(
-                        title = stringResource(id = R.string.sensor_settings))
+                    topBar = {
+                        RuuviTopAppBar(
+                            title = title
+                        )
                     },
                     scaffoldState = scaffoldState
                 ) { paddingValues ->
-                    SensorSettings(
-                        scaffoldState = scaffoldState,
-                        viewModel = viewModel,
-                        alarmsViewModel = alarmsViewModel
-                    )
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                    ) {
+                        composable(
+                            SensorSettingsRoutes.SENSOR_SETTINGS_ROOT,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = tween(600)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    animationSpec = tween(600)
+                                )
+                            },
+                        ) {
+                            SensorSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = viewModel,
+                                onNavigate = navController::navigate,
+                                alarmsViewModel = alarmsViewModel
+                            )
+                        }
+                        composable(
+                            route = SensorSettingsRoutes.SENSOR_REMOVE,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            val removeSensorViewModel: RemoveSensorViewModel by viewModel() {
+                                intent.getStringExtra(TAG_ID)?.let {
+                                    RemoveSensorViewModelArgs(it)
+                                }
+                            }
+                            RemoveSensor(
+                                scaffoldState = scaffoldState,
+                                viewModel = removeSensorViewModel,
+                                onNavigate = navController::navigate
+                            )
+                        }
+                    }
+
+
                 }
 
                 SideEffect {
@@ -77,7 +152,6 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 }
             }
         }
-
     }
 
     override fun onResume() {

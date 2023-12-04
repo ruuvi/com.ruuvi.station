@@ -24,6 +24,10 @@
     <string name="alarm_mute_for_hour">Mute for an hour</string>
     <string name="alarm_notification_disable">Disable this alarm</string>
     <string name="alert">Alert</string>
+    <string name="alert_cloud_connection_description">Alert if sensor data hasn\'t been updated to the cloud for longer than %1$,d minutes.</string>
+    <string name="alert_cloud_connection_dialog_description">Enter the desired delay to be used in minutes before alert is triggered. Minimum value is 2 minutes.</string>
+    <string name="alert_cloud_connection_dialog_title">Set cloud connection alert</string>
+    <string name="alert_cloud_connection_title">Cloud Connection</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Set humidity alert</string>
@@ -37,6 +41,7 @@
     <string name="alert_notification_humidity_low">Air Humidity is too low!</string>
     <string name="alert_notification_humidity_low_threshold">Air Humidity is below %1$s</string>
     <string name="alert_notification_movement">Movement detected!</string>
+    <string name="alert_notification_offline_message">Sensor has been offline over %1$s minutes</string>
     <string name="alert_notification_pressure_high">Air Pressure is too high!</string>
     <string name="alert_notification_pressure_high_threshold">Air Pressure is above %1$s</string>
     <string name="alert_notification_pressure_low">Air Pressure is too low!</string>
@@ -52,6 +57,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$s or more than %2$s</string>
     <string name="alerts">Alerts</string>
+    <string name="all">All</string>
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="already_signed_in">Great! You already signed in!</string>
@@ -108,6 +114,9 @@
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
     <string name="changelog">(changelog)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Average: %3$,.2f</string>
+    <string name="chart_stat_hide">Hide min/max/avg</string>
+    <string name="chart_stat_show">Show min/max/avg</string>
     <string name="chart_view_period_days_count">Number of days: %1$s</string>
     <string name="charts_background_dialog_description">Charts feature works best with background scanning enabled.</string>
     <string name="charts_background_dialog_title_question">Would you like to enable Bluetooth background scanning?</string>
@@ -196,6 +205,8 @@
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
     <string name="dfu_update_do_not_close_app">Do not close the app or power off the sensor during the update.</string>
+    <string name="dialog_are_you_sure">Are you sure?</string>
+    <string name="dialog_operation_undone">This operation cannot be undone.</string>
     <string name="disconnected">Disconnected</string>
     <string name="do_not_show_again">Don\'t show this again</string>
     <string name="do_you_own_sensor">Do you own this sensor?</string>
@@ -254,6 +265,12 @@
     <string name="help_troubleshooting_text">Find help using the Ruuvi Station apps, Ruuvi products and Ruuvi Cloud service from our support center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Troubleshooting</string>
     <string name="history_view">History view</string>
+    <string name="hour">Hour</string>
+    <string name="hour_1">1 hour</string>
+    <string name="hour_12">12 hours</string>
+    <string name="hour_2">2 hours</string>
+    <string name="hour_3">3 hours</string>
+    <string name="hour_x">%1$s hours</string>
     <string name="hours">Hours</string>
     <string name="humidity">Humidity</string>
     <string name="humidity_absolute_name">Absolute (g/m³)</string>
@@ -318,6 +335,7 @@
     <string name="nfc_dialog_mac_address">Mac Address:</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Unique ID:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Enable Bluetooth and scan sensor to add it</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
     <string name="no_data_10_days">No data during the last 10 days</string>
@@ -359,6 +377,7 @@
     <string name="open_sensor_view">Open sensor view</string>
     <string name="open_settings">Open settings</string>
     <string name="owner_none">No owner</string>
+    <string name="owners_plan">Owner\'s Ruuvi Plan</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
@@ -393,8 +412,13 @@
     <string name="reading_history_x">Reading Bluetooth: %1$s</string>
     <string name="remove">Remove</string>
     <string name="remove_claimed_sensor">By removing the sensor, your sensor ownership status will be revoked. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
+    <string name="remove_claimed_sensor_description">By removing the sensor, your sensor ownership status will be revoked and sensor settings, such as name, background image, calibration settings and alert settings will be removed. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
+    <string name="remove_cloud_history_description">I also want to remove sensor history data from Ruuvi Cloud.</string>
+    <string name="remove_cloud_history_title">Remove cloud history</string>
     <string name="remove_local_sensor">Do you want to remove the sensor? You can add it again later, if needed.</string>
+    <string name="remove_local_sensor_description">If you choose to remove this sensor, it will result in the deletion of your locally stored measurement history, along with the removal of any related sensor settings like name, background image, calibration, and alert configurations.\n\nYou can add this sensor later again, if needed.</string>
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.</string>
+    <string name="remove_shared_sensor_description">If you choose to remove this shared sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.\n\nYou will also lose any related sensor settings like name, background image and alert configurations.</string>
     <string name="remove_this_sensor">Remove this sensor</string>
     <string name="rename">Rename</string>
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>
@@ -419,6 +443,8 @@
     <string name="sensor_shared">Shared</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Signing in to the app has many advantages. Settings will be safely stored to your account:</string>
     <string name="settings">Settings</string>
+    <string name="settings_alert_limit_notification">Limit alert notifications</string>
+    <string name="settings_alert_limit_notification_description">Trigger Bluetooth alert notification only once per hour even if alert was retriggered.</string>
     <string name="settings_alert_notifications">Alert Notifications</string>
     <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="settings_appearance">Appearance</string>
@@ -469,6 +495,7 @@
     <string name="settings_temperature_unit">Temperature Unit</string>
     <string name="settings_temperature_unit_details">Choose the temperature unit you want to be displayed.</string>
     <string name="share">Share</string>
+    <string name="share_pending_message">Shared successfully! This email address isn\'t linked to a Ruuvi account yet. An invite to create a free account has been sent. Once created, you\'ll see it in the sharee listing.</string>
     <string name="share_sensor_add_friend">Add friend</string>
     <string name="share_sensor_already_shared">You have used %1$,d/%2$,d of maximum shares of this sensor. The sensor has been shared to following users:</string>
     <string name="share_sensor_description">You can share the sensor with friends and family if it\'s in range of a Ruuvi Gateway.\n\nReceiver will be notified by email. If the receiver doesn\'t have a Ruuvi account, a free Ruuvi account will automatically be created at first log in.\n\nNote that the sensor\'s custom name and background image will be shared. The name and image sync is one time only, and after this, they can be privately customised by the receiver. Offset values (if any) set by the owner, will be automatically synced, and the receiver will always see the final corrected values.</string>
@@ -478,7 +505,7 @@
     <string name="shared_to_x">Shared to %1$,d/%2$,d</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_in_benefits_description">Benefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored on the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
-    <string name="sign_in_check_email">We\'ve sent a one-time password to your email. Sign in by entering it here:</string>
+    <string name="sign_in_check_email">We\'ve sent a one-time password to your email %1$s. Sign in by entering it here:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_continue">Continue</string>
     <string name="sign_in_email_sent">Email sent</string>
