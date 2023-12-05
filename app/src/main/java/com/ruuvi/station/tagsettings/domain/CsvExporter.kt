@@ -42,13 +42,13 @@ class CsvExporter(
         val cacheDir = File(context.cacheDir.path + "/export/")
         cacheDir.mkdirs()
 
-        val filenameDateFormat = SimpleDateFormat("yyyyMMdd-HHmm")
-        val filenameDate = filenameDateFormat.format(Date())
+        val filenameDate = SimpleDateFormat("yyyyMMdd").format(Date())
+        val filenameTime = SimpleDateFormat("HHmmssZ").format(Date())
 
         val filename = if (sensorSettings?.name.isNullOrEmpty()) {
-            "$cacheDir/${tag?.id}_${filenameDate}.csv"
+            "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.csv"
         } else {
-            "$cacheDir/${sensorSettings?.name}_${filenameDate}.csv"
+            "$cacheDir/${sensorSettings?.name}_${filenameDate}T${filenameTime}.csv"
         }
 
         val csvFile = File(filename)
