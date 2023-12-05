@@ -177,6 +177,7 @@
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
     <string name="dashboard_enabled">La vue du tableau de bord est activée.</string>
     <string name="dashboard_no_sensors_message">Il semble que vous n\'ayez pas encore ajouté de capteurs Ruuvi.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Vous n\'êtes pas connecté.\n\nSi vous avez un compte et que vous y avez déjà ajouté des capteurs Ruuvi, ils se synchroniseront automatiquement avec l\'application mobile Ruuvi Station lorsque vous vous connecterez.</string>
     <string name="data_format">Format des données</string>
     <string name="data_forwarding_background_location_message_bloked">Veuillez autoriser l\'accès aux données de localisation</string>
     <string name="data_forwarding_background_location_message_first">Cette fonctionnalité nécessite l\'accès à la position de l\'appareil. Veuillez donner les autorisations nécessaires depuis les réglages de l\'appareil et choisir la précision de la localisation.</string>

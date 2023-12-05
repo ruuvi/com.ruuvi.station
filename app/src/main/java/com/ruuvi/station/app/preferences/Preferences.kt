@@ -247,6 +247,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
         }
 
+    var signedInOnce: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SIGNED_IN_ONCE, false)
+        set(signedIn) {
+            sharedPreferences.edit().putBoolean(PREF_SIGNED_IN_ONCE, signedIn).apply()
+        }
+
     var lastSyncDate: Long
         get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
         set(syncDate) {
@@ -437,6 +443,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
         private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
         private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
+        private const val PREF_SIGNED_IN_ONCE = "pref_signed_in_once"
 
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"

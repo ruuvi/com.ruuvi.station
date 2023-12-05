@@ -177,6 +177,7 @@
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
     <string name="dashboard_enabled">Die Dashboard-Ansicht ist aktiviert.</string>
     <string name="dashboard_no_sensors_message">Scheint, als hätten Sie noch keine Ruuvi-Sensoren hinzugefügt.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Sie sind nicht angemeldet.\n\nWenn Sie ein Konto haben und diesem bereits Ruuvi-Sensoren hinzugefügt haben, werden diese automatisch mit der mobilen Ruuvi Station-App synchronisiert, wenn Sie sich anmelden.</string>
     <string name="data_format">Datei Format</string>
     <string name="data_forwarding_background_location_message_bloked">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um die Koordinaten einzuschließen.</string>
     <string name="data_forwarding_background_location_message_first">Diese Funktion erfordert eine Standortberechtigung. Um Ihre Standortkoordinaten einzubeziehen, wählen Sie bitte aus, ob Sie einen genauen oder ungefähren Standort wünschen und erlauben Sie den Zugriff während der Verwendung der App, wenn Sie im nächsten Dialog dazu aufgefordert werden.</string>
