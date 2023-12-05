@@ -178,6 +178,7 @@
     <string name="dashboard_empty">Your dashboard \nis empty</string>
     <string name="dashboard_enabled">Dashboard view is enabled. </string>
     <string name="dashboard_no_sensors_message">Seems that you don\'t have any Ruuvi sensors added yet.</string>
+    <string name="dashboard_no_sensors_message_signed_out">You are not signed in.\n\nIf you have an account and have already added Ruuvi sensors to it, they will automatically synchronise with Ruuvi Station mobile app when you sign in.</string>
     <string name="data_format">Data Format</string>
     <string name="data_forwarding_background_location_message_bloked">Please enable location permission in Settings to include coordinates</string>
     <string name="data_forwarding_background_location_message_first">This feature requires a location permission. In order to include your location coordinates, please select if you want precise or approximate location and allow access while using the app when prompted in the next dialog.</string>

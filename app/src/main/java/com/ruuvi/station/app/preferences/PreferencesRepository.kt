@@ -294,4 +294,7 @@ class PreferencesRepository(
     fun setLimitLocalAlerts(value: Boolean) {
         preferences.limitLocalAlerts = value
     }
+
+    fun getSignedInOnce(): Boolean =
+        preferences.signedInOnce
 }

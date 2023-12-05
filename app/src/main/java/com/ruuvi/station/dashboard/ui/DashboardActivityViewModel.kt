@@ -49,6 +49,8 @@ class DashboardActivityViewModel(
     private val _dataRefreshing = MutableStateFlow<Boolean>(false)
     val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
+    val signedInOnce: StateFlow<Boolean> = MutableStateFlow<Boolean>(preferencesRepository.getSignedInOnce())
+
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
     val shouldAskNotificationPermission

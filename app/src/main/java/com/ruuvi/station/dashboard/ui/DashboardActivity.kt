@@ -116,6 +116,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val scope = rememberCoroutineScope()
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
+                val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val sensors by remember(dashboardViewModel.tagsFlow, lifecycleOwner) {
                     dashboardViewModel.tagsFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 }.collectAsState(null)
@@ -231,7 +232,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         ) {
                             sensors?.let {
                                 if (it.isEmpty()) {
-                                    EmptyDashboard() {
+                                    EmptyDashboard(
+                                        signedIn,
+                                        signedInOnce
+                                    ) {
                                         openUrl(getString(R.string.buy_sensors_link))
                                     }
                                 } else {
@@ -297,7 +301,11 @@ class DashboardActivity : NfcActivity(), KodeinAware {
 }
 
 @Composable
-fun EmptyDashboard(buySensors: () -> Unit) {
+fun EmptyDashboard(
+    signedIn: Boolean,
+    signedInOnce: Boolean,
+    buySensors: () -> Unit
+) {
     val context = LocalContext.current
 
     Card(
@@ -319,14 +327,29 @@ fun EmptyDashboard(buySensors: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
-                style = RuuviStationTheme.typography.onboardingSubtitle,
-                color = colors.primary,
-                text = stringResource(id = R.string.dashboard_no_sensors_message),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+            if (!signedIn && signedInOnce) {
+                Text(
+                    modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+                    style = RuuviStationTheme.typography.onboardingSubtitle,
+                    color = colors.primary,
+                    text = stringResource(id = R.string.dashboard_no_sensors_message_signed_out),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+                RuuviButton(text = stringResource(id = R.string.sign_in)) {
+                    SignInActivity.start(context)
+                }
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+            } else {
+                Text(
+                    modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+                    style = RuuviStationTheme.typography.onboardingSubtitle,
+                    color = colors.primary,
+                    text = stringResource(id = R.string.dashboard_no_sensors_message),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+            }
             RuuviButton(text = stringResource(id = R.string.add_your_first_sensor)) {
                 AddTagActivity.start(context)
             }

@@ -177,6 +177,7 @@
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="dashboard_enabled">Koontinäyttö käytössä. </string>
     <string name="dashboard_no_sensors_message">Sinulla ei ole vielä Ruuvi-antureita sovelluksessa.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Et ole kirjautunut sisään.\n\nJos sinulla on tili ja olet jo lisännyt tilille Ruuvi-antureita, ne synkronoituvat automaattisesti Ruuvi Station -mobiilisovellukseen kirjautuessasi sisään.</string>
     <string name="data_format">Dataformaatti</string>
     <string name="data_forwarding_background_location_message_bloked">Salli sijaintitietojen käyttö päätelaitteesi asetuksissa sisällyttääksesi koordinaatit lähetykseen</string>
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>

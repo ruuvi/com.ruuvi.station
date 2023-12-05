@@ -177,6 +177,7 @@
     <string name="dashboard_empty">Översikt vyn är tom</string>
     <string name="dashboard_enabled">Översiksvyn är aktiverad. </string>
     <string name="dashboard_no_sensors_message">Det verkar som om du inte har några Ruuvi-sensorer tillagda ännu.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Du är inte inloggad.\n\nOm du har ett konto och redan har lagt till Ruuvi-sensorer till det, synkroniseras de automatiskt med Ruuvi Stations mobilapp när du loggar in.</string>
     <string name="data_format">Dataformat</string>
     <string name="data_forwarding_background_location_message_bloked">Aktivera platsbehörighet i Inställningar för att inkludera koordinater</string>
     <string name="data_forwarding_background_location_message_first">Den här funktionen kräver platsbehörighet. För att inkludera dina platskoordinater, välj om du vill ha exakt eller ungefärlig plats och tillåt åtkomst medan du använder appen när du uppmanas till det i nästa dialogruta.</string>
