@@ -6,7 +6,7 @@ import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.bluetooth.FoundRuuviTag
 import com.ruuvi.station.database.domain.LocalDatabase
-import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.util.MacAddressUtils
 import java.util.*
 
 @Table(
@@ -93,7 +93,7 @@ data class RuuviTagEntity(
         updateAt = reading.createdAt
     )
 
-    fun displayName(): String = "Ruuvi ${id?.takeLast(5)?.removeRange(2,3)}"
+    fun displayName(): String = id?.let { MacAddressUtils.getDefaultName(it) } ?: ""
 
     fun preserveData(tag: RuuviTagEntity) {
         tag.favorite = favorite

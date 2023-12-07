@@ -8,6 +8,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
 
 class TagInteractor constructor(
@@ -57,6 +58,9 @@ class TagInteractor constructor(
         }
     }
 
-    fun updateTagName(sensorId: String, sensorName: String?) =
-        sensorSettingsRepository.updateSensorName(sensorId, sensorName)
+    fun updateTagName(sensorId: String, sensorName: String?) {
+        val name =
+            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId) else sensorName
+        sensorSettingsRepository.updateSensorName(sensorId, name)
+    }
 }

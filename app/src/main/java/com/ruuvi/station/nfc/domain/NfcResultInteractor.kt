@@ -5,6 +5,7 @@ import android.nfc.NfcManager
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.util.MacAddressUtils
 
 class NfcResultInteractor(
     val context: Context,
@@ -31,7 +32,7 @@ class NfcResultInteractor(
         } else {
             return NfcScanResponse(
                 id = info.id,
-                name = "Ruuvi ${info.mac.takeLast(5).removeRange(2, 3)}",
+                name = MacAddressUtils.getDefaultName(info.mac),
                 sensorId = info.mac,
                 firmware = info.sw,
                 existingSensor = false,

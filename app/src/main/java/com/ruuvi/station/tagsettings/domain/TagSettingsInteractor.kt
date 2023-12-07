@@ -12,6 +12,7 @@ import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
 import java.io.File
 
@@ -50,8 +51,11 @@ class TagSettingsInteractor(
         }
     }
 
-    fun updateTagName(sensorId: String, sensorName: String?) =
-        sensorSettingsRepository.updateSensorName(sensorId, sensorName)
+    fun updateTagName(sensorId: String, sensorName: String?) {
+        val name =
+            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId) else sensorName
+        sensorSettingsRepository.updateSensorName(sensorId, name)
+    }
 
     fun updateTagBackground(tagId: String, userBackground: String?, defaultBackground: Int?) =
         sensorSettingsRepository.updateSensorBackground(tagId, userBackground, defaultBackground, null)
