@@ -2,6 +2,7 @@ package com.ruuvi.station.tag.domain
 
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.util.MacAddressUtils
 import java.util.Date
 
 data class RuuviTag(
@@ -22,7 +23,9 @@ data class RuuviTag(
     val subscriptionName: String?,
     var firmware: String?,
     val latestMeasurement: SensorMeasurements?
-)
+) {
+    fun getDefaultName(): String = MacAddressUtils.getDefaultName(id)
+}
 
 data class SensorMeasurements(
     val temperatureValue: EnvironmentValue,

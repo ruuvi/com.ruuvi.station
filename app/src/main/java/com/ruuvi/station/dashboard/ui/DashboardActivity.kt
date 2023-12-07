@@ -1054,6 +1054,7 @@ fun DashboardItemDropdownMenu(
     if (setNameDialog) {
         SetSensorName(
             value = sensor.name,
+            defaultName = sensor.getDefaultName(),
             setName = {newName ->
                 setName.invoke(sensor.id, newName)
             }

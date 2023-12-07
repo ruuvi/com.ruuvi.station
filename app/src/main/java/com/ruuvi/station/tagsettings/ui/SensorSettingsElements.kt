@@ -246,6 +246,7 @@ fun GeneralSettingsGroup(
     if (setNameDialog) {
         SetSensorName(
             value = sensorState.name,
+            defaultName = sensorState.getDefaultName(),
             setName = setName,
         ) {
             setNameDialog = false
@@ -257,6 +258,7 @@ fun GeneralSettingsGroup(
 @Composable
 fun SetSensorName(
     value: String?,
+    defaultName: String,
     setName: (String) -> Unit,
     onDismissRequest : () -> Unit
 ) {
@@ -278,6 +280,7 @@ fun SetSensorName(
         ParagraphWithPadding(text = stringResource(id = R.string.rename_sensor_message))
         TextFieldRuuvi(
             value = name,
+            hint = defaultName,
             onValueChange = {
                 if (it.text.length <= 32) name = it
             },

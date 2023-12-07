@@ -15,6 +15,8 @@ class MacAddressUtils {
 
         fun macIsValid(mac: String) = Regex(MAC_PATTERN).matches(mac)
 
+        fun getDefaultName(id: String): String = "Ruuvi ${id.takeLast(5).removeRange(2,3)}"
+
         const val MAC_PATTERN = "^(([\\d,A-F,a-f]){2}:){5}([\\d,A-F,a-f]){2}\$"
         const val MAC_VALUE_GROUPS_PATTERN = "[a-fA-F\\d][a-fA-F\\d]"
     }
