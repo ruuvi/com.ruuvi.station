@@ -33,11 +33,12 @@ class BluetoothGattInteractor (
         setSyncStatus(GattSyncStatus(sensorId, SyncProgress.CONNECTING))
         val found= interactor.readLogs(sensorId, from, object : IRuuviGattListener {
             override fun connected(state: Boolean) {
+                Timber.d("connected $state syncProgress = ${syncStatus.value?.syncProgress}")
                 if (state) {
                     setSyncStatus(GattSyncStatus(sensorId, SyncProgress.CONNECTED))
                     setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_INFO))
                 } else {
-                    if (syncStatus.value?.syncProgress == SyncProgress.SAVING_DATA) {
+                    if (syncStatus.value?.syncProgress == SyncProgress.SAVING_DATA || syncStatus.value?.syncProgress == SyncProgress.DONE) {
                         setSyncStatus(GattSyncStatus(sensorId, SyncProgress.DONE))
                     } else {
                         setSyncStatus(GattSyncStatus(sensorId, SyncProgress.DISCONNECTED))
