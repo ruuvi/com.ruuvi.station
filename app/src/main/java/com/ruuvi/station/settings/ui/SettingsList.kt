@@ -30,7 +30,13 @@ import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.XIAOMI_MANUFACTURER
 import java.util.*
+
+fun shouldShowLanguageSelection(): Boolean {
+    return Build.VERSION.SDK_INT >= TIRAMISU &&
+            Build.MANUFACTURER.uppercase(Locale.getDefault()) != XIAOMI_MANUFACTURER
+}
 
 @Composable
 fun SettingsList(
@@ -57,7 +63,7 @@ fun SettingsList(
     val developerSettings = viewModel.developerFeatures.observeAsState()
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        if (Build.VERSION.SDK_INT >= TIRAMISU) {
+        if (shouldShowLanguageSelection()) {
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.settings_language),
