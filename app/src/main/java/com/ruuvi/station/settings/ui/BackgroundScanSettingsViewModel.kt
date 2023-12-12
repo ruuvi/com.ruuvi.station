@@ -7,6 +7,7 @@ import com.ruuvi.station.app.domain.PowerManagerInterator
 import com.ruuvi.station.app.ui.components.SelectionElement
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
@@ -73,11 +74,5 @@ class BackgroundScanSettingsViewModel(
 
     fun openOptimizationSettings() {
         powerManagerInterator.openOptimizationSettings()
-    }
-
-    companion object {
-        const val SAMSUNG_MANUFACTURER = "SAMSUNG"
-        const val XIAOMI_MANUFACTURER = "XIAOMI"
-        const val HUAWEI_MANUFACTURER = "HUAWEI"
     }
 }
