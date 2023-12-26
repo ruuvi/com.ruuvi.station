@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script is used to update the l10n files in the repository.
 # It is meant to be run by the CI system.
