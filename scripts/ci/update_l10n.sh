@@ -17,15 +17,17 @@ append_xml() {
   local filename=$1
   local ident_android=$2
   local source_string=$3
+  
+  result="$source_string"
 
   # Replace newline characters \\n with \\\\n
   result=$(echo "$source_string" | sed 's/\\\\n/\\\\\\\\n/g')
 
   # Replace single quotes with escaped single quotes
-  result=${source_string//\'/\\\'}
+  result=$(echo "$result" | sed "s/'/\\\\'/g")
 
   # Replace Unicode ampersand with escaped Unicode ampersand
-  result=${result//&/\\u0026}
+  result=$(echo "$result" | sed 's/&/\\\\u0026/g')
 
   # TODO: @rinat-enikeev does not know for what is it. @denisandreev please check
   # https://github.com/ruuvi/station.localization/blob/master/localize.converter.android/src/model/TranslationString.kt#L35-L41
