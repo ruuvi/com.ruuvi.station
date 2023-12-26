@@ -20,6 +20,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         cache: 'gradle'
+
+    - name: Run localization script
+      run: ./scripts/ci/update_l10n.sh
         
     - name: Build bundle
       run: ./gradlew bundleRelease
