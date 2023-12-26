@@ -8,7 +8,7 @@ set -e
 
 # Clone the station localization repository if it does not exist yet
 if [ ! -d "station.localization" ]; then
-  git clone git@github.com:ruuvi/station.localization.git
+  git clone https://github.com/ruuvi/station.localization.git
 fi
 
 json_file="./station.localization/station.localization.json"
@@ -30,12 +30,16 @@ append_xml() {
   # TODO: @rinat-enikeev does not know for what is it. @denisandreev please check
   # https://github.com/ruuvi/station.localization/blob/master/localize.converter.android/src/model/TranslationString.kt#L35-L41
   # and if needed implement it here
-  # while [[ $result =~ \{(.+?)\^(.+?)\} ]]; do
-  #     # Extracting the second group from the regex match
-  #     replacement=${BASH_REMATCH[2]}
-  #     # Replace the first occurrence of the pattern with the second group match
-  #     result=${result/\{${BASH_REMATCH[1]}\^${BASH_REMATCH[2]}\}/$replacement}
-  # done
+  regex='\{[^}]*\^([^}]*)\}'
+
+  while [[ $result =~ $regex ]]; do
+      # Extract the desired part
+      extracted="${BASH_REMATCH[1]}"
+      # The entire matched string is in BASH_REMATCH[0]
+      full_match="${BASH_REMATCH[0]}"
+      # Replace the first occurrence of the full match with the extracted part
+      result="${result/$full_match/$extracted}"
+  done
   
   printf "    <string name=\"%s\">%s</string>\n" "$ident_android" "$result" >> "$filename"
 }
