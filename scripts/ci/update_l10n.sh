@@ -19,7 +19,7 @@ append_xml() {
   local source_string=$3
 
   # Replace newline characters \\n with \\\\n
-  result=${source_string//\\n/\\\\n}
+  result=$(echo "$source_string" | sed 's/\\\\n/\\\\\\\\n/g')
 
   # Replace single quotes with escaped single quotes
   result=${source_string//\'/\\\'}
