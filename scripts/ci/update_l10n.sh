@@ -27,7 +27,7 @@ append_xml() {
   result=$(echo "$result" | sed "s/'/\\\\'/g")
 
   # Replace Unicode ampersand with escaped Unicode ampersand
-  result=$(echo "$result" | sed 's/&/\\\\u0026/g')
+  result=$(echo "$result" | sed 's/&/\\u0026/g')
 
   # TODO: @rinat-enikeev does not know for what is it. @denisandreev please check
   # https://github.com/ruuvi/station.localization/blob/master/localize.converter.android/src/model/TranslationString.kt#L35-L41
