@@ -249,6 +249,7 @@ fun SharedEmailItem(
             title = stringResource(id = R.string.confirm),
             onDismissRequest = { unshareDialog = false },
             onOkClickAction = {
+                unshareDialog = false
                 unshare(email)
             },
             positiveButtonText = stringResource(id = R.string.yes),
