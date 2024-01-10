@@ -81,3 +81,9 @@ jobs:
       with:
         name: appBundle
         path: ${{steps.sign_bundle.outputs.signedFile}}
+
+    - name: Upload localisation
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: localisation
+        path: app/src/main/res/values/strings.xml
