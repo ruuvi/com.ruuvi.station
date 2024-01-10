@@ -350,7 +350,7 @@ fun EmptyDashboard(
                 )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
             }
-            RuuviButton(text = stringResource(id = R.string.add_your_first_sensor)) {
+            RuuviButton(text = stringResource(id = R.string.add_a_sensor)) {
                 AddTagActivity.start(context)
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))

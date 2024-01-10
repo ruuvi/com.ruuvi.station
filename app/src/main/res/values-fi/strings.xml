@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
+    <string name="add_a_sensor">Lisää anturi</string>
     <string name="add_sensor_description">Tällä sivulla näet lähelläsi olevat Ruuvi-anturit, joita ei ole vielä lisätty sovellukseen. Lisää listattu anturi napauttamalla.</string>
     <string name="add_sensor_via_nfc">Voit vaihtoehtoisesti lisätä anturin sovellukseen NFC:llä koskettamalla sitä, mikäli NFC on otettu käyttöön laitteessasi.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
@@ -337,8 +338,8 @@
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
     <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
     <string name="no">Ei</string>
-    <string name="no_data">Ei tietoja</string>
-    <string name="no_data_10_days">Ei tietoja viimeiseltä 10 päivältä</string>
+    <string name="no_data">Ei historiatietoja</string>
+    <string name="no_data_10_days">Ei historiatietoja viimeiseltä 10 päivältä</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="no_password_needed">Tälle osoitteelle luodaan ilmainen tili, jos sinulla ei vielä ole tiliä. Tarvitset kirjautumiseen ainoastaan sähköpostiosoitteen. Pidämme tietosi turvassa.</string>
     <string name="none">ei kirjautunut</string>

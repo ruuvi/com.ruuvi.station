@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Sélectionnez la précision avec laquelle vous souhaitez voir les valeurs de mesure en direct des capteurs dans l\'application. Ce paramètre n\'affecte pas les graphiques d\'historique ni les alertes.</string>
+    <string name="add_a_sensor">Ajouter un capteur</string>
     <string name="add_sensor_description">Cette page montre les capteurs Ruuvi à proximité qui n\'ont pas encore été ajoutés à l\'application. Appuyez sur un capteur pour l\'ajouter.</string>
     <string name="add_sensor_via_nfc">Alternativement, si votre NFC est activé, vous pouvez ajouter un capteur à l\'aide de NFC en le touchant avec votre téléphone.</string>
     <string name="add_tag_not_found">Aucun capteur détecté</string>

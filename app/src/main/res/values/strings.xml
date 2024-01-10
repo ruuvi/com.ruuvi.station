@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Select how accurately you\'d like to see the sensors\' live measurement values in the app. This setting doesn\'t affect history charts or alerts.</string>
+    <string name="add_a_sensor">Add a Sensor</string>
     <string name="add_sensor_description">This page shows nearby Ruuvi sensors not yet added to the app. Tap a sensor to add it.</string>
     <string name="add_sensor_via_nfc">Alternatively, if your NFC is enabled, you can add a sensor using NFC by touching it with your phone.</string>
     <string name="add_tag_not_found">No sensors found</string>

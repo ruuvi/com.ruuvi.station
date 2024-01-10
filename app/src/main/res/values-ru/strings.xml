@@ -11,6 +11,7 @@
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="add_a_sensor">Добавить датчик</string>
     <string name="add_sensor_description">Здесь показаны датчики Ruuvi, которые еще не были добавлены в приложение. Нажмите на сенсор, чтобы добавить его.</string>
     <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>

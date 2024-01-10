@@ -5,6 +5,7 @@
     <string name="acceleration_x">Przyspieszenie X</string>
     <string name="acceleration_y">Przyspieszenie Y</string>
     <string name="acceleration_z">Przyspieszenie Z</string>
+    <string name="add_a_sensor">Dodaj czujnik</string>
     <string name="add_sensor_description">Ta strona pokazuje pobliskie czujniki Ruuvi, które nie zostały jeszcze dodane do aplikacji. Stuknij czujnik, aby go dodać.</string>
     <string name="add_sensor_via_nfc">Alternatywnie, jeśli Twoja funkcja NFC jest włączona, możesz dodać czujnik za pomocą NFC, dotykając go telefonem.</string>
     <string name="add_tag_not_found">Nie wykryto czujników</string>
