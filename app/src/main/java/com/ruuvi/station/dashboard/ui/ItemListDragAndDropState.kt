@@ -38,7 +38,7 @@ fun Modifier.dragGestureHandler(
             handleOverscrollJob(overscrollJob, scope, itemListDragAndDropState)
         },
         onDragStart = { offset -> itemListDragAndDropState.onDragStart(offset)
-            Timber.d("dragGestureHandler - onDragStart") },
+            Timber.d("dragGestureHandler - onDragStart $offset") },
         onDragEnd = { itemListDragAndDropState.onDragInterrupted()
             Timber.d("dragGestureHandler - onDragEnd") },
         onDragCancel = { itemListDragAndDropState.onDragInterrupted()
@@ -97,11 +97,15 @@ class ItemListDragAndDropState(
 
     // Functions for handling drag gestures
     fun onDragStart(offset: Offset) {
+        for (item in lazyListState.layoutInfo.visibleItemsInfo) {
+            Timber.d("dragGestureHandler - visible item ${item.offset} ${item.size}")
+        }
         lazyListState.layoutInfo.visibleItemsInfo
-            .firstOrNull { item -> offset.y.toInt() in item.offset.y..(item.offset.y + item.size.height) &&
-                    offset.x.toInt() in item.offset.x..(item.offset.x + item.size.width)
+            .firstOrNull { item -> offset.y.toInt() in item.offset.y..(item.offset.y + item.size.height)
+                    && offset.x.toInt() in item.offset.x..(item.offset.x + item.size.width)
             }
             ?.also {
+                Timber.d("dragGestureHandler - currentIndexOfDraggedItem ${it.index}")
                 currentIndexOfDraggedItem = it.index
                 initiallyDraggedElement = it
             }
