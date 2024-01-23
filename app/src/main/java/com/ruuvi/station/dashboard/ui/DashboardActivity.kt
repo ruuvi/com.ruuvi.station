@@ -248,7 +248,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                         dashboardTapAction = dashboardTapAction,
                                         syncCloud = dashboardViewModel::syncCloud,
                                         setName = dashboardViewModel::setName,
-                                        onMove = {from, to -> Timber.d("onMove called $from $to")},
+                                        onMove = dashboardViewModel::moveItem,
                                         refreshing = refreshing
                                     )
                                 }

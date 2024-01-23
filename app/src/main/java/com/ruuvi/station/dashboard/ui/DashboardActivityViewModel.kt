@@ -70,6 +70,10 @@ class DashboardActivityViewModel(
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
 
+    fun moveItem(from: Int, to: Int) {
+
+    }
+
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }

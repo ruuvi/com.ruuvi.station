@@ -135,7 +135,6 @@ class ItemListDragAndDropState(
         return startOffset to endOffset
     }
 
-    // Handle the drag gesture
     fun onDrag(offset: Offset) {
         draggedDistance += IntOffset(offset.x.toInt(), offset.y.toInt())
         val initial = initialOffsets ?: return
@@ -145,11 +144,17 @@ class ItemListDragAndDropState(
         if (hoveredElement != null) {
             val delta = startOffset - hoveredElement.offset
             val isDeltaPositive = delta.x > 0 || delta.y > 0
-            //val isEndOffsetGreater = endOffset > hoveredElement.offsetEnd
+            //val isEndOffsetGreater = endOffset > (hoveredElement.offset + IntOffset(hoveredElement.size.width, hoveredElement.size.height))
 
-//            val validItems = lazyListState.layoutInfo.visibleItemsInfo.filter { item ->
-//                !(item.offsetEnd < startOffset || item.offset > endOffset || hoveredElement.index == item.index)
-//            }
+            val validItems = lazyListState.layoutInfo.visibleItemsInfo.filter { item ->
+                hoveredElement.index != item.index && item.intersects(startOffset) || item.intersects(endOffset)
+                //!(item.offsetEnd < startOffset || item.offset > endOffset || hoveredElement.index == item.index)
+            }
+
+            val targetItem = validItems.sortedBy { it.offset.y }.firstOrNull {
+                true
+            }
+
 //
 //            val targetItem = validItems.firstOrNull {
 //                when {
@@ -158,13 +163,19 @@ class ItemListDragAndDropState(
 //                }
 //            }
 //
-//            if (targetItem != null) {
-//                currentIndexOfDraggedItem.let { current ->
-//                    onMove.invoke(current, targetItem.index)
-//                    currentIndexOfDraggedItem = targetItem.index
-//                }
-//            }
+
+            if (targetItem != null) {
+                currentIndexOfDraggedItem.let { current ->
+                    onMove.invoke(current, targetItem.index)
+                    currentIndexOfDraggedItem = targetItem.index
+                }
+            }
         }
+    }
+
+    fun LazyGridItemInfo.intersects(offset: IntOffset): Boolean {
+        return offset.x >= this.offset.x && offset.x < this.offset.x + this.size.width &&
+                offset.y >= this.offset.y && offset.y < this.offset.y + this.size.height
     }
 
     fun checkForOverScroll(): Float {
