@@ -297,4 +297,11 @@ class PreferencesRepository(
 
     fun getSignedInOnce(): Boolean =
         preferences.signedInOnce
+
+    fun getSortedSensors(): List<String> =
+        preferences.sortedSensors
+
+    fun setSortedSensors(sortedSensors: List<String>) {
+        preferences.sortedSensors = sortedSensors
+    }
 }
