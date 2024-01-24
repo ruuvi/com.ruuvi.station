@@ -22,4 +22,10 @@ class SensorsSortingInteractor (
         sortedResult.addAll(originalList)
         return sortedResult
     }
+
+    fun newOrder(sensorIds: List<String>) {
+        preferences.setSortedSensors(sensorIds)
+    }
+
+
 }

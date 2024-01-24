@@ -6,6 +6,7 @@ import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
@@ -24,7 +25,8 @@ class DashboardActivityViewModel(
     private val permissionLogicInteractor: PermissionLogicInteractor,
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val networkSignInInteractor: NetworkSignInInteractor,
-    private val nfcResultInteractor: NfcResultInteractor
+    private val nfcResultInteractor: NfcResultInteractor,
+    private val sortingInteractor: SensorsSortingInteractor
 ) : ViewModel() {
 
     val tagsFlow: Flow<List<RuuviTag>> = flow {
@@ -71,6 +73,9 @@ class DashboardActivityViewModel(
     }
 
     fun moveItem(from: Int, to: Int) {
+        val currentList = tagInteractor.getTags()
+        val swapped = currentList.swap(from, to)
+        sortingInteractor.newOrder(swapped.map { it.id })
 
     }
 
