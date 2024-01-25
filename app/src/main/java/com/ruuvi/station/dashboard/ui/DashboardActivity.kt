@@ -119,12 +119,11 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
-                val sensors by remember(dashboardViewModel.tagsFlow, lifecycleOwner) {
-                    dashboardViewModel.tagsFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                }.collectAsState(null)
+                val sensors by dashboardViewModel.sensorsList.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
+                val dragDropListState = rememberDragDropListState(onMove = dashboardViewModel::moveItem)
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -249,7 +248,8 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                         syncCloud = dashboardViewModel::syncCloud,
                                         setName = dashboardViewModel::setName,
                                         onMove = dashboardViewModel::moveItem,
-                                        refreshing = refreshing
+                                        refreshing = refreshing,
+                                        dragDropListState = dragDropListState
                                     )
                                 }
                             }
@@ -271,6 +271,16 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         color = Color.Transparent,
                         darkIcons = !isDarkTheme
                     )
+                }
+
+                LaunchedEffect(key1 = true) {
+                    while (true) {
+                        if (!dragDropListState.isDragInProgress) {
+                            Timber.d("Refreshing dashboard")
+                            dashboardViewModel.refreshSensors()
+                        }
+                        delay(1000)
+                    }
                 }
             }
         }
@@ -380,6 +390,7 @@ fun DashboardItems(
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
     onMove: (Int, Int) -> Unit,
+    dragDropListState: ItemListDragAndDropState,
     refreshing: Boolean
 ) {
     val itemHeight = 156.dp * LocalDensity.current.fontScale
@@ -393,7 +404,6 @@ fun DashboardItems(
 
     val coroutineScope = rememberCoroutineScope()
     val overscrollJob = remember { mutableStateOf<Job?>(null) }
-    val dragDropListState = rememberDragDropListState(onMove = onMove)
 
     val pullToRefreshModifier = if (userEmail.isNullOrEmpty()) {
         Modifier
@@ -473,15 +483,13 @@ fun DashboardItem(
             modifier = Modifier
                 .height(itemHeight)
                 .fillMaxWidth()
-//                .clickableSingle {
-//                    SensorCardActivity.start(
-//                        context,
-//                        sensor.id,
-//                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-//                    )
-//                }
-                    ,
-
+                .clickableSingle {
+                    SensorCardActivity.start(
+                        context,
+                        sensor.id,
+                        dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    )
+                },
             shape = RoundedCornerShape(10.dp),
             elevation = 0.dp,
             backgroundColor = RuuviStationTheme.colors.dashboardCardBackground

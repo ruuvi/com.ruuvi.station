@@ -16,6 +16,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
@@ -29,12 +30,8 @@ class DashboardActivityViewModel(
     private val sortingInteractor: SensorsSortingInteractor
 ) : ViewModel() {
 
-    val tagsFlow: Flow<List<RuuviTag>> = flow {
-        while (true) {
-            emit(tagInteractor.getTags())
-            delay(1000)
-        }
-    }.flowOn(Dispatchers.IO)
+    private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
+    val sensorsList: StateFlow<List<RuuviTag>> = _sensorsList
 
     private var _dashBoardType =
         MutableStateFlow<DashboardType>(preferencesRepository.getDashboardType())
@@ -73,10 +70,42 @@ class DashboardActivityViewModel(
     }
 
     fun moveItem(from: Int, to: Int) {
-        val currentList = tagInteractor.getTags()
+        val currentList = _sensorsList.value.toMutableList()
         val swapped = currentList.swap(from, to)
         sortingInteractor.newOrder(swapped.map { it.id })
+        _sensorsList.value = swapped
 
+        val sortingOrder = preferencesRepository.getSortedSensors()
+
+        for (sens in sortingOrder) {
+            Timber.d("dragGestureHandler - sortedResult $sens")
+        }
+        Timber.d("dragGestureHandler - sortedResult =========================")
+
+    }
+
+    init {
+        val currentList = preferencesRepository.getSortedSensors()
+
+        for (sens in currentList) {
+            Timber.d("sorting test before $sens")
+        }
+        Timber.d("sorting test =========================")
+
+
+        val swapped = currentList.swap(1, 3)
+        preferencesRepository.setSortedSensors(emptyList())
+        preferencesRepository.setSortedSensors(emptyList())
+        preferencesRepository.setSortedSensors(emptyList())
+        preferencesRepository.getSortedSensors()
+
+        preferencesRepository.setSortedSensors(swapped)
+        val after = preferencesRepository.getSortedSensors()
+
+        for (sens in after) {
+            Timber.d("sorting test after $sens")
+        }
+        Timber.d("sorting test =========================")
     }
 
     fun signOut() {
@@ -120,5 +149,9 @@ class DashboardActivityViewModel(
     fun setName(sensorId: String, name: String?) {
         tagInteractor.updateTagName(sensorId, name)
         networkInteractor.updateSensorName(sensorId)
+    }
+
+    fun refreshSensors() {
+        _sensorsList.value = tagInteractor.getTags()
     }
 }

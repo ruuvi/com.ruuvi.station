@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +18,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.plus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -77,6 +75,8 @@ class ItemListDragAndDropState(
     private var currentIndexOfDraggedItem by mutableIntStateOf(-1)
     private var overscrollJob by mutableStateOf<Job?>(null)
 
+    var isDragInProgress: Boolean = false
+
     // Retrieve the currently dragged element's info
     private val currentElement: LazyGridItemInfo?
         get() = currentIndexOfDraggedItem.let {
@@ -97,6 +97,7 @@ class ItemListDragAndDropState(
 
     // Functions for handling drag gestures
     fun onDragStart(offset: Offset) {
+        isDragInProgress = true
         for (item in lazyListState.layoutInfo.visibleItemsInfo) {
             Timber.d("dragGestureHandler - visible item ${item.offset} ${item.size}")
         }
@@ -113,6 +114,7 @@ class ItemListDragAndDropState(
 
     // Handle interrupted drag gesture
     fun onDragInterrupted() {
+        isDragInProgress = false
         draggedDistance = IntOffset.Zero
         currentIndexOfDraggedItem = -1
         initiallyDraggedElement = null

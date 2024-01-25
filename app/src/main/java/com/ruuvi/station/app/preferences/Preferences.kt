@@ -389,7 +389,7 @@ class Preferences constructor(val context: Context) {
     var sortedSensors: List<String>
         get() = (sharedPreferences.getStringSet(PREF_SORTED_SENSORS, emptySet()) ?: emptySet<String>()).toList()
         set(sortedSensors) {
-            sharedPreferences.edit().putStringSet(PREF_SORTED_SENSORS, sortedSensors.toSet()).apply()
+            sharedPreferences.edit().putStringSet(PREF_SORTED_SENSORS, sortedSensors.toSortedSet()).apply()
         }
 
     fun getUserEmailLiveData() =
