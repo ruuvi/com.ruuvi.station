@@ -13,7 +13,8 @@ object DashboardActivityInjectionModule {
     val module = Kodein.Module(DashboardActivityInjectionModule.javaClass.name) {
 
         bind<DashboardActivityViewModel>() with provider {
-            DashboardActivityViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            DashboardActivityViewModel(instance(), instance(), instance(), instance(), instance(),
+                instance(), instance(), instance(), instance())
         }
 
         bind<SensorsSortingInteractor>() with singleton {

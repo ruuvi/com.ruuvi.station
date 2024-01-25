@@ -84,30 +84,6 @@ class DashboardActivityViewModel(
 
     }
 
-    init {
-        val currentList = preferencesRepository.getSortedSensors()
-
-        for (sens in currentList) {
-            Timber.d("sorting test before $sens")
-        }
-        Timber.d("sorting test =========================")
-
-
-        val swapped = currentList.swap(1, 3)
-        preferencesRepository.setSortedSensors(emptyList())
-        preferencesRepository.setSortedSensors(emptyList())
-        preferencesRepository.setSortedSensors(emptyList())
-        preferencesRepository.getSortedSensors()
-
-        preferencesRepository.setSortedSensors(swapped)
-        val after = preferencesRepository.getSortedSensors()
-
-        for (sens in after) {
-            Timber.d("sorting test after $sens")
-        }
-        Timber.d("sorting test =========================")
-    }
-
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
