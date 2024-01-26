@@ -46,6 +46,7 @@ class SensorsSortingInteractor (
     fun getListOfSortedSensors(): List<String> {
         val listType = object : TypeToken<List<String>>() {}.type
         val sortedSensors = preferences.getSortedSensors()
+        Timber.d("Preferences order: $sortedSensors")
         if (sortedSensors.isEmpty()) {
             return emptyList()
         } else {

@@ -194,7 +194,7 @@ class NetworkApplicationSettings (
     }
 
     private fun applySensorsOrder(settings: NetworkUserSettings) {
-        settings.SENSORS_ORDER?.let {sensorsOrder ->
+        settings.SENSOR_ORDER?.let {sensorsOrder ->
             Timber.d("NetworkApplicationSettings-applySensorsOrder: $sensorsOrder")
             preferencesRepository.setSortedSensors(sensorsOrder)
         }
