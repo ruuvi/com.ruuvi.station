@@ -37,9 +37,9 @@ fun Modifier.dragGestureHandler(
         },
         onDragStart = { offset -> itemListDragAndDropState.onDragStart(offset)
             Timber.d("dragGestureHandler - onDragStart $offset") },
-        onDragEnd = { itemListDragAndDropState.onDragInterrupted()
+        onDragEnd = { itemListDragAndDropState.onDragInterrupted(false)
             Timber.d("dragGestureHandler - onDragEnd") },
-        onDragCancel = { itemListDragAndDropState.onDragInterrupted()
+        onDragCancel = { itemListDragAndDropState.onDragInterrupted(true)
             Timber.d("dragGestureHandler - onDragCancel") }
     )
 }
@@ -63,12 +63,14 @@ private fun handleOverscrollJob(
 @Composable
 fun rememberDragDropListState(
     lazyListState: LazyGridState = rememberLazyGridState(),
-    onMove: (Int, Int) -> Unit): ItemListDragAndDropState {
-    return remember { ItemListDragAndDropState(lazyListState, onMove) }
+    onMove: (Int, Int) -> Unit,
+    onDoneDragging: () -> Unit): ItemListDragAndDropState {
+    return remember { ItemListDragAndDropState(lazyListState, onMove, onDoneDragging) }
 }
 class ItemListDragAndDropState(
     private val lazyListState: LazyGridState,
     private val onMove: (Int, Int) -> Unit,
+    private val onDoneDragging: () -> Unit
 ) {
     private var draggedDistance by mutableStateOf(IntOffset.Zero)
     private var initiallyDraggedElement by mutableStateOf<LazyGridItemInfo?>(null)
@@ -113,12 +115,13 @@ class ItemListDragAndDropState(
     }
 
     // Handle interrupted drag gesture
-    fun onDragInterrupted() {
+    fun onDragInterrupted(canceled: Boolean) {
         isDragInProgress = false
         draggedDistance = IntOffset.Zero
         currentIndexOfDraggedItem = -1
         initiallyDraggedElement = null
         overscrollJob?.cancel()
+        if (!canceled) onDoneDragging.invoke()
     }
 
     // Helper function to calculate start and end offsets

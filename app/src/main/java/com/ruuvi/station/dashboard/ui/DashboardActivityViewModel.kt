@@ -81,7 +81,10 @@ class DashboardActivityViewModel(
             Timber.d("dragGestureHandler - sortedResult $sens")
         }
         Timber.d("dragGestureHandler - sortedResult =========================")
+    }
 
+    fun onDoneDragging() {
+        networkApplicationSettings.updateSensorsOrder()
     }
 
     fun signOut() {

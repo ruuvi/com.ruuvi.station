@@ -123,7 +123,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
-                val dragDropListState = rememberDragDropListState(onMove = dashboardViewModel::moveItem)
+                val dragDropListState = rememberDragDropListState(
+                    onMove = dashboardViewModel::moveItem,
+                    onDoneDragging = dashboardViewModel::onDoneDragging
+                )
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
