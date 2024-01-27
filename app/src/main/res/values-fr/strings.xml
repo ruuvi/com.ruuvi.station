@@ -36,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Définir une alerte sur la puissance du signal</string>
     <string name="alert_dialog_title_temperature">Réglage de l\'alerte de température</string>
     <string name="alert_movement">Mouvement</string>
-    <string name="alert_movement_description">Notifier quand le capteur est déplacé</string>
+    <string name="alert_movement_description">Une alarme de mouvement se déclenche si la valeur du compteur de mouvement interne du capteur change. Cette alarme peut être utilisée, par exemple, pour détecter un mouvement ou une vibration de porte à proximité du capteur.</string>
     <string name="alert_notification_humidity_high">L\'humidité de l\'air est trop haute !</string>
     <string name="alert_notification_humidity_high_threshold">L\'humidité de l\'air est supérieure à %1$s</string>
     <string name="alert_notification_humidity_low">L\'humidité de l\'air est trop basse !</string>
@@ -382,6 +382,7 @@
     <string name="open_history_view">Ouvrir la vue de l\'historique</string>
     <string name="open_sensor_view">Ouvrir la vue du capteur</string>
     <string name="open_settings">Ouvrir les réglages</string>
+    <string name="ordering">Tri</string>
     <string name="owner_none">Pas de propriétaire</string>
     <string name="owners_plan">Plan Ruuvi du propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
@@ -430,6 +431,8 @@
     <string name="rename_sensor_message">Les capteurs sont dans l\'ordre alphabétique.</string>
     <string name="replace_battery">Batterie faible</string>
     <string name="request_code">Demander un code</string>
+    <string name="reset_order">Réinitialiser au tri alphabétique</string>
+    <string name="reset_order_confirmation">Êtes-vous certain de vouloir revenir à la classification alphabétique de la carte du capteur ?</string>
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode nuage lorsque vous souhaitez enregistrer les données de puissance du signal uniquement via la passerelle Ruuvi.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

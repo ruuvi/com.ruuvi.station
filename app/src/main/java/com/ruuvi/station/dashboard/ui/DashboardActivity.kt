@@ -167,7 +167,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                     scope.launch {
                                         scaffoldState.drawerState.open()
                                     }
-                                }
+                                },
+                                clearSensorOrder = dashboardViewModel::clearSensorOrder,
+                                isCustomOrderEnabled = dashboardViewModel::isCustomOrderEnabled
                             )
                         },
                         drawerContent = {

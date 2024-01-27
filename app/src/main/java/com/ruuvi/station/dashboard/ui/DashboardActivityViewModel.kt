@@ -87,6 +87,11 @@ class DashboardActivityViewModel(
         networkApplicationSettings.updateSensorsOrder()
     }
 
+    fun clearSensorOrder() {
+        sortingInteractor.newOrder(emptyList())
+        networkApplicationSettings.updateSensorsOrder()
+    }
+
     fun signOut() {
         networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
@@ -133,4 +138,6 @@ class DashboardActivityViewModel(
     fun refreshSensors() {
         _sensorsList.value = tagInteractor.getTags()
     }
+
+    fun isCustomOrderEnabled() = sortingInteractor.isCustomOrderEnabled()
 }

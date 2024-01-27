@@ -47,7 +47,7 @@ class SensorsSortingInteractor (
         val listType = object : TypeToken<List<String>>() {}.type
         val sortedSensors = preferences.getSortedSensors()
         Timber.d("Preferences order: $sortedSensors")
-        if (sortedSensors.isEmpty()) {
+        if (sortedSensors.isEmpty() || sortedSensors == "null") {
             return emptyList()
         } else {
             return Gson().fromJson(sortedSensors, listType)
@@ -56,5 +56,9 @@ class SensorsSortingInteractor (
 
     fun saveListOfSortedSensors(sortedSensors: List<String>) {
         preferences.setSortedSensors(Gson().toJson(sortedSensors))
+    }
+
+    fun isCustomOrderEnabled(): Boolean {
+        return getListOfSortedSensors().isNotEmpty()
     }
 }
