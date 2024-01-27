@@ -77,6 +77,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -484,29 +485,29 @@ fun DashboardItem(
             }
     ){
 
-        Card(
-            modifier = Modifier
-                .height(itemHeight)
-                .fillMaxWidth()
-                .clickableSingle {
-                    SensorCardActivity.start(
-                        context,
-                        sensor.id,
-                        dashboardTapAction == DashboardTapAction.SHOW_CHART
-                    )
-                },
-            shape = RoundedCornerShape(10.dp),
-            elevation = 0.dp,
-            backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    Modifier
-                        .fillMaxWidth(fraction = 0.25f)
-                        .fillMaxHeight()
-                        .background(color = RuuviStationTheme.colors.defaultSensorBackground)
-                ) {
-                    Timber.d("Image path ${sensor.userBackground} ")
+    Card(
+        modifier = Modifier
+            .height(itemHeight)
+            .fillMaxWidth()
+            .clickableSingle {
+                SensorCardActivity.start(
+                    context,
+                    sensor.id,
+                    SensorCardOpenType.DEFAULT
+                )
+            },
+        shape = RoundedCornerShape(10.dp),
+        elevation = 0.dp,
+        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier
+                    .fillMaxWidth(fraction = 0.25f)
+                    .fillMaxHeight()
+                    .background(color = RuuviStationTheme.colors.defaultSensorBackground)
+            ) {
+                Timber.d("Image path ${sensor.userBackground} ")
 
                     if (sensor.userBackground != null) {
                         val uri = Uri.parse(sensor.userBackground)
@@ -605,7 +606,7 @@ fun DashboardItemSimple(
                 SensorCardActivity.start(
                     context,
                     sensor.id,
-                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    SensorCardOpenType.DEFAULT
                 )
             },
         shape = RoundedCornerShape(10.dp),
@@ -1035,7 +1036,7 @@ fun DashboardItemDropdownMenu(
             onDismissRequest = { threeDotsMenuExpanded = false }
         ) {
             DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id)
+                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
@@ -1044,7 +1045,7 @@ fun DashboardItemDropdownMenu(
             }
 
             DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id, true)
+                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
