@@ -46,8 +46,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
+import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
@@ -77,9 +79,16 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
     private val unitsConverter: UnitsConverter by instance()
 
     private val viewModel: SensorCardViewModel by viewModel {
+        val preferences: PreferencesRepository by kodein.instance()
+        val showChart = when (intent.getSerializableExtra(ARGUMENT_OPEN_TYPE) as? SensorCardOpenType ?: SensorCardOpenType.DEFAULT) {
+            SensorCardOpenType.DEFAULT -> preferences.getDashboardTapAction() == DashboardTapAction.SHOW_CHART
+            SensorCardOpenType.CARD -> false
+            SensorCardOpenType.HISTORY -> true
+        }
+
         SensorCardViewModelArguments(
             intent.getStringExtra(ARGUMENT_SENSOR_ID),
-            intent.getBooleanExtra(ARGUMENT_SHOW_CHART, false),
+            showChart,
         )
     }
 
@@ -127,19 +136,27 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
 
     companion object {
         const val ARGUMENT_SENSOR_ID = "ARGUMENT_SENSOR_ID"
-        const val ARGUMENT_SHOW_CHART = "ARGUMENT_SHOW_CHART"
+        const val ARGUMENT_OPEN_TYPE = "ARGUMENT_OPEN_TYPE"
 
-        fun start(context: Context, sensorId: String, showChart: Boolean = false) {
+        fun start(
+            context: Context,
+            sensorId: String,
+            openType: SensorCardOpenType = SensorCardOpenType.DEFAULT
+        ) {
             val intent = Intent(context, SensorCardActivity::class.java)
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
-            intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
+            intent.putExtra(ARGUMENT_OPEN_TYPE, openType)
             context.startActivity(intent)
         }
 
-        fun startWithDashboard(context: Context, sensorId: String, showChart: Boolean = false) {
+        fun startWithDashboard(
+            context: Context,
+            sensorId: String,
+            openType: SensorCardOpenType = SensorCardOpenType.DEFAULT
+        ) {
             val intent = Intent(context, SensorCardActivity::class.java)
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
-            intent.putExtra(ARGUMENT_SHOW_CHART, showChart)
+            intent.putExtra(ARGUMENT_OPEN_TYPE, openType)
 
             val stackBuilder = TaskStackBuilder.create(context)
             val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
@@ -149,9 +166,15 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             stackBuilder.startActivities()
         }
 
-        fun createPendingIntent(context: Context, sensorId: String, requestCode: Int): PendingIntent? {
+        fun createPendingIntent(
+            context: Context,
+            sensorId: String,
+            requestCode: Int,
+            openType: SensorCardOpenType = SensorCardOpenType.DEFAULT
+        ): PendingIntent? {
             val intent = Intent(context, SensorCardActivity::class.java)
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
+            intent.putExtra(ARGUMENT_OPEN_TYPE, openType)
 
             val stackBuilder = TaskStackBuilder.create(context)
             val intentDashboardActivity = Intent(context, DashboardActivity::class.java)
@@ -162,6 +185,12 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
     }
+}
+
+enum class SensorCardOpenType {
+    DEFAULT,
+    CARD,
+    HISTORY
 }
 
 @OptIn(ExperimentalFoundationApi::class)
