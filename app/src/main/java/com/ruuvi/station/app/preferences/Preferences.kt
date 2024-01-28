@@ -14,7 +14,7 @@ import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
 
-class Preferences constructor(val context: Context) {
+class Preferences (val context: Context) {
 
     private val sharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(
@@ -32,10 +32,10 @@ class Preferences constructor(val context: Context) {
         get() = BackgroundScanModes.fromInt(
             sharedPreferences.getInt(
                 PREF_BACKGROUND_SCAN_MODE,
-                BackgroundScanModes.DISABLED.value
+                BackgroundScanModes.BACKGROUND.value
             )
         )
-            ?: BackgroundScanModes.DISABLED
+            ?: BackgroundScanModes.BACKGROUND
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
         }

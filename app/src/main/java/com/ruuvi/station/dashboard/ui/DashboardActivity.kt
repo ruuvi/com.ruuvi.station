@@ -76,6 +76,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -455,7 +456,7 @@ fun DashboardItem(
                 SensorCardActivity.start(
                     context,
                     sensor.id,
-                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    SensorCardOpenType.DEFAULT
                 )
             },
         shape = RoundedCornerShape(10.dp),
@@ -567,7 +568,7 @@ fun DashboardItemSimple(
                 SensorCardActivity.start(
                     context,
                     sensor.id,
-                    dashboardTapAction == DashboardTapAction.SHOW_CHART
+                    SensorCardOpenType.DEFAULT
                 )
             },
         shape = RoundedCornerShape(10.dp),
@@ -997,7 +998,7 @@ fun DashboardItemDropdownMenu(
             onDismissRequest = { threeDotsMenuExpanded = false }
         ) {
             DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id)
+                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
@@ -1006,7 +1007,7 @@ fun DashboardItemDropdownMenu(
             }
 
             DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id, true)
+                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
                 threeDotsMenuExpanded = false
             }) {
                 com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
