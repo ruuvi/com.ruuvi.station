@@ -336,7 +336,12 @@ fun EmptyDashboard(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-                RuuviButton(text = stringResource(id = R.string.sign_in)) {
+                RuuviButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = RuuviStationTheme.dimensions.extended),
+                    text = stringResource(id = R.string.sign_in)
+                ) {
                     SignInActivity.start(context)
                 }
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
@@ -350,7 +355,12 @@ fun EmptyDashboard(
                 )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
             }
-            RuuviButton(text = stringResource(id = R.string.add_a_sensor)) {
+            RuuviButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended),
+                text = stringResource(id = R.string.add_a_sensor)
+            ) {
                 AddTagActivity.start(context)
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
