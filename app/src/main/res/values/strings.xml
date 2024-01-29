@@ -36,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Set signal strength alert</string>
     <string name="alert_dialog_title_temperature">Set temperature alert</string>
     <string name="alert_movement">Movement</string>
-    <string name="alert_movement_description">Alert when sensor is moved</string>
+    <string name="alert_movement_description">Movement alert is triggered if the value of the sensor\'s internal motion counter changes. This alert can be used, for example, to detect door movement or vibration in the vicinity of the sensor.</string>
     <string name="alert_notification_humidity_high">Air Humidity is too high!</string>
     <string name="alert_notification_humidity_high_threshold">Air Humidity is above %1$s</string>
     <string name="alert_notification_humidity_low">Air Humidity is too low!</string>
@@ -378,6 +378,7 @@
     <string name="open_history_view">Open history view</string>
     <string name="open_sensor_view">Open sensor view</string>
     <string name="open_settings">Open settings</string>
+    <string name="ordering">Ordering</string>
     <string name="owner_none">No owner</string>
     <string name="owners_plan">Owner\'s Ruuvi Plan</string>
     <string name="permission_background_dialog_title">Enable Background Scanning</string>
@@ -426,6 +427,8 @@
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>
     <string name="replace_battery">Low battery</string>
     <string name="request_code">Request Code</string>
+    <string name="reset_order">Reset to alphabetical sorting</string>
+    <string name="reset_order_confirmation">Are you certain you wish to revert the sensor card ordering to alphabetical sorting?</string>
     <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use cloud mode when you want to record signal strength data only via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

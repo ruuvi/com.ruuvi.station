@@ -386,6 +386,12 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
         }
 
+    var sortedSensors: String
+        get() = sharedPreferences.getString(PREF_DASHBOARD_SORTED_SENSORS, "") ?: ""
+        set(sortedSensors) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_SORTED_SENSORS, sortedSensors).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -444,6 +450,7 @@ class Preferences (val context: Context) {
         private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
         private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
         private const val PREF_SIGNED_IN_ONCE = "pref_signed_in_once"
+        private const val PREF_DASHBOARD_SORTED_SENSORS = "pref_dashboard_sorted_sensors"
 
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
