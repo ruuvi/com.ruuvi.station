@@ -19,7 +19,7 @@
     <string name="alert_cloud_connection_dialog_title">Ustaw alarm połączenia z chmurą</string>
     <string name="alert_cloud_connection_title">Połączenie z chmurą</string>
     <string name="alert_movement">Przesunięcia</string>
-    <string name="alert_movement_description">Ostrzeżenie, gdy czujnik jest przesuwany</string>
+    <string name="alert_movement_description">Alarm ruchu jest wyzwalany w przypadku zmiany wartości wewnętrznego licznika ruchu czujnika. Alarm ten można wykorzystać na przykład do wykrycia ruchu drzwi lub wibracji w pobliżu czujnika.</string>
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
     <string name="alert_notification_humidity_low">Zbyt niska wilgotność powietrza!</string>
     <string name="alert_notification_movement">Wykryto przesunięcie!</string>
@@ -207,6 +207,7 @@
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
+    <string name="ordering">Sortowanie</string>
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>
     <string name="permission_dialog_background_request_message">Android wymaga dostępu do lokalizacji w tle, aby skanować znajdujące się w pobliżu urządzenia Bluetooth. \n\nAby użytkować tę funkcję, należy wybrać „zezwalaj zawsze”. \n\nRuuvi nie śledzi ruchu użytkownika. Zapewniamy prywatność.</string>
@@ -242,6 +243,8 @@
     <string name="remove_this_sensor">Usuń ten czujnik</string>
     <string name="rename">Przemianować</string>
     <string name="rename_sensor_message">Czujniki wyświetlane są w kolejności alfabetycznej.</string>
+    <string name="reset_order">Zresetuj do sortowania alfabetycznego</string>
+    <string name="reset_order_confirmation">Czy jesteś pewien, że chcesz przywrócić porządek kart czujników do sortowania alfabetycznego?</string>
     <string name="s">s</string>
     <string name="scan">SKANOWANIE</string>
     <string name="searching_for_sensor">Wyszukiwanie czujnika</string>

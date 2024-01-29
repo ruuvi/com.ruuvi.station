@@ -36,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Ställ in signalstyrkealarm</string>
     <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
     <string name="alert_movement">Rörelse</string>
-    <string name="alert_movement_description">Alarmera om rörelse upptäcks</string>
+    <string name="alert_movement_description">Ett rörelselarm utlöses om värdet på sensorns interna rörelseräknare ändras. Detta larm kan till exempel användas för att detektera dörrrörelser eller vibrationer i närheten av sensorn.</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfuktigheten är över %1$s</string>
     <string name="alert_notification_humidity_low">För låg Luftfuktighet!</string>
@@ -377,6 +377,7 @@
     <string name="open_history_view">Öppna historikvy</string>
     <string name="open_sensor_view">Öppna sensorvy</string>
     <string name="open_settings">Öppna inställningar</string>
+    <string name="ordering">Sortering</string>
     <string name="owner_none">Ingen</string>
     <string name="owners_plan">Ägarens Ruuvi-plan</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
@@ -425,6 +426,8 @@
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
+    <string name="reset_order">Återställ till alfabetisk sortering</string>
+    <string name="reset_order_confirmation">Är du säker på att du vill återställa sensorkortsordningen till alfabetisk sortering?</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

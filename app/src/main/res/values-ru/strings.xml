@@ -22,7 +22,7 @@
     <string name="alarm_mute_for_hour">Отключить на час</string>
     <string name="alarm_notification_disable">Отключить это уведомление</string>
     <string name="alert_movement">Движение</string>
-    <string name="alert_movement_description">Уведомить при движении</string>
+    <string name="alert_movement_description">Тревога движения срабатывает, если изменяется значение внутреннего счетчика движения датчика. Эту сигнализацию можно использовать, например, для обнаружения движения двери или вибрации вблизи датчика.</string>
     <string name="alert_notification_humidity_high">Высокая Влажность!</string>
     <string name="alert_notification_humidity_high_threshold">Влажность выше %1$s</string>
     <string name="alert_notification_humidity_low">Низкая Влажность!</string>
