@@ -185,16 +185,19 @@ class ItemListDragAndDropState(
 
     fun checkForOverScroll(): Float {
         val draggedElement = initiallyDraggedElement
-//        if (draggedElement != null) {
-//            val (startOffset, endOffset) = calculateOffsets(draggedElement.offset.toFloat())
-//            val diffToEnd = endOffset - lazyListState.layoutInfo.viewportEndOffset
-//            val diffToStart = startOffset - lazyListState.layoutInfo.viewportStartOffset
-//            return when {
-//                draggedDistance > 0 && diffToEnd > 0 -> diffToEnd
-//                draggedDistance < 0 && diffToStart < 0 -> diffToStart
-//                else -> 0f
-//            }
-//        }
+        if (draggedElement != null) {
+            val (startOffset, endOffset) = calculateOffsets(draggedElement.offset)
+            Timber.d("lazyListState ${lazyListState.layoutInfo.viewportEndOffset} ${lazyListState.layoutInfo.viewportStartOffset}")
+            Timber.d("lazyListState startOffset, endOffset ${startOffset} ${endOffset}")
+
+            val diffToEnd = endOffset.y - lazyListState.layoutInfo.viewportEndOffset
+            val diffToStart = startOffset.y - lazyListState.layoutInfo.viewportStartOffset
+            return when {
+                draggedDistance.y > 0 && diffToEnd > 0 -> diffToEnd.toFloat()
+                draggedDistance.y < 0 && diffToStart < 0 -> diffToStart.toFloat()
+                else -> 0f
+            }
+        }
         return 0f
     }
 
