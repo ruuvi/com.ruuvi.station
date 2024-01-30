@@ -28,7 +28,7 @@ class CalibrationInteractor (
     fun calibrateTemperature(sensorId: String, targetValue: Double) {
         getSensorEntity(sensorId)?.let { entity ->
             val fromTemperature = entity.temperature - entity.temperatureOffset
-            val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue).round(2)
+            val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue).round(4)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset.round(4))
             saveCalibrationToNetwork(sensorId)
