@@ -403,6 +403,10 @@ fun MovementAlertEditItem(
     ExpandableContainer(header = {
         AlarmHeader(title, alarmState)
     }) {
+        SmallerParagraph(
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium),
+            text = stringResource(id = R.string.alert_movement_description)
+        )
         SwitchIndicatorRuuvi(
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
@@ -417,20 +421,6 @@ fun MovementAlertEditItem(
             emptyText = stringResource(id = R.string.alarm_custom_title_hint)
         ) {
             openDescriptionDialog = true
-        }
-        DividerRuuvi()
-        Row(
-            modifier = Modifier
-                .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = RuuviStationTheme.dimensions.medium),
-                style = RuuviStationTheme.typography.paragraph,
-                textAlign = TextAlign.End,
-                text = stringResource(id = R.string.alert_movement_description))
         }
     }
     DividerSurfaceColor()
