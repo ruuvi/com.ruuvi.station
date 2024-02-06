@@ -453,6 +453,7 @@ fun DashboardItems(
                             userEmail = userEmail,
                             setName = setName,
                             displacementOffset = displacementOffset,
+                            itemIsDragged = itemIsDragged,
                             )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
@@ -481,7 +482,16 @@ fun DashboardItem(
     setName: (String, String?) -> Unit
 ) {
     val context = LocalContext.current
-    val modifier = if (displacementOffset != null) Modifier.zIndex(2f) else Modifier.zIndex(1f)
+    val modifier = if (itemIsDragged) {
+        Modifier
+            .zIndex(2f)
+            .padding(horizontal = RuuviStationTheme.dimensions.small)
+    } else {
+        Modifier
+            .zIndex(1f)
+            .padding(horizontal = RuuviStationTheme.dimensions.medium)
+    }
+
     val backgroundColor = if (itemIsDragged) {
         colors.dashboardCardBackground.copy(alpha = 0.5f)
     } else {
@@ -489,7 +499,7 @@ fun DashboardItem(
     }
 
     Column (
-        modifier = modifier.padding(horizontal = if (itemIsDragged) RuuviStationTheme.dimensions.small else RuuviStationTheme.dimensions.medium)
+        modifier = modifier
     ) {
         Card(
             modifier = Modifier
@@ -605,84 +615,102 @@ fun DashboardItemSimple(
     userEmail: String?,
     setName: (String, String?) -> Unit,
     displacementOffset: IntOffset?,
+    itemIsDragged: Boolean,
 ) {
     val context = LocalContext.current
-    val isBeingDragged = displacementOffset != null
-    val modifier = if (isBeingDragged) Modifier.zIndex(2f) else Modifier.zIndex(1f)
+    val modifier = if (itemIsDragged) {
+        Modifier
+            .zIndex(2f)
+            .padding(horizontal = RuuviStationTheme.dimensions.small)
+    } else {
+        Modifier
+            .zIndex(1f)
+            .padding(horizontal = RuuviStationTheme.dimensions.medium)
+    }
 
-    Card(
+    val backgroundColor = if (itemIsDragged) {
+        colors.dashboardCardBackground.copy(alpha = 0.5f)
+    } else {
+        colors.dashboardCardBackground
+    }
+
+    Column (
         modifier = modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                Timber.d("dragGestureHandler - graphicsLayer $displacementOffset")
-                translationY = displacementOffset?.y?.toFloat() ?: 0f
-                translationX = displacementOffset?.x?.toFloat() ?: 0f
-            }
-            .clickableSingle {
-                SensorCardActivity.start(
-                    context,
-                    sensor.id,
-                    SensorCardOpenType.DEFAULT
-                )
-            },
-        shape = RoundedCornerShape(10.dp),
-        elevation = 0.dp,
-        backgroundColor = RuuviStationTheme.colors.dashboardCardBackground
     ) {
-        ConstraintLayout(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = RuuviStationTheme.dimensions.mediumPlus,
-                    start = RuuviStationTheme.dimensions.mediumPlus,
-                    bottom = RuuviStationTheme.dimensions.medium,
-                    end = RuuviStationTheme.dimensions.medium,
-                )
-        ) {
-            val (title, buttons, updated, values) = createRefs()
-
-            ItemName(
-                sensor = sensor,
-                modifier = Modifier.constrainAs(title) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(buttons.start)
-                    width = Dimension.fillToConstraints
+                .fillMaxWidth()
+                .graphicsLayer {
+                    Timber.d("dragGestureHandler - graphicsLayer $displacementOffset")
+                    translationY = displacementOffset?.y?.toFloat() ?: 0f
+                    translationX = displacementOffset?.x?.toFloat() ?: 0f
                 }
-            )
-
-            ItemButtons(
-                sensor = sensor,
-                userEmail = userEmail,
+                .clickableSingle {
+                    SensorCardActivity.start(
+                        context,
+                        sensor.id,
+                        SensorCardOpenType.DEFAULT
+                    )
+                },
+            shape = RoundedCornerShape(10.dp),
+            elevation = 0.dp,
+            backgroundColor = backgroundColor
+        ) {
+            ConstraintLayout(
                 modifier = Modifier
-                    .constrainAs(buttons) {
+                    .fillMaxSize()
+                    .padding(
+                        top = RuuviStationTheme.dimensions.mediumPlus,
+                        start = RuuviStationTheme.dimensions.mediumPlus,
+                        bottom = RuuviStationTheme.dimensions.medium,
+                        end = RuuviStationTheme.dimensions.medium,
+                    )
+            ) {
+                val (title, buttons, updated, values) = createRefs()
+
+                ItemName(
+                    sensor = sensor,
+                    modifier = Modifier.constrainAs(title) {
                         top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                    },
-                setName = setName
-            )
-
-            ItemValues(
-                sensor = sensor,
-                modifier = Modifier
-                    .padding(vertical = RuuviStationTheme.dimensions.small)
-                    .constrainAs(values) {
-                        top.linkTo(title.bottom)
                         start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        end.linkTo(buttons.start)
                         width = Dimension.fillToConstraints
                     }
-            )
+                )
 
-            ItemBottom(
-                sensor = sensor,
-                modifier = Modifier.constrainAs(updated) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(values.bottom)
-                    width = Dimension.fillToConstraints
-                }
-            )
+                ItemButtons(
+                    sensor = sensor,
+                    userEmail = userEmail,
+                    modifier = Modifier
+                        .constrainAs(buttons) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                        },
+                    setName = setName
+                )
+
+                ItemValues(
+                    sensor = sensor,
+                    modifier = Modifier
+                        .padding(vertical = RuuviStationTheme.dimensions.small)
+                        .constrainAs(values) {
+                            top.linkTo(title.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                )
+
+                ItemBottom(
+                    sensor = sensor,
+                    modifier = Modifier.constrainAs(updated) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(values.bottom)
+                        width = Dimension.fillToConstraints
+                    }
+                )
+            }
         }
     }
 }
