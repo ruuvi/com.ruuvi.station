@@ -53,10 +53,14 @@ class SensorClaimInteractor(
         }
     }
 
-    suspend fun unclaimSensor(sensorId: String, onResult: (ClaimSensorResponse?) -> Unit) {
+    suspend fun unclaimSensor(
+        sensorId: String,
+        deleteData: Boolean,
+        onResult: (ClaimSensorResponse?) -> Unit
+    ) {
         val token = getToken()?.token
         token?.let {
-            val request = UnclaimSensorRequest(sensorId)
+            val request = UnclaimSensorRequest(sensorId, deleteData)
             try {
                 val response = networkRepository.unclaimSensor(request, token)
                 tryToParseOwnerEmail(sensorId, response?.error ?: "")

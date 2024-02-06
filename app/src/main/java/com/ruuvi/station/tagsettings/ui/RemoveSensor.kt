@@ -63,7 +63,7 @@ fun RemoveSensor(
 ) {
     val sensorState by viewModel.sensorState.collectAsState()
     val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsState(initial = false)
-    val cloudModeEnabled = viewModel.removeWithCloudData.collectAsState()
+    val deleteDataEnabled = viewModel.removeWithCloudData.collectAsState()
     var removeDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -76,7 +76,7 @@ fun RemoveSensor(
                     ParagraphWithPadding(text = stringResource(id = R.string.remove_claimed_sensor_description))
                     SwitchRuuvi(
                         text = stringResource(id = R.string.remove_cloud_history_title),
-                        checked = cloudModeEnabled.value,
+                        checked = deleteDataEnabled.value,
                         onCheckedChange = viewModel::setRemoveWithCloudData
                     )
                     Paragraph(text = stringResource(id = R.string.remove_cloud_history_description))
