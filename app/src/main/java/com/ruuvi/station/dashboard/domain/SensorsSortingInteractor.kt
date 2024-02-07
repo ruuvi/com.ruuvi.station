@@ -3,11 +3,13 @@ package com.ruuvi.station.dashboard.domain
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.tag.domain.RuuviTag
 import timber.log.Timber
 
 class SensorsSortingInteractor (
-    val preferences: PreferencesRepository
+    val preferences: PreferencesRepository,
+    private val networkApplicationSettings: NetworkApplicationSettings,
 ){
     fun sortSensors(sensors: List<RuuviTag>): List<RuuviTag> {
         val sortingOrder = getListOfSortedSensors()
@@ -60,5 +62,17 @@ class SensorsSortingInteractor (
 
     fun isCustomOrderEnabled(): Boolean {
         return getListOfSortedSensors().isNotEmpty()
+    }
+
+    fun addNewSensor(sensorId: String) {
+        if (isCustomOrderEnabled()) {
+            val sensorList = getListOfSortedSensors()
+            if (sensorId.isNotEmpty() && sensorList.none { it == sensorId }) {
+                val updatedList = mutableListOf<String>(sensorId)
+                updatedList.addAll(sensorList)
+                newOrder(updatedList)
+                networkApplicationSettings.updateSensorsOrder()
+            }
+        }
     }
 }

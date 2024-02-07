@@ -19,7 +19,7 @@ class TagInteractor constructor(
     private val preferencesRepository: PreferencesRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val tagSettingsInteractor: TagSettingsInteractor,
-    private val sortingInteractor: SensorsSortingInteractor
+    private val sortingInteractor: SensorsSortingInteractor,
 ) {
 
     fun getTags(): List<RuuviTag> =
@@ -59,6 +59,9 @@ class TagInteractor constructor(
         sensor.id?.let { sensorId ->
             tagRepository.makeSensorFavorite(sensor)
             tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            sensor.id?.let {sensorId ->
+                sortingInteractor.addNewSensor(sensorId)
+            }
         }
     }
 

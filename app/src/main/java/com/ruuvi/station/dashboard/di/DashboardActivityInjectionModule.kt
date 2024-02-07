@@ -18,7 +18,7 @@ object DashboardActivityInjectionModule {
         }
 
         bind<SensorsSortingInteractor>() with singleton {
-            SensorsSortingInteractor(instance())
+            SensorsSortingInteractor(instance(), instance())
         }
     }
 }
