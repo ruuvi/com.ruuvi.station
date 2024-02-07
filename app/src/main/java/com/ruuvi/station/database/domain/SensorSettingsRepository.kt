@@ -110,6 +110,9 @@ class SensorSettingsRepository {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.owner = owner
         settings.networkSensor = isNetworkSensor
+        if (owner == null) {
+            settings.subscriptionName = null
+        }
         settings.update()
     }
 
