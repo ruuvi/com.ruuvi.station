@@ -326,7 +326,9 @@ fun MoreInfoGroup(
             title = stringResource(id = R.string.mac_address),
             value = sensorState.id
         )
-        if (sensorState.latestMeasurement?.dataFormat == 3 || sensorState.latestMeasurement?.dataFormat == 5) {
+        if (sensorState.latestMeasurement?.dataFormat == 3 ||
+            sensorState.latestMeasurement?.dataFormat == 5 ||
+            sensorState.latestMeasurement?.dataFormat == 0xC5) {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
                 value = sensorState.latestMeasurement.dataFormat.toString()
