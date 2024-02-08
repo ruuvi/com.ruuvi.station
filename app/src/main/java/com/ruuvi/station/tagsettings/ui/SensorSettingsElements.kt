@@ -483,11 +483,13 @@ fun SensorSettingsTitle (title: String) {
 
 @Composable
 fun ValueWithCaption(
+    modifier: Modifier = Modifier,
     title: String,
     value: String?
 ) {
-    Row(modifier = Modifier
-        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
+    Row(modifier = modifier
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

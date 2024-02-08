@@ -3,6 +3,7 @@ package com.ruuvi.station.app.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
@@ -24,14 +25,16 @@ import com.ruuvi.station.util.text.getDecimalMatches
 
 @Composable
 fun TextEditButton(
+    modifier: Modifier = Modifier,
     value: String?,
     emptyText: String,
     textAlign: TextAlign = TextAlign.Start,
     applyBoldStyleToDecimals: Boolean = false,
     editAction: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+    Row(modifier = modifier
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus)
         .clickable { editAction.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
