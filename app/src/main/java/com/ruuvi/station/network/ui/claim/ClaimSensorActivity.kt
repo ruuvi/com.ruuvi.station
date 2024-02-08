@@ -202,15 +202,40 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
 
     @Composable
     fun UnclaimSensor() {
+        var unclaimDialog by remember { mutableStateOf(false) }
+        var deleteData by remember { mutableStateOf(false) }
+
         PageSurfaceWithPadding() {
             Column() {
                 Paragraph(text = stringResource(id = R.string.unclaim_sensor_description))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                SwitchRuuvi(
+                    text = stringResource(id = R.string.remove_cloud_history_title),
+                    checked = deleteData,
+                    onCheckedChange = { deleteData = !deleteData }
+                )
+                Paragraph(text = stringResource(id = R.string.remove_cloud_history_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     RuuviButton(text = stringResource(id = R.string.unclaim)) {
-                        viewModel.unclaimSensor()
+                        unclaimDialog = true
                     }
                 }
+            }
+        }
+
+        if (unclaimDialog) {
+            RuuviDialog(
+                title = stringResource(id = R.string.dialog_are_you_sure),
+                onDismissRequest = { unclaimDialog = false },
+                onOkClickAction = {
+                    viewModel.unclaimSensor(deleteData)
+                },
+                positiveButtonText = stringResource(id = R.string.confirm)
+            ) {
+                Paragraph(text = stringResource(id = R.string.dialog_operation_undone))
             }
         }
     }

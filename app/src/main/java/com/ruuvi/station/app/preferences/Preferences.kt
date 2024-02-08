@@ -14,7 +14,7 @@ import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
 
-class Preferences constructor(val context: Context) {
+class Preferences (val context: Context) {
 
     private val sharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(
@@ -32,10 +32,10 @@ class Preferences constructor(val context: Context) {
         get() = BackgroundScanModes.fromInt(
             sharedPreferences.getInt(
                 PREF_BACKGROUND_SCAN_MODE,
-                BackgroundScanModes.DISABLED.value
+                BackgroundScanModes.BACKGROUND.value
             )
         )
-            ?: BackgroundScanModes.DISABLED
+            ?: BackgroundScanModes.BACKGROUND
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
         }
@@ -247,6 +247,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
         }
 
+    var signedInOnce: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SIGNED_IN_ONCE, false)
+        set(signedIn) {
+            sharedPreferences.edit().putBoolean(PREF_SIGNED_IN_ONCE, signedIn).apply()
+        }
+
     var lastSyncDate: Long
         get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
         set(syncDate) {
@@ -380,6 +386,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
         }
 
+    var sortedSensors: String
+        get() = sharedPreferences.getString(PREF_DASHBOARD_SORTED_SENSORS, "") ?: ""
+        set(sortedSensors) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_SORTED_SENSORS, sortedSensors).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -437,6 +449,8 @@ class Preferences constructor(val context: Context) {
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
         private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
         private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
+        private const val PREF_SIGNED_IN_ONCE = "pref_signed_in_once"
+        private const val PREF_DASHBOARD_SORTED_SENSORS = "pref_dashboard_sorted_sensors"
 
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"

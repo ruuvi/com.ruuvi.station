@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 33
         compileSdk 34
-        versionCode 206004
-        versionName "2.6.4"
+        versionCode 207005
+        versionName "2.7.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.7'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.4.13'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.0'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:1.12.0'

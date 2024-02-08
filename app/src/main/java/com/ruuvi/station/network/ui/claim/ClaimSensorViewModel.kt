@@ -81,7 +81,7 @@ class ClaimSensorViewModel (
         }
     }
 
-    fun unclaimSensor() {
+    fun unclaimSensor(deleteData: Boolean) {
         Timber.d("unclaimSensor")
         emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
         CoroutineScope(Dispatchers.IO).launch {
@@ -89,7 +89,7 @@ class ClaimSensorViewModel (
                 withContext(Dispatchers.IO) {
                     val settings = interactor.getSensorSettings(sensorId)
                     settings?.let {
-                        sensorClaimInteractor.unclaimSensor(settings.id) {
+                        sensorClaimInteractor.unclaimSensor(settings.id, deleteData) {
                             if (it?.isSuccess() == true) {
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {

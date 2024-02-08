@@ -11,6 +11,7 @@
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="add_a_sensor">Добавить датчик</string>
     <string name="add_sensor_description">Здесь показаны датчики Ruuvi, которые еще не были добавлены в приложение. Нажмите на сенсор, чтобы добавить его.</string>
     <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
@@ -21,7 +22,7 @@
     <string name="alarm_mute_for_hour">Отключить на час</string>
     <string name="alarm_notification_disable">Отключить это уведомление</string>
     <string name="alert_movement">Движение</string>
-    <string name="alert_movement_description">Уведомить при движении</string>
+    <string name="alert_movement_description">Тревога движения срабатывает, если изменяется значение внутреннего счетчика движения датчика. Эту сигнализацию можно использовать, например, для обнаружения движения двери или вибрации вблизи датчика.</string>
     <string name="alert_notification_humidity_high">Высокая Влажность!</string>
     <string name="alert_notification_humidity_high_threshold">Влажность выше %1$s</string>
     <string name="alert_notification_humidity_low">Низкая Влажность!</string>
@@ -132,6 +133,7 @@
     <string name="dashboard">Панель датчиков</string>
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно.</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
+    <string name="dashboard_no_sensors_message_signed_out">Вы не вошли в аккаунт.\n\nЕсли у вас уже есть аккаунт Ruuvi и добавлены датчики в него, то они будут автоматичеки синхронизированы с мобильным приложением после того как вы войдете в свой аккаунт.</string>
     <string name="data_format">Формат Данных</string>
     <string name="data_forwarding_background_location_message_bloked">Включите доступ к местоположению, чтобы добавить координаты</string>
     <string name="data_forwarding_background_location_message_first">Эта функция требует доступа к местоположению устройства. Чтобы добавить данные о местоположении, на следующем системном диалоге укажите хотите вы точное или примерное местоположение и разрешите доступ к местоположению пока приложение активно.</string>
@@ -257,7 +259,6 @@
     <string name="network_syncing">Синхронизация...</string>
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
-    <string name="nfc_enable_bt_to_add_sensor">Включите Bluetooth и отсканируйте датчик чтобы добавить его</string>
     <string name="no">Нет</string>
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>

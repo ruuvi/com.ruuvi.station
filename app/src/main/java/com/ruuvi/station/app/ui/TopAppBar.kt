@@ -21,16 +21,18 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
+import com.ruuvi.station.app.ui.components.RuuviDialog
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.util.extensions.clickableSingle
 
 @Composable
 fun RuuviTopAppBar(
@@ -68,9 +70,15 @@ fun DashboardTopAppBar(
     dashboardTapAction: DashboardTapAction,
     navigationCallback: () -> Unit,
     changeDashboardType: (DashboardType) -> Unit,
-    changeDashboardTapAction: (DashboardTapAction) -> Unit
+    changeDashboardTapAction: (DashboardTapAction) -> Unit,
+    clearSensorOrder: () -> Unit,
+    isCustomOrderEnabled: () -> Boolean
 ) {
     var dashboardTypeMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var resetSensorsOrderDialog by remember {
         mutableStateOf(false)
     }
 
@@ -170,6 +178,26 @@ fun DashboardTopAppBar(
                             changeDashboardTapAction.invoke(DashboardTapAction.SHOW_CHART)
                         }
                     )
+
+                    if (isCustomOrderEnabled()) {
+                        Subtitle(
+                            modifier = Modifier.padding(
+                                horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                vertical = RuuviStationTheme.dimensions.medium
+                            ),
+                            text = stringResource(id = R.string.ordering)
+                        )
+                        
+                        Paragraph(
+                            modifier = Modifier.padding(
+                                horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                vertical = RuuviStationTheme.dimensions.medium)
+                                .clickableSingle {
+                                    resetSensorsOrderDialog = true
+                                },
+                            text = stringResource(id = R.string.reset_order)
+                        )
+                    }
                 }
             }
         },
@@ -177,9 +205,24 @@ fun DashboardTopAppBar(
         contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
     )
+
+    if (resetSensorsOrderDialog) {
+        RuuviDialog(
+            title = stringResource(id = R.string.confirm),
+            onDismissRequest = { resetSensorsOrderDialog = false },
+            onOkClickAction = {
+                resetSensorsOrderDialog = false
+                dashboardTypeMenuExpanded = false
+                clearSensorOrder()
+            },
+            positiveButtonText = stringResource(id = R.string.yes),
+            negativeButtonText = stringResource(id = R.string.no)
+        ) {
+            Paragraph(text = stringResource(id = R.string.reset_order_confirmation))
+        }
+    }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnboardingTopAppBar(
     pagerState: PagerState,

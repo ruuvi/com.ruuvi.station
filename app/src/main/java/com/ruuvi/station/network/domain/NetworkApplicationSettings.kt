@@ -43,6 +43,7 @@ class NetworkApplicationSettings (
                     applyTemperatureAccuracy(response.data.settings)
                     applyHumidityAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
+                    applySensorsOrder(response.data.settings)
                 }
                 if (response.data.settings.PROFILE_LANGUAGE_CODE.isNullOrEmpty()) {
                     updateProfileLanguage()
@@ -67,6 +68,7 @@ class NetworkApplicationSettings (
             updateTemperatureAccuracy()
             updateHumidityAccuracy()
             updatePressureAccuracy()
+            updateSensorsOrder()
             false
         } else {
             true
@@ -188,6 +190,13 @@ class NetworkApplicationSettings (
                 Timber.d("NetworkApplicationSettings-applyPressureAccuracy: $accuracy")
                 preferencesRepository.setPressureAccuracy(accuracy)
             }
+        }
+    }
+
+    private fun applySensorsOrder(settings: NetworkUserSettings) {
+        settings.SENSOR_ORDER?.let {sensorsOrder ->
+            Timber.d("NetworkApplicationSettings-applySensorsOrder: $sensorsOrder")
+            preferencesRepository.setSortedSensors(sensorsOrder)
         }
     }
 
@@ -332,6 +341,19 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateSensorsOrder() {
+        if (networkInteractor.signedIn) {
+            val sensorsOrder = preferencesRepository.getSortedSensors()
+            if (sensorsOrder.isNotEmpty()) {
+                Timber.d("NetworkApplicationSettings-updateSensorsOrder: $sensorsOrder")
+                networkInteractor.updateUserSetting(
+                    SENSOR_ORDER,
+                    sensorsOrder
+                )
+            }
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
@@ -347,5 +369,6 @@ class NetworkApplicationSettings (
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
+        val SENSOR_ORDER = "SENSOR_ORDER"
     }
 }

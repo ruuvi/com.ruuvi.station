@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Wählen Sie aus, wie genau Sie die Live-Messwerte der Sensoren in der App sehen möchten. Diese Einstellung hat keinen Einfluss auf Verlaufsdiagramme oder Alarme.</string>
+    <string name="add_a_sensor">Fügen Sie einen Sensor hinzu</string>
     <string name="add_sensor_description">Auf dieser Seite werden Ruuvi-Sensoren in der Nähe angezeigt, die der App noch nicht hinzugefügt wurden. Tippen Sie auf einen Sensor, um ihn hinzuzufügen.</string>
     <string name="add_sensor_via_nfc">Wenn Ihr NFC aktiviert ist, können Sie alternativ einen NFC-Sensor hinzufügen, indem Sie ihn mit Ihrem Telefon berühren.</string>
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
@@ -35,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Signalstärkealarm einstellen</string>
     <string name="alert_dialog_title_temperature">Temperaturalarm einstellen</string>
     <string name="alert_movement">Bewegung</string>
-    <string name="alert_movement_description">Warnung, wenn der Sensor bewegt wird</string>
+    <string name="alert_movement_description">Ändert sich der Wert des sensorinternen Bewegungszählers, wird ein Bewegungsalarm ausgelöst. Mit diesem Alarm können beispielsweise Türbewegungen oder Vibrationen in der Nähe des Sensors erkannt werden.</string>
     <string name="alert_notification_humidity_high">Luftfeuchtigkeit ist zu hoch!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfeuchtigkeit liegt über %1$s</string>
     <string name="alert_notification_humidity_low">Luftfeuchtigkeit ist zu niedrig!</string>
@@ -177,6 +178,7 @@
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
     <string name="dashboard_enabled">Die Dashboard-Ansicht ist aktiviert.</string>
     <string name="dashboard_no_sensors_message">Scheint, als hätten Sie noch keine Ruuvi-Sensoren hinzugefügt.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Sie sind nicht angemeldet.\n\nWenn Sie ein Konto haben und diesem bereits Ruuvi-Sensoren hinzugefügt haben, werden diese automatisch mit der mobilen Ruuvi Station-App synchronisiert, wenn Sie sich anmelden.</string>
     <string name="data_format">Datei Format</string>
     <string name="data_forwarding_background_location_message_bloked">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um die Koordinaten einzuschließen.</string>
     <string name="data_forwarding_background_location_message_first">Diese Funktion erfordert eine Standortberechtigung. Um Ihre Standortkoordinaten einzubeziehen, wählen Sie bitte aus, ob Sie einen genauen oder ungefähren Standort wünschen und erlauben Sie den Zugriff während der Verwendung der App, wenn Sie im nächsten Dialog dazu aufgefordert werden.</string>
@@ -386,6 +388,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="open_history_view">Verlaufsansicht öffnen</string>
     <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
+    <string name="ordering">Sortierung</string>
     <string name="owner_none">Keiner</string>
     <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
@@ -434,6 +437,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Schwache Batterie</string>
     <string name="request_code">Anfrage Code</string>
+    <string name="reset_order">Zur alphabetischen Sortierung zurücksetzen</string>
+    <string name="reset_order_confirmation">Sind Sie sicher, dass Sie die Reihenfolge der Sensorkarten auf die alphabetische Sortierung zurücksetzen möchten?</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

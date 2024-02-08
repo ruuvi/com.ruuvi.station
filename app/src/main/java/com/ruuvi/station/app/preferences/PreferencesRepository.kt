@@ -294,4 +294,14 @@ class PreferencesRepository(
     fun setLimitLocalAlerts(value: Boolean) {
         preferences.limitLocalAlerts = value
     }
+
+    fun getSignedInOnce(): Boolean =
+        preferences.signedInOnce
+
+    fun getSortedSensors(): String =
+        preferences.sortedSensors
+
+    fun setSortedSensors(sortedSensors: String) {
+        preferences.sortedSensors = sortedSensors
+    }
 }

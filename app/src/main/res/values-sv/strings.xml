@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Välj hur exakt du vill se sensorernas livemätvärden i appen. Den här inställningen påverkar inte histogram eller varningar.</string>
+    <string name="add_a_sensor">Lägg till en sensor</string>
     <string name="add_sensor_description">Den här sidan visar närliggande Ruuvi-sensorer som ännu inte har lagts till i appen. Tryck på en sensor för att lägga till den.</string>
     <string name="add_sensor_via_nfc">Alternativt, om din NFC är aktiverad, kan du lägga till en sensor med NFC genom att röra vid den med telefonen.</string>
     <string name="add_tag_not_found">Inga sensorer hittades</string>
@@ -35,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Ställ in signalstyrkealarm</string>
     <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
     <string name="alert_movement">Rörelse</string>
-    <string name="alert_movement_description">Alarmera om rörelse upptäcks</string>
+    <string name="alert_movement_description">Ett rörelselarm utlöses om värdet på sensorns interna rörelseräknare ändras. Detta larm kan till exempel användas för att detektera dörrrörelser eller vibrationer i närheten av sensorn.</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfuktigheten är över %1$s</string>
     <string name="alert_notification_humidity_low">För låg Luftfuktighet!</string>
@@ -177,6 +178,7 @@
     <string name="dashboard_empty">Översikt vyn är tom</string>
     <string name="dashboard_enabled">Översiksvyn är aktiverad. </string>
     <string name="dashboard_no_sensors_message">Det verkar som om du inte har några Ruuvi-sensorer tillagda ännu.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Du är inte inloggad.\n\nOm du har ett konto och redan har lagt till Ruuvi-sensorer till det, synkroniseras de automatiskt med Ruuvi Stations mobilapp när du loggar in.</string>
     <string name="data_format">Dataformat</string>
     <string name="data_forwarding_background_location_message_bloked">Aktivera platsbehörighet i Inställningar för att inkludera koordinater</string>
     <string name="data_forwarding_background_location_message_first">Den här funktionen kräver platsbehörighet. För att inkludera dina platskoordinater, välj om du vill ha exakt eller ungefärlig plats och tillåt åtkomst medan du använder appen när du uppmanas till det i nästa dialogruta.</string>
@@ -375,6 +377,7 @@
     <string name="open_history_view">Öppna historikvy</string>
     <string name="open_sensor_view">Öppna sensorvy</string>
     <string name="open_settings">Öppna inställningar</string>
+    <string name="ordering">Sortering</string>
     <string name="owner_none">Ingen</string>
     <string name="owners_plan">Ägarens Ruuvi-plan</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
@@ -423,6 +426,8 @@
     <string name="rename_sensor_message">Dina sensorer kommer att vara i alfabetisk ordning.</string>
     <string name="replace_battery">Låg batterinivå</string>
     <string name="request_code">Begär en inloggningskod</string>
+    <string name="reset_order">Återställ till alfabetisk sortering</string>
+    <string name="reset_order_confirmation">Är du säker på att du vill återställa sensorkortsordningen till alfabetisk sortering?</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>

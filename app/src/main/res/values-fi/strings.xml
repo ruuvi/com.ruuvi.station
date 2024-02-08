@@ -13,6 +13,7 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin tai hälytyksiin.</string>
+    <string name="add_a_sensor">Lisää anturi</string>
     <string name="add_sensor_description">Tällä sivulla näet lähelläsi olevat Ruuvi-anturit, joita ei ole vielä lisätty sovellukseen. Lisää listattu anturi napauttamalla.</string>
     <string name="add_sensor_via_nfc">Voit vaihtoehtoisesti lisätä anturin sovellukseen NFC:llä koskettamalla sitä, mikäli NFC on otettu käyttöön laitteessasi.</string>
     <string name="add_tag_not_found">Antureita ei löydetty</string>
@@ -35,7 +36,7 @@
     <string name="alert_dialog_title_rssi">Aseta signaalinvoimakkuushälytys</string>
     <string name="alert_dialog_title_temperature">Aseta lämpötilahälytys</string>
     <string name="alert_movement">Liike</string>
-    <string name="alert_movement_description">Hälytä, mikäli liike havaittu</string>
+    <string name="alert_movement_description">Liikehälytys laukeaa, jos anturin sisäisen liikelaskurin arvo muuttuu. Tätä hälytystä voi käyttää esimerkiksi havaitsemaan oven liikkeen tai tärinän anturin läheisyydessä.</string>
     <string name="alert_notification_humidity_high">Suhteellinen ilmankosteus liian korkea!</string>
     <string name="alert_notification_humidity_high_threshold">Ilmankosteus on yli %1$s</string>
     <string name="alert_notification_humidity_low">Suhteellinen ilmankosteus liian alhainen!</string>
@@ -114,8 +115,8 @@
     <string name="changelog">(muutosloki)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Keskiarvo: %3$,.2f</string>
-    <string name="chart_stat_hide">Piilota min/maks/ka</string>
-    <string name="chart_stat_show">Näytä min/maks/ka</string>
+    <string name="chart_stat_hide">Piilota min/max/ka</string>
+    <string name="chart_stat_show">Näytä min/max/ka</string>
     <string name="chart_view_period_days_count">Päivien lukumäärä: %1$s </string>
     <string name="charts_background_dialog_description">Historiatietojen kerääminen toimii parhaiten taustaskannauksen ollessa käytössä.</string>
     <string name="charts_background_dialog_title_question">Haluatko ottaa käyttöön Bluetooth-taustaskannauksen?</string>
@@ -177,6 +178,7 @@
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
     <string name="dashboard_enabled">Koontinäyttö käytössä. </string>
     <string name="dashboard_no_sensors_message">Sinulla ei ole vielä Ruuvi-antureita sovelluksessa.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Et ole kirjautunut sisään.\n\nJos sinulla on tili ja olet jo lisännyt tilille Ruuvi-antureita, ne synkronoituvat automaattisesti Ruuvi Station -mobiilisovellukseen kirjautuessasi sisään.</string>
     <string name="data_format">Dataformaatti</string>
     <string name="data_forwarding_background_location_message_bloked">Salli sijaintitietojen käyttö päätelaitteesi asetuksissa sisällyttääksesi koordinaatit lähetykseen</string>
     <string name="data_forwarding_background_location_message_first">Tämä ominaisuus vaatii luvan paikkatiedon käyttöön. Sisällyttääksesi paikkatietokoordinaatit lähetettäviin viesteihin, anna sovellukselle oikeus paikkatietojen käyttöön sovelluksen ollessa päällä ja lisäksi valitse haluatko käyttää tarkkaa vai summittaista paikkatietoa.</string>
@@ -336,8 +338,8 @@
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
     <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
     <string name="no">Ei</string>
-    <string name="no_data">Ei tietoja</string>
-    <string name="no_data_10_days">Ei tietoja viimeiseltä 10 päivältä</string>
+    <string name="no_data">Ei historiatietoja</string>
+    <string name="no_data_10_days">Ei historiatietoja viimeiseltä 10 päivältä</string>
     <string name="no_new_data_points">Uusia mittaustietoja ei saatavilla</string>
     <string name="no_password_needed">Tälle osoitteelle luodaan ilmainen tili, jos sinulla ei vielä ole tiliä. Tarvitset kirjautumiseen ainoastaan sähköpostiosoitteen. Pidämme tietosi turvassa.</string>
     <string name="none">ei kirjautunut</string>
@@ -375,6 +377,7 @@
     <string name="open_history_view">Historianäkymään</string>
     <string name="open_sensor_view">Anturinäkymään</string>
     <string name="open_settings">Avaa asetukset</string>
+    <string name="ordering">Järjestäminen</string>
     <string name="owner_none">Ei omistajaa</string>
     <string name="owners_plan">Omistajan Ruuvi-tilaus</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
@@ -423,6 +426,8 @@
     <string name="rename_sensor_message">Anturisi asettuvat automaattisesti aakkosjärjestykseen.</string>
     <string name="replace_battery">Paristo vähissä</string>
     <string name="request_code">Pyydä kirjautumiskoodi</string>
+    <string name="reset_order">Palauta aakkosjärjestys</string>
+    <string name="reset_order_confirmation">Oletko varma, että haluat palauttaa anturikortin järjestyksen aakkosjärjestykseen?</string>
     <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä pilvitilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
