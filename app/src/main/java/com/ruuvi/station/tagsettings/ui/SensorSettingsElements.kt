@@ -469,14 +469,15 @@ fun SensorSettingsTitle (title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-            .background(color = RuuviStationTheme.colors.settingsTitle),
+            .background(color = RuuviStationTheme.colors.settingsTitle)
+            .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+            .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = title,
             style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
         )
     }
 }

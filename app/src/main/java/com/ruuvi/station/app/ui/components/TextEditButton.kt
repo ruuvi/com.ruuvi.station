@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -33,10 +32,10 @@ fun TextEditButton(
     editAction: () -> Unit
 ) {
     Row(modifier = modifier
+        .clickable { editAction.invoke() }
         .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus)
-        .clickable { editAction.invoke() },
-        verticalAlignment = Alignment.CenterVertically
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier
@@ -90,8 +89,9 @@ fun TextEditWithCaptionButton(
     editAction: () -> Unit
 ) {
     Row(modifier = Modifier
-        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-        .clickable { editAction.invoke() },
+        .clickable { editAction.invoke() }
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -122,7 +122,8 @@ fun TextWithCaption(
     title: String
 ) {
     Row(modifier = Modifier
-        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

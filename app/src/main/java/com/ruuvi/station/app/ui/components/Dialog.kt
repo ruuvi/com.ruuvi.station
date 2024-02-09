@@ -23,7 +23,7 @@ fun RuuviDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.extended)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(RuuviStationTheme.dimensions.medium),
             backgroundColor = RuuviStationTheme.colors.background
