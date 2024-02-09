@@ -423,6 +423,7 @@ fun BatteryInfoItem (
                 modifier = Modifier
                     .padding(horizontal = RuuviStationTheme.dimensions.small),
                 style = RuuviStationTheme.typography.warning,
+                color = RuuviStationTheme.colors.activeAlert ,
                 textAlign = TextAlign.Start,
                 text = stringResource(id = R.string.brackets_text, stringResource(id = R.string.replace_battery)))
         } else {
