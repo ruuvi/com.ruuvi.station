@@ -10,10 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import kotlinx.coroutines.launch
 
@@ -58,38 +57,39 @@ fun ExpandableContainer(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
 
-    Card (
-        backgroundColor = RuuviStationTheme.colors.background,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = RuuviStationTheme.colors.background)
+            .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 200,
                     easing = LinearOutSlowInEasing
                 )
             ),
-        shape = RectangleShape,
     ) {
-        Column(
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { expandedState = !expandedState }
+                .background(color = backgroundColor)
+                .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+                .padding(
+                    horizontal = RuuviStationTheme.dimensions.screenPadding,
+                    vertical = RuuviStationTheme.dimensions.mediumPlus
+                ),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
             Row(
-                modifier = Modifier
-                    .background(color = backgroundColor)
-                    .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-                    .padding(RuuviStationTheme.dimensions.screenPadding)
-                    .clickable { expandedState = !expandedState },
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    header()
-                }
+                header()
+            }
 
+            CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
                 IconButton(
                     modifier = Modifier
                         .rotate(rotationState),
@@ -104,15 +104,14 @@ fun ExpandableContainer(
                     )
                 }
             }
-            if (expandedState) {
-                Column(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)){
-                    content()
-                }
-                coroutineScope.launch {
-                    bringIntoViewRequester.bringIntoView()
-                }
+        }
+        if (expandedState) {
+            Column(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)) {
+                content()
+            }
+            coroutineScope.launch {
+                bringIntoViewRequester.bringIntoView()
             }
         }
-
     }
 }
