@@ -26,8 +26,8 @@ import com.ruuvi.station.app.ui.components.PageSurfaceWithPadding
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.RuuviCheckbox
 import com.ruuvi.station.app.ui.components.RuuviDialog
-import com.ruuvi.station.app.ui.components.SwitchRuuvi
 import com.ruuvi.station.app.ui.components.TextEditWithCaptionButton
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -74,12 +74,12 @@ fun RemoveSensor(
             } else {
                 if (sensorOwnedByUser) {
                     ParagraphWithPadding(text = stringResource(id = R.string.remove_claimed_sensor_description))
-                    SwitchRuuvi(
-                        text = stringResource(id = R.string.remove_cloud_history_title),
+
+                    RuuviCheckbox(
                         checked = deleteDataEnabled.value,
+                        text = stringResource(id = R.string.remove_cloud_history_description),
                         onCheckedChange = viewModel::setRemoveWithCloudData
                     )
-                    Paragraph(text = stringResource(id = R.string.remove_cloud_history_description))
                 } else {
                     ParagraphWithPadding(text = stringResource(id = R.string.remove_shared_sensor_description))
                 }
