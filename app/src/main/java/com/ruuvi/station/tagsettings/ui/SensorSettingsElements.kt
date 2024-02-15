@@ -43,6 +43,7 @@ import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import okhttp3.internal.toHexString
 import timber.log.Timber
 
 @Composable
@@ -331,7 +332,7 @@ fun MoreInfoGroup(
             sensorState.latestMeasurement?.dataFormat == 0xC5) {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
-                value = sensorState.latestMeasurement.dataFormat.toString()
+                value = sensorState.latestMeasurement.dataFormat.toHexString()
             )
             BatteryInfoItem(
                 voltage = sensorState.latestMeasurement.voltageValue.value,
