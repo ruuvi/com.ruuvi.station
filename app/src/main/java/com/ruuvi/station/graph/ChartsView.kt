@@ -52,6 +52,18 @@ fun ChartsView(
     Timber.d("ChartView - top $sensorId $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
 
+    var viewPeriodLocal by remember { mutableStateOf<Period?>(null) }
+
+    var temperatureData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
+    }
+    var humidityData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
+    }
+    var pressureData by remember {
+        mutableStateOf<MutableList<Entry>>(ArrayList())
+    }
+
     var history by remember {
         mutableStateOf<List<TagSensorReading>>(listOf())
     }
@@ -64,18 +76,15 @@ fun ChartsView(
         mutableStateOf(0L)
     }
 
-    var temperatureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var humidityData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var pressureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-
     var isLoading by remember {
         mutableStateOf(true)
+    }
+
+    if (viewPeriod != viewPeriodLocal) {
+        viewPeriodLocal = viewPeriod
+        temperatureChart.fitScreen()
+        humidityChart.fitScreen()
+        pressureChart.fitScreen()
     }
 
     LaunchedEffect(key1 = sensorId) {
