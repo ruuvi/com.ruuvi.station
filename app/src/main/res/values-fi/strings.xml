@@ -155,8 +155,8 @@
     <string name="cloud_er_unable_to_send_email">Sähköpostin lähetys epäonnistui</string>
     <string name="cloud_er_unauthorized">Ei sallittu</string>
     <string name="cloud_er_user_not_found">Käyttäjää ei löydy</string>
-    <string name="cloud_only_mode">Pilvitila</string>
-    <string name="cloud_only_mode_description">Päivitä lähellä olevat pilveen rekisteröidyt anturit ainoastaan pilvestä hylkäämällä niiden Bluetooth-viestit. Vaatii Ruuvi Gateway -reitittimen.</string>
+    <string name="cloud_only_mode">Hylkää Bluetooth-viestit</string>
+    <string name="cloud_only_mode_description">Kun Hylkää Bluetooth-viestit -vaihtoehto on aktivoitu, sovellus ei huomioi Ruuvi-antureiden Bluetoothilla lähettämiä mittauksia silloin, kun anturit Ruuvi Gateway -reitittimen lähellä. Sen sijaan sovellus vastaanottaa sensoreiden mittaustiedot yksinomaan Ruuvi Cloudista. Jotta mittaustiedot voidaan lähettää Ruuvi Cloudiin, anturin on oltava Ruuvi Gateway -reitittimen läheisyydessä.</string>
     <string name="cloud_stored_alerts">● Taustakuvat</string>
     <string name="cloud_stored_backgrounds">● Hälytysasetukset</string>
     <string name="cloud_stored_calibration">● Kalibrointiasetukset</string>
@@ -428,7 +428,7 @@
     <string name="request_code">Pyydä kirjautumiskoodi</string>
     <string name="reset_order">Palauta aakkosjärjestys</string>
     <string name="reset_order_confirmation">Oletko varma, että haluat palauttaa anturikortin järjestyksen aakkosjärjestykseen?</string>
-    <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä pilvitilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
+    <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä Hylkää Bluetooth-viestit -tilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SKANNAA</string>

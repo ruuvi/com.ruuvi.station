@@ -217,7 +217,6 @@ fun SettingsElement(
                 if (!description.isNullOrEmpty()) {
                     Text(
                         style = RuuviStationTheme.typography.subtitle.copy(
-                            color = RuuviStationTheme.colors.secondaryTextColor,
                             fontFamily = ruuviStationFonts.mulishRegular),
                         text = description,
                         textAlign = TextAlign.Left
