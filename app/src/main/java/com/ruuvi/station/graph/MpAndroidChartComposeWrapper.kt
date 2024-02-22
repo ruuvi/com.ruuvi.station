@@ -62,7 +62,13 @@ fun ChartView(
             Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
             val chartCaption =
                 if (showChartStats) {
-                    getMinMaxAverageDescription(context, lineChart, chartData) + System.lineSeparator()
+                    getMinMaxAverageDescription(
+                        context,
+                        lineChart,
+                        chartData,
+                        chartSensorType,
+                        unitsConverter
+                    ) + System.lineSeparator()
                 } else {
                     ""
                 } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
@@ -91,7 +97,13 @@ fun getLatestValueDescription(
     }
 }
 
-fun getMinMaxAverageDescription(context: Context, lineChart: LineChart, chartData: MutableList<Entry>): String {
+fun getMinMaxAverageDescription(
+    context: Context,
+    lineChart: LineChart,
+    chartData: MutableList<Entry>,
+    chartSensorType: ChartSensorType,
+    unitsConverter: UnitsConverter
+): String {
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
@@ -120,9 +132,62 @@ fun getMinMaxAverageDescription(context: Context, lineChart: LineChart, chartDat
 
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
-    Timber.d("calculateCaption average = ${average.toDouble()} min = $min max = $max")
+    val minMaxAvgOneLine = context.getString(R.string.chart_min_max_avg, min, max, average)
+    val computePaint = Paint(1)
+    computePaint.typeface = lineChart.description.typeface
+    computePaint.textSize = lineChart.description.textSize
+    val computeSize = Utils.calcTextSize(computePaint, minMaxAvgOneLine)
+    val lineFits = computeSize.width * 1.1f < lineChart.viewPortHandler.contentWidth()
+    Timber.d("calculateCaption $minMaxAvgOneLine size = $computeSize field = ${lineChart.viewPortHandler.contentWidth()}")
 
-    return context.getString(R.string.chart_min_max_avg, min, max, average)
+    return if (lineFits) {
+        minMaxAvgOneLine
+    } else {
+        getMultilineMinMaxAvg(
+            context = context,
+            chartSensorType = chartSensorType,
+            unitsConverter = unitsConverter,
+            min = min,
+            max = max,
+            average = average
+        )
+    }
+}
+
+fun getMultilineMinMaxAvg(
+    context: Context,
+    chartSensorType: ChartSensorType,
+    unitsConverter: UnitsConverter,
+    min: Float,
+    max: Float,
+    average: Float
+): String {
+    val multiLineBuilder = StringBuilder()
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_min))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.appendLine(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
+    })
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_max))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.appendLine(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
+    })
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_avg))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
+    })
+    return multiLineBuilder.toString()
 }
 
 fun chartsInitialSetup(

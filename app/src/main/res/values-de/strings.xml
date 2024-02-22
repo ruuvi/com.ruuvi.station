@@ -115,7 +115,10 @@
     <string name="changelog">(änderungsprotokoll)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
+    <string name="chart_stat_avg">Durchschnitt</string>
     <string name="chart_stat_hide">Min./Max./Durchschnitt ausblenden</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Min./Max./Durchschnitt anzeigen</string>
     <string name="chart_view_period_days_count">Anzahl der Tage: %1$s</string>
     <string name="charts_background_dialog_description">Die Diagrammfunktion funktioniert am besten, wenn das Scannen im Hintergrund aktiviert ist.</string>

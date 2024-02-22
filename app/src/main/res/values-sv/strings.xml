@@ -115,7 +115,10 @@
     <string name="changelog">(ändringslogg)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Medelvärde: %3$,.2f</string>
+    <string name="chart_stat_avg">Medelvärde</string>
     <string name="chart_stat_hide">Dölj min/max/genomsnitt</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Visa min/max/genomsnitt</string>
     <string name="chart_view_period_days_count">Antal dagar: %1$s</string>
     <string name="charts_background_dialog_description">Historiken fungerar bäst när bakgrundsskanning är aktiverad.</string>

@@ -115,7 +115,10 @@
     <string name="changelog">(journal des modifications)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Moyenne: %3$,.2f</string>
+    <string name="chart_stat_avg">Moyenne</string>
     <string name="chart_stat_hide">Masquer min/max/moy</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Afficher min/max/moy</string>
     <string name="chart_view_period_days_count">Nombre de jours : %1$s</string>
     <string name="charts_background_dialog_description">L\'histogramme fonctionne mieux avec le balayage en arrière-plan activé.</string>
