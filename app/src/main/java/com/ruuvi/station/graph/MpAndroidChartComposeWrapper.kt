@@ -32,6 +32,8 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.*
 
 @Composable
@@ -320,6 +322,11 @@ private fun addDataToChart(
     chart.axisLeft.axisMinimum = set.yMin - 1f
     chart.axisLeft.axisMaximum = set.yMax + 1f
     chart.axisLeft.setDrawTopYLabelEntry(false)
+    chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
+        override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
+            return formatDoubleToString(p0)
+        }
+    }
 
     chart.data = LineData(set)
     chart.data.isHighlightEnabled = true
@@ -336,6 +343,18 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
+}
+
+fun formatDoubleToString(value: Double): String {
+    return if (value % 1 == 0.0) {
+        val symbols = DecimalFormatSymbols.getInstance()
+        val decimalFormat = DecimalFormat("#,###", symbols)
+        decimalFormat.format(value)
+    } else {
+        val symbols = DecimalFormatSymbols.getInstance()
+        val decimalFormat = DecimalFormat("#.###", symbols)
+        decimalFormat.format(value)
+    }
 }
 
 private fun setLabelCount(chart: LineChart) {
@@ -358,7 +377,7 @@ fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pres
     val computePaint = Paint(1)
     computePaint.typeface = pressureChart.axisLeft.typeface
     computePaint.textSize = pressureChart.axisLeft.textSize
-    val computeSize = Utils.calcTextSize(computePaint, "0000.00")
+    val computeSize = Utils.calcTextSize(computePaint, "0,000.00")
     val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
 
     val offsetLeft = computeSize.width * 1.1f
