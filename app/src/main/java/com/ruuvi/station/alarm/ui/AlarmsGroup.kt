@@ -136,6 +136,7 @@ fun OfflineAlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -205,6 +206,7 @@ fun AlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -291,6 +293,7 @@ fun RssiAlertEditItem(
     }) {
         SmallerText(stringResource(id = R.string.rssi_alert_description))
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -399,6 +402,7 @@ fun MovementAlertEditItem(
     }) {
         SmallerText(stringResource(id = R.string.alert_movement_description))
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {

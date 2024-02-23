@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ruuvi.station.R
@@ -23,7 +22,7 @@ fun ChartSettings(
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.settings_chart_all_points),
                 checked = displayAllPoint.value,
                 onCheckedChange = viewModel::setShowAllPoints
@@ -32,7 +31,7 @@ fun ChartSettings(
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.settings_chart_draw_dots),
                 checked = drawDots.value,
                 onCheckedChange = viewModel::setDrawDots
