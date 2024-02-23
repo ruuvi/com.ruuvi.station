@@ -32,6 +32,8 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.*
 
 @Composable
@@ -62,7 +64,13 @@ fun ChartView(
             Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
             val chartCaption =
                 if (showChartStats) {
-                    getMinMaxAverageDescription(context, lineChart, chartData) + System.lineSeparator()
+                    getMinMaxAverageDescription(
+                        context,
+                        lineChart,
+                        chartData,
+                        chartSensorType,
+                        unitsConverter
+                    ) + System.lineSeparator()
                 } else {
                     ""
                 } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
@@ -91,7 +99,13 @@ fun getLatestValueDescription(
     }
 }
 
-fun getMinMaxAverageDescription(context: Context, lineChart: LineChart, chartData: MutableList<Entry>): String {
+fun getMinMaxAverageDescription(
+    context: Context,
+    lineChart: LineChart,
+    chartData: MutableList<Entry>,
+    chartSensorType: ChartSensorType,
+    unitsConverter: UnitsConverter
+): String {
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
@@ -120,9 +134,62 @@ fun getMinMaxAverageDescription(context: Context, lineChart: LineChart, chartDat
 
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
-    Timber.d("calculateCaption average = ${average.toDouble()} min = $min max = $max")
+    val minMaxAvgOneLine = context.getString(R.string.chart_min_max_avg, min, max, average)
+    val computePaint = Paint(1)
+    computePaint.typeface = lineChart.description.typeface
+    computePaint.textSize = lineChart.description.textSize
+    val computeSize = Utils.calcTextSize(computePaint, minMaxAvgOneLine)
+    val lineFits = computeSize.width * 1.1f < lineChart.viewPortHandler.contentWidth()
+    Timber.d("calculateCaption $minMaxAvgOneLine size = $computeSize field = ${lineChart.viewPortHandler.contentWidth()}")
 
-    return context.getString(R.string.chart_min_max_avg, min, max, average)
+    return if (lineFits) {
+        minMaxAvgOneLine
+    } else {
+        getMultilineMinMaxAvg(
+            context = context,
+            chartSensorType = chartSensorType,
+            unitsConverter = unitsConverter,
+            min = min,
+            max = max,
+            average = average
+        )
+    }
+}
+
+fun getMultilineMinMaxAvg(
+    context: Context,
+    chartSensorType: ChartSensorType,
+    unitsConverter: UnitsConverter,
+    min: Float,
+    max: Float,
+    average: Float
+): String {
+    val multiLineBuilder = StringBuilder()
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_min))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.appendLine(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
+    })
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_max))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.appendLine(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
+    })
+
+    multiLineBuilder.append(context.getString(R.string.chart_stat_avg))
+    multiLineBuilder.append(": ")
+    multiLineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
+    })
+    return multiLineBuilder.toString()
 }
 
 fun chartsInitialSetup(
@@ -255,6 +322,11 @@ private fun addDataToChart(
     chart.axisLeft.axisMinimum = set.yMin - 1f
     chart.axisLeft.axisMaximum = set.yMax + 1f
     chart.axisLeft.setDrawTopYLabelEntry(false)
+    chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
+        override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
+            return formatDoubleToString(p0)
+        }
+    }
 
     chart.data = LineData(set)
     chart.data.isHighlightEnabled = true
@@ -271,6 +343,18 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
+}
+
+fun formatDoubleToString(value: Double): String {
+    return if (value % 1 == 0.0) {
+        val symbols = DecimalFormatSymbols.getInstance()
+        val decimalFormat = DecimalFormat("#,###", symbols)
+        decimalFormat.format(value)
+    } else {
+        val symbols = DecimalFormatSymbols.getInstance()
+        val decimalFormat = DecimalFormat("#.###", symbols)
+        decimalFormat.format(value)
+    }
 }
 
 private fun setLabelCount(chart: LineChart) {
@@ -293,7 +377,7 @@ fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pres
     val computePaint = Paint(1)
     computePaint.typeface = pressureChart.axisLeft.typeface
     computePaint.textSize = pressureChart.axisLeft.textSize
-    val computeSize = Utils.calcTextSize(computePaint, "0000.00")
+    val computeSize = Utils.calcTextSize(computePaint, "0,000.00")
     val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
 
     val offsetLeft = computeSize.width * 1.1f

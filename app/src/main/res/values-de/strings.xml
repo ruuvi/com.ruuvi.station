@@ -115,7 +115,10 @@
     <string name="changelog">(änderungsprotokoll)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
+    <string name="chart_stat_avg">Durchschnitt</string>
     <string name="chart_stat_hide">Min./Max./Durchschnitt ausblenden</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Min./Max./Durchschnitt anzeigen</string>
     <string name="chart_view_period_days_count">Anzahl der Tage: %1$s</string>
     <string name="charts_background_dialog_description">Die Diagrammfunktion funktioniert am besten, wenn das Scannen im Hintergrund aktiviert ist.</string>
@@ -155,8 +158,8 @@
     <string name="cloud_er_unable_to_send_email">Die Email kann nicht gesendet werden</string>
     <string name="cloud_er_unauthorized">Nicht autorisiert</string>
     <string name="cloud_er_user_not_found">Benutzer wurde nicht gefunden</string>
-    <string name="cloud_only_mode">Cloud-Modus</string>
-    <string name="cloud_only_mode_description">Aktualisieren Sie Cloud-Sensoren in der Nähe nur von der Cloud aus, indem Sie deren Bluetooth-Meldungen ignorieren. Dazu ist ein Ruuvi Gateway Router erforderlich.</string>
+    <string name="cloud_only_mode">Bluetooth deaktivieren</string>
+    <string name="cloud_only_mode_description">Wenn die Option Bluetooth deaktivieren aktiviert ist, ignoriert die App alle Messungen, die von Ruuvi-Sensoren über Bluetooth gesendet werden, wenn sich Sensoren in der Nähe eines Ruuvi Gateway-Routers befinden. Stattdessen empfängt die App die Sensormessdaten ausschließlich aus der Ruuvi Cloud. Damit Messdaten an die Ruuvi Cloud übertragen werden können, muss sich Ihr Sensor in der Nähe eines Ruuvi Gateway-Routers befinden.</string>
     <string name="cloud_stored_alerts">● Hintergrundbilder</string>
     <string name="cloud_stored_backgrounds">● Alert-Einstellungen</string>
     <string name="cloud_stored_calibration">● Kalibrierungseinstellungen</string>
@@ -439,7 +442,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="request_code">Anfrage Code</string>
     <string name="reset_order">Zur alphabetischen Sortierung zurücksetzen</string>
     <string name="reset_order_confirmation">Sind Sie sicher, dass Sie die Reihenfolge der Sensorkarten auf die alphabetische Sortierung zurücksetzen möchten?</string>
-    <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
+    <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Modus Bluetooth deaktivieren, wenn Sie Daten zur Signalstärke nur über das Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SCANNEN</string>

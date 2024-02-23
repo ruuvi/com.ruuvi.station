@@ -3,6 +3,7 @@ package com.ruuvi.station.dfu.ui
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,7 +34,10 @@ fun FirmwareGroup(
         backgroundColor = RuuviStationTheme.colors.settingsTitle
     ) {
         if (firmware != null) {
-            ValueWithCaption(value = firmwareVersion, title = stringResource(id = R.string.current_version))
+            ValueWithCaption(
+                value = firmwareVersion,
+                title = stringResource(id = R.string.current_version)
+            )
             DividerRuuvi()
         }
 

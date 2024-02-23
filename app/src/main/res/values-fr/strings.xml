@@ -115,7 +115,10 @@
     <string name="changelog">(journal des modifications)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Moyenne: %3$,.2f</string>
+    <string name="chart_stat_avg">Moyenne</string>
     <string name="chart_stat_hide">Masquer min/max/moy</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Afficher min/max/moy</string>
     <string name="chart_view_period_days_count">Nombre de jours : %1$s</string>
     <string name="charts_background_dialog_description">L\'histogramme fonctionne mieux avec le balayage en arrière-plan activé.</string>
@@ -155,8 +158,8 @@
     <string name="cloud_er_unable_to_send_email">Impossible d\'envoyer l\'email</string>
     <string name="cloud_er_unauthorized">Non permis</string>
     <string name="cloud_er_user_not_found">Utilisateur introuvable</string>
-    <string name="cloud_only_mode">Statut du cloud</string>
-    <string name="cloud_only_mode_description">Mettre à jour les capteurs à proximité associés au cloud seulement en rejetant les messages Bluetooth depuis le could. Nécessite le routeur Ruuvi Gateway.</string>
+    <string name="cloud_only_mode">Désactiver Bluetooth</string>
+    <string name="cloud_only_mode_description">Lorsque l\'option Désactiver Bluetooth est activée, l\'application ne tiendra pas compte des mesures envoyées par les capteurs Ruuvi via Bluetooth lorsque les capteurs se trouvent à proximité d\'un routeur Ruuvi Gateway. Au lieu de cela, l\'application recevra exclusivement les données de mesure des capteurs de Ruuvi Cloud. Pour que les données de mesure soient transmises à Ruuvi Cloud, votre capteur doit se trouver à proximité d\'un routeur Ruuvi Gateway.</string>
     <string name="cloud_stored_alerts">● Images d\'arrière-plan</string>
     <string name="cloud_stored_backgrounds">● Paramètres d\'alerte</string>
     <string name="cloud_stored_calibration">● Paramètres d\'étalonnage</string>
@@ -433,7 +436,7 @@
     <string name="request_code">Demander un code</string>
     <string name="reset_order">Réinitialiser au tri alphabétique</string>
     <string name="reset_order_confirmation">Êtes-vous certain de vouloir revenir à la classification alphabétique de la carte du capteur ?</string>
-    <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode nuage lorsque vous souhaitez enregistrer les données de puissance du signal uniquement via la passerelle Ruuvi.</string>
+    <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode Désactiver Bluetooth si vous souhaitez enregistrer des données sur la force du signal uniquement via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">BALAYAGE EN COURS</string>

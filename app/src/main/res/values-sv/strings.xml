@@ -115,7 +115,10 @@
     <string name="changelog">(ändringslogg)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Medelvärde: %3$,.2f</string>
+    <string name="chart_stat_avg">Medelvärde</string>
     <string name="chart_stat_hide">Dölj min/max/genomsnitt</string>
+    <string name="chart_stat_max">Max</string>
+    <string name="chart_stat_min">Min</string>
     <string name="chart_stat_show">Visa min/max/genomsnitt</string>
     <string name="chart_view_period_days_count">Antal dagar: %1$s</string>
     <string name="charts_background_dialog_description">Historiken fungerar bäst när bakgrundsskanning är aktiverad.</string>
@@ -155,8 +158,8 @@
     <string name="cloud_er_unable_to_send_email">Kunde inte skicka e-post</string>
     <string name="cloud_er_unauthorized">Obehörig</string>
     <string name="cloud_er_user_not_found">Användaren hittades inte</string>
-    <string name="cloud_only_mode">Molnläge</string>
-    <string name="cloud_only_mode_description">Uppdatera närliggande molnregistrerade sensorer endast från molnet genom att inte lyssna på deras Bluetooth-meddelanden. Kräver en Ruuvi Gateway.</string>
+    <string name="cloud_only_mode">Inaktivera Bluetooth</string>
+    <string name="cloud_only_mode_description">När alternativet Inaktivera Bluetooth är aktiverat kommer appen att bortse från alla mätningar som skickas av Ruuvi-sensorer via Bluetooth när sensorerna är i närheten av en Ruuvi Gateway-router. Istället kommer appen endast att ta emot sensorernas mätdata från Ruuvi Cloud. För att mätdata ska kunna överföras till Ruuvi Cloud måste din sensor befinna sig i närheten av en Ruuvi Gateway-router.</string>
     <string name="cloud_stored_alerts">● Bakgrundsbilder</string>
     <string name="cloud_stored_backgrounds">● Varningsinställningar</string>
     <string name="cloud_stored_calibration">● Kalibreringsinställningar</string>
@@ -428,7 +431,7 @@
     <string name="request_code">Begär en inloggningskod</string>
     <string name="reset_order">Återställ till alfabetisk sortering</string>
     <string name="reset_order_confirmation">Är du säker på att du vill återställa sensorkortsordningen till alfabetisk sortering?</string>
-    <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd molnläge när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
+    <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd läget Inaktivera Bluetooth när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
     <string name="scan">SKANNA</string>

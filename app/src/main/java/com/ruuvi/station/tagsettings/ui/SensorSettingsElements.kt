@@ -43,6 +43,7 @@ import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import okhttp3.internal.toHexString
 import timber.log.Timber
 
 @Composable
@@ -331,7 +332,7 @@ fun MoreInfoGroup(
             sensorState.latestMeasurement?.dataFormat == 0xC5) {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
-                value = sensorState.latestMeasurement.dataFormat.toString()
+                value = sensorState.latestMeasurement.dataFormat.toHexString()
             )
             BatteryInfoItem(
                 voltage = sensorState.latestMeasurement.voltageValue.value,
@@ -423,6 +424,7 @@ fun BatteryInfoItem (
                 modifier = Modifier
                     .padding(horizontal = RuuviStationTheme.dimensions.small),
                 style = RuuviStationTheme.typography.warning,
+                color = RuuviStationTheme.colors.activeAlert ,
                 textAlign = TextAlign.Start,
                 text = stringResource(id = R.string.brackets_text, stringResource(id = R.string.replace_battery)))
         } else {
@@ -469,25 +471,28 @@ fun SensorSettingsTitle (title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-            .background(color = RuuviStationTheme.colors.settingsTitle),
+            .background(color = RuuviStationTheme.colors.settingsTitle)
+            .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+            .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = title,
             style = RuuviStationTheme.typography.title,
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
         )
     }
 }
 
 @Composable
 fun ValueWithCaption(
+    modifier: Modifier = Modifier,
     title: String,
     value: String?
 ) {
-    Row(modifier = Modifier
-        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
+    Row(modifier = modifier
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+        .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

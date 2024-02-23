@@ -210,12 +210,11 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
                 Paragraph(text = stringResource(id = R.string.unclaim_sensor_description))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
-                SwitchRuuvi(
-                    text = stringResource(id = R.string.remove_cloud_history_title),
+                RuuviCheckbox(
                     checked = deleteData,
-                    onCheckedChange = { deleteData = !deleteData }
+                    text = stringResource(id = R.string.remove_cloud_history_description),
+                    onCheckedChange = { checked -> deleteData = checked}
                 )
-                Paragraph(text = stringResource(id = R.string.remove_cloud_history_description))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
