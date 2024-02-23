@@ -18,7 +18,7 @@ object AlarmModule {
         bind<AlarmsInteractor>() with singleton { AlarmsInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<AlarmItemsViewModel>() with factory { sensorId: String ->
-            AlarmItemsViewModel(sensorId, instance())
+            AlarmItemsViewModel(sensorId, instance(), instance())
         }
 
         bind<AlertNotificationInteractor>() with singleton { AlertNotificationInteractor(instance()) }
