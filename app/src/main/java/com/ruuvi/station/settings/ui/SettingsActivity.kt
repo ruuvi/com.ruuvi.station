@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -41,7 +41,7 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme() {
-                val navController = rememberAnimatedNavController()
+                val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val activity = LocalContext.current as Activity
@@ -62,13 +62,13 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                     topBar = { RuuviTopAppBar(title = title) },
                     scaffoldState = scaffoldState
                 ) { padding ->
-                    AnimatedNavHost(
+                    NavHost(
                         navController = navController,
                         startDestination = SettingsRoutes.LIST
                     ) {
                         composable(SettingsRoutes.LIST,
-                            enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                            exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                            exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                         ) {
                             SettingsList(
                                 scaffoldState = scaffoldState,
@@ -92,8 +92,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             enterTransition = enterTransition,
                             exitTransition = exitTransition
                         ) {
+                            val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
                             AlertNotificationsSettings(
-                                scaffoldState = scaffoldState
+                                scaffoldState = scaffoldState,
+                                viewModel = alertNotificationsSettingsViewModel
                             )
                         }
                         composable(SettingsRoutes.BACKGROUNDSCAN,
@@ -166,6 +168,16 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 viewModel = dataForwardingSettingsViewModel
                             )
                         }
+                        composable(SettingsRoutes.DEVELOPER,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
+                            DeveloperSettings(
+                                scaffoldState = scaffoldState,
+                                viewModel = developerSettingsViewModel
+                            )
+                        }
                     }
                 }
 
@@ -180,14 +192,14 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Right,
+            towards = AnimatedContentTransitionScope.SlideDirection.Right,
             animationSpec = tween(600)
         ) }
 

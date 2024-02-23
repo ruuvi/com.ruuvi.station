@@ -27,6 +27,8 @@ import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
+const val MAX_RESOLUTION = 3000
+
 class ImageInteractor (
     private val context: Context
 ) {
@@ -87,7 +89,7 @@ class ImageInteractor (
 
     fun isImage(uri: Uri?): Boolean {
         val mime = uri?.let { getMimeType(it) }
-        return mime == "jpeg" || mime == "jpg" || mime == "png"
+        return mime == "jpeg" || mime == "jpg" || mime == "png" || mime == "heic" || mime == "heif"
     }
 
     fun getMimeType(uri: Uri): String? {
@@ -137,7 +139,6 @@ class ImageInteractor (
     //TODO filename and uri should become 1 param
     fun resize(filename: String?, uri: Uri?, rotation: Int) {
         try {
-            val targetWidth = 1080
 
             var bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
 
@@ -145,7 +146,20 @@ class ImageInteractor (
 
             Timber.d("Original ${bitmap.width} x ${bitmap.height} rotation = $rotation")
 
-            val out = Bitmap.createScaledBitmap(bitmap, targetWidth, (targetWidth.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt(), false)
+            var targetWidth = bitmap.width
+            var targetHeight = bitmap.height
+
+            if (bitmap.width > MAX_RESOLUTION || bitmap.height > MAX_RESOLUTION) {
+                if (bitmap.width > bitmap.height) {
+                    targetWidth = MAX_RESOLUTION
+                    targetHeight = (MAX_RESOLUTION.toFloat() / bitmap.width.toFloat() * bitmap.height).toInt()
+                } else {
+                    targetHeight = MAX_RESOLUTION
+                    targetWidth = (MAX_RESOLUTION.toFloat() / bitmap.height.toFloat() * bitmap.width).toInt()
+                }
+            }
+
+            val out = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
 
             Timber.d("Scaled ${out.width} x ${out.height}")
 

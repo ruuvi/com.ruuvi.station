@@ -62,7 +62,7 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     GRAPH_VIEW_PERIOD,
-                    preferences.getGraphViewPeriodDays().toString()
+                    preferences.getGraphViewPeriodHours().toString()
                 )
                 firebaseAnalytics.setUserProperty(
                     GRAPH_SHOW_ALL_POINTS,

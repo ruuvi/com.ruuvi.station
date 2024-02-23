@@ -3,18 +3,15 @@ package com.ruuvi.station.tagsettings.ui
 import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -35,21 +32,23 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
-import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 @Composable
 fun SensorSettings(
     scaffoldState: ScaffoldState,
+    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TagSettingsViewModel,
     alarmsViewModel: AlarmItemsViewModel
 ) {
@@ -61,6 +60,9 @@ fun SensorSettings(
     val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
+    var showAskToClaimDialog by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -98,14 +100,34 @@ fun SensorSettings(
         )
         DividerSurfaceColor()
         RemoveGroup(
-            sensorState = sensorState,
-            sensorOwnedByUser = sensorOwnedByUser,
-            deleteSensor = viewModel::deleteSensor
+            deleteSensor = { onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.SENSOR_REMOVE)) }
         )
     }
 
-    LaunchedEffect(key1 = 1) {
+    if (showAskToClaimDialog) {
+        RuuviDialog(
+            title = stringResource(id = R.string.claim_sensor_ownership),
+            onDismissRequest = { showAskToClaimDialog = false },
+            positiveButtonText = stringResource(id = R.string.yes),
+            negativeButtonText = stringResource(id = R.string.no),
+            onOkClickAction = {
+                showAskToClaimDialog = false
+                ClaimSensorActivity.start(context, sensorState.id)
+            }
+        ) {
+            Paragraph(text = stringResource(id = R.string.do_you_own_sensor))
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
         viewModel.updateSensorFirmwareVersion()
+    }
+    
+    LaunchedEffect(key1 = Unit) {
+        viewModel.askToClaim.collectLatest {
+            Timber.d("askToClaim collected $it")
+            if (it) showAskToClaimDialog = true
+        }
     }
 }
 
@@ -115,6 +137,7 @@ fun SensorSettingsImage(
     sensorState: RuuviTag,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Box(
         Modifier
             .fillMaxWidth()
@@ -143,34 +166,15 @@ fun SensorSettingsImage(
                 )
             }
         }
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(modifier = Modifier
-                .clip(CircleShape)
-                .size(RuuviStationTheme.dimensions.huge)
-                .background(RuuviStationTheme.colors.accent),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    modifier = Modifier.size(RuuviStationTheme.dimensions.extraBig),
-                    painter = painterResource(id = R.drawable.camera_24),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-            Text(
-                style = RuuviStationTheme.typography.subtitle,
-                text = stringResource(id = R.string.change_background_image),
-                color = RuuviStationTheme.colors.buttonText
-            )
-        }
     }
 
+    TextEditWithCaptionButton(
+        title = stringResource(id = R.string.background_image),
+        icon = painterResource(id = R.drawable.camera_24),
+        tint = RuuviStationTheme.colors.accent
+    ) {
+        BackgroundActivity.start(context, sensorState.id)
+    }
 }
 
 @Composable
@@ -184,7 +188,7 @@ fun GeneralSettingsGroup(
     val context = LocalContext.current
     var setNameDialog by remember { mutableStateOf(false) }
 
-    SensorSettingsTitle(title = stringResource(id = R.string.general))
+    DividerRuuvi()
     TextEditWithCaptionButton(
         title = stringResource(id = R.string.tag_name),
         value = sensorState.displayName,
@@ -200,21 +204,13 @@ fun GeneralSettingsGroup(
         } else {
             sensorState.owner
         }
-
-        if (sensorOwnedByUser) {
-            ValueWithCaption(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = owner
-            )
-        } else {
-            TextEditWithCaptionButton(
-                title = stringResource(id = R.string.tagsettings_owner),
-                value = owner,
-                icon = painterResource(id = R.drawable.arrow_forward_16),
-                tint = RuuviStationTheme.colors.trackInactive
-            ) {
-                ClaimSensorActivity.start(context, sensorState.id)
-            }
+        TextEditWithCaptionButton(
+            title = stringResource(id = R.string.tagsettings_owner),
+            value = owner,
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
+        ) {
+            ClaimSensorActivity.start(context, sensorState.id)
         }
         if (sensorOwnedByUser) {
             val sharedText = sensorIsShared.asString(context)
@@ -228,12 +224,29 @@ fun GeneralSettingsGroup(
             ) {
                 ShareSensorActivity.start(context, sensorState.id)
             }
+        } else if (sensorState.subscriptionName?.isNotEmpty() == true) {
+            DividerRuuvi()
+            TextWithCaption(
+                title = stringResource(id = R.string.owners_plan),
+                value = sensorState.subscriptionName
+            )
+        }
+    } else {
+        DividerRuuvi()
+        TextEditWithCaptionButton(
+            title = stringResource(id = R.string.tagsettings_owner),
+            value = stringResource(id = R.string.owner_none),
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
+        ) {
+            ClaimSensorActivity.start(context, sensorState.id)
         }
     }
 
     if (setNameDialog) {
         SetSensorName(
             value = sensorState.name,
+            defaultName = sensorState.getDefaultName(),
             setName = setName,
         ) {
             setNameDialog = false
@@ -245,6 +258,7 @@ fun GeneralSettingsGroup(
 @Composable
 fun SetSensorName(
     value: String?,
+    defaultName: String,
     setName: (String) -> Unit,
     onDismissRequest : () -> Unit
 ) {
@@ -266,6 +280,7 @@ fun SetSensorName(
         ParagraphWithPadding(text = stringResource(id = R.string.rename_sensor_message))
         TextFieldRuuvi(
             value = name,
+            hint = defaultName,
             onValueChange = {
                 if (it.text.length <= 32) name = it
             },
@@ -286,62 +301,6 @@ fun SetSensorName(
         LaunchedEffect(key1 = Unit) {
             delay(100)
             focusRequester.requestFocus()
-        }
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun RemoveGroup(
-    sensorState: RuuviTag,
-    sensorOwnedByUser: Boolean,
-    deleteSensor: ()->Unit
-) {
-    val context = LocalContext.current
-    val removeMessage = if (sensorState.networkSensor != true) {
-        stringResource(id = R.string.remove_local_sensor)
-    } else {
-        if (sensorOwnedByUser) {
-            stringResource(id = R.string.remove_claimed_sensor)
-        } else {
-            stringResource(id = R.string.remove_shared_sensor)
-        }
-    }
-
-    var removeDialog by remember {
-        mutableStateOf(false)
-    }
-
-    ExpandableContainer(header = {
-        Text(
-            text = stringResource(id = R.string.remove),
-            style = RuuviStationTheme.typography.title,
-        )
-    },
-        backgroundColor = RuuviStationTheme.colors.settingsTitle
-    ) {
-        TextEditWithCaptionButton(
-            value = null,
-            title = stringResource(id = R.string.remove_this_sensor),
-            icon = painterResource(id = R.drawable.arrow_forward_16),
-            tint = RuuviStationTheme.colors.trackInactive
-        ) {
-            removeDialog = true
-        }
-    }
-
-    if (removeDialog) {
-        RuuviDialog(
-            title = stringResource(id = R.string.tagsettings_sensor_remove),
-            onDismissRequest = { removeDialog = false },
-            onOkClickAction = {
-                deleteSensor()
-                DashboardActivity.start(context)
-            }
-        ) {
-            Paragraph(text = removeMessage)
         }
     }
 }
@@ -367,7 +326,9 @@ fun MoreInfoGroup(
             title = stringResource(id = R.string.mac_address),
             value = sensorState.id
         )
-        if (sensorState.latestMeasurement?.dataFormat == 3 || sensorState.latestMeasurement?.dataFormat == 5) {
+        if (sensorState.latestMeasurement?.dataFormat == 3 ||
+            sensorState.latestMeasurement?.dataFormat == 5 ||
+            sensorState.latestMeasurement?.dataFormat == 0xC5) {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
                 value = sensorState.latestMeasurement.dataFormat.toString()

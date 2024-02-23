@@ -7,9 +7,10 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -18,14 +19,18 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
+import com.ruuvi.station.nfc.NfcScanReciever
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.openUrl
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
+import timber.log.Timber
 import java.util.*
 
-class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware {
+class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -80,6 +85,24 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
                 adapter.notifyDataSetChanged()
             }
         }
+        lifecycleScope.launchWhenStarted {
+            NfcScanReciever.nfcSensorScanned.collect{
+                    scanInfo ->
+                Timber.d("nfc scanned: $scanInfo")
+                if (scanInfo != null) {
+                    val response = viewModel.getNfcScanResponse(scanInfo)
+                    Timber.d("nfc scanned response: $response")
+                    if (response.existingSensor) {
+                        SensorCardActivity.startWithDashboard(this@AddTagActivity, response.sensorId)
+                    } else if (response.canBeAdded){
+                        viewModel.addSensor(response.sensorId)
+                        TagSettingsActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
+                    } else {
+                        Snackbar.make(this@AddTagActivity, binding.content.root, getText(R.string.nfc_enable_bt_to_add_sensor), LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun setupUI() {
@@ -105,6 +128,8 @@ class AddTagActivity : AppCompatActivity(R.layout.activity_add_tag), KodeinAware
         binding.content.buySensorsButton2.setOnClickListener {
             openUrl(getString(R.string.buy_sensors_link))
         }
+
+        binding.content.nfcHintTextView.isVisible = viewModel.nfcSupported
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

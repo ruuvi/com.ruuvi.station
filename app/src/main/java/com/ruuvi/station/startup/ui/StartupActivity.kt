@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.welcome.ui.WelcomeActivity.Companion.ARGUMENT_FROM_WELCOME
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.onboarding.ui.OnboardingActivity
 import org.kodein.di.KodeinAware
@@ -44,9 +43,8 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-        fun start(context: Context, isFromWelcome: Boolean) {
+        fun start(context: Context) {
             val intent = createIntentForNotification(context)
-            intent.putExtra(ARGUMENT_FROM_WELCOME, isFromWelcome)
             context.startActivity(intent)
         }
     }

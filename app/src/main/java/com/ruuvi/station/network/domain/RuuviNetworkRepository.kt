@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ruuvi.station.BuildConfig
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.response.*
@@ -19,13 +21,13 @@ import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 
 
 class RuuviNetworkRepository
     @VisibleForTesting internal constructor(
         private val dispatcher: CoroutineDispatcher,
-        private val imageInteractor: ImageInteractor
+        private val imageInteractor: ImageInteractor,
+        private val preferencesRepository: PreferencesRepository
     )
 {
     val ioScope = CoroutineScope(Dispatchers.IO)
@@ -34,16 +36,37 @@ class RuuviNetworkRepository
         it.level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(client)
+    private val client = OkHttpClient
+        .Builder()
+        .addNetworkInterceptor { chain ->
+            chain.proceed(
+                chain.request()
+                    .newBuilder()
+                    .header(USER_AGENT, userAgent)
+                    .build()
+            )
+        }
+        .addInterceptor(interceptor)
         .build()
 
-    private val retrofitService: RuuviNetworkApi by lazy {
-        retrofit.create(RuuviNetworkApi::class.java)
+    private var retrofit = buildRetrofit()
+
+    private var retrofitService: RuuviNetworkApi = getRetrofitService()
+
+    fun reinitialize() {
+        retrofit = buildRetrofit()
+        retrofitService = getRetrofitService()
+    }
+    private fun buildRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(if (preferencesRepository.isDevServerEnabled()) DEV_URL else BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+    }
+
+    private fun getRetrofitService(): RuuviNetworkApi {
+        return retrofit.create(RuuviNetworkApi::class.java)
     }
 
     fun registerUser(user: UserRegisterRequest, onResult: (UserRegisterResponse?) -> Unit) {
@@ -387,11 +410,11 @@ class RuuviNetworkRepository
         result
     }
 
-    suspend fun registerPush(token: String, fcmToken: String): PushRegisterResponse?
+    suspend fun registerPush(token: String, fcmToken: String, language: String): PushRegisterResponse?
     {
         val response = retrofitService.pushRegister(
             auth = getAuth(token),
-            request = PushRegisterRequest(token = fcmToken)
+            request = PushRegisterRequest(token = fcmToken, params = PushRegisterParams(language))
         )
         val result: PushRegisterResponse? = if (response.isSuccessful) {
             response.body()
@@ -435,7 +458,16 @@ class RuuviNetworkRepository
 
     companion object {
         private const val BASE_URL = "https://network.ruuvi.com/" //production
-        //private const val BASE_URL = "https://j9ul2pfmol.execute-api.eu-central-1.amazonaws.com/" //testing
+        private const val DEV_URL = "https://testnet.ruuvi.com/" //testing
+        private const val USER_AGENT = "User-Agent"
+        private const val USER_AGENT_TEMPLATE = "Station_Android"
+        private const val USER_AGENT_DEBUG = "_Debug"
+        private const val USER_AGENT_BUILD = "/Build_"
+
         fun getAuth(token: String) = "Bearer $token"
+
+        private val userAgent = USER_AGENT_TEMPLATE +
+                if (BuildConfig.DEBUG) USER_AGENT_DEBUG else "" +
+                        USER_AGENT_BUILD + BuildConfig.VERSION_CODE
     }
 }

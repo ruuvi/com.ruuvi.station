@@ -13,6 +13,9 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Wählen Sie aus, wie genau Sie die Live-Messwerte der Sensoren in der App sehen möchten. Diese Einstellung hat keinen Einfluss auf Verlaufsdiagramme oder Alarme.</string>
+    <string name="add_a_sensor">Fügen Sie einen Sensor hinzu</string>
+    <string name="add_sensor_description">Auf dieser Seite werden Ruuvi-Sensoren in der Nähe angezeigt, die der App noch nicht hinzugefügt wurden. Tippen Sie auf einen Sensor, um ihn hinzuzufügen.</string>
+    <string name="add_sensor_via_nfc">Wenn Ihr NFC aktiviert ist, können Sie alternativ einen NFC-Sensor hinzufügen, indem Sie ihn mit Ihrem Telefon berühren.</string>
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
     <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
@@ -22,6 +25,10 @@
     <string name="alarm_mute_for_hour">Stumm schalten für eine Stunde</string>
     <string name="alarm_notification_disable">Diesen Alarm deaktivieren</string>
     <string name="alert">Alarmierung</string>
+    <string name="alert_cloud_connection_description">Warnung, wenn Sensordaten länger als %1$,d Minuten nicht in der Cloud aktualisiert wurden.</string>
+    <string name="alert_cloud_connection_dialog_description">Geben Sie die gewünschte Verzögerung in Minuten ein, bevor die Warnung ausgelöst wird. Der Mindestwert beträgt 2 Minuten.</string>
+    <string name="alert_cloud_connection_dialog_title">Cloud-Verbindungsalarm einstellen</string>
+    <string name="alert_cloud_connection_title">Cloud-Verbindung</string>
     <string name="alert_dialog_max">Max (%1$s)</string>
     <string name="alert_dialog_min">Min (%1$s)</string>
     <string name="alert_dialog_title_humidity">Feuchtigkeitsalarm einstellen</string>
@@ -29,12 +36,13 @@
     <string name="alert_dialog_title_rssi">Signalstärkealarm einstellen</string>
     <string name="alert_dialog_title_temperature">Temperaturalarm einstellen</string>
     <string name="alert_movement">Bewegung</string>
-    <string name="alert_movement_description">Warnung, wenn der Sensor bewegt wird</string>
+    <string name="alert_movement_description">Ändert sich der Wert des sensorinternen Bewegungszählers, wird ein Bewegungsalarm ausgelöst. Mit diesem Alarm können beispielsweise Türbewegungen oder Vibrationen in der Nähe des Sensors erkannt werden.</string>
     <string name="alert_notification_humidity_high">Luftfeuchtigkeit ist zu hoch!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfeuchtigkeit liegt über %1$s</string>
     <string name="alert_notification_humidity_low">Luftfeuchtigkeit ist zu niedrig!</string>
     <string name="alert_notification_humidity_low_threshold">Luftfeuchtigkeit liegt unter %1$s</string>
     <string name="alert_notification_movement">Bewegung erkannt!</string>
+    <string name="alert_notification_offline_message">Der Sensor war über %1$s Minuten offline</string>
     <string name="alert_notification_pressure_high">Luftdruck ist zu hoch!</string>
     <string name="alert_notification_pressure_high_threshold">Luftdruck liegt über %1$s</string>
     <string name="alert_notification_pressure_low">Luftdruck ist zu niedrig!</string>
@@ -50,6 +58,7 @@
     <string name="alert_subtitle_off">Aus</string>
     <string name="alert_subtitle_on">Warnung bei weniger als %1$s oder mehr als %2$s</string>
     <string name="alerts">Warnungen</string>
+    <string name="all">Alle</string>
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="already_signed_in">Super! Sie haben sich bereits angemeldet!</string>
@@ -72,6 +81,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Kalibrieren</string>
     <string name="calibrated">Kalibriert: %1$s</string>
     <string name="calibration_clear_confirm">Kalibrierungseinstellungen löschen?</string>
@@ -104,13 +114,18 @@
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
     <string name="changelog">(änderungsprotokoll)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
+    <string name="chart_stat_hide">Min./Max./Durchschnitt ausblenden</string>
+    <string name="chart_stat_show">Min./Max./Durchschnitt anzeigen</string>
     <string name="chart_view_period_days_count">Anzahl der Tage: %1$s</string>
     <string name="charts_background_dialog_description">Die Diagrammfunktion funktioniert am besten, wenn das Scannen im Hintergrund aktiviert ist.</string>
     <string name="charts_background_dialog_title_question">Möchten Sie die Bluetooth-Hintergrundsuche aktivieren?</string>
     <string name="check_claim_state">Prüfung des Antragsstatus</string>
-    <string name="claim_description">Besitzen Sie diesen Sensor? Wenn ja, beanspruchen Sie bitte den Besitz des Sensors und er wird Ihrem Ruuvi-Konto hinzugefügt. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.\n\nVorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
+    <string name="claim_description">Besitzen Sie diesen Sensor? Wenn ja, beanspruchen Sie bitte den Besitz des Sensors und er wird Ihrem Ruuvi-Konto hinzugefügt. Jeder Ruuvi-Sensor kann nur einen Besitzer haben. Um Eigentum zu beanspruchen, müssen Sie angemeldet sein.\n\nVorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
+    <string name="claim_in_progress">Anspruchserhebung läuft</string>
     <string name="claim_ownership">Inhaberschaft beanspruchen</string>
     <string name="claim_sensor">Sensor beanspruchen</string>
+    <string name="claim_sensor_ownership">Beanspruchen Sie den Besitz des Sensors</string>
     <string name="claim_warning">Sichern Sie die Eigentumsinformationen Ihrer Sensoren, indem Sie ihre Eigentumsrechte in der App beanspruchen.</string>
     <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene RuuviTag</string>
     <string name="clear">Löschen</string>
@@ -163,6 +178,7 @@
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
     <string name="dashboard_enabled">Die Dashboard-Ansicht ist aktiviert.</string>
     <string name="dashboard_no_sensors_message">Scheint, als hätten Sie noch keine Ruuvi-Sensoren hinzugefügt.</string>
+    <string name="dashboard_no_sensors_message_signed_out">Sie sind nicht angemeldet.\n\nWenn Sie ein Konto haben und diesem bereits Ruuvi-Sensoren hinzugefügt haben, werden diese automatisch mit der mobilen Ruuvi Station-App synchronisiert, wenn Sie sich anmelden.</string>
     <string name="data_format">Datei Format</string>
     <string name="data_forwarding_background_location_message_bloked">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um die Koordinaten einzuschließen.</string>
     <string name="data_forwarding_background_location_message_first">Diese Funktion erfordert eine Standortberechtigung. Um Ihre Standortkoordinaten einzubeziehen, wählen Sie bitte aus, ob Sie einen genauen oder ungefähren Standort wünschen und erlauben Sie den Zugriff während der Verwendung der App, wenn Sie im nächsten Dialog dazu aufgefordert werden.</string>
@@ -190,8 +206,11 @@
     <string name="dfu_low_battery_warning">Die Batteriespannung des Sensors scheint zu niedrig zu sein, und der Firmware-Aktualisierungsprozess kann fehlschlagen. Wir empfehlen, die Batterie vor der Aktualisierung zu ersetzen.</string>
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
+    <string name="dialog_are_you_sure">Sind Sie sicher?</string>
+    <string name="dialog_operation_undone">Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
     <string name="disconnected">Getrennt</string>
     <string name="do_not_show_again">Zeige das nicht noch einmal</string>
+    <string name="do_you_own_sensor">Besitzen Sie diesen Sensor?</string>
     <string name="done">Fertig</string>
     <string name="download">Download</string>
     <string name="downloading_latest_firmware">Laden Sie die neueste zu aktualisierende Firmware herunter...</string>
@@ -215,7 +234,7 @@
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>
     <string name="firmware_very_old">Sehr alt</string>
-    <string name="follow_system_theme">Dem Systemthema folgen</string>
+    <string name="follow_system_theme">Systemthema</string>
     <string name="force_claim">Kraft-Anspruch</string>
     <string name="force_claim_sensor">Antragstellung in Bearbeitung</string>
     <string name="force_claim_sensor_description1">Dieser Sensor wurde von einem anderen Benutzer beansprucht. Sie können die Eigentümerschaft für Ihr Konto erzwingen, wenn Sie physischen Zugang zu diesem Sensor haben. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
@@ -258,6 +277,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_troubleshooting_text">Hilfe bei der Verwendung der Ruuvi Station-Apps, Ruuvi-Produkte und des Ruuvi Cloud-Dienstes finden Sie in unserem Support-Center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
     <string name="history_view">Ansicht Verlauf</string>
+    <string name="hour">Stunde</string>
+    <string name="hour_1">1 Stunde</string>
+    <string name="hour_12">12 stunden</string>
+    <string name="hour_2">2 stunden</string>
+    <string name="hour_3">3 stunden</string>
+    <string name="hour_x">%1$s tage</string>
     <string name="hours">Stunden</string>
     <string name="humidity">Feuchtigkeit</string>
     <string name="humidity_absolute_name">Absolut (g/m³)</string>
@@ -316,6 +341,13 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="network_syncing">Synchronisierung...</string>
     <string name="network_user">Benutzer: %1$s</string>
     <string name="never">Nie</string>
+    <string name="nfc_dialog_add_sensor">Sensor hinzufügen</string>
+    <string name="nfc_dialog_firmware_version">Firmware Version:</string>
+    <string name="nfc_dialog_go_to_sensor">Gehen Sie zur Sensorkarte</string>
+    <string name="nfc_dialog_mac_address">MAC-Adresse:</string>
+    <string name="nfc_dialog_name">Name:</string>
+    <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
+    <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -356,7 +388,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="open_history_view">Verlaufsansicht öffnen</string>
     <string name="open_sensor_view">Sensoransicht öffnen</string>
     <string name="open_settings">Einstellungen öffnen</string>
+    <string name="ordering">Sortierung</string>
     <string name="owner_none">Keiner</string>
+    <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message">Um Bluetooth-Geräte in der Nähe zu scannen, muss für Android der Standortzugriff aktiviert sein. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
@@ -391,12 +425,20 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
     <string name="remove">Löschen</string>
     <string name="remove_claimed_sensor">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus widerrufen. Nach dem Entfernen kann eine andere Person das Eigentum an dem Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
+    <string name="remove_claimed_sensor_description">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus aufgehoben, und Sensor-Einstellungen wie Name, Hintergrundbild, Kalibrierungseinstellungen und Alarmeinstellungen werden entfernt. Nach der Entfernung kann jemand anderes das Eigentum am Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
+    <string name="remove_cloud_history_description">Ich möchte auch die Sensorverlaufsdaten aus Ruuvi Cloud entfernen.</string>
+    <string name="remove_cloud_history_title">Cloud-Historie entfernen</string>
     <string name="remove_local_sensor">Möchten Sie den Sensor entfernen? Sie können ihn später bei Bedarf wieder hinzufügen.</string>
+    <string name="remove_local_sensor_description">Wenn Sie diesen Sensor entfernen, führt dies zur Löschung Ihres lokal gespeicherten Messverlaufs sowie zur Entfernung aller zugehörigen Sensoreinstellungen wie Name, Hintergrundbild, Kalibrierung und Alarmkonfigurationen.\n\nSie können hinzufügen diesen Sensor später bei Bedarf erneut.</string>
     <string name="remove_shared_sensor">Wenn Sie den Sensor entfernen, wird der Besitzer des Sensors benachrichtigt und Sie können nicht mehr auf den Sensor zugreifen.</string>
+    <string name="remove_shared_sensor_description">Wenn Sie diesen freigegebenen Sensor entfernen, wird der Eigentümer des Sensors benachrichtigt und Sie können nicht mehr auf den Sensor zugreifen.\n\nSie verlieren außerdem alle zugehörigen Sensoreinstellungen wie Name, Hintergrundbild und Alarmkonfigurationen .</string>
     <string name="remove_this_sensor">Entfernen Sie diesen Sensor</string>
+    <string name="rename">Umbenennen</string>
     <string name="rename_sensor_message">Ihre Sensoren werden in alphabetischer Reihenfolge angezeigt.</string>
     <string name="replace_battery">Schwache Batterie</string>
     <string name="request_code">Anfrage Code</string>
+    <string name="reset_order">Zur alphabetischen Sortierung zurücksetzen</string>
+    <string name="reset_order_confirmation">Sind Sie sicher, dass Sie die Reihenfolge der Sensorkarten auf die alphabetische Sortierung zurücksetzen möchten?</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Cloud-Modus, wenn Sie Daten zur Signalstärke nur über Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
@@ -410,11 +452,14 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="select_sensor">Sensor auswählen</string>
     <string name="send_email">Email schicken</string>
     <string name="sensor_already_added">Sensor ist bereits hinzugefügt</string>
+    <string name="sensor_details">Sensordetails</string>
     <string name="sensor_not_shared">Nicht geteilt</string>
     <string name="sensor_settings">Sensoreinstellungen</string>
     <string name="sensor_shared">Geteilt</string>
     <string name="sensors_ownership_and_settings_stored_in_cloud">Die Anmeldung bei der App hat viele Vorteile. Einstellungen werden sicher in deinem Konto gespeichert:</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_alert_limit_notification">Beschränken Sie Warnmeldungen</string>
+    <string name="settings_alert_limit_notification_description">Lösen Sie die Bluetooth-Benachrichtigung nur einmal pro Stunde aus, auch wenn die Warnung erneut ausgelöst wurde.</string>
     <string name="settings_alert_notifications">Alarmbenachrichtigungen</string>
     <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="settings_appearance">Erscheinungsbild</string>
@@ -446,6 +491,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 10 Tagen.</string>
     <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
+    <string name="settings_developer">Entwicklereinstellungen</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
     <string name="settings_gateway_details_link">dokumentation.</string>
@@ -464,6 +510,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_temperature_unit">Temperatureinheit</string>
     <string name="settings_temperature_unit_details">Wählen Sie die Temperatureinheit, die angezeigt werden soll.</string>
     <string name="share">Teilen</string>
+    <string name="share_pending_message">Erfolgreich geteilt! Diese E-Mail-Adresse ist noch nicht mit einem Ruuvi-Konto verknüpft. Eine Einladung zur Erstellung eines kostenlosen Kontos wurde gesendet. Nach der Erstellung werden Sie es in der Freigabeliste sehen.</string>
     <string name="share_sensor_add_friend">Freund hinzufügen</string>
     <string name="share_sensor_already_shared">Sie haben %1$,d/%2$,d der maximalen Teilungszahl für diesen Sensor verwendet. Der Sensor wird mit den folgenden Benutzern geteilt:</string>
     <string name="share_sensor_description">Sie können den Sensor mit Freunden und Familie teilen, wenn er sich in Reichweite eines Ruuvi Gateways befindet.\n\nDer Empfänger wird per E-Mail benachrichtigt. Wenn der Empfänger kein Ruuvi-Konto hat, wird beim ersten Anmelden automatisch ein kostenloses Ruuvi-Konto erstellt.\n\nBeachten Sie, dass der benutzerdefinierte Name und das Hintergrundbild des Sensors geteilt werden. Der Name und das Bild werden nur einmal synchronisiert und können danach vom Empfänger privat angepasst werden. Vom Besitzer eingestellte Offset-Werte (sofern vorhanden) werden automatisch synchronisiert und der Empfänger sieht immer die endgültigen korrigierten Werte.</string>
@@ -473,7 +520,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="shared_to_x">Freigegebene %1$,d/%2$,d</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
-    <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet. Melden Sie sich an, indem Sie es hier eingeben:</string>
+    <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet %1$s. Melden Sie sich an, indem Sie es hier eingeben:</string>
     <string name="sign_in_code_hint">Code</string>
     <string name="sign_in_continue">Weitermachen</string>
     <string name="sign_in_email_sent">E-Mail gesendet</string>
@@ -532,12 +579,17 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Geben Sie Ihre E-Mail ein..</string>
+    <string name="unclaim">Anspruch aufheben</string>
+    <string name="unclaim_sensor">Anspruch auf Eigentum zurückziehen</string>
+    <string name="unclaim_sensor_description">Das Eigentum an diesem Sensor wurde Ihrem Ruuvi-Konto zugeordnet. Klicken Sie auf „Anspruch aufheben“, um die Einstellungen dieses Sensors und die zugehörigen Daten aus Ihrem Ruuvi-Konto zu entfernen.</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="update_action">NEUSTART</string>
     <string name="update_downloaded_message">Ein Update wurde soeben heruntergeladen.</string>
     <string name="update_successful">Aktualisierung erfolgreich</string>
     <string name="updated">Aktuaisiert %1$s</string>
     <string name="updating">Aktualisierung...</string>
+    <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
+    <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Siehe</string>

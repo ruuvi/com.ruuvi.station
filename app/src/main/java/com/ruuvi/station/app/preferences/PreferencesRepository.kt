@@ -136,11 +136,11 @@ class PreferencesRepository(
         preferences.graphPointInterval = newInterval
     }
 
-    fun getGraphViewPeriodDays(): Int =
-        preferences.graphViewPeriodDays
+    fun getGraphViewPeriodHours(): Int =
+        preferences.graphViewPeriodHours
 
-    fun setGraphViewPeriodDays(newPeriod: Int) {
-        preferences.graphViewPeriodDays = newPeriod
+    fun setGraphViewPeriodHours(newPeriod: Int) {
+        preferences.graphViewPeriodHours = newPeriod
     }
 
     fun isFirstGraphVisit(): Boolean =
@@ -155,6 +155,13 @@ class PreferencesRepository(
 
     fun setIsExperimentalFeaturesEnabled(experimentalEnabled: Boolean) {
         preferences.experimentalFeatures = experimentalEnabled
+    }
+
+    fun isDeveloperSettingsEnabled(): Boolean =
+        preferences.developerSettings
+
+    fun setDeveloperFeaturesEnabled(developerSettingsEnabled: Boolean) {
+        preferences.developerSettings = developerSettingsEnabled
     }
 
     fun isFirstStart(): Boolean =
@@ -176,6 +183,8 @@ class PreferencesRepository(
     fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()
 
     fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
+
+    fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
 
     fun getLocale(): String =
         preferences.locale
@@ -207,6 +216,13 @@ class PreferencesRepository(
         preferences.cloudModeEnabled = isEnabled
     }
 
+    fun isDevServerEnabled(): Boolean =
+        preferences.useDevServer
+
+    fun setDevServerEnabled(isEnabled: Boolean) {
+        preferences.useDevServer = isEnabled
+    }
+
     fun getDarkMode(): DarkModeState = preferences.darkMode
 
     fun updateDarkMode(darkMode: DarkModeState) {
@@ -229,6 +245,12 @@ class PreferencesRepository(
 
     fun updateRegisteredToken(token: String) {
         preferences.registeredToken = token
+    }
+
+    fun getRegisteredTokenLanguage(): String = preferences.registeredTokenLanguage
+
+    fun updateRegisteredTokenLanguage(language: String) {
+        preferences.registeredTokenLanguage = language
     }
 
     fun getDeviceTokenRefreshDate(): Long =
@@ -257,5 +279,29 @@ class PreferencesRepository(
 
     fun setDontShowGattSync(value: Boolean) {
         preferences.dontShowGattSync = value
+    }
+
+    fun getShowChartStats(): Boolean =
+        preferences.showChartStats
+
+    fun setShowChartStats(value: Boolean) {
+        preferences.showChartStats = value
+    }
+
+    fun getLimitLocalAlerts(): Boolean =
+        preferences.limitLocalAlerts
+
+    fun setLimitLocalAlerts(value: Boolean) {
+        preferences.limitLocalAlerts = value
+    }
+
+    fun getSignedInOnce(): Boolean =
+        preferences.signedInOnce
+
+    fun getSortedSensors(): String =
+        preferences.sortedSensors
+
+    fun setSortedSensors(sortedSensors: String) {
+        preferences.sortedSensors = sortedSensors
     }
 }

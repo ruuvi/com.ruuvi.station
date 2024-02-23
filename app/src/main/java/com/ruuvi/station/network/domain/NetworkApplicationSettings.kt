@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.app.locale.LocaleInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
@@ -17,7 +18,8 @@ class NetworkApplicationSettings (
     private val networkRepository: RuuviNetworkRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val preferencesRepository: PreferencesRepository,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val localeInteractor: LocaleInteractor
     ) {
 
     private fun getToken() = tokenRepository.getTokenInfo()
@@ -38,10 +40,13 @@ class NetworkApplicationSettings (
                     applyCloudModeEnabled(response.data.settings)
                     applyChartShowAllPoints(response.data.settings)
                     applyChartDrawDots(response.data.settings)
-                    applyChartViewPeriod(response.data.settings)
                     applyTemperatureAccuracy(response.data.settings)
                     applyHumidityAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
+                    applySensorsOrder(response.data.settings)
+                }
+                if (response.data.settings.PROFILE_LANGUAGE_CODE.isNullOrEmpty()) {
+                    updateProfileLanguage()
                 }
             }
         }
@@ -60,10 +65,10 @@ class NetworkApplicationSettings (
             updateChartShowAllPoints()
             updateCloudModeEnabled()
             updateChartDrawDots()
-            updateChartViewPeriod()
             updateTemperatureAccuracy()
             updateHumidityAccuracy()
             updatePressureAccuracy()
+            updateSensorsOrder()
             false
         } else {
             true
@@ -158,13 +163,6 @@ class NetworkApplicationSettings (
         }
     }
 
-    private fun applyChartViewPeriod(settings: NetworkUserSettings) {
-        settings.CHART_VIEW_PERIOD?.toIntOrNull()?.let {
-            Timber.d("NetworkApplicationSettings-applyChartViewPeriod: $it")
-            preferencesRepository.setGraphViewPeriodDays(it)
-        }
-    }
-
     private fun applyTemperatureAccuracy(settings: NetworkUserSettings) {
         settings.ACCURACY_TEMPERATURE?.toIntOrNull()?.let {
             val accuracy = Accuracy.getByCode(it)
@@ -192,6 +190,13 @@ class NetworkApplicationSettings (
                 Timber.d("NetworkApplicationSettings-applyPressureAccuracy: $accuracy")
                 preferencesRepository.setPressureAccuracy(accuracy)
             }
+        }
+    }
+
+    private fun applySensorsOrder(settings: NetworkUserSettings) {
+        settings.SENSOR_ORDER?.let {sensorsOrder ->
+            Timber.d("NetworkApplicationSettings-applySensorsOrder: $sensorsOrder")
+            preferencesRepository.setSortedSensors(sensorsOrder)
         }
     }
 
@@ -295,16 +300,6 @@ class NetworkApplicationSettings (
         }
     }
 
-    fun updateChartViewPeriod() {
-        if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updateChartViewPeriod: ${preferencesRepository.getGraphViewPeriodDays()}")
-            networkInteractor.updateUserSetting(
-                CHART_VIEW_PERIOD,
-                preferencesRepository.getGraphViewPeriodDays().toString()
-            )
-        }
-    }
-
     fun updatePressureUnit() {
         if (networkInteractor.signedIn) {
             Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().code}")
@@ -335,6 +330,30 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateProfileLanguage() {
+        if (networkInteractor.signedIn) {
+            val language = localeInteractor.getCurrentLocaleLanguage()
+            Timber.d("NetworkApplicationSettings-updateProfileLanguage: $language")
+            networkInteractor.updateUserSetting(
+                PROFILE_LANGUAGE_CODE,
+                language
+            )
+        }
+    }
+
+    fun updateSensorsOrder() {
+        if (networkInteractor.signedIn) {
+            val sensorsOrder = preferencesRepository.getSortedSensors()
+            if (sensorsOrder.isNotEmpty()) {
+                Timber.d("NetworkApplicationSettings-updateSensorsOrder: $sensorsOrder")
+                networkInteractor.updateUserSetting(
+                    SENSOR_ORDER,
+                    sensorsOrder
+                )
+            }
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
@@ -346,9 +365,10 @@ class NetworkApplicationSettings (
         val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
         val DASHBOARD_TYPE = "DASHBOARD_TYPE"
         val DASHBOARD_TAP_ACTION = "DASHBOARD_TAP_ACTION"
+        val PROFILE_LANGUAGE_CODE = "PROFILE_LANGUAGE_CODE"
         val CLOUD_MODE_ENABLED = "CLOUD_MODE_ENABLED"
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
-        val CHART_VIEW_PERIOD = "CHART_VIEW_PERIOD"
+        val SENSOR_ORDER = "SENSOR_ORDER"
     }
 }

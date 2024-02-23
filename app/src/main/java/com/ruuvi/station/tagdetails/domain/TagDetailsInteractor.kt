@@ -22,11 +22,20 @@ class TagDetailsInteractor(
     fun clearLastSync(sensorId: String) =
         sensorSettingsRepository.clearLastSync(sensorId)
 
-    fun getTagReadings(tagId: String): List<TagSensorReading> {
-        return if (preferences.isShowAllGraphPoint()) {
-            sensorHistoryRepository.getHistory(tagId, preferences.getGraphViewPeriodDays())
+    fun getTagReadings(sensorId: String): List<TagSensorReading> {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        var viewPeriod = preferences.getGraphViewPeriodHours()
+        if (viewPeriod == 0) viewPeriod = 24 * 10
+        val history =  if (preferences.isShowAllGraphPoint()) {
+            sensorHistoryRepository.getHistory(sensorId, viewPeriod)
         } else {
-            sensorHistoryRepository.getCompositeHistory(tagId, preferences.getGraphViewPeriodDays(), preferences.getGraphPointInterval())
+            sensorHistoryRepository.getCompositeHistory(sensorId, viewPeriod, preferences.getGraphPointInterval())
+        }.map { it.copy(
+            temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+            humidity = it.humidity?.let { humidity -> humidity + (sensorSettings?.humidityOffset ?: 0.0)},
+            pressure = it.pressure?.let { pressure -> pressure + (sensorSettings?.pressureOffset ?: 0.0)}
+        )
         }
+        return history
     }
 }

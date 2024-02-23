@@ -14,7 +14,7 @@ import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
 
-class Preferences constructor(val context: Context) {
+class Preferences (val context: Context) {
 
     private val sharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(
@@ -32,10 +32,10 @@ class Preferences constructor(val context: Context) {
         get() = BackgroundScanModes.fromInt(
             sharedPreferences.getInt(
                 PREF_BACKGROUND_SCAN_MODE,
-                BackgroundScanModes.DISABLED.value
+                BackgroundScanModes.BACKGROUND.value
             )
         )
-            ?: BackgroundScanModes.DISABLED
+            ?: BackgroundScanModes.BACKGROUND
         set(mode) {
             sharedPreferences.edit().putInt(PREF_BACKGROUND_SCAN_MODE, mode.value).apply()
         }
@@ -180,9 +180,11 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putInt(PREF_GRAPH_POINT_INTERVAL, interval).apply()
         }
 
-    // chart view period (in hours)
-    var graphViewPeriod: Int
-        get() = sharedPreferences.getInt(PREF_GRAPH_VIEW_PERIOD, DEFAULT_GRAPH_VIEW_PERIOD)
+    var graphViewPeriodHours: Int
+        get() = sharedPreferences.getInt(
+            PREF_GRAPH_VIEW_PERIOD,
+            graphViewPeriodDays * 24
+        )
         set(period) {
             sharedPreferences.edit().putInt(PREF_GRAPH_VIEW_PERIOD, period).apply()
         }
@@ -245,6 +247,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_NETWORK_TOKEN, token).apply()
         }
 
+    var signedInOnce: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SIGNED_IN_ONCE, false)
+        set(signedIn) {
+            sharedPreferences.edit().putBoolean(PREF_SIGNED_IN_ONCE, signedIn).apply()
+        }
+
     var lastSyncDate: Long
         get() = sharedPreferences.getLong(PREF_LAST_SYNC_DATE, Long.MIN_VALUE)
         set(syncDate) {
@@ -255,6 +263,13 @@ class Preferences constructor(val context: Context) {
         get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
         set(experimentalFeatures) {
             sharedPreferences.edit().putBoolean(PREF_EXPERIMENTAL_FEATURES, experimentalFeatures)
+                .apply()
+        }
+
+    var developerSettings: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DEVELOPER_SETTINGS, false)
+        set(developerSettings) {
+            sharedPreferences.edit().putBoolean(PREF_DEVELOPER_SETTINGS, developerSettings)
                 .apply()
         }
 
@@ -280,6 +295,12 @@ class Preferences constructor(val context: Context) {
         get() = sharedPreferences.getBoolean(PREF_CLOUD_MODE, false)
         set(enabled) {
             sharedPreferences.edit().putBoolean(PREF_CLOUD_MODE, enabled).apply()
+        }
+
+    var useDevServer: Boolean
+        get() = sharedPreferences.getBoolean(PREF_USE_DEVSERVER, false)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_USE_DEVSERVER, enabled).apply()
         }
 
     var darkMode: DarkModeState
@@ -317,6 +338,12 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putString(PREF_REGISTERED_DEVICE_TOKEN, token).apply()
         }
 
+    var registeredTokenLanguage: String
+        get() = sharedPreferences.getString(PREF_REGISTERED_TOKEN_LANGUAGE, "") ?: ""
+        set(language) {
+            sharedPreferences.edit().putString(PREF_REGISTERED_TOKEN_LANGUAGE, language).apply()
+        }
+
     var deviceTokenRefreshDate: Long
         get() = sharedPreferences.getLong(PREF_DEVICE_TOKEN_REFRESH_DATE, Long.MIN_VALUE)
         set(refreshDate) {
@@ -347,6 +374,24 @@ class Preferences constructor(val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_DONT_SHOW_GATT_SYNC, value).apply()
         }
 
+    var limitLocalAlerts: Boolean
+        get() = sharedPreferences.getBoolean(PREF_LIMIT_LOCAL_ALERTS, true)
+        set(enabled) {
+            sharedPreferences.edit().putBoolean(PREF_LIMIT_LOCAL_ALERTS, enabled).apply()
+        }
+
+    var showChartStats: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SHOW_CHART_STATS, true)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
+        }
+
+    var sortedSensors: String
+        get() = sharedPreferences.getString(PREF_DASHBOARD_SORTED_SENSORS, "") ?: ""
+        set(sortedSensors) {
+            sharedPreferences.edit().putString(PREF_DASHBOARD_SORTED_SENSORS, sortedSensors).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -355,6 +400,9 @@ class Preferences constructor(val context: Context) {
 
     fun getExperimentalFeaturesLiveData() =
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_EXPERIMENTAL_FEATURES, false)
+
+    fun getDeveloperSettingsLiveData() =
+        SharedPreferenceBooleanLiveData(sharedPreferences, PREF_DEVELOPER_SETTINGS, false)
 
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
@@ -376,7 +424,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_WAKELOCK = "pref_wakelock"
         private const val PREF_BGSCAN_BATTERY_SAVING = "pref_bgscan_battery_saving"
         private const val PREF_GRAPH_POINT_INTERVAL = "pref_graph_point_interval"
-        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period"
+        private const val PREF_GRAPH_VIEW_PERIOD = "pref_graph_view_period_hours"
         private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
@@ -385,6 +433,7 @@ class Preferences constructor(val context: Context) {
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
+        private const val PREF_DEVELOPER_SETTINGS = "pref_developer_settings"
         private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"
         private const val PREF_CLOUD_MODE = "pref_cloud_mode_enabled"
         private const val PREF_LAST_APP_UPDATE_REQUEST = "pref_last_app_update_request"
@@ -392,16 +441,22 @@ class Preferences constructor(val context: Context) {
         private const val PREF_DASHBOARD_TYPE = "pref_dashboard_type"
         private const val PREF_DASHBOARD_TAP_ACTION = "pref_dashboard_tap_action"
         private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
+        private const val PREF_REGISTERED_TOKEN_LANGUAGE = "pref_registered_token_language"
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
+        private const val PREF_USE_DEVSERVER = "pref_use_devserver"
+        private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
+        private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
+        private const val PREF_SIGNED_IN_ONCE = "pref_signed_in_once"
+        private const val PREF_DASHBOARD_SORTED_SENSORS = "pref_dashboard_sorted_sensors"
+
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
-        private const val DEFAULT_GRAPH_VIEW_PERIOD = 24
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false

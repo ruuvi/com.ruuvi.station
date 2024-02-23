@@ -13,14 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.util.text.getDecimalMatches
 
 @Composable
 fun TextEditButton(
     value: String?,
     emptyText: String,
+    textAlign: TextAlign = TextAlign.Start,
+    applyBoldStyleToDecimals: Boolean = false,
     editAction: () -> Unit
 ) {
     Row(modifier = Modifier
@@ -33,8 +40,18 @@ fun TextEditButton(
                 .weight(1f)
                 .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
-            textAlign = TextAlign.End,
-            text = if (value.isNullOrEmpty()) emptyText else value)
+            textAlign = textAlign,
+            text = if (value.isNullOrEmpty()) {
+                AnnotatedString(emptyText)
+            } else {
+                if (applyBoldStyleToDecimals) {
+                    applyStyleToDecimals(value)
+                } else {
+                    AnnotatedString(value)
+                }
+            }
+        )
+
         Image(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             painter = painterResource(id = R.drawable.edit_20),
@@ -43,9 +60,27 @@ fun TextEditButton(
     }
 }
 
+fun applyStyleToDecimals(
+    text: String,
+    spanStyle: SpanStyle = SpanStyle(fontWeight = FontWeight.Bold)
+): AnnotatedString {
+    val matches = text.getDecimalMatches()
+
+    return buildAnnotatedString {
+        append(text)
+        for (match in matches) {
+            addStyle(
+                spanStyle,
+                match.range.first,
+                match.range.last + 1
+            )
+        }
+    }
+}
+
 @Composable
 fun TextEditWithCaptionButton(
-    value: String?,
+    value: String? = null,
     title: String,
     icon: Painter,
     tint: Color,
@@ -75,5 +110,30 @@ fun TextEditWithCaptionButton(
             tint = tint,
             contentDescription = ""
         )
+    }
+}
+
+@Composable
+fun TextWithCaption(
+    value: String? = null,
+    title: String
+) {
+    Row(modifier = Modifier
+        .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+            style = RuuviStationTheme.typography.subtitle,
+            textAlign = TextAlign.Start,
+            text = title)
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+            style = RuuviStationTheme.typography.paragraph,
+            textAlign = TextAlign.End,
+            text = value ?: "")
     }
 }

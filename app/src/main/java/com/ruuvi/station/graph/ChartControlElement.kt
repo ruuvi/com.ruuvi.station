@@ -24,167 +24,15 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
-import com.ruuvi.station.tagdetails.ui.TagViewModel
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @Composable
-fun ChartControlElement(
-    viewModel: TagViewModel
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    val context = LocalContext.current
-
-    val viewPeriod by viewModel.chartViewPeriod.collectAsState(Days.Day10())
-
-    val syncInProgress by viewModel.gattSyncInProgress.collectAsState(false)
-
-    val syncMessage by viewModel.gattSyncStatus.collectAsState(UiText.EmptyString)
-
-    var gattSyncDialogOpened by remember {
-        mutableStateOf(false)
-    }
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        if (syncInProgress) {
-            IconButton(onClick = {
-                viewModel.disconnectGatt()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-            Text(
-                style = RuuviStationTheme.typography.syncStatusText,
-                text = syncMessage.asString(context)
-            )
-        } else {
-            IconButton(onClick = {
-                if (!viewModel.shouldSkipGattSyncDialog()) {
-                    gattSyncDialogOpened = true
-                }
-                viewModel.syncGatt()
-            }) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extended)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.gatt_sync),
-                        contentDescription = null,
-                        tint = RuuviStationTheme.colors.buttonText
-                    )
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-                    Text(
-                        style = RuuviStationTheme.typography.subtitle,
-                        text = stringResource(id = R.string.sync),
-                        color = RuuviStationTheme.colors.buttonText
-                    )
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            ViewPeriodMenu(
-                viewPeriod = viewPeriod,
-                setViewPeriod = viewModel::setViewPeriod
-            )
-
-            ThreeDotsMenu(
-                sensorId = viewModel.sensorId,
-                exportToCsv = viewModel::exportToCsv,
-                clearHistory = viewModel::removeTagData
-            )
-        }
-    }
-
-    DisposableEffect( key1 = lifecycleOwner ) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.refreshStatus()
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    var uiEvent by remember {
-        mutableStateOf<SyncProgress?>(null)
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.event.collect() { event ->
-            uiEvent = event
-        }
-    }
-     if (uiEvent != null) {
-         when (uiEvent) {
-             SyncProgress.DISCONNECTED -> {
-                 RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
-                     uiEvent = null
-                 }
-             }
-             SyncProgress.NOT_SUPPORTED -> {
-                 RuuviMessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
-                     uiEvent = null
-                 }
-             }
-             SyncProgress.NOT_FOUND -> {
-                 if (!gattSyncDialogOpened) {
-                     RuuviConfirmDialog(
-                         title = stringResource(id = R.string.error),
-                         message = stringResource(id = R.string.gatt_not_in_range_description),
-                         noButtonCaption = stringResource(id = R.string.close),
-                         yesButtonCaption = stringResource(id = R.string.try_again),
-                         onDismissRequest = {
-                             uiEvent = null
-                         }
-                     ) {
-                         uiEvent = null
-                         viewModel.syncGatt()
-                     }
-                 }
-             }
-             SyncProgress.ERROR -> {
-                 RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
-                     uiEvent = null
-                 }
-             }
-             else -> {
-                 uiEvent = null
-             }
-         }
-     }
-
-    if (gattSyncDialogOpened) {
-        GattSyncDescriptionDialog(
-            doNotShowAgain = {
-                gattSyncDialogOpened = false
-                viewModel.dontShowGattSyncDescription()
-            },
-            onDismissRequest = {
-                gattSyncDialogOpened = false
-            }
-        )
-    }
-}
-
-@Composable
 fun ChartControlElement2(
     sensorId: String,
-    viewPeriod: Days,
+    viewPeriod: Period,
+    showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
@@ -193,7 +41,8 @@ fun ChartControlElement2(
     exportToCsv: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
-    dontShowGattSyncDescription: () -> Unit
+    dontShowGattSyncDescription: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -286,8 +135,10 @@ fun ChartControlElement2(
 
             ThreeDotsMenu(
                 sensorId = sensorId,
+                showChartStats = showChartStats,
                 exportToCsv = { exportToCsv(sensorId) },
-                clearHistory = { removeTagData(sensorId) }
+                clearHistory = { removeTagData(sensorId) },
+                changeShowStats = changeShowStats
             )
         }
     }
@@ -361,7 +212,7 @@ fun ChartControlElement2(
 
 @Composable
 fun ViewPeriodMenu(
-    viewPeriod: Days,
+    viewPeriod: Period,
     setViewPeriod: (Int) -> Unit
 ) {
     var daysMenuExpanded by remember {
@@ -395,19 +246,24 @@ fun ViewPeriodMenu(
             modifier = Modifier.background(color = RuuviStationTheme.colors.background),
             expanded = daysMenuExpanded,
             onDismissRequest = { daysMenuExpanded = false }) {
-            val daysOptions = listOf(
-                Days.Day1(),
-                Days.Day2(),
-                Days.Day3(),
-                Days.Day4(),
-                Days.Day5(),
-                Days.Day6(),
-                Days.Day7(),
-                Days.Day8(),
-                Days.Day9(),
-                Days.Day10(),
+            val periodOptions = listOf(
+                Period.All(),
+                Period.Hour1(),
+                Period.Hour2(),
+                Period.Hour3(),
+                Period.Hour12(),
+                Period.Day1(),
+                Period.Day2(),
+                Period.Day3(),
+                Period.Day4(),
+                Period.Day5(),
+                Period.Day6(),
+                Period.Day7(),
+                Period.Day8(),
+                Period.Day9(),
+                Period.Day10(),
             )
-            for (day in daysOptions) {
+            for (day in periodOptions) {
                 DropdownMenuItem(onClick = {
                     setViewPeriod.invoke(day.value)
                     daysMenuExpanded = false
@@ -438,8 +294,10 @@ fun ViewPeriodMenu(
 @Composable
 fun ThreeDotsMenu(
     sensorId: String,
+    showChartStats: Boolean,
     exportToCsv: () -> Uri?,
     clearHistory: () -> Unit,
+    changeShowStats: () -> Unit
 ) {
     val context = LocalContext.current
     var clearConfirmOpened by remember {
@@ -474,6 +332,17 @@ fun ThreeDotsMenu(
                 threeDotsMenuExpanded = false
             }) {
                 Paragraph(text = stringResource(id = R.string.clear_view))
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+                changeShowStats()
+            }) {
+                val caption = if (showChartStats) {
+                    stringResource(id = R.string.chart_stat_hide)
+                } else {
+                    stringResource(id = R.string.chart_stat_show)
+                }
+                Paragraph(text = caption)
             }
         }
     }
@@ -511,7 +380,10 @@ fun GattSyncDescriptionDialog(
                 
                 ParagraphWithPadding(text = stringResource(id = R.string.gatt_sync_description))
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     RuuviTextButton(
                         text = stringResource(id = R.string.do_not_show_again),
                         onClick = {

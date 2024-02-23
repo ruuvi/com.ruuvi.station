@@ -36,6 +36,8 @@ data class FavouriteSensorQuery(
     @Column
     var owner: String? = null,
     @Column
+    var subscriptionName: String? = null,
+    @Column
     var lastSync: Date? = null,
     @Column
     var networkLastSync: Date? = null,
@@ -90,6 +92,7 @@ data class FavouriteSensorQuery(
             SensorSettings_Table.pressureOffset.withTable(),
             SensorSettings_Table.pressureOffsetDate.withTable(),
             SensorSettings_Table.owner.withTable(),
+            SensorSettings_Table.subscriptionName.withTable(),
             SensorSettings_Table.lastSync.withTable(),
             SensorSettings_Table.networkLastSync.withTable(),
             SensorSettings_Table.networkSensor.withTable(),

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -29,7 +30,13 @@ import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.XIAOMI_MANUFACTURER
 import java.util.*
+
+fun shouldShowLanguageSelection(): Boolean {
+    return Build.VERSION.SDK_INT >= TIRAMISU &&
+            Build.MANUFACTURER.uppercase(Locale.getDefault()) != XIAOMI_MANUFACTURER
+}
 
 @Composable
 fun SettingsList(
@@ -53,8 +60,10 @@ fun SettingsList(
         intervalText = stringResource(id = R.string.alert_subtitle_off)
     }
 
+    val developerSettings = viewModel.developerFeatures.observeAsState()
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        if (Build.VERSION.SDK_INT >= TIRAMISU) {
+        if (shouldShowLanguageSelection()) {
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.settings_language),
@@ -98,7 +107,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_temperature),
+                name = stringResource(id = R.string.settings_temperature_unit),
                 value = stringResource(id = viewModel.getTemperatureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
             )
@@ -106,7 +115,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_humidity),
+                name = stringResource(id = R.string.settings_humidity_unit),
                 value = stringResource(id = viewModel.getHumidityUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
             )
@@ -114,7 +123,7 @@ fun SettingsList(
 
         item {
             SettingsElement(
-                name = stringResource(id = R.string.settings_pressure),
+                name = stringResource(id = R.string.settings_pressure_unit ),
                 value = stringResource(id = viewModel.getPressureUnit().unit),
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
             )
@@ -144,6 +153,16 @@ fun SettingsList(
                 value = null,
                 onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
             )
+        }
+
+        if (developerSettings.value == true) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_developer),
+                    value = null,
+                    onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DEVELOPER)) }
+                )
+            }
         }
     }
 }

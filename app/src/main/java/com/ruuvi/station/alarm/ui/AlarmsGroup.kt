@@ -37,6 +37,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -106,11 +107,82 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                         changeEnabled = viewModel::setEnabled,
                         setDescription = viewModel::setDescription,
                     )
+                AlarmType.OFFLINE ->
+                    OfflineAlertEditItem(
+                        title = title,
+                        alarmState = itemState,
+                        changeEnabled = viewModel::setEnabled,
+                        setDescription = viewModel::setDescription,
+                        manualRangeSave = viewModel::manualRangeSave
+                    )
             }
         }
     }
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun OfflineAlertEditItem(
+    title: String,
+    alarmState: AlarmItemState,
+    changeEnabled: (AlarmType, Boolean) -> Unit,
+    setDescription: (AlarmType, String) -> Unit,
+    manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+) {
+    var openDescriptionDialog by remember { mutableStateOf(false) }
+    var openAlarmEditDialog by remember { mutableStateOf(false) }
+
+
+    ExpandableContainer(header = {
+        AlarmHeader(title, alarmState)
+    }) {
+        SwitchIndicatorRuuvi(
+            text = getMutedText(LocalContext.current, alarmState.mutedTill),
+            checked = alarmState.isEnabled,
+            onCheckedChange = {
+                changeEnabled.invoke(alarmState.type, it)
+            },
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.medium)
+        )
+        DividerRuuvi()
+        TextEditButton(
+            value = alarmState.customDescription,
+            emptyText = stringResource(id = R.string.alarm_custom_title_hint)
+        ) {
+            openDescriptionDialog = true
+        }
+        DividerRuuvi()
+        TextEditButton(
+            value = stringResource(
+                id = R.string.alert_cloud_connection_description,
+                (alarmState.max / 60.0).roundToInt()),
+            emptyText = "",
+            applyBoldStyleToDecimals = true
+        ) {
+            openAlarmEditDialog = true
+        }
+    }
+    DividerSurfaceColor()
+
+    if (openDescriptionDialog) {
+        ChangeDescriptionDialog(
+            alarmState = alarmState,
+            setDescription = setDescription
+        ) {
+            openDescriptionDialog = false
+        }
+    }
+
+    if (openAlarmEditDialog) {
+        OfflineAlarmEditDialog(
+            alarmState = alarmState,
+            manualRangeSave = manualRangeSave,
+        ) {
+            openAlarmEditDialog = false
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -156,7 +228,8 @@ fun AlertEditItem(
                 id = R.string.alert_subtitle_on,
                 alarmState.displayLow,
                 alarmState.displayHigh),
-            emptyText = ""
+            emptyText = "",
+            applyBoldStyleToDecimals = true
         ) {
             openAlarmEditDialog = true
         }
@@ -245,7 +318,8 @@ fun RssiAlertEditItem(
                 id = R.string.alert_subtitle_on,
                 alarmState.displayLow,
                 alarmState.displayHigh),
-            emptyText = ""
+            emptyText = "",
+            applyBoldStyleToDecimals = true
         ) {
             openAlarmEditDialog = true
         }
@@ -329,6 +403,10 @@ fun MovementAlertEditItem(
     ExpandableContainer(header = {
         AlarmHeader(title, alarmState)
     }) {
+        SmallerParagraph(
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.medium),
+            text = stringResource(id = R.string.alert_movement_description)
+        )
         SwitchIndicatorRuuvi(
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
@@ -343,20 +421,6 @@ fun MovementAlertEditItem(
             emptyText = stringResource(id = R.string.alarm_custom_title_hint)
         ) {
             openDescriptionDialog = true
-        }
-        DividerRuuvi()
-        Row(
-            modifier = Modifier
-                .height(RuuviStationTheme.dimensions.sensorSettingTitleHeight),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = RuuviStationTheme.dimensions.medium),
-                style = RuuviStationTheme.typography.paragraph,
-                textAlign = TextAlign.End,
-                text = stringResource(id = R.string.alert_movement_description))
         }
     }
     DividerSurfaceColor()
@@ -487,6 +551,49 @@ fun AlarmEditDialog(
         ) { parsed, value ->
             max = value
         }
+    }
+}
+
+@Composable
+fun OfflineAlarmEditDialog(
+    alarmState: AlarmItemState,
+    manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
+    onDismissRequest : () -> Unit,
+) {
+    val title = stringResource(id = R.string.alert_cloud_connection_dialog_title)
+
+    var delay by remember {
+        mutableDoubleStateOf(alarmState.max)
+    }
+    
+    RuuviDialog(
+        title = title,
+        onDismissRequest = onDismissRequest,
+        onOkClickAction = {
+            val max = delay * 60
+            manualRangeSave.invoke(alarmState.type, 0.0, max)
+            onDismissRequest.invoke()
+        },
+        validation = {
+            (delay.toInt() >= 2) && (delay.toInt() <= 1440)
+        }
+    ) {
+        Paragraph(text = stringResource(id = R.string.alert_cloud_connection_dialog_description))
+        
+        val focusManager = LocalFocusManager.current
+
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+        NumberTextFieldRuuvi(
+            value = (alarmState.max / 60).toLong().toString(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        ) { parsed, value ->
+            if (parsed && value != null) delay = value
+        }
+
     }
 }
 

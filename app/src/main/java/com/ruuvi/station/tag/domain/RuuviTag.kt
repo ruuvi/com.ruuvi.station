@@ -2,6 +2,7 @@ package com.ruuvi.station.tag.domain
 
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.util.MacAddressUtils
 import java.util.Date
 
 data class RuuviTag(
@@ -19,9 +20,12 @@ data class RuuviTag(
     val networkLastSync: Date?,
     val networkSensor: Boolean,
     val owner: String?,
+    val subscriptionName: String?,
     var firmware: String?,
     val latestMeasurement: SensorMeasurements?
-)
+) {
+    fun getDefaultName(): String = MacAddressUtils.getDefaultName(id)
+}
 
 data class SensorMeasurements(
     val temperatureValue: EnvironmentValue,
@@ -53,4 +57,8 @@ fun SensorMeasurements.isLowBattery(): Boolean {
 
 fun RuuviTag.isLowBattery(): Boolean {
     return this.latestMeasurement?.isLowBattery() ?: false
+}
+
+fun RuuviTag.canUseCloudAlerts(): Boolean {
+    return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }

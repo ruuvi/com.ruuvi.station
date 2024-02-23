@@ -2,7 +2,6 @@ package com.ruuvi.station.database.tables
 
 import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
-import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.network.data.response.SensorsDenseInfo
 import java.util.*
@@ -40,6 +39,8 @@ data class SensorSettings(
     @Column
     var owner: String? = null,
     @Column
+    var subscriptionName: String? = null,
+    @Column
     var lastSync: Date? = null,
     @Column
     var networkLastSync: Date? = null,
@@ -54,46 +55,15 @@ data class SensorSettings(
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
-    fun calibrateSensor(sensor: RuuviTagEntity) {
-        sensor.temperature = sensor.temperature - sensor.temperatureOffset + (temperatureOffset ?: 0.0)
-        sensor.temperatureOffset = temperatureOffset ?: 0.0
-
-        sensor.pressure?.let { pressure ->
-            sensor.pressure = pressure - sensor.pressureOffset + (pressureOffset ?: 0.0)
-        }
-        sensor.pressureOffset = pressureOffset ?: 0.0
-
-        sensor.humidity?.let { humidity ->
-            sensor.humidity = humidity - sensor.humidityOffset + (humidityOffset ?: 0.0)
-        }
-        sensor.humidityOffset = humidityOffset ?: 0.0
-    }
-
-    fun calibrateSensor(sensorReading: TagSensorReading) {
-        sensorReading.temperature += (temperatureOffset ?: 0.0)
-        sensorReading.temperatureOffset = temperatureOffset ?: 0.0
-
-        sensorReading.pressure?.let { pressure ->
-            sensorReading.pressure = pressure + (pressureOffset ?: 0.0)
-        }
-        sensorReading.pressureOffset = pressureOffset ?: 0.0
-
-        sensorReading.humidity?.let { humidity ->
-            sensorReading.humidity = humidity + (humidityOffset ?: 0.0)
-        }
-        sensorReading.humidityOffset = humidityOffset ?: 0.0
-    }
-
-    fun updateFromNetwork(sensor: SensorsDenseInfo, calibrationInteractor: CalibrationInteractor) {
+    fun updateFromNetwork(sensor: SensorsDenseInfo) {
         name = sensor.name
         owner = sensor.owner
         canShare = sensor.canShare
-        val recalibrateHistory = humidityOffset != sensor.offsetHumidity || pressureOffset != sensor.offsetPressure || temperatureOffset != sensor.offsetTemperature
         humidityOffset = sensor.offsetHumidity
         pressureOffset = sensor.offsetPressure
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
+        subscriptionName = sensor.subscription?.subscriptionName
         update()
-        if (recalibrateHistory) calibrationInteractor.recalibrateHistory(this)
     }
 }

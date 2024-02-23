@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -12,12 +13,13 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.util.Days
+import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -35,6 +37,7 @@ class SensorCardViewModel(
     private val gattInteractor: BluetoothGattInteractor,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val csvExporter: CsvExporter,
+    private val nfcResultInteractor: NfcResultInteractor
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -47,8 +50,8 @@ class SensorCardViewModel(
     private val _selectedIndex = MutableStateFlow<Int>(0)
     val selectedIndex: StateFlow<Int> = _selectedIndex
 
-    private val _chartViewPeriod = MutableStateFlow<Days>(getGraphViewPeriod())
-    val chartViewPeriod: StateFlow<Days> = _chartViewPeriod
+    private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
+    val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
 
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
@@ -60,11 +63,19 @@ class SensorCardViewModel(
 
     val graphDrawDots = preferencesRepository.graphDrawDots()
 
+    private val _showChartStats = MutableStateFlow<Boolean>(preferencesRepository.getShowChartStats())
+    val showChartStats: StateFlow<Boolean> = _showChartStats
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
 
     fun getChartCleared(sensorId: String):Flow<String> = chartCleared.filter { it == sensorId }
+
+    fun changeShowChartStats() {
+        preferencesRepository.setShowChartStats(!preferencesRepository.getShowChartStats())
+        _showChartStats.value = preferencesRepository.getShowChartStats()
+    }
 
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.syncStatusFlow.filter { it?.sensorId == sensorId }.collect{ status ->
@@ -178,7 +189,7 @@ class SensorCardViewModel(
 
     fun exportToCsv(sensorId: String): Uri? = csvExporter.toCsv(sensorId)
 
-    private fun getGraphViewPeriod() = Days.getInstance(appSettingsInteractor.getGraphViewPeriod())
+    private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod())
 
     fun shouldSkipGattSyncDialog() = preferencesRepository.getDontShowGattSync()
 
@@ -201,6 +212,14 @@ class SensorCardViewModel(
 
     fun setShowCharts(showCharts: Boolean) {
         _showCharts.value = showCharts
+    }
+
+    fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
+
+    fun addSensor(sensorId: String) {
+        tagInteractor.getTagEntityById(sensorId)?.let {
+            tagInteractor.makeSensorFavorite(it)
+        }
     }
 
     init {

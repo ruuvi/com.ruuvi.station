@@ -7,6 +7,8 @@ import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
@@ -58,6 +60,8 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
         }
     }
 
+    private var counter: Int = 0
+
     private fun showAppStats(appStats: AppStats?) {
         var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + " " +
                 getString(R.string.changelog)+ "\n"
@@ -76,6 +80,20 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
             this,
             Pair(getString(R.string.changelog), getString(R.string.changelog_android_url))
         )
+        binding.content.debugInfo.setOnClickListener {
+            counter++
+            val developerSettingsEnabled = viewModel.isDeveloperSettingsEnabled()
+            if (counter == 15 && !developerSettingsEnabled) {
+                Snackbar.make(binding.root, "You're almost there", LENGTH_SHORT).show()
+            }
+            if (counter == 20 && !developerSettingsEnabled) {
+                Snackbar.make(binding.root, "You can see developer settings now", LENGTH_SHORT).show()
+                viewModel.enableDeveloperSettings()
+            }
+            if (counter == 15 && developerSettingsEnabled) {
+                Snackbar.make(binding.root, "You already can see settings options", LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

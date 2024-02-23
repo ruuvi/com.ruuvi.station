@@ -9,7 +9,7 @@ import org.kodein.di.generic.*
 
 object NetworkInjectionModule {
     val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
-        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance()) }
+        bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance(), instance()) }
 
         bind<SensorClaimInteractor>() with singleton { SensorClaimInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
@@ -30,7 +30,7 @@ object NetworkInjectionModule {
         bind<NetworkShareListInteractor>() with singleton { NetworkShareListInteractor(instance()) }
 
         bind<NetworkApplicationSettings>() with  singleton {
-            NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance())
+            NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<NetworkAlertsSyncInteractor>() with  singleton {
@@ -39,14 +39,6 @@ object NetworkInjectionModule {
 
         bind<SubscriptionInfoSyncInteractor>() with singleton {
             SubscriptionInfoSyncInteractor(instance(), instance())
-        }
-
-        bind<EmailEnterViewModel>() with provider {
-            EmailEnterViewModel(instance())
-        }
-
-        bind<EnterCodeViewModel>() with provider {
-            EnterCodeViewModel(instance(), instance(), instance())
         }
 
         bind<ShareSensorViewModel>() with factory { tagId: String ->

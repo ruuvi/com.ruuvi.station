@@ -2,13 +2,9 @@ package com.ruuvi.station.network.ui.claim
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -29,6 +25,8 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -37,7 +35,7 @@ import org.kodein.di.android.closestKodein
 import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
-class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
+class ClaimSensorActivity : NfcActivity(), KodeinAware {
 
     override val kodein: Kodein by closestKodein()
 
@@ -56,6 +54,8 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 Body()
             }
         }
+
+        viewModel.checkClaimState()
     }
 
     @Composable
@@ -67,8 +67,6 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         val systemUiController = rememberSystemUiController()
         val systemBarsColor = RuuviStationTheme.colors.systemBars
         var title by remember { mutableStateOf(titleString) }
-
-        val claimState by viewModel.claimState.collectAsState()
 
         LaunchedEffect(null) {
             viewModel.uiEvent.collect { uiEvent ->
@@ -107,9 +105,17 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                 startDestination = ClaimRoutes.CHECK_CLAIM_STATE
             ) {
                 composable(
+                    route = ClaimRoutes.NOT_SIGNED_IN,
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
+                ) {
+                    NotSignedInScreen()
+                }
+
+                composable(
                     route = ClaimRoutes.CHECK_CLAIM_STATE,
-                    enterTransition = { slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = tween(600)) },
-                    exitTransition = { slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600)) },
+                    enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
+                    exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
                 ) {
                     LoadingScreen(status = stringResource(id = R.string.check_claim_state))
                 }
@@ -120,6 +126,14 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                     exitTransition = exitTransition
                 ) {
                     ClaimSensor()
+                }
+
+                composable(
+                    route = ClaimRoutes.UNCLAIM,
+                    enterTransition = enterTransition,
+                    exitTransition = exitTransition
+                ) {
+                    UnclaimSensor()
                 }
 
                 composable(
@@ -146,30 +160,6 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                     ForceClaimGettingId()
                 }
             }
-
-//            when (claimState) {
-//                is ClaimSensorState.InProgress -> {
-//                    val state = claimState as ClaimSensorState.InProgress
-//                    title = stringResource(id = state.title)
-//                    LoadingScreen(status = stringResource(id = (claimState as ClaimSensorState.InProgress).status))
-//                }
-//                is ClaimSensorState.FreeToClaim -> {
-//                    title = stringResource(id = R.string.claim_sensor)
-//                    ClaimSensor()
-//                }
-//                is ClaimSensorState.ForceClaimInit -> {
-//                    title = stringResource(id = R.string.force_claim_sensor)
-//                    ForceClaimInit()
-//                }
-//                is ClaimSensorState.ForceClaimGettingId -> {
-//                    title = stringResource(id = R.string.force_claim_sensor)
-//                    ForceClaimGettingId()
-//                }
-//                is ClaimSensorState.ClaimFinished -> finish()
-//                is ClaimSensorState.ErrorWhileChecking -> {
-//                    Paragraph(text = "error ${(claimState as ClaimSensorState.ErrorWhileChecking).error}")
-//                }
-//            }
         }
 
         SideEffect {
@@ -179,6 +169,21 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    @Composable
+    fun NotSignedInScreen() {
+        val context = LocalContext.current
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.claim_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.claim_ownership)) {
+                        SignInActivity.start(context)
+                    }
+                }
+            }
+        }
+    }
 
     @Composable
     fun ClaimSensor() {
@@ -191,6 +196,46 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
                         viewModel.claimSensor()
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun UnclaimSensor() {
+        var unclaimDialog by remember { mutableStateOf(false) }
+        var deleteData by remember { mutableStateOf(false) }
+
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.unclaim_sensor_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                SwitchRuuvi(
+                    text = stringResource(id = R.string.remove_cloud_history_title),
+                    checked = deleteData,
+                    onCheckedChange = { deleteData = !deleteData }
+                )
+                Paragraph(text = stringResource(id = R.string.remove_cloud_history_description))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RuuviButton(text = stringResource(id = R.string.unclaim)) {
+                        unclaimDialog = true
+                    }
+                }
+            }
+        }
+
+        if (unclaimDialog) {
+            RuuviDialog(
+                title = stringResource(id = R.string.dialog_are_you_sure),
+                onDismissRequest = { unclaimDialog = false },
+                onOkClickAction = {
+                    viewModel.unclaimSensor(deleteData)
+                },
+                positiveButtonText = stringResource(id = R.string.confirm)
+            ) {
+                Paragraph(text = stringResource(id = R.string.dialog_operation_undone))
             }
         }
     }
@@ -219,38 +264,16 @@ class ClaimSensorActivity : AppCompatActivity(), KodeinAware {
         }
 
     }
-    
-    private fun setupViewModel() {
-        viewModel.claimResultObserve.observe(this) { claimResult ->
-            if (claimResult != null) {
-                if (claimResult.first) {
-                    finish()
-                } else {
-                    //Snackbar.make(binding.root, claimResult.second, Snackbar.LENGTH_SHORT).show()
-                }
-            }
-        }
 
-        viewModel.claimInProgress.observe(this) {
-            //binding.claimButton.isEnabled = !it
-        }
-    }
-
-    private fun setupUI() {
-//        binding.claimButton.setDebouncedOnClickListener {
-//            viewModel.claimSensor()
-//        }
-    }
-
-    private val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 
-    private val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
-            towards = AnimatedContentScope.SlideDirection.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
 

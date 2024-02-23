@@ -12,6 +12,8 @@ class BackgroundViewModel(
     val networkDataSyncInteractor: NetworkDataSyncInteractor
 ): ViewModel() {
 
+    lateinit var cameraFile: Pair<File, Uri>
+
     fun getDefaultImages(): List<Int> = tagSettingsInteractor.getDefaultImages()
 
     fun setDefaultImage(resource: Int) {
@@ -24,14 +26,19 @@ class BackgroundViewModel(
         requestCloudSync()
     }
 
-    fun setImageFromCamera(imageFile: File, uri: Uri) {
-        tagSettingsInteractor.setImageFromCamera(sensorId, imageFile, uri)
-        requestCloudSync()
+    fun setImageFromCamera() {
+        if (this::cameraFile.isInitialized && cameraFile?.first != null) {
+            tagSettingsInteractor.setImageFromCamera(sensorId, cameraFile.first, Uri.fromFile(cameraFile.first))
+            requestCloudSync()
+        }
     }
 
     private fun requestCloudSync() {
         networkDataSyncInteractor.syncNetworkData()
     }
 
-    fun getImageFileForCamera(): Pair<File, Uri> = tagSettingsInteractor.createFileForCamera(sensorId)
+    fun getImageFileForCamera(): Pair<File, Uri> {
+        cameraFile = tagSettingsInteractor.createFileForCamera(sensorId)
+        return cameraFile
+    }
 }

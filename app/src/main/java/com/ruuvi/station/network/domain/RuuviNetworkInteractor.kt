@@ -165,8 +165,12 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun unclaimSensor(sensorId: String) {
-        val networkRequest = NetworkRequest(NetworkRequestType.UNCLAIM, sensorId, UnclaimSensorRequest(sensorId))
+    fun unclaimSensor(sensorId: String, deleteData: Boolean) {
+        val networkRequest = NetworkRequest(
+            NetworkRequestType.UNCLAIM,
+            sensorId,
+            UnclaimSensorRequest(sensorId, deleteData)
+        )
         Timber.d("unclaimSensor $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest)
     }
@@ -367,10 +371,10 @@ class RuuviNetworkInteractor (
         }
     }
 
-    suspend fun registerPush(fcmToken: String): PushRegisterResponse? {
+    suspend fun registerPush(fcmToken: String, language: String): PushRegisterResponse? {
         val token = getToken()?.token
         token?.let {
-            return networkRepository.registerPush(it, fcmToken)
+            return networkRepository.registerPush(it, fcmToken, language)
         }
         return null
     }

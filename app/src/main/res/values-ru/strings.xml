@@ -11,6 +11,9 @@
     <string name="accuracy0_template">%1$,.0f %2$s</string>
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
+    <string name="add_a_sensor">Добавить датчик</string>
+    <string name="add_sensor_description">Здесь показаны датчики Ruuvi, которые еще не были добавлены в приложение. Нажмите на сенсор, чтобы добавить его.</string>
+    <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="ago">назад</string>
@@ -19,12 +22,13 @@
     <string name="alarm_mute_for_hour">Отключить на час</string>
     <string name="alarm_notification_disable">Отключить это уведомление</string>
     <string name="alert_movement">Движение</string>
-    <string name="alert_movement_description">Уведомить при движении</string>
+    <string name="alert_movement_description">Тревога движения срабатывает, если изменяется значение внутреннего счетчика движения датчика. Эту сигнализацию можно использовать, например, для обнаружения движения двери или вибрации вблизи датчика.</string>
     <string name="alert_notification_humidity_high">Высокая Влажность!</string>
     <string name="alert_notification_humidity_high_threshold">Влажность выше %1$s</string>
     <string name="alert_notification_humidity_low">Низкая Влажность!</string>
     <string name="alert_notification_humidity_low_threshold">Влажность ниже %1$s</string>
     <string name="alert_notification_movement">Сработал Датчик Движения!</string>
+    <string name="alert_notification_offline_message">Датчик был оффлайн более предельного порога в %1$s минут</string>
     <string name="alert_notification_pressure_high">Высокое Атмосферное Давление!</string>
     <string name="alert_notification_pressure_high_threshold">Давление выше %1$s</string>
     <string name="alert_notification_pressure_low">Низкое Атмосферное Давление!</string>
@@ -58,6 +62,7 @@
     <string name="brackets_text">(%1$s)</string>
     <string name="buy_gateway_link">https://ruuvi.com/gateway?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="buy_sensors_link">https://ruuvi.com/products?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
+    <string name="buy_sensors_menu_link">https://ruuvi.com/products?utm_campaign=app_ua_nav\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="calibrate">Калибровать</string>
     <string name="calibrated">Откалибровано: %1$s</string>
     <string name="calibration_clear_confirm">Сбросить настройки калибровки?</string>
@@ -85,12 +90,14 @@
     <string name="cancel">Отмена</string>
     <string name="change_background_image">Изменить фоновое изображение</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_min_max_avg">Мин: %1$,.2f Макс: %2$,.2f Среднее: %3$,.2f</string>
     <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
     <string name="charts_background_dialog_title_question">Включить фоновое сканирование Bluetooth?</string>
-    <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
+    <string name="claim_description">Это ваш датчик? Если да, то пожалуйста заявите о владении и датчик будет добавлен в ваш Ruuvi аккаунт. Каждый датчик может иметь только одного владельца. Чтобы заявить права собственности, вам необходимо войти в систему.\n\nПреимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="claim_ownership">Заявить о владении</string>
     <string name="claim_sensor">Заявить о собственности</string>
+    <string name="claim_sensor_ownership">Заявить о собственности на датчик</string>
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
@@ -126,6 +133,7 @@
     <string name="dashboard">Панель датчиков</string>
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно.</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
+    <string name="dashboard_no_sensors_message_signed_out">Вы не вошли в аккаунт.\n\nЕсли у вас уже есть аккаунт Ruuvi и добавлены датчики в него, то они будут автоматичеки синхронизированы с мобильным приложением после того как вы войдете в свой аккаунт.</string>
     <string name="data_format">Формат Данных</string>
     <string name="data_forwarding_background_location_message_bloked">Включите доступ к местоположению, чтобы добавить координаты</string>
     <string name="data_forwarding_background_location_message_first">Эта функция требует доступа к местоположению устройства. Чтобы добавить данные о местоположении, на следующем системном диалоге укажите хотите вы точное или примерное местоположение и разрешите доступ к местоположению пока приложение активно.</string>
@@ -150,8 +158,10 @@
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
     <string name="dfu_update_do_not_close_app">Не закрывайте приложение и не отключайте сенсор во время обновления.</string>
+    <string name="dialog_are_you_sure">Вы уверены?</string>
     <string name="disconnected">Отсоединен</string>
     <string name="do_not_show_again">Больше не показывать</string>
+    <string name="do_you_own_sensor">Это ваш датчик?</string>
     <string name="done">Готово</string>
     <string name="downloading_latest_firmware">Идет скачивание обновления прошивки...</string>
     <string name="email">Email</string>
@@ -171,7 +181,7 @@
     <string name="firmware">Прошивка</string>
     <string name="firmware_update">Обновить</string>
     <string name="firmware_very_old">Устаревшая</string>
-    <string name="follow_system_theme">Как в системе</string>
+    <string name="follow_system_theme">Системная тема</string>
     <string name="gallery">Галерея</string>
     <string name="gateway_test_exception">Произошла ошибка. Адрес правильный?</string>
     <string name="gateway_test_fail">Произошла ошибка. Код ответа: %1$d</string>
@@ -195,6 +205,12 @@
     <string name="help_seen_tags">Датчиков обнаружено: %1$,d</string>
     <string name="help_troubleshooting_text">Получите помощь по использованию приложений Ruuvi Station, продуктов Ruuvi и облачной службы Ruuvi в нашем центре поддержки: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Решение проблем</string>
+    <string name="hour">час</string>
+    <string name="hour_1">1 час</string>
+    <string name="hour_12">12 часов</string>
+    <string name="hour_2">2 часа</string>
+    <string name="hour_3">3 часа</string>
+    <string name="hour_x">%1$s дней</string>
     <string name="hours">Часов</string>
     <string name="humidity">Влажность</string>
     <string name="humidity_absolute_name">Абсолютная влажность (г/м³)</string>
@@ -227,6 +243,7 @@
     <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
+    <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
     <string name="movements">движений</string>
@@ -279,6 +296,7 @@
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
     <string name="remove_shared_sensor">Если вы удалите датчик, то владелец будет уведомлен и вы более не сможете получать данные с него.</string>
     <string name="remove_this_sensor">Удалить этот датчик</string>
+    <string name="rename">Переименовать</string>
     <string name="rename_sensor_message">Датчики будут отсортированы в алфавитном порядке.</string>
     <string name="s">с</string>
     <string name="scan">СКАНИРОВАТЬ</string>
@@ -292,6 +310,8 @@
     <string name="sensor_settings">Настройки датчика</string>
     <string name="sensor_shared">Поделились</string>
     <string name="settings">Настройки</string>
+    <string name="settings_alert_limit_notification">Ограничить количество уведомлений</string>
+    <string name="settings_alert_limit_notification_description">Показывать уведомления не чаще одного раза в час, даже если тревога сработала повторно.</string>
     <string name="settings_alert_notifications">Уведомления о тревогах</string>
     <string name="settings_appearance">Внешний вид</string>
     <string name="settings_background_battery_optimization">Если у вас нестабильно работает фоновое сканирование, то следует отключить оптимизацию батареи для Ruuvi Station. Конкретные действия, которые необходимо выполнить могут зависеть от производителя телефона, его модели и версии Android.</string>
@@ -348,7 +368,7 @@
     <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
     <string name="sign_in">Войти</string>
     <string name="sign_in_benefits_description">Преимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
-    <string name="sign_in_check_email">Мы отправили одноразовый пароль на вашу электронную почту. Войдите, введя его здесь:</string>
+    <string name="sign_in_check_email">Мы отправили одноразовый пароль на вашу электронную почту %1$s. Войдите, введя его здесь:</string>
     <string name="sign_in_code_hint">Код для входа</string>
     <string name="sign_in_continue">Продолжить</string>
     <string name="sign_in_email_sent">Email отправлен</string>
@@ -402,6 +422,7 @@
     <string name="update_successful">Обновление успешно завершено</string>
     <string name="updated">Обновлено %1$s</string>
     <string name="updating">Обновляю...</string>
+    <string name="use_dev_server_description">Чтобы применить изменения, просто синхронизируйте данные с панели управления или дождитесь следующей синхронизации.</string>
     <string name="version">Версия: %1$s</string>
     <string name="view">Вид</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

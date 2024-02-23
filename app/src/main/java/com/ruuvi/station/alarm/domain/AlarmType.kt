@@ -5,7 +5,8 @@ enum class AlarmType(val value: Int, val networkCode: String?, val possibleRange
     HUMIDITY(1, "humidity", 0 .. 100),
     PRESSURE(2, "pressure", 50000 .. 115500),
     RSSI(3, "signal", -105 .. 0),
-    MOVEMENT(4, "movement", 0 .. 0);
+    MOVEMENT(4, "movement", 0 .. 0),
+    OFFLINE(5, "offline", 120..86400);
 
     fun valueInRange(value: Double): Boolean = value >= possibleRange.first && value <= possibleRange.last
 

@@ -66,8 +66,8 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                         finish()
                     },
                     getImageFileForCamera = viewModel::getImageFileForCamera,
-                    setImageFromCamera = { file, uri ->
-                        viewModel.setImageFromCamera(file, uri)
+                    setImageFromCamera = {
+                        viewModel.setImageFromCamera()
                         finish()
                     }
                 )
@@ -82,7 +82,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         setDefaultImage: (Int) -> Unit,
         setImageFromGallery: (Uri) -> Unit,
         getImageFileForCamera: () -> Pair<File, Uri>,
-        setImageFromCamera: (File, Uri) -> Unit
+        setImageFromCamera: () -> Unit
     ) {
         val context = LocalContext.current
         val scaffoldState = rememberScaffoldState()
@@ -131,7 +131,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
     fun PageHeader(
         setImageFromGallery: (Uri) -> Unit,
         getImageFileForCamera: () -> Pair<File, Uri>,
-        setImageFromCamera: (File, Uri) -> Unit
+        setImageFromCamera: () -> Unit
     ) {
         var cameraFile by remember {
             mutableStateOf<Pair<File, Uri>?>(null)
@@ -151,10 +151,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             contract = ActivityResultContracts.TakePicture(),
             onResult = { success ->
                 Timber.d("Image taken $success")
-                val cameraImage = cameraFile?.first
-                if (success && cameraImage != null) {
-                    setImageFromCamera(cameraImage, Uri.fromFile(cameraImage))
-                }
+                if (success) setImageFromCamera()
             }
         )
 
@@ -170,7 +167,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             DividerRuuvi()
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.take_photo),
-                value = null,
                 icon = painterResource(id = R.drawable.camera_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
@@ -183,7 +179,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
             DividerRuuvi()
             TextEditWithCaptionButton(
                 title = stringResource(id = R.string.select_from_gallery),
-                value = null,
                 icon = painterResource(id = R.drawable.gallery_24),
                 tint = RuuviStationTheme.colors.accent
             ) {
@@ -194,7 +189,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 text = stringResource(id = R.string.select_default_image),
                 modifier = Modifier.padding(
                     vertical = RuuviStationTheme.dimensions.extended,
-                    horizontal = RuuviStationTheme.dimensions.medium
+                    horizontal = RuuviStationTheme.dimensions.screenPadding
                 ))
         }
     }
