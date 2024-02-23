@@ -16,7 +16,7 @@ fun DeveloperSettings(
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.use_dev_server),
                 checked = devServerEnabled.value,
                 onCheckedChange = viewModel::setDevServerEnabled
