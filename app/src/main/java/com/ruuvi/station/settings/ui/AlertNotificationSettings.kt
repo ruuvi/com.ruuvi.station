@@ -18,7 +18,7 @@ import com.ruuvi.station.alarm.domain.AlertNotificationInteractor
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.PageSurface
 import com.ruuvi.station.app.ui.components.Paragraph
-import com.ruuvi.station.app.ui.components.SwitchRuuvi
+import com.ruuvi.station.app.ui.components.SwitchIndicatorRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,7 @@ fun AlertNotificationsSettings(
         Column() {
             Column (modifier = Modifier
                 .padding(RuuviStationTheme.dimensions.screenPadding)) {
-                SwitchRuuvi(
+                SwitchIndicatorRuuvi(
                     text = stringResource(id = R.string.settings_alert_limit_notification),
                     checked = limitLocalAlerts.value,
                     onCheckedChange = viewModel::setLimitLocalAlerts
