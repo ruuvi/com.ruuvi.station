@@ -32,7 +32,7 @@
     <string name="alert_notification_temperature_low">Zbyt niska temperatura!</string>
     <string name="alert_subtitle_off">Wyłącz</string>
     <string name="alert_subtitle_on">Ostrzeżenie, gdy mniej niż %1$s lub więcej niż %2$s</string>
-    <string name="alerts">OSTRZEŻENIA</string>
+    <string name="alerts">Ostrzeżenia</string>
     <string name="all">Wszystko</string>
     <string name="already_latest_version">Masz najnowszą wersję firmware, aktualizacja nie jest wymagana.</string>
     <string name="app_name">Ruuvi Station</string>

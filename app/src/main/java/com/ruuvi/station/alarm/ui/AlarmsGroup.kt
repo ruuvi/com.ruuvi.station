@@ -30,6 +30,7 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -54,11 +55,14 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
         while (true) {
             Timber.d("AlarmItems refreshAlarmState ")
             viewModel.refreshAlarmState()
+            viewModel.refreshSensorState()
             delay(1000)
         }
     }
     Timber.d("AlarmItems refresh ")
     val alarms = viewModel.alarms
+
+    val sensorState by viewModel.sensorState.collectAsState()
 
     if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
         permissionAsked = true
@@ -76,6 +80,7 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                     AlertEditItem(
                         title = title,
                         alarmState = itemState,
+                        sensorState = sensorState,
                         changeEnabled = viewModel::setEnabled,
                         setDescription = viewModel::setDescription,
                         setRange = viewModel::setRange,
@@ -89,6 +94,7 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                     RssiAlertEditItem(
                         title = title,
                         alarmState = itemState,
+                        sensorState = sensorState,
                         changeEnabled = viewModel::setEnabled,
                         setDescription = viewModel::setDescription,
                         setRange = viewModel::setRange,
@@ -136,6 +142,7 @@ fun OfflineAlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -186,6 +193,7 @@ fun OfflineAlertEditItem(
 fun AlertEditItem(
     title: String,
     alarmState: AlarmItemState,
+    sensorState: RuuviTag,
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
     setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
@@ -205,6 +213,7 @@ fun AlertEditItem(
         AlarmHeader(title, alarmState)
     }) {
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -241,6 +250,24 @@ fun AlertEditItem(
                 saveRange.invoke(alarmState.type)
             }
         )
+
+        if (sensorState.latestMeasurement != null) {
+            val latestValue = when (alarmState.type) {
+                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue.valueWithUnit
+                AlarmType.HUMIDITY -> sensorState.latestMeasurement.humidityValue?.valueWithUnit
+                AlarmType.PRESSURE -> sensorState.latestMeasurement.pressureValue?.valueWithUnit
+                else -> null
+            }
+            if (latestValue != null) {
+                Paragraph(
+                    modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
+                    text = stringResource(
+                        id = R.string.latest_measured_value,
+                        latestValue
+                    )
+                )
+            }
+        }
     }
     DividerSurfaceColor()
 
@@ -271,6 +298,7 @@ fun AlertEditItem(
 fun RssiAlertEditItem(
     title: String,
     alarmState: AlarmItemState,
+    sensorState: RuuviTag,
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
     setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
@@ -291,6 +319,7 @@ fun RssiAlertEditItem(
     }) {
         SmallerText(stringResource(id = R.string.rssi_alert_description))
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {
@@ -327,6 +356,16 @@ fun RssiAlertEditItem(
                 saveRange.invoke(alarmState.type)
             }
         )
+        if (sensorState.latestMeasurement != null) {
+            val latestValue = sensorState.latestMeasurement.rssiValue.valueWithUnit
+            Paragraph(
+                modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
+                text = stringResource(
+                    id = R.string.latest_measured_value,
+                    latestValue
+                )
+            )
+        }
     }
     DividerSurfaceColor()
 
@@ -399,6 +438,7 @@ fun MovementAlertEditItem(
     }) {
         SmallerText(stringResource(id = R.string.alert_movement_description))
         SwitchIndicatorRuuvi(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
             checked = alarmState.isEnabled,
             onCheckedChange = {

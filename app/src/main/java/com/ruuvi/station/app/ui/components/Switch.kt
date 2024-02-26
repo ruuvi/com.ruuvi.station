@@ -81,10 +81,6 @@ fun SwitchIndicatorRuuvi (
         .fillMaxWidth()
         .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) }
         .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
-        .padding(
-            vertical = RuuviStationTheme.dimensions.mediumPlus,
-            horizontal = RuuviStationTheme.dimensions.screenPadding
-        )
     ) {
         val (caption, onOff, switch) = createRefs()
 
@@ -112,7 +108,7 @@ fun SwitchIndicatorRuuvi (
                     bottom.linkTo(parent.bottom)
                     start.linkTo(caption.end)
                     end.linkTo(switch.start)
-                    width = Dimension.fillToConstraints
+                    width = Dimension.wrapContent
                 }
 
         )

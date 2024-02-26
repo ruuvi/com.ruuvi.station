@@ -296,6 +296,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Latest available Ruuvi Firmware version:</string>
+    <string name="latest_measured_value">Latest measured value: %1$s</string>
     <string name="lets_do_it">Let\'s Sign In</string>
     <string name="light_theme">Light theme</string>
     <string name="logged_in">Signed in:</string>
