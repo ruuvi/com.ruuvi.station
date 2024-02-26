@@ -928,17 +928,24 @@ fun ItemBottomUpdatedInfo(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier.padding(top = 2.dp)
         ) {
-            val icon = if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
-                R.drawable.ic_icon_gateway
+            // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
+            if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
+                val icon = R.drawable.ic_icon_gateway
+                Icon(
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    painter = painterResource(id = icon),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                    contentDescription = null,
+                )
             } else {
-                R.drawable.ic_icon_bluetooth
+                val icon = R.drawable.ic_icon_bluetooth
+                Icon(
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    painter = painterResource(id = icon),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                    contentDescription = null,
+                )
             }
-            Icon(
-                modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
-                painter = painterResource(id = icon),
-                tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
-                contentDescription = null,
-            )
 
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
 
