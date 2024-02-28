@@ -80,6 +80,7 @@ class DfuUpdateViewModel(
     }
 
     fun permissionsChecked(permissionsGranted: Boolean) {
+        Timber.d("permissionsChecked $permissionsGranted")
         this.permissionsGranted = permissionsGranted
         if (permissionsGranted) {
             getSensorFirmwareVersion()
@@ -104,7 +105,7 @@ class DfuUpdateViewModel(
                 val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
                 val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
 
-                if (sensorFwParsed.compareTo(latestFwParsed) != 0) {
+                if (sensorFwParsed.compareTo(latestFwParsed) < 0) {
                     return true
                 } else {
                     _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
@@ -123,6 +124,7 @@ class DfuUpdateViewModel(
         }
 
         getFwJob = viewModelScope.launch {
+            Timber.d("getSensorFirmwareVersion")
             val firmware = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
             _sensorFwVersion.value = firmware
             if (firmware.isSuccess && firmware.fw.isNotEmpty()) {
