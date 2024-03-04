@@ -49,7 +49,10 @@ class PermissionsInteractor(private val activity: Activity) {
     private var shouldAskToEnableLocation = !isApi31Behaviour
     private var shouldAskToEnableBluetooth = true
 
-    fun arePermissionsGranted(): Boolean = getRequiredPermissions().isEmpty()
+    fun arePermissionsGranted(): Boolean {
+        Timber.d("arePermissionsGranted ${getRequiredPermissions()}")
+        return getRequiredPermissions().isEmpty()
+    }
 
     fun requestPermissions(needBackground: Boolean, askForBluetooth: Boolean) {
         val neededPermissions = getRequiredPermissions()
