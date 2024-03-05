@@ -51,6 +51,7 @@ import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
@@ -113,6 +114,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                     graphDrawDots = viewModel.graphDrawDots,
                     syncInProgress = syncInProcess,
                     setShowCharts = viewModel::setShowCharts,
+                    getActiveAlarms = viewModel::getActiveAlarms,
                     getHistory = viewModel::getSensorHistory,
                     unitsConverter = unitsConverter,
                     viewPeriod = viewPeriod,
@@ -203,6 +205,7 @@ fun SensorsPager(
     syncInProgress: Boolean,
     graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
+    getActiveAlarms: (String) -> List<Alarm>,
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
@@ -357,7 +360,8 @@ fun SensorsPager(
                                 selected = pagerSensor?.id == sensor.id,
                                 viewPeriod = viewPeriod,
                                 chartCleared = getChartClearedFlow(sensor.id),
-                                showChartStats = showChartStats
+                                showChartStats = showChartStats,
+                                getActiveAlarms = getActiveAlarms
                             )
                         } else {
                             SensorCard(

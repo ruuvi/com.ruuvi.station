@@ -10,6 +10,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -37,7 +38,8 @@ class SensorCardViewModel(
     private val gattInteractor: BluetoothGattInteractor,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val csvExporter: CsvExporter,
-    private val nfcResultInteractor: NfcResultInteractor
+    private val nfcResultInteractor: NfcResultInteractor,
+    private val alarmRepository: AlarmRepository
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -221,6 +223,8 @@ class SensorCardViewModel(
             tagInteractor.makeSensorFavorite(it)
         }
     }
+
+    fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)
 
     init {
         if (arguments.sensorId != null) {
