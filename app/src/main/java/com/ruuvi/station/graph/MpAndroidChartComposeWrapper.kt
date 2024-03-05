@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -45,6 +46,7 @@ fun ChartView(
     chartSensorType: ChartSensorType,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
+    limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
 ) {
@@ -74,7 +76,7 @@ fun ChartView(
                 } else {
                     ""
                 } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
-            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
+            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, limits, from, to)
             (view.marker as ChartMarkerView).getFrom = {from}
         }
     )
@@ -286,6 +288,7 @@ private fun addDataToChart(
     chart: LineChart,
     label: String,
     graphDrawDots: Boolean,
+    limits: Pair<Double,Double>?,
     from: Long,
     to: Long
 ) {
@@ -298,6 +301,7 @@ private fun addDataToChart(
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
             from,
@@ -317,6 +321,12 @@ private fun addDataToChart(
 
     chart.xAxis.axisMaximum = (to - from).toFloat()
     chart.xAxis.axisMinimum = 0f
+
+    chart.axisLeft.removeAllLimitLines()
+    if (limits != null) {
+        chart.axisLeft.addLimitLine(getLimitLine(context, limits.first.toFloat()))
+        chart.axisLeft.addLimitLine(getLimitLine(context, limits.second.toFloat()))
+    }
 
     chart.description.text = label
     chart.axisLeft.axisMinimum = set.yMin - 1f
@@ -343,6 +353,15 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
+}
+
+fun getLimitLine(
+    context: Context,
+    value: Float
+) : LimitLine {
+    val limitLine = LimitLine(value)
+    limitLine.lineColor = context.getColor(R.color.error)
+    return limitLine
 }
 
 fun formatDoubleToString(value: Double): String {

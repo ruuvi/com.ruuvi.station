@@ -1,5 +1,6 @@
 package com.ruuvi.station.graph
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -19,12 +20,15 @@ import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.delay
@@ -47,7 +51,8 @@ fun ChartsView(
     showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
-    getHistory: (String) -> List<TagSensorReading>
+    getHistory: (String) -> List<TagSensorReading>,
+    getActiveAlarms: (String) -> List<Alarm>
 ) {
     Timber.d("ChartView - top $sensorId $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
@@ -108,12 +113,31 @@ fun ChartsView(
         }
     }
 
+    var temperatureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+    var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+    var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+
     LaunchedEffect(key1 = selected, viewPeriod) {
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             Timber.d("ChartView - get history $sensorId")
             delay(300)
             val freshHistory = getHistory.invoke(sensorId)
+            val alarms = getActiveAlarms(sensorId)
+
+            temperatureLimits = alarms.firstOrNull { it.alarmType == AlarmType.TEMPERATURE }?.let {
+                unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
+            }
+            humidityLimits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
+                alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }?.let {it.min to it.max }
+            } else null
+            pressureLimits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }?.let {
+                unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
+            }
+
+            Timber.d("ChartView - temperatureLimits $temperatureLimits")
+            Timber.d("ChartView - humidityLimits $humidityLimits")
+            Timber.d("ChartView - pressureLimits $pressureLimits")
 
             if (history.isEmpty() ||
                 temperatureChart.highestVisibleX >= (temperatureChart.data?.xMax ?: Float.MIN_VALUE)) {
@@ -194,6 +218,7 @@ fun ChartsView(
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
                             showChartStats,
+                            limits = temperatureLimits,
                             from,
                             to
                         )
@@ -207,6 +232,7 @@ fun ChartsView(
                             ChartSensorType.HUMIDITY,
                             graphDrawDots,
                             showChartStats,
+                            limits = humidityLimits,
                             from,
                             to
                         )
@@ -220,6 +246,7 @@ fun ChartsView(
                             ChartSensorType.PRESSURE,
                             graphDrawDots,
                             showChartStats,
+                            limits = pressureLimits,
                             from,
                             to
                         )
@@ -252,6 +279,7 @@ fun ChartsView(
                             ChartSensorType.TEMPERATURE,
                             graphDrawDots,
                             showChartStats,
+                            limits = temperatureLimits,
                             from,
                             to
                         )
@@ -277,6 +305,7 @@ fun ChartsView(
                                 ChartSensorType.HUMIDITY,
                                 graphDrawDots,
                                 showChartStats,
+                                limits = humidityLimits,
                                 from,
                                 to
                             )
@@ -296,6 +325,7 @@ fun ChartsView(
                                 ChartSensorType.PRESSURE,
                                 graphDrawDots,
                                 showChartStats,
+                                limits = pressureLimits,
                                 from,
                                 to
                             )
