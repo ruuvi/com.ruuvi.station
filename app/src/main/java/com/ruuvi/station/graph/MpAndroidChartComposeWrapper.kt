@@ -360,7 +360,7 @@ fun getLimitLine(
     value: Float
 ) : LimitLine {
     val limitLine = LimitLine(value)
-    limitLine.lineColor = context.getColor(R.color.error)
+    limitLine.lineColor = context.getColor(R.color.activeAlarm)
     return limitLine
 }
 
