@@ -302,6 +302,10 @@ private fun addDataToChart(
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
 
+    set.enableDashedHighlightLine(10f, 5f, 0f)
+    set.setDrawHighlightIndicators(true)
+    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
             from,
@@ -315,10 +319,6 @@ private fun addDataToChart(
         chart.axisLeft,
         chart.getTransformer(YAxis.AxisDependency.LEFT)
     )
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
-
     chart.xAxis.axisMaximum = (to - from).toFloat()
     chart.xAxis.axisMinimum = 0f
 
@@ -353,6 +353,30 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
+}
+
+private fun prepareDatasets(data: MutableList<Entry>) {
+
+}
+
+private fun setupDataSet(
+    context: Context,
+    data: MutableList<Entry>,
+    label: String,
+    graphDrawDots: Boolean
+): LineDataSet {
+    val set = LineDataSet(data, label)
+    set.setDrawCircles(graphDrawDots)
+    set.setDrawValues(false)
+    set.setDrawFilled(true)
+    set.circleRadius = 1f
+    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+    set.enableDashedHighlightLine(10f, 5f, 0f)
+    set.setDrawHighlightIndicators(true)
+    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    return set
 }
 
 fun getLimitLine(

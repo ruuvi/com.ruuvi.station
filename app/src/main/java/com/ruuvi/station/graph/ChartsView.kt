@@ -362,7 +362,7 @@ fun setupChart(
     chartSensorType: ChartSensorType
 ) {
     if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
-        chart.axisLeft.valueFormatter = GraphView.AxisLeftValueFormatter("#.##")
+        chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
         chart.axisLeft.granularity = 0.01f
     } else {
         if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
