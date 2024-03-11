@@ -259,12 +259,14 @@ fun AlertEditItem(
                 else -> null
             }
             if (latestValue != null) {
-                Paragraph(
+                Text(
                     modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = RuuviStationTheme.fontSizes.small,
                     text = stringResource(
                         id = R.string.latest_measured_value,
                         latestValue
-                    )
+                    ),
                 )
             }
         }
