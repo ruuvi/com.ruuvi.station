@@ -385,6 +385,7 @@ fun getLimitLine(
 ) : LimitLine {
     val limitLine = LimitLine(value)
     limitLine.lineColor = context.getColor(R.color.activeAlarm)
+    limitLine.lineWidth = 2.5f
     return limitLine
 }
 
