@@ -1,6 +1,5 @@
 package com.ruuvi.station.graph
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
