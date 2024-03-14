@@ -112,7 +112,7 @@ fun ChartViewPrototype(
         ChartSensorType.PRESSURE -> stringResource(id = R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
     } 
 
-    val offset = lineChart.viewPortHandler.offsetLeft().toInt().pxToDp()
+    val offset = RuuviStationTheme.dimensions.extended
     val description = getPrototypeChartDescription(
         context,
         lineChart,
@@ -521,7 +521,7 @@ fun getLimitLine(
 ) : LimitLine {
     val limitLine = LimitLine(value)
     limitLine.lineColor = context.getColor(R.color.activeAlarm)
-    limitLine.lineWidth = 2.5f
+    limitLine.lineWidth = 1.5f
     return limitLine
 }
 
