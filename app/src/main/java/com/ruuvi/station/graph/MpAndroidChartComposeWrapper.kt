@@ -39,7 +39,6 @@ import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.util.extensions.isStartOfTheDay
-import com.ruuvi.station.util.ui.pxToDp
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -177,14 +176,15 @@ fun getPrototypeChartDescription(
 
     val latestPoint = chartData.lastOrNull()
     val latestValue =
-        if (latestPoint != null) getRawValue(latestPoint.y.toDouble(), Accuracy.Accuracy2) else ""
+        if (latestPoint != null) getRawValue(latestPoint.y.toDouble(), null) else ""
 
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
     Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
 
-    if (visibleEntries.isEmpty()) return context.getString(R.string.chart_latest_min_max_avg, latestValue, "", "", "")
+    if (visibleEntries.isEmpty())
+        return context.getString(R.string.chart_latest_min_max_avg, "", "", "", latestValue)
 
     var totalArea = 0.0
 
@@ -209,10 +209,10 @@ fun getPrototypeChartDescription(
 
     return context.getString(
         R.string.chart_latest_min_max_avg,
-        latestValue,
-        getRawValue(min.toDouble(), Accuracy.Accuracy2),
-        getRawValue(max.toDouble(), Accuracy.Accuracy2),
-        getRawValue(average.toDouble(), Accuracy.Accuracy2)
+        getRawValue(min.toDouble(), null),
+        getRawValue(max.toDouble(), null),
+        getRawValue(average.toDouble(), null),
+        latestValue
     )
 }
 
