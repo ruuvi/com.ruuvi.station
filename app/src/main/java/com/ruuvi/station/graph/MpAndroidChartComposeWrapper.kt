@@ -144,7 +144,7 @@ fun ChartViewPrototype(
         }
 
         AndroidView(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
+            modifier = Modifier.fillMaxWidth().height(220.dp),
             factory = { context ->
                 Timber.d("ChartView - factory")
                 val chart = lineChart
