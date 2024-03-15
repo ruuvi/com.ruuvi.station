@@ -248,6 +248,12 @@ fun VerticalCharts(
     from: Long,
     to: Long
 ) {
+    val clearMarker = {
+        temperatureChart.highlightValue(null)
+        pressureChart.highlightValue(null)
+        humidityChart.highlightValue(null)
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
             EmptyCharts()
@@ -275,7 +281,8 @@ fun VerticalCharts(
                     showChartStats,
                     limits = temperatureLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
             }
             if (onlyOneChart) {
@@ -301,7 +308,8 @@ fun VerticalCharts(
                         showChartStats,
                         limits = humidityLimits,
                         from,
-                        to
+                        to,
+                        clearMarker
                     )
                 }
             }
@@ -321,7 +329,8 @@ fun VerticalCharts(
                         showChartStats,
                         limits = pressureLimits,
                         from,
-                        to
+                        to,
+                        clearMarker
                     )
                 }
             }
@@ -347,6 +356,12 @@ fun VerticalChartsPrototype(
     from: Long,
     to: Long
 ) {
+    val clearMarker = {
+        temperatureChart.highlightValue(null)
+        pressureChart.highlightValue(null)
+        humidityChart.highlightValue(null)
+    }
+
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
             EmptyCharts()
@@ -362,7 +377,8 @@ fun VerticalChartsPrototype(
                 showChartStats,
                 limits = temperatureLimits,
                 from,
-                to
+                to,
+                clearMarker
             )
 
             if (humidityData.isNotEmpty()) {
@@ -376,7 +392,8 @@ fun VerticalChartsPrototype(
                     showChartStats,
                     limits = humidityLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
             }
             if (pressureData.isNotEmpty()) {
@@ -390,7 +407,8 @@ fun VerticalChartsPrototype(
                     showChartStats,
                     limits = pressureLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
 
             }
@@ -417,6 +435,11 @@ fun LandscapeCharts(
     from: Long,
     to: Long
 ) {
+    val clearMarker = {
+        temperatureChart.highlightValue(null)
+        humidityChart.highlightValue(null)
+        pressureChart.highlightValue(null)
+    }
     val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
     if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
     if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
@@ -444,7 +467,8 @@ fun LandscapeCharts(
                     showChartStats,
                     limits = temperatureLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
             }
             ChartSensorType.HUMIDITY -> {
@@ -458,7 +482,8 @@ fun LandscapeCharts(
                     showChartStats,
                     limits = humidityLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
             }
             ChartSensorType.PRESSURE -> {
@@ -472,7 +497,8 @@ fun LandscapeCharts(
                     showChartStats,
                     limits = pressureLimits,
                     from,
-                    to
+                    to,
+                    clearMarker
                 )
             }
         }

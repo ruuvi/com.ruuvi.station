@@ -15,18 +15,25 @@ import java.text.DateFormat
 import java.util.*
 
 class ChartMarkerView @JvmOverloads
-    constructor(
+constructor(
     context: Context,
     layoutResource: Int,
     val chartSensorType: ChartSensorType,
     val unitsConverter: UnitsConverter,
-    var getFrom: () -> Long
+    var getFrom: () -> Long,
+    var clearMarker: () -> Unit
 ): MarkerView(context, layoutResource) {
 
     private var tvContent: TextView = findViewById(R.id.tvContent)
 
     override fun getOffset(): MPPointF {
         return MPPointF((-(width / 2)).toFloat(), (-height).toFloat() -15)
+    }
+
+    init {
+        setOnClickListener {
+            clearMarker()
+        }
     }
 
     override fun refreshContent(e: Entry, highlight: Highlight) {

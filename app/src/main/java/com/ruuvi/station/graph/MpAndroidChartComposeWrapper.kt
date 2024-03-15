@@ -58,6 +58,7 @@ fun ChartView(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
+    clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -66,9 +67,7 @@ fun ChartView(
         factory = { context ->
             Timber.d("ChartView - factory")
             val chart = lineChart
-            setupMarker(context, chart, unitsConverter, chartSensorType) {
-                from
-            }
+            setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
             chart
         },
         update = { view ->
@@ -103,6 +102,7 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
+    clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -149,9 +149,7 @@ fun ChartViewPrototype(
             factory = { context ->
                 Timber.d("ChartView - factory")
                 val chart = lineChart
-                setupMarker(context, chart, unitsConverter, chartSensorType) {
-                    from
-                }
+                setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
                 chart
             },
             update = { view ->
@@ -406,13 +404,15 @@ fun setupMarker(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
     getFrom: () -> Long,
+    clearMarker: () -> Unit
 ) {
     val markerView = ChartMarkerView(
         context = context,
         layoutResource = R.layout.custom_marker_view,
         chartSensorType = chartSensorType,
         unitsConverter = unitsConverter,
-        getFrom = getFrom
+        getFrom = getFrom,
+        clearMarker = clearMarker
     )
     markerView.chartView = chart
     chart.marker = markerView
