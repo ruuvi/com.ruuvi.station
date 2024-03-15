@@ -115,6 +115,7 @@
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
     <string name="changelog">(changelog)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Latest: %2$s Min: %2$s Max: %3$s Average: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Average: %3$,.2f</string>
     <string name="chart_stat_avg">Average</string>
     <string name="chart_stat_hide">Hide min/max/avg</string>

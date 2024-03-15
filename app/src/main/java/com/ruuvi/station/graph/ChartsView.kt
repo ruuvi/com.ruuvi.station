@@ -5,6 +5,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -169,8 +171,6 @@ fun ChartsView(
                     humidityData = humidityDataTemp
                     pressureData = pressureDataTemp
                 }
-            } else {
-
             }
             isLoading = false
             delay(1000)
@@ -209,7 +209,7 @@ fun ChartsView(
                 to
             )
         } else {
-            VerticalCharts(
+            VerticalChartsPrototype(
                 modifier,
                 temperatureChart,
                 humidityChart,
@@ -229,7 +229,6 @@ fun ChartsView(
         }
     }
 }
-
 
 @Composable
 fun VerticalCharts(
@@ -329,6 +328,76 @@ fun VerticalCharts(
         }
     }
 }
+
+@Composable
+fun VerticalChartsPrototype(
+    modifier: Modifier,
+    temperatureChart: LineChart,
+    humidityChart: LineChart,
+    pressureChart: LineChart,
+    temperatureData: MutableList<Entry>,
+    pressureData: MutableList<Entry>,
+    humidityData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    graphDrawDots: Boolean,
+    showChartStats: Boolean,
+    temperatureLimits: Pair<Double, Double>?,
+    humidityLimits: Pair<Double, Double>?,
+    pressureLimits: Pair<Double, Double>?,
+    from: Long,
+    to: Long
+) {
+    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
+            EmptyCharts()
+        } else {
+
+            ChartViewPrototype(
+                temperatureChart,
+                Modifier.fillMaxWidth(),
+                temperatureData,
+                unitsConverter,
+                ChartSensorType.TEMPERATURE,
+                graphDrawDots,
+                showChartStats,
+                limits = temperatureLimits,
+                from,
+                to
+            )
+
+            if (humidityData.isNotEmpty()) {
+                ChartViewPrototype(
+                    humidityChart,
+                    Modifier.fillMaxWidth(),
+                    humidityData,
+                    unitsConverter,
+                    ChartSensorType.HUMIDITY,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = humidityLimits,
+                    from,
+                    to
+                )
+            }
+            if (pressureData.isNotEmpty()) {
+                ChartViewPrototype(
+                    pressureChart,
+                    Modifier.fillMaxWidth(),
+                    pressureData,
+                    unitsConverter,
+                    ChartSensorType.PRESSURE,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = pressureLimits,
+                    from,
+                    to
+                )
+
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LandscapeCharts(

@@ -300,6 +300,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Dernière version du Ruuvi Firmware :</string>
+    <string name="latest_measured_value">Dernière valeur mesurée : %1$s</string>
     <string name="lets_do_it">Connectez-vous</string>
     <string name="light_theme">Thème de la lumière</string>
     <string name="logged_in">Connecté :</string>
