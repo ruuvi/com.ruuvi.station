@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -101,6 +102,7 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
+    height: Dp? = null,
     clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
@@ -143,8 +145,14 @@ fun ChartViewPrototype(
             )
         }
 
+        var chartsModifier = Modifier.fillMaxWidth()
+        chartsModifier = if (height != null) {
+            chartsModifier.height(height)
+        } else {
+            chartsModifier.fillMaxHeight()
+        }
         AndroidView(
-            modifier = Modifier.fillMaxWidth().height(220.dp),
+            modifier = chartsModifier,
             factory = { context ->
                 Timber.d("ChartView - factory")
                 val chart = lineChart

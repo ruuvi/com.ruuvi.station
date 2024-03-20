@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
@@ -37,6 +38,8 @@ import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
+
+private val chartHeight = 220.dp
 
 @Composable
 fun ChartsView(
@@ -191,7 +194,7 @@ fun ChartsView(
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
             EmptyCharts()
         } else if (isLandscape) {
-            LandscapeCharts(
+            LandscapeChartsPrototype(
                 modifier,
                 temperatureChart,
                 humidityChart,
@@ -227,6 +230,224 @@ fun ChartsView(
                 to
             )
         }
+    }
+}
+
+@Composable
+fun VerticalChartsPrototype(
+    modifier: Modifier,
+    temperatureChart: LineChart,
+    humidityChart: LineChart,
+    pressureChart: LineChart,
+    temperatureData: MutableList<Entry>,
+    pressureData: MutableList<Entry>,
+    humidityData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    graphDrawDots: Boolean,
+    showChartStats: Boolean,
+    temperatureLimits: Pair<Double, Double>?,
+    humidityLimits: Pair<Double, Double>?,
+    pressureLimits: Pair<Double, Double>?,
+    from: Long,
+    to: Long
+) {
+    val clearMarker = {
+        temperatureChart.highlightValue(null)
+        pressureChart.highlightValue(null)
+        humidityChart.highlightValue(null)
+    }
+
+    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
+            EmptyCharts()
+        } else {
+
+            ChartViewPrototype(
+                temperatureChart,
+                Modifier.fillMaxWidth(),
+                temperatureData,
+                unitsConverter,
+                ChartSensorType.TEMPERATURE,
+                graphDrawDots,
+                showChartStats,
+                limits = temperatureLimits,
+                from,
+                to,
+                chartHeight,
+                clearMarker
+            )
+
+            if (humidityData.isNotEmpty()) {
+                ChartViewPrototype(
+                    humidityChart,
+                    Modifier.fillMaxWidth(),
+                    humidityData,
+                    unitsConverter,
+                    ChartSensorType.HUMIDITY,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = humidityLimits,
+                    from,
+                    to,
+                    chartHeight,
+                    clearMarker
+                )
+            }
+            if (pressureData.isNotEmpty()) {
+                ChartViewPrototype(
+                    pressureChart,
+                    Modifier.fillMaxWidth(),
+                    pressureData,
+                    unitsConverter,
+                    ChartSensorType.PRESSURE,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = pressureLimits,
+                    from,
+                    to,
+                    chartHeight,
+                    clearMarker
+                )
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun LandscapeChartsPrototype(
+    modifier: Modifier,
+    temperatureChart: LineChart,
+    humidityChart: LineChart,
+    pressureChart: LineChart,
+    temperatureData: MutableList<Entry>,
+    pressureData: MutableList<Entry>,
+    humidityData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    graphDrawDots: Boolean,
+    showChartStats: Boolean,
+    temperatureLimits: Pair<Double, Double>?,
+    humidityLimits: Pair<Double, Double>?,
+    pressureLimits: Pair<Double, Double>?,
+    from: Long,
+    to: Long
+) {
+    val clearMarker = {
+        temperatureChart.highlightValue(null)
+        humidityChart.highlightValue(null)
+        pressureChart.highlightValue(null)
+    }
+    val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
+    if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
+    if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
+
+    val pagerState = rememberPagerState {
+        return@rememberPagerState chartTypes.size
+    }
+
+    VerticalPager(
+        modifier = modifier.fillMaxSize(),
+        state = pagerState,
+        beyondBoundsPageCount = 3
+    ) { page ->
+        val chartSensorType = chartTypes[page]
+
+        when (chartSensorType) {
+            ChartSensorType.TEMPERATURE -> {
+                ChartViewPrototype(
+                    temperatureChart,
+                    Modifier.fillMaxSize(),
+                    temperatureData,
+                    unitsConverter,
+                    ChartSensorType.TEMPERATURE,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = temperatureLimits,
+                    from,
+                    to,
+                    null,
+                    clearMarker
+                )
+            }
+            ChartSensorType.HUMIDITY -> {
+                ChartViewPrototype(
+                    humidityChart,
+                    Modifier.fillMaxSize(),
+                    humidityData,
+                    unitsConverter,
+                    ChartSensorType.HUMIDITY,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = humidityLimits,
+                    from,
+                    to,
+                    null,
+                    clearMarker
+                )
+            }
+            ChartSensorType.PRESSURE -> {
+                ChartViewPrototype(
+                    pressureChart,
+                    Modifier.fillMaxSize(),
+                    pressureData,
+                    unitsConverter,
+                    ChartSensorType.PRESSURE,
+                    graphDrawDots,
+                    showChartStats,
+                    limits = pressureLimits,
+                    from,
+                    to,
+                    null,
+                    clearMarker
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyCharts() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.extended),
+            color = Color.White,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = RuuviStationTheme.fontSizes.extended,
+            text = stringResource(id = R.string.empty_chart_message),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+fun setupChart(
+    chart: LineChart,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType
+) {
+    if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
+        chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
+        chart.axisLeft.granularity = 0.01f
+    } else {
+        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
+            chart.axisLeft.granularity = 1f
+        } else {
+            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
+            chart.axisLeft.granularity = 0.01f
+        }
+    }
+}
+
+class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
+    override fun getFormattedValue(value: Double, p1: AxisBase?): String {
+        val decimalFormat = DecimalFormat(formatPattern)
+        return decimalFormat.format(value)
     }
 }
 
@@ -338,84 +559,6 @@ fun VerticalCharts(
     }
 }
 
-@Composable
-fun VerticalChartsPrototype(
-    modifier: Modifier,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    temperatureData: MutableList<Entry>,
-    pressureData: MutableList<Entry>,
-    humidityData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    temperatureLimits: Pair<Double, Double>?,
-    humidityLimits: Pair<Double, Double>?,
-    pressureLimits: Pair<Double, Double>?,
-    from: Long,
-    to: Long
-) {
-    val clearMarker = {
-        temperatureChart.highlightValue(null)
-        pressureChart.highlightValue(null)
-        humidityChart.highlightValue(null)
-    }
-
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts()
-        } else {
-
-            ChartViewPrototype(
-                temperatureChart,
-                Modifier.fillMaxWidth(),
-                temperatureData,
-                unitsConverter,
-                ChartSensorType.TEMPERATURE,
-                graphDrawDots,
-                showChartStats,
-                limits = temperatureLimits,
-                from,
-                to,
-                clearMarker
-            )
-
-            if (humidityData.isNotEmpty()) {
-                ChartViewPrototype(
-                    humidityChart,
-                    Modifier.fillMaxWidth(),
-                    humidityData,
-                    unitsConverter,
-                    ChartSensorType.HUMIDITY,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = humidityLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-            }
-            if (pressureData.isNotEmpty()) {
-                ChartViewPrototype(
-                    pressureChart,
-                    Modifier.fillMaxWidth(),
-                    pressureData,
-                    unitsConverter,
-                    ChartSensorType.PRESSURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = pressureLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LandscapeCharts(
@@ -502,50 +645,5 @@ fun LandscapeCharts(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun EmptyCharts() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.extended),
-            color = Color.White,
-            fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = RuuviStationTheme.fontSizes.extended,
-            text = stringResource(id = R.string.empty_chart_message),
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-fun setupChart(
-    chart: LineChart,
-    unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType
-) {
-    if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
-        chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
-        chart.axisLeft.granularity = 0.01f
-    } else {
-        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
-            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
-            chart.axisLeft.granularity = 1f
-        } else {
-            chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
-            chart.axisLeft.granularity = 0.01f
-        }
-    }
-}
-
-class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueFormatter {
-    override fun getFormattedValue(value: Double, p1: AxisBase?): String {
-        val decimalFormat = DecimalFormat(formatPattern)
-        return decimalFormat.format(value)
     }
 }
