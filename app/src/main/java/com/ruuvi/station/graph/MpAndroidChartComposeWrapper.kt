@@ -30,6 +30,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
@@ -44,7 +45,9 @@ import timber.log.Timber
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.ArrayList
+import java.util.Date
+
 
 @Composable
 fun ChartView(
@@ -436,19 +439,8 @@ private fun addDataToChart(
     from: Long,
     to: Long
 ) {
-    val set = LineDataSet(data, label)
     setLabelCount(chart)
-    set.setDrawCircles(graphDrawDots)
-    set.setDrawValues(false)
-    set.setDrawFilled(true)
-    set.circleRadius = 1f
-    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
-    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
-    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    val set = LineDataSet(data, label)
 
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
@@ -472,6 +464,7 @@ private fun addDataToChart(
         chart.axisLeft.addLimitLine(getLimitLine(context, limits.second.toFloat()))
     }
 
+    val dataSets = prepareDatasets(context, data, label, graphDrawDots)
     chart.description.text = label
     chart.axisLeft.axisMinimum = set.yMin - 1f
     chart.axisLeft.axisMaximum = set.yMax + 1f
@@ -482,7 +475,7 @@ private fun addDataToChart(
         }
     }
 
-    chart.data = LineData(set)
+    chart.data = LineData(dataSets)
     chart.data.isHighlightEnabled = true
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
@@ -499,8 +492,36 @@ private fun addDataToChart(
     chart.invalidate()
 }
 
-private fun prepareDatasets(data: MutableList<Entry>) {
-
+private fun prepareDatasets(
+    context: Context,
+    data: MutableList<Entry>,
+    label: String,
+    graphDrawDots: Boolean
+): List<ILineDataSet> {
+    val dataSets: MutableList<ILineDataSet> = ArrayList<ILineDataSet>()
+    var i = 0
+    var k = 1
+    val subDataset = mutableListOf<Entry>()
+    for (entry in data) {
+        subDataset.add(entry)
+        if (i < 500) {
+            i++
+        } else {
+            i = 0
+            val lineDataSet = setupDataSet(context, subDataset, label+k.toString(), graphDrawDots)
+            Timber.d("dataSet $k added. Entries count = ${lineDataSet.entryCount}")
+            k++
+            dataSets.add(lineDataSet)
+            subDataset.clear()
+        }
+    }
+    if (subDataset.size > 0) {
+        val lineDataSet = setupDataSet(context, subDataset, label+k.toString(), graphDrawDots)
+        Timber.d("dataSet $k added. Entries count = ${lineDataSet.entryCount}")
+        dataSets.add(lineDataSet)
+    }
+    Timber.d("dataSet total count = ${dataSets.size}")
+    return dataSets
 }
 
 private fun setupDataSet(
