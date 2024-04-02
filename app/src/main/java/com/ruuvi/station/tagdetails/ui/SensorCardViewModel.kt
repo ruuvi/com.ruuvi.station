@@ -225,6 +225,10 @@ class SensorCardViewModel(
     }
 
     fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)
+    fun saveSelected(sensorId: String) {
+        val sensors = tagInteractor.getTags()
+        _selectedIndex.value = sensors.indexOfFirst { it.id == arguments.sensorId }
+    }
 
     init {
         if (arguments.sensorId != null) {

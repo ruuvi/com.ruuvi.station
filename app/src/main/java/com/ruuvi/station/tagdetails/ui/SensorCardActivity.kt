@@ -130,7 +130,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                     dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
                     getNfcScanResponse = viewModel::getNfcScanResponse,
                     addSensor = viewModel::addSensor,
-                    changeShowStats = viewModel::changeShowChartStats
+                    changeShowStats = viewModel::changeShowChartStats,
+                    saveSelected = viewModel::saveSelected
                 )
             }
         }
@@ -221,7 +222,8 @@ fun SensorsPager(
     dontShowGattSyncDescription: () -> Unit,
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
     addSensor: (String) -> Unit,
-    changeShowStats: () -> Unit
+    changeShowStats: () -> Unit,
+    saveSelected: (String) -> Unit
 ) {
     Timber.d("SensorsPager selected $selectedIndex")
     val systemUiController = rememberSystemUiController()
@@ -392,6 +394,40 @@ fun SensorsPager(
             darkIcons = !isDarkTheme
         )
     }
+
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> {
+
+                }
+                Lifecycle.Event.ON_START -> {
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    pagerSensor?.let {sensor ->
+                        saveSelected(sensor.id)
+                    }
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                }
+                else -> {}
+            }
+        }
+
+        // Add the observer to the lifecycle
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        // When the effect leaves the Composition, remove the observer
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
 }
 
 @Composable
