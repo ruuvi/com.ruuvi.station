@@ -3,10 +3,10 @@ package com.ruuvi.station.graph
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +33,7 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.util.ui.scrollbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
@@ -257,58 +258,69 @@ fun VerticalChartsPrototype(
         humidityChart.highlightValue(null)
     }
 
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    val listState = rememberLazyListState()
+
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+            .scrollbar(state = listState, horizontal = false)
+    ) {
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts()
+            item {
+                EmptyCharts()
+            }
         } else {
-
-            ChartViewPrototype(
-                temperatureChart,
-                Modifier.fillMaxWidth(),
-                temperatureData,
-                unitsConverter,
-                ChartSensorType.TEMPERATURE,
-                graphDrawDots,
-                showChartStats,
-                limits = temperatureLimits,
-                from,
-                to,
-                chartHeight,
-                clearMarker
-            )
-
-            if (humidityData.isNotEmpty()) {
+            item {
                 ChartViewPrototype(
-                    humidityChart,
+                    temperatureChart,
                     Modifier.fillMaxWidth(),
-                    humidityData,
+                    temperatureData,
                     unitsConverter,
-                    ChartSensorType.HUMIDITY,
+                    ChartSensorType.TEMPERATURE,
                     graphDrawDots,
                     showChartStats,
-                    limits = humidityLimits,
+                    limits = temperatureLimits,
                     from,
                     to,
                     chartHeight,
                     clearMarker
                 )
             }
+            if (humidityData.isNotEmpty()) {
+                item {
+                    ChartViewPrototype(
+                        humidityChart,
+                        Modifier.fillMaxWidth(),
+                        humidityData,
+                        unitsConverter,
+                        ChartSensorType.HUMIDITY,
+                        graphDrawDots,
+                        showChartStats,
+                        limits = humidityLimits,
+                        from,
+                        to,
+                        chartHeight,
+                        clearMarker
+                    )
+                }
+            }
             if (pressureData.isNotEmpty()) {
-                ChartViewPrototype(
-                    pressureChart,
-                    Modifier.fillMaxWidth(),
-                    pressureData,
-                    unitsConverter,
-                    ChartSensorType.PRESSURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = pressureLimits,
-                    from,
-                    to,
-                    chartHeight,
-                    clearMarker
-                )
-
+                item {
+                    ChartViewPrototype(
+                        pressureChart,
+                        Modifier.fillMaxWidth(),
+                        pressureData,
+                        unitsConverter,
+                        ChartSensorType.PRESSURE,
+                        graphDrawDots,
+                        showChartStats,
+                        limits = pressureLimits,
+                        from,
+                        to,
+                        chartHeight,
+                        clearMarker
+                    )
+                }
             }
         }
     }
