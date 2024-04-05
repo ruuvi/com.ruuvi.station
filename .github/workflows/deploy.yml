@@ -1,4 +1,4 @@
-name: Android Release Bundle Build
+name: Android Release Bundle Deploy
 on:
   workflow_dispatch:
     branches: [ master, dev, 'milestone/**' ]
