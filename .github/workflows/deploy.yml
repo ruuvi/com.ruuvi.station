@@ -42,7 +42,7 @@ jobs:
       with:
         serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         packageName: com.ruuvi.station
-        releaseFiles: app/build/outputs/bundle/release/app-release.aab
+        releaseFiles: ${{steps.sign_bundle.outputs.signedFile}}
         track: qa
      
     - name: Upload bundle
