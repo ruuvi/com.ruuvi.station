@@ -7,6 +7,7 @@ import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.domain.AlarmsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.diff
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.round
@@ -20,6 +21,7 @@ import timber.log.Timber
 class AlarmItemsViewModel(
     val sensorId: String,
     val alarmsInteractor: AlarmsInteractor,
+    val unitsConverter: UnitsConverter,
     val tagSettingsInteractor: TagSettingsInteractor
 ): ViewModel() {
 
