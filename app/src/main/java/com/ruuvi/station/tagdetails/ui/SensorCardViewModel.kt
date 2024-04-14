@@ -49,8 +49,8 @@ class SensorCardViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private val _selectedIndex = MutableStateFlow<Int>(0)
-    val selectedIndex: StateFlow<Int> = _selectedIndex
+    private val _selectedSensor = MutableStateFlow<String?>(null)
+    val selectedSensor: StateFlow<String?> = _selectedSensor
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
@@ -225,11 +225,20 @@ class SensorCardViewModel(
     }
 
     fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)
+    fun saveSelected(sensorId: String) {
+        _selectedSensor.value = sensorId
+    }
+
+    fun getIndex(sensorId: String): Int {
+        val sensors = tagInteractor.getTags()
+        val index = sensors.indexOfFirst { it.id == sensorId }
+        return if (index == - 1) 0 else index
+    }
 
     init {
         if (arguments.sensorId != null) {
             val sensors = tagInteractor.getTags()
-            _selectedIndex.value = sensors.indexOfFirst { it.id == arguments.sensorId }
+            _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
         }
     }
 
