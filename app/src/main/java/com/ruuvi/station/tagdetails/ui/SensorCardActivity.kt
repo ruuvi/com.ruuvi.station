@@ -70,6 +70,7 @@ import com.ruuvi.station.util.extensions.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
@@ -100,39 +101,42 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
         setContent {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
-                val selectedIndex by viewModel.selectedIndex.collectAsStateWithLifecycle()
+                val selectedSensor by viewModel.selectedSensor.collectAsStateWithLifecycle()
                 val viewPeriod by viewModel.chartViewPeriod.collectAsState(Period.Day10())
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
 
-                SensorsPager(
-                    selectedIndex = selectedIndex,
-                    sensors = sensors,
-                    showCharts = showCharts,
-                    showChartStats = showChartStats,
-                    graphDrawDots = viewModel.graphDrawDots,
-                    syncInProgress = syncInProcess,
-                    setShowCharts = viewModel::setShowCharts,
-                    getActiveAlarms = viewModel::getActiveAlarms,
-                    getHistory = viewModel::getSensorHistory,
-                    unitsConverter = unitsConverter,
-                    viewPeriod = viewPeriod,
-                    getSyncStatusFlow = viewModel::getGattEvents,
-                    getChartClearedFlow = viewModel::getChartCleared,
-                    disconnectGattAction = viewModel::disconnectGatt,
-                    shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
-                    syncGatt = viewModel::syncGatt,
-                    setViewPeriod = viewModel::setViewPeriod,
-                    exportToCsv = viewModel::exportToCsv ,
-                    removeTagData= viewModel::removeTagData,
-                    refreshStatus = viewModel::refreshStatus,
-                    dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
-                    getNfcScanResponse = viewModel::getNfcScanResponse,
-                    addSensor = viewModel::addSensor,
-                    changeShowStats = viewModel::changeShowChartStats,
-                    saveSelected = viewModel::saveSelected
-                )
+                if (sensors.isNotEmpty()) {
+                    SensorsPager(
+                        selectedSensor = selectedSensor,
+                        sensors = sensors,
+                        showCharts = showCharts,
+                        showChartStats = showChartStats,
+                        graphDrawDots = viewModel.graphDrawDots,
+                        syncInProgress = syncInProcess,
+                        setShowCharts = viewModel::setShowCharts,
+                        getActiveAlarms = viewModel::getActiveAlarms,
+                        getHistory = viewModel::getSensorHistory,
+                        unitsConverter = unitsConverter,
+                        viewPeriod = viewPeriod,
+                        getSyncStatusFlow = viewModel::getGattEvents,
+                        getChartClearedFlow = viewModel::getChartCleared,
+                        disconnectGattAction = viewModel::disconnectGatt,
+                        shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
+                        syncGatt = viewModel::syncGatt,
+                        setViewPeriod = viewModel::setViewPeriod,
+                        exportToCsv = viewModel::exportToCsv ,
+                        removeTagData= viewModel::removeTagData,
+                        refreshStatus = viewModel::refreshStatus,
+                        dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
+                        getNfcScanResponse = viewModel::getNfcScanResponse,
+                        addSensor = viewModel::addSensor,
+                        changeShowStats = viewModel::changeShowChartStats,
+                        saveSelected = viewModel::saveSelected,
+                        getIndex = viewModel::getIndex
+                    )
+                }
             }
         }
     }
@@ -199,7 +203,7 @@ enum class SensorCardOpenType {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorsPager(
-    selectedIndex: Int,
+    selectedSensor: String?,
     sensors: List<RuuviTag>,
     showCharts: Boolean,
     showChartStats: Boolean,
@@ -223,22 +227,24 @@ fun SensorsPager(
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
     addSensor: (String) -> Unit,
     changeShowStats: () -> Unit,
-    saveSelected: (String) -> Unit
+    saveSelected: (String) -> Unit,
+    getIndex: (String) -> Int
 ) {
-    Timber.d("SensorsPager selected $selectedIndex")
+    Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
-        initialPage = selectedIndex,
+        initialPage = sensors.firstOrNull { sensor -> sensor.id == selectedSensor }
+            ?.let { sensors.indexOf(it) } ?: 0,
         initialPageOffsetFraction = 0f
     ) {
         return@rememberPagerState sensors.size
     }
 
     var pagerSensor by remember {
-        mutableStateOf(sensors.getOrNull(selectedIndex))
+        mutableStateOf(sensors.firstOrNull{it.id == selectedSensor})
     }
 
     Surface(
@@ -250,7 +256,7 @@ fun SensorsPager(
 
     pagerSensor = sensors.getOrNull(pagerState.currentPage)
     LaunchedEffect(pagerState, sensors.size) {
-        snapshotFlow { pagerState.currentPage }.collectLatest { page ->
+        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collectLatest { page ->
             Timber.d("page changed to $page")
             delay(100)
             pagerSensor = sensors.getOrNull(page)
@@ -403,6 +409,13 @@ fun SensorsPager(
 
                 }
                 Lifecycle.Event.ON_START -> {
+                    pagerSensor?.let {
+                        val index = getIndex(it.id)
+                        Timber.d("SensorsPager onStart selectedSensor = ${it.id} index = $index")
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(index)
+                        }
+                    }
                 }
                 Lifecycle.Event.ON_RESUME -> {
                 }
