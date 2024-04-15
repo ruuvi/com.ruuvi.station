@@ -63,8 +63,6 @@ class PushAlertInteractor(
     }
 
     fun getHumidityMessage(message: AlertMessage, context: Context): String {
-        val unit = HumidityUnit.getByCode(message.alertUnit.toInt()) ?: HumidityUnit.PERCENT
-
         val resource = if (message.currentValue < message.thresholdValue) {
             R.string.alert_notification_humidity_low_threshold
         } else {
@@ -72,7 +70,7 @@ class PushAlertInteractor(
         }
 
         val displayThreshold = unitsConverter.getDisplayValue(message.thresholdValue.toFloat())
-        return context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(unit)}")
+        return context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
     }
 
     fun getPressureMessage(message: AlertMessage, context: Context): String {
