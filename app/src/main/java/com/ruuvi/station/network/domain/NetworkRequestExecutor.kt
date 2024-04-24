@@ -2,6 +2,7 @@ package com.ruuvi.station.network.domain
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.NetworkRequestRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestStatus
@@ -11,6 +12,9 @@ import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import timber.log.Timber
 
 class NetworkRequestExecutor (
@@ -33,6 +37,25 @@ class NetworkRequestExecutor (
                 execute(networkRequest)
             }
         }
+    }
+
+    fun registerRequestWithStatus(networkRequest: NetworkRequest): Flow<OperationStatus> = channelFlow {
+
+        Timber.d("registerRequest $networkRequest true")
+        CoroutineScope(Dispatchers.IO).launch {
+            send(OperationStatus.InProgress)
+            disableSimilarRequest (networkRequest)
+            networkRequestRepository.saveRequest(networkRequest)
+            Timber.d("request saved $networkRequest")
+            Timber.d("execute NOW $networkRequest")
+            val result = execute(networkRequest)
+            if (result) {
+                send(OperationStatus.Success)
+            } else {
+                send(OperationStatus.Fail(UiText.EmptyString))
+            }
+        }
+        awaitClose()
     }
 
     fun gotAnyImagesInSync(sensorId: String): Boolean {
@@ -62,13 +85,14 @@ class NetworkRequestExecutor (
         return requests.any{ it.type == NetworkRequestType.SETTINGS }
     }
 
-    private suspend fun execute(networkRequest: NetworkRequest) {
+    private suspend fun execute(networkRequest: NetworkRequest): Boolean {
         if (!startExecuting(networkRequest)) {
-            return
+            return false
         }
 
         val token = getToken()?.token
         val request = getRequest(networkRequest)
+        var result = false
 
         if (request != null) {
             token?.let {
@@ -77,6 +101,7 @@ class NetworkRequestExecutor (
                     Timber.d("Execute response: $response")
                     if (response?.isSuccess() == true) {
                         disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                        result = true
                     } else {
                         if (response?.code == ER_CONFLICT) {
                             disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
@@ -92,6 +117,7 @@ class NetworkRequestExecutor (
         } else {
             disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
         }
+        return result
     }
 
     private fun startExecuting(networkRequest: NetworkRequest): Boolean {

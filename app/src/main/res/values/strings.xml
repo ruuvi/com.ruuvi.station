@@ -437,6 +437,9 @@
     <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use Disable Bluetooth -mode when you want to record signal strength data only via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Couldn\'t save changes to cloud.</string>
+    <string name="saving_success">Saved successfully.</string>
+    <string name="saving_to_cloud">Saving to cloud... Please wait.</string>
     <string name="scan">SCAN</string>
     <string name="searching_for_sensor">Searching for a sensor</string>
     <string name="sec">sec</string>

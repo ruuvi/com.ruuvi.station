@@ -78,7 +78,10 @@ fun SensorSettings(
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
-        AlarmsGroup(alarmsViewModel)
+        AlarmsGroup(
+            scaffoldState,
+            alarmsViewModel
+        )
         if (sensorOwnedOrOffline && sensorState.latestMeasurement != null) {
             CalibrationSettingsGroup(
                 sensorState = sensorState,
@@ -128,6 +131,21 @@ fun SensorSettings(
         viewModel.askToClaim.collectLatest {
             Timber.d("askToClaim collected $it")
             if (it) showAskToClaimDialog = true
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collectLatest{ uiEvent ->
+            when (uiEvent) {
+                is UiEvent.ShowSnackbar -> {
+                    Timber.d("ShowSnackbar $uiEvent")
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = uiEvent.message.asString(context),
+                        duration = uiEvent.duration
+                    )
+                }
+                else -> {}
+            }
         }
     }
 }

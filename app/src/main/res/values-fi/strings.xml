@@ -435,6 +435,9 @@
     <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä Hylkää Bluetooth-viestit -tilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Muutoksia ei voitu tallentaa pilveen.</string>
+    <string name="saving_success">Tallennus onnistui.</string>
+    <string name="saving_to_cloud">Tallennetaan pilveen... Odota.</string>
     <string name="scan">SKANNAA</string>
     <string name="searching_for_sensor">Laitetta etsitään</string>
     <string name="sec">sek</string>

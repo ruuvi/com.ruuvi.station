@@ -440,6 +440,9 @@
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode Désactiver Bluetooth si vous souhaitez enregistrer des données sur la force du signal uniquement via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Impossible d\'enregistrer les modifications dans le cloud.</string>
+    <string name="saving_success">Enregistré avec succès.</string>
+    <string name="saving_to_cloud">Enregistrement dans le cloud... Veuillez patienter.</string>
     <string name="scan">BALAYAGE EN COURS</string>
     <string name="searching_for_sensor">Recherche d\'un capteur</string>
     <string name="sec">sec</string>
