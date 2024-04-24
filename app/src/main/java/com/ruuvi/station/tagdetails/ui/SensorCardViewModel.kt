@@ -68,6 +68,9 @@ class SensorCardViewModel(
     private val _showChartStats = MutableStateFlow<Boolean>(preferencesRepository.getShowChartStats())
     val showChartStats: StateFlow<Boolean> = _showChartStats
 
+    private val _newChartsUI = MutableStateFlow<Boolean>(preferencesRepository.isNewChartsUI())
+    val newChartsUI: StateFlow<Boolean> = _newChartsUI
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }

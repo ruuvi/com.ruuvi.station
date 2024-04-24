@@ -106,6 +106,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
+                val newChartsUI by viewModel.newChartsUI.collectAsStateWithLifecycle()
 
                 if (sensors.isNotEmpty()) {
                     SensorsPager(
@@ -120,6 +121,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         getHistory = viewModel::getSensorHistory,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
+                        newChartsUI = newChartsUI,
                         getSyncStatusFlow = viewModel::getGattEvents,
                         getChartClearedFlow = viewModel::getChartCleared,
                         disconnectGattAction = viewModel::disconnectGatt,
@@ -214,6 +216,7 @@ fun SensorsPager(
     getHistory: (String) -> List<TagSensorReading>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
+    newChartsUI: Boolean,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
@@ -367,6 +370,7 @@ fun SensorsPager(
                                 graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,
                                 viewPeriod = viewPeriod,
+                                newChartsUI = newChartsUI,
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 getActiveAlarms = getActiveAlarms
