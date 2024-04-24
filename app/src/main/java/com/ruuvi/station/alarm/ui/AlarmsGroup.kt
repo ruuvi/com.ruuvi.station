@@ -28,7 +28,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -36,7 +35,6 @@ import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -55,8 +53,6 @@ fun AlarmsGroup(
     var permissionAsked by remember {
         mutableStateOf(false)
     }
-
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         Timber.d("Alarms LaunchedEffect")
@@ -133,20 +129,10 @@ fun AlarmsGroup(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEvent.collectLatest{ uiEvent ->
-            when (uiEvent) {
-                is UiEvent.ShowSnackbar -> {
-                    Timber.d("ShowSnackbar $uiEvent")
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = uiEvent.message.asString(context),
-                        duration = uiEvent.duration
-                    )
-                }
-                else -> {}
-            }
-        }
-    }
+    ShowStatusSnackbar(
+        scaffoldState = scaffoldState,
+        uiEvent = viewModel.uiEvent
+    )
 }
 
 

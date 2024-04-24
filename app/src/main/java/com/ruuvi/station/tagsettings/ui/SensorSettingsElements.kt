@@ -134,20 +134,10 @@ fun SensorSettings(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEvent.collectLatest{ uiEvent ->
-            when (uiEvent) {
-                is UiEvent.ShowSnackbar -> {
-                    Timber.d("ShowSnackbar $uiEvent")
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = uiEvent.message.asString(context),
-                        duration = uiEvent.duration
-                    )
-                }
-                else -> {}
-            }
-        }
-    }
+    ShowStatusSnackbar(
+        scaffoldState = scaffoldState,
+        uiEvent = viewModel.uiEvent
+    )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
