@@ -55,6 +55,7 @@ fun ChartsView(
     showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
+    newChartsUI: Boolean,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -195,41 +196,81 @@ fun ChartsView(
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
             EmptyCharts()
         } else if (isLandscape) {
-            LandscapeChartsPrototype(
-                modifier,
-                temperatureChart,
-                humidityChart,
-                pressureChart,
-                temperatureData,
-                pressureData,
-                humidityData,
-                unitsConverter,
-                graphDrawDots,
-                showChartStats,
-                temperatureLimits,
-                humidityLimits,
-                pressureLimits,
-                from,
-                to
-            )
+            if (newChartsUI) {
+                LandscapeChartsPrototype(
+                    modifier,
+                    temperatureChart,
+                    humidityChart,
+                    pressureChart,
+                    temperatureData,
+                    pressureData,
+                    humidityData,
+                    unitsConverter,
+                    graphDrawDots,
+                    showChartStats,
+                    temperatureLimits,
+                    humidityLimits,
+                    pressureLimits,
+                    from,
+                    to
+                )
+            } else {
+                LandscapeCharts(
+                    modifier,
+                    temperatureChart,
+                    humidityChart,
+                    pressureChart,
+                    temperatureData,
+                    pressureData,
+                    humidityData,
+                    unitsConverter,
+                    graphDrawDots,
+                    showChartStats,
+                    temperatureLimits,
+                    humidityLimits,
+                    pressureLimits,
+                    from,
+                    to
+                )
+            }
         } else {
-            VerticalChartsPrototype(
-                modifier,
-                temperatureChart,
-                humidityChart,
-                pressureChart,
-                temperatureData,
-                pressureData,
-                humidityData,
-                unitsConverter,
-                graphDrawDots,
-                showChartStats,
-                temperatureLimits,
-                humidityLimits,
-                pressureLimits,
-                from,
-                to
-            )
+            if (newChartsUI) {
+                VerticalChartsPrototype(
+                    modifier,
+                    temperatureChart,
+                    humidityChart,
+                    pressureChart,
+                    temperatureData,
+                    pressureData,
+                    humidityData,
+                    unitsConverter,
+                    graphDrawDots,
+                    showChartStats,
+                    temperatureLimits,
+                    humidityLimits,
+                    pressureLimits,
+                    from,
+                    to
+                )
+            } else {
+                VerticalCharts(
+                    modifier,
+                    temperatureChart,
+                    humidityChart,
+                    pressureChart,
+                    temperatureData,
+                    pressureData,
+                    humidityData,
+                    unitsConverter,
+                    graphDrawDots,
+                    showChartStats,
+                    temperatureLimits,
+                    humidityLimits,
+                    pressureLimits,
+                    from,
+                    to
+                )
+            }
         }
     }
 }
