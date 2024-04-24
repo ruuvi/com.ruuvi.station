@@ -4,6 +4,7 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.network.domain.OperationStatus
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.canUseCloudAlerts
@@ -11,6 +12,7 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
+import kotlinx.coroutines.flow.Flow
 
 class AlarmsInteractor(
     private val context: Context,
@@ -133,7 +135,7 @@ class AlarmsInteractor(
         }
     }
 
-    fun saveAlarm(state: AlarmItemState) {
+    fun saveAlarm(state: AlarmItemState): Flow<OperationStatus>? {
         val alarm = alarmRepository.upsertAlarm(
             sensorId = state.sensorId,
             min = state.min,
@@ -143,6 +145,6 @@ class AlarmsInteractor(
             description = state.customDescription,
             mutedTill = state.mutedTill
         )
-        networkInteractor.setAlert(alarm)
+        return networkInteractor.setAlert(alarm)
     }
 }

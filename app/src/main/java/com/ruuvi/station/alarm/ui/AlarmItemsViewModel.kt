@@ -1,10 +1,16 @@
 package com.ruuvi.station.alarm.ui
 
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.domain.AlarmsInteractor
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.network.domain.OperationStatus
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -13,8 +19,11 @@ import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -24,6 +33,9 @@ class AlarmItemsViewModel(
     val unitsConverter: UnitsConverter,
     val tagSettingsInteractor: TagSettingsInteractor
 ): ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _alarms = mutableStateListOf<AlarmItemState>()
     val alarms: List<AlarmItemState> = _alarms
@@ -179,7 +191,31 @@ class AlarmItemsViewModel(
     fun getUnit(alarmType: AlarmType): String = alarmsInteractor.getAlarmUnit(alarmType)
 
     fun saveAlarm(alarmItemState: AlarmItemState) {
-        alarmsInteractor.saveAlarm(alarmItemState)
+        val status = alarmsInteractor.saveAlarm(alarmItemState)
+        viewModelScope.launch {
+            status?.collect{ status ->
+                Timber.d("saveAlarm status $status")
+                when (status) {
+                    OperationStatus.Success -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_success), SnackbarDuration.Short))
+                        }
+                    }
+                    is OperationStatus.Fail -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_fail), SnackbarDuration.Short))
+                        }
+                    }
+                    OperationStatus.InProgress -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_to_cloud), SnackbarDuration.Indefinite))
+                        }
+                    }
+                    OperationStatus.Skipped -> {}
+                }
+            }
+        }
+
     }
 
     fun refreshAlarmState() {

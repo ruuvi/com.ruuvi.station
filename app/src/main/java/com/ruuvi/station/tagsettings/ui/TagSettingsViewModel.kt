@@ -1,15 +1,18 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
+import androidx.compose.material.SnackbarDuration
 import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.network.domain.OperationStatus
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
@@ -36,6 +39,9 @@ class TagSettingsViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
     var file: Uri? = null
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _sensorState = MutableStateFlow<RuuviTag>(requireNotNull(interactor.getFavouriteSensorById(sensorId)))
     val sensorState: StateFlow<RuuviTag> = _sensorState
@@ -152,7 +158,30 @@ class TagSettingsViewModel(
         Timber.d("setName")
         interactor.updateTagName(sensorId, name)
         getTagInfo()
-        networkInteractor.updateSensorName(sensorId)
+        val status = networkInteractor.updateSensorNameWithStatus(sensorId)
+        viewModelScope.launch {
+            status?.collect{ status ->
+                Timber.d("setName status $status")
+                when (status) {
+                    OperationStatus.Success -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_success), SnackbarDuration.Short))
+                        }
+                    }
+                    is OperationStatus.Fail -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_fail), SnackbarDuration.Short))
+                        }
+                    }
+                    OperationStatus.InProgress -> {
+                        (Dispatchers.Main) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.saving_to_cloud), SnackbarDuration.Indefinite))
+                        }
+                    }
+                    OperationStatus.Skipped -> {}
+                }
+            }
+        }
     }
 
     fun getTemperatureOffsetString(value: Double) = unitsConverter.getTemperatureOffsetString(value)

@@ -250,6 +250,9 @@
     <string name="reset_order_confirmation">Czy jesteś pewien, że chcesz przywrócić porządek kart czujników do sortowania alfabetycznego?</string>
     <string name="rssi_alert_description">Należy pamiętać, że dane wysyłane przez czujniki Ruuvi mogą być odbierane za pomocą urządzeń mobilnych lub routerów Ruuvi Gateway. Siła odbieranego sygnału będzie różna w zależności od urządzenia odbierającego i wpłynie na wartość używaną do wyzwalania alertu RSSI. Użyj trybu Wyłącz Bluetooth, jeśli chcesz rejestrować dane o sile sygnału tylko za pośrednictwem bramy Ruuvi Gateway.</string>
     <string name="s">s</string>
+    <string name="saving_fail">Nie udało się zapisać zmian w chmurze.</string>
+    <string name="saving_success">Zapisano pomyślnie.</string>
+    <string name="saving_to_cloud">Zapisuję w chmurze... Proszę czekać.</string>
     <string name="scan">SKANOWANIE</string>
     <string name="searching_for_sensor">Wyszukiwanie czujnika</string>
     <string name="sec">sek.</string>
