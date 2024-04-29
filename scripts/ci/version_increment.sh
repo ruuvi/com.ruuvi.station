@@ -20,3 +20,9 @@ sed -i "s/versionCode $current_version_code/versionCode $incremented_version_cod
 
 echo "Incremented version name: $incremented_version_name"
 echo "Incremented version code: $incremented_version_code"
+
+git config --local user.email "action@github.com"
+git config --local user.name "GitHub Action"
+git add app/build.gradle
+git commit -m "Increment version and version code"
+git push
