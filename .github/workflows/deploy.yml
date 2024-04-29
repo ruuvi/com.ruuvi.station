@@ -27,11 +27,6 @@ jobs:
 
     - name: Increment version
       run: ./scripts/ci/version_increment.sh
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add app/build.gradle
-        git commit -m "Increment version and version code"
-        git push
         
     - name: Build bundle
       run: ./gradlew bundleRelease
