@@ -22,6 +22,9 @@ jobs:
     - name: Run localization script
       run: ./scripts/ci/update_l10n.sh
 
+    - name: permissions
+      run: chmod +x scripts/ci/version_increment.sh
+
     - name: Increment version
       run: ./scripts/ci/version_increment.sh
         
