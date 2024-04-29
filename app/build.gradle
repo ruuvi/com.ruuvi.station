@@ -14,7 +14,7 @@ android {
         targetSdkVersion 33
         compileSdk 34
         versionCode 209008
-        versionName "3"
+        versionName "2.9.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
