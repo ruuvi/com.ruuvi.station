@@ -42,6 +42,14 @@ jobs:
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
 
+    - name: Upload to internal testing
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+        packageName: com.ruuvi.station
+        releaseFiles: ${{steps.sign_bundle.outputs.signedFile}}
+        track: internal
+
     - name: Upload bundle
       uses: actions/upload-artifact@v3.1.2
       with:
