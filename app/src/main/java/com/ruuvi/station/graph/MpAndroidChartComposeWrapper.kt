@@ -39,6 +39,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
@@ -217,9 +218,9 @@ fun getPrototypeChartDescription(
 
     return context.getString(
         R.string.chart_latest_min_max_avg,
-        getRawValue(min.toDouble(), null),
-        getRawValue(max.toDouble(), null),
-        getRawValue(average.toDouble(), null),
+        getRawValue(min.toDouble(), Accuracy.Accuracy2),
+        getRawValue(max.toDouble(), Accuracy.Accuracy2),
+        getRawValue(average.toDouble(), Accuracy.Accuracy2),
         latestValue
     )
 }
@@ -309,30 +310,29 @@ fun getMultilineMinMaxAvg(
     average: Float
 ): String {
     val multiLineBuilder = StringBuilder()
+    Timber.d("calculateCaption getMultilineMinMaxAvg $chartSensorType min = $min max = $max average = $average")
+
+    val valueTemplate = if (chartSensorType == ChartSensorType.PRESSURE &&
+        unitsConverter.getPressureUnit() == PressureUnit.PA
+    ) {
+        R.string.accuracy0_template
+    } else {
+        R.string.accuracy2_template
+    }
 
     multiLineBuilder.append(context.getString(R.string.chart_stat_min))
     multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
-    })
+    multiLineBuilder.appendLine(context.getString(valueTemplate, min, "").trim())
 
     multiLineBuilder.append(context.getString(R.string.chart_stat_max))
     multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
-    })
+    multiLineBuilder.appendLine(context.getString(valueTemplate, max, "").trim())
 
     multiLineBuilder.append(context.getString(R.string.chart_stat_avg))
     multiLineBuilder.append(": ")
-    multiLineBuilder.append(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
-    })
+    multiLineBuilder.append(context.getString(valueTemplate, average, "").trim())
+
+    Timber.d("calculateCaption getMultilineMinMaxAvg $multiLineBuilder")
     return multiLineBuilder.toString()
 }
 
