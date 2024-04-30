@@ -180,7 +180,7 @@ fun SettingsElement(
             .fillMaxWidth()
     ) {
         val modifier = if (fixedHeight) {
-            Modifier.height(RuuviStationTheme.dimensions.settingsListHeight)
+            Modifier.defaultMinSize(minHeight = RuuviStationTheme.dimensions.settingsListHeight)
         } else {
             Modifier
         }
