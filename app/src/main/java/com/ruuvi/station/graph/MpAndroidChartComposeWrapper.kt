@@ -38,7 +38,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
@@ -218,9 +217,9 @@ fun getPrototypeChartDescription(
 
     return context.getString(
         R.string.chart_latest_min_max_avg,
-        getRawValue(min.toDouble(), Accuracy.Accuracy2),
-        getRawValue(max.toDouble(), Accuracy.Accuracy2),
-        getRawValue(average.toDouble(), Accuracy.Accuracy2),
+        getRawValue(min.toDouble(), null),
+        getRawValue(max.toDouble(), null),
+        getRawValue(average.toDouble(), null),
         latestValue
     )
 }
@@ -234,9 +233,9 @@ fun getLatestValueDescription(
     val latestPoint = chartData.lastOrNull()
     return if (latestPoint != null) {
         val latestValue = when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble())
+            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble())
         }
         context.getString(chartSensorType.captionTemplate, latestValue)
     } else {
@@ -256,7 +255,15 @@ fun getMinMaxAverageDescription(
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
     Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
 
-    if (visibleEntries.isEmpty()) return context.getString(R.string.chart_min_max_avg, 0f, 0f, 0f)
+    if (visibleEntries.isEmpty()) return getMinMaxAvg(
+        context = context,
+        chartSensorType = chartSensorType,
+        unitsConverter = unitsConverter,
+        min = 0f,
+        max = 0f,
+        average = 0f,
+        multiLine = false
+    )
 
     var totalArea = 0.0
 
@@ -279,7 +286,15 @@ fun getMinMaxAverageDescription(
 
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
-    val minMaxAvgOneLine = context.getString(R.string.chart_min_max_avg, min, max, average)
+    val minMaxAvgOneLine = getMinMaxAvg(
+        context = context,
+        chartSensorType = chartSensorType,
+        unitsConverter = unitsConverter,
+        min = min,
+        max = max,
+        average = average,
+        multiLine = false
+    )
     val computePaint = Paint(1)
     computePaint.typeface = lineChart.description.typeface
     computePaint.textSize = lineChart.description.textSize
@@ -290,27 +305,29 @@ fun getMinMaxAverageDescription(
     return if (lineFits) {
         minMaxAvgOneLine
     } else {
-        getMultilineMinMaxAvg(
+        getMinMaxAvg(
             context = context,
             chartSensorType = chartSensorType,
             unitsConverter = unitsConverter,
             min = min,
             max = max,
-            average = average
+            average = average,
+            multiLine = true
         )
     }
 }
 
-fun getMultilineMinMaxAvg(
+fun getMinMaxAvg(
     context: Context,
     chartSensorType: ChartSensorType,
     unitsConverter: UnitsConverter,
     min: Float,
     max: Float,
-    average: Float
+    average: Float,
+    multiLine: Boolean
 ): String {
-    val multiLineBuilder = StringBuilder()
-    Timber.d("calculateCaption getMultilineMinMaxAvg $chartSensorType min = $min max = $max average = $average")
+    val lineBuilder = StringBuilder()
+    Timber.d("calculateCaption getMinMaxAvg $chartSensorType min = $min max = $max average = $average")
 
     val valueTemplate = if (chartSensorType == ChartSensorType.PRESSURE &&
         unitsConverter.getPressureUnit() == PressureUnit.PA
@@ -320,20 +337,34 @@ fun getMultilineMinMaxAvg(
         R.string.accuracy2_template
     }
 
-    multiLineBuilder.append(context.getString(R.string.chart_stat_min))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(context.getString(valueTemplate, min, "").trim())
+    lineBuilder.append(context.getString(R.string.chart_stat_min))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(min.toDouble())
+    })
+    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
-    multiLineBuilder.append(context.getString(R.string.chart_stat_max))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(context.getString(valueTemplate, max, "").trim())
+    lineBuilder.append(context.getString(R.string.chart_stat_max))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(max.toDouble())
+    })
+    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
-    multiLineBuilder.append(context.getString(R.string.chart_stat_avg))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.append(context.getString(valueTemplate, average, "").trim())
+    lineBuilder.append(context.getString(R.string.chart_stat_avg))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(average.toDouble())
+    })
 
-    Timber.d("calculateCaption getMultilineMinMaxAvg $multiLineBuilder")
-    return multiLineBuilder.toString()
+    Timber.d("calculateCaption getMinMaxAvg $lineBuilder")
+    return lineBuilder.toString()
 }
 
 fun chartsInitialSetup(
