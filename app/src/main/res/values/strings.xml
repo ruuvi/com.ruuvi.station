@@ -115,6 +115,7 @@
     <string name="change_background_message">Select background image. If you\'re not signed in, you\'ll lose the image in case of app reinstall.</string>
     <string name="changelog">(changelog)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Average: %3$s Latest: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Average: %3$,.2f</string>
     <string name="chart_stat_avg">Average</string>
     <string name="chart_stat_hide">Hide min/max/avg</string>
@@ -436,6 +437,9 @@
     <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use Disable Bluetooth -mode when you want to record signal strength data only via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Couldn\'t save changes to cloud.</string>
+    <string name="saving_success">Saved successfully.</string>
+    <string name="saving_to_cloud">Saving to cloud... Please wait.</string>
     <string name="scan">SCAN</string>
     <string name="searching_for_sensor">Searching for a sensor</string>
     <string name="sec">sec</string>

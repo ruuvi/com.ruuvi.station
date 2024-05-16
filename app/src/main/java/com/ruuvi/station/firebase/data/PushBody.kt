@@ -21,7 +21,10 @@ data class AlertMessage(
     val currentValue: Double,
     val thresholdValue: Double,
     val alertUnit: String,
-    val alertData: String
+    val alertData: String,
+    val showLocallyFormatted: Boolean?,
+    val title: String,
+    val body: String
 ) {
 
     val alarmType: AlarmType?

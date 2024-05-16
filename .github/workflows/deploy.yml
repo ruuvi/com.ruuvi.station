@@ -1,0 +1,57 @@
+name: Android Release Bundle Deploy
+on:
+  workflow_dispatch:
+    branches: [ master, dev, 'milestone/**' ]
+       
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout
+      uses: actions/checkout@v3.4.0
+      
+    - name: set up JDK 17
+      uses: actions/setup-java@v3.12.0
+      with:
+        distribution: 'corretto'
+        java-version: 17
+
+    - name: Run localization script
+      run: ./scripts/ci/update_l10n.sh
+
+    - name: permissions
+      run: chmod +x scripts/ci/version_increment.sh
+
+    - name: Increment version
+      run: ./scripts/ci/version_increment.sh
+        
+    - name: Build bundle
+      run: ./gradlew bundleRelease
+      
+    - name: Sign bundle
+      id: sign_bundle
+      uses: ilharp/sign-android-release@v1
+      with:
+        # The directory to find your release to sign
+        releaseDir: app/build/outputs/bundle/withoutFileLogsRelease/
+        signingKey: ${{ secrets.SIGNING_KEY }}
+        keyAlias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Upload to internal testing
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+        packageName: com.ruuvi.station
+        releaseFiles: ${{steps.sign_bundle.outputs.signedFile}}
+        track: internal
+
+    - name: Upload bundle
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: appBundle
+        path: ${{steps.sign_bundle.outputs.signedFile}}

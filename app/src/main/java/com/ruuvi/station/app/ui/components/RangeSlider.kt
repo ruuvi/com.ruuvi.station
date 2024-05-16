@@ -11,7 +11,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 fun RuuviSliderColors() = SliderDefaults.colors(
     thumbColor = RuuviStationTheme.colors.accent,
     activeTrackColor = RuuviStationTheme.colors.accent,
-    inactiveTrackColor = RuuviStationTheme.colors.divider
+    inactiveTrackColor = RuuviStationTheme.colors.activeAlert
 )
 
 @OptIn(ExperimentalMaterialApi::class)

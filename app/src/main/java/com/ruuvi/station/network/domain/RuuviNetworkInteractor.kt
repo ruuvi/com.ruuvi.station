@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.Alarm
@@ -11,6 +12,7 @@ import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.lang.Exception
 import java.util.*
@@ -253,6 +255,21 @@ class RuuviNetworkInteractor (
         }
     }
 
+    fun updateSensorNameWithStatus(sensorId: String): Flow<OperationStatus>? {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (shouldSendSensorDataToNetwork(sensorId) && sensorSettings != null) {
+            val networkRequest = NetworkRequest(NetworkRequestType.UPDATE_SENSOR, sensorId,
+                UpdateSensorRequest(
+                    sensor = sensorId,
+                    name = sensorSettings.displayName
+                ))
+            Timber.d("updateSensor $networkRequest")
+            return networkRequestExecutor.registerRequestWithStatus(networkRequest)
+        } else {
+            return null
+        }
+    }
+
     fun uploadImage(sensorId: String, filename: String, uploadNow: Boolean = false) {
         if (shouldSendSensorDataToNetwork(sensorId)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
@@ -329,7 +346,7 @@ class RuuviNetworkInteractor (
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
-    fun setAlert(alarm: Alarm) {
+    fun setAlert(alarm: Alarm): Flow<OperationStatus>? {
         if (shouldSendSensorDataToNetwork(alarm.ruuviTagId) && alarm.alarmType?.networkCode != null) {
             val networkRequest = NetworkRequest(
                 NetworkRequestType.SET_ALERT,
@@ -337,7 +354,9 @@ class RuuviNetworkInteractor (
                 SetAlertRequest.getAlarmRequest(alarm)
             )
             Timber.d("setAlert $networkRequest")
-            networkRequestExecutor.registerRequest(networkRequest)
+            return networkRequestExecutor.registerRequestWithStatus(networkRequest)
+        } else {
+            return null
         }
     }
 
@@ -390,4 +409,11 @@ class RuuviNetworkInteractor (
         }
         return null
     }
+}
+
+sealed class OperationStatus {
+    data object Skipped: OperationStatus()
+    data object InProgress: OperationStatus()
+    data object Success: OperationStatus()
+    data class Fail(val reason: UiText): OperationStatus()
 }

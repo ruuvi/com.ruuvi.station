@@ -10,6 +10,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
+import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -37,7 +38,8 @@ class SensorCardViewModel(
     private val gattInteractor: BluetoothGattInteractor,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val csvExporter: CsvExporter,
-    private val nfcResultInteractor: NfcResultInteractor
+    private val nfcResultInteractor: NfcResultInteractor,
+    private val alarmRepository: AlarmRepository
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -47,8 +49,8 @@ class SensorCardViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private val _selectedIndex = MutableStateFlow<Int>(0)
-    val selectedIndex: StateFlow<Int> = _selectedIndex
+    private val _selectedSensor = MutableStateFlow<String?>(null)
+    val selectedSensor: StateFlow<String?> = _selectedSensor
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
@@ -65,6 +67,9 @@ class SensorCardViewModel(
 
     private val _showChartStats = MutableStateFlow<Boolean>(preferencesRepository.getShowChartStats())
     val showChartStats: StateFlow<Boolean> = _showChartStats
+
+    private val _newChartsUI = MutableStateFlow<Boolean>(preferencesRepository.isNewChartsUI())
+    val newChartsUI: StateFlow<Boolean> = _newChartsUI
 
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
@@ -222,10 +227,21 @@ class SensorCardViewModel(
         }
     }
 
+    fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)
+    fun saveSelected(sensorId: String) {
+        _selectedSensor.value = sensorId
+    }
+
+    fun getIndex(sensorId: String): Int {
+        val sensors = tagInteractor.getTags()
+        val index = sensors.indexOfFirst { it.id == sensorId }
+        return if (index == - 1) 0 else index
+    }
+
     init {
         if (arguments.sensorId != null) {
             val sensors = tagInteractor.getTags()
-            _selectedIndex.value = sensors.indexOfFirst { it.id == arguments.sensorId }
+            _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
         }
     }
 

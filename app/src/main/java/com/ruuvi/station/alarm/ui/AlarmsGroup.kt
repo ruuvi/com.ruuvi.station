@@ -32,6 +32,8 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.HumidityUnit
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.DateFormat
@@ -40,7 +42,10 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
+fun AlarmsGroup(
+    scaffoldState: ScaffoldState,
+    viewModel: AlarmItemsViewModel
+) {
     val notificationPermissionState = rememberPermissionState(
         android.Manifest.permission.POST_NOTIFICATIONS
     )
@@ -81,6 +86,7 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
                         title = title,
                         alarmState = itemState,
                         sensorState = sensorState,
+                        unitsConverter = viewModel.unitsConverter,
                         changeEnabled = viewModel::setEnabled,
                         setDescription = viewModel::setDescription,
                         setRange = viewModel::setRange,
@@ -122,6 +128,11 @@ fun AlarmsGroup(viewModel: AlarmItemsViewModel) {
             }
         }
     }
+
+    ShowStatusSnackbar(
+        scaffoldState = scaffoldState,
+        uiEvent = viewModel.uiEvent
+    )
 }
 
 
@@ -194,6 +205,7 @@ fun AlertEditItem(
     title: String,
     alarmState: AlarmItemState,
     sensorState: RuuviTag,
+    unitsConverter: UnitsConverter,
     changeEnabled: (AlarmType, Boolean) -> Unit,
     setDescription: (AlarmType, String) -> Unit,
     setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
@@ -254,17 +266,23 @@ fun AlertEditItem(
         if (sensorState.latestMeasurement != null) {
             val latestValue = when (alarmState.type) {
                 AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue.valueWithUnit
-                AlarmType.HUMIDITY -> sensorState.latestMeasurement.humidityValue?.valueWithUnit
+                AlarmType.HUMIDITY -> unitsConverter.getHumidityString(
+                    sensorState.latestMeasurement.humidityValue?.original,
+                    sensorState.latestMeasurement.temperatureValue.original,
+                    HumidityUnit.PERCENT
+                )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressureValue?.valueWithUnit
                 else -> null
             }
             if (latestValue != null) {
-                Paragraph(
+                Text(
                     modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = RuuviStationTheme.fontSizes.small,
                     text = stringResource(
                         id = R.string.latest_measured_value,
                         latestValue
-                    )
+                    ),
                 )
             }
         }

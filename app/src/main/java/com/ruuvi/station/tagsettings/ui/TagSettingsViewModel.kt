@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
@@ -18,6 +19,7 @@ import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.util.extensions.processStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -36,6 +38,9 @@ class TagSettingsViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
     var file: Uri? = null
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _sensorState = MutableStateFlow<RuuviTag>(requireNotNull(interactor.getFavouriteSensorById(sensorId)))
     val sensorState: StateFlow<RuuviTag> = _sensorState
@@ -152,7 +157,10 @@ class TagSettingsViewModel(
         Timber.d("setName")
         interactor.updateTagName(sensorId, name)
         getTagInfo()
-        networkInteractor.updateSensorName(sensorId)
+        val status = networkInteractor.updateSensorNameWithStatus(sensorId)
+        status?.let {
+            processStatus(it, _uiEvent)
+        }
     }
 
     fun getTemperatureOffsetString(value: Double) = unitsConverter.getTemperatureOffsetString(value)

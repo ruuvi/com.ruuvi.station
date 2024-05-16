@@ -304,4 +304,11 @@ class PreferencesRepository(
     fun setSortedSensors(sortedSensors: String) {
         preferences.sortedSensors = sortedSensors
     }
+
+    fun isNewChartsUI(): Boolean =
+        preferences.newChartsUI
+
+    fun setNewChartsUI(newChartsUI: Boolean) {
+        preferences.newChartsUI = newChartsUI
+    }
 }

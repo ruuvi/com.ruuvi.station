@@ -78,7 +78,10 @@ fun SensorSettings(
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
-        AlarmsGroup(alarmsViewModel)
+        AlarmsGroup(
+            scaffoldState,
+            alarmsViewModel
+        )
         if (sensorOwnedOrOffline && sensorState.latestMeasurement != null) {
             CalibrationSettingsGroup(
                 sensorState = sensorState,
@@ -130,6 +133,11 @@ fun SensorSettings(
             if (it) showAskToClaimDialog = true
         }
     }
+
+    ShowStatusSnackbar(
+        scaffoldState = scaffoldState,
+        uiEvent = viewModel.uiEvent
+    )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)

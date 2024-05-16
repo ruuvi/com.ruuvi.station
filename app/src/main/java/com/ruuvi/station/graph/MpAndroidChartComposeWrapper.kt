@@ -6,14 +6,23 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -26,9 +35,10 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
@@ -45,8 +55,10 @@ fun ChartView(
     chartSensorType: ChartSensorType,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
+    limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
+    clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -55,9 +67,7 @@ fun ChartView(
         factory = { context ->
             Timber.d("ChartView - factory")
             val chart = lineChart
-            setupMarker(context, chart, unitsConverter, chartSensorType) {
-                from
-            }
+            setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
             chart
         },
         update = { view ->
@@ -74,9 +84,143 @@ fun ChartView(
                 } else {
                     ""
                 } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
-            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, from, to)
+            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, limits, from, to)
             (view.marker as ChartMarkerView).getFrom = {from}
         }
+    )
+}
+
+@Composable
+fun ChartViewPrototype(
+    lineChart: LineChart,
+    modifier: Modifier,
+    chartData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType,
+    graphDrawDots: Boolean,
+    showChartStats: Boolean,
+    limits: Pair<Double,Double>?,
+    from: Long,
+    to: Long,
+    height: Dp? = null,
+    clearMarker: () -> Unit
+) {
+    val context = LocalContext.current
+
+    val title = when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> stringResource(id = R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
+        ChartSensorType.HUMIDITY -> stringResource(id = R.string.humidity_with_unit, unitsConverter.getHumidityUnitString())
+        ChartSensorType.PRESSURE -> stringResource(id = R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
+    } 
+
+    val offset = RuuviStationTheme.dimensions.extended
+    val description = getPrototypeChartDescription(
+        context,
+        lineChart,
+        chartData,
+        unitsConverter,
+        chartSensorType
+    )
+
+    Column (
+        modifier = modifier
+    ){
+        Text(
+            modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
+            style = RuuviStationTheme.typography.subtitle,
+            text = title,
+            color = RuuviStationTheme.colors.buttonText
+        )
+        if (showChartStats) {
+            Text(
+                modifier = Modifier.padding(
+                    start = offset,
+                    bottom = RuuviStationTheme.dimensions.small,
+                    end = RuuviStationTheme.dimensions.medium
+                ),
+                style = RuuviStationTheme.typography.paragraphSmall,
+                text = description,
+                fontSize = RuuviStationTheme.fontSizes.tiny,
+                color = RuuviStationTheme.colors.buttonText
+            )
+        }
+
+        var chartsModifier = Modifier.fillMaxWidth()
+        chartsModifier = if (height != null) {
+            chartsModifier.height(height)
+        } else {
+            chartsModifier.fillMaxHeight()
+        }
+        AndroidView(
+            modifier = chartsModifier,
+            factory = { context ->
+                Timber.d("ChartView - factory")
+                val chart = lineChart
+                setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
+                chart
+            },
+            update = { view ->
+                Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
+                addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
+                (view.marker as ChartMarkerView).getFrom = {from}
+            }
+        )
+    }
+    
+}
+
+fun getPrototypeChartDescription(
+    context: Context,
+    lineChart: LineChart,
+    chartData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    chartSensorType: ChartSensorType,
+): String {
+    val getRawValue = when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter::getTemperatureRawWithoutUnitString
+        ChartSensorType.HUMIDITY -> unitsConverter::getHumidityRawWithoutUnitString
+        ChartSensorType.PRESSURE -> unitsConverter::getPressureRawWithoutUnitString
+    }
+
+    val latestPoint = chartData.lastOrNull()
+    val latestValue =
+        if (latestPoint != null) getRawValue(latestPoint.y.toDouble(), null) else ""
+
+    val lowestVisibleX = lineChart.lowestVisibleX
+    val highestVisibleX = lineChart.highestVisibleX
+    val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
+    Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
+
+    if (visibleEntries.isEmpty())
+        return context.getString(R.string.chart_latest_min_max_avg, "", "", "", latestValue)
+
+    var totalArea = 0.0
+
+    var min = visibleEntries[0].y
+    var max = visibleEntries[0].y
+
+    for (i in 1 until visibleEntries.size) {
+        val x1 = visibleEntries[i - 1].x
+        val y1 = visibleEntries[i - 1].y
+        val x2 = visibleEntries[i].x
+        val y2 = visibleEntries[i].y
+
+        val area = (x2 - x1) * (y2 + y1) / 2.0
+        totalArea += area
+
+        if (y2 < min) min = y2
+        if (y2 > max) max = y2
+    }
+    val timespan = visibleEntries.last().x - visibleEntries.first().x
+
+    val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
+
+    return context.getString(
+        R.string.chart_latest_min_max_avg,
+        getRawValue(min.toDouble(), null),
+        getRawValue(max.toDouble(), null),
+        getRawValue(average.toDouble(), null),
+        latestValue
     )
 }
 
@@ -89,9 +233,9 @@ fun getLatestValueDescription(
     val latestPoint = chartData.lastOrNull()
     return if (latestPoint != null) {
         val latestValue = when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble(), Accuracy.Accuracy2)
+            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble())
+            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble())
         }
         context.getString(chartSensorType.captionTemplate, latestValue)
     } else {
@@ -111,7 +255,15 @@ fun getMinMaxAverageDescription(
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
     Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
 
-    if (visibleEntries.isEmpty()) return context.getString(R.string.chart_min_max_avg, 0f, 0f, 0f)
+    if (visibleEntries.isEmpty()) return getMinMaxAvg(
+        context = context,
+        chartSensorType = chartSensorType,
+        unitsConverter = unitsConverter,
+        min = 0f,
+        max = 0f,
+        average = 0f,
+        multiLine = false
+    )
 
     var totalArea = 0.0
 
@@ -134,7 +286,15 @@ fun getMinMaxAverageDescription(
 
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
-    val minMaxAvgOneLine = context.getString(R.string.chart_min_max_avg, min, max, average)
+    val minMaxAvgOneLine = getMinMaxAvg(
+        context = context,
+        chartSensorType = chartSensorType,
+        unitsConverter = unitsConverter,
+        min = min,
+        max = max,
+        average = average,
+        multiLine = false
+    )
     val computePaint = Paint(1)
     computePaint.typeface = lineChart.description.typeface
     computePaint.textSize = lineChart.description.textSize
@@ -145,51 +305,66 @@ fun getMinMaxAverageDescription(
     return if (lineFits) {
         minMaxAvgOneLine
     } else {
-        getMultilineMinMaxAvg(
+        getMinMaxAvg(
             context = context,
             chartSensorType = chartSensorType,
             unitsConverter = unitsConverter,
             min = min,
             max = max,
-            average = average
+            average = average,
+            multiLine = true
         )
     }
 }
 
-fun getMultilineMinMaxAvg(
+fun getMinMaxAvg(
     context: Context,
     chartSensorType: ChartSensorType,
     unitsConverter: UnitsConverter,
     min: Float,
     max: Float,
-    average: Float
+    average: Float,
+    multiLine: Boolean
 ): String {
-    val multiLineBuilder = StringBuilder()
+    val lineBuilder = StringBuilder()
+    Timber.d("calculateCaption getMinMaxAvg $chartSensorType min = $min max = $max average = $average")
 
-    multiLineBuilder.append(context.getString(R.string.chart_stat_min))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(min.toDouble(), Accuracy.Accuracy2)
+    val valueTemplate = if (chartSensorType == ChartSensorType.PRESSURE &&
+        unitsConverter.getPressureUnit() == PressureUnit.PA
+    ) {
+        R.string.accuracy0_template
+    } else {
+        R.string.accuracy2_template
+    }
+
+    lineBuilder.append(context.getString(R.string.chart_stat_min))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(min.toDouble())
+    })
+    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
+
+    lineBuilder.append(context.getString(R.string.chart_stat_max))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(max.toDouble())
+    })
+    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
+
+    lineBuilder.append(context.getString(R.string.chart_stat_avg))
+    lineBuilder.append(": ")
+    lineBuilder.append(when (chartSensorType) {
+        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble())
+        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(average.toDouble())
     })
 
-    multiLineBuilder.append(context.getString(R.string.chart_stat_max))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.appendLine(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(max.toDouble(), Accuracy.Accuracy2)
-    })
-
-    multiLineBuilder.append(context.getString(R.string.chart_stat_avg))
-    multiLineBuilder.append(": ")
-    multiLineBuilder.append(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble(), Accuracy.Accuracy2, humidityUnit = null)
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureStringWithoutUnit(average.toDouble(), Accuracy.Accuracy2)
-    })
-    return multiLineBuilder.toString()
+    Timber.d("calculateCaption getMinMaxAvg $lineBuilder")
+    return lineBuilder.toString()
 }
 
 fun chartsInitialSetup(
@@ -268,13 +443,15 @@ fun setupMarker(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
     getFrom: () -> Long,
+    clearMarker: () -> Unit
 ) {
     val markerView = ChartMarkerView(
         context = context,
         layoutResource = R.layout.custom_marker_view,
         chartSensorType = chartSensorType,
         unitsConverter = unitsConverter,
-        getFrom = getFrom
+        getFrom = getFrom,
+        clearMarker = clearMarker
     )
     markerView.chartView = chart
     chart.marker = markerView
@@ -286,6 +463,7 @@ private fun addDataToChart(
     chart: LineChart,
     label: String,
     graphDrawDots: Boolean,
+    limits: Pair<Double,Double>?,
     from: Long,
     to: Long
 ) {
@@ -298,6 +476,11 @@ private fun addDataToChart(
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+
+    set.enableDashedHighlightLine(10f, 5f, 0f)
+    set.setDrawHighlightIndicators(true)
+    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
             from,
@@ -311,12 +494,14 @@ private fun addDataToChart(
         chart.axisLeft,
         chart.getTransformer(YAxis.AxisDependency.LEFT)
     )
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
-
     chart.xAxis.axisMaximum = (to - from).toFloat()
     chart.xAxis.axisMinimum = 0f
+
+    chart.axisLeft.removeAllLimitLines()
+    if (limits != null) {
+        chart.axisLeft.addLimitLine(getLimitLine(context, limits.first.toFloat()))
+        chart.axisLeft.addLimitLine(getLimitLine(context, limits.second.toFloat()))
+    }
 
     chart.description.text = label
     chart.axisLeft.axisMinimum = set.yMin - 1f
@@ -343,6 +528,40 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
+}
+
+private fun prepareDatasets(data: MutableList<Entry>) {
+
+}
+
+private fun setupDataSet(
+    context: Context,
+    data: MutableList<Entry>,
+    label: String,
+    graphDrawDots: Boolean
+): LineDataSet {
+    val set = LineDataSet(data, label)
+    set.setDrawCircles(graphDrawDots)
+    set.setDrawValues(false)
+    set.setDrawFilled(true)
+    set.circleRadius = 1f
+    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+    set.enableDashedHighlightLine(10f, 5f, 0f)
+    set.setDrawHighlightIndicators(true)
+    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    return set
+}
+
+fun getLimitLine(
+    context: Context,
+    value: Float
+) : LimitLine {
+    val limitLine = LimitLine(value)
+    limitLine.lineColor = context.getColor(R.color.activeAlarm)
+    limitLine.lineWidth = 1.5f
+    return limitLine
 }
 
 fun formatDoubleToString(value: Double): String {

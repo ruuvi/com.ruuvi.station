@@ -11,7 +11,6 @@ import com.ruuvi.station.dfu.di.DfuInjectionModule
 import com.ruuvi.station.feature.di.FeatureInjectionModule
 import com.ruuvi.station.firebase.di.FirebaseInjectionModule
 import com.ruuvi.station.dataforwarding.di.DataForwardingInjectionModule
-import com.ruuvi.station.graph.di.GraphInjectionModule
 import com.ruuvi.station.image.di.ImageInjectionModule
 import com.ruuvi.station.network.di.NetworkInjectionModule
 import com.ruuvi.station.nfc.di.NfcInjectionModule
@@ -42,7 +41,6 @@ object AppInjectionModules {
         import(RuuviTagInjectionModule.module)
         import(AlarmModule.module)
         import(UnitsInjectionModule.module)
-        import(GraphInjectionModule.module)
         import(NetworkInjectionModule.module)
         import(ImageInjectionModule.module)
         import(FeatureInjectionModule.module)

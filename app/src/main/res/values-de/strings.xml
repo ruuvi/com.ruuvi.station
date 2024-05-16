@@ -306,6 +306,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Neueste verfügbare Ruuvi Firmware-Version:</string>
+    <string name="latest_measured_value">Letzter Messwert: %1$s</string>
     <string name="lets_do_it">Gehen Sie zum Anmelden</string>
     <string name="light_theme">Thema Licht</string>
     <string name="logged_in">Eingeloggt:</string>
@@ -445,6 +446,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Modus Bluetooth deaktivieren, wenn Sie Daten zur Signalstärke nur über das Ruuvi Gateway aufzeichnen möchten.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Die Änderungen konnten nicht in der Cloud gespeichert werden.</string>
+    <string name="saving_success">Erfolgreich gespeichert.</string>
+    <string name="saving_to_cloud">Speichern in der Cloud... Bitte warten.</string>
     <string name="scan">SCANNEN</string>
     <string name="searching_for_sensor">Suche nach einem Sensor</string>
     <string name="sec">sek</string>

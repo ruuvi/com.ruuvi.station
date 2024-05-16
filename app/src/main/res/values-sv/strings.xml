@@ -295,6 +295,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Senast tillgängliga Ruuvi firmwareversion:</string>
+    <string name="latest_measured_value">Senaste uppmätta värde: %1$s</string>
     <string name="lets_do_it">Gå till inloggning</string>
     <string name="light_theme">Ljust tema</string>
     <string name="logged_in">Inloggad:</string>
@@ -434,6 +435,9 @@
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd läget Inaktivera Bluetooth när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
     <string name="ruuvi_cloud">Ruuvi Cloud</string>
     <string name="s">s</string>
+    <string name="saving_fail">Det gick inte att spara ändringar i molnet.</string>
+    <string name="saving_success">Sparad.</string>
+    <string name="saving_to_cloud">Sparar till molnet... Vänligen vänta.</string>
     <string name="scan">SKANNA</string>
     <string name="searching_for_sensor">Söker efter en sensor</string>
     <string name="sec">sek</string>

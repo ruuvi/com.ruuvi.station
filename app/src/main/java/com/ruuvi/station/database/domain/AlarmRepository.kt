@@ -1,5 +1,6 @@
 package com.ruuvi.station.database.domain
 
+import com.raizlabs.android.dbflow.kotlinextensions.and
 import com.raizlabs.android.dbflow.kotlinextensions.save
 import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.raizlabs.android.dbflow.sql.language.SQLite
@@ -34,6 +35,13 @@ class AlarmRepository {
             .select()
             .from(Alarm::class.java)
             .where(Alarm_Table.enabled.eq(true))
+            .queryList()
+
+    fun getActiveAlarms(sensorId: String): List<Alarm> =
+        SQLite
+            .select()
+            .from(Alarm::class.java)
+            .where(Alarm_Table.enabled.eq(true).and(Alarm_Table.ruuviTagId.eq(sensorId)))
             .queryList()
 
     fun getActiveByType(type: Int) : List<Alarm> =

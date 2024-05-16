@@ -69,6 +69,11 @@ class UnitsConverter (
         return context.getString(accuracy.nameTemplateId, temperature, getTemperatureUnitString())
     }
 
+    fun getTemperatureRawWithoutUnitString(temperature: Double, accuracy: Accuracy? = getTemperatureAccuracy()): String {
+        val temperatureAccuracy = accuracy ?: getTemperatureAccuracy()
+        return context.getString(temperatureAccuracy.nameTemplateId, temperature, "").trim()
+    }
+
     fun getTemperatureAccuracy() = preferences.getTemperatureAccuracy()
 
     fun getTemperatureStringWithoutUnit(temperature: Double?, accuracy: Accuracy = getTemperatureAccuracy()): String =
@@ -135,6 +140,15 @@ class UnitsConverter (
         } else {
             val displayAccuracy = accuracy ?: getPressureAccuracy()
             return context.getString(displayAccuracy.nameTemplateId, pressure, getPressureUnitString())
+        }
+    }
+
+    fun getPressureRawWithoutUnitString(pressure: Double, accuracy: Accuracy? = getPressureAccuracy()): String {
+        val pressureAccuracy = accuracy ?: getPressureAccuracy()
+        return if (getPressureUnit() == PressureUnit.PA) {
+            context.getString(R.string.pressure_reading_pa, pressure, "").trim()
+        } else {
+            return context.getString(pressureAccuracy.nameTemplateId, pressure, "").trim()
         }
     }
 
@@ -222,6 +236,14 @@ class UnitsConverter (
         val displayAccuracy = accuracy ?: getHumidityAccuracy()
         val humidityUnitString = humidityUnit?.let { getHumidityUnitString(humidityUnit) } ?: ""
         return context.getString(displayAccuracy.nameTemplateId, hunidity, humidityUnitString).trim()
+    }
+
+    fun getHumidityRawWithoutUnitString(
+        hunidity: Double,
+        accuracy: Accuracy? = getHumidityAccuracy()
+    ): String {
+        val humidityAccuracy = accuracy ?: getHumidityAccuracy()
+        return context.getString(humidityAccuracy.nameTemplateId, hunidity, "").trim()
     }
 
     fun getHumidityAccuracy() = preferences.getHumidityAccuracy()
