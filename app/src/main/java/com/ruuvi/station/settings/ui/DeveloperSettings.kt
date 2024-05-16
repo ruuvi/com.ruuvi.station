@@ -73,13 +73,11 @@ fun SharingWebView(
                         settings.domStorageEnabled = true
                         settings.databaseEnabled = true
                         settings.cacheMode = LOAD_DEFAULT
-//                        loadUrl("https://github.com/ruuvi")
                         setWebViewClient(object: WebViewClient() {
                             override fun shouldOverrideUrlLoading(
                                 view: WebView?,
                                 url: String?
                             ): Boolean {
-                                //loadUrl("https://devstation.ruuvi.com/shares")
                                 return false
                             }
 
@@ -112,10 +110,6 @@ fun SharingWebView(
 
                         loadUrl("https://devstation.ruuvi.com/shares")
 
-
-//                        evaluateJavascript(script) {
-//                            Timber.d("evaluateJavascript $script RESULT $it")
-//                        }
                         webView = this
                     }
                 }, update = {
