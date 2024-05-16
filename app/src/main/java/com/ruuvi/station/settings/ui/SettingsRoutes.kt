@@ -15,6 +15,7 @@ object SettingsRoutes {
     const val CLOUD = "cloud"
     const val DATAFORWARDING = "dataforwarding"
     const val DEVELOPER = "developer"
+    const val SHARINGWEB = "sharingweb"
 
     fun getTitleByRoute(context: Context, route: String): String {
         return when (route) {
