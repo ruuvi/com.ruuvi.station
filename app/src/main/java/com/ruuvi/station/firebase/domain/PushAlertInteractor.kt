@@ -31,10 +31,10 @@ class PushAlertInteractor(
 
                 val notificationData = AlertNotificationInteractor.AlertNotificationData(
                     sensorId = message.id,
-                    message = notificationMessage,
+                    message = notificationMessage.first,
                     alarmId = localAlert?.id,
                     sensorName = message.name,
-                    alertCustomDescription = message.alertData
+                    alertCustomDescription = notificationMessage.second
                 )
 
                 alertNotificationInteractor.notify(localAlert?.id ?: -1, notificationData)
@@ -42,24 +42,34 @@ class PushAlertInteractor(
         }
     }
 
-    fun getMessage(message: AlertMessage, context: Context): String? {
-        return when (message.alarmType) {
-            AlarmType.HUMIDITY -> {
-                getHumidityMessage(message, context)
+    fun getMessage(message: AlertMessage, context: Context): Pair<String, String>? {
+        val title = if (message.showLocallyFormatted == true && message.title.isNotEmpty()) {
+            message.title
+        } else {
+            when (message.alarmType) {
+                AlarmType.HUMIDITY -> {
+                    getHumidityMessage(message, context)
+                }
+                AlarmType.PRESSURE -> {
+                    getPressureMessage(message, context)
+                }
+                AlarmType.TEMPERATURE -> {
+                    getTemperatureMessage(message, context)
+                }
+                AlarmType.RSSI -> {
+                    getRssiMessage(message, context)
+                }
+                AlarmType.MOVEMENT -> context.getString(R.string.alert_notification_movement)
+                AlarmType.OFFLINE -> getOfflineMessage(message, context)
+                else -> null
             }
-            AlarmType.PRESSURE -> {
-                getPressureMessage(message, context)
-            }
-            AlarmType.TEMPERATURE -> {
-                getTemperatureMessage(message, context)
-            }
-            AlarmType.RSSI -> {
-                getRssiMessage(message, context)
-            }
-            AlarmType.MOVEMENT -> context.getString(R.string.alert_notification_movement)
-            AlarmType.OFFLINE -> getOfflineMessage(message, context)
-            else -> null
         }
+        val body = if (message.showLocallyFormatted == true && message.body.isNotEmpty()) {
+            message.body
+        } else {
+            message.alertData
+        }
+        return title?.let { title to body }
     }
 
     fun getHumidityMessage(message: AlertMessage, context: Context): String {
