@@ -166,11 +166,7 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:33.1.0')
     implementation 'com.google.firebase:firebase-config-ktx'
-    implementation ('com.google.firebase:firebase-analytics-ktx') {
-        exclude module: "play-services-ads-identifier"
-        exclude module: "play-services-measurement"
-        exclude module: "play-services-measurement-sdk"
-    }
+    implementation ('com.google.firebase:firebase-analytics-ktx')
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
