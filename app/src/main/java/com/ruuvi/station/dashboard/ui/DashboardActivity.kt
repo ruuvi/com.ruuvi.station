@@ -1148,6 +1148,15 @@ fun DashboardItemDropdownMenu(
                     ))
                 }
             }
+
+            DropdownMenuItem(onClick = {
+                TagSettingsActivity.startToRemove(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    id = R.string.remove
+                ))
+            }
         }
     }
 
