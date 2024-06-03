@@ -43,7 +43,7 @@ class PushAlertInteractor(
     }
 
     fun getMessage(message: AlertMessage, context: Context): Pair<String, String>? {
-        val title = if (message.showLocallyFormatted == true && message.title.isNotEmpty()) {
+        val title = if (message.showLocallyFormatted == false && message.title.isNotEmpty()) {
             message.title
         } else {
             when (message.alarmType) {
@@ -64,7 +64,7 @@ class PushAlertInteractor(
                 else -> null
             }
         }
-        val body = if (message.showLocallyFormatted == true && message.body.isNotEmpty()) {
+        val body = if (message.showLocallyFormatted == false && message.body.isNotEmpty()) {
             message.body
         } else {
             message.alertData
