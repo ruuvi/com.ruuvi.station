@@ -92,6 +92,7 @@ fun AlarmsGroup(
                         setRange = viewModel::setRange,
                         saveRange = viewModel::saveRange,
                         getPossibleRange = viewModel::getPossibleRange,
+                        getExtraRange = viewModel::getExtraRange,
                         validateRange = viewModel::validateRange,
                         manualRangeSave = viewModel::manualRangeSave,
                         getUnit = viewModel::getUnit
@@ -211,14 +212,17 @@ fun AlertEditItem(
     setRange: (AlarmType, ClosedFloatingPointRange<Float>) -> Unit,
     saveRange: (AlarmType) -> Unit,
     getPossibleRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
+    getExtraRange: (AlarmType) -> ClosedFloatingPointRange<Float>,
     validateRange: (AlarmType, Double?, Double?) -> Boolean,
     manualRangeSave: (AlarmType, Double?, Double?) -> Unit,
     getUnit: (AlarmType) -> String
 ) {
     var openDescriptionDialog by remember { mutableStateOf(false) }
     var openAlarmEditDialog by remember { mutableStateOf(false) }
-    val possibleRange by remember {
-        mutableStateOf(getPossibleRange.invoke(alarmState.type))
+    val possibleRange = if (alarmState.extended) {
+        getExtraRange.invoke(alarmState.type)
+    } else {
+        getPossibleRange.invoke(alarmState.type)
     }
 
     ExpandableContainer(header = {
@@ -301,7 +305,7 @@ fun AlertEditItem(
     if (openAlarmEditDialog) {
         AlarmEditDialog(
             alarmState = alarmState,
-            getPossibleRange = getPossibleRange,
+            getPossibleRange = getExtraRange,
             validateRange = validateRange,
             manualRangeSave = manualRangeSave,
             getUnit = getUnit
