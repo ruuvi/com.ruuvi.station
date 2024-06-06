@@ -10,6 +10,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -449,20 +450,26 @@ fun DashboardItems(
                 when (dashboardType) {
                     DashboardType.SIMPLE_VIEW ->
                         DashboardItemSimple(
+                            lazyGridState = dragDropListState.getLazyListState(),
+                            itemIndex = index,
                             sensor = sensor,
                             userEmail = userEmail,
                             setName = setName,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            moveItem = onMove
                             )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
+                            lazyGridState = dragDropListState.getLazyListState(),
+                            itemIndex = index,
                             itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
-                            setName = setName
+                            setName = setName,
+                            moveItem = onMove
                         )
                 }
             }
@@ -474,12 +481,15 @@ fun DashboardItems(
 
 @Composable
 fun DashboardItem(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
-    setName: (String, String?) -> Unit
+    setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -561,6 +571,8 @@ fun DashboardItem(
                     )
 
                     ItemButtons(
+                        lazyGridState = lazyGridState,
+                        itemIndex = itemIndex,
                         sensor = sensor,
                         userEmail = userEmail,
                         modifier = Modifier
@@ -568,7 +580,8 @@ fun DashboardItem(
                                 top.linkTo(parent.top)
                                 end.linkTo(parent.end)
                             },
-                        setName = setName
+                        setName = setName,
+                        moveItem = moveItem
                     )
 
                     if (sensor.latestMeasurement?.temperatureValue != null) {
@@ -611,9 +624,12 @@ fun DashboardItem(
 
 @Composable
 fun DashboardItemSimple(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
 ) {
@@ -679,6 +695,8 @@ fun DashboardItemSimple(
                 )
 
                 ItemButtons(
+                    lazyGridState = lazyGridState,
+                    itemIndex = itemIndex,
                     sensor = sensor,
                     userEmail = userEmail,
                     modifier = Modifier
@@ -686,7 +704,8 @@ fun DashboardItemSimple(
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
                         },
-                    setName = setName
+                    setName = setName,
+                    moveItem = moveItem
                 )
 
                 ItemValues(
@@ -733,9 +752,12 @@ fun ItemName(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemButtons(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -779,7 +801,7 @@ fun ItemButtons(
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
             }
 
-            DashboardItemDropdownMenu(sensor, userEmail, setName)
+            DashboardItemDropdownMenu(lazyGridState, itemIndex, sensor, userEmail, setName, moveItem)
         }
     }
 }
@@ -1055,13 +1077,20 @@ fun BigValueDisplay(
 
 @Composable
 fun DashboardItemDropdownMenu(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
-    setName: (String, String?) -> Unit
+    setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
+    }
+    val coroutineScope = rememberCoroutineScope()
+    var index by remember {
+        mutableIntStateOf(itemIndex)
     }
 
     var setNameDialog by remember { mutableStateOf(false) }
@@ -1147,6 +1176,21 @@ fun DashboardItemDropdownMenu(
                         id = R.string.share
                     ))
                 }
+            }
+
+            DropdownMenuItem(onClick = {
+                moveItem(index, --index)
+                if (index < 0) index = 0
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = "Move up")
+            }
+
+            DropdownMenuItem(onClick = {
+                moveItem(index, ++index)
+                if (index >= lazyGridState.layoutInfo.totalItemsCount - 1)
+                    index = lazyGridState.layoutInfo.totalItemsCount - 2
+            }) {
+                com.ruuvi.station.app.ui.components.Paragraph(text = "Move down")
             }
 
             DropdownMenuItem(onClick = {
