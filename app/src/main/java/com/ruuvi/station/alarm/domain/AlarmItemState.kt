@@ -16,7 +16,8 @@ data class AlarmItemState(
     var displayHigh: String,
     var customDescription: String = "",
     var mutedTill: Date? = null,
-    var triggered: Boolean = false
+    var triggered: Boolean = false,
+    var extended: Boolean = false
 ) {
     companion object {
         fun getStateForDbAlarm(alarm: Alarm, alarmsInteractor: AlarmsInteractor): AlarmItemState {
@@ -44,7 +45,8 @@ data class AlarmItemState(
                 displayLow = alarmsInteractor.getDisplayValue(rangeLow),
                 displayHigh = alarmsInteractor.getDisplayValue(rangeHigh),
                 customDescription = alarm.customDescription,
-                mutedTill = alarm.mutedTill
+                mutedTill = alarm.mutedTill,
+                extended = alarm.extended
             )
             Timber.d("getStateForDbAlarm $alarm \n $state")
             return state

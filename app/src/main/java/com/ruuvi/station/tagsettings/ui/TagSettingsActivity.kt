@@ -44,7 +44,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     private val viewModel: TagSettingsViewModel by viewModel {
         intent.getStringExtra(TAG_ID)?.let {
-            TagSettingsViewModelArgs(it, intent.getBooleanExtra(NEW_SENSOR, false))
+            TagSettingsViewModelArgs(
+                tagId = it,
+                newSensor = intent.getBooleanExtra(NEW_SENSOR, false),
+                openRemove = intent.getBooleanExtra(OPEN_REMOVE, false)
+            )
         }
     }
 
@@ -67,7 +71,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val openRemove = intent.getBooleanExtra(OPEN_REMOVE, false)
         setContent {
             RuuviTheme {
                 val context = LocalContext.current
@@ -99,8 +103,12 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                 ) { paddingValues ->
 
                     NavHost(
-                        navController = navController,
-                        startDestination = SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                        startDestination = if (openRemove) {
+                            SensorSettingsRoutes.SENSOR_REMOVE
+                        } else {
+                            SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                        },
+                        navController = navController
                     ) {
                         composable(
                             SensorSettingsRoutes.SENSOR_SETTINGS_ROOT,
@@ -172,6 +180,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
         private const val TAG_ID = "TAG_ID"
         private const val SCROLL_TO_ALARMS = "SCROLL_TO_ALARMS"
         private const val NEW_SENSOR = "NEW_SENSOR"
+        private const val OPEN_REMOVE = "OPEN_REMOVE"
 
         fun start(context: Context, tagId: String?, scrollToAlarms: Boolean = false) {
             val intent = Intent(context, TagSettingsActivity::class.java)
@@ -195,6 +204,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
             stackBuilder.addNextIntent(sensorCardIntent)
             stackBuilder.addNextIntent(settingsIntent)
             stackBuilder.startActivities()
+        }
+
+        fun startToRemove(context: Context, tagId: String?) {
+            val intent = Intent(context, TagSettingsActivity::class.java)
+            intent.putExtra(TAG_ID, tagId)
+            intent.putExtra(OPEN_REMOVE, true)
+            context.startActivity(intent)
         }
     }
 }
