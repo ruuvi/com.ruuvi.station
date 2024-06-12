@@ -128,7 +128,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
                         syncGatt = viewModel::syncGatt,
                         setViewPeriod = viewModel::setViewPeriod,
-                        exportToCsv = viewModel::exportToCsv ,
+                        exportToCsv = viewModel::exportToXlsx ,
                         removeTagData= viewModel::removeTagData,
                         refreshStatus = viewModel::refreshStatus,
                         dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,

@@ -431,7 +431,7 @@ fun sendCsv(sensorId: String, uri: Uri, context: Context) {
     val sendIntent = Intent()
     sendIntent.action = Intent.ACTION_SEND
     sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
-    sendIntent.type = "text/csv"
+    sendIntent.type = "application/vnd.ms-excel"
     sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
     context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, sensorId)))
 }
