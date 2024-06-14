@@ -111,6 +111,10 @@ fun ChartViewPrototype(
         ChartSensorType.TEMPERATURE -> stringResource(id = R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
         ChartSensorType.HUMIDITY -> stringResource(id = R.string.humidity_with_unit, unitsConverter.getHumidityUnitString())
         ChartSensorType.PRESSURE -> stringResource(id = R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
+        ChartSensorType.BATTERY -> stringResource(id = R.string.battery_voltage)
+        ChartSensorType.ACCELERATION -> stringResource(id = R.string.acceleration_x)
+        ChartSensorType.RSSI -> stringResource(id = R.string.signal_strength_rssi)
+        ChartSensorType.MOVEMENTS -> stringResource(id = R.string.movement_counter)
     } 
 
     val offset = RuuviStationTheme.dimensions.extended
@@ -180,6 +184,10 @@ fun getPrototypeChartDescription(
         ChartSensorType.TEMPERATURE -> unitsConverter::getTemperatureRawWithoutUnitString
         ChartSensorType.HUMIDITY -> unitsConverter::getHumidityRawWithoutUnitString
         ChartSensorType.PRESSURE -> unitsConverter::getPressureRawWithoutUnitString
+        ChartSensorType.BATTERY -> unitsConverter::getTemperatureRawWithoutUnitString
+        ChartSensorType.ACCELERATION -> unitsConverter::getTemperatureRawWithoutUnitString
+        ChartSensorType.RSSI -> unitsConverter::getTemperatureRawWithoutUnitString
+        ChartSensorType.MOVEMENTS -> unitsConverter::getTemperatureRawWithoutUnitString
     }
 
     val latestPoint = chartData.lastOrNull()
@@ -236,6 +244,10 @@ fun getLatestValueDescription(
             ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
             ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble())
             ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble())
+            ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
         }
         context.getString(chartSensorType.captionTemplate, latestValue)
     } else {
@@ -343,6 +355,10 @@ fun getMinMaxAvg(
         ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(min.toDouble())
         ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble())
         ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(min.toDouble())
+        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(min.toDouble())
     })
     if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
@@ -352,6 +368,10 @@ fun getMinMaxAvg(
         ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(max.toDouble())
         ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble())
         ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(max.toDouble())
+        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(max.toDouble())
     })
     if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
@@ -361,6 +381,10 @@ fun getMinMaxAvg(
         ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(average.toDouble())
         ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble())
         ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(average.toDouble())
+        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(average.toDouble())
     })
 
     Timber.d("calculateCaption getMinMaxAvg $lineBuilder")
@@ -370,31 +394,19 @@ fun getMinMaxAvg(
 fun chartsInitialSetup(
     context: Context,
     unitsConverter: UnitsConverter,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
+    charts: List<Pair<ChartSensorType, LineChart>>
 ) {
-    setupChart(temperatureChart, unitsConverter, ChartSensorType.TEMPERATURE)
-    applyChartStyle(
-        context = context,
-        chart = temperatureChart,
-    )
+    for (chartPair in charts) {
+        setupChart(chartPair.second, unitsConverter, chartPair.first)
+        applyChartStyle(
+            context = context,
+            chart = chartPair.second,
+        )
+    }
 
-    setupChart(humidityChart, unitsConverter, ChartSensorType.HUMIDITY)
-    applyChartStyle(
-        context = context,
-        chart = humidityChart,
-    )
-
-    setupChart(pressureChart, unitsConverter, ChartSensorType.PRESSURE)
-    applyChartStyle(
-        context = context,
-        chart = pressureChart
-    )
-
-    normalizeOffsets(temperatureChart, humidityChart, pressureChart)
-    synchronizeChartGestures(setOf(temperatureChart, humidityChart, pressureChart))
-    setupHighLighting(setOf(temperatureChart, humidityChart, pressureChart))
+    normalizeOffsets(charts)
+    synchronizeChartGestures(charts.map { it.second }.toSet())
+    setupHighLighting(charts.map { it.second }.toSet())
 }
 
 
@@ -592,10 +604,10 @@ private fun setLabelCount(chart: LineChart) {
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
-fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pressureChart: LineChart) {
+fun normalizeOffsets(charts: List<Pair<ChartSensorType, LineChart>>) {
     val computePaint = Paint(1)
-    computePaint.typeface = pressureChart.axisLeft.typeface
-    computePaint.textSize = pressureChart.axisLeft.textSize
+    computePaint.typeface = charts.first().second.axisLeft.typeface
+    computePaint.textSize = charts.first().second.axisLeft.textSize
     val computeSize = Utils.calcTextSize(computePaint, "0,000.00")
     val computeHeight = Utils.calcTextHeight(computePaint, "Q").toFloat()
 
@@ -606,26 +618,14 @@ fun normalizeOffsets(temperatureChart: LineChart, humidityChart: LineChart, pres
 
     Timber.d("Offsets top = $offsetTop bottom = $offsetBottom left = $offsetLeft right = $offsetRight computeSize = $computeSize computeHeight = $computeHeight")
 
-    temperatureChart.setViewPortOffsets(
-        offsetLeft,
-        offsetTop,
-        offsetRight,
-        offsetBottom
-    )
-
-    humidityChart.setViewPortOffsets(
-        offsetLeft,
-        offsetTop,
-        offsetRight,
-        offsetBottom
-    )
-
-    pressureChart.setViewPortOffsets(
-        offsetLeft,
-        offsetTop,
-        offsetRight,
-        offsetBottom
-    )
+    for (chart in charts) {
+        chart.second.setViewPortOffsets(
+            offsetLeft,
+            offsetTop,
+            offsetRight,
+            offsetBottom
+        )
+    }
 }
 
 fun synchronizeChartGestures(charts: Set<LineChart>) {
