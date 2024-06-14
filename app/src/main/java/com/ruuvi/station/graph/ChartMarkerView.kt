@@ -50,6 +50,10 @@ constructor(
             ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(e.y.toDouble(), Accuracy.Accuracy2)
             ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(e.y.toDouble(), Accuracy.Accuracy2)
             ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(e.y.toDouble(), Accuracy.Accuracy2)
+            ChartSensorType.BATTERY -> unitsConverter.getVoltageEnvironmentValue(e.y.toDouble()).valueWithUnit
+            ChartSensorType.RSSI -> unitsConverter.getSignalEnvironmentValue(e.y.toInt()).valueWithUnit
+            ChartSensorType.ACCELERATION -> e.y.toDouble().toString()
+            ChartSensorType.MOVEMENTS -> e.y.toInt().toString()
         }
 
         tvContent.text ="$valueText\n$timeText\n$dateText"

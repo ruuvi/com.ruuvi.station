@@ -337,6 +337,22 @@ fun SensorsPager(
                         mutableStateOf(LineChart(context))
                     }
 
+                    val batteryChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val accelerationChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val rssiChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val movementsChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
@@ -365,6 +381,10 @@ fun SensorsPager(
                                 temperatureChart = temperatureChart,
                                 humidityChart = humidityChart,
                                 pressureChart = pressureChart,
+                                batteryChart = batteryChart,
+                                accelerationChart = accelerationChart,
+                                rssiChart = rssiChart,
+                                movementsChart = movementsChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,
