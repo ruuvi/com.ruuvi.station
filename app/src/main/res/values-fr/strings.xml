@@ -114,6 +114,7 @@
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
     <string name="changelog">(journal des modifications)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Moyenne: %3$s Dernière: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Moyenne: %3$,.2f</string>
     <string name="chart_stat_avg">Moyenne</string>
     <string name="chart_stat_hide">Masquer min/max/moy</string>
@@ -228,7 +229,6 @@
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>
     <string name="export_csv_failed">Echec de la création du fichier CSV</string>
-    <string name="export_csv_feature_location">Vous pouvez exporter l\'historique d\'un capteur à partir de sa page graphique d\'historique. Appuyez sur l\'icône de menu à trois points dans le coin supérieur droit, puis sélectionnez \"Exporter l\'historique (csv)\".</string>
     <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
@@ -323,6 +323,8 @@
     <string name="minutes">Minutes</string>
     <string name="more">Plus...</string>
     <string name="more_info">Plus d\'infos</string>
+    <string name="move_down">Descendre</string>
+    <string name="move_up">Monter</string>
     <string name="movement_counter">Compteur de mouvements</string>
     <string name="movements">mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
@@ -354,9 +356,11 @@
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
+    <string name="off">Désactivé</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Impossible d\'obtenir la version actuelle de l\'appareil. La version est probablement trop ancienne et il est recommandé d\'effectuer une mise à jour.</string>
+    <string name="on">Activé</string>
     <string name="onboarding_access_widgets">Apportez vos capteurs préférés sur votre écran d\'accueil sous forme</string>
     <string name="onboarding_alerts">alertes</string>
     <string name="onboarding_almost_there">Presque là!</string>

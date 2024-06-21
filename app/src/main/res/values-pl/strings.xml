@@ -64,6 +64,7 @@
     <string name="camera">Aparat</string>
     <string name="camera_fail">Nie można uruchomić aparatu</string>
     <string name="cancel">Anuluj</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Maks: %2$s Przeciętny: %3$s Najnowszy: %4$s</string>
     <string name="chart_stat_hide">Ukryj min./maks./śr</string>
     <string name="chart_stat_show">Pokaż min./maks./śr</string>
     <string name="charts_background_dialog_description">Funkcja wykresów działa najlepiej z włączonym skanowaniem w tle.</string>
@@ -190,6 +191,8 @@
     <string name="min">min</string>
     <string name="minutes">Minuty</string>
     <string name="more_info">WIĘCEJ INFORMACJI</string>
+    <string name="move_down">Przesuń w dół</string>
+    <string name="move_up">Przesuń w górę</string>
     <string name="movement_counter">Licznik przesunięć</string>
     <string name="name">NAZWA</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>

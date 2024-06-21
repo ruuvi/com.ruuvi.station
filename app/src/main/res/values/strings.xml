@@ -230,7 +230,6 @@
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>
     <string name="export_csv_failed">Failed to create CSV file</string>
-    <string name="export_csv_feature_location">You can export a sensor\'s history from its history graph page. Tap the three dots menu icon in the top right corner, and then select \"Export history (csv)\".</string>
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX Power (dBm)</string>
@@ -320,6 +319,8 @@
     <string name="minutes">Minutes</string>
     <string name="more">More...</string>
     <string name="more_info">More info</string>
+    <string name="move_down">Move down</string>
+    <string name="move_up">Move up</string>
     <string name="movement_counter">Movement Counter</string>
     <string name="movements">movements</string>
     <string name="muted_till">Muted till %1$s</string>
@@ -351,9 +352,11 @@
     <string name="none">none</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">To enable alerts please allow Notifications in Settings</string>
+    <string name="off">Off</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Your sensor doesn\'t report its current firmware version. Either you\'re not in its Bluetooth range, it\'s connected to another phone, or it\'s running a very old firmware version.</string>
+    <string name="on">On</string>
     <string name="onboarding_access_widgets">Bring your favorite sensors to your home screen as</string>
     <string name="onboarding_alerts">Alerts</string>
     <string name="onboarding_almost_there">Almost there!</string>

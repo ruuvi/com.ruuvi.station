@@ -114,6 +114,7 @@
     <string name="change_background_message">Valitse taustakuva. Taustakuva menetetään uudelleenasennuksen yhteydessä, mikäli et ole sisäänkirjautunut sovellukseen.</string>
     <string name="changelog">(muutosloki)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Keskiarvo: %3$s Viimeisin: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Keskiarvo: %3$,.2f</string>
     <string name="chart_stat_avg">Keskiarvo</string>
     <string name="chart_stat_hide">Piilota min/max/ka</string>
@@ -228,7 +229,6 @@
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
     <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjakoikkuna</string>
     <string name="export_csv_failed">CSV-tiedoston luonti epäonnistui</string>
-    <string name="export_csv_feature_location">Anturihistoria voidaan viedä tiedostoon anturin historiasivulla. Napauta oikeassa yläkulmassa olevaa kolmipistevalikkoa ja valitse sitten \"Lataa historia (csv)\".</string>
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
@@ -318,6 +318,8 @@
     <string name="minutes">Minuuttia</string>
     <string name="more">Lisää...</string>
     <string name="more_info">Lisätietoa</string>
+    <string name="move_down">Siirrä alas</string>
+    <string name="move_up">Siirrä ylös</string>
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
     <string name="muted_till">Poissa käytöstä %1$s saakka</string>
@@ -349,9 +351,11 @@
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>
+    <string name="off">Pois</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Laitteessa oleva laiteohjelmisto ei ilmoita nykyistä versiota. Joko et ole sen Bluetooth-kuuluvuusalueella, se on samanaikaisesti yhteydessä toiseen puhelimeen tai kyseessä on hyvin vanha laiteohjelmisto.</string>
+    <string name="on">Päällä</string>
     <string name="onboarding_access_widgets">Tuo suosikkianturisi kotinäytölle</string>
     <string name="onboarding_alerts">hälytyksesi</string>
     <string name="onboarding_almost_there">Melkein valmista!</string>
