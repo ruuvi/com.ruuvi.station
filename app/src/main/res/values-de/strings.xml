@@ -114,6 +114,7 @@
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
     <string name="changelog">(änderungsprotokoll)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Durchschnitt: %3$s Neueste: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
     <string name="chart_stat_avg">Durchschnitt</string>
     <string name="chart_stat_hide">Min./Max./Durchschnitt ausblenden</string>
@@ -202,7 +203,7 @@
     <string name="day_7">7 Tage</string>
     <string name="day_8">8 Tage</string>
     <string name="day_9">9 Tage</string>
-    <string name="day_x">%1$s Tage</string>
+    <string name="day_x">%1$s tage</string>
     <string name="days">Tage</string>
     <string name="delete_account">Konto löschen</string>
     <string name="details">Einzelheiten</string>
@@ -228,7 +229,6 @@
     <string name="export_csv_chooser_title">Sensor %1$s CSV-Export</string>
     <string name="export_csv_created">.csv erstellt, Freigabemenü öffnen</string>
     <string name="export_csv_failed">CSV-Datei konnte nicht erstellt werden</string>
-    <string name="export_csv_feature_location">Sie können den Verlauf eines Sensors von seiner Verlaufsgrafikseite aus exportieren. Tippen Sie auf das Drei-Punkte-Menüsymbol in der oberen rechten Ecke und wählen Sie dann \"Verlauf exportieren (csv)\".</string>
     <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
@@ -281,7 +281,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
     <string name="history_view">Ansicht Verlauf</string>
     <string name="hour">Stunde</string>
-    <string name="hour_1">1 Stunde</string>
+    <string name="hour_1">1 stunde</string>
     <string name="hour_12">12 stunden</string>
     <string name="hour_2">2 stunden</string>
     <string name="hour_3">3 stunden</string>
@@ -329,6 +329,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="minutes">Minuten</string>
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
+    <string name="move_down">Nach unten bewegen</string>
+    <string name="move_up">Nach oben bewegen</string>
     <string name="movement_counter">Bewegungszähler</string>
     <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
@@ -360,9 +362,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
     <string name="notification_permission_needed">Um Benachrichtigungen zu aktivieren, erlauben Sie bitte Benachrichtigungen in den Einstellungen</string>
+    <string name="off">Aus</string>
     <string name="offset_correction">Offset-Korrektur</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ihr Sensor meldet seine aktuelle Firmware-Version nicht. Dies bedeutet, dass wahrscheinlich eine alte Firmware-Version ausgeführt wird und eine Aktualisierung empfohlen wird.</string>
+    <string name="on">An</string>
     <string name="onboarding_access_widgets">Fügen Sie Ihre bevorzugten Sensoren als</string>
     <string name="onboarding_alerts">Alarme</string>
     <string name="onboarding_almost_there">Fast dort!</string>

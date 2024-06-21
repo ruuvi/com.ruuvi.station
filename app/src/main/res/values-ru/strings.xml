@@ -90,6 +90,7 @@
     <string name="cancel">Отмена</string>
     <string name="change_background_image">Изменить фоновое изображение</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Мин: %1$s Макс: %2$s Среднее: %3$s Последний: %4$s</string>
     <string name="chart_min_max_avg">Мин: %1$,.2f Макс: %2$,.2f Среднее: %3$,.2f</string>
     <string name="chart_view_period_days_count">Количество дней: %1$s</string>
     <string name="charts_background_dialog_description">Графики работают лучше всего с включенным фоновым сканированием</string>
@@ -264,9 +265,11 @@
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
+    <string name="off">Выкл</string>
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано.</string>
+    <string name="on">Вкл</string>
     <string name="onboarding_measure_your_world">Measure Your World</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>

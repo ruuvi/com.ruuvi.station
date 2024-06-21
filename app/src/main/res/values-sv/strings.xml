@@ -114,6 +114,7 @@
     <string name="change_background_message">Välj bakgrundsbild. Om du inte är inloggad kommer du att förlora bilden vid appominstallation.</string>
     <string name="changelog">(ändringslogg)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Medelvärde %3$s Senast: %4$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Medelvärde: %3$,.2f</string>
     <string name="chart_stat_avg">Medelvärde</string>
     <string name="chart_stat_hide">Dölj min/max/genomsnitt</string>
@@ -228,7 +229,6 @@
     <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
     <string name="export_csv_created">.csv skapad, öppnar dela menyn</string>
     <string name="export_csv_failed">Kunde inte skapa CSV filen</string>
-    <string name="export_csv_feature_location">Du kan exportera sensorns historik från dess historiagramsida. Tryck på tre punkters menyikon i övre högra hörnet, och välj sedan \"Exportera historik (csv)\".</string>
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
@@ -318,6 +318,8 @@
     <string name="minutes">Minuter</string>
     <string name="more">Mer...</string>
     <string name="more_info">Mer info</string>
+    <string name="move_down">Flytta ner</string>
+    <string name="move_up">Flytta upp</string>
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
@@ -349,9 +351,11 @@
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
     <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i Inställningar.</string>
+    <string name="off">Av</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Din sensor rapporterar inte sin nuvarande firmwareversion. Det betyder att den förmodligen har en gammal firmwareversion och uppdatering rekommenderas.</string>
+    <string name="on">På</string>
     <string name="onboarding_access_widgets">Ta med dina favoritsensorer till din startskärm som</string>
     <string name="onboarding_alerts">varningar</string>
     <string name="onboarding_almost_there">Nästan där!</string>

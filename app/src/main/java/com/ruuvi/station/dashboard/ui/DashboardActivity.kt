@@ -44,7 +44,9 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -60,6 +62,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -84,7 +87,10 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
@@ -128,6 +134,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
+                val coroutineScope = rememberCoroutineScope()
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -279,13 +286,15 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     )
                 }
 
-                LaunchedEffect(key1 = true) {
-                    while (true) {
-                        if (!dragDropListState.isDragInProgress) {
-                            Timber.d("Refreshing dashboard")
-                            dashboardViewModel.refreshSensors()
+                LaunchedEffect(key1 = null) {
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        while (true) {
+                            if (!dragDropListState.isDragInProgress) {
+                                Timber.d("Refreshing dashboard")
+                                dashboardViewModel.refreshSensors()
+                            }
+                            delay(1000)
                         }
-                        delay(1000)
                     }
                 }
             }
@@ -1089,9 +1098,6 @@ fun DashboardItemDropdownMenu(
         mutableStateOf(false)
     }
     val coroutineScope = rememberCoroutineScope()
-    var index by remember {
-        mutableIntStateOf(itemIndex)
-    }
 
     var setNameDialog by remember { mutableStateOf(false) }
 
@@ -1119,7 +1125,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.full_image_view
                 ))
             }
@@ -1128,7 +1134,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.history_view
                 ))
             }
@@ -1136,7 +1142,7 @@ fun DashboardItemDropdownMenu(
                 TagSettingsActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.settings_and_alerts
                 ))
             }
@@ -1144,7 +1150,7 @@ fun DashboardItemDropdownMenu(
                 BackgroundActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.change_background
                 ))
             }
@@ -1153,9 +1159,39 @@ fun DashboardItemDropdownMenu(
                 setNameDialog = true
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.rename
                 ))
+            }
+
+            if (itemIndex != 0) {
+                DropdownMenuItem(onClick = {
+                    var newIndex = itemIndex - 1
+                    moveItem(itemIndex, newIndex)
+                    if (newIndex < 0) newIndex = 0
+                    threeDotsMenuExpanded = false
+                    coroutineScope.launch {
+                        lazyGridState.centerViewportOnItem(newIndex)
+                    }
+                }) {
+                    Paragraph(text = stringResource(id = R.string.move_up))
+                }
+            }
+
+            if (itemIndex != lazyGridState.layoutInfo.totalItemsCount - 2) {
+                DropdownMenuItem(onClick = {
+                    var newIndex = itemIndex + 1
+                    moveItem(itemIndex, newIndex)
+                    if (newIndex >= lazyGridState.layoutInfo.totalItemsCount) {
+                        newIndex = lazyGridState.layoutInfo.totalItemsCount - 2
+                    }
+                    threeDotsMenuExpanded = false
+                    coroutineScope.launch {
+                        lazyGridState.centerViewportOnItem(newIndex)
+                    }
+                }) {
+                    Paragraph(text = stringResource(id = R.string.move_down))
+                }
             }
 
             if (canBeClaimed) {
@@ -1163,7 +1199,7 @@ fun DashboardItemDropdownMenu(
                     ClaimSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    Paragraph(text = stringResource(
                         id = R.string.claim_sensor
                     ))
                 }
@@ -1172,32 +1208,17 @@ fun DashboardItemDropdownMenu(
                     ShareSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    Paragraph(text = stringResource(
                         id = R.string.share
                     ))
                 }
             }
 
             DropdownMenuItem(onClick = {
-                moveItem(index, --index)
-                if (index < 0) index = 0
-            }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = "Move up")
-            }
-
-            DropdownMenuItem(onClick = {
-                moveItem(index, ++index)
-                if (index >= lazyGridState.layoutInfo.totalItemsCount - 1)
-                    index = lazyGridState.layoutInfo.totalItemsCount - 2
-            }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = "Move down")
-            }
-
-            DropdownMenuItem(onClick = {
                 TagSettingsActivity.startToRemove(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.remove
                 ))
             }
