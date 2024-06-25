@@ -193,6 +193,7 @@
     <string name="data_forwarding_url">URL du routeur</string>
     <string name="data_forwarding_url_hint">https://mon.routeur/...</string>
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
+    <string name="date">Date</string>
     <string name="day_1">1 jour</string>
     <string name="day_10">10 jours</string>
     <string name="day_2">2 jours</string>
@@ -233,6 +234,7 @@
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
+    <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
     <string name="file_not_supported">Format non supporté</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>

@@ -193,6 +193,7 @@
     <string name="data_forwarding_url">Vidarebefordings-URL</string>
     <string name="data_forwarding_url_hint">https://din.server/...</string>
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
+    <string name="date">Datum</string>
     <string name="day_1">1 dag</string>
     <string name="day_10">10 dagar</string>
     <string name="day_2">2 dagar</string>
@@ -233,6 +234,7 @@
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
     <string name="export_history">Exportera historik (csv)</string>
+    <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
     <string name="firmware">Programvara</string>
     <string name="firmware_update">Uppdatera</string>

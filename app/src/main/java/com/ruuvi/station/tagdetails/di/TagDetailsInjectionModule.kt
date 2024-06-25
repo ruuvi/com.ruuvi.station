@@ -6,6 +6,7 @@ import com.ruuvi.station.tagdetails.ui.SensorCardViewModel
 import com.ruuvi.station.tagdetails.ui.SensorCardViewModelArguments
 import com.ruuvi.station.tagdetails.ui.TagViewModel
 import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
 
@@ -21,9 +22,11 @@ object TagDetailsInjectionModule {
         }
 
         bind<SensorCardViewModel>() with factory { arguments: SensorCardViewModelArguments ->
-            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<CsvExporter>() with singleton { CsvExporter(instance(), instance(), instance(), instance(), instance()) }
+
+        bind<XlsxExporter>() with singleton { XlsxExporter(instance(), instance(), instance(), instance(), instance()) }
     }
 }
