@@ -193,6 +193,7 @@
     <string name="data_forwarding_url">Datenweiterleitungs-URL</string>
     <string name="data_forwarding_url_hint">https://dein.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
+    <string name="date">Datum</string>
     <string name="day_1">1 Tag</string>
     <string name="day_10">10 Tage</string>
     <string name="day_2">2 Tage</string>
@@ -233,6 +234,7 @@
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
     <string name="export_history">Verlauf exportieren (csv)</string>
+    <string name="export_history_xlsx">Verlauf exportieren (xlsx)</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>

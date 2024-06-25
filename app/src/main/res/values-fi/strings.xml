@@ -193,6 +193,7 @@
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
+    <string name="date">Päivämäärä</string>
     <string name="day_1">1 päivä</string>
     <string name="day_10">10 päivää</string>
     <string name="day_2">2 päivää</string>
@@ -233,6 +234,7 @@
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
     <string name="export_history">Lataa historia (csv)</string>
+    <string name="export_history_xlsx">Lataa historia (xlsx)</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
