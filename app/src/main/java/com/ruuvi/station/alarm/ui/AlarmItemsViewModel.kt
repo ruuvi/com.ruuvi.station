@@ -5,18 +5,38 @@ import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.domain.AlarmsInteractor
+import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.diff
 import com.ruuvi.station.util.extensions.equalsEpsilon
+import com.ruuvi.station.util.extensions.processStatus
 import com.ruuvi.station.util.extensions.round
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AlarmItemsViewModel(
     val sensorId: String,
     val alarmsInteractor: AlarmsInteractor,
+    val unitsConverter: UnitsConverter,
+    val tagSettingsInteractor: TagSettingsInteractor
 ): ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _alarms = mutableStateListOf<AlarmItemState>()
     val alarms: List<AlarmItemState> = _alarms
+
+    private val _sensorState = MutableStateFlow<RuuviTag>(requireNotNull(tagSettingsInteractor.getFavouriteSensorById(sensorId)))
+    val sensorState: StateFlow<RuuviTag> = _sensorState
 
     var editLow: Boolean? = null
     var editHigh: Boolean? = null
@@ -166,7 +186,10 @@ class AlarmItemsViewModel(
     fun getUnit(alarmType: AlarmType): String = alarmsInteractor.getAlarmUnit(alarmType)
 
     fun saveAlarm(alarmItemState: AlarmItemState) {
-        alarmsInteractor.saveAlarm(alarmItemState)
+        val status = alarmsInteractor.saveAlarm(alarmItemState)
+        status?.let {
+            processStatus(it, _uiEvent)
+        }
     }
 
     fun refreshAlarmState() {
@@ -176,6 +199,16 @@ class AlarmItemsViewModel(
             item.isEnabled = updated?.isEnabled ?: item.isEnabled
             item.triggered = updated?.triggered ?: false
             item.mutedTill = updated?.mutedTill
+        }
+    }
+
+    fun refreshSensorState() {
+        Timber.d("getTagInfo")
+        CoroutineScope(Dispatchers.IO).launch {
+            val sensorState = tagSettingsInteractor.getFavouriteSensorById(sensorId)
+            if (sensorState != null) {
+                _sensorState.value = sensorState
+            }
         }
     }
 }

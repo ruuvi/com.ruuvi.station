@@ -50,7 +50,7 @@ fun DataForwardingSettings(
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.data_forwarding_location_enable),
                 checked = locationEnabled.value,
                 onCheckedChange = viewModel::setDataForwardingLocationEnabled
@@ -58,7 +58,7 @@ fun DataForwardingSettings(
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.data_forwarding_during_sync_enable),
                 checked = sendDuringSync.value,
                 onCheckedChange = viewModel::setDataForwardingDuringSyncEnabled

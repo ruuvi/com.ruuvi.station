@@ -1,12 +1,16 @@
 package com.ruuvi.station.app.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -65,6 +69,7 @@ fun SwitchRuuvi (
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SwitchIndicatorRuuvi (
     text: String,
@@ -75,6 +80,7 @@ fun SwitchIndicatorRuuvi (
     ConstraintLayout(modifier = modifier
         .fillMaxWidth()
         .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) }
+        .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
     ) {
         val (caption, onOff, switch) = createRefs()
 
@@ -102,20 +108,22 @@ fun SwitchIndicatorRuuvi (
                     bottom.linkTo(parent.bottom)
                     start.linkTo(caption.end)
                     end.linkTo(switch.start)
-                    width = Dimension.fillToConstraints
+                    width = Dimension.wrapContent
                 }
 
         )
 
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = ruuviSwitchColors(),
-            modifier = Modifier.constrainAs(switch) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                end.linkTo(parent.end)
-            }
-        )
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = ruuviSwitchColors(),
+                modifier = Modifier.constrainAs(switch) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            )
+        }
     }
 }

@@ -21,6 +21,7 @@ xmlns:tools="http://schemas.android.com/tools">
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 <uses-permission android:name="android.permission.NFC" />
+<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
 <uses-feature android:name="android.hardware.bluetooth" />
 
@@ -249,5 +250,12 @@ xmlns:tools="http://schemas.android.com/tools">
     <meta-data
         android:name="preloaded_fonts"
         android:resource="@array/preloaded_fonts" />
+
+    <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="true" />
+    <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+    <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
+    <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
+
 </application>
+
 </manifest>

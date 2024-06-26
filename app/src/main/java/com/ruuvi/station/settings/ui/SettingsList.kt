@@ -180,7 +180,7 @@ fun SettingsElement(
             .fillMaxWidth()
     ) {
         val modifier = if (fixedHeight) {
-            Modifier.height(RuuviStationTheme.dimensions.settingsListHeight)
+            Modifier.defaultMinSize(minHeight = RuuviStationTheme.dimensions.settingsListHeight)
         } else {
             Modifier
         }
@@ -217,7 +217,6 @@ fun SettingsElement(
                 if (!description.isNullOrEmpty()) {
                     Text(
                         style = RuuviStationTheme.typography.subtitle.copy(
-                            color = RuuviStationTheme.colors.secondaryTextColor,
                             fontFamily = ruuviStationFonts.mulishRegular),
                         text = description,
                         textAlign = TextAlign.Left

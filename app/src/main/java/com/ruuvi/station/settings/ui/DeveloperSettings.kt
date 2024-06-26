@@ -13,10 +13,17 @@ fun DeveloperSettings(
     viewModel: DeveloperSettingsViewModel
 ) {
     val devServerEnabled = viewModel.devServerEnabled.collectAsState()
+    val newChartsUi = viewModel.newChartsUiEnabled.collectAsState()
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
+                text = "New charts UI",
+                checked = newChartsUi.value,
+                onCheckedChange = viewModel::setNewChartsUi
+            )
+
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.use_dev_server),
                 checked = devServerEnabled.value,
                 onCheckedChange = viewModel::setDevServerEnabled

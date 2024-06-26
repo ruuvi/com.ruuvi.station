@@ -27,7 +27,7 @@ fun BackgroundScanSettings(
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchRuuvi(
+            SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.background_scanning),
                 checked = backgroundScanEnabled,
                 onCheckedChange = viewModel::setBackgroundScanEnabled

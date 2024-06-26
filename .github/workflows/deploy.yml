@@ -21,11 +21,16 @@ jobs:
 
     - name: Run localization script
       run: ./scripts/ci/update_l10n.sh
+
+    - name: permissions
+      run: chmod +x scripts/ci/version_increment.sh
+
+    - name: Increment version
+      run: ./scripts/ci/version_increment.sh
         
     - name: Build bundle
       run: ./gradlew bundleRelease
       
-        
     - name: Sign bundle
       id: sign_bundle
       uses: ilharp/sign-android-release@v1
@@ -42,9 +47,9 @@ jobs:
       with:
         serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         packageName: com.ruuvi.station
-        releaseFiles: app/build/outputs/bundle/release/app-release.aab
-        track: qa
-     
+        releaseFiles: ${{steps.sign_bundle.outputs.signedFile}}
+        track: internal
+
     - name: Upload bundle
       uses: actions/upload-artifact@v3.1.2
       with:

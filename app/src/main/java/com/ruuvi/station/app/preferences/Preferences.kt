@@ -374,6 +374,12 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_DONT_SHOW_GATT_SYNC, value).apply()
         }
 
+    var newChartsUI: Boolean
+        get() = sharedPreferences.getBoolean(PREF_NEW_CHARTS_UI, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_NEW_CHARTS_UI, value).apply()
+        }
+
     var limitLocalAlerts: Boolean
         get() = sharedPreferences.getBoolean(PREF_LIMIT_LOCAL_ALERTS, true)
         set(enabled) {
@@ -446,6 +452,7 @@ class Preferences (val context: Context) {
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
+        private const val PREF_NEW_CHARTS_UI = "pref_new_charts_ui"
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
         private const val PREF_LIMIT_LOCAL_ALERTS = "pref_limit_local_alerts"
         private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"

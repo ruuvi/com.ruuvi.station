@@ -122,8 +122,8 @@
     <string name="cloud_er_unable_to_send_email">Не удалось отправить e-mail</string>
     <string name="cloud_er_unauthorized">Требуется авторизация</string>
     <string name="cloud_er_user_not_found">Пользователь не найден</string>
-    <string name="cloud_only_mode">Режим облака</string>
-    <string name="cloud_only_mode_description">Получайте данные с ближайших датчиков только через облако, игнорируя при этом измерения через Bluetooth. Требуется Ruuvi Gateway.</string>
+    <string name="cloud_only_mode">Отключить Bluetooth</string>
+    <string name="cloud_only_mode_description">При активации опции Отключить Bluetooth приложение будет игнорировать любые измерения, отправленные датчиками Ruuvi по Bluetooth, когда датчики находятся рядом с маршрутизатором Ruuvi Gateway. Вместо этого приложение будет получать данные измерений датчиков исключительно из Ruuvi Cloud. Чтобы данные измерений передавались в Ruuvi Cloud, ваш датчик должен находиться вблизи маршрутизатора Ruuvi Gateway.</string>
     <string name="confirm">Подтвердить</string>
     <string name="connected_reading_info">Обмениваюсь...</string>
     <string name="connecting">Соединение...</string>
@@ -227,6 +227,7 @@
     <string name="language_russian">Русский</string>
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Доступная версия прошивки Ruuvi:</string>
+    <string name="latest_measured_value">Последнее измерение: %1$s</string>
     <string name="light_theme">Светлая тема</string>
     <string name="logged_in">Пользователь:</string>
     <string name="login_description">Чтобы воспользоваться всеми функциями, создайте аккаунт или войдите в существующий. Пожалуйста, введите ваш email.</string>
