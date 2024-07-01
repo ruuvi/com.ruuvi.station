@@ -1,5 +1,8 @@
 package com.ruuvi.station.receivers
 
+import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,18 +14,29 @@ import com.ruuvi.station.app.preferences.Preferences
 import timber.log.Timber
 
 class RebootSchedulerReceiver : BroadcastReceiver() {
+    private fun isInForeground(): Boolean {
+        val appProcessInfo = ActivityManager.RunningAppProcessInfo()
+        ActivityManager.getMyMemoryState(appProcessInfo)
+        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE)
+    }
     override fun onReceive(context: Context?, intent: Intent?) {
-        Timber.d("ruuvi.BOOT_COMPLETED.onReceive")
+        Timber.d("onReceive $intent")
+
         context?.let {
-            val preferences = Preferences(it)
-            Timber.d("Start from reboot")
-            if (preferences.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                    ScanningPeriodicReceiver.start(it, preferences.backgroundScanInterval * 1000L)
-                }
-                startForegroundService(it)
+            if (isInForeground()) {
+                Timber.d("Ignoring since app is in foreground")
             } else {
-                Timber.d("Background scan disabled")
+                val preferences = Preferences(it)
+                Timber.d("Start from reboot")
+                if (preferences.backgroundScanMode == BackgroundScanModes.BACKGROUND) {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                        ScanningPeriodicReceiver.start(it, preferences.backgroundScanInterval * 1000L)
+                    }
+                } else {
+                    Timber.d("Background scan disabled")
+                }
+
+                startForegroundService(it)
             }
         }
     }
