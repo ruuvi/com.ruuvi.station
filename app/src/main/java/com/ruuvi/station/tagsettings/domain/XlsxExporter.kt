@@ -93,12 +93,14 @@ class XlsxExporter (
     }
 
     private fun getStandardColumnsDefns(dataFormat: Int): List<ColumnDefinition> {
+        val humidityUnit = " (${unitsConverter.getHumidityUnitString()})"
+        val pressureUnit = " (${unitsConverter.getPressureUnitString()})"
         val columns = mutableListOf(
             ColumnDefinition(context.getString(R.string.date), null, 20.0),
             ColumnDefinition(context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString()), null, null),
-            ColumnDefinition(context.getString(R.string.humidity_with_unit, unitsConverter.getHumidityUnitString()), null, null),
-            ColumnDefinition(context.getString(R.string.pressure_with_unit, unitsConverter.getPressureUnitString()), null, null),
-            ColumnDefinition(context.getString(R.string.signal_strength_dbm), null, null)
+            ColumnDefinition(context.getString(R.string.humidity) + humidityUnit, null, null),
+            ColumnDefinition(context.getString(R.string.pressure) + pressureUnit, null, null),
+            ColumnDefinition("RSSI (dBm)", null, null)
         )
         if (dataFormat == 3 || dataFormat == 5) {
             val accelerationUnit = " (${context.getString(R.string.acceleration_unit)})"
