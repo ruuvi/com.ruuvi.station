@@ -424,7 +424,8 @@ fun SensorsPager(
         )
         systemUiController.setNavigationBarColor(
             color = Color.Transparent,
-            darkIcons = !isDarkTheme
+            navigationBarContrastEnforced = false,
+            darkIcons = false
         )
     }
 

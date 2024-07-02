@@ -8,7 +8,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,7 +46,6 @@ import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.onboarding.ui.*
-import com.ruuvi.station.settings.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
@@ -58,7 +56,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import timber.log.Timber
 
-@OptIn(ExperimentalAnimationApi::class)
 class SignInActivity: AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
@@ -137,6 +134,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 SideEffect {
                     systemUiController.setSystemBarsColor(
                         color = Color.Transparent,
+                        isNavigationBarContrastEnforced = false,
                         darkIcons = false
                     )
                 }

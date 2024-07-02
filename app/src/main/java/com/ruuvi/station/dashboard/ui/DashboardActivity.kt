@@ -115,7 +115,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val lifecycleOwner = LocalLifecycleOwner.current
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
-                val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
+                val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
                 val context = LocalContext.current
                 val isDarkTheme = isSystemInDarkTheme()
@@ -279,6 +279,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     )
                     systemUiController.setNavigationBarColor(
                         color = Color.Transparent,
+                        navigationBarContrastEnforced = false,
                         darkIcons = !isDarkTheme
                     )
                 }

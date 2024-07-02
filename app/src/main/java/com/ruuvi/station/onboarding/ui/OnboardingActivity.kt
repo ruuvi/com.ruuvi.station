@@ -76,7 +76,8 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
                     )
                     systemUiController.setNavigationBarColor(
                         color = Color.Transparent,
-                        darkIcons = !isDarkTheme
+                        navigationBarContrastEnforced = false,
+                        darkIcons = false
                     )
                 }
             }
