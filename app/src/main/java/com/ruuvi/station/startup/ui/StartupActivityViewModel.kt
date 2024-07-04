@@ -18,6 +18,8 @@ class StartupActivityViewModel(
 
     fun isFirstStart(): Boolean = startupInteractor.isFirstStart()
 
+    fun shouldAcceptTerms(): Boolean = startupInteractor.shouldAcceptTerms()
+
     fun generateDeviceId() {
         preferencesRepository.getDeviceId()
     }

@@ -26,11 +26,14 @@ fun ruuviCheckboxColors() = CheckboxDefaults.colors(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RuuviCheckbox(
+    modifier: Modifier = Modifier,
     checked: Boolean,
     text: String,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
             Checkbox(
                 modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended),
@@ -47,5 +50,41 @@ fun RuuviCheckbox(
             onClick = {
                 onCheckedChange(!checked)
             })
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RuuviCheckboxHypertext(
+    modifier: Modifier = Modifier,
+    checked: Boolean,
+    text: String,
+    linkText: List<String>,
+    hyperlinks: List<String>,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+            Checkbox(
+                modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended),
+                checked = checked,
+                colors = ruuviCheckboxColors(),
+                onCheckedChange = onCheckedChange,
+            )
+        }
+
+        HyperlinkText(
+            modifier = Modifier
+                .fillMaxWidth(),
+            fullText = text,
+            linkText = linkText,
+            hyperlinks = hyperlinks,
+            textStyle = RuuviStationTheme.typography.paragraph,
+            linkTextColor = RuuviStationTheme.typography.paragraph.color
+        ) {
+            onCheckedChange(!checked)
+        }
     }
 }

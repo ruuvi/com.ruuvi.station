@@ -30,7 +30,9 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
         viewModel.startForegroundScanning()
 
         when {
-            viewModel.isFirstStart() -> OnboardingActivity.start(this)
+            viewModel.isFirstStart() || viewModel.shouldAcceptTerms() -> {
+                OnboardingActivity.start(this)
+            }
             else -> {
                 DashboardActivity.start(this)
             }

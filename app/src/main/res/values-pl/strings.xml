@@ -213,6 +213,9 @@
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_tos_link_markup">Warunki użytkowania i Politykę prywatności</string>
+    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności.</string>
     <string name="ordering">Sortowanie</string>
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>
