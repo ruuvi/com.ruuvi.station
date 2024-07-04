@@ -311,4 +311,18 @@ class PreferencesRepository(
     fun setNewChartsUI(newChartsUI: Boolean) {
         preferences.newChartsUI = newChartsUI
     }
+
+    fun isAcceptTerms(): Boolean =
+        preferences.acceptTerms
+
+    fun setAcceptTerms(acceptTerms: Boolean) {
+        preferences.acceptTerms = acceptTerms
+    }
+
+    fun isFirebaseConsent(): Boolean =
+        preferences.firebaseConsent
+
+    fun setFirebaseConsent(firebaseConsent: Boolean) {
+        preferences.firebaseConsent = firebaseConsent
+    }
 }

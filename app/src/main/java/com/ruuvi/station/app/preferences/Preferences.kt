@@ -392,6 +392,18 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_SHOW_CHART_STATS, value).apply()
         }
 
+    var acceptTerms: Boolean
+        get() = sharedPreferences.getBoolean(PREF_ACCEPT_TERMS, true)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_ACCEPT_TERMS, value).apply()
+        }
+
+    var firebaseConsent: Boolean
+        get() = sharedPreferences.getBoolean(PREF_FIREBASE_CONSENT, true)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_FIREBASE_CONSENT, value).apply()
+        }
+
     var sortedSensors: String
         get() = sharedPreferences.getString(PREF_DASHBOARD_SORTED_SENSORS, "") ?: ""
         set(sortedSensors) {
@@ -458,7 +470,8 @@ class Preferences (val context: Context) {
         private const val PREF_SHOW_CHART_STATS = "pref_show_chart_stats"
         private const val PREF_SIGNED_IN_ONCE = "pref_signed_in_once"
         private const val PREF_DASHBOARD_SORTED_SENSORS = "pref_dashboard_sorted_sensors"
-
+        private const val PREF_ACCEPT_TERMS = "pref_accept_terms"
+        private const val PREF_FIREBASE_CONSENT = "pref_firebase_consent"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

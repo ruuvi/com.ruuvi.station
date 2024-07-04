@@ -378,6 +378,9 @@
     <string name="onboarding_share_your_sensors">för att mäta tillsammans med dina vänner och familj.</string>
     <string name="onboarding_sharees_can_use">Dela sensorer</string>
     <string name="onboarding_skip">Hoppa över</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_tos_link_markup">villkoren och integritetspolicyn</string>
+    <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn.</string>
     <string name="onboarding_station_web">Ruuvi webbappen</string>
     <string name="onboarding_swipe_to_continue">Dra för att fortsätta →</string>
     <string name="onboarding_via_bluetooth_or_cloud">med Bluetooth eller Ruuvi Cloud</string>
