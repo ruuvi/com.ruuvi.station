@@ -23,10 +23,10 @@ class AlertNotificationInteractor(
 ) {
     data class AlertNotificationData(
         val sensorId: String,
-        val message: String,
-        val sensorName: String,
+        val title: String,
+        val summary: String,
         val alarmId: Int?,
-        val alertCustomDescription: String
+        val body: String
     )
 
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -66,16 +66,16 @@ class AlertNotificationInteractor(
         val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         var notification =  NotificationCompat
             .Builder(context, CHANNEL_ID)
-            .setContentTitle(notificationData.message)
-            .setTicker("${notificationData.sensorName} ${notificationData.message}")
+            .setContentTitle(notificationData.title)
+            .setTicker("${notificationData.summary} ${notificationData.title}")
             .setStyle(
                 NotificationCompat
                     .BigTextStyle()
-                    .setBigContentTitle(notificationData.message)
-                    .setSummaryText(notificationData.sensorName)
-                    .bigText(notificationData.alertCustomDescription)
+                    .setBigContentTitle(notificationData.title)
+                    .setSummaryText(notificationData.summary)
+                    .bigText(notificationData.body)
             )
-            .setContentText(notificationData.alertCustomDescription)
+            .setContentText(notificationData.body)
             .setDefaults(Notification.DEFAULT_ALL)
             .setOnlyAlertOnce(false)
             .setAutoCancel(true)
