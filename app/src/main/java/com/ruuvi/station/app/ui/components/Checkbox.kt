@@ -13,6 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -29,6 +30,7 @@ fun RuuviCheckbox(
     modifier: Modifier = Modifier,
     checked: Boolean,
     text: String,
+    textStyle: TextStyle = RuuviStationTheme.typography.paragraph,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
@@ -46,7 +48,7 @@ fun RuuviCheckbox(
             modifier = Modifier
                 .fillMaxWidth(),
             text = AnnotatedString(text),
-            style = RuuviStationTheme.typography.paragraph,
+            style = textStyle,
             onClick = {
                 onCheckedChange(!checked)
             })
@@ -81,8 +83,8 @@ fun RuuviCheckboxHypertext(
             fullText = text,
             linkText = linkText,
             hyperlinks = hyperlinks,
-            textStyle = RuuviStationTheme.typography.paragraph,
-            linkTextColor = RuuviStationTheme.typography.paragraph.color
+            textStyle = RuuviStationTheme.typography.paragraphOnboarding,
+            linkTextColor = RuuviStationTheme.typography.paragraphOnboarding.color
         ) {
             onCheckedChange(!checked)
         }

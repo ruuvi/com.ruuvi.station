@@ -486,6 +486,7 @@ fun FinishPage(
         RuuviCheckbox(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
             checked = firebaseConsent,
+            textStyle = RuuviStationTheme.typography.paragraphOnboarding,
             text = stringResource(id = R.string.onboarding_start_anonymous_data_collection_title)
         ) {
             firebaseConsent = it
