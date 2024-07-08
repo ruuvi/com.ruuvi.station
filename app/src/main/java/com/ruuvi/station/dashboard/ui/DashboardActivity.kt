@@ -132,6 +132,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
                 val coroutineScope = rememberCoroutineScope()
+                val navigationColor = colors.navigationTransparent
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -278,7 +279,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         darkIcons = !isDarkTheme
                     )
                     systemUiController.setNavigationBarColor(
-                        color = Color.Transparent,
+                        color = navigationColor,
                         navigationBarContrastEnforced = false,
                         darkIcons = !isDarkTheme
                     )
