@@ -24,9 +24,9 @@ class AlertNotificationInteractor(
     data class AlertNotificationData(
         val sensorId: String,
         val title: String,
-        val summary: String,
+        val summary: String?,
         val alarmId: Int?,
-        val body: String
+        val body: String?
     )
 
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

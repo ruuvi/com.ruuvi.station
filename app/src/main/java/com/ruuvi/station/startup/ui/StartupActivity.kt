@@ -12,6 +12,7 @@ import com.ruuvi.station.onboarding.ui.OnboardingActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
+import timber.log.Timber
 
 class StartupActivity : AppCompatActivity(), KodeinAware {
 
@@ -29,6 +30,7 @@ class StartupActivity : AppCompatActivity(), KodeinAware {
         viewModel.generateDeviceId()
         viewModel.startForegroundScanning()
 
+        Timber.d("isFirstStart = ${viewModel.isFirstStart()} shouldAcceptTerms = ${viewModel.shouldAcceptTerms()}")
         when {
             viewModel.isFirstStart() || viewModel.shouldAcceptTerms() -> {
                 OnboardingActivity.start(this)

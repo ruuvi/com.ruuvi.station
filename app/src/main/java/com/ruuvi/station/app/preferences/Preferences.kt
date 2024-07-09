@@ -393,13 +393,13 @@ class Preferences (val context: Context) {
         }
 
     var acceptTerms: Boolean
-        get() = sharedPreferences.getBoolean(PREF_ACCEPT_TERMS, true)
+        get() = sharedPreferences.getBoolean(PREF_ACCEPT_TERMS, false)
         set(value) {
             sharedPreferences.edit().putBoolean(PREF_ACCEPT_TERMS, value).apply()
         }
 
     var firebaseConsent: Boolean
-        get() = sharedPreferences.getBoolean(PREF_FIREBASE_CONSENT, true)
+        get() = sharedPreferences.getBoolean(PREF_FIREBASE_CONSENT, false)
         set(value) {
             sharedPreferences.edit().putBoolean(PREF_FIREBASE_CONSENT, value).apply()
         }

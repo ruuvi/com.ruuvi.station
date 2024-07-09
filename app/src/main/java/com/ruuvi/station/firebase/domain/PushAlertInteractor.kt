@@ -74,7 +74,7 @@ class PushAlertInteractor(
                     sensorId = message.id,
                     title = it,
                     body = message.alertData,
-                    summary = message.subtitle,
+                    summary = message.name,
                     alarmId = alarm?.id,
                 )
             }

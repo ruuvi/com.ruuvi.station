@@ -106,7 +106,7 @@ fun OnboardingBody(
     signedIn: Boolean,
     onFinishAction: (firebaseConsent: Boolean) -> Unit
 ) {
-    val initialPage = if (!firstStart) {
+    val initialPage = if (firstStart) {
         0
     } else {
         OnboardingPages.entries.indexOf(OnboardingPages.FINISH)
