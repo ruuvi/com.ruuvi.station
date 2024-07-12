@@ -132,7 +132,11 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
                 val coroutineScope = rememberCoroutineScope()
-                val navigationColor = colors.navigationTransparent
+                val navigationColor = if (gestureNavigationEnabled()) {
+                    Color.Transparent
+                } else {
+                    colors.navigationTransparent
+                }
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
