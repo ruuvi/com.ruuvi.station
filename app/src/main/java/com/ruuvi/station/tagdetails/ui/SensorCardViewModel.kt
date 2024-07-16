@@ -20,6 +20,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagsettings.domain.CsvExporter
+import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -38,6 +39,7 @@ class SensorCardViewModel(
     private val gattInteractor: BluetoothGattInteractor,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val csvExporter: CsvExporter,
+    private val xlsxExporter: XlsxExporter,
     private val nfcResultInteractor: NfcResultInteractor,
     private val alarmRepository: AlarmRepository
     ): ViewModel() {
@@ -193,6 +195,8 @@ class SensorCardViewModel(
     }
 
     fun exportToCsv(sensorId: String): Uri? = csvExporter.toCsv(sensorId)
+
+    fun exportToXlsx(sensorId: String): Uri? = xlsxExporter.exportToXlsx(sensorId)
 
     private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod())
 

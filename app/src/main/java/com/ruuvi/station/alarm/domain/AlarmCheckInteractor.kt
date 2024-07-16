@@ -91,10 +91,10 @@ class AlarmCheckInteractor(
         if (message?.isNotEmpty() == true) {
             val notificationData = AlertNotificationInteractor.AlertNotificationData(
                 sensorId = checker.ruuviTag.id,
-                message = message,
+                title = message,
                 alarmId = checker.alarm.id,
-                sensorName = checker.ruuviTag.displayName,
-                alertCustomDescription = checker.alarm.customDescription
+                summary = checker.ruuviTag.displayName,
+                body = checker.alarm.customDescription
             )
 
             alertNotificationInteractor.notify(checker.alarm.id, notificationData)

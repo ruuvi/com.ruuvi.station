@@ -129,6 +129,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         syncGatt = viewModel::syncGatt,
                         setViewPeriod = viewModel::setViewPeriod,
                         exportToCsv = viewModel::exportToCsv ,
+                        exportToXlsx = viewModel::exportToXlsx ,
                         removeTagData= viewModel::removeTagData,
                         refreshStatus = viewModel::refreshStatus,
                         dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
@@ -224,6 +225,7 @@ fun SensorsPager(
     syncGatt: (String) -> Unit,
     setViewPeriod: (Int) -> Unit,
     exportToCsv: (String) -> Uri?,
+    exportToXlsx: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit,
@@ -337,6 +339,22 @@ fun SensorsPager(
                         mutableStateOf(LineChart(context))
                     }
 
+                    val batteryChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val accelerationChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val rssiChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
+                    val movementsChart by remember {
+                        mutableStateOf(LineChart(context))
+                    }
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
@@ -352,6 +370,7 @@ fun SensorsPager(
                                 syncGatt = syncGatt,
                                 setViewPeriod = setViewPeriod,
                                 exportToCsv = exportToCsv,
+                                exportToXlsx = exportToXlsx,
                                 removeTagData = removeTagData,
                                 refreshStatus = refreshStatus,
                                 dontShowGattSyncDescription = dontShowGattSyncDescription,
@@ -365,6 +384,10 @@ fun SensorsPager(
                                 temperatureChart = temperatureChart,
                                 humidityChart = humidityChart,
                                 pressureChart = pressureChart,
+                                batteryChart = batteryChart,
+                                accelerationChart = accelerationChart,
+                                rssiChart = rssiChart,
+                                movementsChart = movementsChart,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,
@@ -401,7 +424,8 @@ fun SensorsPager(
         )
         systemUiController.setNavigationBarColor(
             color = Color.Transparent,
-            darkIcons = !isDarkTheme
+            navigationBarContrastEnforced = false,
+            darkIcons = false
         )
     }
 

@@ -175,6 +175,17 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
                             DeveloperSettings(
                                 scaffoldState = scaffoldState,
+                                onNavigate = navController::navigate,
+                                viewModel = developerSettingsViewModel
+                            )
+                        }
+                        composable(SettingsRoutes.SHARINGWEB,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
+                            SharingWebView(
+                                scaffoldState = scaffoldState,
                                 viewModel = developerSettingsViewModel
                             )
                         }

@@ -34,7 +34,9 @@ data class Alarm (
     @Column
     var customDescription: String = "",
     @Column
-    var latestTriggered: Date? = null
+    var latestTriggered: Date? = null,
+    @Column
+    var extended: Boolean = false
 ) {
     val alarmType: AlarmType
         get() = AlarmType.getByDbCode(type)

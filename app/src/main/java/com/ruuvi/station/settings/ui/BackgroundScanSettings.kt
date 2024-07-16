@@ -1,5 +1,8 @@
 package com.ruuvi.station.settings.ui
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
@@ -32,25 +35,38 @@ fun BackgroundScanSettings(
                 checked = backgroundScanEnabled,
                 onCheckedChange = viewModel::setBackgroundScanEnabled
             )
-            SubtitleWithPadding(text = stringResource(id = R.string.settings_background_scan_interval))
-            TwoButtonsSelector(
-                values = intervalOptions,
-                initialValue = initialValue ?: intervalOptions.first(),
-                onValueChanged = viewModel::setBackgroundScanInterval
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 200,
+                            easing = LinearOutSlowInEasing
+                        )
+                    )
+            ) {
+                if (backgroundScanEnabled) {
+                    SubtitleWithPadding(text = stringResource(id = R.string.settings_background_scan_interval))
+                    TwoButtonsSelector(
+                        values = intervalOptions,
+                        initialValue = initialValue ?: intervalOptions.first(),
+                        onValueChanged = viewModel::setBackgroundScanInterval
+                    )
 
-            if (showOptimizationTips.value) {
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-                SubtitleWithPadding(text = stringResource(id = R.string.settings_background_battery_optimization_title))
-                ParagraphWithPadding(text = stringResource(id = R.string.settings_background_battery_optimization))
-                ParagraphWithPadding(text = stringResource(id = viewModel.getBatteryOptimizationMessageId()))
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    RuuviButton(text = stringResource(id = R.string.open_settings)) {
-                        viewModel.openOptimizationSettings()
+                    if (showOptimizationTips.value) {
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                        SubtitleWithPadding(text = stringResource(id = R.string.settings_background_battery_optimization_title))
+                        ParagraphWithPadding(text = stringResource(id = R.string.settings_background_battery_optimization))
+                        ParagraphWithPadding(text = stringResource(id = viewModel.getBatteryOptimizationMessageId()))
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            RuuviButton(text = stringResource(id = R.string.open_settings)) {
+                                viewModel.openOptimizationSettings()
+                            }
+                        }
                     }
                 }
             }

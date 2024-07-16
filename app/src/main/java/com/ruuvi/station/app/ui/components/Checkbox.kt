@@ -13,6 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -26,11 +27,15 @@ fun ruuviCheckboxColors() = CheckboxDefaults.colors(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RuuviCheckbox(
+    modifier: Modifier = Modifier,
     checked: Boolean,
     text: String,
+    textStyle: TextStyle = RuuviStationTheme.typography.paragraph,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
             Checkbox(
                 modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended),
@@ -43,9 +48,45 @@ fun RuuviCheckbox(
             modifier = Modifier
                 .fillMaxWidth(),
             text = AnnotatedString(text),
-            style = RuuviStationTheme.typography.paragraph,
+            style = textStyle,
             onClick = {
                 onCheckedChange(!checked)
             })
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RuuviCheckboxHypertext(
+    modifier: Modifier = Modifier,
+    checked: Boolean,
+    text: String,
+    linkText: List<String>,
+    hyperlinks: List<String>,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+            Checkbox(
+                modifier = Modifier.padding(end = RuuviStationTheme.dimensions.extended),
+                checked = checked,
+                colors = ruuviCheckboxColors(),
+                onCheckedChange = onCheckedChange,
+            )
+        }
+
+        HyperlinkText(
+            modifier = Modifier
+                .fillMaxWidth(),
+            fullText = text,
+            linkText = linkText,
+            hyperlinks = hyperlinks,
+            textStyle = RuuviStationTheme.typography.paragraphOnboarding,
+            linkTextColor = RuuviStationTheme.typography.paragraphOnboarding.color
+        ) {
+            onCheckedChange(!checked)
+        }
     }
 }

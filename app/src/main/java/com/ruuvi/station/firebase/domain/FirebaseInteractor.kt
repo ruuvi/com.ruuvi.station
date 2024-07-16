@@ -29,6 +29,8 @@ class FirebaseInteractor(
             delay(15000)
             Timber.d("FirebasePropertySaver.saveUserProperties")
             try {
+                saveUserConsent()
+
                 firebaseAnalytics.setUserProperty(
                     BACKGROUND_SCAN_ENABLED,
                     (preferences.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND).toString()
@@ -73,14 +75,6 @@ class FirebaseInteractor(
                     GRAPH_DRAW_DOTS,
                     preferences.graphDrawDots().toString()
                 )
-
-                firebaseAnalytics.setConsent{
-                    analyticsStorage = FirebaseAnalytics.ConsentStatus.GRANTED
-                    adStorage = FirebaseAnalytics.ConsentStatus.DENIED
-                    adUserData = FirebaseAnalytics.ConsentStatus.DENIED
-                    adPersonalization = FirebaseAnalytics.ConsentStatus.DENIED
-                }
-
                 val favouriteTags = tagRepository.getFavoriteSensors()
                 val addedTags = favouriteTags.size
                 val notAddedTags = tagRepository.getAllTags(false).size
@@ -117,6 +111,24 @@ class FirebaseInteractor(
                 firebaseAnalytics.setUserProperty(USE_SIMPLE_WIDGET, useSimpleWidget.toString())
             } catch (e: Exception) {
                 Timber.e(e)
+            }
+        }
+    }
+
+    fun saveUserConsent() {
+        if (preferences.isFirebaseConsent()) {
+            firebaseAnalytics.setConsent{
+                analyticsStorage = FirebaseAnalytics.ConsentStatus.GRANTED
+                adStorage = FirebaseAnalytics.ConsentStatus.DENIED
+                adUserData = FirebaseAnalytics.ConsentStatus.DENIED
+                adPersonalization = FirebaseAnalytics.ConsentStatus.DENIED
+            }
+        } else {
+            firebaseAnalytics.setConsent{
+                analyticsStorage = FirebaseAnalytics.ConsentStatus.DENIED
+                adStorage = FirebaseAnalytics.ConsentStatus.DENIED
+                adUserData = FirebaseAnalytics.ConsentStatus.DENIED
+                adPersonalization = FirebaseAnalytics.ConsentStatus.DENIED
             }
         }
     }

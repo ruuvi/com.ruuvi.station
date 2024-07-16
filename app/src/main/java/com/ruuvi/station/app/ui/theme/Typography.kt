@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.sp
 data class RuuviStationTypography(
     val subtitle: TextStyle,
     val paragraph: TextStyle,
+    val paragraphOnboarding: TextStyle,
     val paragraphSmall: TextStyle,
     val warning: TextStyle,
     val buttonText: TextStyle,
@@ -39,6 +40,11 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         paragraph = TextStyle(
             color = colors.primary,
+            fontFamily = ruuviStationFonts.mulishRegular,
+            fontSize = ruuviStationFontsSizes.normal,
+        ),
+        paragraphOnboarding = TextStyle(
+            color = colors.onboardingTextColor,
             fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.normal,
         ),

@@ -39,6 +39,7 @@ fun ChartControlElement2(
     syncGatt: (String) -> Unit,
     setViewPeriod: (Int) -> Unit,
     exportToCsv: (String) -> Uri?,
+    exportToXlsx: (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit,
@@ -137,6 +138,7 @@ fun ChartControlElement2(
                 sensorId = sensorId,
                 showChartStats = showChartStats,
                 exportToCsv = { exportToCsv(sensorId) },
+                exportToXlsx = { exportToXlsx(sensorId) },
                 clearHistory = { removeTagData(sensorId) },
                 changeShowStats = changeShowStats
             )
@@ -296,6 +298,7 @@ fun ThreeDotsMenu(
     sensorId: String,
     showChartStats: Boolean,
     exportToCsv: () -> Uri?,
+    exportToXlsx: () -> Uri?,
     clearHistory: () -> Unit,
     changeShowStats: () -> Unit
 ) {
@@ -326,6 +329,13 @@ fun ThreeDotsMenu(
                 threeDotsMenuExpanded = false
             }) {
                 Paragraph(text = stringResource(id = R.string.export_history))
+            }
+            DropdownMenuItem(onClick = {
+                val uri = exportToXlsx.invoke()
+                if (uri != null) { sendXlsx(sensorId, uri, context) }
+                threeDotsMenuExpanded = false
+            }) {
+                Paragraph(text = stringResource(id = R.string.export_history_xlsx))
             }
             DropdownMenuItem(onClick = {
                 clearConfirmOpened = true
@@ -425,6 +435,15 @@ fun ClearHistoryDialog(
         dismissAction.invoke()
         clearHistory.invoke()
     }
+}
+
+fun sendXlsx(sensorId: String, uri: Uri, context: Context) {
+    val sendIntent = Intent()
+    sendIntent.action = Intent.ACTION_SEND
+    sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
+    sendIntent.type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_csv_chooser_title, sensorId)))
 }
 
 fun sendCsv(sensorId: String, uri: Uri, context: Context) {

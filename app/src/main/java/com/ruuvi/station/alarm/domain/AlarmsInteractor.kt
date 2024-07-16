@@ -39,6 +39,22 @@ class AlarmsInteractor(
         }
     }
 
+    fun getExtraRange(type: AlarmType): ClosedFloatingPointRange<Float> {
+        return when (type) {
+            AlarmType.TEMPERATURE -> {
+                val first = unitsConverter.getTemperatureValue(type.extraRange.first.toDouble()).toFloat()
+                val last = unitsConverter.getTemperatureValue(type.extraRange.last.toDouble()).toFloat()
+                first..last
+            }
+            AlarmType.PRESSURE -> {
+                val first = unitsConverter.getPressureValue(type.extraRange.first.toDouble()).toFloat()
+                val last = unitsConverter.getPressureValue(type.extraRange.last.toDouble()).toFloat()
+                first..last
+            }
+            else -> type.extraRange.first.toFloat()..type.extraRange.last.toFloat()
+        }
+    }
+
     fun getRangeValue(type: AlarmType, value: Float): Float {
         return when (type) {
             AlarmType.TEMPERATURE -> unitsConverter.getTemperatureValue(value.toDouble()).toFloat()
