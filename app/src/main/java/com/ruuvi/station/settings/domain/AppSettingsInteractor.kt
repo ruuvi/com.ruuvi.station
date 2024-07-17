@@ -209,4 +209,18 @@ class AppSettingsInteractor(
     fun setLimitLocalAlertsEnabled(isEnabled: Boolean) {
         preferencesRepository.setLimitLocalAlerts(isEnabled)
     }
+    
+    fun isEmailAlerts(): Boolean = !preferencesRepository.isDisableEmailNotifications()
+
+    fun setEmailAlerts(enabled: Boolean) {
+        preferencesRepository.setDisableEmailNotifications(!enabled)
+        networkApplicationSettings.updateDisableEmailNotifications()
+    }
+
+    fun isPushAlerts(): Boolean = !preferencesRepository.isDisablePushNotifications()
+
+    fun setPushAlerts(enabled: Boolean) {
+        preferencesRepository.setDisablePushNotifications(!enabled)
+        networkApplicationSettings.updateDisablePushNotifications()
+    }
 }

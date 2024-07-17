@@ -380,7 +380,7 @@
     <string name="onboarding_sharees_can_use">Share Sensors</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_start_anonymous_data_collection_title">I want to help Ruuvi by sharing anonymous statistics to improve app performance and stability</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Terms of Service and Privacy Policy</string>
     <string name="onboarding_start_tos_title">I accept Terms of Service and Privacy Policy.</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
@@ -499,6 +499,8 @@
     <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
     <string name="settings_developer">Developer settings</string>
+    <string name="settings_email_alerts">Email Alerts</string>
+    <string name="settings_email_alerts_description">If you are using Ruuvi Cloud and Ruuvi Gateway, you will be able to receive email alerts by enabling this.</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
@@ -511,6 +513,8 @@
     <string name="settings_pressure">Pressure</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
+    <string name="settings_push_alerts">Push Alerts</string>
+    <string name="settings_push_alerts_description">If you are using Ruuvi Cloud and Ruuvi Gateway, you will be able to receive push alerts by enabling this.</string>
     <string name="settings_sound">Sound Settings</string>
     <string name="settings_sound_description">Configure app related sound and vibration settings.</string>
     <string name="settings_temperature">Temperature</string>

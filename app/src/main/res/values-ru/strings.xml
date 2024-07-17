@@ -273,6 +273,8 @@
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано.</string>
     <string name="on">Вкл</string>
     <string name="onboarding_measure_your_world">Measure Your World</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Я хочу помочь Ruuvi, делясь анонимной статистикой для улучшения производительности и стабильности приложения</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>

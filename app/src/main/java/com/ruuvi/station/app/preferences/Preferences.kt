@@ -410,6 +410,23 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putString(PREF_DASHBOARD_SORTED_SENSORS, sortedSensors).apply()
         }
 
+    var disableEmailNotifications: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DISABLE_EMAIL_NOTIFICATIONS, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_DISABLE_EMAIL_NOTIFICATIONS, value).apply()
+        }
+
+    var disablePushNotifications: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DISABLE_PUSH_NOTIFICATIONS, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_DISABLE_PUSH_NOTIFICATIONS, value).apply()
+        }
+    var disableTelegramNotifications: Boolean
+        get() = sharedPreferences.getBoolean(PREF_DISABLE_TELEGRAM_NOTIFICATIONS, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_DISABLE_TELEGRAM_NOTIFICATIONS, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -472,6 +489,9 @@ class Preferences (val context: Context) {
         private const val PREF_DASHBOARD_SORTED_SENSORS = "pref_dashboard_sorted_sensors"
         private const val PREF_ACCEPT_TERMS = "pref_accept_terms"
         private const val PREF_FIREBASE_CONSENT = "pref_firebase_consent"
+        private const val PREF_DISABLE_EMAIL_NOTIFICATIONS = "pref_disable_email_notifications"
+        private const val PREF_DISABLE_PUSH_NOTIFICATIONS = "pref_disable_push_notifications"
+        private const val PREF_DISABLE_TELEGRAM_NOTIFICATIONS = "pref_disable_telegram_notifications"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""
