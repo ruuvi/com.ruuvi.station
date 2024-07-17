@@ -378,7 +378,8 @@
     <string name="onboarding_share_your_sensors">för att mäta tillsammans med dina vänner och familj.</string>
     <string name="onboarding_sharees_can_use">Dela sensorer</string>
     <string name="onboarding_skip">Hoppa över</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Jag vill hjälpa Ruuvi genom att dela anonym statistik för att förbättra appens prestanda och stabilitet</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">villkoren och integritetspolicyn</string>
     <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn.</string>
     <string name="onboarding_station_web">Ruuvi webbappen</string>
@@ -497,6 +498,8 @@
     <string name="settings_data_forwarding">Vidarebefordran av data</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
     <string name="settings_developer">Utvecklarinställningar</string>
+    <string name="settings_email_alerts">E-postvarningar</string>
+    <string name="settings_email_alerts_description">Om du använder Ruuvi Cloud och Ruuvi Gateway kommer du att kunna ta emot e-postvarningar genom att aktivera detta.</string>
     <string name="settings_experimental">Experimentella funktioner</string>
     <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>
     <string name="settings_gateway_details_link">läs dokumentationen.</string>
@@ -509,6 +512,8 @@
     <string name="settings_pressure">Lufttryck</string>
     <string name="settings_pressure_unit">Tryckenhet</string>
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas.</string>
+    <string name="settings_push_alerts">Push-varningar</string>
+    <string name="settings_push_alerts_description">Om du använder Ruuvi Cloud och Ruuvi Gateway kommer du att kunna ta emot push-varningar genom att aktivera detta.</string>
     <string name="settings_sound">Ljudinställningar</string>
     <string name="settings_sound_description">Konfigurera appens ljud- och vibrationsinställningar.</string>
     <string name="settings_temperature">Temperatur</string>

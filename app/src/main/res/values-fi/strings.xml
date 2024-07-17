@@ -378,7 +378,8 @@
     <string name="onboarding_share_your_sensors">ja mittaa yhdessä ystävien sekä perheen kesken.</string>
     <string name="onboarding_sharees_can_use">Jaa anturisi</string>
     <string name="onboarding_skip">Ohita</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/fi/tietosuoja</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Haluan auttaa Ruuvia jakamalla anonyymejä käyttötietoja sovelluksen suorituskyvyn ja vakauden parantamiseksi</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/fi/tietosuoja/#apps</string>
     <string name="onboarding_start_tos_link_markup">yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön</string>
     <string name="onboarding_start_tos_title">Hyväksyn yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön.</string>
     <string name="onboarding_station_web">Ruuvin web-sovelluksessa</string>
@@ -497,6 +498,8 @@
     <string name="settings_data_forwarding">Välityspalvelimen asetukset</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
     <string name="settings_developer">Kehittäjäasetukset</string>
+    <string name="settings_email_alerts">Sähköpostihälytykset</string>
+    <string name="settings_email_alerts_description">Jos olet Ruuvi Cloud ja Ruuvi Gateway -käyttäjä, voit vastaanottaa sähköpostihälytyksiä ottamalla tämän käyttöön.</string>
     <string name="settings_experimental">Kokeelliset ominaisuudet</string>
     <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
     <string name="settings_gateway_details_link">ohjesivulta.</string>
@@ -509,6 +512,8 @@
     <string name="settings_pressure">Paine</string>
     <string name="settings_pressure_unit">Paineyksikkö</string>
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö.</string>
+    <string name="settings_push_alerts">Push-hälytykset</string>
+    <string name="settings_push_alerts_description">Jos olet Ruuvi Cloud ja Ruuvi Gateway -käyttäjä, voit vastaanottaa push-hälytyksiä ottamalla tämän käyttöön.</string>
     <string name="settings_sound">Ääniasetukset</string>
     <string name="settings_sound_description">Määritä sovelluksen ääni- ja värinäasetukset.</string>
     <string name="settings_temperature">Lämpötila</string>

@@ -383,7 +383,8 @@
     <string name="onboarding_share_your_sensors">à mesurer avec vos amis et votre famille.</string>
     <string name="onboarding_sharees_can_use">Partagez des capteurs</string>
     <string name="onboarding_skip">Ignorer</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Je souhaite aider Ruuvi en partageant des statistiques anonymes pour améliorer les performances et la stabilité de l\'application</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Conditions d\'utilisation et la Politique de confidentialit</string>
     <string name="onboarding_start_tos_title">J\'accepte les Conditions d\'utilisation et la Politique de confidentialité.</string>
     <string name="onboarding_station_web">l\'application Web Ruuvi</string>
@@ -502,6 +503,8 @@
     <string name="settings_data_forwarding">Paramètres du routeur</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
     <string name="settings_developer">Paramètres du développeur</string>
+    <string name="settings_email_alerts">Alertes courrier électronique</string>
+    <string name="settings_email_alerts_description">Si vous utilisez Ruuvi Cloud et Ruuvi Gateway, vous pourrez recevoir des alertes par e-mail en activant ceci.</string>
     <string name="settings_experimental">Options avancées</string>
     <string name="settings_gateway_details">L\'application envoie les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
     <string name="settings_gateway_details_link">page de support.</string>
@@ -514,6 +517,8 @@
     <string name="settings_pressure">Pression</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
+    <string name="settings_push_alerts">Alertes push</string>
+    <string name="settings_push_alerts_description">Si vous utilisez Ruuvi Cloud et Ruuvi Gateway, vous pourrez recevoir des alertes push en activant ceci.</string>
     <string name="settings_sound">Paramètres du son</string>
     <string name="settings_sound_description">Configurer les paramètres de son et de vibration de l\'application.</string>
     <string name="settings_temperature">Température</string>

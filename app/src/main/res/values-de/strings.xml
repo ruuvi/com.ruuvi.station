@@ -389,7 +389,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="onboarding_share_your_sensors">zum Messen mit Ihren Freunden und Ihrer Familie.</string>
     <string name="onboarding_sharees_can_use">Teilen Sie Sensoren</string>
     <string name="onboarding_skip">Überspringen</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Ich möchte Ruuvi helfen, indem ich anonyme Statistiken teile, um die Leistung und Stabilität der App zu verbessern</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Nutzungsbedingungen und die Datenschutzerklärung</string>
     <string name="onboarding_start_tos_title">Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
@@ -508,6 +509,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
     <string name="settings_developer">Entwicklereinstellungen</string>
+    <string name="settings_email_alerts">E-Mail-Benachrichtigungen</string>
+    <string name="settings_email_alerts_description">Wenn Sie Ruuvi Cloud und Ruuvi Gateway verwenden, können Sie durch Aktivieren dieser Funktion E-Mail-Benachrichtigungen erhalten.</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
     <string name="settings_gateway_details_link">dokumentation.</string>
@@ -520,6 +523,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_pressure">Druck</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
+    <string name="settings_push_alerts">Push-Benachrichtigungen</string>
+    <string name="settings_push_alerts_description">Wenn Sie Ruuvi Cloud und Ruuvi Gateway verwenden, können Sie Push-Benachrichtigungen erhalten, indem Sie diese aktivieren.</string>
     <string name="settings_sound">Toneinstellungen</string>
     <string name="settings_sound_description">Konfigurieren Sie die Ton- und Vibrationseinstellungen der App.</string>
     <string name="settings_temperature">Temperatur</string>

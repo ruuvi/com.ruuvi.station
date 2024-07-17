@@ -325,4 +325,25 @@ class PreferencesRepository(
     fun setFirebaseConsent(firebaseConsent: Boolean) {
         preferences.firebaseConsent = firebaseConsent
     }
+
+    fun isDisablePushNotifications(): Boolean =
+        preferences.disablePushNotifications
+
+    fun setDisablePushNotifications(value: Boolean) {
+        preferences.disablePushNotifications = value
+    }
+
+    fun isDisableEmailNotifications(): Boolean =
+        preferences.disableEmailNotifications
+
+    fun setDisableEmailNotifications(value: Boolean) {
+        preferences.disableEmailNotifications = value
+    }
+
+    fun isDisableTelegramNotifications(): Boolean =
+        preferences.disableTelegramNotifications
+
+    fun setDisableTelegramNotifications(value: Boolean) {
+        preferences.disableTelegramNotifications = value
+    }
 }

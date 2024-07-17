@@ -19,3 +19,7 @@ fun String.hexStringToByteArray(): ByteArray {
 
     return result
 }
+
+fun String.toBooleanExtra(): Boolean {
+    return this.toBoolean() || this == "1"
+}
