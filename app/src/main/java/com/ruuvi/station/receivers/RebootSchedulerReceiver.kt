@@ -32,11 +32,10 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                         ScanningPeriodicReceiver.start(it, preferences.backgroundScanInterval * 1000L)
                     }
+                    startForegroundService(it)
                 } else {
                     Timber.d("Background scan disabled")
                 }
-
-                startForegroundService(it)
             }
         }
     }
