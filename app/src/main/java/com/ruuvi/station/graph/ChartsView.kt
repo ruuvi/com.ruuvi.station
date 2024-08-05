@@ -245,7 +245,7 @@ fun ChartsView(
                     }
 
 
-                    if (batteryDataTemp.isNotEmpty()) {
+                    if (batteryDataTemp.isNotEmpty() && newChartsUI) {
                         container.add(
                             ChartContainer(
                                 chartSensorType = ChartSensorType.BATTERY,
@@ -258,7 +258,7 @@ fun ChartsView(
                         )
                     }
 
-                    if (accelerationDataTemp.isNotEmpty()) {
+                    if (accelerationDataTemp.isNotEmpty() && newChartsUI) {
                         container.add(
                             ChartContainer(
                                 chartSensorType = ChartSensorType.ACCELERATION,
@@ -271,7 +271,7 @@ fun ChartsView(
                         )
                     }
 
-                    if (rssiDataTemp.isNotEmpty()) {
+                    if (rssiDataTemp.isNotEmpty() && newChartsUI) {
                         container.add(
                             ChartContainer(
                                 chartSensorType = ChartSensorType.RSSI,
@@ -284,7 +284,7 @@ fun ChartsView(
                         )
                     }
 
-                    if (movementDataTemp.isNotEmpty()) {
+                    if (movementDataTemp.isNotEmpty() && newChartsUI) {
                         container.add(
                             ChartContainer(
                                 chartSensorType = ChartSensorType.MOVEMENTS,
@@ -322,61 +322,55 @@ fun ChartsView(
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
             EmptyCharts()
         } else if (isLandscape) {
-            if (newChartsUI) {
-                LandscapeChartsPrototype(
-                    modifier,
-                    chartContainers,
-                    unitsConverter,
-                    graphDrawDots,
-                    showChartStats
-                )
-            } else {
-                LandscapeCharts(
-                    modifier,
-                    temperatureChart,
-                    humidityChart,
-                    pressureChart,
-                    temperatureData,
-                    pressureData,
-                    humidityData,
-                    unitsConverter,
-                    graphDrawDots,
-                    showChartStats,
-                    temperatureLimits,
-                    humidityLimits,
-                    pressureLimits,
-                    from,
-                    to
-                )
-            }
+            LandscapeChartsPrototype(
+                modifier,
+                chartContainers,
+                unitsConverter,
+                graphDrawDots,
+                showChartStats
+            )
+//                LandscapeCharts(
+//                    modifier,
+//                    temperatureChart,
+//                    humidityChart,
+//                    pressureChart,
+//                    temperatureData,
+//                    pressureData,
+//                    humidityData,
+//                    unitsConverter,
+//                    graphDrawDots,
+//                    showChartStats,
+//                    temperatureLimits,
+//                    humidityLimits,
+//                    pressureLimits,
+//                    from,
+//                    to
+//                )
         } else {
-            if (newChartsUI) {
-                VerticalChartsPrototype(
-                    modifier,
-                    chartContainers,
-                    unitsConverter,
-                    graphDrawDots,
-                    showChartStats
-                )
-            } else {
-                VerticalCharts(
-                    modifier,
-                    temperatureChart,
-                    humidityChart,
-                    pressureChart,
-                    temperatureData,
-                    pressureData,
-                    humidityData,
-                    unitsConverter,
-                    graphDrawDots,
-                    showChartStats,
-                    temperatureLimits,
-                    humidityLimits,
-                    pressureLimits,
-                    from,
-                    to
-                )
-            }
+            VerticalChartsPrototype(
+                modifier,
+                chartContainers,
+                unitsConverter,
+                graphDrawDots,
+                showChartStats
+            )
+//                VerticalCharts(
+//                    modifier,
+//                    temperatureChart,
+//                    humidityChart,
+//                    pressureChart,
+//                    temperatureData,
+//                    pressureData,
+//                    humidityData,
+//                    unitsConverter,
+//                    graphDrawDots,
+//                    showChartStats,
+//                    temperatureLimits,
+//                    humidityLimits,
+//                    pressureLimits,
+//                    from,
+//                    to
+//                )
         }
     }
 }

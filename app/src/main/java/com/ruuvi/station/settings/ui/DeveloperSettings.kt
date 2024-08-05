@@ -30,7 +30,7 @@ fun DeveloperSettings(
     PageSurfaceWithPadding {
         Column() {
             SwitchIndicatorRuuvi(
-                text = "New charts UI",
+                text = "Show additional charts",
                 checked = newChartsUi.value,
                 onCheckedChange = viewModel::setNewChartsUi
             )
