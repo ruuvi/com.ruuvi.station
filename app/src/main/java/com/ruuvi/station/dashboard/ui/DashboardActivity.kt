@@ -520,7 +520,7 @@ fun DashboardItem(
         colors.dashboardCardBackground
     }
 
-    Column (
+    Column(
         modifier = modifier
     ) {
         Card(
@@ -596,38 +596,52 @@ fun DashboardItem(
                         moveItem = moveItem
                     )
 
-                    if (sensor.latestMeasurement?.temperatureValue != null) {
-                        BigValueDisplay(
-                            value = sensor.latestMeasurement.temperatureValue,
-                            alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                    if (sensor.latestMeasurement != null) {
+                        if (sensor.latestMeasurement?.temperatureValue != null) {
+                            BigValueDisplay(
+                                value = sensor.latestMeasurement.temperatureValue,
+                                alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                modifier = Modifier
+                                    .constrainAs(bigTemperature) {
+                                        top.linkTo(title.bottom)
+                                        start.linkTo(parent.start)
+                                    }
+                            )
+                        }
+
+                        ItemValuesWithoutTemperature(
+                            sensor = sensor,
+                            modifier = Modifier.constrainAs(values) {
+                                start.linkTo(parent.start)
+                                bottom.linkTo(updated.top)
+                                end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
+                            }
+                        )
+
+                        ItemBottom(
+                            sensor = sensor,
                             modifier = Modifier
-                                .constrainAs(bigTemperature) {
-                                    top.linkTo(title.bottom)
+                                .constrainAs(updated) {
                                     start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                }
+                        )
+                    } else {
+                        ItemBottomNoData(
+                            modifier = Modifier
+                                .constrainAs(updated) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(title.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                    height = Dimension.fillToConstraints
                                 }
                         )
                     }
-
-                    ItemValuesWithoutTemperature(
-                        sensor = sensor,
-                        modifier = Modifier.constrainAs(values) {
-                            start.linkTo(parent.start)
-                            bottom.linkTo(updated.top)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        }
-                    )
-
-                    ItemBottom(
-                        sensor = sensor,
-                        modifier = Modifier
-                            .constrainAs(updated) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                                width = Dimension.fillToConstraints
-                            }
-                    )
                 }
             }
         }
