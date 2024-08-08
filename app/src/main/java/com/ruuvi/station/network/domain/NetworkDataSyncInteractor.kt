@@ -56,7 +56,7 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var autoRefreshJob: Job? = null
 
-    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> ()
+    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> (replay = 1)
     val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
@@ -149,6 +149,8 @@ class NetworkDataSyncInteractor (
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
                 updateSensors(sensorsInfo.data)
+                sendSyncEvent(NetworkSyncEvent.SensorsSynced)
+                updateBackgrounds(sensorsInfo.data)
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
@@ -265,7 +267,7 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private fun setSyncInProgress(status: Boolean) {//} = withContext(Dispatchers.Main) {
+    private fun setSyncInProgress(status: Boolean) {
         Timber.d("SyncInProgress = $status")
         syncInProgress.value = status
     }
@@ -315,16 +317,6 @@ class NetworkDataSyncInteractor (
                 tagEntry.update()
             }
 
-            if (sensor.picture.isNullOrEmpty()) {
-                tagSettingsInteractor.setDefaultBackgroundImageByResource(
-                    sensorId = sensor.sensor,
-                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
-                    uploadNow = true
-                )
-            } else {
-                setSensorImage(sensor, sensorSettings)
-            }
-
             val latestData = sensor.measurements.maxByOrNull { it.timestamp }
             if (latestData != null) {
                 updateLatestMeasurement(
@@ -339,6 +331,22 @@ class NetworkDataSyncInteractor (
         for (sensor in sensors) {
             if (sensor.networkSensor && userInfoData.sensors.none { it.sensor == sensor.id }) {
                 tagRepository.deleteSensorAndRelatives(sensor.id)
+            }
+        }
+    }
+
+    private suspend fun updateBackgrounds(userInfoData: SensorsDenseResponseBody) {
+        userInfoData.sensors.forEach { sensor ->
+            val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
+
+            if (sensor.picture.isNullOrEmpty()) {
+                tagSettingsInteractor.setDefaultBackgroundImageByResource(
+                    sensorId = sensor.sensor,
+                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
+                    uploadNow = true
+                )
+            } else {
+                setSensorImage(sensor, sensorSettings)
             }
         }
     }

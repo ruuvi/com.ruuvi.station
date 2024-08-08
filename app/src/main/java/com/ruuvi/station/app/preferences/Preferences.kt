@@ -497,7 +497,7 @@ class Preferences (val context: Context) {
         private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
-        private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 10
+        private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 0
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_LOCALE = "en"
