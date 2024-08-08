@@ -250,7 +250,10 @@
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
     <string name="gateway_test_success">Palvelin vastasi! Palautekoodi: %1$d</string>
     <string name="gateway_testing">Testataan...</string>
+    <string name="gatt_abort_download">Peruuta lataaminen</string>
+    <string name="gatt_download_failed">Lataus epäonnistui</string>
     <string name="gatt_not_in_range_description">Bluetooth-historian lataus epäonnistui. Tarkasta, että olet Bluetooth-kantaman sisällä, että anturissa on latausta tukeva laiteohjelmisto ja ettei anturi ole yhteydessä toiseen iOS-laitteeseen samanaikaisesti. Ruuvi Stationin iOS-versio varaa anturin yhteyden käyttöönsä jatkuvaa yhteystilaa käytettäessä.</string>
+    <string name="gatt_please_wait">Historian lataaminen voi kestää pitkään Bluetooth-yhteyden laadusta riippuen. Odota hetki.</string>
     <string name="gatt_sync_description">Ruuvi Station lataa anturin sisäisen historian viimeiseltä 10 päivältä, jos historia on saatavilla.\n\nMittaushistoria ladataan Bluetooth-yhteydellä. Varmista, että olet anturin läheisyydessä.</string>
     <string name="general">Yleisasetukset</string>
     <string name="h">t</string>
@@ -381,7 +384,7 @@
     <string name="onboarding_start_anonymous_data_collection_title">Haluan auttaa Ruuvia jakamalla anonyymejä käyttötietoja sovelluksen suorituskyvyn ja vakauden parantamiseksi</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/fi/tietosuoja/#apps</string>
     <string name="onboarding_start_tos_link_markup">yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön</string>
-    <string name="onboarding_start_tos_title">Hyväksyn yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön.</string>
+    <string name="onboarding_start_tos_title">Hyväksyn yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön</string>
     <string name="onboarding_station_web">Ruuvin web-sovelluksessa</string>
     <string name="onboarding_swipe_to_continue">Jatka pyyhkäisemällä →</string>
     <string name="onboarding_via_bluetooth_or_cloud">Bluetoothilla tai Ruuvi Cloudilla</string>

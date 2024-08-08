@@ -84,7 +84,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.7'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.2'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.3'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:2.4.2'

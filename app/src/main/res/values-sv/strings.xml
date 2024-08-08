@@ -250,7 +250,10 @@
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
     <string name="gateway_test_success">Vidarebefordran fungerar! HTTP svarskod: %1$d</string>
     <string name="gateway_testing">Testar...</string>
+    <string name="gatt_abort_download">Avbryt nedladdning</string>
+    <string name="gatt_download_failed">Nedladdning misslyckad</string>
     <string name="gatt_not_in_range_description">Nedladdning av Bluetooth-historik misslyckades. Kontrollera att du är inom Bluetooth-räckvidd, att din sensor har firmware som stöder nedladdning och att sensorn inte samtidigt är ansluten till en annan iOS-enhet. Sensoranslutning är reserverad för Ruuvi Station vid användning av anslutet läge i iOS.</string>
+    <string name="gatt_please_wait">Ibland går nedladdningen av historik långsamt på grund av Bluetooth-anslutningen. Var god vänta ett ögonblick.</string>
     <string name="gatt_sync_description">Ruuvi Station laddar ner sensorns interna historik för de senaste 10 dagarna om mäthistoriken är tillgänglig.\n\nHistorien laddas ner med en Bluetooth-anslutning. Se till att du är nära sensorn.</string>
     <string name="general">Allmänt</string>
     <string name="h">h</string>
@@ -381,7 +384,7 @@
     <string name="onboarding_start_anonymous_data_collection_title">Jag vill hjälpa Ruuvi genom att dela anonym statistik för att förbättra appens prestanda och stabilitet</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">villkoren och integritetspolicyn</string>
-    <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn.</string>
+    <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn</string>
     <string name="onboarding_station_web">Ruuvi webbappen</string>
     <string name="onboarding_swipe_to_continue">Dra för att fortsätta →</string>
     <string name="onboarding_via_bluetooth_or_cloud">med Bluetooth eller Ruuvi Cloud</string>

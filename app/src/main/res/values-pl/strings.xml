@@ -139,6 +139,7 @@
     <string name="gateway_test_fail">To nie pomogło. Kod odpowiedzi: %1$d</string>
     <string name="gateway_test_success">Prace związane z przekazywaniem danych! Kod odpowiedzi: %1$d</string>
     <string name="gateway_testing">Testowanie...</string>
+    <string name="gatt_download_failed">Pobieranie nie udane</string>
     <string name="general">Ogólne</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station to łatwe w użyciu, ale potężne narzędzie pozwalające zwiększyć możliwości czujników Ruuvi. Po prostu dodaj czujniki i gotowe.</string>
@@ -216,7 +217,7 @@
     <string name="onboarding_start_anonymous_data_collection_title">Chcę pomóc Ruuvi, udostępniając anonimowe statystyki w celu poprawy wydajności i stabilności aplikacji</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Warunki użytkowania i Politykę prywatności</string>
-    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności.</string>
+    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności</string>
     <string name="ordering">Sortowanie</string>
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>

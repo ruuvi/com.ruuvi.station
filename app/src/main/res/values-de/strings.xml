@@ -261,7 +261,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="gateway_test_fail">Nein, es hat nicht funktioniert. Antwortcode: %1$d</string>
     <string name="gateway_test_success">Datenweiterleitung funktioniert! Antwortcode: %1$d</string>
     <string name="gateway_testing">Testen...</string>
+    <string name="gatt_abort_download">Download abbrechen</string>
+    <string name="gatt_download_failed">Herunterladen fehlgeschlagen</string>
     <string name="gatt_not_in_range_description">Download der Bluetooth-Historie fehlgeschlagen. Stellen Sie sicher, dass Sie sich in Bluetooth-Reichweite befinden, dass Ihr Sensor über eine Firmware verfügt, die das Herunterladen unterstützt, und dass der Sensor nicht gleichzeitig mit einem anderen iOS-Gerät verbunden ist. Die Sensorverbindung ist für die Ruuvi Station reserviert, wenn der Verbindungsmodus in iOS verwendet wird.</string>
+    <string name="gatt_please_wait">Manchmal ist der Download des Protokolls aufgrund der Bluetooth-Verbindung langsam. Bitte warten Sie einen Moment.</string>
     <string name="gatt_sync_description">Ruuvi Station lädt den internen Verlauf des Sensors für die letzten 10 Tage herunter, wenn der Messverlauf verfügbar ist.\n\nDer Verlauf wird über eine Bluetooth-Verbindung heruntergeladen. Stellen Sie sicher, dass Sie sich in der Nähe des Sensors befinden.</string>
     <string name="general">Allgemein</string>
     <string name="h">h</string>
@@ -392,7 +395,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="onboarding_start_anonymous_data_collection_title">Ich möchte Ruuvi helfen, indem ich anonyme Statistiken teile, um die Leistung und Stabilität der App zu verbessern</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Nutzungsbedingungen und die Datenschutzerklärung</string>
-    <string name="onboarding_start_tos_title">Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.</string>
+    <string name="onboarding_start_tos_title">Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
     <string name="onboarding_swipe_to_continue">Wischen Sie zum Fortfahren →</string>
     <string name="onboarding_via_bluetooth_or_cloud">mit Bluetooth oder Ruuvi Cloud</string>

@@ -251,7 +251,10 @@
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
     <string name="gateway_test_success">Data forwarding works! Response code: %1$d</string>
     <string name="gateway_testing">Testing...</string>
+    <string name="gatt_abort_download">Abort download</string>
+    <string name="gatt_download_failed">Download failed</string>
     <string name="gatt_not_in_range_description">Bluetooth history download failed. Check that you\'re within Bluetooth range, your sensor has firmware that supports downloading and that the sensor is not simultaneously connected to another iOS device. Sensor connection is reserved for Ruuvi Station when using connected mode in iOS.</string>
+    <string name="gatt_please_wait">Sometimes the history download is slow due to the Bluetooth connectivity. Please wait a moment.</string>
     <string name="gatt_sync_description">Ruuvi Station downloads the internal history of the sensor for the last 10 days if the measurement history is available.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
     <string name="general">General</string>
     <string name="h">h</string>
@@ -382,7 +385,7 @@
     <string name="onboarding_start_anonymous_data_collection_title">I want to help Ruuvi by sharing anonymous statistics to improve app performance and stability</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Terms of Service and Privacy Policy</string>
-    <string name="onboarding_start_tos_title">I accept Terms of Service and Privacy Policy.</string>
+    <string name="onboarding_start_tos_title">I accept Terms of Service and Privacy Policy</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
     <string name="onboarding_swipe_to_continue">Swipe to continue →</string>
     <string name="onboarding_via_bluetooth_or_cloud">using Bluetooth or Ruuvi Cloud</string>

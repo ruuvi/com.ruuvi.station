@@ -255,7 +255,10 @@
     <string name="gateway_test_fail">Erreur. Réponse : %1$d</string>
     <string name="gateway_test_success">Le routeur fonctionne ! Réponse : %1$d</string>
     <string name="gateway_testing">Test en cours...</string>
+    <string name="gatt_abort_download">Abandonner le téléchargement</string>
+    <string name="gatt_download_failed">Échec du téléchargement</string>
     <string name="gatt_not_in_range_description">Le téléchargement de l\'historique Bluetooth a échoué. Vérifiez que vous êtes à portée Bluetooth, que votre capteur possède un micrologiciel prenant en charge le téléchargement et que le capteur n\'est pas simultanément connecté à un autre appareil iOS. La connexion du capteur est réservée à la Ruuvi Station lorsque vous utilisez le mode connecté dans iOS.</string>
+    <string name="gatt_please_wait">Parfois, le téléchargement de l\'historique est lent en raison de la connectivité Bluetooth. Veuillez patienter un moment.</string>
     <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="general">Général</string>
     <string name="h">h</string>
@@ -386,7 +389,7 @@
     <string name="onboarding_start_anonymous_data_collection_title">Je souhaite aider Ruuvi en partageant des statistiques anonymes pour améliorer les performances et la stabilité de l\'application</string>
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Conditions d\'utilisation et la Politique de confidentialit</string>
-    <string name="onboarding_start_tos_title">J\'accepte les Conditions d\'utilisation et la Politique de confidentialité.</string>
+    <string name="onboarding_start_tos_title">J\'accepte les Conditions d\'utilisation et la Politique de confidentialité</string>
     <string name="onboarding_station_web">l\'application Web Ruuvi</string>
     <string name="onboarding_swipe_to_continue">Balayez pour continuer →</string>
     <string name="onboarding_via_bluetooth_or_cloud">en utilisant Bluetooth ou Ruuvi Cloud</string>

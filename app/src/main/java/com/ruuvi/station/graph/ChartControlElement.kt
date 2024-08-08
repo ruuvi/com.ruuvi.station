@@ -26,6 +26,7 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 @Composable
@@ -53,6 +54,10 @@ fun ChartControlElement2(
         mutableStateOf(false)
     }
 
+    var disconnectDialogOpened by remember {
+        mutableStateOf(false)
+    }
+
     var syncInProgress by remember {
         mutableStateOf(false)
     }
@@ -66,7 +71,7 @@ fun ChartControlElement2(
     }
 
     LaunchedEffect(key1 = true) {
-        syncStatus.collect() { event ->
+        syncStatus.collectLatest { event ->
             Timber.d("SyncEvent collected $event")
 
             if (listOf(
@@ -86,7 +91,7 @@ fun ChartControlElement2(
     Row(verticalAlignment = Alignment.CenterVertically) {
         if (syncInProgress) {
             IconButton(onClick = {
-                disconnectGattAction(sensorId)
+                disconnectDialogOpened = true
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_clear_24),
@@ -163,19 +168,17 @@ fun ChartControlElement2(
     if (uiEvent != null) {
         when (uiEvent) {
             SyncProgress.DISCONNECTED -> {
-                RuuviMessageDialog(message = stringResource(id = R.string.disconnected)) {
-                    uiEvent = null
-                }
+                uiEvent = null
             }
             SyncProgress.NOT_SUPPORTED -> {
                 RuuviMessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
                     uiEvent = null
                 }
             }
-            SyncProgress.NOT_FOUND -> {
+            SyncProgress.NOT_FOUND, SyncProgress.ERROR -> {
                 if (!gattSyncDialogOpened) {
                     RuuviConfirmDialog(
-                        title = stringResource(id = R.string.error),
+                        title = stringResource(id = R.string.gatt_download_failed),
                         message = stringResource(id = R.string.gatt_not_in_range_description),
                         noButtonCaption = stringResource(id = R.string.close),
                         yesButtonCaption = stringResource(id = R.string.try_again),
@@ -186,11 +189,6 @@ fun ChartControlElement2(
                         uiEvent = null
                         syncGatt(sensorId)
                     }
-                }
-            }
-            SyncProgress.ERROR -> {
-                RuuviMessageDialog(message = stringResource(id = R.string.something_went_wrong)) {
-                    uiEvent = null
                 }
             }
             else -> {
@@ -207,6 +205,17 @@ fun ChartControlElement2(
             },
             onDismissRequest = {
                 gattSyncDialogOpened = false
+            }
+        )
+    }
+
+    if (disconnectDialogOpened) {
+        DisconnectConfirmDialog(
+            onDisconnesct = {
+                disconnectGattAction(sensorId)
+            },
+            onDismissRequest = {
+                disconnectDialogOpened = false
             }
         )
     }
@@ -417,6 +426,23 @@ fun GattSyncDescriptionDialog(
                 
             }
         }
+    }
+}
+
+@Composable
+fun DisconnectConfirmDialog(
+    onDisconnesct: () -> Unit,
+    onDismissRequest : () -> Unit,
+) {
+    RuuviConfirmDialog(
+        title = stringResource(id = R.string.dialog_are_you_sure),
+        message = stringResource(id = R.string.gatt_please_wait),
+        noButtonCaption = stringResource(id = R.string.ok),
+        yesButtonCaption = stringResource(id = R.string.gatt_abort_download),
+        onDismissRequest = onDismissRequest
+    ) {
+        onDismissRequest.invoke()
+        onDisconnesct.invoke()
     }
 }
 
