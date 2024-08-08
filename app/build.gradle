@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 34
         compileSdk 34
-        versionCode 210010
-        versionName "2.10.10"
+        versionCode 210012
+        versionName "2.10.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -130,8 +130,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
 
     implementation 'com.google.android.gms:play-services-location:18.0.0'
-    implementation 'com.google.android.play:core:1.10.3'
-    implementation 'com.google.android.play:core-ktx:1.8.1'
+    implementation 'com.google.android.play:review-ktx:2.0.1'
 
     implementation 'com.koushikdutta.ion:ion:3.1.0'
 //    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
