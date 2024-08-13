@@ -10,6 +10,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,7 +44,9 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -59,6 +62,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -111,7 +115,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val lifecycleOwner = LocalLifecycleOwner.current
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
-                val systemBarsColor = RuuviStationTheme.colors.dashboardBackground
+                val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
                 val context = LocalContext.current
                 val isDarkTheme = isSystemInDarkTheme()
@@ -127,6 +131,12 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
+                val coroutineScope = rememberCoroutineScope()
+                val navigationColor = if (gestureNavigationEnabled()) {
+                    Color.Transparent
+                } else {
+                    colors.navigationTransparent
+                }
 
                 NotificationPermission(
                     scaffoldState = scaffoldState,
@@ -273,18 +283,21 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         darkIcons = !isDarkTheme
                     )
                     systemUiController.setNavigationBarColor(
-                        color = Color.Transparent,
+                        color = navigationColor,
+                        navigationBarContrastEnforced = false,
                         darkIcons = !isDarkTheme
                     )
                 }
 
-                LaunchedEffect(key1 = true) {
-                    while (true) {
-                        if (!dragDropListState.isDragInProgress) {
-                            Timber.d("Refreshing dashboard")
-                            dashboardViewModel.refreshSensors()
+                LaunchedEffect(key1 = null) {
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        while (true) {
+                            if (!dragDropListState.isDragInProgress) {
+                                Timber.d("Refreshing dashboard")
+                                dashboardViewModel.refreshSensors()
+                            }
+                            delay(1000)
                         }
-                        delay(1000)
                     }
                 }
             }
@@ -449,20 +462,26 @@ fun DashboardItems(
                 when (dashboardType) {
                     DashboardType.SIMPLE_VIEW ->
                         DashboardItemSimple(
+                            lazyGridState = dragDropListState.getLazyListState(),
+                            itemIndex = index,
                             sensor = sensor,
                             userEmail = userEmail,
                             setName = setName,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            moveItem = onMove
                             )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
+                            lazyGridState = dragDropListState.getLazyListState(),
+                            itemIndex = index,
                             itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
-                            setName = setName
+                            setName = setName,
+                            moveItem = onMove
                         )
                 }
             }
@@ -474,12 +493,15 @@ fun DashboardItems(
 
 @Composable
 fun DashboardItem(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
-    setName: (String, String?) -> Unit
+    setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -561,6 +583,8 @@ fun DashboardItem(
                     )
 
                     ItemButtons(
+                        lazyGridState = lazyGridState,
+                        itemIndex = itemIndex,
                         sensor = sensor,
                         userEmail = userEmail,
                         modifier = Modifier
@@ -568,7 +592,8 @@ fun DashboardItem(
                                 top.linkTo(parent.top)
                                 end.linkTo(parent.end)
                             },
-                        setName = setName
+                        setName = setName,
+                        moveItem = moveItem
                     )
 
                     if (sensor.latestMeasurement?.temperatureValue != null) {
@@ -611,9 +636,12 @@ fun DashboardItem(
 
 @Composable
 fun DashboardItemSimple(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
 ) {
@@ -679,6 +707,8 @@ fun DashboardItemSimple(
                 )
 
                 ItemButtons(
+                    lazyGridState = lazyGridState,
+                    itemIndex = itemIndex,
                     sensor = sensor,
                     userEmail = userEmail,
                     modifier = Modifier
@@ -686,7 +716,8 @@ fun DashboardItemSimple(
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
                         },
-                    setName = setName
+                    setName = setName,
+                    moveItem = moveItem
                 )
 
                 ItemValues(
@@ -733,9 +764,12 @@ fun ItemName(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemButtons(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -779,7 +813,7 @@ fun ItemButtons(
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
             }
 
-            DashboardItemDropdownMenu(sensor, userEmail, setName)
+            DashboardItemDropdownMenu(lazyGridState, itemIndex, sensor, userEmail, setName, moveItem)
         }
     }
 }
@@ -1055,14 +1089,18 @@ fun BigValueDisplay(
 
 @Composable
 fun DashboardItemDropdownMenu(
+    lazyGridState: LazyGridState,
+    itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
-    setName: (String, String?) -> Unit
+    setName: (String, String?) -> Unit,
+    moveItem: (Int, Int) -> Unit
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
     }
+    val coroutineScope = rememberCoroutineScope()
 
     var setNameDialog by remember { mutableStateOf(false) }
 
@@ -1090,7 +1128,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.full_image_view
                 ))
             }
@@ -1099,7 +1137,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.history_view
                 ))
             }
@@ -1107,7 +1145,7 @@ fun DashboardItemDropdownMenu(
                 TagSettingsActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.settings_and_alerts
                 ))
             }
@@ -1115,7 +1153,7 @@ fun DashboardItemDropdownMenu(
                 BackgroundActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.change_background
                 ))
             }
@@ -1124,9 +1162,39 @@ fun DashboardItemDropdownMenu(
                 setNameDialog = true
                 threeDotsMenuExpanded = false
             }) {
-                com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                Paragraph(text = stringResource(
                     id = R.string.rename
                 ))
+            }
+
+            if (itemIndex != 0) {
+                DropdownMenuItem(onClick = {
+                    var newIndex = itemIndex - 1
+                    moveItem(itemIndex, newIndex)
+                    if (newIndex < 0) newIndex = 0
+                    threeDotsMenuExpanded = false
+                    coroutineScope.launch {
+                        lazyGridState.centerViewportOnItem(newIndex)
+                    }
+                }) {
+                    Paragraph(text = stringResource(id = R.string.move_up))
+                }
+            }
+
+            if (itemIndex != lazyGridState.layoutInfo.totalItemsCount - 2) {
+                DropdownMenuItem(onClick = {
+                    var newIndex = itemIndex + 1
+                    moveItem(itemIndex, newIndex)
+                    if (newIndex >= lazyGridState.layoutInfo.totalItemsCount) {
+                        newIndex = lazyGridState.layoutInfo.totalItemsCount - 2
+                    }
+                    threeDotsMenuExpanded = false
+                    coroutineScope.launch {
+                        lazyGridState.centerViewportOnItem(newIndex)
+                    }
+                }) {
+                    Paragraph(text = stringResource(id = R.string.move_down))
+                }
             }
 
             if (canBeClaimed) {
@@ -1134,7 +1202,7 @@ fun DashboardItemDropdownMenu(
                     ClaimSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    Paragraph(text = stringResource(
                         id = R.string.claim_sensor
                     ))
                 }
@@ -1143,10 +1211,19 @@ fun DashboardItemDropdownMenu(
                     ShareSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    com.ruuvi.station.app.ui.components.Paragraph(text = stringResource(
+                    Paragraph(text = stringResource(
                         id = R.string.share
                     ))
                 }
+            }
+
+            DropdownMenuItem(onClick = {
+                TagSettingsActivity.startToRemove(context, sensor.id)
+                threeDotsMenuExpanded = false
+            }) {
+                Paragraph(text = stringResource(
+                    id = R.string.remove
+                ))
             }
         }
     }

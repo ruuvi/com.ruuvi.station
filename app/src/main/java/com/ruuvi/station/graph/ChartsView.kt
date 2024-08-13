@@ -28,6 +28,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
@@ -39,6 +40,7 @@ import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 private val chartHeight = 220.dp
 
@@ -49,6 +51,10 @@ fun ChartsView(
     temperatureChart: LineChart,
     humidityChart: LineChart,
     pressureChart: LineChart,
+    batteryChart: LineChart,
+    accelerationChart: LineChart,
+    rssiChart: LineChart,
+    movementsChart: LineChart,
     unitsConverter: UnitsConverter,
     selected: Boolean,
     graphDrawDots: Boolean,
@@ -63,6 +69,10 @@ fun ChartsView(
     val context = LocalContext.current
 
     var viewPeriodLocal by remember { mutableStateOf<Period?>(null) }
+
+    var chartContainers by remember {
+        mutableStateOf<List<ChartContainer>>(ArrayList())
+    }
 
     var temperatureData by remember {
         mutableStateOf<MutableList<Entry>>(ArrayList())
@@ -100,9 +110,15 @@ fun ChartsView(
     LaunchedEffect(key1 = sensorId) {
         Timber.d("ChartView - initial setup $sensorId")
         chartsInitialSetup(
-            temperatureChart = temperatureChart,
-            humidityChart = humidityChart,
-            pressureChart = pressureChart,
+            charts = listOf(
+                ChartSensorType.TEMPERATURE to temperatureChart,
+                ChartSensorType.HUMIDITY to humidityChart,
+                ChartSensorType.PRESSURE to pressureChart,
+                ChartSensorType.BATTERY to batteryChart,
+                ChartSensorType.RSSI to rssiChart,
+                ChartSensorType.ACCELERATION to accelerationChart,
+                ChartSensorType.MOVEMENTS to movementsChart
+            ),
             unitsConverter = unitsConverter,
             context = context
         )
@@ -125,6 +141,8 @@ fun ChartsView(
     LaunchedEffect(key1 = selected, viewPeriod) {
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
+            val container = mutableListOf<ChartContainer>()
+
             Timber.d("ChartView - get history $sensorId")
             delay(300)
             val freshHistory = getHistory.invoke(sensorId)
@@ -162,6 +180,11 @@ fun ChartsView(
                     val temperatureDataTemp = mutableListOf<Entry>()
                     val humidityDataTemp = mutableListOf<Entry>()
                     val pressureDataTemp = mutableListOf<Entry>()
+                    val batteryDataTemp = mutableListOf<Entry>()
+                    val accelerationDataTemp = mutableListOf<Entry>()
+                    val rssiDataTemp = mutableListOf<Entry>()
+                    val movementDataTemp = mutableListOf<Entry>()
+
                     history.forEach { item ->
                         val timestamp = (item.createdAt.time - from).toFloat()
                         temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(item.temperature).toFloat()))
@@ -171,10 +194,113 @@ fun ChartsView(
                         item.pressure?.let {pressure ->
                             pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
                         }
+                        item.voltage?.let {voltage ->
+                            batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
+                        }
+                        item.accelX?.let {accelX ->
+                            accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
+                        }
+                        item.rssi?.let {rssi ->
+                            rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
+                        }
+                        item.movementCounter?.let {movements ->
+                            movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                        }
                     }
+                    container.add(
+                        ChartContainer(
+                            chartSensorType = ChartSensorType.TEMPERATURE,
+                            uiComponent = temperatureChart,
+                            data = temperatureDataTemp,
+                            limits = temperatureLimits,
+                            from = from,
+                            to = to
+                        )
+                    )
+
+                    if (humidityDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.HUMIDITY,
+                                uiComponent = humidityChart,
+                                data = humidityDataTemp,
+                                limits = humidityLimits,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
+                    if (pressureDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.PRESSURE,
+                                uiComponent = pressureChart,
+                                data = pressureDataTemp,
+                                limits = pressureLimits,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
+
+                    if (batteryDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.BATTERY,
+                                uiComponent = batteryChart,
+                                data = batteryDataTemp,
+                                limits = null,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
+                    if (accelerationDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.ACCELERATION,
+                                uiComponent = accelerationChart,
+                                data = accelerationDataTemp,
+                                limits = null,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
+                    if (rssiDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.RSSI,
+                                uiComponent = rssiChart,
+                                data = rssiDataTemp,
+                                limits = null,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
+                    if (movementDataTemp.isNotEmpty()) {
+                        container.add(
+                            ChartContainer(
+                                chartSensorType = ChartSensorType.MOVEMENTS,
+                                uiComponent = movementsChart,
+                                data = movementDataTemp,
+                                limits = null,
+                                from = from,
+                                to = to
+                            )
+                        )
+                    }
+
                     temperatureData = temperatureDataTemp
                     humidityData = humidityDataTemp
                     pressureData = pressureDataTemp
+                    chartContainers = container
                 }
             }
             isLoading = false
@@ -199,20 +325,10 @@ fun ChartsView(
             if (newChartsUI) {
                 LandscapeChartsPrototype(
                     modifier,
-                    temperatureChart,
-                    humidityChart,
-                    pressureChart,
-                    temperatureData,
-                    pressureData,
-                    humidityData,
+                    chartContainers,
                     unitsConverter,
                     graphDrawDots,
-                    showChartStats,
-                    temperatureLimits,
-                    humidityLimits,
-                    pressureLimits,
-                    from,
-                    to
+                    showChartStats
                 )
             } else {
                 LandscapeCharts(
@@ -237,20 +353,10 @@ fun ChartsView(
             if (newChartsUI) {
                 VerticalChartsPrototype(
                     modifier,
-                    temperatureChart,
-                    humidityChart,
-                    pressureChart,
-                    temperatureData,
-                    pressureData,
-                    humidityData,
+                    chartContainers,
                     unitsConverter,
                     graphDrawDots,
-                    showChartStats,
-                    temperatureLimits,
-                    humidityLimits,
-                    pressureLimits,
-                    from,
-                    to
+                    showChartStats
                 )
             } else {
                 VerticalCharts(
@@ -278,25 +384,15 @@ fun ChartsView(
 @Composable
 fun VerticalChartsPrototype(
     modifier: Modifier,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    temperatureData: MutableList<Entry>,
-    pressureData: MutableList<Entry>,
-    humidityData: MutableList<Entry>,
+    chartContainers: List<ChartContainer>,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    temperatureLimits: Pair<Double, Double>?,
-    humidityLimits: Pair<Double, Double>?,
-    pressureLimits: Pair<Double, Double>?,
-    from: Long,
-    to: Long
+    showChartStats: Boolean
 ) {
     val clearMarker = {
-        temperatureChart.highlightValue(null)
-        pressureChart.highlightValue(null)
-        humidityChart.highlightValue(null)
+        for (chartContainer in chartContainers) {
+            chartContainer.uiComponent.highlightValue(null)
+        }
     }
 
     val listState = rememberLazyListState()
@@ -306,58 +402,24 @@ fun VerticalChartsPrototype(
         modifier = modifier
             .scrollbar(state = listState, horizontal = false)
     ) {
-        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
+        if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
             item {
                 EmptyCharts()
             }
         } else {
-            item {
-                ChartViewPrototype(
-                    temperatureChart,
-                    Modifier.fillMaxWidth(),
-                    temperatureData,
-                    unitsConverter,
-                    ChartSensorType.TEMPERATURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = temperatureLimits,
-                    from,
-                    to,
-                    chartHeight,
-                    clearMarker
-                )
-            }
-            if (humidityData.isNotEmpty()) {
+            for (chartContainer in chartContainers) {
                 item {
                     ChartViewPrototype(
-                        humidityChart,
+                        chartContainer.uiComponent,
                         Modifier.fillMaxWidth(),
-                        humidityData,
+                        chartContainer.data,
                         unitsConverter,
-                        ChartSensorType.HUMIDITY,
+                        chartContainer.chartSensorType,
                         graphDrawDots,
                         showChartStats,
-                        limits = humidityLimits,
-                        from,
-                        to,
-                        chartHeight,
-                        clearMarker
-                    )
-                }
-            }
-            if (pressureData.isNotEmpty()) {
-                item {
-                    ChartViewPrototype(
-                        pressureChart,
-                        Modifier.fillMaxWidth(),
-                        pressureData,
-                        unitsConverter,
-                        ChartSensorType.PRESSURE,
-                        graphDrawDots,
-                        showChartStats,
-                        limits = pressureLimits,
-                        from,
-                        to,
+                        limits = chartContainer.limits,
+                        chartContainer.from,
+                        chartContainer.to,
                         chartHeight,
                         clearMarker
                     )
@@ -371,32 +433,19 @@ fun VerticalChartsPrototype(
 @Composable
 fun LandscapeChartsPrototype(
     modifier: Modifier,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    temperatureData: MutableList<Entry>,
-    pressureData: MutableList<Entry>,
-    humidityData: MutableList<Entry>,
+    chartContainers: List<ChartContainer>,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    temperatureLimits: Pair<Double, Double>?,
-    humidityLimits: Pair<Double, Double>?,
-    pressureLimits: Pair<Double, Double>?,
-    from: Long,
-    to: Long
+    showChartStats: Boolean
 ) {
     val clearMarker = {
-        temperatureChart.highlightValue(null)
-        humidityChart.highlightValue(null)
-        pressureChart.highlightValue(null)
+        for (chartContainer in chartContainers) {
+            chartContainer.uiComponent.highlightValue(null)
+        }
     }
-    val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
-    if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
-    if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
 
     val pagerState = rememberPagerState {
-        return@rememberPagerState chartTypes.size
+        return@rememberPagerState chartContainers.size
     }
 
     VerticalPager(
@@ -404,58 +453,22 @@ fun LandscapeChartsPrototype(
         state = pagerState,
         beyondBoundsPageCount = 3
     ) { page ->
-        val chartSensorType = chartTypes[page]
+        val chartContainer = chartContainers[page]
 
-        when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> {
-                ChartViewPrototype(
-                    temperatureChart,
-                    Modifier.fillMaxSize(),
-                    temperatureData,
-                    unitsConverter,
-                    ChartSensorType.TEMPERATURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = temperatureLimits,
-                    from,
-                    to,
-                    null,
-                    clearMarker
-                )
-            }
-            ChartSensorType.HUMIDITY -> {
-                ChartViewPrototype(
-                    humidityChart,
-                    Modifier.fillMaxSize(),
-                    humidityData,
-                    unitsConverter,
-                    ChartSensorType.HUMIDITY,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = humidityLimits,
-                    from,
-                    to,
-                    null,
-                    clearMarker
-                )
-            }
-            ChartSensorType.PRESSURE -> {
-                ChartViewPrototype(
-                    pressureChart,
-                    Modifier.fillMaxSize(),
-                    pressureData,
-                    unitsConverter,
-                    ChartSensorType.PRESSURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = pressureLimits,
-                    from,
-                    to,
-                    null,
-                    clearMarker
-                )
-            }
-        }
+        ChartViewPrototype(
+            chartContainer.uiComponent,
+            Modifier.fillMaxWidth(),
+            chartContainer.data,
+            unitsConverter,
+            chartContainer.chartSensorType,
+            graphDrawDots,
+            showChartStats,
+            limits = chartContainer.limits,
+            chartContainer.from,
+            chartContainer.to,
+            chartHeight,
+            clearMarker
+        )
     }
 }
 
@@ -697,6 +710,7 @@ fun LandscapeCharts(
                     clearMarker
                 )
             }
+            else -> {}
         }
     }
 }

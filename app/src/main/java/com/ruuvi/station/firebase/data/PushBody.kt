@@ -24,7 +24,8 @@ data class AlertMessage(
     val alertData: String,
     val showLocallyFormatted: Boolean?,
     val title: String,
-    val body: String
+    val body: String,
+    val subtitle: String
 ) {
 
     val alarmType: AlarmType?

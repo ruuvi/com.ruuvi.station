@@ -29,6 +29,8 @@ import com.google.accompanist.pager.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.RuuviCheckbox
+import com.ruuvi.station.app.ui.components.RuuviCheckboxHypertext
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -59,8 +61,11 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
                 val systemUiController = rememberSystemUiController()
                 val isDarkTheme = isSystemInDarkTheme()
 
-                OnboardingBody(onboardingViewModel.signedIn) {
-                    onboardingViewModel.onboardingFinished()
+                OnboardingBody(
+                    firstStart = onboardingViewModel.firstStart,
+                    signedIn = onboardingViewModel.signedIn
+                ) {firebaseConsent ->
+                    onboardingViewModel.onboardingFinished(firebaseConsent)
                     if (onboardingViewModel.signedIn) {
                         StartupActivity.start(this)
                     } else {
@@ -76,7 +81,8 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
                     )
                     systemUiController.setNavigationBarColor(
                         color = Color.Transparent,
-                        darkIcons = !isDarkTheme
+                        navigationBarContrastEnforced = false,
+                        darkIcons = false
                     )
                 }
             }
@@ -96,10 +102,16 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
 @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun OnboardingBody(
+    firstStart: Boolean,
     signedIn: Boolean,
-    onFinishAction: () -> Unit
+    onFinishAction: (firebaseConsent: Boolean) -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val initialPage = if (firstStart) {
+        0
+    } else {
+        OnboardingPages.entries.indexOf(OnboardingPages.FINISH)
+    }
+    val pagerState = rememberPagerState(initialPage)
 
     GlideImage(
         modifier = Modifier.fillMaxSize(),
@@ -437,7 +449,7 @@ fun FitImageAboveBanner(
 @Composable
 fun FinishPage(
     signedIn: Boolean,
-    continueAction: ()-> Unit
+    continueAction: (Boolean)-> Unit
 ) {
     Column(
         modifier = Modifier
@@ -447,18 +459,42 @@ fun FinishPage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
         if (signedIn) {
             OnboardingTitle(stringResource(id = R.string.onboarding_lets_get_started))
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-            OnboardingSubTitle(stringResource(id = R.string.onboarding_lets_get_started_description))
         } else {
             OnboardingTitle(stringResource(id = R.string.onboarding_almost_there))
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-            OnboardingSubTitle(stringResource(id = R.string.onboarding_go_to_sign_in))
+        }
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+        var acceptTerms by remember {
+            mutableStateOf(false)
+        }
+        var firebaseConsent by remember {
+            mutableStateOf(false)
+        }
+        RuuviCheckboxHypertext(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+            checked = acceptTerms,
+            text = stringResource(id = R.string.onboarding_start_tos_title),
+            linkText = listOf(stringResource(id = R.string.onboarding_start_tos_link_markup)),
+            hyperlinks = listOf(stringResource(id = R.string.onboarding_start_tos_link))
+        ) {
+            acceptTerms = it
+        }
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        RuuviCheckbox(
+            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
+            checked = firebaseConsent,
+            textStyle = RuuviStationTheme.typography.paragraphOnboarding,
+            text = stringResource(id = R.string.onboarding_start_anonymous_data_collection_title)
+        ) {
+            firebaseConsent = it
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-        RuuviButton(text = stringResource(id = R.string.onboarding_continue)) {
-            continueAction.invoke()
+
+        RuuviButton(text = stringResource(id = R.string.onboarding_continue), enabled = acceptTerms) {
+            continueAction.invoke(firebaseConsent)
         }
         Column(modifier = Modifier.weight(1f)) {
             BackgroundBeaver(R.drawable.onboarding_beaver_end)

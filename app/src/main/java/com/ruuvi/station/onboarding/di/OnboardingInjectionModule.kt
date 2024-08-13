@@ -8,6 +8,6 @@ import org.kodein.di.generic.provider
 
 object OnboardingInjectionModule {
     val module = Kodein.Module(OnboardingInjectionModule.javaClass.name) {
-        bind<OnboardingViewModel>() with provider { OnboardingViewModel(instance(), instance()) }
+        bind<OnboardingViewModel>() with provider { OnboardingViewModel(instance(), instance(), instance()) }
     }
 }

@@ -49,6 +49,9 @@ class AlarmItemsViewModel(
     fun getPossibleRange(type: AlarmType): ClosedFloatingPointRange<Float> =
         alarmsInteractor.getPossibleRange(type)
 
+    fun getExtraRange(type: AlarmType): ClosedFloatingPointRange<Float> =
+        alarmsInteractor.getExtraRange(type)
+
     fun setEnabled(type: AlarmType, enabled: Boolean) {
         val alarmItem = _alarms.firstOrNull { it.type == type }
 
@@ -154,6 +157,11 @@ class AlarmItemsViewModel(
             val savableHigh = alarmsInteractor.getSavableValue(type, max).round(4)
             val savableLow = alarmsInteractor.getSavableValue(type, min).round(4)
 
+            val extraRange = getExtraRange(type)
+            val possibleRange = getPossibleRange(type)
+            val extended = (!possibleRange.contains(savableHigh) && extraRange.contains(savableHigh)) ||
+                (!possibleRange.contains(savableLow) && extraRange.contains(savableLow))
+
             val newAlarm = alarmItem.copy(
                 min = savableLow,
                 max = savableHigh,
@@ -161,6 +169,7 @@ class AlarmItemsViewModel(
                 displayLow = alarmsInteractor.getDisplayValue(min.toFloat()),
                 rangeHigh = alarmsInteractor.getRangeValue(type, savableHigh.toFloat()),
                 displayHigh = alarmsInteractor.getDisplayValue(max.toFloat()),
+                extended = alarmItem.extended || extended
             )
             _alarms[itemIndex] = newAlarm
             saveAlarm(newAlarm)
@@ -168,7 +177,7 @@ class AlarmItemsViewModel(
     }
 
     fun validateRange(type: AlarmType, min: Double?, max: Double?): Boolean {
-        val possibleRange = getPossibleRange(type)
+        val possibleRange = getExtraRange(type)
         val result = if (min != null && max !=null) {
             if (type == AlarmType.OFFLINE) {
                 max >= possibleRange.start && max <= possibleRange.endInclusive

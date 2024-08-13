@@ -37,6 +37,6 @@ object SettingsInjectionModule {
 
         bind<AlertNotificationsSettingsViewModel>() with provider { AlertNotificationsSettingsViewModel(instance()) }
 
-        bind<DeveloperSettingsViewModel>() with provider { DeveloperSettingsViewModel(instance(), instance()) }
+        bind<DeveloperSettingsViewModel>() with provider { DeveloperSettingsViewModel(instance(), instance(), instance()) }
     }
 }

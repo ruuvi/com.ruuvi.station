@@ -4,6 +4,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.and
 import com.raizlabs.android.dbflow.kotlinextensions.save
 import com.raizlabs.android.dbflow.kotlinextensions.update
 import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.ruuvi.station.alarm.domain.AlarmType.Companion.getByDbCode
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.Alarm_Table
 import java.util.*
@@ -84,6 +85,11 @@ class AlarmRepository {
             alarm = Alarm()
         }
 
+        val extraRange = getByDbCode(type).extraRange
+        val possibleRange = getByDbCode(type).possibleRange
+        val extended = (!possibleRange.contains(min.toInt()) && extraRange.contains(min.toInt())) ||
+                (!possibleRange.contains(max.toInt()) && extraRange.contains(max.toInt()))
+
         val min = if (type == Alarm.MOVEMENT) 0.0 else min
         val max = if (type == Alarm.MOVEMENT) 0.0 else max
 
@@ -95,6 +101,7 @@ class AlarmRepository {
         alarm.customDescription = description
         alarm.mutedTill = mutedTill
         alarm.latestTriggered = if (enabled) alarm.latestTriggered else null
+        alarm.extended = alarm.extended || extended
         alarm.save()
         return alarm
     }

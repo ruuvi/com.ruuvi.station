@@ -21,32 +21,37 @@ class PushAlertInteractor(
 ) {
     fun processAlertPush(message: AlertMessage, context: Context) {
         message.alarmType.let { alarmType ->
-            val notificationMessage = getMessage(message, context)
+            val localAlert = getLocalAlert(message.id, message.alarmType)
+            val notificationMessage = getMessage(context, message, localAlert)
+
+            if (isLocallyMuted(localAlert)) {
+                Timber.d("Alert is locally muted till $localAlert. Message: $message")
+                return
+            }
             if (notificationMessage != null) {
-                val localAlert = getLocalAlert(message.id, message.alarmType)
-                if (isLocallyMuted(localAlert)) {
-                    Timber.d("Alert is locally muted till $localAlert. Message: $message")
-                    return
-                }
-
-                val notificationData = AlertNotificationInteractor.AlertNotificationData(
-                    sensorId = message.id,
-                    message = notificationMessage.first,
-                    alarmId = localAlert?.id,
-                    sensorName = message.name,
-                    alertCustomDescription = notificationMessage.second
+                alertNotificationInteractor.notify(
+                    notificationId = notificationMessage.alarmId ?: -1,
+                    notificationData = notificationMessage
                 )
-
-                alertNotificationInteractor.notify(localAlert?.id ?: -1, notificationData)
             }
         }
     }
 
-    fun getMessage(message: AlertMessage, context: Context): Pair<String, String>? {
-        val title = if (message.showLocallyFormatted == false && message.title.isNotEmpty()) {
-            message.title
+    fun getMessage(
+        context: Context,
+        message: AlertMessage,
+        alarm: Alarm?
+    ): AlertNotificationInteractor.AlertNotificationData? {
+        if (message.showLocallyFormatted == false) {
+            return AlertNotificationInteractor.AlertNotificationData(
+                sensorId = message.id,
+                title = message.title,
+                body = message.body,
+                summary = message.subtitle,
+                alarmId = alarm?.id,
+            )
         } else {
-            when (message.alarmType) {
+            val title = when (message.alarmType) {
                 AlarmType.HUMIDITY -> {
                     getHumidityMessage(message, context)
                 }
@@ -63,13 +68,17 @@ class PushAlertInteractor(
                 AlarmType.OFFLINE -> getOfflineMessage(message, context)
                 else -> null
             }
+
+            return title?.let {
+                AlertNotificationInteractor.AlertNotificationData(
+                    sensorId = message.id,
+                    title = it,
+                    body = message.alertData,
+                    summary = message.name,
+                    alarmId = alarm?.id,
+                )
+            }
         }
-        val body = if (message.showLocallyFormatted == false && message.body.isNotEmpty()) {
-            message.body
-        } else {
-            message.alertData
-        }
-        return title?.let { title to body }
     }
 
     fun getHumidityMessage(message: AlertMessage, context: Context): String {

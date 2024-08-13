@@ -60,7 +60,8 @@ data class RuuviStationColors(
     val secondaryTextColor: Color,
     val backgroundAlpha: Float,
     val onboardingTextColor: Color,
-    val dangerousButton: Color
+    val dangerousButton: Color,
+    val navigationTransparent: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -91,7 +92,8 @@ val lightPalette = RuuviStationColors(
     secondaryTextColor = Titan50,
     backgroundAlpha = 0.3f,
     onboardingTextColor = White,
-    dangerousButton = OrangeSolid
+    dangerousButton = OrangeSolid,
+    navigationTransparent = White50
 )
 
 val darkPalette = RuuviStationColors(
@@ -122,5 +124,6 @@ val darkPalette = RuuviStationColors(
     secondaryTextColor = White50,
     backgroundAlpha = 0.75f,
     onboardingTextColor = White,
-    dangerousButton = OrangeSolid
+    dangerousButton = OrangeSolid,
+    navigationTransparent = Titan50
 )

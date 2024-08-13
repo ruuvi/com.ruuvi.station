@@ -64,6 +64,7 @@
     <string name="camera">Aparat</string>
     <string name="camera_fail">Nie można uruchomić aparatu</string>
     <string name="cancel">Anuluj</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Maks: %2$s Przeciętny: %3$s Najnowszy: %4$s</string>
     <string name="chart_stat_hide">Ukryj min./maks./śr</string>
     <string name="chart_stat_show">Pokaż min./maks./śr</string>
     <string name="charts_background_dialog_description">Funkcja wykresów działa najlepiej z włączonym skanowaniem w tle.</string>
@@ -190,6 +191,8 @@
     <string name="min">min</string>
     <string name="minutes">Minuty</string>
     <string name="more_info">WIĘCEJ INFORMACJI</string>
+    <string name="move_down">Przesuń w dół</string>
+    <string name="move_up">Przesuń w górę</string>
     <string name="movement_counter">Licznik przesunięć</string>
     <string name="name">NAZWA</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
@@ -210,6 +213,9 @@
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_tos_link_markup">Warunki użytkowania i Politykę prywatności</string>
+    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności.</string>
     <string name="ordering">Sortowanie</string>
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>
