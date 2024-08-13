@@ -125,6 +125,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
+                val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
                 val dragDropListState = rememberDragDropListState(
@@ -171,6 +172,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             DashboardTopAppBar(
                                 dashboardType = dashboardType,
                                 dashboardTapAction = dashboardTapAction,
+                                syncInProgress = syncInProgress,
                                 changeDashboardType = dashboardViewModel::changeDashboardType,
                                 changeDashboardTapAction = dashboardViewModel::changeDashboardTapAction,
                                 navigationCallback = {
