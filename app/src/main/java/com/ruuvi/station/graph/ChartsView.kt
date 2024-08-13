@@ -319,9 +319,7 @@ fun ChartsView(
             LoadingAnimation3dots()
         }
     } else {
-        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts()
-        } else if (isLandscape) {
+       if (isLandscape) {
             LandscapeChartsPrototype(
                 modifier,
                 chartContainers,
@@ -391,16 +389,15 @@ fun VerticalChartsPrototype(
 
     val listState = rememberLazyListState()
 
-    LazyColumn(
-        state = listState,
-        modifier = modifier
-            .scrollbar(state = listState, horizontal = false)
-    ) {
-        if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
-            item {
-                EmptyCharts()
-            }
-        } else {
+    if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
+        EmptyCharts(modifier)
+    } else {
+        LazyColumn(
+            state = listState,
+            modifier = modifier
+                .scrollbar(state = listState, horizontal = false)
+        ) {
+
             for (chartContainer in chartContainers) {
                 item {
                     ChartViewPrototype(
@@ -467,9 +464,9 @@ fun LandscapeChartsPrototype(
 }
 
 @Composable
-fun EmptyCharts() {
+fun EmptyCharts(modifier: Modifier) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -537,7 +534,7 @@ fun VerticalCharts(
 
     Column(modifier = modifier.fillMaxSize()) {
         if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts()
+            EmptyCharts(modifier)
         } else {
             val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
             if (onlyOneChart) {

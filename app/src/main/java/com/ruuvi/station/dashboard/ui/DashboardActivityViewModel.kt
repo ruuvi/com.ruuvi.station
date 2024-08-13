@@ -45,6 +45,8 @@ class DashboardActivityViewModel(
 
     val syncEvents = networkDataSyncInteractor.syncEvents
 
+    val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
+
     private val _dataRefreshing = MutableStateFlow<Boolean>(false)
     val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
@@ -104,7 +106,7 @@ class DashboardActivityViewModel(
             job.invokeOnCompletion {
                 _dataRefreshing.value = false
             }
-            delay(5000)
+            delay(1000)
             if (job.isActive) _dataRefreshing.value = false
         }
     }
