@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
+    <string name="advertisement">Laiteilmoitus</string>
     <string name="ago">sitten</string>
     <string name="alarm_custom_description_title">Aseta hälytysviesti</string>
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Haluatko tyhjentää sovelluksen muistiin tallennetun mittaushistorian? Tämä ei tyhjennä anturin sisäistä historiaa eikä Ruuvi Cloud -pilvipalveluun tallennettua historiaa.</string>
     <string name="clear_view">Tyhjennä kaavionäkymä</string>
     <string name="close">Sulje</string>
+    <string name="cloud">Pilvi</string>
     <string name="cloud_er_forbidden">Kielletty</string>
     <string name="cloud_er_internal">Sisäinen virhe</string>
     <string name="cloud_er_invalid_density_mode">Virheellinen tiheuden tila</string>
@@ -193,6 +195,7 @@
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
+    <string name="data_received_via">Datalähde</string>
     <string name="date">Päivämäärä</string>
     <string name="day_1">1 päivä</string>
     <string name="day_10">10 päivää</string>

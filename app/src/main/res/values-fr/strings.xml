@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Aucun capteur détecté</string>
     <string name="add_tag_title">Capteurs Ruuvi à proximité</string>
     <string name="add_your_first_sensor">Ajoutez votre premier capteur</string>
+    <string name="advertisement">Messages des capteurs</string>
     <string name="ago">avant</string>
     <string name="alarm_custom_description_title">Description personnalisée de l\'alerte</string>
     <string name="alarm_custom_title_hint">Modifier la description...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Voulez-vous effacer les données historiques stockées localement dans l\'application ? Cela n\'effacera pas l\'historique stocké en interne par le capteur ou les données historiques stockées sur le service Ruuvi Cloud.</string>
     <string name="clear_view">Vue historique vide</string>
     <string name="close">Fermer</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Interdit</string>
     <string name="cloud_er_internal">Erreur interne</string>
     <string name="cloud_er_invalid_density_mode">Mode de densité invalide</string>
@@ -193,6 +195,7 @@
     <string name="data_forwarding_url">URL du routeur</string>
     <string name="data_forwarding_url_hint">https://mon.routeur/...</string>
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
+    <string name="data_received_via">Données reçues via</string>
     <string name="date">Date</string>
     <string name="day_1">1 jour</string>
     <string name="day_10">10 jours</string>

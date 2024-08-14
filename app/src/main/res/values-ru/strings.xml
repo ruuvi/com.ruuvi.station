@@ -16,6 +16,7 @@
     <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
+    <string name="advertisement">Вещания</string>
     <string name="ago">назад</string>
     <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
@@ -102,6 +103,7 @@
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
+    <string name="cloud">Сеть</string>
     <string name="cloud_er_forbidden">Запрещено</string>
     <string name="cloud_er_internal">Внутренняя ошибка</string>
     <string name="cloud_er_invalid_density_mode">Недопустимый режим плотности</string>
@@ -144,6 +146,7 @@
     <string name="data_forwarding_url">URL шлюза</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
+    <string name="data_received_via">Данные Получены Из</string>
     <string name="date">Дата</string>
     <string name="day_1">1 день</string>
     <string name="day_10">10 дней</string>

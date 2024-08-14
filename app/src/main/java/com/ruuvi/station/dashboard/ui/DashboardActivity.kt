@@ -77,6 +77,7 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
@@ -979,8 +980,8 @@ fun ItemBottomUpdatedInfo(
             modifier = modifier.padding(top = 2.dp)
         ) {
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
-            if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
-                val icon = R.drawable.ic_icon_gateway
+            val icon = sensor.getSource().getIconResource()
+            if (sensor.getSource() == UpdateSource.Cloud) {
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = icon),
@@ -988,7 +989,6 @@ fun ItemBottomUpdatedInfo(
                     contentDescription = null,
                 )
             } else {
-                val icon = R.drawable.ic_icon_bluetooth
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = icon),

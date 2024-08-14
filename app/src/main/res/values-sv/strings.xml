@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Inga sensorer hittades</string>
     <string name="add_tag_title">Ruuvi sensorer i närheten</string>
     <string name="add_your_first_sensor">Lägg till din första sensor.</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Vill du rensa lokalt lagrad historisk data från appen? Detta kommer inte att rensa internt lagrad historik i sensorer eller historisk data lagrad i Ruuvi Cloud-tjänst.</string>
     <string name="clear_view">Töm historikvy</string>
     <string name="close">Stäng</string>
+    <string name="cloud">Moln</string>
     <string name="cloud_er_forbidden">Förbjuden</string>
     <string name="cloud_er_internal">Internt fel</string>
     <string name="cloud_er_invalid_density_mode">Ogiltig densitet</string>
@@ -193,6 +195,7 @@
     <string name="data_forwarding_url">Vidarebefordings-URL</string>
     <string name="data_forwarding_url_hint">https://din.server/...</string>
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
+    <string name="data_received_via">Data Mottagen Via</string>
     <string name="date">Datum</string>
     <string name="day_1">1 dag</string>
     <string name="day_10">10 dagar</string>

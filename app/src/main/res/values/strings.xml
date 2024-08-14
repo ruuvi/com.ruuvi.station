@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">No sensors found</string>
     <string name="add_tag_title">Nearby Ruuvi sensors</string>
     <string name="add_your_first_sensor">Add Your First Sensor</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">ago</string>
     <string name="alarm_custom_description_title">Alert custom description</string>
     <string name="alarm_custom_title_hint">Set custom description...</string>
@@ -139,6 +140,7 @@
     <string name="clear_local_history_description">Do you want to clear locally stored history data from the app? This won\'t clear internally stored history from the sensor or history data stored on the Ruuvi Cloud service.</string>
     <string name="clear_view">Clear history view</string>
     <string name="close">Close</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Forbidden</string>
     <string name="cloud_er_internal">Internal error</string>
     <string name="cloud_er_invalid_density_mode">Invalid density mode</string>
@@ -194,6 +196,7 @@
     <string name="data_forwarding_url">Data Forwarding URL</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
+    <string name="data_received_via">Data Received Via</string>
     <string name="date">Date</string>
     <string name="day_1">1 day</string>
     <string name="day_10">10 days</string>

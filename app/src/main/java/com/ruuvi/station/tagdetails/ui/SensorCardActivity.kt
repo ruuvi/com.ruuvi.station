@@ -885,11 +885,7 @@ fun SensorCardBottom(
                 .padding(RuuviStationTheme.dimensions.medium)
                 .fillMaxWidth()
         ) {
-            val icon = if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
-                R.drawable.ic_icon_gateway
-            } else {
-                R.drawable.ic_icon_bluetooth
-            }
+            val icon = sensor.getSource().getIconResource()
 
             if (syncInProgress) {
                 Text(
