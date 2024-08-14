@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
     <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">vor</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Möchten Sie lokal gespeicherte historische Daten aus der App löschen? Dies löscht nicht den intern gespeicherten Verlauf des Sensors oder die im Ruuvi Cloud-Dienst gespeicherten historischen Daten.</string>
     <string name="clear_view">Klare verlaufsansicht</string>
     <string name="close">Schließen</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Verboten</string>
     <string name="cloud_er_internal">Interner Fehler</string>
     <string name="cloud_er_invalid_density_mode">Ungültiger Dichtemodus</string>
@@ -193,6 +195,7 @@
     <string name="data_forwarding_url">Datenweiterleitungs-URL</string>
     <string name="data_forwarding_url_hint">https://dein.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
+    <string name="data_received_via">Daten empfangen über</string>
     <string name="date">Datum</string>
     <string name="day_1">1 Tag</string>
     <string name="day_10">10 Tage</string>

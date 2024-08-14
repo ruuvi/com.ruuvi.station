@@ -1,5 +1,6 @@
 package com.ruuvi.station.tag.domain
 
+import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.MacAddressUtils
@@ -25,6 +26,14 @@ data class RuuviTag(
     val latestMeasurement: SensorMeasurements?
 ) {
     fun getDefaultName(): String = MacAddressUtils.getDefaultName(id)
+
+    fun getSource(): UpdateSource {
+        return if (latestMeasurement?.updatedAt == networkLastSync) {
+            UpdateSource.Cloud
+        } else {
+            UpdateSource.Advertisement
+        }
+    }
 }
 
 data class SensorMeasurements(
@@ -61,4 +70,29 @@ fun RuuviTag.isLowBattery(): Boolean {
 
 fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
+}
+
+sealed class UpdateSource() {
+    abstract fun getDescriptionResource(): Int
+    abstract fun getIconResource(): Int
+
+    data object Cloud: UpdateSource() {
+        override fun getDescriptionResource(): Int {
+            return R.string.cloud
+        }
+
+        override fun getIconResource(): Int {
+            return R.drawable.ic_icon_gateway
+        }
+    }
+
+    data object Advertisement: UpdateSource() {
+        override fun getDescriptionResource(): Int {
+            return R.string.advertisement
+        }
+
+        override fun getIconResource(): Int {
+            return R.drawable.ic_icon_bluetooth
+        }
+    }
 }
