@@ -24,6 +24,7 @@ import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,7 +57,10 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var autoRefreshJob: Job? = null
 
-    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> (replay = 1)
+    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent>(
+        replay = 2,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)

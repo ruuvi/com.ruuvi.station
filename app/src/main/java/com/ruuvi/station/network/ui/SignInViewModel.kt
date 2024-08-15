@@ -68,6 +68,7 @@ class SignInViewModel(
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
                     var retry = true
+                    networkDataSyncInteractor.syncNetworkData()
                     networkDataSyncInteractor.syncEvents
                         .collect {
                             Timber.d("syncEvents collected $it")
@@ -85,15 +86,12 @@ class SignInViewModel(
                                     Timber.d("syncEvents second try fail")
                                     showError(UiText.DynamicString(it.message))
                                     setProgress(false)
+                                    signInFinished()
                                     this.cancel()
                                 }
                             }
                         }
-                }.invokeOnCompletion { Timber.d("ioScope collecting syncEvents Completed") }
-                viewModelScope.launch {
-                    val syncJob = networkDataSyncInteractor.syncNetworkData()
-                    syncJob.join()
-                }.invokeOnCompletion { Timber.d("ioScope syncNetworkData Completed") }
+                }.invokeOnCompletion { Timber.d("viewModelScope collecting syncEvents Completed") }
             } else {
                 showError(UiText.DynamicString(response))
                 setProgress(false)
