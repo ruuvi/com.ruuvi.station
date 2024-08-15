@@ -52,6 +52,9 @@ class DashboardActivityViewModel(
 
     val signedInOnce: StateFlow<Boolean> = MutableStateFlow<Boolean>(preferencesRepository.getSignedInOnce())
 
+    val _bannerDisabled: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(preferencesRepository.isBannerDisabled())
+    val bannerDisabled: StateFlow<Boolean> = _bannerDisabled
+
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
     val shouldAskNotificationPermission
@@ -69,6 +72,11 @@ class DashboardActivityViewModel(
 
     fun refreshDashboardTapAction() {
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
+    fun disableBanner() {
+        preferencesRepository.disableBanner()
+        _bannerDisabled.value = preferencesRepository.isBannerDisabled()
     }
 
     fun moveItem(from: Int, to: Int) {

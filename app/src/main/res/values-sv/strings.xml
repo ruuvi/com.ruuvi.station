@@ -179,6 +179,7 @@
     <string name="darktheme_disabled">Mörkt tema är inaktiverat.</string>
     <string name="darktheme_enabled">Mörkt tema är aktiverat.</string>
     <string name="dashboard">Översikt vy</string>
+    <string name="dashboard_banner_signed_out">Du är inte inloggad.</string>
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång.</string>
     <string name="dashboard_disabled">Översiksvyn är inaktiverad. </string>
     <string name="dashboard_empty">Översikt vyn är tom</string>

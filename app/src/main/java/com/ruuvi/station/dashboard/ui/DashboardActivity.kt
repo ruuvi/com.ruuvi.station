@@ -21,6 +21,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
@@ -68,6 +69,7 @@ import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.Titan
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -124,6 +126,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
+                val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
@@ -258,17 +261,25 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                         openUrl(getString(R.string.buy_sensors_link))
                                     }
                                 } else {
-                                    DashboardItems(
-                                        items = it,
-                                        userEmail = userEmail,
-                                        dashboardType = dashboardType,
-                                        dashboardTapAction = dashboardTapAction,
-                                        syncCloud = dashboardViewModel::syncCloud,
-                                        setName = dashboardViewModel::setName,
-                                        onMove = dashboardViewModel::moveItem,
-                                        refreshing = refreshing,
-                                        dragDropListState = dragDropListState
-                                    )
+                                    Column {
+                                        if (!signedIn && signedInOnce && !bannerDisabled) {
+                                            SignInBanner(
+                                                disableBanner = dashboardViewModel::disableBanner
+                                            )
+                                            Spacer(modifier =  Modifier.height(RuuviStationTheme.dimensions.medium))
+                                        }
+                                        DashboardItems(
+                                            items = it,
+                                            userEmail = userEmail,
+                                            dashboardType = dashboardType,
+                                            dashboardTapAction = dashboardTapAction,
+                                            syncCloud = dashboardViewModel::syncCloud,
+                                            setName = dashboardViewModel::setName,
+                                            onMove = dashboardViewModel::moveItem,
+                                            refreshing = refreshing,
+                                            dragDropListState = dragDropListState
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -491,6 +502,63 @@ fun DashboardItems(
             item(span = { GridItemSpan(maxLineSpan) }) { Box(modifier = Modifier.navigationBarsPadding()) }
         }
         PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+    }
+}
+
+@Composable
+fun SignInBanner(
+    modifier: Modifier = Modifier,
+    disableBanner: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Surface (
+        modifier = modifier
+            .fillMaxWidth(),
+        color = RuuviStationTheme.colors.bannerBackground
+    ) {
+        Column (
+            modifier = modifier.padding(vertical = RuuviStationTheme.dimensions.extended),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Box (modifier = Modifier.width(RuuviStationTheme.dimensions.huge)) {}
+                Text(
+                    modifier = Modifier
+                        .weight(1f),
+                    style = RuuviStationTheme.typography.onboardingSubtitle,
+                    color = Titan,
+                    text = stringResource(id = R.string.dashboard_banner_signed_out),
+                    textAlign = TextAlign.Center
+                )
+                Box (
+                    contentAlignment = CenterEnd,
+                    modifier = Modifier
+                    .width(RuuviStationTheme.dimensions.huge)
+                    .padding(end = RuuviStationTheme.dimensions.small)
+                ){
+                    IconButton(
+                        onClick = {
+                            disableBanner.invoke()
+                        }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_clear_24),
+                            contentDescription = null,
+                            tint = RuuviStationTheme.colors.accent
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
+            RuuviButton(
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended),
+                text = stringResource(id = R.string.sign_in)
+            ) {
+                SignInActivity.start(context)
+            }
+        }
     }
 }
 

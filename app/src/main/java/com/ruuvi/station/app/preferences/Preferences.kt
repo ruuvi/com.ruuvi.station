@@ -410,6 +410,12 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putString(PREF_DASHBOARD_SORTED_SENSORS, sortedSensors).apply()
         }
 
+    var bannerDisabledForVersion: String
+        get() = sharedPreferences.getString(PREF_BANNER_DISABLED_FOR_VERSION, "") ?: ""
+        set(version) {
+            sharedPreferences.edit().putString(PREF_BANNER_DISABLED_FOR_VERSION, version).apply()
+        }
+
     var disableEmailNotifications: Boolean
         get() = sharedPreferences.getBoolean(PREF_DISABLE_EMAIL_NOTIFICATIONS, false)
         set(value) {
@@ -492,6 +498,7 @@ class Preferences (val context: Context) {
         private const val PREF_DISABLE_EMAIL_NOTIFICATIONS = "pref_disable_email_notifications"
         private const val PREF_DISABLE_PUSH_NOTIFICATIONS = "pref_disable_push_notifications"
         private const val PREF_DISABLE_TELEGRAM_NOTIFICATIONS = "pref_disable_telegram_notifications"
+        private const val PREF_BANNER_DISABLED_FOR_VERSION = "pref_banner_disabled_for_version"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

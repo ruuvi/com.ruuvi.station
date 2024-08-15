@@ -10,7 +10,7 @@ val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
 val Titan80 = Color(0xCC083C3D)
 val Ruuvi = Color(0xFF158EA5)
-val RuuviNew = Color(0xFF4BC9BA)
+val RuuviNew = Color(0xFFC6EEE6)
 val Red = Color.Red
 val Inactive = Color(0xFFE7EBEB)
 val OnInactive = Color(0xFF8DA09F)
@@ -61,7 +61,8 @@ data class RuuviStationColors(
     val backgroundAlpha: Float,
     val onboardingTextColor: Color,
     val dangerousButton: Color,
-    val navigationTransparent: Color
+    val navigationTransparent: Color,
+    val bannerBackground: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -93,7 +94,8 @@ val lightPalette = RuuviStationColors(
     backgroundAlpha = 0.3f,
     onboardingTextColor = White,
     dangerousButton = OrangeSolid,
-    navigationTransparent = White50
+    navigationTransparent = White50,
+    bannerBackground = RuuviNew
 )
 
 val darkPalette = RuuviStationColors(
@@ -125,5 +127,6 @@ val darkPalette = RuuviStationColors(
     backgroundAlpha = 0.75f,
     onboardingTextColor = White,
     dangerousButton = OrangeSolid,
-    navigationTransparent = Titan50
+    navigationTransparent = Titan50,
+    bannerBackground = RuuviNew
 )

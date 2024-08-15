@@ -179,6 +179,7 @@
     <string name="darktheme_disabled">Le thème sombre est désactivé.</string>
     <string name="darktheme_enabled">Le thème sombre est activé.</string>
     <string name="dashboard">Affichage tableau de bord</string>
+    <string name="dashboard_banner_signed_out">Vous n\'êtes pas connecté.</string>
     <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord.</string>
     <string name="dashboard_disabled">La vue du tableau de bord est désactivée. </string>
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
