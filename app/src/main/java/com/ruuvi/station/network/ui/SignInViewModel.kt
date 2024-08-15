@@ -67,6 +67,7 @@ class SignInViewModel(
         networkSignInInteractor.signIn(token) { response ->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
+                    var retry = true
                     networkDataSyncInteractor.syncEvents
                         .collect {
                             Timber.d("syncEvents collected $it")
@@ -75,13 +76,23 @@ class SignInViewModel(
                                 signInFinished()
                                 this.cancel()
                             }
+                            if (it is NetworkSyncEvent.Error) {
+                                if (retry) {
+                                    retry = false
+                                    Timber.d("syncEvents retry")
+                                    networkDataSyncInteractor.syncNetworkData()
+                                } else {
+                                    Timber.d("syncEvents second try fail")
+                                    showError(UiText.DynamicString(it.message))
+                                    setProgress(false)
+                                    this.cancel()
+                                }
+                            }
                         }
                 }.invokeOnCompletion { Timber.d("ioScope collecting syncEvents Completed") }
                 viewModelScope.launch {
                     val syncJob = networkDataSyncInteractor.syncNetworkData()
                     syncJob.join()
-                    setProgress(false)
-                    signInFinished()
                 }.invokeOnCompletion { Timber.d("ioScope syncNetworkData Completed") }
             } else {
                 showError(UiText.DynamicString(response))
