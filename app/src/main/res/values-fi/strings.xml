@@ -179,6 +179,7 @@
     <string name="darktheme_disabled">Tumma teema ei käytössä.</string>
     <string name="darktheme_enabled">Tumma teema käytössä.</string>
     <string name="dashboard">Koontinäyttö</string>
+    <string name="dashboard_banner_signed_out">Et ole kirjautunut sisään.</string>
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla.</string>
     <string name="dashboard_disabled">Koontinäyttö ei käytössä. </string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>

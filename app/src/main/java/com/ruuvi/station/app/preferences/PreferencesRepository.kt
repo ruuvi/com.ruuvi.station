@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
@@ -345,5 +346,12 @@ class PreferencesRepository(
 
     fun setDisableTelegramNotifications(value: Boolean) {
         preferences.disableTelegramNotifications = value
+    }
+
+    fun isBannerDisabled(): Boolean =
+        preferences.bannerDisabledForVersion == BuildConfig.VERSION_NAME
+
+    fun disableBanner() {
+        preferences.bannerDisabledForVersion = BuildConfig.VERSION_NAME
     }
 }

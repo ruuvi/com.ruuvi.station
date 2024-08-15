@@ -134,6 +134,7 @@
     <string name="current_version_fw">Текущая версия:</string>
     <string name="dark_theme">Темная тема</string>
     <string name="dashboard">Панель датчиков</string>
+    <string name="dashboard_banner_signed_out">Вы не вошли в аккаунт.</string>
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно.</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
     <string name="dashboard_no_sensors_message_signed_out">Вы не вошли в аккаунт.\n\nЕсли у вас уже есть аккаунт Ruuvi и добавлены датчики в него, то они будут автоматичеки синхронизированы с мобильным приложением после того как вы войдете в свой аккаунт.</string>

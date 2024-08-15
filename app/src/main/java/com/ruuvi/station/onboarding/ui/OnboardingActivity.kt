@@ -540,7 +540,6 @@ fun GatewayBanner() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnboardingTopBar(
     height: Dp,

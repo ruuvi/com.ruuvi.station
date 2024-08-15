@@ -105,6 +105,7 @@
     <string name="current_version_fw">Obecna wersja:</string>
     <string name="dark_theme">Ciemny temat</string>
     <string name="dashboard">Panel</string>
+    <string name="dashboard_banner_signed_out">Nie jesteś zalogowany.</string>
     <string name="dashboard_description">Użyj widoku panelu, aby mieć przegląd wielu czujników.</string>
     <string name="dashboard_empty">Twój panel \njest pusty</string>
     <string name="dashboard_no_sensors_message_signed_out">Nie jesteś zalogowany.\n\nJeśli masz konto i dodałeś już do niego czujniki Ruuvi, po zalogowaniu zostaną one automatycznie zsynchronizowane z aplikacją mobilną Ruuvi Station.</string>

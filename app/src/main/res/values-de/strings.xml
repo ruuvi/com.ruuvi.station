@@ -179,6 +179,7 @@
     <string name="darktheme_disabled">Das dunkle Thema ist deaktiviert.</string>
     <string name="darktheme_enabled">Das dunkle Thema ist aktiviert.</string>
     <string name="dashboard">Dashboard</string>
+    <string name="dashboard_banner_signed_out">Sie sind nicht angemeldet.</string>
     <string name="dashboard_description">Verwenden Sie die Dashboard-Ansicht, um mehrere Sensoren auf einen Blick zu sehen.</string>
     <string name="dashboard_disabled">Die Dashboard-Ansicht ist deaktiviert. </string>
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>

@@ -180,6 +180,7 @@
     <string name="darktheme_disabled">Dark theme is disabled.</string>
     <string name="darktheme_enabled">Dark theme is enabled.</string>
     <string name="dashboard">Dashboard</string>
+    <string name="dashboard_banner_signed_out">You are not signed in.</string>
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance.</string>
     <string name="dashboard_disabled">Dashboard view is disabled. </string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
