@@ -114,7 +114,7 @@ class DashboardActivityViewModel(
             job.invokeOnCompletion {
                 _dataRefreshing.value = false
             }
-            delay(1000)
+            delay(200)
             if (job.isActive) _dataRefreshing.value = false
         }
     }

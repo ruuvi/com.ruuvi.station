@@ -501,7 +501,13 @@ fun DashboardItems(
             }
             item(span = { GridItemSpan(maxLineSpan) }) { Box(modifier = Modifier.navigationBarsPadding()) }
         }
-        PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+            contentColor = RuuviStationTheme.colors.indicatorColor
+        )
     }
 }
 

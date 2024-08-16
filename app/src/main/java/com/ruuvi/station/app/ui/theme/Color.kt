@@ -8,7 +8,7 @@ val White50 = Color(0x80FFFFFF)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
-val Titan80 = Color(0xCC083C3D)
+val Titan70 = Color(0xB3083C3D)
 val Ruuvi = Color(0xFF158EA5)
 val RuuviNew = Color(0xFFC6EEE6)
 val Red = Color.Red
@@ -17,6 +17,8 @@ val OnInactive = Color(0xFF8DA09F)
 val Keppel = Color(0xFF35AD9F)
 val Keppel15 = Color(0x2635AD9F)
 val Keppel30 = Color(0x4D35AD9F)
+val Keppel50 = Color(0x8035AD9F)
+val Keppel70 = Color(0xB335AD9F)
 val Elm = Color(0xFF1F9385)
 val Error = Color(0xFFF15A24)
 val Track = Color(0xFFDFEFEC)
@@ -62,7 +64,8 @@ data class RuuviStationColors(
     val onboardingTextColor: Color,
     val dangerousButton: Color,
     val navigationTransparent: Color,
-    val bannerBackground: Color
+    val bannerBackground: Color,
+    val indicatorColor: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -95,7 +98,8 @@ val lightPalette = RuuviStationColors(
     onboardingTextColor = White,
     dangerousButton = OrangeSolid,
     navigationTransparent = White50,
-    bannerBackground = RuuviNew
+    bannerBackground = RuuviNew,
+    indicatorColor = Titan50
 )
 
 val darkPalette = RuuviStationColors(
@@ -128,5 +132,6 @@ val darkPalette = RuuviStationColors(
     onboardingTextColor = White,
     dangerousButton = OrangeSolid,
     navigationTransparent = Titan50,
-    bannerBackground = RuuviNew
+    bannerBackground = RuuviNew,
+    indicatorColor = Keppel50
 )
