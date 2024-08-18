@@ -132,6 +132,6 @@ val darkPalette = RuuviStationColors(
     onboardingTextColor = White,
     dangerousButton = OrangeSolid,
     navigationTransparent = Titan50,
-    bannerBackground = RuuviNew,
+    bannerBackground = Keppel50,
     indicatorColor = Keppel50
 )

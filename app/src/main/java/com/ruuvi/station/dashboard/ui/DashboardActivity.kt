@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
@@ -523,38 +524,36 @@ fun SignInBanner(
             .fillMaxWidth(),
         color = RuuviStationTheme.colors.bannerBackground
     ) {
+        Box (
+            contentAlignment = CenterEnd,
+            modifier = Modifier
+                .padding(RuuviStationTheme.dimensions.small)
+        ){
+            IconButton(
+                onClick = {
+                    disableBanner.invoke()
+                }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.primary
+                )
+            }
+        }
         Column (
             modifier = modifier.padding(vertical = RuuviStationTheme.dimensions.extended),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row (verticalAlignment = Alignment.CenterVertically){
-                Box (modifier = Modifier.width(RuuviStationTheme.dimensions.huge)) {}
                 Text(
                     modifier = Modifier
                         .weight(1f),
-                    style = RuuviStationTheme.typography.onboardingSubtitle,
-                    color = Titan,
+                    style = RuuviStationTheme.typography.subtitle,
+                    fontSize = RuuviStationTheme.fontSizes.extended,
                     text = stringResource(id = R.string.dashboard_banner_signed_out),
                     textAlign = TextAlign.Center
                 )
-                Box (
-                    contentAlignment = CenterEnd,
-                    modifier = Modifier
-                    .width(RuuviStationTheme.dimensions.huge)
-                    .padding(end = RuuviStationTheme.dimensions.small)
-                ){
-                    IconButton(
-                        onClick = {
-                            disableBanner.invoke()
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_clear_24),
-                            contentDescription = null,
-                            tint = RuuviStationTheme.colors.accent
-                        )
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
             RuuviButton(
