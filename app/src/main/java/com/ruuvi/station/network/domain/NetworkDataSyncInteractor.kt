@@ -63,6 +63,8 @@ class NetworkDataSyncInteractor (
     )
     val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
 
+    var lastResult: NetworkSyncEvent? = null
+
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
 
@@ -88,6 +90,9 @@ class NetworkDataSyncInteractor (
                         Timber.d("Do actual sync")
                         syncNetworkData()
                     }
+                }
+                if (lastResult is NetworkSyncEvent.Error) {
+                    delay(60000)
                 }
                 delay(10000)
             }
@@ -170,6 +175,7 @@ class NetworkDataSyncInteractor (
             catch (exception: Exception) {
                 exception.message?.let { message ->
                     sendSyncEvent(NetworkSyncEvent.Error(message))
+                    lastResult = NetworkSyncEvent.Error(message)
                 }
             } finally {
                 sendSyncEvent(NetworkSyncEvent.Idle)
@@ -205,6 +211,7 @@ class NetworkDataSyncInteractor (
         }
 
         sendSyncEvent(NetworkSyncEvent.Success)
+        lastResult = NetworkSyncEvent.Success
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
