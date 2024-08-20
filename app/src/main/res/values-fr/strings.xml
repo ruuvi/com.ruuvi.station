@@ -303,6 +303,7 @@
     <string name="image_cards">Cartes-images</string>
     <string name="image_view">Vue de l\'image</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Problème de connexion Internet</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>

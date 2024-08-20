@@ -298,6 +298,7 @@
     <string name="image_cards">Kuvakortit</string>
     <string name="image_view">Näytä kuvat</string>
     <string name="information">Tietoja</string>
+    <string name="internet_connection_problem">Ongelma internet-yhteydessä</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>

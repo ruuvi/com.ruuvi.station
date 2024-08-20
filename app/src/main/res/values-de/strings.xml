@@ -309,6 +309,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="image_cards">Bildkarten</string>
     <string name="image_view">Bildansicht</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Problem mit der Internetverbindung</string>
     <string name="language_english">Englisch</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>

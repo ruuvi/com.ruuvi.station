@@ -228,6 +228,7 @@
     <string name="humidity_relative_name">Относительная влажность (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Влажность воздуха (%1$s)</string>
+    <string name="internet_connection_problem">Проблема с подключением</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
