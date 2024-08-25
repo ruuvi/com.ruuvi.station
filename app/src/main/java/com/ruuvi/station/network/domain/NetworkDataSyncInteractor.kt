@@ -417,6 +417,9 @@ class NetworkDataSyncInteractor (
     fun stopSync() {
         Timber.d("stopSync")
         syncInProgress.value = false
+        CoroutineScope(IO).launch() {
+            sendSyncEvent(NetworkSyncEvent.Idle)
+        }
         if (syncJob.isActive) {
             syncJob.cancel()
         }
