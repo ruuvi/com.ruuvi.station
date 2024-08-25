@@ -296,6 +296,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfuktighet (%1$s)</string>
     <string name="image_cards">Bildkort</string>
+    <string name="image_format_not_supported">Bildformat stöds inte</string>
     <string name="image_view">Bildvy</string>
     <string name="information">Information</string>
     <string name="internet_connection_problem">Internetanslutningsproblem</string>
