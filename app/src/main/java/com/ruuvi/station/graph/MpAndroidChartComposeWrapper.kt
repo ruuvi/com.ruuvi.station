@@ -442,7 +442,10 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    val textSize = context.resources.getDimension(R.dimen.graph_description_size)
+    var textSize = context.resources.getDimension(R.dimen.graph_description_size).toFloat()
+    val density = context.resources.displayMetrics.density
+    if (density < 2) textSize *= 2
+    Timber.d("graph_description_size $textSize $density")
     chart.description.textSize = textSize
     chart.axisLeft.textSize = textSize
     chart.xAxis.textSize = textSize
