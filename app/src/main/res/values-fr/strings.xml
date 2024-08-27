@@ -301,6 +301,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Humidité de l\'air (%1$s)</string>
     <string name="image_cards">Cartes-images</string>
+    <string name="image_format_not_supported">Format d\'image non pris en charge</string>
     <string name="image_view">Vue de l\'image</string>
     <string name="information">Information</string>
     <string name="internet_connection_problem">Problème de connexion Internet</string>

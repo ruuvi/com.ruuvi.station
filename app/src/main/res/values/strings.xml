@@ -297,6 +297,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Air Humidity (%1$s)</string>
     <string name="image_cards">Image cards</string>
+    <string name="image_format_not_supported">Image format not supported</string>
     <string name="image_view">Image view</string>
     <string name="information">Information</string>
     <string name="internet_connection_problem">Internet connection problem</string>
