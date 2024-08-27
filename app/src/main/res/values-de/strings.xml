@@ -345,6 +345,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="movement_counter">Bewegungszähler</string>
     <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mein Ruuvi Konto</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Schließen der Navigation</string>

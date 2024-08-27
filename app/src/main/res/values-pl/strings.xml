@@ -197,6 +197,8 @@
     <string name="move_down">Przesuń w dół</string>
     <string name="move_up">Przesuń w górę</string>
     <string name="movement_counter">Licznik przesunięć</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="name">NAZWA</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
     <string name="navigation_drawer_open">Otwórz menu nawigacji</string>

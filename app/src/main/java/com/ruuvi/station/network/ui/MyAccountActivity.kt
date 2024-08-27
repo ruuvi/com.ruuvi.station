@@ -134,6 +134,16 @@ fun MyAccountBody(
             Column() {
                 SubtitleWithPadding(text = stringResource(id = R.string.signed_in_user))
                 ParagraphWithPadding(text = user)
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                HyperlinkText(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fullText = stringResource(id = R.string.my_account_change_email),
+                    linkText = listOf(stringResource(id = R.string.my_account_change_email_link_markup)),
+                    hyperlinks = listOf(stringResource(id = R.string.my_account_change_email_link)),
+                    textStyle = RuuviStationTheme.typography.paragraph,
+                    linkTextColor = RuuviStationTheme.typography.paragraph.color
+                )
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 

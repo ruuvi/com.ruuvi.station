@@ -339,6 +339,8 @@
     <string name="movement_counter">Compteur de mouvements</string>
     <string name="movements">mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mon compte Ruuvi</string>
     <string name="name">NOM</string>
     <string name="navigation_drawer_close">Fermer le menu</string>

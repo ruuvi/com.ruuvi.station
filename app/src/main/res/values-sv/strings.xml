@@ -334,6 +334,8 @@
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mitt Ruuvi-konto</string>
     <string name="name">NAMN</string>
     <string name="navigation_drawer_close">Stäng navigationslådan</string>

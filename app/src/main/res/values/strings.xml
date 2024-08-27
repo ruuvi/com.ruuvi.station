@@ -335,6 +335,9 @@
     <string name="movement_counter">Movement Counter</string>
     <string name="movements">movements</string>
     <string name="muted_till">Muted till %1$s</string>
+    <string name="my_account_change_email">Contact support@ruuvi.com if you wish to change email address.</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">My Ruuvi Account</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>

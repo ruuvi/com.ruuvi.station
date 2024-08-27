@@ -257,6 +257,9 @@
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
     <string name="movements">движений</string>
+    <string name="my_account_change_email">Свяжитесь с support@ruuvi.com, если вы хотите изменить адрес электронной почты.</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
