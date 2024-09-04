@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +35,7 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -42,7 +44,7 @@ import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-private val chartHeight = 220.dp
+private val chartHeight = 280.dp
 
 @Composable
 fun ChartsView(
@@ -62,6 +64,7 @@ fun ChartsView(
     chartCleared: Flow<String>,
     viewPeriod: Period,
     newChartsUI: Boolean,
+    size: Size,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -313,62 +316,30 @@ fun ChartsView(
 
     if (isLoading) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             LoadingAnimation3dots()
         }
     } else {
        if (isLandscape) {
-            LandscapeChartsPrototype(
+           LandscapeChartsPrototype(
                 modifier,
                 chartContainers,
                 unitsConverter,
                 graphDrawDots,
                 showChartStats
             )
-//                LandscapeCharts(
-//                    modifier,
-//                    temperatureChart,
-//                    humidityChart,
-//                    pressureChart,
-//                    temperatureData,
-//                    pressureData,
-//                    humidityData,
-//                    unitsConverter,
-//                    graphDrawDots,
-//                    showChartStats,
-//                    temperatureLimits,
-//                    humidityLimits,
-//                    pressureLimits,
-//                    from,
-//                    to
-//                )
         } else {
-            VerticalChartsPrototype(
+           VerticalChartsPrototype(
                 modifier,
                 chartContainers,
                 unitsConverter,
                 graphDrawDots,
-                showChartStats
-            )
-//                VerticalCharts(
-//                    modifier,
-//                    temperatureChart,
-//                    humidityChart,
-//                    pressureChart,
-//                    temperatureData,
-//                    pressureData,
-//                    humidityData,
-//                    unitsConverter,
-//                    graphDrawDots,
-//                    showChartStats,
-//                    temperatureLimits,
-//                    humidityLimits,
-//                    pressureLimits,
-//                    from,
-//                    to
-//                )
+                showChartStats,
+               size = size
+           )
         }
     }
 }
@@ -379,7 +350,8 @@ fun VerticalChartsPrototype(
     chartContainers: List<ChartContainer>,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
-    showChartStats: Boolean
+    showChartStats: Boolean,
+    size: Size
 ) {
     val clearMarker = {
         for (chartContainer in chartContainers) {
@@ -392,28 +364,44 @@ fun VerticalChartsPrototype(
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
+        var needsScroll = true
+        var height = chartHeight
+        if (chartContainers.size <= 3 && size.height.pxToDp() >= chartHeight * chartContainers.size && chartContainers.isNotEmpty()) {
+            height = (size.height / chartContainers.size).pxToDp()
+            needsScroll = false
+        }
+
+        Timber.d("chart height $size $height")
+
+        val columnModifier = if (needsScroll) {
+            modifier.fillMaxSize().scrollbar(state = listState, horizontal = false)
+        } else {
+            modifier
+        }
+
         LazyColumn(
             state = listState,
-            modifier = modifier
-                .scrollbar(state = listState, horizontal = false)
+            modifier = columnModifier
         ) {
-
-            for (chartContainer in chartContainers) {
-                item {
-                    ChartViewPrototype(
-                        chartContainer.uiComponent,
-                        Modifier.fillMaxWidth(),
-                        chartContainer.data,
-                        unitsConverter,
-                        chartContainer.chartSensorType,
-                        graphDrawDots,
-                        showChartStats,
-                        limits = chartContainer.limits,
-                        chartContainer.from,
-                        chartContainer.to,
-                        chartHeight,
-                        clearMarker
-                    )
+            if (!size.isEmpty()) {
+                for (chartContainer in chartContainers) {
+                    item {
+                        ChartViewPrototype(
+                            chartContainer.uiComponent,
+                            Modifier
+                                .height(height)
+                                .fillMaxWidth(),
+                            chartContainer.data,
+                            unitsConverter,
+                            chartContainer.chartSensorType,
+                            graphDrawDots,
+                            showChartStats,
+                            limits = chartContainer.limits,
+                            chartContainer.from,
+                            chartContainer.to,
+                            clearMarker
+                        )
+                    }
                 }
             }
         }
@@ -448,7 +436,7 @@ fun LandscapeChartsPrototype(
 
         ChartViewPrototype(
             chartContainer.uiComponent,
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxSize(),
             chartContainer.data,
             unitsConverter,
             chartContainer.chartSensorType,
@@ -457,7 +445,6 @@ fun LandscapeChartsPrototype(
             limits = chartContainer.limits,
             chartContainer.from,
             chartContainer.to,
-            chartHeight,
             clearMarker
         )
     }

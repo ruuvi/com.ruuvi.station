@@ -102,7 +102,6 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
-    height: Dp? = null,
     clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
@@ -149,14 +148,11 @@ fun ChartViewPrototype(
             )
         }
 
-        var chartsModifier = Modifier.fillMaxWidth()
-        chartsModifier = if (height != null) {
-            chartsModifier.height(height)
-        } else {
-            chartsModifier.fillMaxHeight()
-        }
         AndroidView(
-            modifier = chartsModifier,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
                 Timber.d("ChartView - factory")
                 val chart = lineChart
