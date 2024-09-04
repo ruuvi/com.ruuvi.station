@@ -455,7 +455,9 @@ fun FinishPage(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(top = OnboardingActivity.topBarHeight),
+            .navigationBarsPadding()
+            .padding(top = OnboardingActivity.topBarHeight)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
