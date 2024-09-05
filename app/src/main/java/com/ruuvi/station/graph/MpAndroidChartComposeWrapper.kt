@@ -484,7 +484,7 @@ private fun addDataToChart(
     set.setDrawValues(false)
     set.setDrawFilled(true)
     set.lineWidth = 1f
-    set.circleRadius = 1.1f
+    set.circleRadius = 1.2f
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
