@@ -430,7 +430,7 @@ fun LandscapeChartsPrototype(
     VerticalPager(
         modifier = modifier.fillMaxSize(),
         state = pagerState,
-        beyondBoundsPageCount = 3
+        beyondViewportPageCount = 3
     ) { page ->
         val chartContainer = chartContainers[page]
 
@@ -638,7 +638,7 @@ fun LandscapeCharts(
     VerticalPager(
         modifier = modifier.fillMaxSize(),
         state = pagerState,
-        beyondBoundsPageCount = 3
+        beyondViewportPageCount = 3
     ) { page ->
         val chartSensorType = chartTypes[page]
 

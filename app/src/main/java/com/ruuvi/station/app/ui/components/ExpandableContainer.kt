@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -110,6 +111,7 @@ fun ExpandableContainer(
                 content()
             }
             coroutineScope.launch {
+                delay(50)
                 bringIntoViewRequester.bringIntoView()
             }
         }
