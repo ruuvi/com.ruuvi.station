@@ -487,6 +487,7 @@ private fun addDataToChart(
     set.circleRadius = 1.5f
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+    set.setDrawCircleHole(false)
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
 
     set.enableDashedHighlightLine(10f, 5f, 0f)
