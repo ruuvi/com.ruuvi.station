@@ -615,13 +615,14 @@ fun OfflineAlarmEditDialog(
     val title = stringResource(id = R.string.alert_cloud_connection_dialog_title)
 
     var delay by remember {
-        mutableDoubleStateOf(alarmState.max)
+        mutableDoubleStateOf(alarmState.max / 60)
     }
     
     RuuviDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
+            Timber.d("Offline alert save: $delay")
             val max = delay * 60
             manualRangeSave.invoke(alarmState.type, 0.0, max)
             onDismissRequest.invoke()
@@ -637,7 +638,7 @@ fun OfflineAlarmEditDialog(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
         NumberTextFieldRuuvi(
-            value = (alarmState.max / 60).toLong().toString(),
+            value = delay.toLong().toString(),
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()

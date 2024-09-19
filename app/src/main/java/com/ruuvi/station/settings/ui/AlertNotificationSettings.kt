@@ -6,6 +6,8 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
@@ -49,6 +51,9 @@ fun AlertNotificationsSettings(
     var settingsClicked by remember { mutableStateOf(false) }
 
     val limitLocalAlerts = viewModel.limitLocalAlerts.collectAsState()
+    val emailALerts = viewModel.emailAlerts.collectAsState()
+    val pushAlerts = viewModel.pushAlerts.collectAsState()
+
 
     PageSurface() {
         Column() {
@@ -60,6 +65,24 @@ fun AlertNotificationsSettings(
                     onCheckedChange = viewModel::setLimitLocalAlerts
                 )
                 Paragraph(text = stringResource(id = R.string.settings_alert_limit_notification_description))
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                SwitchIndicatorRuuvi(
+                    text = stringResource(id = R.string.settings_email_alerts),
+                    checked = emailALerts.value,
+                    onCheckedChange = viewModel::setEmailAlerts
+                )
+                Paragraph(text = stringResource(id = R.string.settings_email_alerts_description))
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                SwitchIndicatorRuuvi(
+                    text = stringResource(id = R.string.settings_push_alerts),
+                    checked = pushAlerts.value,
+                    onCheckedChange = viewModel::setPushAlerts
+                )
+                Paragraph(text = stringResource(id = R.string.settings_push_alerts_description))
             }
 
             DividerRuuvi()

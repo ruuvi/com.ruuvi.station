@@ -12,6 +12,8 @@ object ClaimRoutes {
 
     const val FORCE_CLAIM_INIT = "force_claim_init"
     const val FORCE_CLAIM_GETTING_ID = "force_claim_getting_id"
+    const val FORCE_CLAIM_ERROR = "force_claim_error"
+
     const val NOT_SIGNED_IN = "not_signed_in"
     const val UNCLAIM = "unclaim"
 
@@ -23,6 +25,7 @@ object ClaimRoutes {
             FORCE_CLAIM_INIT -> context.getString(R.string.force_claim_sensor)
             FORCE_CLAIM_GETTING_ID -> context.getString(R.string.force_claim_sensor)
             UNCLAIM -> context.getString(R.string.unclaim_sensor)
+            FORCE_CLAIM_ERROR -> context.getString(R.string.error)
             else -> context.getString(R.string.app_name)
         }
     }

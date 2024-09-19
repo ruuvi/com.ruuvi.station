@@ -159,6 +159,14 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
                 ) {
                     ForceClaimGettingId()
                 }
+
+                composable(
+                    route = ClaimRoutes.FORCE_CLAIM_ERROR,
+                    enterTransition = enterTransition,
+                    exitTransition = exitTransition
+                ) {
+                    ForceClaimError()
+                }
             }
         }
 
@@ -259,6 +267,16 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
         PageSurfaceWithPadding() {
             Column() {
                 Paragraph(text = stringResource(id = R.string.force_claim_sensor_description2))
+            }
+        }
+
+    }
+
+    @Composable
+    fun ForceClaimError() {
+        PageSurfaceWithPadding() {
+            Column() {
+                Paragraph(text = stringResource(id = R.string.internet_connection_problem))
             }
         }
 

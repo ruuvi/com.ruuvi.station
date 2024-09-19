@@ -5,15 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SignInViewModel(
     val networkInteractor: RuuviNetworkInteractor,
@@ -29,6 +34,8 @@ class SignInViewModel(
 
     private val _email = MutableStateFlow<String> ("")
     val email: StateFlow<String> = _email
+
+    val ioScope = CoroutineScope(Dispatchers.IO)
 
     fun submitEmail(email: String) {
         if (email.isNullOrEmpty()) {
@@ -57,14 +64,34 @@ class SignInViewModel(
     fun verifyCode(token: String) {
         setProgress(true)
 
-        networkSignInInteractor.signIn(token) { response->
+        networkSignInInteractor.signIn(token) { response ->
             if (response.isNullOrEmpty()) {
                 viewModelScope.launch {
-                    val syncJob = networkDataSyncInteractor.syncNetworkData()
-                    syncJob.join()
-                    setProgress(false)
-                    signInFinished()
-                }
+                    var retry = true
+                    networkDataSyncInteractor.syncNetworkData()
+                    networkDataSyncInteractor.syncEvents
+                        .collect {
+                            Timber.d("syncEvents collected $it")
+                            if (it is NetworkSyncEvent.Success || it is NetworkSyncEvent.SensorsSynced) {
+                                setProgress(false)
+                                signInFinished()
+                                this.cancel()
+                            }
+                            if (it is NetworkSyncEvent.Error) {
+                                if (retry) {
+                                    retry = false
+                                    Timber.d("syncEvents retry")
+                                    networkDataSyncInteractor.syncNetworkData()
+                                } else {
+                                    Timber.d("syncEvents second try fail")
+                                    showError(UiText.DynamicString(it.message))
+                                    setProgress(false)
+                                    signInFinished()
+                                    this.cancel()
+                                }
+                            }
+                        }
+                }.invokeOnCompletion { Timber.d("viewModelScope collecting syncEvents Completed") }
             } else {
                 showError(UiText.DynamicString(response))
                 setProgress(false)

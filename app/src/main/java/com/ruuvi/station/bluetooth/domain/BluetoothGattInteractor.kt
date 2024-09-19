@@ -74,6 +74,7 @@ class BluetoothGattInteractor (
 
             override fun error(errorMessage: String) {
                 Timber.d("Error: $errorMessage")
+                setSyncStatus(GattSyncStatus(sensorId, SyncProgress.ERROR))
             }
 
             override fun heartbeat(raw: String) { }

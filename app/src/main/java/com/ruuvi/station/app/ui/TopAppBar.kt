@@ -11,25 +11,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.HorizontalPagerIndicator
-import com.google.accompanist.pager.PagerState
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
 import com.ruuvi.station.app.ui.components.RuuviDialog
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.util.extensions.clickableSingle
@@ -68,6 +64,7 @@ fun RuuviTopAppBar(
 fun DashboardTopAppBar(
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
+    syncInProgress: Boolean,
     navigationCallback: () -> Unit,
     changeDashboardType: (DashboardType) -> Unit,
     changeDashboardTapAction: (DashboardTapAction) -> Unit,
@@ -81,15 +78,23 @@ fun DashboardTopAppBar(
     var resetSensorsOrderDialog by remember {
         mutableStateOf(false)
     }
-
     TopAppBar(
+        modifier = Modifier.height(RuuviStationTheme.dimensions.topAppBarHeight),
         title = {
-            Image(
-                modifier = Modifier.height(40.dp),
-                painter = painterResource(id = R.drawable.logo_2021),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(RuuviStationTheme.colors.dashboardIcons)
-            )
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Image(
+                    modifier = Modifier.height(40.dp),
+                    painter = painterResource(id = R.drawable.logo_2021),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(RuuviStationTheme.colors.dashboardIcons)
+                )
+//                if (syncInProgress) {
+//                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.extended))
+//                    CircularIndicator(modifier = Modifier.align(Alignment.CenterVertically))
+//                    //LoadingAnimation3dots(circleSize = RuuviStationTheme.dimensions.medium)
+//                }
+            }
+
         },
         navigationIcon = {
                          IconButton(
@@ -189,9 +194,11 @@ fun DashboardTopAppBar(
                         )
                         
                         Paragraph(
-                            modifier = Modifier.padding(
-                                horizontal = RuuviStationTheme.dimensions.mediumPlus,
-                                vertical = RuuviStationTheme.dimensions.medium)
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                    vertical = RuuviStationTheme.dimensions.medium
+                                )
                                 .clickableSingle {
                                     resetSensorsOrderDialog = true
                                 },
@@ -205,6 +212,17 @@ fun DashboardTopAppBar(
         contentColor = RuuviStationTheme.colors.topBarText,
         elevation = 0.dp
     )
+
+    if (syncInProgress) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(RuuviStationTheme.dimensions.topAppBarHeight),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularIndicator()
+        }
+    }
 
     if (resetSensorsOrderDialog) {
         RuuviDialog(
@@ -221,40 +239,4 @@ fun DashboardTopAppBar(
             Paragraph(text = stringResource(id = R.string.reset_order_confirmation))
         }
     }
-}
-
-@Composable
-fun OnboardingTopAppBar(
-    pagerState: PagerState,
-    actionCallBack: () -> Unit
-) {
-    TopAppBar(
-        title = {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                HorizontalPagerIndicator(
-                    pagerState = pagerState,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = RuuviStationTheme.dimensions.mediumPlus)
-                        .align(Alignment.CenterEnd)
-                        .clickable { actionCallBack.invoke() },
-                    style = RuuviStationTheme.typography.topBarText,
-                    text = "Skip",
-                    fontSize = ruuviStationFontsSizes.normal,
-                    textDecoration = TextDecoration.Underline
-                )
-            }
-        },
-        elevation = 0.dp,
-        backgroundColor = Color.Transparent,
-        contentColor = RuuviStationTheme.colors.topBarText,
-        )
 }

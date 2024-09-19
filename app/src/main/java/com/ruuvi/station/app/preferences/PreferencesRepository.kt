@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.preferences
 
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
@@ -324,5 +325,33 @@ class PreferencesRepository(
 
     fun setFirebaseConsent(firebaseConsent: Boolean) {
         preferences.firebaseConsent = firebaseConsent
+    }
+
+    fun isDisablePushNotifications(): Boolean =
+        preferences.disablePushNotifications
+
+    fun setDisablePushNotifications(value: Boolean) {
+        preferences.disablePushNotifications = value
+    }
+
+    fun isDisableEmailNotifications(): Boolean =
+        preferences.disableEmailNotifications
+
+    fun setDisableEmailNotifications(value: Boolean) {
+        preferences.disableEmailNotifications = value
+    }
+
+    fun isDisableTelegramNotifications(): Boolean =
+        preferences.disableTelegramNotifications
+
+    fun setDisableTelegramNotifications(value: Boolean) {
+        preferences.disableTelegramNotifications = value
+    }
+
+    fun isBannerDisabled(): Boolean =
+        preferences.bannerDisabledForVersion == BuildConfig.VERSION_NAME
+
+    fun disableBanner() {
+        preferences.bannerDisabledForVersion = BuildConfig.VERSION_NAME
     }
 }

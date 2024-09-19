@@ -49,8 +49,7 @@ class ClaimSensorViewModel (
                     emitUiEvent(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_INIT, true))
                     return@getSensorOwner
                 } else {
-                    emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
-                    emitUiEvent(UiEvent.NavigateUp)
+                    emitUiEvent(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_ERROR, true))
                 }
             }
         }

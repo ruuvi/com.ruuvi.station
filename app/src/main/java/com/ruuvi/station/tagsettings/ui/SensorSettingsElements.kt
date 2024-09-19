@@ -342,6 +342,10 @@ fun MoreInfoGroup(
                 title = stringResource(id = R.string.data_format),
                 value = sensorState.latestMeasurement.dataFormat.toHexString()
             )
+            MoreInfoItem(
+                title = stringResource(id = R.string.data_received_via),
+                value = stringResource(id = sensorState.getSource().getDescriptionResource())
+            )
             BatteryInfoItem(
                 voltage = sensorState.latestMeasurement.voltageValue.value,
                 isLowBattery = isLowBattery

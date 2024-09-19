@@ -196,6 +196,7 @@ class AlarmItemsViewModel(
 
     fun saveAlarm(alarmItemState: AlarmItemState) {
         val status = alarmsInteractor.saveAlarm(alarmItemState)
+        refreshAlarmState()
         status?.let {
             processStatus(it, _uiEvent)
         }

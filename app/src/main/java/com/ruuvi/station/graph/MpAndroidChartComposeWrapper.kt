@@ -102,7 +102,6 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
-    height: Dp? = null,
     clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
@@ -149,14 +148,11 @@ fun ChartViewPrototype(
             )
         }
 
-        var chartsModifier = Modifier.fillMaxWidth()
-        chartsModifier = if (height != null) {
-            chartsModifier.height(height)
-        } else {
-            chartsModifier.fillMaxHeight()
-        }
         AndroidView(
-            modifier = chartsModifier,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
                 Timber.d("ChartView - factory")
                 val chart = lineChart
@@ -442,7 +438,10 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    val textSize = context.resources.getDimension(R.dimen.graph_description_size)
+    var textSize = context.resources.getDimension(R.dimen.graph_description_size).toFloat()
+    val density = context.resources.displayMetrics.density
+    if (density < 2) textSize *= 2
+    Timber.d("graph_description_size $textSize $density")
     chart.description.textSize = textSize
     chart.axisLeft.textSize = textSize
     chart.xAxis.textSize = textSize
@@ -484,9 +483,11 @@ private fun addDataToChart(
     set.setDrawCircles(graphDrawDots)
     set.setDrawValues(false)
     set.setDrawFilled(true)
-    set.circleRadius = 1f
+    set.lineWidth = 1f
+    set.circleRadius = 1.5f
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+    set.setDrawCircleHole(false)
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
 
     set.enableDashedHighlightLine(10f, 5f, 0f)
@@ -540,30 +541,6 @@ private fun addDataToChart(
     }
     chart.notifyDataSetChanged()
     chart.invalidate()
-}
-
-private fun prepareDatasets(data: MutableList<Entry>) {
-
-}
-
-private fun setupDataSet(
-    context: Context,
-    data: MutableList<Entry>,
-    label: String,
-    graphDrawDots: Boolean
-): LineDataSet {
-    val set = LineDataSet(data, label)
-    set.setDrawCircles(graphDrawDots)
-    set.setDrawValues(false)
-    set.setDrawFilled(true)
-    set.circleRadius = 1f
-    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
-    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
-    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
-    return set
 }
 
 fun getLimitLine(

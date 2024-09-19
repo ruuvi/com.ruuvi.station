@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
@@ -78,6 +79,18 @@ fun LoadingScreen(status: String) {
             LoadingStatus()
         }
     }
+}
+
+@Composable
+fun CircularIndicator(
+    modifier: Modifier = Modifier
+) {
+    CircularProgressIndicator(
+        modifier = modifier.width(22.dp).height(22.dp),
+        color = RuuviStationTheme.colors.indicatorColor,
+        backgroundColor = Color.Transparent,
+        strokeWidth = 3.dp
+    )
 }
 
 @Composable
