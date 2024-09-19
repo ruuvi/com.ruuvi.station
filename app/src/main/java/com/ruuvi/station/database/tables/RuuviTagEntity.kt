@@ -118,6 +118,30 @@ data class RuuviTagEntity(
         humidityOffset = reading.humidityOffset
         pressureOffset = reading.pressureOffset
     }
+
+    companion object {
+        val queryFields = arrayOf(
+            RuuviTagEntity_Table.id.withTable(),
+            RuuviTagEntity_Table.rssi.withTable(),
+            RuuviTagEntity_Table.temperature.withTable(),
+            RuuviTagEntity_Table.temperatureOffset.withTable(),
+            RuuviTagEntity_Table.humidity.withTable(),
+            RuuviTagEntity_Table.humidityOffset.withTable(),
+            RuuviTagEntity_Table.pressure.withTable(),
+            RuuviTagEntity_Table.pressureOffset.withTable(),
+            RuuviTagEntity_Table.favorite.withTable(),
+            RuuviTagEntity_Table.accelX.withTable(),
+            RuuviTagEntity_Table.accelY.withTable(),
+            RuuviTagEntity_Table.accelZ.withTable(),
+            RuuviTagEntity_Table.voltage.withTable(),
+            RuuviTagEntity_Table.updateAt.withTable(),
+            RuuviTagEntity_Table.dataFormat.withTable(),
+            RuuviTagEntity_Table.txPower.withTable(),
+            RuuviTagEntity_Table.movementCounter.withTable(),
+            RuuviTagEntity_Table.measurementSequenceNumber.withTable(),
+            RuuviTagEntity_Table.connectable.withTable()
+        )
+    }
 }
 
 fun RuuviTagEntity.isLowBattery(): Boolean {

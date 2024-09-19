@@ -226,9 +226,7 @@ class SensorCardViewModel(
     fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
 
     fun addSensor(sensorId: String) {
-        tagInteractor.getTagEntityById(sensorId)?.let {
-            tagInteractor.makeSensorFavorite(it)
-        }
+        tagInteractor.makeSensorFavorite(sensorId)
     }
 
     fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)

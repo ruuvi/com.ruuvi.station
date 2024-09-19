@@ -52,7 +52,7 @@ class DefaultOnTagFoundListener(
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
                     if (shouldSkipForCloudMode(sensorSettings) == false) {
                         repository.updateTag(ruuviTag)
-                        if (dbTag.favorite == true && sensorSettings != null) {
+                        if (sensorSettings != null) {
                             saveFavoriteReading(ruuviTag, sensorSettings)
                         }
                     }

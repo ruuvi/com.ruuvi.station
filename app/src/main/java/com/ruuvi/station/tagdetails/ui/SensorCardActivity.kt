@@ -58,9 +58,8 @@ import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
-import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.nfc.domain.NfcScanResponse
-import com.ruuvi.station.nfc.ui.NfcDialog
+import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -478,56 +477,6 @@ fun SensorsPager(
         }
     }
 
-}
-
-@Composable
-fun NfcInteractor(
-    getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
-    addSensor: (String) -> Unit
-) {
-    val context = LocalContext.current
-    var nfcDialog by remember { mutableStateOf(false) }
-    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse?>(null) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-
-    LaunchedEffect(key1 = lifecycleOwner.lifecycle) {
-        lifecycleOwner.lifecycleScope.launch {
-            Timber.d("nfc scanned launch")
-
-            NfcScanReciever.nfcSensorScanned
-                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { scanInfo ->
-                    Timber.d("nfc scanned: $scanInfo")
-                    if (scanInfo != null) {
-                        val response = getNfcScanResponse.invoke(scanInfo)
-                        Timber.d("nfc scanned response: $response")
-                        nfcScanResponse = response
-                        nfcDialog = true
-                    }
-                }
-        }
-    }
-
-    if (nfcDialog && nfcScanResponse != null) {
-        val response = nfcScanResponse
-        if (response != null) {
-            NfcDialog(
-                sensorInfo = response,
-                addSensorAction = {
-                    addSensor(response.sensorId)
-                    TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
-                },
-                goToSensorAction = {
-                    SensorCardActivity.startWithDashboard(context, response.sensorId)
-                },
-                onDismissRequest = {
-                    nfcDialog = false
-                    nfcScanResponse = null
-                }
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

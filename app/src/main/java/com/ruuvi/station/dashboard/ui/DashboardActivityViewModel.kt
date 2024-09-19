@@ -135,9 +135,7 @@ class DashboardActivityViewModel(
         nfcResultInteractor.getNfcScanResponse(scanInfo)
 
     fun addSensor(sensorId: String) {
-        tagInteractor.getTagEntityById(sensorId)?.let {
-            tagInteractor.makeSensorFavorite(it)
-        }
+        tagInteractor.makeSensorFavorite(sensorId)
     }
 
     fun setName(sensorId: String, name: String?) {
