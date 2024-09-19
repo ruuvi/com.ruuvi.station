@@ -16,10 +16,11 @@ class TagRepository(
     private val tagConverter: TagConverter
 ) {
     fun getAllTags(isFavorite: Boolean): List<RuuviTagEntity> =
-        SQLite.select()
+        SQLite.select(*RuuviTagEntity.queryFields)
             .from(RuuviTagEntity::class.java)
-            .where(RuuviTagEntity_Table.favorite.eq(isFavorite))
-            //.orderBy(RuuviTagEntity_Table.createDate, true)
+            .leftOuterJoin(SensorSettings::class.java)
+            .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
+            .where(if (isFavorite) SensorSettings_Table.id.withTable().isNotNull else SensorSettings_Table.id.withTable().isNull)
             .queryList()
 
     fun getTagById(id: String): RuuviTagEntity? =

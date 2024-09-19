@@ -5,19 +5,85 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviTextButton
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.nfc.domain.NfcScanResponse
+import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import kotlinx.coroutines.launch
+import timber.log.Timber
+
+@Composable
+fun NfcInteractor(
+    getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
+    addSensor: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var nfcDialog by remember { mutableStateOf(false) }
+    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+
+    LaunchedEffect(key1 = lifecycleOwner.lifecycle) {
+        lifecycleOwner.lifecycleScope.launch {
+            Timber.d("nfc scanned launch")
+
+            NfcScanReciever.nfcSensorScanned
+                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { scanInfo ->
+                    Timber.d("nfc scanned: $scanInfo")
+                    if (scanInfo != null) {
+                        val response = getNfcScanResponse.invoke(scanInfo)
+                        Timber.d("nfc scanned response: $response")
+                        nfcScanResponse = response
+                        nfcDialog = true
+                    }
+                }
+        }
+    }
+
+    if (nfcDialog && nfcScanResponse != null) {
+        val response = nfcScanResponse
+        if (response != null) {
+            NfcDialog(
+                sensorInfo = response,
+                addSensorAction = {
+                    addSensor(response.sensorId)
+                    TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
+                },
+                goToSensorAction = {
+                    SensorCardActivity.startWithDashboard(context, response.sensorId)
+                },
+                onDismissRequest = {
+                    nfcDialog = false
+                    nfcScanResponse = null
+                }
+            )
+        }
+    }
+}
 
 @Composable
 fun NfcDialog(
