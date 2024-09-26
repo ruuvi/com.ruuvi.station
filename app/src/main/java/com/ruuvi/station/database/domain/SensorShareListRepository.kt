@@ -31,7 +31,7 @@ class SensorShareListRepository {
 
     fun insertToShareList(sensorId: String, userEmail: String) {
         if (sensorId.isNotEmpty() && userEmail.isNotEmpty()) {
-            val newElement = SensorsShareList(sensorId, userEmail)
+            val newElement = SensorsShareList(sensorId, userEmail.lowercase())
             newElement.insert()
         }
     }

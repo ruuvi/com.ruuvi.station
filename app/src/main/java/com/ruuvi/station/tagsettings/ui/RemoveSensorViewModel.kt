@@ -21,7 +21,7 @@ class RemoveSensorViewModel(
     val sensorState: StateFlow<RuuviTag> = _sensorState
 
     val sensorOwnedByUser: Flow<Boolean> = sensorState.mapNotNull {
-        it.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
+        it.owner?.isNotEmpty() == true && it.owner.equals(networkInteractor.getEmail(), true)
     }
 
     private var _removeWithCloudData = MutableStateFlow(false)

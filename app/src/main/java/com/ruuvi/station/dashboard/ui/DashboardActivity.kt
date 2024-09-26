@@ -1191,7 +1191,7 @@ fun DashboardItemDropdownMenu(
 
     var setNameDialog by remember { mutableStateOf(false) }
 
-    val canBeShared = sensor.owner == userEmail
+    val canBeShared = sensor.owner.equals(userEmail, true)
     val canBeClaimed = sensor.owner.isNullOrEmpty() && userEmail?.isNotEmpty() == true
 
     Box() {

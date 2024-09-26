@@ -41,7 +41,7 @@ class ClaimSensorViewModel (
                         return@getSensorOwner
                     }
 
-                    if (it.data?.email == ruuviNetworkInteractor.getEmail()) {
+                    if (it.data?.email.equals(ruuviNetworkInteractor.getEmail(), true)) {
                         emitUiEvent(UiEvent.Navigate(ClaimRoutes.UNCLAIM, true))
                         return@getSensorOwner
                     }
