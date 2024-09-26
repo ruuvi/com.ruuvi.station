@@ -152,6 +152,7 @@ class NetworkDataSyncInteractor (
                         else -> NetworkSyncEvent.Error(sensorsInfo?.error ?: "Unknown error")
                     }
                     sendSyncEvent(event)
+                    lastResult = NetworkSyncEvent.Error(sensorsInfo?.error ?: "Unknown error")
                     return@launch
                 }
 
