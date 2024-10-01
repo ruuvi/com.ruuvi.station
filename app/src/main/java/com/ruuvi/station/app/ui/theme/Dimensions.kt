@@ -23,7 +23,8 @@ data class RuuviDimensions(
     val settingsListHeight: Dp = 56.dp,
     val sensorSettingTitleHeight: Dp = 48.dp,
     val dashboardIconSize: Dp = 32.dp,
-    val defaultImagePreviewHeight: Dp = 208.dp
+    val defaultImagePreviewHeight: Dp = 208.dp,
+    val topAppBarHeight: Dp = 64.dp
 )
 
 val ruuviDimensions = RuuviDimensions()

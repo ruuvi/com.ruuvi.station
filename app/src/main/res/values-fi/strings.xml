@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Antureita ei löydetty</string>
     <string name="add_tag_title">Lähellä olevat Ruuvi-laitteet</string>
     <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
+    <string name="advertisement">Laiteilmoitus</string>
     <string name="ago">sitten</string>
     <string name="alarm_custom_description_title">Aseta hälytysviesti</string>
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Haluatko tyhjentää sovelluksen muistiin tallennetun mittaushistorian? Tämä ei tyhjennä anturin sisäistä historiaa eikä Ruuvi Cloud -pilvipalveluun tallennettua historiaa.</string>
     <string name="clear_view">Tyhjennä kaavionäkymä</string>
     <string name="close">Sulje</string>
+    <string name="cloud">Pilvi</string>
     <string name="cloud_er_forbidden">Kielletty</string>
     <string name="cloud_er_internal">Sisäinen virhe</string>
     <string name="cloud_er_invalid_density_mode">Virheellinen tiheuden tila</string>
@@ -177,6 +179,7 @@
     <string name="darktheme_disabled">Tumma teema ei käytössä.</string>
     <string name="darktheme_enabled">Tumma teema käytössä.</string>
     <string name="dashboard">Koontinäyttö</string>
+    <string name="dashboard_banner_signed_out">Et ole kirjautunut sisään.</string>
     <string name="dashboard_description">Koontinäyttö mahdollistaa useamman anturin tietojen näyttämisen yhdellä sivulla.</string>
     <string name="dashboard_disabled">Koontinäyttö ei käytössä. </string>
     <string name="dashboard_empty">Koontinäyttö on tyhjä</string>
@@ -193,6 +196,7 @@
     <string name="data_forwarding_url">Välityspalvelimen URL-osoite</string>
     <string name="data_forwarding_url_hint">https://välitys.palvelin/...</string>
     <string name="data_points_read">%1$,d mittausta luettu, tallennetaan...</string>
+    <string name="data_received_via">Datalähde</string>
     <string name="date">Päivämäärä</string>
     <string name="day_1">1 päivä</string>
     <string name="day_10">10 päivää</string>
@@ -250,7 +254,10 @@
     <string name="gateway_test_fail">Tapahtui virhe. Palautekoodi: %1$d</string>
     <string name="gateway_test_success">Palvelin vastasi! Palautekoodi: %1$d</string>
     <string name="gateway_testing">Testataan...</string>
+    <string name="gatt_abort_download">Peruuta lataaminen</string>
+    <string name="gatt_download_failed">Lataus epäonnistui</string>
     <string name="gatt_not_in_range_description">Bluetooth-historian lataus epäonnistui. Tarkasta, että olet Bluetooth-kantaman sisällä, että anturissa on latausta tukeva laiteohjelmisto ja ettei anturi ole yhteydessä toiseen iOS-laitteeseen samanaikaisesti. Ruuvi Stationin iOS-versio varaa anturin yhteyden käyttöönsä jatkuvaa yhteystilaa käytettäessä.</string>
+    <string name="gatt_please_wait">Historian lataaminen voi kestää pitkään Bluetooth-yhteyden laadusta riippuen. Odota hetki.</string>
     <string name="gatt_sync_description">Ruuvi Station lataa anturin sisäisen historian viimeiseltä 10 päivältä, jos historia on saatavilla.\n\nMittaushistoria ladataan Bluetooth-yhteydellä. Varmista, että olet anturin läheisyydessä.</string>
     <string name="general">Yleisasetukset</string>
     <string name="h">t</string>
@@ -289,8 +296,10 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Ilmankosteus (%1$s)</string>
     <string name="image_cards">Kuvakortit</string>
+    <string name="image_format_not_supported">Kuvamuotoa ei tueta</string>
     <string name="image_view">Näytä kuvat</string>
     <string name="information">Tietoja</string>
+    <string name="internet_connection_problem">Ongelma internet-yhteydessä</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -325,6 +334,8 @@
     <string name="movement_counter">Liikelaskuri</string>
     <string name="movements">liikettä</string>
     <string name="muted_till">Poissa käytöstä %1$s saakka</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Minun Ruuvi-tilini</string>
     <string name="name">NIMI</string>
     <string name="navigation_drawer_close">Sulje siirtymisvalikko</string>
@@ -378,9 +389,10 @@
     <string name="onboarding_share_your_sensors">ja mittaa yhdessä ystävien sekä perheen kesken.</string>
     <string name="onboarding_sharees_can_use">Jaa anturisi</string>
     <string name="onboarding_skip">Ohita</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/fi/tietosuoja</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Haluan auttaa Ruuvia jakamalla anonyymejä käyttötietoja sovelluksen suorituskyvyn ja vakauden parantamiseksi</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/fi/tietosuoja/#apps</string>
     <string name="onboarding_start_tos_link_markup">yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön</string>
-    <string name="onboarding_start_tos_title">Hyväksyn yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön.</string>
+    <string name="onboarding_start_tos_title">Hyväksyn yleiset myynti- ja käyttöehdot sekä yksityisyyskäytännön</string>
     <string name="onboarding_station_web">Ruuvin web-sovelluksessa</string>
     <string name="onboarding_swipe_to_continue">Jatka pyyhkäisemällä →</string>
     <string name="onboarding_via_bluetooth_or_cloud">Bluetoothilla tai Ruuvi Cloudilla</string>
@@ -497,6 +509,8 @@
     <string name="settings_data_forwarding">Välityspalvelimen asetukset</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
     <string name="settings_developer">Kehittäjäasetukset</string>
+    <string name="settings_email_alerts">Sähköpostihälytykset</string>
+    <string name="settings_email_alerts_description">Jos olet Ruuvi Cloud ja Ruuvi Gateway -käyttäjä, voit vastaanottaa sähköpostihälytyksiä ottamalla tämän käyttöön.</string>
     <string name="settings_experimental">Kokeelliset ominaisuudet</string>
     <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
     <string name="settings_gateway_details_link">ohjesivulta.</string>
@@ -509,6 +523,8 @@
     <string name="settings_pressure">Paine</string>
     <string name="settings_pressure_unit">Paineyksikkö</string>
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö.</string>
+    <string name="settings_push_alerts">Push-hälytykset</string>
+    <string name="settings_push_alerts_description">Jos olet Ruuvi Cloud ja Ruuvi Gateway -käyttäjä, voit vastaanottaa push-hälytyksiä ottamalla tämän käyttöön.</string>
     <string name="settings_sound">Ääniasetukset</string>
     <string name="settings_sound_description">Määritä sovelluksen ääni- ja värinäasetukset.</string>
     <string name="settings_temperature">Lämpötila</string>

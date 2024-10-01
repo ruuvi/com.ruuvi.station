@@ -105,6 +105,7 @@
     <string name="current_version_fw">Obecna wersja:</string>
     <string name="dark_theme">Ciemny temat</string>
     <string name="dashboard">Panel</string>
+    <string name="dashboard_banner_signed_out">Nie jesteś zalogowany.</string>
     <string name="dashboard_description">Użyj widoku panelu, aby mieć przegląd wielu czujników.</string>
     <string name="dashboard_empty">Twój panel \njest pusty</string>
     <string name="dashboard_no_sensors_message_signed_out">Nie jesteś zalogowany.\n\nJeśli masz konto i dodałeś już do niego czujniki Ruuvi, po zalogowaniu zostaną one automatycznie zsynchronizowane z aplikacją mobilną Ruuvi Station.</string>
@@ -139,6 +140,7 @@
     <string name="gateway_test_fail">To nie pomogło. Kod odpowiedzi: %1$d</string>
     <string name="gateway_test_success">Prace związane z przekazywaniem danych! Kod odpowiedzi: %1$d</string>
     <string name="gateway_testing">Testowanie...</string>
+    <string name="gatt_download_failed">Pobieranie nie udane</string>
     <string name="general">Ogólne</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station to łatwe w użyciu, ale potężne narzędzie pozwalające zwiększyć możliwości czujników Ruuvi. Po prostu dodaj czujniki i gotowe.</string>
@@ -169,6 +171,7 @@
     <string name="humidity_relative_name">Względna (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Wilgotność powietrza (%1$s)</string>
+    <string name="image_format_not_supported">Format obrazu nie jest obsługiwany</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -194,6 +197,8 @@
     <string name="move_down">Przesuń w dół</string>
     <string name="move_up">Przesuń w górę</string>
     <string name="movement_counter">Licznik przesunięć</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="name">NAZWA</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
     <string name="navigation_drawer_open">Otwórz menu nawigacji</string>
@@ -213,9 +218,10 @@
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Chcę pomóc Ruuvi, udostępniając anonimowe statystyki w celu poprawy wydajności i stabilności aplikacji</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Warunki użytkowania i Politykę prywatności</string>
-    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności.</string>
+    <string name="onboarding_start_tos_title">Akceptuję Warunki użytkowania i Politykę prywatności</string>
     <string name="ordering">Sortowanie</string>
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>

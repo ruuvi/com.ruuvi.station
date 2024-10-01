@@ -21,6 +21,8 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
@@ -68,6 +70,7 @@ import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.Titan
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -77,6 +80,7 @@ import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
@@ -123,8 +127,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
+                val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
+                val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
                 val dragDropListState = rememberDragDropListState(
@@ -171,6 +177,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             DashboardTopAppBar(
                                 dashboardType = dashboardType,
                                 dashboardTapAction = dashboardTapAction,
+                                syncInProgress = syncInProgress,
                                 changeDashboardType = dashboardViewModel::changeDashboardType,
                                 changeDashboardTapAction = dashboardViewModel::changeDashboardTapAction,
                                 navigationCallback = {
@@ -255,17 +262,25 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                         openUrl(getString(R.string.buy_sensors_link))
                                     }
                                 } else {
-                                    DashboardItems(
-                                        items = it,
-                                        userEmail = userEmail,
-                                        dashboardType = dashboardType,
-                                        dashboardTapAction = dashboardTapAction,
-                                        syncCloud = dashboardViewModel::syncCloud,
-                                        setName = dashboardViewModel::setName,
-                                        onMove = dashboardViewModel::moveItem,
-                                        refreshing = refreshing,
-                                        dragDropListState = dragDropListState
-                                    )
+                                    Column {
+                                        if (!signedIn && signedInOnce && !bannerDisabled) {
+                                            SignInBanner(
+                                                disableBanner = dashboardViewModel::disableBanner
+                                            )
+                                            Spacer(modifier =  Modifier.height(RuuviStationTheme.dimensions.medium))
+                                        }
+                                        DashboardItems(
+                                            items = it,
+                                            userEmail = userEmail,
+                                            dashboardType = dashboardType,
+                                            dashboardTapAction = dashboardTapAction,
+                                            syncCloud = dashboardViewModel::syncCloud,
+                                            setName = dashboardViewModel::setName,
+                                            onMove = dashboardViewModel::moveItem,
+                                            refreshing = refreshing,
+                                            dragDropListState = dragDropListState
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -487,7 +502,68 @@ fun DashboardItems(
             }
             item(span = { GridItemSpan(maxLineSpan) }) { Box(modifier = Modifier.navigationBarsPadding()) }
         }
-        PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            backgroundColor = RuuviStationTheme.colors.dashboardBackground,
+            contentColor = RuuviStationTheme.colors.indicatorColor
+        )
+    }
+}
+
+@Composable
+fun SignInBanner(
+    modifier: Modifier = Modifier,
+    disableBanner: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Surface (
+        modifier = modifier
+            .fillMaxWidth(),
+        color = RuuviStationTheme.colors.bannerBackground
+    ) {
+        Box (
+            contentAlignment = CenterEnd,
+            modifier = Modifier
+                .padding(RuuviStationTheme.dimensions.small)
+        ){
+            IconButton(
+                onClick = {
+                    disableBanner.invoke()
+                }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
+                    contentDescription = null,
+                    tint = RuuviStationTheme.colors.primary
+                )
+            }
+        }
+        Column (
+            modifier = modifier.padding(vertical = RuuviStationTheme.dimensions.extended),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Text(
+                    modifier = Modifier
+                        .weight(1f),
+                    style = RuuviStationTheme.typography.subtitle,
+                    fontSize = RuuviStationTheme.fontSizes.extended,
+                    text = stringResource(id = R.string.dashboard_banner_signed_out),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
+            RuuviButton(
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.extended),
+                text = stringResource(id = R.string.sign_in)
+            ) {
+                SignInActivity.start(context)
+            }
+        }
     }
 }
 
@@ -520,7 +596,7 @@ fun DashboardItem(
         colors.dashboardCardBackground
     }
 
-    Column (
+    Column(
         modifier = modifier
     ) {
         Card(
@@ -596,38 +672,52 @@ fun DashboardItem(
                         moveItem = moveItem
                     )
 
-                    if (sensor.latestMeasurement?.temperatureValue != null) {
-                        BigValueDisplay(
-                            value = sensor.latestMeasurement.temperatureValue,
-                            alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                    if (sensor.latestMeasurement != null) {
+                        if (sensor.latestMeasurement?.temperatureValue != null) {
+                            BigValueDisplay(
+                                value = sensor.latestMeasurement.temperatureValue,
+                                alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                modifier = Modifier
+                                    .constrainAs(bigTemperature) {
+                                        top.linkTo(title.bottom)
+                                        start.linkTo(parent.start)
+                                    }
+                            )
+                        }
+
+                        ItemValuesWithoutTemperature(
+                            sensor = sensor,
+                            modifier = Modifier.constrainAs(values) {
+                                start.linkTo(parent.start)
+                                bottom.linkTo(updated.top)
+                                end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
+                            }
+                        )
+
+                        ItemBottom(
+                            sensor = sensor,
                             modifier = Modifier
-                                .constrainAs(bigTemperature) {
-                                    top.linkTo(title.bottom)
+                                .constrainAs(updated) {
                                     start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                }
+                        )
+                    } else {
+                        ItemBottomNoData(
+                            modifier = Modifier
+                                .constrainAs(updated) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(title.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                    height = Dimension.fillToConstraints
                                 }
                         )
                     }
-
-                    ItemValuesWithoutTemperature(
-                        sensor = sensor,
-                        modifier = Modifier.constrainAs(values) {
-                            start.linkTo(parent.start)
-                            bottom.linkTo(updated.top)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        }
-                    )
-
-                    ItemBottom(
-                        sensor = sensor,
-                        modifier = Modifier
-                            .constrainAs(updated) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                                width = Dimension.fillToConstraints
-                            }
-                    )
                 }
             }
         }
@@ -963,8 +1053,8 @@ fun ItemBottomUpdatedInfo(
             modifier = modifier.padding(top = 2.dp)
         ) {
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
-            if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
-                val icon = R.drawable.ic_icon_gateway
+            val icon = sensor.getSource().getIconResource()
+            if (sensor.getSource() == UpdateSource.Cloud) {
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = icon),
@@ -972,7 +1062,6 @@ fun ItemBottomUpdatedInfo(
                     contentDescription = null,
                 )
             } else {
-                val icon = R.drawable.ic_icon_bluetooth
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = icon),

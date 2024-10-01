@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -28,9 +29,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -55,15 +58,20 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
+                val scaffoldState = rememberScaffoldState()
+                val context = LocalContext.current
+
                 Body(
+                    scaffoldState = scaffoldState,
                     defaultImages = viewModel.getDefaultImages(),
                     setDefaultImage = { image ->
                         viewModel.setDefaultImage(image)
                         finish()
                     },
                     setImageFromGallery = { uri ->
-                        viewModel.setImageFromGallery(uri)
-                        finish()
+                        if (viewModel.setImageFromGallery(uri)) {
+                            finish()
+                        }
                     },
                     getImageFileForCamera = viewModel::getImageFileForCamera,
                     setImageFromCamera = {
@@ -71,6 +79,19 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                         finish()
                     }
                 )
+
+                LaunchedEffect(null) {
+                    viewModel.uiEvent.collect { uiEvent ->
+                        Timber.d("uiEvent $uiEvent")
+                        when (uiEvent) {
+                            is UiEvent.ShowSnackbar -> {
+                                scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
+                            }
+                            is UiEvent.NavigateUp -> finish()
+                            else -> {}
+                        }
+                    }
+                }
             }
         }
     }
@@ -78,6 +99,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     fun Body(
+        scaffoldState: ScaffoldState,
         defaultImages: List<Int>,
         setDefaultImage: (Int) -> Unit,
         setImageFromGallery: (Uri) -> Unit,
@@ -85,7 +107,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         setImageFromCamera: () -> Unit
     ) {
         val context = LocalContext.current
-        val scaffoldState = rememberScaffoldState()
         val systemUiController = rememberSystemUiController()
         val systemBarsColor = RuuviStationTheme.colors.systemBars
 

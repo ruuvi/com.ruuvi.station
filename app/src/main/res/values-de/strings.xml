@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Keine Sensoren gefunden</string>
     <string name="add_tag_title">Ruuvi-Sensoren in der Nähe</string>
     <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">vor</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Möchten Sie lokal gespeicherte historische Daten aus der App löschen? Dies löscht nicht den intern gespeicherten Verlauf des Sensors oder die im Ruuvi Cloud-Dienst gespeicherten historischen Daten.</string>
     <string name="clear_view">Klare verlaufsansicht</string>
     <string name="close">Schließen</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Verboten</string>
     <string name="cloud_er_internal">Interner Fehler</string>
     <string name="cloud_er_invalid_density_mode">Ungültiger Dichtemodus</string>
@@ -177,6 +179,7 @@
     <string name="darktheme_disabled">Das dunkle Thema ist deaktiviert.</string>
     <string name="darktheme_enabled">Das dunkle Thema ist aktiviert.</string>
     <string name="dashboard">Dashboard</string>
+    <string name="dashboard_banner_signed_out">Sie sind nicht angemeldet.</string>
     <string name="dashboard_description">Verwenden Sie die Dashboard-Ansicht, um mehrere Sensoren auf einen Blick zu sehen.</string>
     <string name="dashboard_disabled">Die Dashboard-Ansicht ist deaktiviert. </string>
     <string name="dashboard_empty">Ihr Dashboard ist leer</string>
@@ -193,6 +196,7 @@
     <string name="data_forwarding_url">Datenweiterleitungs-URL</string>
     <string name="data_forwarding_url_hint">https://dein.gateway/...</string>
     <string name="data_points_read">%1$,d Messwerte gelesen, gespeichert...</string>
+    <string name="data_received_via">Daten empfangen über</string>
     <string name="date">Datum</string>
     <string name="day_1">1 Tag</string>
     <string name="day_10">10 Tage</string>
@@ -261,7 +265,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="gateway_test_fail">Nein, es hat nicht funktioniert. Antwortcode: %1$d</string>
     <string name="gateway_test_success">Datenweiterleitung funktioniert! Antwortcode: %1$d</string>
     <string name="gateway_testing">Testen...</string>
+    <string name="gatt_abort_download">Download abbrechen</string>
+    <string name="gatt_download_failed">Herunterladen fehlgeschlagen</string>
     <string name="gatt_not_in_range_description">Download der Bluetooth-Historie fehlgeschlagen. Stellen Sie sicher, dass Sie sich in Bluetooth-Reichweite befinden, dass Ihr Sensor über eine Firmware verfügt, die das Herunterladen unterstützt, und dass der Sensor nicht gleichzeitig mit einem anderen iOS-Gerät verbunden ist. Die Sensorverbindung ist für die Ruuvi Station reserviert, wenn der Verbindungsmodus in iOS verwendet wird.</string>
+    <string name="gatt_please_wait">Manchmal ist der Download des Protokolls aufgrund der Bluetooth-Verbindung langsam. Bitte warten Sie einen Moment.</string>
     <string name="gatt_sync_description">Ruuvi Station lädt den internen Verlauf des Sensors für die letzten 10 Tage herunter, wenn der Messverlauf verfügbar ist.\n\nDer Verlauf wird über eine Bluetooth-Verbindung heruntergeladen. Stellen Sie sicher, dass Sie sich in der Nähe des Sensors befinden.</string>
     <string name="general">Allgemein</string>
     <string name="h">h</string>
@@ -300,8 +307,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfeuchtigkeit (%1$s)</string>
     <string name="image_cards">Bildkarten</string>
+    <string name="image_format_not_supported">Bildformat wird nicht unterstützt</string>
     <string name="image_view">Bildansicht</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Problem mit der Internetverbindung</string>
     <string name="language_english">Englisch</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -336,6 +345,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="movement_counter">Bewegungszähler</string>
     <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mein Ruuvi Konto</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Schließen der Navigation</string>
@@ -389,9 +400,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="onboarding_share_your_sensors">zum Messen mit Ihren Freunden und Ihrer Familie.</string>
     <string name="onboarding_sharees_can_use">Teilen Sie Sensoren</string>
     <string name="onboarding_skip">Überspringen</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Ich möchte Ruuvi helfen, indem ich anonyme Statistiken teile, um die Leistung und Stabilität der App zu verbessern</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Nutzungsbedingungen und die Datenschutzerklärung</string>
-    <string name="onboarding_start_tos_title">Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.</string>
+    <string name="onboarding_start_tos_title">Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
     <string name="onboarding_swipe_to_continue">Wischen Sie zum Fortfahren →</string>
     <string name="onboarding_via_bluetooth_or_cloud">mit Bluetooth oder Ruuvi Cloud</string>
@@ -508,6 +520,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
     <string name="settings_developer">Entwicklereinstellungen</string>
+    <string name="settings_email_alerts">E-Mail-Benachrichtigungen</string>
+    <string name="settings_email_alerts_description">Wenn Sie Ruuvi Cloud und Ruuvi Gateway verwenden, können Sie durch Aktivieren dieser Funktion E-Mail-Benachrichtigungen erhalten.</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
     <string name="settings_gateway_details_link">dokumentation.</string>
@@ -520,6 +534,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_pressure">Druck</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
+    <string name="settings_push_alerts">Push-Benachrichtigungen</string>
+    <string name="settings_push_alerts_description">Wenn Sie Ruuvi Cloud und Ruuvi Gateway verwenden, können Sie Push-Benachrichtigungen erhalten, indem Sie diese aktivieren.</string>
     <string name="settings_sound">Toneinstellungen</string>
     <string name="settings_sound_description">Konfigurieren Sie die Ton- und Vibrationseinstellungen der App.</string>
     <string name="settings_temperature">Temperatur</string>

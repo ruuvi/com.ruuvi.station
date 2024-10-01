@@ -34,7 +34,11 @@ class NetworkRequestExecutor (
             Timber.d("request saved $networkRequest")
             if (executeNow) {
                 Timber.d("execute NOW $networkRequest")
-                execute(networkRequest)
+                delay(1000)
+                val request = networkRequestRepository.getById(networkRequest.id)
+                if (request != null && request.status == NetworkRequestStatus.READY) {
+                    execute(request)
+                }
             }
         }
     }

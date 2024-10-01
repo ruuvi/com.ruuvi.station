@@ -16,6 +16,7 @@
     <string name="add_sensor_via_nfc">Также вы можете добавить датчик с помощью NFC - просто прикоснитесь к нему телефоном.</string>
     <string name="add_tag_not_found">Датчиков не обнаружено</string>
     <string name="add_tag_title">Ближайшие Сенсоры</string>
+    <string name="advertisement">Вещания</string>
     <string name="ago">назад</string>
     <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
@@ -102,6 +103,7 @@
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
+    <string name="cloud">Сеть</string>
     <string name="cloud_er_forbidden">Запрещено</string>
     <string name="cloud_er_internal">Внутренняя ошибка</string>
     <string name="cloud_er_invalid_density_mode">Недопустимый режим плотности</string>
@@ -132,6 +134,7 @@
     <string name="current_version_fw">Текущая версия:</string>
     <string name="dark_theme">Темная тема</string>
     <string name="dashboard">Панель датчиков</string>
+    <string name="dashboard_banner_signed_out">Вы не вошли в аккаунт.</string>
     <string name="dashboard_description">Используйте панель датчиков чтобы видеть показания сразу нескольких датчиков одноременно.</string>
     <string name="dashboard_empty">Панель датчиков пуста</string>
     <string name="dashboard_no_sensors_message_signed_out">Вы не вошли в аккаунт.\n\nЕсли у вас уже есть аккаунт Ruuvi и добавлены датчики в него, то они будут автоматичеки синхронизированы с мобильным приложением после того как вы войдете в свой аккаунт.</string>
@@ -144,6 +147,7 @@
     <string name="data_forwarding_url">URL шлюза</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d измерений прочитано, сохраняем..</string>
+    <string name="data_received_via">Данные Получены Из</string>
     <string name="date">Дата</string>
     <string name="day_1">1 день</string>
     <string name="day_10">10 дней</string>
@@ -224,6 +228,8 @@
     <string name="humidity_relative_name">Относительная влажность (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Влажность воздуха (%1$s)</string>
+    <string name="image_format_not_supported">Формат изображения не поддерживается</string>
+    <string name="internet_connection_problem">Проблема с подключением</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -251,6 +257,9 @@
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
     <string name="movements">движений</string>
+    <string name="my_account_change_email">Свяжитесь с support@ruuvi.com, если вы хотите изменить адрес электронной почты.</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="name">ИМЯ</string>
     <string name="navigation_drawer_close">Закрыть навигационную панель</string>
     <string name="navigation_drawer_open">Открыть навигационную панель</string>
@@ -273,6 +282,8 @@
     <string name="old_sensor_fw">Ваш сенсор не возвращает версию прошивки. Вероятно, на нем установлена старая версия прошивки и обновление рекомендовано.</string>
     <string name="on">Вкл</string>
     <string name="onboarding_measure_your_world">Measure Your World</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Я хочу помочь Ruuvi, делясь анонимной статистикой для улучшения производительности и стабильности приложения</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>

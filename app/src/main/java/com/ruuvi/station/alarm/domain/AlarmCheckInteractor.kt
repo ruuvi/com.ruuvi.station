@@ -209,7 +209,8 @@ class AlarmCheckInteractor(
         }
 
         private fun checkOfflineData() {
-            if (ruuviTag.networkLastSync?.diffGreaterThan(alarm.max.toLong() * 1000) == true) {
+            val syncDate = preferencesRepository.getLastSyncDate()
+            if (syncDate - (ruuviTag.networkLastSync?.time ?: 0) > alarm.max.toLong() * 1000) {
                 alarmResource = R.string.alert_notification_offline_message
             }
         }

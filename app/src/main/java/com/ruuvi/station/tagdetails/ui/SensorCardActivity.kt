@@ -22,9 +22,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.app.TaskStackBuilder
 import androidx.core.view.WindowCompat
@@ -377,9 +380,14 @@ fun SensorsPager(
                                 changeShowStats = changeShowStats
 
                             )
-
+                            var size by remember { mutableStateOf(Size.Zero)}
                             ChartsView(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .onGloballyPositioned { coordinates ->
+                                        size = coordinates.size.toSize()
+                                        Timber.d("ChartsView size $size")
+                                    },
                                 sensorId = sensor.id,
                                 temperatureChart = temperatureChart,
                                 humidityChart = humidityChart,
@@ -396,7 +404,8 @@ fun SensorsPager(
                                 newChartsUI = newChartsUI,
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
-                                getActiveAlarms = getActiveAlarms
+                                getActiveAlarms = getActiveAlarms,
+                                size = size
                             )
                         } else {
                             SensorCard(
@@ -885,11 +894,7 @@ fun SensorCardBottom(
                 .padding(RuuviStationTheme.dimensions.medium)
                 .fillMaxWidth()
         ) {
-            val icon = if (sensor.latestMeasurement.updatedAt == sensor.networkLastSync) {
-                R.drawable.ic_icon_gateway
-            } else {
-                R.drawable.ic_icon_bluetooth
-            }
+            val icon = sensor.getSource().getIconResource()
 
             if (syncInProgress) {
                 Text(

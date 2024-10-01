@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Aucun capteur détecté</string>
     <string name="add_tag_title">Capteurs Ruuvi à proximité</string>
     <string name="add_your_first_sensor">Ajoutez votre premier capteur</string>
+    <string name="advertisement">Messages des capteurs</string>
     <string name="ago">avant</string>
     <string name="alarm_custom_description_title">Description personnalisée de l\'alerte</string>
     <string name="alarm_custom_title_hint">Modifier la description...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Voulez-vous effacer les données historiques stockées localement dans l\'application ? Cela n\'effacera pas l\'historique stocké en interne par le capteur ou les données historiques stockées sur le service Ruuvi Cloud.</string>
     <string name="clear_view">Vue historique vide</string>
     <string name="close">Fermer</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Interdit</string>
     <string name="cloud_er_internal">Erreur interne</string>
     <string name="cloud_er_invalid_density_mode">Mode de densité invalide</string>
@@ -177,6 +179,7 @@
     <string name="darktheme_disabled">Le thème sombre est désactivé.</string>
     <string name="darktheme_enabled">Le thème sombre est activé.</string>
     <string name="dashboard">Affichage tableau de bord</string>
+    <string name="dashboard_banner_signed_out">Vous n\'êtes pas connecté.</string>
     <string name="dashboard_description">Vous pouvez afficher différentes informations importantes sur le tableau de bord.</string>
     <string name="dashboard_disabled">La vue du tableau de bord est désactivée. </string>
     <string name="dashboard_empty">Votre tableau de bord est vide</string>
@@ -193,6 +196,7 @@
     <string name="data_forwarding_url">URL du routeur</string>
     <string name="data_forwarding_url_hint">https://mon.routeur/...</string>
     <string name="data_points_read">%1$,d mesures analysées, enregistrement...</string>
+    <string name="data_received_via">Données reçues via</string>
     <string name="date">Date</string>
     <string name="day_1">1 jour</string>
     <string name="day_10">10 jours</string>
@@ -255,7 +259,10 @@
     <string name="gateway_test_fail">Erreur. Réponse : %1$d</string>
     <string name="gateway_test_success">Le routeur fonctionne ! Réponse : %1$d</string>
     <string name="gateway_testing">Test en cours...</string>
+    <string name="gatt_abort_download">Abandonner le téléchargement</string>
+    <string name="gatt_download_failed">Échec du téléchargement</string>
     <string name="gatt_not_in_range_description">Le téléchargement de l\'historique Bluetooth a échoué. Vérifiez que vous êtes à portée Bluetooth, que votre capteur possède un micrologiciel prenant en charge le téléchargement et que le capteur n\'est pas simultanément connecté à un autre appareil iOS. La connexion du capteur est réservée à la Ruuvi Station lorsque vous utilisez le mode connecté dans iOS.</string>
+    <string name="gatt_please_wait">Parfois, le téléchargement de l\'historique est lent en raison de la connectivité Bluetooth. Veuillez patienter un moment.</string>
     <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="general">Général</string>
     <string name="h">h</string>
@@ -294,8 +301,10 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Humidité de l\'air (%1$s)</string>
     <string name="image_cards">Cartes-images</string>
+    <string name="image_format_not_supported">Format d\'image non pris en charge</string>
     <string name="image_view">Vue de l\'image</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Problème de connexion Internet</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -330,6 +339,8 @@
     <string name="movement_counter">Compteur de mouvements</string>
     <string name="movements">mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mon compte Ruuvi</string>
     <string name="name">NOM</string>
     <string name="navigation_drawer_close">Fermer le menu</string>
@@ -383,9 +394,10 @@
     <string name="onboarding_share_your_sensors">à mesurer avec vos amis et votre famille.</string>
     <string name="onboarding_sharees_can_use">Partagez des capteurs</string>
     <string name="onboarding_skip">Ignorer</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Je souhaite aider Ruuvi en partageant des statistiques anonymes pour améliorer les performances et la stabilité de l\'application</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Conditions d\'utilisation et la Politique de confidentialit</string>
-    <string name="onboarding_start_tos_title">J\'accepte les Conditions d\'utilisation et la Politique de confidentialité.</string>
+    <string name="onboarding_start_tos_title">J\'accepte les Conditions d\'utilisation et la Politique de confidentialité</string>
     <string name="onboarding_station_web">l\'application Web Ruuvi</string>
     <string name="onboarding_swipe_to_continue">Balayez pour continuer →</string>
     <string name="onboarding_via_bluetooth_or_cloud">en utilisant Bluetooth ou Ruuvi Cloud</string>
@@ -502,6 +514,8 @@
     <string name="settings_data_forwarding">Paramètres du routeur</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
     <string name="settings_developer">Paramètres du développeur</string>
+    <string name="settings_email_alerts">Alertes courrier électronique</string>
+    <string name="settings_email_alerts_description">Si vous utilisez Ruuvi Cloud et Ruuvi Gateway, vous pourrez recevoir des alertes par e-mail en activant ceci.</string>
     <string name="settings_experimental">Options avancées</string>
     <string name="settings_gateway_details">L\'application envoie les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
     <string name="settings_gateway_details_link">page de support.</string>
@@ -514,6 +528,8 @@
     <string name="settings_pressure">Pression</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
+    <string name="settings_push_alerts">Alertes push</string>
+    <string name="settings_push_alerts_description">Si vous utilisez Ruuvi Cloud et Ruuvi Gateway, vous pourrez recevoir des alertes push en activant ceci.</string>
     <string name="settings_sound">Paramètres du son</string>
     <string name="settings_sound_description">Configurer les paramètres de son et de vibration de l\'application.</string>
     <string name="settings_temperature">Température</string>

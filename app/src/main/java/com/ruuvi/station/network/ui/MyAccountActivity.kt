@@ -148,6 +148,10 @@ fun MyAccountBody(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+
+                ChangeEmailText()
+
                 if (BuildConfig.DEBUG) {
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
@@ -183,6 +187,19 @@ fun MyAccountBody(
             }
         }
     }
+}
+
+@Composable
+fun ChangeEmailText(modifier: Modifier = Modifier) {
+    HyperlinkText(
+        modifier = modifier
+            .fillMaxWidth(),
+        fullText = stringResource(id = R.string.my_account_change_email),
+        linkText = listOf(stringResource(id = R.string.my_account_change_email_link_markup)),
+        hyperlinks = listOf(stringResource(id = R.string.my_account_change_email_link)),
+        textStyle = RuuviStationTheme.typography.paragraph,
+        linkTextColor = RuuviStationTheme.typography.paragraph.color
+    )
 }
 
 @Composable

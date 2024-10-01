@@ -24,6 +24,7 @@ import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,8 +57,13 @@ class NetworkDataSyncInteractor (
     @Volatile
     private var autoRefreshJob: Job? = null
 
-    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent> ()
+    private val _syncEvents = MutableSharedFlow<NetworkSyncEvent>(
+        replay = 2,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val syncEvents: SharedFlow<NetworkSyncEvent> = _syncEvents
+
+    var lastResult: NetworkSyncEvent? = null
 
     private val syncInProgress = MutableStateFlow<Boolean> (false)
     val syncInProgressFlow: StateFlow<Boolean> = syncInProgress
@@ -84,6 +90,9 @@ class NetworkDataSyncInteractor (
                         Timber.d("Do actual sync")
                         syncNetworkData()
                     }
+                }
+                if (lastResult is NetworkSyncEvent.Error) {
+                    delay(60000)
                 }
                 delay(10000)
             }
@@ -149,6 +158,7 @@ class NetworkDataSyncInteractor (
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
                 updateSensors(sensorsInfo.data)
+                sendSyncEvent(NetworkSyncEvent.SensorsSynced)
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
@@ -157,6 +167,7 @@ class NetworkDataSyncInteractor (
                 syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
+                updateBackgrounds(sensorsInfo.data)
                 networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
                 networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
@@ -164,6 +175,7 @@ class NetworkDataSyncInteractor (
             catch (exception: Exception) {
                 exception.message?.let { message ->
                     sendSyncEvent(NetworkSyncEvent.Error(message))
+                    lastResult = NetworkSyncEvent.Error(message)
                 }
             } finally {
                 sendSyncEvent(NetworkSyncEvent.Idle)
@@ -199,6 +211,7 @@ class NetworkDataSyncInteractor (
         }
 
         sendSyncEvent(NetworkSyncEvent.Success)
+        lastResult = NetworkSyncEvent.Success
         preferencesRepository.setLastSyncDate(Date().time)
     }
 
@@ -265,7 +278,7 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private fun setSyncInProgress(status: Boolean) {//} = withContext(Dispatchers.Main) {
+    private fun setSyncInProgress(status: Boolean) {
         Timber.d("SyncInProgress = $status")
         syncInProgress.value = status
     }
@@ -315,16 +328,6 @@ class NetworkDataSyncInteractor (
                 tagEntry.update()
             }
 
-            if (sensor.picture.isNullOrEmpty()) {
-                tagSettingsInteractor.setDefaultBackgroundImageByResource(
-                    sensorId = sensor.sensor,
-                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
-                    uploadNow = true
-                )
-            } else {
-                setSensorImage(sensor, sensorSettings)
-            }
-
             val latestData = sensor.measurements.maxByOrNull { it.timestamp }
             if (latestData != null) {
                 updateLatestMeasurement(
@@ -339,6 +342,22 @@ class NetworkDataSyncInteractor (
         for (sensor in sensors) {
             if (sensor.networkSensor && userInfoData.sensors.none { it.sensor == sensor.id }) {
                 tagRepository.deleteSensorAndRelatives(sensor.id)
+            }
+        }
+    }
+
+    private suspend fun updateBackgrounds(userInfoData: SensorsDenseResponseBody) {
+        userInfoData.sensors.forEach { sensor ->
+            val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
+
+            if (sensor.picture.isNullOrEmpty()) {
+                tagSettingsInteractor.setDefaultBackgroundImageByResource(
+                    sensorId = sensor.sensor,
+                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
+                    uploadNow = true
+                )
+            } else {
+                setSensorImage(sensor, sensorSettings)
             }
         }
     }
@@ -398,6 +417,9 @@ class NetworkDataSyncInteractor (
     fun stopSync() {
         Timber.d("stopSync")
         syncInProgress.value = false
+        CoroutineScope(IO).launch() {
+            sendSyncEvent(NetworkSyncEvent.Idle)
+        }
         if (syncJob.isActive) {
             syncJob.cancel()
         }

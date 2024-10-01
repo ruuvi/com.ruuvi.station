@@ -45,10 +45,15 @@ class DashboardActivityViewModel(
 
     val syncEvents = networkDataSyncInteractor.syncEvents
 
+    val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
+
     private val _dataRefreshing = MutableStateFlow<Boolean>(false)
     val dataRefreshing: StateFlow<Boolean> = _dataRefreshing
 
     val signedInOnce: StateFlow<Boolean> = MutableStateFlow<Boolean>(preferencesRepository.getSignedInOnce())
+
+    val _bannerDisabled: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(preferencesRepository.isBannerDisabled())
+    val bannerDisabled: StateFlow<Boolean> = _bannerDisabled
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
@@ -67,6 +72,11 @@ class DashboardActivityViewModel(
 
     fun refreshDashboardTapAction() {
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
+    fun disableBanner() {
+        preferencesRepository.disableBanner()
+        _bannerDisabled.value = preferencesRepository.isBannerDisabled()
     }
 
     fun moveItem(from: Int, to: Int) {
@@ -104,7 +114,7 @@ class DashboardActivityViewModel(
             job.invokeOnCompletion {
                 _dataRefreshing.value = false
             }
-            delay(5000)
+            delay(200)
             if (job.isActive) _dataRefreshing.value = false
         }
     }

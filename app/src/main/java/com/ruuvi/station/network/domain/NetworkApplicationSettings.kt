@@ -11,6 +11,8 @@ import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.units.model.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
+import com.ruuvi.station.util.extensions.toBooleanExtra
+import com.ruuvi.station.util.extensions.toInt
 import timber.log.Timber
 
 class NetworkApplicationSettings (
@@ -44,6 +46,8 @@ class NetworkApplicationSettings (
                     applyHumidityAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
                     applySensorsOrder(response.data.settings)
+                    applyDisableEmailNotifications(response.data.settings)
+                    applyDisablePushNotifications(response.data.settings)
                 }
                 if (response.data.settings.PROFILE_LANGUAGE_CODE.isNullOrEmpty()) {
                     updateProfileLanguage()
@@ -69,6 +73,8 @@ class NetworkApplicationSettings (
             updateHumidityAccuracy()
             updatePressureAccuracy()
             updateSensorsOrder()
+            updateDisableEmailNotifications()
+            updateDisablePushNotifications()
             false
         } else {
             true
@@ -138,7 +144,7 @@ class NetworkApplicationSettings (
 
     private fun applyCloudModeEnabled(settings: NetworkUserSettings) {
         if (settings.CLOUD_MODE_ENABLED != null) {
-            settings.CLOUD_MODE_ENABLED.toBoolean().let {
+            settings.CLOUD_MODE_ENABLED.toBooleanExtra().let {
                 Timber.d("NetworkApplicationSettings-applyCloudModeEnabled: $it")
                 preferencesRepository.setIsCloudModeEnabled(it)
             }
@@ -147,7 +153,7 @@ class NetworkApplicationSettings (
 
     private fun applyChartShowAllPoints(settings: NetworkUserSettings) {
         if (settings.CHART_SHOW_ALL_POINTS != null) {
-            settings.CHART_SHOW_ALL_POINTS.toBoolean().let {
+            settings.CHART_SHOW_ALL_POINTS.toBooleanExtra().let {
                 Timber.d("NetworkApplicationSettings-applyChartShowAllPoints: $it")
                 preferencesRepository.setIsShowAllGraphPoint(it)
             }
@@ -156,7 +162,7 @@ class NetworkApplicationSettings (
 
     private fun applyChartDrawDots(settings: NetworkUserSettings) {
         if (settings.CHART_DRAW_DOTS != null) {
-            settings.CHART_DRAW_DOTS.toBoolean().let {
+            settings.CHART_DRAW_DOTS.toBooleanExtra().let {
                 Timber.d("NetworkApplicationSettings-applyChartDrawDots: $it")
                 preferencesRepository.setGraphDrawDots(it)
             }
@@ -197,6 +203,22 @@ class NetworkApplicationSettings (
         settings.SENSOR_ORDER?.let {sensorsOrder ->
             Timber.d("NetworkApplicationSettings-applySensorsOrder: $sensorsOrder")
             preferencesRepository.setSortedSensors(sensorsOrder)
+        }
+    }
+
+    private fun applyDisableEmailNotifications(settings: NetworkUserSettings) {
+        if (settings.DISABLE_EMAIL_NOTIFICATIONS != null) {
+            val disableEmail = settings.DISABLE_EMAIL_NOTIFICATIONS.toBooleanExtra()
+            Timber.d("NetworkApplicationSettings-applyDisableEmailNotifications: $disableEmail")
+            preferencesRepository.setDisableEmailNotifications(disableEmail)
+        }
+    }
+
+    private fun applyDisablePushNotifications(settings: NetworkUserSettings) {
+        if (settings.DISABLE_PUSH_NOTIFICATIONS != null) {
+            val disablePush = settings.DISABLE_PUSH_NOTIFICATIONS.toBooleanExtra()
+            Timber.d("NetworkApplicationSettings-applyDisablePushNotifications: $disablePush")
+            preferencesRepository.setDisablePushNotifications(disablePush)
         }
     }
 
@@ -354,6 +376,39 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateDisableEmailNotifications() {
+        if (networkInteractor.signedIn) {
+            val disableEmailNotifications = preferencesRepository.isDisableEmailNotifications()
+            Timber.d("NetworkApplicationSettings-updateDisableEmailNotifications: $disableEmailNotifications")
+            networkInteractor.updateUserSetting(
+                DISABLE_EMAIL_NOTIFICATIONS,
+                disableEmailNotifications.toInt().toString()
+            )
+        }
+    }
+
+    fun updateDisablePushNotifications() {
+        if (networkInteractor.signedIn) {
+            val disablePushNotifications = preferencesRepository.isDisablePushNotifications()
+            Timber.d("NetworkApplicationSettings-updateDisablePushNotifications: $disablePushNotifications")
+            networkInteractor.updateUserSetting(
+                DISABLE_PUSH_NOTIFICATIONS,
+                disablePushNotifications.toInt().toString()
+            )
+        }
+    }
+
+    fun updateDisableTelegramNotifications() {
+        if (networkInteractor.signedIn) {
+            val disableTelegramNotifications = preferencesRepository.isDisableTelegramNotifications()
+            Timber.d("NetworkApplicationSettings-updateDisableTelegramNotifications: $disableTelegramNotifications")
+            networkInteractor.updateUserSetting(
+                DISABLE_TELEGRAM_NOTIFICATIONS,
+                disableTelegramNotifications.toInt().toString()
+            )
+        }
+    }
+
     companion object {
         val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
         val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
@@ -370,5 +425,8 @@ class NetworkApplicationSettings (
         val CHART_SHOW_ALL_POINTS = "CHART_SHOW_ALL_POINTS"
         val CHART_DRAW_DOTS = "CHART_DRAW_DOTS"
         val SENSOR_ORDER = "SENSOR_ORDER"
+        val DISABLE_EMAIL_NOTIFICATIONS = "DISABLE_EMAIL_NOTIFICATIONS"
+        val DISABLE_PUSH_NOTIFICATIONS = "DISABLE_PUSH_NOTIFICATIONS"
+        val DISABLE_TELEGRAM_NOTIFICATIONS = "DISABLE_TELEGRAM_NOTIFICATIONS"
     }
 }

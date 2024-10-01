@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">No sensors found</string>
     <string name="add_tag_title">Nearby Ruuvi sensors</string>
     <string name="add_your_first_sensor">Add Your First Sensor</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">ago</string>
     <string name="alarm_custom_description_title">Alert custom description</string>
     <string name="alarm_custom_title_hint">Set custom description...</string>
@@ -139,6 +140,7 @@
     <string name="clear_local_history_description">Do you want to clear locally stored history data from the app? This won\'t clear internally stored history from the sensor or history data stored on the Ruuvi Cloud service.</string>
     <string name="clear_view">Clear history view</string>
     <string name="close">Close</string>
+    <string name="cloud">Cloud</string>
     <string name="cloud_er_forbidden">Forbidden</string>
     <string name="cloud_er_internal">Internal error</string>
     <string name="cloud_er_invalid_density_mode">Invalid density mode</string>
@@ -178,6 +180,7 @@
     <string name="darktheme_disabled">Dark theme is disabled.</string>
     <string name="darktheme_enabled">Dark theme is enabled.</string>
     <string name="dashboard">Dashboard</string>
+    <string name="dashboard_banner_signed_out">You are not signed in.</string>
     <string name="dashboard_description">Use dashboard view to see multiple sensors at a glance.</string>
     <string name="dashboard_disabled">Dashboard view is disabled. </string>
     <string name="dashboard_empty">Your dashboard \nis empty</string>
@@ -194,6 +197,7 @@
     <string name="data_forwarding_url">Data Forwarding URL</string>
     <string name="data_forwarding_url_hint">https://your.gateway/...</string>
     <string name="data_points_read">%1$,d measurements read, saving..</string>
+    <string name="data_received_via">Data Received Via</string>
     <string name="date">Date</string>
     <string name="day_1">1 day</string>
     <string name="day_10">10 days</string>
@@ -251,7 +255,10 @@
     <string name="gateway_test_fail">Nope, it did not work. Response code: %1$d</string>
     <string name="gateway_test_success">Data forwarding works! Response code: %1$d</string>
     <string name="gateway_testing">Testing...</string>
+    <string name="gatt_abort_download">Abort download</string>
+    <string name="gatt_download_failed">Download failed</string>
     <string name="gatt_not_in_range_description">Bluetooth history download failed. Check that you\'re within Bluetooth range, your sensor has firmware that supports downloading and that the sensor is not simultaneously connected to another iOS device. Sensor connection is reserved for Ruuvi Station when using connected mode in iOS.</string>
+    <string name="gatt_please_wait">Sometimes the history download is slow due to the Bluetooth connectivity. Please wait a moment.</string>
     <string name="gatt_sync_description">Ruuvi Station downloads the internal history of the sensor for the last 10 days if the measurement history is available.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
     <string name="general">General</string>
     <string name="h">h</string>
@@ -290,8 +297,10 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Air Humidity (%1$s)</string>
     <string name="image_cards">Image cards</string>
+    <string name="image_format_not_supported">Image format not supported</string>
     <string name="image_view">Image view</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Internet connection problem</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -326,6 +335,9 @@
     <string name="movement_counter">Movement Counter</string>
     <string name="movements">movements</string>
     <string name="muted_till">Muted till %1$s</string>
+    <string name="my_account_change_email">Contact support@ruuvi.com if you wish to change email address.</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">My Ruuvi Account</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Close the navigation drawer</string>
@@ -380,9 +392,9 @@
     <string name="onboarding_sharees_can_use">Share Sensors</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_start_anonymous_data_collection_title">I want to help Ruuvi by sharing anonymous statistics to improve app performance and stability</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">Terms of Service and Privacy Policy</string>
-    <string name="onboarding_start_tos_title">I accept Terms of Service and Privacy Policy.</string>
+    <string name="onboarding_start_tos_title">I accept Terms of Service and Privacy Policy</string>
     <string name="onboarding_station_web">Ruuvi Web App</string>
     <string name="onboarding_swipe_to_continue">Swipe to continue →</string>
     <string name="onboarding_via_bluetooth_or_cloud">using Bluetooth or Ruuvi Cloud</string>
@@ -499,6 +511,8 @@
     <string name="settings_data_forwarding">Data Forwarding</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
     <string name="settings_developer">Developer settings</string>
+    <string name="settings_email_alerts">Email Alerts</string>
+    <string name="settings_email_alerts_description">If you are using Ruuvi Cloud and Ruuvi Gateway, you will be able to receive email alerts by enabling this.</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
@@ -511,6 +525,8 @@
     <string name="settings_pressure">Pressure</string>
     <string name="settings_pressure_unit">Pressure Unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
+    <string name="settings_push_alerts">Push Alerts</string>
+    <string name="settings_push_alerts_description">If you are using Ruuvi Cloud and Ruuvi Gateway, you will be able to receive push alerts by enabling this.</string>
     <string name="settings_sound">Sound Settings</string>
     <string name="settings_sound_description">Configure app related sound and vibration settings.</string>
     <string name="settings_temperature">Temperature</string>

@@ -125,7 +125,7 @@ class TagSettingsInteractor(
         }
     }
 
-    fun setImageFromGallery(sensorId: String, uri: Uri) {
+    fun setImageFromGallery(sensorId: String, uri: Uri): Boolean {
         Timber.d("setImageFromGallery $sensorId $uri")
         val isImage = imageInteractor.isImage(uri)
         Timber.d("isImage $isImage")
@@ -145,7 +145,9 @@ class TagSettingsInteractor(
                     userBackground = imageUri.toString()
                 )
             }
+            return true
         }
+        return false
     }
 
     fun createFileForCamera(sensorId: String): Pair<File,Uri> = imageInteractor.createFileForCamera(sensorId)

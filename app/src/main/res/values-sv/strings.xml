@@ -19,6 +19,7 @@
     <string name="add_tag_not_found">Inga sensorer hittades</string>
     <string name="add_tag_title">Ruuvi sensorer i närheten</string>
     <string name="add_your_first_sensor">Lägg till din första sensor.</string>
+    <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -138,6 +139,7 @@
     <string name="clear_local_history_description">Vill du rensa lokalt lagrad historisk data från appen? Detta kommer inte att rensa internt lagrad historik i sensorer eller historisk data lagrad i Ruuvi Cloud-tjänst.</string>
     <string name="clear_view">Töm historikvy</string>
     <string name="close">Stäng</string>
+    <string name="cloud">Moln</string>
     <string name="cloud_er_forbidden">Förbjuden</string>
     <string name="cloud_er_internal">Internt fel</string>
     <string name="cloud_er_invalid_density_mode">Ogiltig densitet</string>
@@ -177,6 +179,7 @@
     <string name="darktheme_disabled">Mörkt tema är inaktiverat.</string>
     <string name="darktheme_enabled">Mörkt tema är aktiverat.</string>
     <string name="dashboard">Översikt vy</string>
+    <string name="dashboard_banner_signed_out">Du är inte inloggad.</string>
     <string name="dashboard_description">Använd översikt vy för att se flera sensorer på samma gång.</string>
     <string name="dashboard_disabled">Översiksvyn är inaktiverad. </string>
     <string name="dashboard_empty">Översikt vyn är tom</string>
@@ -193,6 +196,7 @@
     <string name="data_forwarding_url">Vidarebefordings-URL</string>
     <string name="data_forwarding_url_hint">https://din.server/...</string>
     <string name="data_points_read">%1$,d mätningar läst, sparar..</string>
+    <string name="data_received_via">Data Mottagen Via</string>
     <string name="date">Datum</string>
     <string name="day_1">1 dag</string>
     <string name="day_10">10 dagar</string>
@@ -250,7 +254,10 @@
     <string name="gateway_test_fail">Fel uppstod. HTTP svarskod: %1$d</string>
     <string name="gateway_test_success">Vidarebefordran fungerar! HTTP svarskod: %1$d</string>
     <string name="gateway_testing">Testar...</string>
+    <string name="gatt_abort_download">Avbryt nedladdning</string>
+    <string name="gatt_download_failed">Nedladdning misslyckad</string>
     <string name="gatt_not_in_range_description">Nedladdning av Bluetooth-historik misslyckades. Kontrollera att du är inom Bluetooth-räckvidd, att din sensor har firmware som stöder nedladdning och att sensorn inte samtidigt är ansluten till en annan iOS-enhet. Sensoranslutning är reserverad för Ruuvi Station vid användning av anslutet läge i iOS.</string>
+    <string name="gatt_please_wait">Ibland går nedladdningen av historik långsamt på grund av Bluetooth-anslutningen. Var god vänta ett ögonblick.</string>
     <string name="gatt_sync_description">Ruuvi Station laddar ner sensorns interna historik för de senaste 10 dagarna om mäthistoriken är tillgänglig.\n\nHistorien laddas ner med en Bluetooth-anslutning. Se till att du är nära sensorn.</string>
     <string name="general">Allmänt</string>
     <string name="h">h</string>
@@ -289,8 +296,10 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Luftfuktighet (%1$s)</string>
     <string name="image_cards">Bildkort</string>
+    <string name="image_format_not_supported">Bildformat stöds inte</string>
     <string name="image_view">Bildvy</string>
     <string name="information">Information</string>
+    <string name="internet_connection_problem">Internetanslutningsproblem</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
     <string name="language_french">Français</string>
@@ -325,6 +334,8 @@
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
+    <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
+    <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mitt Ruuvi-konto</string>
     <string name="name">NAMN</string>
     <string name="navigation_drawer_close">Stäng navigationslådan</string>
@@ -378,9 +389,10 @@
     <string name="onboarding_share_your_sensors">för att mäta tillsammans med dina vänner och familj.</string>
     <string name="onboarding_sharees_can_use">Dela sensorer</string>
     <string name="onboarding_skip">Hoppa över</string>
-    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy</string>
+    <string name="onboarding_start_anonymous_data_collection_title">Jag vill hjälpa Ruuvi genom att dela anonym statistik för att förbättra appens prestanda och stabilitet</string>
+    <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="onboarding_start_tos_link_markup">villkoren och integritetspolicyn</string>
-    <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn.</string>
+    <string name="onboarding_start_tos_title">Jag accepterar villkoren och integritetspolicyn</string>
     <string name="onboarding_station_web">Ruuvi webbappen</string>
     <string name="onboarding_swipe_to_continue">Dra för att fortsätta →</string>
     <string name="onboarding_via_bluetooth_or_cloud">med Bluetooth eller Ruuvi Cloud</string>
@@ -497,6 +509,8 @@
     <string name="settings_data_forwarding">Vidarebefordran av data</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
     <string name="settings_developer">Utvecklarinställningar</string>
+    <string name="settings_email_alerts">E-postvarningar</string>
+    <string name="settings_email_alerts_description">Om du använder Ruuvi Cloud och Ruuvi Gateway kommer du att kunna ta emot e-postvarningar genom att aktivera detta.</string>
     <string name="settings_experimental">Experimentella funktioner</string>
     <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>
     <string name="settings_gateway_details_link">läs dokumentationen.</string>
@@ -509,6 +523,8 @@
     <string name="settings_pressure">Lufttryck</string>
     <string name="settings_pressure_unit">Tryckenhet</string>
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas.</string>
+    <string name="settings_push_alerts">Push-varningar</string>
+    <string name="settings_push_alerts_description">Om du använder Ruuvi Cloud och Ruuvi Gateway kommer du att kunna ta emot push-varningar genom att aktivera detta.</string>
     <string name="settings_sound">Ljudinställningar</string>
     <string name="settings_sound_description">Konfigurera appens ljud- och vibrationsinställningar.</string>
     <string name="settings_temperature">Temperatur</string>
