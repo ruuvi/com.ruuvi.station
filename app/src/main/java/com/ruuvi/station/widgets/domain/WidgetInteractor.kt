@@ -179,11 +179,85 @@ class WidgetInteractor (
     }
 
     suspend fun getSimpleWidgetData(sensorId: String, widgetType: WidgetType): SimpleWidgetData? {
-        var sensorFav = tagRepository.getFavoriteSensorById(sensorId)
-        if (sensorFav == null || !canReturnData(sensorFav)) {
+        val sensorFav = tagRepository.getFavoriteSensorById(sensorId) ?: return emptySimpleResult(sensorId)
+
+        if (canReturnData(sensorFav)) {
+            val cloudData = getSimpleDataFromCloud(sensorFav, widgetType)
+            val localData = getLocalData(sensorFav, widgetType)
+            if (cloudData?.timestamp ?: Date(0L) > localData.timestamp) {
+                return cloudData
+            } else {
+                return localData
+            }
+        } else {
+            return getLocalData(sensorFav, widgetType)
+        }
+    }
+
+    fun getLocalData(tag: RuuviTag, widgetType: WidgetType): SimpleWidgetData {
+        val sensorId = tag.id
+        if (tag.latestMeasurement != null) {
+            var unit = ""
+            var sensorValue = ""
+            when (widgetType) {
+                WidgetType.TEMPERATURE -> {
+                    unit = context.getString(unitsConverter.getTemperatureUnit().unit)
+                    sensorValue = tag.latestMeasurement.temperatureValue.valueWithoutUnit
+                }
+                WidgetType.HUMIDITY -> {
+                    unit = context.getString(unitsConverter.getHumidityUnit().unit)
+                    sensorValue = tag.latestMeasurement.humidityValue?.valueWithoutUnit ?: ""
+                }
+                WidgetType.PRESSURE -> {
+                    unit = context.getString(unitsConverter.getPressureUnit().unit)
+                    sensorValue = tag.latestMeasurement.pressureValue?.valueWithoutUnit ?: ""
+                }
+                WidgetType.MOVEMENT -> {
+                    unit = context.getString(R.string.movements)
+                    sensorValue = tag.latestMeasurement.movementValue?.valueWithoutUnit ?: ""
+                }
+                WidgetType.VOLTAGE -> {
+                    unit = context.getString(R.string.voltage_unit)
+                    sensorValue = tag.latestMeasurement.voltageValue.valueWithoutUnit
+                }
+                WidgetType.SIGNAL_STRENGTH -> {
+                    unit = context.getString(R.string.signal_unit)
+                    sensorValue = tag.latestMeasurement.rssiValue.valueWithoutUnit
+                }
+                WidgetType.ACCELERATION_X -> {
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationX)
+                }
+                WidgetType.ACCELERATION_Y -> {
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationY)
+                }
+                WidgetType.ACCELERATION_Z -> {
+                    unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
+                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationZ)
+                }
+            }
+            val updatedDate = tag.latestMeasurement.updatedAt
+            val updated = if (updatedDate.diffGreaterThan(hours24)) {
+                updatedDate.localizedDate(context)
+            } else {
+                updatedDate.localizedTime(context)
+            }
+            return SimpleWidgetData(
+                sensorId = sensorId,
+                timestamp = updatedDate,
+                displayName = tag.displayName,
+                sensorValue = sensorValue,
+                unit = unit,
+                updated = updated
+            )
+        } else {
             return emptySimpleResult(sensorId)
         }
+    }
 
+    suspend fun getSimpleDataFromCloud(tag: RuuviTag, widgetType: WidgetType): SimpleWidgetData? {
+        val sensorId = tag.id
         try {
             val sensorsData = getSensorDataFromCloud()
             val lastData = sensorsData?.data?.sensors?.firstOrNull{it.sensor == sensorId}
@@ -260,7 +334,8 @@ class WidgetInteractor (
 
                 return SimpleWidgetData(
                     sensorId = sensorId,
-                    displayName = sensorFav.displayName,
+                    timestamp = updatedDate,
+                    displayName = tag.displayName,
                     sensorValue = sensorValue,
                     unit = unit,
                     updated = updated
@@ -276,7 +351,7 @@ class WidgetInteractor (
 
     private fun emptyResult(sensorId: String): WidgetData = WidgetData(sensorId)
 
-    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, context.getString(R.string.no_data), "", "", null)
+    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, Date(0), context.getString(R.string.no_data), "", "", null)
 
     fun emptyComplexResult(sensorId: String): ComplexWidgetData = ComplexWidgetData(sensorId, context.getString(R.string.no_data), emptyList(), null)
 

@@ -50,7 +50,7 @@ data class SensorMeasurements(
     val txPower: Double,
     val connectable: Boolean?,
     val dataFormat: Int,
-    val updatedAt: Date?,
+    val updatedAt: Date,
 )
 
 fun SensorMeasurements.isLowBattery(): Boolean {

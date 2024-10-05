@@ -21,9 +21,7 @@ class SimpleWidgetConfigureViewModel(
     var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
-    val cloudSensors = _allSensors.map { allSensors ->
-        allSensors.filter { it.networkLastSync != null }
-    }
+    val cloudSensors = _allSensors
 
     val gotFilteredSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }

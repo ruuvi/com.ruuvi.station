@@ -55,7 +55,7 @@ class TagConverter(
                 dataFormat = entity.dataFormat,
                 measurementSequenceNumber = entity.measurementSequenceNumber,
                 connectable = entity.connectable,
-                updatedAt = entity.updateAt,
+                updatedAt = entity.updateAt!!,
             )
         )
     }
@@ -109,7 +109,7 @@ class TagConverter(
                     dataFormat = entity.dataFormat,
                     measurementSequenceNumber = entity.measurementSequenceNumber,
                     connectable = entity.connectable,
-                    updatedAt = entity.updateAt,
+                    updatedAt = entity.updateAt!!,
                 )
             }
         )
