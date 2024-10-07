@@ -23,9 +23,7 @@ class ComplexWidgetConfigureViewModel(
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
 
-    private val cloudSensors = _allSensors.map { allSensors ->
-        allSensors.filter { it.networkLastSync != null }
-    }
+    private val cloudSensors = _allSensors
 
     val gotFilteredSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }
@@ -59,7 +57,7 @@ class ComplexWidgetConfigureViewModel(
 
     fun getSensorsForWidgetId(appWidgetId: Int): List<ComplexWidgetSensorItem> {
         val saved = preferencesInteractor.getComplexWidgetSettings(appWidgetId)
-        return tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }.map { cloudSensor ->
+        return tagRepository.getFavoriteSensors().map { cloudSensor ->
             ComplexWidgetSensorItem(cloudSensor.id, cloudSensor.displayName).also {
                 it.restoreSettings(saved.firstOrNull { it.sensorId == cloudSensor.id })
             }
