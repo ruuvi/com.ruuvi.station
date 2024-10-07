@@ -43,7 +43,7 @@ data class RuuviTagEntity(
     @Column
     var voltage: Double = 0.0,
     @Column
-    var updateAt: Date? = null,
+    var updateAt: Date = Date(),
     @Column
     var dataFormat: Int = 0,
     @Column

@@ -25,20 +25,35 @@ class WidgetInteractor (
     val unitsConverter: UnitsConverter,
     val accelerationConverter: AccelerationConverter
 ) {
-    fun getCloudSensorsList() = tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }
+    fun getCloudSensorsList() = tagRepository.getFavoriteSensors()
 
     suspend fun getComplexWidgetData(sensorId: String, settings: ComplexWidgetPreferenceItem?): ComplexWidgetData {
         val sensorFav = tagRepository.getFavoriteSensorById(sensorId)
+            ?: return emptyComplexResult(sensorId)
 
-        if (sensorFav == null || !canReturnData(sensorFav)) {
-            return emptyComplexResult(sensorId)
+        if (isCloudSensor(sensorFav)) {
+            val cloudData = getComplexDataFromCloud(sensorFav, settings)
+            val localData = getComplexLocalData(sensorFav, settings)
+
+            return if (cloudData.timestamp > localData.timestamp) {
+                cloudData
+            } else {
+                localData
+            }
+        } else {
+            return getComplexLocalData(sensorFav, settings)
         }
+    }
 
+    private suspend fun getComplexDataFromCloud(sensorFav: RuuviTag, settings: ComplexWidgetPreferenceItem?): ComplexWidgetData
+    {
+        val sensorId = sensorFav.id
         try {
             val lastMeasurement = getSensorLatestValues(sensorId)
             val result = ComplexWidgetData(
                 sensorId = sensorId,
-                displayName = sensorFav?.displayName ?: sensorId,
+                timestamp = lastMeasurement?.updatedAt ?: Date(0),
+                displayName = sensorFav.displayName,
                 sensorValues = listOf(),
                 updated = null
             )
@@ -123,13 +138,102 @@ class WidgetInteractor (
                 if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
                 result.sensorValues = sensorValues
             }
-
             return result
         } catch (e: Exception) {
             Timber.e(e)
             return emptyComplexResult(sensorId)
         }
     }
+
+
+    private fun getComplexLocalData(sensorFav: RuuviTag, settings: ComplexWidgetPreferenceItem?): ComplexWidgetData {
+        val sensorId = sensorFav.id
+        val lastMeasurement = sensorFav.latestMeasurement
+
+        val result = ComplexWidgetData(
+            sensorId = sensorId,
+            timestamp = lastMeasurement?.updatedAt ?: Date(0),
+            displayName = sensorFav.displayName,
+            sensorValues = listOf(),
+            updated = null
+        )
+
+        if (lastMeasurement != null) {
+            val temperatureValue = SensorValue(
+                type = WidgetType.TEMPERATURE,
+                sensorValue = lastMeasurement.temperatureValue.valueWithoutUnit,
+                unit = lastMeasurement.temperatureValue.unitString
+            )
+
+            val humidityValue = SensorValue(
+                type = WidgetType.HUMIDITY,
+                sensorValue = lastMeasurement.humidityValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.humidityValue?.valueWithUnit ?: context.getString(unitsConverter.getHumidityUnit().unit)
+            )
+
+            val pressureValue = SensorValue(
+                type = WidgetType.PRESSURE,
+                sensorValue = lastMeasurement.pressureValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.pressureValue?.unitString ?: context.getString(unitsConverter.getPressureUnit().unit)
+            )
+
+            val movementsValue = SensorValue(
+                type = WidgetType.MOVEMENT,
+                sensorValue = lastMeasurement.movementValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.movementValue?.unitString ?: context.getString(R.string.movements)
+            )
+
+            val voltageValue = SensorValue(
+                type = WidgetType.VOLTAGE,
+                sensorValue = lastMeasurement.voltageValue.valueWithoutUnit,
+                unit = lastMeasurement.voltageValue.unitString
+            )
+
+            val signalStrengthValue = SensorValue(
+                type = WidgetType.SIGNAL_STRENGTH,
+                sensorValue = lastMeasurement.rssiValue.valueWithoutUnit ,
+                unit = lastMeasurement.rssiValue.unitString
+            )
+
+            val accelerationXValue = SensorValue(
+                type = WidgetType.ACCELERATION_X,
+                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationX),
+                unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
+            )
+
+            val accelerationYValue = SensorValue(
+                type = WidgetType.ACCELERATION_Y,
+                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationY),
+                unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
+            )
+
+            val accelerationZValue = SensorValue(
+                type = WidgetType.ACCELERATION_Z,
+                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationZ),
+                unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
+            )
+
+            result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
+                lastMeasurement.updatedAt.localizedDate(context)
+            } else {
+                lastMeasurement.updatedAt.localizedTime(context)
+            }
+
+            val sensorValues: MutableList<SensorValue> = mutableListOf()
+            if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
+            if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
+            if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
+            if (settings?.checkedMovement == true) sensorValues.add(movementsValue)
+            if (settings?.checkedVoltage == true) sensorValues.add(voltageValue)
+            if (settings?.checkedSignalStrength == true) sensorValues.add(signalStrengthValue)
+            if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
+            if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
+            if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
+            result.sensorValues = sensorValues
+        }
+        return result
+    }
+
 
     private var sensorDenseResponse: SensorDenseResponse? = null
     private var lastSyncDate: Date? = null
@@ -152,7 +256,7 @@ class WidgetInteractor (
 
     suspend fun getSensorLatestValues(sensorId: String): DecodedSensorData? {
         val sensorFav = tagRepository.getFavoriteSensorById(sensorId)
-        if (sensorFav == null || !canReturnData(sensorFav)) {
+        if (sensorFav == null || !isCloudSensor(sensorFav)) {
             return null
         }
 
@@ -181,20 +285,20 @@ class WidgetInteractor (
     suspend fun getSimpleWidgetData(sensorId: String, widgetType: WidgetType): SimpleWidgetData? {
         val sensorFav = tagRepository.getFavoriteSensorById(sensorId) ?: return emptySimpleResult(sensorId)
 
-        if (canReturnData(sensorFav)) {
+        if (isCloudSensor(sensorFav)) {
             val cloudData = getSimpleDataFromCloud(sensorFav, widgetType)
-            val localData = getLocalData(sensorFav, widgetType)
+            val localData = getSimpleLocalData(sensorFav, widgetType)
             if (cloudData?.timestamp ?: Date(0L) > localData.timestamp) {
                 return cloudData
             } else {
                 return localData
             }
         } else {
-            return getLocalData(sensorFav, widgetType)
+            return getSimpleLocalData(sensorFav, widgetType)
         }
     }
 
-    fun getLocalData(tag: RuuviTag, widgetType: WidgetType): SimpleWidgetData {
+    fun getSimpleLocalData(tag: RuuviTag, widgetType: WidgetType): SimpleWidgetData {
         val sensorId = tag.id
         if (tag.latestMeasurement != null) {
             var unit = ""
@@ -353,7 +457,7 @@ class WidgetInteractor (
 
     private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, Date(0), context.getString(R.string.no_data), "", "", null)
 
-    fun emptyComplexResult(sensorId: String): ComplexWidgetData = ComplexWidgetData(sensorId, context.getString(R.string.no_data), emptyList(), null)
+    fun emptyComplexResult(sensorId: String): ComplexWidgetData = ComplexWidgetData(sensorId, Date(0), context.getString(R.string.no_data), emptyList(), null)
 
-    private fun canReturnData(sensor: RuuviTag) = sensor.networkLastSync != null
+    private fun isCloudSensor(sensor: RuuviTag) = sensor.networkLastSync != null
 }
