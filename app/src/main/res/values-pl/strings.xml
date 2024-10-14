@@ -93,7 +93,7 @@
     <string name="cloud_er_sub_data_storage_error">Błąd w zapisie danych</string>
     <string name="cloud_er_sub_no_user">Brak użytkownika</string>
     <string name="cloud_er_subscription_not_found">Nie znaleziono subskrypcji</string>
-    <string name="cloud_er_token_expired">Token wygasł</string>
+    <string name="cloud_er_token_expired">Wprowadzony jednorazowy kod (OTP) jest nieprawidłowy lub wygasł</string>
     <string name="cloud_er_unable_to_send_email">Nie można wysłać wiadomości e-mail</string>
     <string name="cloud_er_unauthorized">Nieautoryzowane</string>
     <string name="cloud_er_user_not_found">Nie znaleziono użytkownika</string>
@@ -197,6 +197,7 @@
     <string name="move_down">Przesuń w dół</string>
     <string name="move_up">Przesuń w górę</string>
     <string name="movement_counter">Licznik przesunięć</string>
+    <string name="my_account_change_email">Skontaktuj się z support@ruuvi.com, jeśli chcesz zmienić adres e-mail powiązany z tym kontem użytkownika.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
     <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="name">NAZWA</string>

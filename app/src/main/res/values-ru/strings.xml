@@ -100,6 +100,7 @@
     <string name="claim_ownership">Заявить о владении</string>
     <string name="claim_sensor">Заявить о собственности</string>
     <string name="claim_sensor_ownership">Заявить о собственности на датчик</string>
+    <string name="claim_wrong_sensor_scanned">Вы считываете неверный датчик Ruuvi</string>
     <string name="clear">Очистить</string>
     <string name="clear_confirm">Вы уверены что хотите удалить всю историю наблюдений? Данное действие невозможно отменить.</string>
     <string name="close">Закрыть</string>
@@ -121,7 +122,7 @@
     <string name="cloud_er_sub_data_storage_error">Ошибка сохранения данных</string>
     <string name="cloud_er_sub_no_user">Нет пользователя</string>
     <string name="cloud_er_subscription_not_found">Подписка не найдена</string>
-    <string name="cloud_er_token_expired">Токен истек</string>
+    <string name="cloud_er_token_expired">Введённый одноразовый пароль (OTP) неверен или истек</string>
     <string name="cloud_er_unable_to_send_email">Не удалось отправить e-mail</string>
     <string name="cloud_er_unauthorized">Требуется авторизация</string>
     <string name="cloud_er_user_not_found">Пользователь не найден</string>
