@@ -57,8 +57,8 @@ class DashboardActivityViewModel(
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
 
-    val shouldAskNotificationPermission
-        get() = permissionLogicInteractor.shouldAskNotificationPermission()
+    val _shouldAskNotificationPermission: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(permissionLogicInteractor.shouldAskNotificationPermission())
+    val shouldAskNotificationPermission: StateFlow<Boolean> = _shouldAskNotificationPermission
 
     val shouldAskForBackgroundLocationPermission
         get() = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
@@ -72,6 +72,10 @@ class DashboardActivityViewModel(
 
     fun refreshDashboardTapAction() {
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
+    }
+
+    fun refreshNotificationStatus() {
+        _shouldAskNotificationPermission.value = permissionLogicInteractor.shouldAskForBackgroundLocationPermission()
     }
 
     fun disableBanner() {

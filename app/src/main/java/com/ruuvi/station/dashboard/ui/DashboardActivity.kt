@@ -131,6 +131,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
+                val shouldAskNotificationPermission by dashboardViewModel.shouldAskNotificationPermission.collectAsState()
                 val dragDropListState = rememberDragDropListState(
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
@@ -142,11 +143,13 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     colors.navigationTransparent
                 }
 
-                NotificationPermission(
-                    scaffoldState = scaffoldState,
-                    shouldAskNotificationPermission = dashboardViewModel.shouldAskNotificationPermission
-                ) {
-                    bluetoothCheckReady = true
+                if (shouldAskNotificationPermission) {
+                    NotificationPermission(
+                        scaffoldState = scaffoldState,
+                        shouldAskNotificationPermission = shouldAskNotificationPermission
+                    ) {
+                        bluetoothCheckReady = true
+                    }
                 }
 
                 if (bluetoothCheckReady) {
@@ -328,6 +331,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 if (it is NetworkSyncEvent.Success) {
                     dashboardViewModel.refreshDashboardType()
                     dashboardViewModel.refreshDashboardTapAction()
+                }
+
+                if (it is NetworkSyncEvent.SensorsSynced) {
+                    dashboardViewModel.refreshNotificationStatus()
                 }
             }
         }
