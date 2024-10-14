@@ -25,8 +25,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
-import com.ruuvi.station.widgets.ui.ForNetworkSensorsOnlyScreen
-import com.ruuvi.station.widgets.ui.LogInFirstScreen
+import com.ruuvi.station.widgets.ui.AddSensorsFirstScreen
+import com.ruuvi.station.widgets.ui.EnableBackgroundService
 import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -90,17 +90,14 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
 @Composable
 fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    val sensors by viewModel.cloudSensors.observeAsState(listOf())
-    val userLoggedIn by viewModel.userLoggedIn.observeAsState(false)
+    val sensors by viewModel.allSensors.observeAsState(listOf())
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = RuuviStationTheme.colors.background,
     ) {
-        if (!userLoggedIn) {
-            LogInFirstScreen()
-        } else if (sensors.isNullOrEmpty()) {
-            ForNetworkSensorsOnlyScreen()
+        if (sensors.isNullOrEmpty()) {
+            AddSensorsFirstScreen()
         } else {
             SelectSensorScreen(viewModel)
         }
@@ -109,17 +106,17 @@ fun WidgetSetupScreen(viewModel: SimpleWidgetConfigureViewModel) {
 
 @Composable
 fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
-    val sensors by viewModel.cloudSensors.observeAsState(listOf())
-    val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
+    val sensors by viewModel.allSensors.observeAsState(listOf())
+    val gotLocalSensors by viewModel.gotLocalSensors.observeAsState(false)
     val selectedOption by viewModel.sensorId.observeAsState()
+    val backgroundServiceEnabled by viewModel.backgroundServiceEnabled.observeAsState(true)
 
     LazyColumn() {
         item {
-            if (gotFilteredSensors) {
-                Paragraph(
-                    text = stringResource(id = R.string.widgets_missing_sensors),
-                    modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
-                )
+            if (gotLocalSensors && !backgroundServiceEnabled) {
+                EnableBackgroundService(viewModel.backgroundServiceInterval) {
+                    viewModel.enableBackgroundService()
+                }
             }
         }
 

@@ -629,7 +629,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/ideas/?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Benefits</string>
     <string name="widget_empty">Press + to add sensors</string>
+    <string name="widgets_add_sensors_first">Add sensors to app before using widgets</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
+    <string name="widgets_enable_background_service">To update local sensor values in widget you need to enable background scanning service. This is not needed for cloud sensors with Ruuvi Gateway. You can enable background service now. Adjust scanning interval in app settings. Currently it set to %1$s</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared with you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>
     <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownership of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>
