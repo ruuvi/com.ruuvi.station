@@ -168,7 +168,7 @@ class WidgetInteractor (
             val humidityValue = SensorValue(
                 type = WidgetType.HUMIDITY,
                 sensorValue = lastMeasurement.humidityValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.humidityValue?.valueWithUnit ?: context.getString(unitsConverter.getHumidityUnit().unit)
+                unit = lastMeasurement.humidityValue?.unitString ?: context.getString(unitsConverter.getHumidityUnit().unit)
             )
 
             val pressureValue = SensorValue(
