@@ -54,9 +54,9 @@ class XlsxExporter (
         val sensorName = sensorSettings?.name?.prepareFilename()
 
         val filename = if (sensorName.isNullOrEmpty()) {
-            "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.csv"
+            "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.xlsx"
         } else {
-            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.csv"
+            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.xlsx"
         }
 
         val filePath = File(filename)
