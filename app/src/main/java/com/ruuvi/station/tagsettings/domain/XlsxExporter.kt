@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.prepareFilename
 import uk.co.spudsoft.xlsx.ColumnDefinition
 import uk.co.spudsoft.xlsx.TableDefinition
 import uk.co.spudsoft.xlsx.XlsxWriter
@@ -50,11 +51,12 @@ class XlsxExporter (
 
         val filenameDate = SimpleDateFormat("yyyyMMdd").format(Date())
         val filenameTime = SimpleDateFormat("HHmmssZ").format(Date())
+        val sensorName = sensorSettings?.name?.prepareFilename()
 
-        val filename = if (sensorSettings?.name.isNullOrEmpty()) {
-            "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.xlsx"
+        val filename = if (sensorName.isNullOrEmpty()) {
+            "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.csv"
         } else {
-            "$cacheDir/${sensorSettings?.name}_${filenameDate}T${filenameTime}.xlsx"
+            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.csv"
         }
 
         val filePath = File(filename)

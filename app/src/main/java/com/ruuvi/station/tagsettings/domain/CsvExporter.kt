@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.prepareFilename
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
@@ -44,11 +45,12 @@ class CsvExporter(
 
         val filenameDate = SimpleDateFormat("yyyyMMdd").format(Date())
         val filenameTime = SimpleDateFormat("HHmmssZ").format(Date())
+        val sensorName = sensorSettings?.name?.prepareFilename()
 
-        val filename = if (sensorSettings?.name.isNullOrEmpty()) {
+        val filename = if (sensorName.isNullOrEmpty()) {
             "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.csv"
         } else {
-            "$cacheDir/${sensorSettings?.name}_${filenameDate}T${filenameTime}.csv"
+            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.csv"
         }
 
         val csvFile = File(filename)

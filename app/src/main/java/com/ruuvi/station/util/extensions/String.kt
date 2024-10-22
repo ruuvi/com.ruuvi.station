@@ -3,6 +3,7 @@ package com.ruuvi.station.util.extensions
 import java.util.Locale
 
 private const val HEX_CHARS = "0123456789ABCDEF"
+private val FORBIDDEN_CHARS = arrayOf('"', '*', '/', ':', '<', '>', '?', '\\', '|')
 
 fun String.hexStringToByteArray(): ByteArray {
     val input = this.toUpperCase(Locale.getDefault())
@@ -22,4 +23,10 @@ fun String.hexStringToByteArray(): ByteArray {
 
 fun String.toBooleanExtra(): Boolean {
     return this.toBoolean() || this == "1"
+}
+
+fun String.prepareFilename(replaceWith: String = ""): String {
+    return this
+        .map { ch -> if (FORBIDDEN_CHARS.any { ch == it } ) "_" else ch }
+        .joinToString(separator = replaceWith)
 }
