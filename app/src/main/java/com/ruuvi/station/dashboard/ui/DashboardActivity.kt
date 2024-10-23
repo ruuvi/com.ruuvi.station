@@ -928,10 +928,12 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                ValueDisplay(
-                    value = sensor.latestMeasurement.temperatureValue,
-                    sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
-                )
+                if (sensor.latestMeasurement.temperatureValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.temperatureValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
+                    )
+                }
                 if (sensor.latestMeasurement.humidityValue != null) {
                     ValueDisplay(
                         value = sensor.latestMeasurement.humidityValue,

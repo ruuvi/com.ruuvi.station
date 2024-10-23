@@ -31,7 +31,9 @@ class CsvExporter(
         val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthHours)
             .map {
                 it.copy(
-                    temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+                    temperature = it.temperature?.let { temperature ->
+                        temperature + (sensorSettings?.temperatureOffset ?: 0.0)
+                    },
                     humidity = it.humidity?.let { humidity ->
                         humidity + (sensorSettings?.humidityOffset ?: 0.0)
                     },
@@ -88,7 +90,7 @@ class CsvExporter(
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
-                fileWriter.append(unitsConverter.getTemperatureValue(reading.temperature).toString())
+                fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
                 fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() } ?: nullValue)
                 fileWriter.append(',')

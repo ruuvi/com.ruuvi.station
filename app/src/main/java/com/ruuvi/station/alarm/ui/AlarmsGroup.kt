@@ -269,10 +269,10 @@ fun AlertEditItem(
 
         if (sensorState.latestMeasurement != null) {
             val latestValue = when (alarmState.type) {
-                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue.valueWithUnit
+                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue?.valueWithUnit
                 AlarmType.HUMIDITY -> unitsConverter.getHumidityString(
                     sensorState.latestMeasurement.humidityValue?.original,
-                    sensorState.latestMeasurement.temperatureValue.original,
+                    sensorState.latestMeasurement.temperatureValue?.original,
                     HumidityUnit.PERCENT
                 )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressureValue?.valueWithUnit

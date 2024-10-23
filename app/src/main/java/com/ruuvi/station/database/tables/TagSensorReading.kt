@@ -20,7 +20,7 @@ data class TagSensorReading(
     @Column
     var createdAt: Date = Date(),
     @Column
-    var temperature: Double = 0.0,
+    var temperature: Double? = null,
     @Column
     var temperatureOffset: Double = 0.0,
     @Column
@@ -72,7 +72,7 @@ data class TagSensorReading(
 
     constructor(tag: FoundRuuviTag, timestamp: Date): this(
         ruuviTagId = tag.id,
-        temperature = tag.temperature ?: 0.0,
+        temperature = tag.temperature,
         humidity = tag.humidity,
         pressure = tag.pressure,
         rssi = tag.rssi ?: 0,

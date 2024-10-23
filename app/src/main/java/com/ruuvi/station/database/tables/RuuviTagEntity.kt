@@ -21,7 +21,7 @@ data class RuuviTagEntity(
     @Column
     var rssi: Int = 0,
     @Column
-    var temperature: Double = 0.0,
+    var temperature: Double? = null,
     @Column
     var temperatureOffset: Double = 0.0,
     @Column
@@ -59,7 +59,7 @@ data class RuuviTagEntity(
     constructor(tag: FoundRuuviTag) :this(
         id = tag.id,
         rssi = tag.rssi ?: 0,
-        temperature = tag.temperature ?: 0.0,
+        temperature = tag.temperature,
         humidity = tag.humidity,
         pressure = tag.pressure,
         accelX = tag.accelX,
@@ -145,10 +145,11 @@ data class RuuviTagEntity(
 }
 
 fun RuuviTagEntity.isLowBattery(): Boolean {
+    val temperature = this.temperature ?: return this.voltage < 2.5
     return when {
-        this.temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
-        this.temperature > -20 && this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
-        this.temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
+        temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
+        temperature > -20 && temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
+        temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
         else -> false
     }
 }

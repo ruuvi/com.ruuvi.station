@@ -31,7 +31,7 @@ class TagDetailsInteractor(
         } else {
             sensorHistoryRepository.getCompositeHistory(sensorId, viewPeriod, preferences.getGraphPointInterval())
         }.map { it.copy(
-            temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+            temperature = it.temperature?.let { temperature -> temperature + (sensorSettings?.temperatureOffset ?: 0.0) },
             humidity = it.humidity?.let { humidity -> humidity + (sensorSettings?.humidityOffset ?: 0.0)},
             pressure = it.pressure?.let { pressure -> pressure + (sensorSettings?.pressureOffset ?: 0.0)}
         )
