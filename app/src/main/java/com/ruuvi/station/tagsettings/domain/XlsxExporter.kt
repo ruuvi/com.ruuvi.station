@@ -37,7 +37,9 @@ class XlsxExporter (
         val readings = sensorHistoryRepository.getHistory(sensorId, GlobalSettings.historyLengthHours)
             .map {
                 it.copy(
-                    temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+                    temperature = it.temperature?.let { temperature ->
+                        temperature + (sensorSettings?.temperatureOffset ?: 0.0)
+                    },
                     humidity = it.humidity?.let { humidity ->
                         humidity + (sensorSettings?.humidityOffset ?: 0.0)
                     },
@@ -91,7 +93,6 @@ class XlsxExporter (
             e.printStackTrace()
             return null
         }
-        return null
     }
 
     private fun getStandardColumnsDefns(dataFormat: Int): List<ColumnDefinition> {
@@ -126,7 +127,7 @@ class XlsxExporter (
     private fun getDataRow(dataFormat: Int, reading: TagSensorReading): List<Any?> {
         val dataRow = mutableListOf<Any?>(
             dateFormat.format(reading.createdAt),
-            unitsConverter.getTemperatureValue(reading.temperature),
+            reading.temperature?.let { unitsConverter.getTemperatureValue(it) },
             reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) },
             reading.pressure?.let { unitsConverter.getPressureValue(it) },
             reading.rssi

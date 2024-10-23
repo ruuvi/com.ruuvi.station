@@ -27,7 +27,7 @@ class CalibrationInteractor (
 
     fun calibrateTemperature(sensorId: String, targetValue: Double) {
         getSensorEntity(sensorId)?.let { entity ->
-            val fromTemperature = entity.temperature - entity.temperatureOffset
+            val fromTemperature = (entity.temperature ?: 0.0) - entity.temperatureOffset
             val targetCelsius = unitsConverter.getTemperatureCelsiusValue(targetValue).round(4)
             val offset = targetCelsius - fromTemperature
             sensorSettingsRepository.setSensorTemperatureCalibrationOffset(sensorId, offset.round(4))
@@ -53,7 +53,7 @@ class CalibrationInteractor (
         val currentTemperatureOffset = getSensorSettings(sensorId)?.temperatureOffset ?: 0.0
         val isTemperatureCalibrated = isTemperatureCalibrated(sensorSettings)
         getSensorEntity(sensorId)?.let { entity ->
-            val temperatureRaw = entity.temperature - entity.temperatureOffset
+            val temperatureRaw = (entity.temperature ?: 0.0) - entity.temperatureOffset
             val temperatureCalibrated = temperatureRaw + currentTemperatureOffset
             return CalibrationInfo(
                 sensorId,

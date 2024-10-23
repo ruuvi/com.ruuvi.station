@@ -168,17 +168,20 @@ class UnitsConverter (
     // Humidity
     fun getHumidityEnvironmentValue(
         humidity: Double,
-        temperature: Double,
+        temperature: Double?,
         accuracy: Accuracy = getHumidityAccuracy()
-    ): EnvironmentValue =
-        EnvironmentValue (
-            original = humidity,
-            value = getHumidityValue(humidity, temperature),
-            accuracy = accuracy,
-            valueWithUnit = getHumidityString(humidity, temperature),
-            valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature),
-            unitString = getHumidityUnitString()
-        )
+    ): EnvironmentValue? =
+        getHumidityValue(humidity, temperature)?.let {
+            EnvironmentValue (
+                original = humidity,
+                value = it,
+                accuracy = accuracy,
+                valueWithUnit = getHumidityString(humidity, temperature),
+                valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature),
+                unitString = getHumidityUnitString()
+            )
+        }
+
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
 
@@ -192,27 +195,35 @@ class UnitsConverter (
         }
     }
 
-    fun getHumidityValue(humidity: Double, temperature: Double, humidityUnit: HumidityUnit = getHumidityUnit()): Double {
-        val converter = HumidityConverter(temperature, humidity/100)
+    fun getHumidityValue(humidity: Double, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): Double? {
+        val converter = temperature?.let { HumidityConverter(temperature, humidity/100) }
 
         return when (humidityUnit) {
             HumidityUnit.PERCENT -> humidity.round(2)
-            HumidityUnit.GM3-> converter.absoluteHumidity.round(2)
+            HumidityUnit.GM3-> converter?.let { it.absoluteHumidity.round(2) }
             HumidityUnit.DEW -> {
-                when (getTemperatureUnit()) {
-                    TemperatureUnit.CELSIUS -> (converter.toDewCelsius ?: 0.0).round(2)
-                    TemperatureUnit.KELVIN-> (converter.toDewKelvin ?: 0.0).round(2)
-                    TemperatureUnit.FAHRENHEIT -> (converter.toDewFahrenheit ?: 0.0).round(2)
+                converter?.let {
+                    when (getTemperatureUnit()) {
+                        TemperatureUnit.CELSIUS -> (converter.toDewCelsius ?: 0.0).round(2)
+                        TemperatureUnit.KELVIN -> (converter.toDewKelvin ?: 0.0).round(2)
+                        TemperatureUnit.FAHRENHEIT -> (converter.toDewFahrenheit ?: 0.0).round(2)
+                    }
                 }
             }
         }
     }
 
-    fun getHumidityStringWithoutUnit(humidity: Double?, temperature: Double): String =
+    fun getHumidityStringWithoutUnit(humidity: Double?, temperature: Double?): String =
         if (humidity == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(getHumidityAccuracy().nameTemplateId, getHumidityValue(humidity, temperature), "").trim()
+            val humidityValue = getHumidityValue(humidity, temperature)
+            if (humidityValue == null) {
+                NO_VALUE_AVAILABLE
+            } else {
+                context.getString(getHumidityAccuracy().nameTemplateId, humidityValue, "").trim()
+            }
+
         }
 
     fun getHumidityString(
@@ -229,13 +240,15 @@ class UnitsConverter (
     }
 
     fun getHumidityRawString(
-        hunidity: Double,
+        humidity: Double?,
         accuracy: Accuracy? = null,
         humidityUnit: HumidityUnit? = getHumidityUnit()
     ): String {
+        if (humidity == null)
+            return NO_VALUE_AVAILABLE
         val displayAccuracy = accuracy ?: getHumidityAccuracy()
         val humidityUnitString = humidityUnit?.let { getHumidityUnitString(humidityUnit) } ?: ""
-        return context.getString(displayAccuracy.nameTemplateId, hunidity, humidityUnitString).trim()
+        return context.getString(displayAccuracy.nameTemplateId, humidity, humidityUnitString).trim()
     }
 
     fun getHumidityRawWithoutUnitString(

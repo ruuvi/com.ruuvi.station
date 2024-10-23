@@ -51,7 +51,7 @@ data class FavouriteSensorQuery(
     @Column
     var rssi: Int = 0,
     @Column
-    var temperature: Double = 0.0,
+    var temperature: Double? = null,
     @Column
     var humidity: Double? = null,
     @Column

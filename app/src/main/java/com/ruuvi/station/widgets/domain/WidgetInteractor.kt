@@ -161,8 +161,8 @@ class WidgetInteractor (
         if (lastMeasurement != null) {
             val temperatureValue = SensorValue(
                 type = WidgetType.TEMPERATURE,
-                sensorValue = lastMeasurement.temperatureValue.valueWithoutUnit,
-                unit = lastMeasurement.temperatureValue.unitString
+                sensorValue = lastMeasurement.temperatureValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.temperatureValue?.unitString ?: context.getString(unitsConverter.getTemperatureUnit().unit)
             )
 
             val humidityValue = SensorValue(
@@ -306,7 +306,7 @@ class WidgetInteractor (
             when (widgetType) {
                 WidgetType.TEMPERATURE -> {
                     unit = context.getString(unitsConverter.getTemperatureUnit().unit)
-                    sensorValue = tag.latestMeasurement.temperatureValue.valueWithoutUnit
+                    sensorValue = tag.latestMeasurement.temperatureValue?.valueWithoutUnit ?: ""
                 }
                 WidgetType.HUMIDITY -> {
                     unit = context.getString(unitsConverter.getHumidityUnit().unit)

@@ -190,9 +190,14 @@ fun ChartsView(
 
                     history.forEach { item ->
                         val timestamp = (item.createdAt.time - from).toFloat()
-                        temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(item.temperature).toFloat()))
+                        item.temperature?.let { temperature ->
+                            temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(temperature).toFloat()))
+                        }
                         item.humidity?.let { humidity ->
-                            humidityDataTemp.add(Entry(timestamp, unitsConverter.getHumidityValue(humidity, item.temperature).toFloat()))
+                            val humidityValue = unitsConverter.getHumidityValue(humidity, item.temperature)
+                            if (humidityValue != null) {
+                                humidityDataTemp.add(Entry(timestamp, humidityValue.toFloat()))
+                            }
                         }
                         item.pressure?.let {pressure ->
                             pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
