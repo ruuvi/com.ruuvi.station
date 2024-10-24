@@ -573,11 +573,12 @@ private fun setLabelCount(chart: LineChart) {
     computePaint.textSize = chart.xAxis.textSize
     val computeSize = Utils.calcTextSize(computePaint, timeText)
 
-    Timber.d("setLabelCount computeLabelWidth = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()}")
 
-    var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 1.7)
+    var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 2)
+    var labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
+    Timber.d("setLabelCount computeLabelWidth = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
-    chart.axisLeft.setLabelCount(6, false)
+    chart.axisLeft.setLabelCount(labelCountY.toInt(), false)
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
