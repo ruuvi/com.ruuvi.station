@@ -771,19 +771,19 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
-        modifier = modifier.padding(end = RuuviStationTheme.dimensions.mediumPlus)
+        modifier = modifier.padding(end = RuuviStationTheme.dimensions.medium)
     ) {
         Text(
             color = White50,
-            fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = RuuviStationTheme.fontSizes.small,
+            style = RuuviStationTheme.typography.dashboardSecondary,
             textAlign = TextAlign.Right,
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
         Image(
             modifier = Modifier
-                .size(16.dp)
+                .height(12.dp)
+                .width(24.dp)
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.icon_battery_low),
             contentDescription = null
@@ -849,7 +849,6 @@ fun SensorCardBottom(
                 Text(
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = White50,
-                    fontSize = RuuviStationTheme.fontSizes.small,
                     textAlign = TextAlign.Left,
                     text = syncText,
                 )
@@ -859,7 +858,6 @@ fun SensorCardBottom(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
-                fontSize = RuuviStationTheme.fontSizes.small,
                 textAlign = TextAlign.Right,
                 text = updatedText,
             )
@@ -868,7 +866,7 @@ fun SensorCardBottom(
 
             Icon(
                 modifier = Modifier
-                    .height(20.dp)
+                    .height(RuuviStationTheme.dimensions.mediumPlus)
                     .width(24.dp),
                 painter = painterResource(id = icon),
                 tint = White50,
