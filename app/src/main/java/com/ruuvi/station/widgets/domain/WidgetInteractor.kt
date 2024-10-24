@@ -261,7 +261,7 @@ class WidgetInteractor (
         }
 
         val lastDataResponse = getSensorDataFromCloud()
-        val sensorInfo = lastDataResponse?.data?.sensors?.first{it.sensor == sensorId}
+        val sensorInfo = lastDataResponse?.data?.sensors?.firstOrNull{it.sensor == sensorId}
         val lastMeasurement = sensorInfo?.measurements?.maxByOrNull { it.timestamp }
         if (lastDataResponse?.isSuccess() == true && lastMeasurement != null) {
             val decoded =  BluetoothLibrary.decode(sensorId, lastMeasurement.data, lastMeasurement.rssi)
