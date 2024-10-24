@@ -409,7 +409,6 @@ fun SensorsPager(
                         } else {
                             SensorCard(
                                 sensor = sensor,
-                                unitsConverter = unitsConverter,
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -553,7 +552,6 @@ fun SensorTitle(
 @Composable
 fun SensorCard(
     modifier: Modifier = Modifier,
-    unitsConverter: UnitsConverter,
     sensor: RuuviTag
 ) {
     ConstraintLayout(
@@ -562,7 +560,7 @@ fun SensorCard(
     ) {
         val (temperatureValue, temperatureUnit, otherValues, lowBattery) = createRefs()
 
-        if (sensor.latestMeasurement != null) {
+        if (sensor.latestMeasurement?.temperatureValue != null) {
             Text(
                 modifier = Modifier
                     .constrainAs(temperatureValue) {
@@ -573,7 +571,7 @@ fun SensorCard(
                     .padding(top = 48.dp),
                 fontSize = 72.sp,
                 fontFamily = ruuviStationFonts.oswaldBold,
-                text = sensor.latestMeasurement.temperatureValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                text = sensor.latestMeasurement.temperatureValue.valueWithoutUnit,
                 lineHeight = 10.sp,
                 color = Color.White
             )
@@ -590,7 +588,7 @@ fun SensorCard(
                     ),
                 fontSize = 36.sp,
                 fontFamily = ruuviStationFonts.oswaldRegular,
-                text = sensor.latestMeasurement.temperatureValue?.unitString ?: unitsConverter.getTemperatureUnitString(),
+                text = sensor.latestMeasurement.temperatureValue.unitString,
                 color = Color.White
             )
         }
