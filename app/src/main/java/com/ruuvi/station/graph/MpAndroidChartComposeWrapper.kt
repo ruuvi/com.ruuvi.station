@@ -45,6 +45,7 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.math.min
 
 @Composable
 fun ChartView(
@@ -576,9 +577,9 @@ private fun setLabelCount(chart: LineChart) {
 
     var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 2)
     var labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
-    Timber.d("setLabelCount computeLabelWidth = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
+    Timber.d("setLabelCount computeLabelSize = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} contentHeight = ${chart.viewPortHandler.contentHeight()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
-    chart.axisLeft.setLabelCount(labelCountY.toInt(), false)
+    chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
