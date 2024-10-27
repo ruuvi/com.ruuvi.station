@@ -43,6 +43,7 @@ import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.min
 
 private val chartHeight = 280.dp
 
@@ -65,6 +66,7 @@ fun ChartsView(
     viewPeriod: Period,
     newChartsUI: Boolean,
     size: Size,
+    increasedChartSize: Boolean = false,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -202,17 +204,19 @@ fun ChartsView(
                         item.pressure?.let {pressure ->
                             pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
                         }
-                        item.voltage?.let {voltage ->
-                            batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
-                        }
-                        item.accelX?.let {accelX ->
-                            accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
-                        }
-                        item.rssi?.let {rssi ->
-                            rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
-                        }
-                        item.movementCounter?.let {movements ->
-                            movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                        if (newChartsUI) {
+                            item.voltage?.let {voltage ->
+                                batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
+                            }
+                            item.accelX?.let {accelX ->
+                                accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
+                            }
+                            item.rssi?.let {rssi ->
+                                rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
+                            }
+                            item.movementCounter?.let {movements ->
+                                movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                            }
                         }
                     }
                     container.add(
@@ -338,11 +342,12 @@ fun ChartsView(
             )
         } else {
            VerticalChartsPrototype(
-                modifier,
-                chartContainers,
-                unitsConverter,
-                graphDrawDots,
-                showChartStats,
+               modifier =  modifier,
+               chartContainers = chartContainers,
+               unitsConverter = unitsConverter,
+               graphDrawDots = graphDrawDots,
+               showChartStats = showChartStats,
+               increasedChartSize = increasedChartSize,
                size = size
            )
         }
@@ -356,6 +361,7 @@ fun VerticalChartsPrototype(
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
+    increasedChartSize: Boolean,
     size: Size
 ) {
     val clearMarker = {
@@ -369,29 +375,30 @@ fun VerticalChartsPrototype(
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
-        var needsScroll = true
-        var height = chartHeight
-        if (chartContainers.size <= 3 && size.height.pxToDp() >= chartHeight * chartContainers.size && chartContainers.isNotEmpty()) {
-            height = (size.height / chartContainers.size).pxToDp()
-            needsScroll = false
+        val chartsPerScreen = if (increasedChartSize) {
+            min(2, chartContainers.size)
+        } else {
+            min(3, chartContainers.size)
         }
+        val height = (size.height / chartsPerScreen).pxToDp()
+        val needsScroll = chartsPerScreen > chartContainers.size
 
         Timber.d("chart height $size $height")
 
         val columnModifier = if (needsScroll) {
-            modifier.fillMaxSize().scrollbar(state = listState, horizontal = false)
-        } else {
             modifier
+                .fillMaxSize()
+                .scrollbar(state = listState, horizontal = false)
+        } else {
+            modifier.fillMaxSize()
         }
 
-        LazyColumn(
-            state = listState,
+        Column(
             modifier = columnModifier
         ) {
             if (!size.isEmpty()) {
                 for (chartContainer in chartContainers) {
-                    item {
-                        ChartViewPrototype(
+                    ChartViewPrototype(
                             chartContainer.uiComponent,
                             Modifier
                                 .height(height)
@@ -406,7 +413,6 @@ fun VerticalChartsPrototype(
                             chartContainer.to,
                             clearMarker
                         )
-                    }
                 }
             }
         }

@@ -685,7 +685,7 @@ fun SensorValueItem(
                     ),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White80,
-                fontSize = RuuviStationTheme.fontSizes.small,
+                fontSize = RuuviStationTheme.fontSizes.compact,
                 text = unit,
             )
         }
@@ -912,7 +912,7 @@ fun SensorCardBottom(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
-                fontSize = RuuviStationTheme.fontSizes.small,
+                fontSize = RuuviStationTheme.fontSizes.compact,
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.no_data_10_days),
             )

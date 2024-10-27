@@ -9,14 +9,12 @@ import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -132,6 +130,7 @@ fun ChartViewPrototype(
         Text(
             modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
             style = RuuviStationTheme.typography.subtitle,
+            fontSize = RuuviStationTheme.fontSizes.miniature,
             text = title,
             color = RuuviStationTheme.colors.buttonText
         )
@@ -144,7 +143,7 @@ fun ChartViewPrototype(
                 ),
                 style = RuuviStationTheme.typography.paragraphSmall,
                 text = description,
-                fontSize = RuuviStationTheme.fontSizes.tiny,
+                fontSize = RuuviStationTheme.fontSizes.miniature,
                 color = RuuviStationTheme.colors.buttonText
             )
         }
@@ -442,7 +441,7 @@ fun applyChartStyle(
     var textSize = context.resources.getDimension(R.dimen.graph_description_size).toFloat()
     val density = context.resources.displayMetrics.density
     if (density < 2) textSize *= 2
-    Timber.d("graph_description_size $textSize $density")
+    Timber.d("graph_description_sizegraph_description_size $textSize $density")
     chart.description.textSize = textSize
     chart.axisLeft.textSize = textSize
     chart.xAxis.textSize = textSize
