@@ -63,6 +63,7 @@
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
+    <string name="android_8_required">Den här funktionen är tillgänglig på enheter med Android 8 och senare. Använd export till CSV istället.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App tema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -627,7 +628,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Fördelar</string>
     <string name="widget_empty">Tryck på + för att lägga till sensorer</string>
+    <string name="widgets_add_sensors_first">Lägg till sensorer i appen innan du använder widgetar</string>
     <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
+    <string name="widgets_enable_background_service">Uppdatera lokala Bluetooth-sensorers data i widgeten genom att aktivera bakgrundsskanning. Detta behövs inte för molnsensorer vars data samlas in via Ruuvi Gateway. Intervall för bakgrundsskanning kan ställas in i Ruuvi Station-appens inställningar (för närvarande inställt på %1$s).</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
     <string name="widgets_loading">laddar...</string>
     <string name="widgets_missing_sensors">Kan du inte se alla dina sensorer i listan? Se till att du har bekräftat ägandet av alla dina sensorer i applikationen och att de är inom räckhåll för Ruuvi Gateway-routern.</string>

@@ -35,6 +35,7 @@
     <string name="alerts">Ostrzeżenia</string>
     <string name="all">Wszystko</string>
     <string name="already_latest_version">Masz najnowszą wersję firmware, aktualizacja nie jest wymagana.</string>
+    <string name="android_8_required">Ta funkcja jest dostępna na urządzeniach z Androidem 8 i nowszymi. Użyj opcji eksportu do pliku CSV zamiast tego.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="background_notification_message">Możesz wyłączyć skanowanie w tle w ustawieniach</string>
     <string name="background_notification_scanning_every">Skanuj wszystko</string>
@@ -382,5 +383,7 @@
     <string name="welcome_text_2">Uzyskaj dostęp do danych dla każdego połączonego czujnika w czasie rzeczywistym i zbadaj wykresy historii.</string>
     <string name="welcome_text_3">Ustaw ostrzeżenia, by je otrzymywać, gdy twoje limity zostaną osiągnięte.</string>
     <string name="welcome_text_5">Naciśnij SCAN, aby znaleźć i dodać pobliskie czujniki do swojej Ruuvi Station.</string>
+    <string name="widgets_add_sensors_first">Dodaj czujniki do aplikacji przed użyciem widżetów</string>
+    <string name="widgets_enable_background_service">Włącz skanowanie w tle, aby zaktualizować wartości lokalnych czujników przez Bluetooth w widżecie. Nie jest to wymagane dla czujników w chmurze z Ruuvi Gateway. Interwał skanowania w tle można ustawić w ustawieniach aplikacji Ruuvi Station (obecnie ustawiony na %1$s).</string>
     <string name="yes">Tak</string>
 </resources>

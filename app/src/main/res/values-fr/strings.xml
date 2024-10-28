@@ -63,6 +63,7 @@
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>
     <string name="already_signed_in">Super ! Vous vous êtes déjà connecté !</string>
+    <string name="android_8_required">Cette fonctionnalité est disponible sur les appareils Android 8 et versions ultérieures. Utilisez l\'option d\'exportation en CSV à la place.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -110,7 +111,7 @@
     <string name="cancel">Annuler</string>
     <string name="card_action">Action de la carte</string>
     <string name="card_type">Type de carte</string>
-    <string name="change_background">Paramètres et alertes</string>
+    <string name="change_background">Changer le fond d\'écran</string>
     <string name="change_background_image">Modifier l\'image de fond</string>
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
     <string name="changelog">(journal des modifications)</string>
@@ -632,7 +633,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Bénéfices</string>
     <string name="widget_empty">Appuyez sur + pour ajouter des capteurs</string>
+    <string name="widgets_add_sensors_first">Ajoutez des capteurs à l\'application avant d\'utiliser les widgets</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
+    <string name="widgets_enable_background_service">Activez le balayage en arrière-plan pour mettre à jour les valeurs des capteurs locaux via Bluetooth dans le widget. Ce n\'est pas nécessaire pour les capteurs cloud avec Ruuvi Gateway. L\'intervalle de balayage en arrière-plan peut être défini dans les paramètres de l\'application Ruuvi Station (actuellement défini sur %1$s).</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur.</string>
     <string name="widgets_loading">Chargement...</string>
     <string name="widgets_missing_sensors">Vous ne voyez pas tous vos capteurs sur la liste ? Assurez-vous de vous être approprié tous les capteurs depuis l\'application mobile et que les capteurs sont à la portée d\'un routeur Ruuvi Gateway.</string>

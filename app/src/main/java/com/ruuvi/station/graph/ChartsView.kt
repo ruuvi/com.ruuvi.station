@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -66,7 +67,7 @@ fun ChartsView(
     viewPeriod: Period,
     newChartsUI: Boolean,
     size: Size,
-    increasedChartSize: Boolean = false,
+    increasedChartSize: Boolean,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -77,6 +78,14 @@ fun ChartsView(
 
     var chartContainers by remember {
         mutableStateOf<List<ChartContainer>>(ArrayList())
+    }
+
+    var needsScroll by remember {
+        mutableStateOf(true)
+    }
+
+    var chartsPerScreen by remember {
+        mutableStateOf(3)
     }
 
     var temperatureData by remember {
@@ -143,7 +152,7 @@ fun ChartsView(
     var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
     var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
 
-    LaunchedEffect(key1 = selected, viewPeriod) {
+    LaunchedEffect(key1 = selected, viewPeriod, increasedChartSize) {
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             val container = mutableListOf<ChartContainer>()
@@ -316,6 +325,14 @@ fun ChartsView(
                 }
             }
             isLoading = false
+            chartsPerScreen = if (increasedChartSize) {
+                min(2, chartContainers.size)
+            } else {
+                min(3, chartContainers.size)
+            }
+            needsScroll = chartsPerScreen < chartContainers.size
+            Timber.d("needsScroll $needsScroll increaseChartSize = $increasedChartSize chartsPerScreen=$chartsPerScreen containers = ${chartContainers.size}")
+
             delay(1000)
         }
     }
@@ -341,15 +358,20 @@ fun ChartsView(
                 showChartStats
             )
         } else {
-           VerticalChartsPrototype(
-               modifier =  modifier,
-               chartContainers = chartContainers,
-               unitsConverter = unitsConverter,
-               graphDrawDots = graphDrawDots,
-               showChartStats = showChartStats,
-               increasedChartSize = increasedChartSize,
-               size = size
-           )
+            Box (modifier = modifier.fillMaxSize()){
+                val height = (size.height / chartsPerScreen).pxToDp()
+
+                if (!size.isEmpty())
+                VerticalChartsPrototype(
+                    modifier =  Modifier,
+                    chartContainers = chartContainers,
+                    unitsConverter = unitsConverter,
+                    graphDrawDots = graphDrawDots,
+                    showChartStats = showChartStats,
+                    height = height,
+                    needsScroll = needsScroll
+                )
+            }
         }
     }
 }
@@ -361,8 +383,8 @@ fun VerticalChartsPrototype(
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
-    increasedChartSize: Boolean,
-    size: Size
+    height: Dp,
+    needsScroll: Boolean
 ) {
     val clearMarker = {
         for (chartContainer in chartContainers) {
@@ -370,35 +392,25 @@ fun VerticalChartsPrototype(
         }
     }
 
-    val listState = rememberLazyListState()
-
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
-        val chartsPerScreen = if (increasedChartSize) {
-            min(2, chartContainers.size)
-        } else {
-            min(3, chartContainers.size)
-        }
-        val height = (size.height / chartsPerScreen).pxToDp()
-        val needsScroll = chartsPerScreen > chartContainers.size
 
-        Timber.d("chart height $size $height")
+        Timber.d("chart height $height $needsScroll")
+        val listState = rememberLazyListState()
 
-        val columnModifier = if (needsScroll) {
-            modifier
+        if (needsScroll) {
+            val columnModifier = modifier
                 .fillMaxSize()
                 .scrollbar(state = listState, horizontal = false)
-        } else {
-            modifier.fillMaxSize()
-        }
 
-        Column(
-            modifier = columnModifier
-        ) {
-            if (!size.isEmpty()) {
+            LazyColumn(
+                state = listState,
+                modifier = columnModifier
+            ) {
                 for (chartContainer in chartContainers) {
-                    ChartViewPrototype(
+                    item {
+                        ChartViewPrototype(
                             chartContainer.uiComponent,
                             Modifier
                                 .height(height)
@@ -413,6 +425,30 @@ fun VerticalChartsPrototype(
                             chartContainer.to,
                             clearMarker
                         )
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+            ) {
+                for (chartContainer in chartContainers) {
+                    ChartViewPrototype(
+                        chartContainer.uiComponent,
+                        Modifier
+                            .height(height)
+                            .fillMaxWidth(),
+                        chartContainer.data,
+                        unitsConverter,
+                        chartContainer.chartSensorType,
+                        graphDrawDots,
+                        showChartStats,
+                        limits = chartContainer.limits,
+                        chartContainer.from,
+                        chartContainer.to,
+                        clearMarker
+                    )
                 }
             }
         }

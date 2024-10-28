@@ -36,6 +36,8 @@ fun ChartControlElement2(
     viewPeriod: Period,
     showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
+    increasedChartSize: Boolean,
+    changeIncreasedChartSize: () -> Unit,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
     syncGatt: (String) -> Unit,
@@ -143,6 +145,8 @@ fun ChartControlElement2(
             ThreeDotsMenu(
                 sensorId = sensorId,
                 showChartStats = showChartStats,
+                increasedChartSize = increasedChartSize,
+                changeIncreasedChartSize = changeIncreasedChartSize,
                 exportToCsv = { exportToCsv(sensorId) },
                 exportToXlsx = { exportToXlsx(sensorId) },
                 clearHistory = { removeTagData(sensorId) },
@@ -307,6 +311,8 @@ fun ViewPeriodMenu(
 fun ThreeDotsMenu(
     sensorId: String,
     showChartStats: Boolean,
+    increasedChartSize: Boolean,
+    changeIncreasedChartSize: () -> Unit,
     exportToCsv: () -> Uri?,
     exportToXlsx: () -> Uri?,
     clearHistory: () -> Unit,
@@ -373,6 +379,17 @@ fun ThreeDotsMenu(
                     stringResource(id = R.string.chart_stat_hide)
                 } else {
                     stringResource(id = R.string.chart_stat_show)
+                }
+                Paragraph(text = caption)
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+                changeIncreasedChartSize()
+            }) {
+                val caption = if (increasedChartSize) {
+                    stringResource(id = R.string.decrease_graph_size)
+                } else {
+                    stringResource(id = R.string.increase_graph_size)
                 }
                 Paragraph(text = caption)
             }

@@ -109,6 +109,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
                 val newChartsUI by viewModel.newChartsUI.collectAsStateWithLifecycle()
+                val increasedChartSize by viewModel.increasedChartSize.collectAsStateWithLifecycle()
 
                 if (sensors.isNotEmpty()) {
                     SensorsPager(
@@ -134,6 +135,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         exportToXlsx = viewModel::exportToXlsx ,
                         removeTagData= viewModel::removeTagData,
                         refreshStatus = viewModel::refreshStatus,
+                        increasedChartSize = increasedChartSize,
+                        changeIncreasedChartSize = viewModel::changeIncreaseChartSize,
                         dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
                         getNfcScanResponse = viewModel::getNfcScanResponse,
                         addSensor = viewModel::addSensor,
@@ -220,6 +223,7 @@ fun SensorsPager(
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
     newChartsUI: Boolean,
+    increasedChartSize: Boolean,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
@@ -234,6 +238,7 @@ fun SensorsPager(
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
     addSensor: (String) -> Unit,
     changeShowStats: () -> Unit,
+    changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
     getIndex: (String) -> Int
 ) {
@@ -376,8 +381,9 @@ fun SensorsPager(
                                 removeTagData = removeTagData,
                                 refreshStatus = refreshStatus,
                                 dontShowGattSyncDescription = dontShowGattSyncDescription,
-                                changeShowStats = changeShowStats
-
+                                changeShowStats = changeShowStats,
+                                increasedChartSize = increasedChartSize,
+                                changeIncreasedChartSize = changeIncreasedChartSize
                             )
                             var size by remember { mutableStateOf(Size.Zero)}
                             ChartsView(
@@ -404,6 +410,7 @@ fun SensorsPager(
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 getActiveAlarms = getActiveAlarms,
+                                increasedChartSize = increasedChartSize,
                                 size = size
                             )
                         } else {
