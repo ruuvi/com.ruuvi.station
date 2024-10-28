@@ -73,6 +73,9 @@ class SensorCardViewModel(
     private val _newChartsUI = MutableStateFlow<Boolean>(preferencesRepository.isNewChartsUI())
     val newChartsUI: StateFlow<Boolean> = _newChartsUI
 
+    private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
+    val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
+
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
@@ -82,6 +85,11 @@ class SensorCardViewModel(
     fun changeShowChartStats() {
         preferencesRepository.setShowChartStats(!preferencesRepository.getShowChartStats())
         _showChartStats.value = preferencesRepository.getShowChartStats()
+    }
+
+    fun changeIncreaseChartSize() {
+        preferencesRepository.setIncreasedChartSize(!preferencesRepository.isIncreasedChartSize())
+        _increasedChartSize.value = preferencesRepository.isIncreasedChartSize()
     }
 
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{

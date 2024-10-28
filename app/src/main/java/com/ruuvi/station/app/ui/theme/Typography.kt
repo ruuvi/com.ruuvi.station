@@ -51,7 +51,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         paragraphSmall = TextStyle(
             color = colors.primary,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.small,
+            fontSize = ruuviStationFontsSizes.compact,
         ),
         warning = TextStyle(
             color = colors.warning,
@@ -97,19 +97,19 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         dashboardValue = TextStyle(
             color = colors.primary,
             fontFamily = ruuviStationFonts.montserratBold,
-            fontSize = ruuviStationFontsSizes.small,
+            fontSize = ruuviStationFontsSizes.compact,
             textAlign = TextAlign.Left
         ),
         dashboardUnit = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.montserratRegular,
-            fontSize = ruuviStationFontsSizes.smallest,
+            fontSize = ruuviStationFontsSizes.petite,
             textAlign = TextAlign.Left
         ),
         dashboardBigValue = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.oswaldBold,
-            fontSize = ruuviStationFontsSizes.bigger,
+            fontSize = ruuviStationFontsSizes.huge,
             textAlign = TextAlign.Left
         ),
         dashboardBigValueUnit = TextStyle(
@@ -121,7 +121,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         dashboardSecondary = TextStyle(
             color = colors.secondaryTextColor,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.smallest,
+            fontSize = ruuviStationFontsSizes.petite,
         ),
         onboardingTitle = TextStyle(
             color = colors.onboardingTextColor,

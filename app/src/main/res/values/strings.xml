@@ -63,7 +63,7 @@
     <string name="already_latest_version">You are running the latest firmware version, no need to update</string>
     <string name="already_logged_in_message">User %1$s is already signed in. If you\'d like to use a different account, please sign out first and then try again.</string>
     <string name="already_signed_in">Great! You already signed in!</string>
-    <string name="android_8_required">This feature is only supported starting from Android 8. You can use export to csv.</string>
+    <string name="android_8_required">This feature is available on devices with Android 8 and newer. Use the export to CSV option instead.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -212,6 +212,7 @@
     <string name="day_9">9 days</string>
     <string name="day_x">%1$s days</string>
     <string name="days">Days</string>
+    <string name="decrease_graph_size">Decrease  graph size</string>
     <string name="delete_account">Delete account</string>
     <string name="details">Details</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
@@ -300,6 +301,7 @@
     <string name="image_cards">Image cards</string>
     <string name="image_format_not_supported">Image format not supported</string>
     <string name="image_view">Image view</string>
+    <string name="increase_graph_size">Increase graph size</string>
     <string name="information">Information</string>
     <string name="internet_connection_problem">Internet connection problem</string>
     <string name="language_english">English</string>
@@ -631,7 +633,7 @@
     <string name="widget_empty">Press + to add sensors</string>
     <string name="widgets_add_sensors_first">Add sensors to app before using widgets</string>
     <string name="widgets_battery_optimisation_hint">To allow Ruuvi widgets to refresh automatically, please disable the app\'s battery optimisation.</string>
-    <string name="widgets_enable_background_service">To update local sensor values in widget you need to enable background scanning service. This is not needed for cloud sensors with Ruuvi Gateway. You can enable background service now. Adjust scanning interval in app settings. Currently it set to %1$s</string>
+    <string name="widgets_enable_background_service">Enable background scanning to update local sensor values via Bluetooth in the widget. This isn\'t needed for cloud sensors with Ruuvi Gateway. Background scanning interval can be set in Ruuvi Station app settings (currently set to %1$s).</string>
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared with you a Ruuvi sensor.</string>
     <string name="widgets_loading">loading...</string>
     <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownership of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>

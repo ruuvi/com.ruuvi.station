@@ -63,6 +63,7 @@
     <string name="already_latest_version">Laitteessa on jo viimeisin saatavilla oleva laiteohjelmisto</string>
     <string name="already_logged_in_message">Käyttäjä %1$s on jo kirjautuneena sisälle. Mikäli haluat käyttää toista tiliä, kirjaudu ensin ulos ja yritä sitten uudelleen.</string>
     <string name="already_signed_in">Hienoa, olet jo kirjautunut sisään!</string>
+    <string name="android_8_required">Tämä ominaisuus on käytettävissä Android 8 ja uudemmissa laitteissa. Käytä tämän sijaan CSV-tiedostoon vientiä.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">Sovelluksen teema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -627,7 +628,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/fi/ideat?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Hyödyt</string>
     <string name="widget_empty">Paina + lisätäksesi antureita</string>
+    <string name="widgets_add_sensors_first">Lisää antureita sovellukseen ennen widgetien käyttämistä</string>
     <string name="widgets_battery_optimisation_hint">Jotta widgettien arvot voisivat päivittyä automaattisesti, poista sovelluksen virransäästöominaisuudet käytöstä.</string>
+    <string name="widgets_enable_background_service">Päivitä paikallisten Bluetooth-antureiden tiedot widgetiin ottamalla taustaskannaus käyttöön. Tätä ei tarvita pilviantureille, joiden tiedot kerätään Ruuvi Gatewayn avulla. Taustaskannauksen aikaväli voidaan asettaa Ruuvi Station -sovelluksen asetuksissa (tämän hetkinen arvo on %1$s).</string>
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
     <string name="widgets_loading">ladataan...</string>
     <string name="widgets_missing_sensors">Etkö näe kaikkia antureitasi listassa? Varmista, että olet vahvistanut kaikkien anturiesi omistajuudet sovelluksessa ja että ne ovat Ruuvi Gateway -reitittimen kuuluvuusalueella.</string>

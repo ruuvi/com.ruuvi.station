@@ -47,6 +47,7 @@
     <string name="alerts">Уведомления</string>
     <string name="already_latest_version">Последняя версия прошивки уже установлена, обновление не требуется</string>
     <string name="already_logged_in_message">Пользователь %1$s уже совершил вход. Если вы хотите войти под другим аккаунтом, пожалуйста вначале выйдите, а затем повторите попытку.</string>
+    <string name="android_8_required">Эта функция доступна на устройствах с Android 8 и новее. Используйте экспорт в формате CSV вместо этого.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -161,6 +162,7 @@
     <string name="day_8">8 дней</string>
     <string name="day_9">9 дней</string>
     <string name="days">Дней</string>
+    <string name="decrease_graph_size">Сделать графики меньше</string>
     <string name="details">Подробнее</string>
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
@@ -230,6 +232,7 @@
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Влажность воздуха (%1$s)</string>
     <string name="image_format_not_supported">Формат изображения не поддерживается</string>
+    <string name="increase_graph_size">Сделать графики крупнее</string>
     <string name="internet_connection_problem">Проблема с подключением</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
@@ -452,6 +455,8 @@
     <string name="welcome_text_5">Нажмите СКАНИРОВАТЬ, чтобы найти и добавить датчики в Ruuvi Station.</string>
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="widget_empty">Нажмите + чтобы добавить датчики</string>
+    <string name="widgets_add_sensors_first">Добавьте датчики в приложение перед использованием виджетов</string>
+    <string name="widgets_enable_background_service">Включите фоновое сканирование, чтобы обновлять локальные значения датчиков через Bluetooth в виджете. Это не требуется для облачных датчиков с Ruuvi Gateway. Интервал фонового сканирования можно установить в настройках приложения Ruuvi Station (текущий интервал %1$s).</string>
     <string name="widgets_loading">загрузка...</string>
     <string name="widgets_preview_sensor_name">Сауна</string>
     <string name="widgets_preview_sensor_value">69.50</string>

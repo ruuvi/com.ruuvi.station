@@ -282,7 +282,7 @@ fun AlertEditItem(
                 Text(
                     modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    fontSize = RuuviStationTheme.fontSizes.small,
+                    fontSize = RuuviStationTheme.fontSizes.compact,
                     text = stringResource(
                         id = R.string.latest_measured_value,
                         latestValue

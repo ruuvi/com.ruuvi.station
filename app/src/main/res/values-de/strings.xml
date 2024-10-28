@@ -63,6 +63,7 @@
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="already_signed_in">Super! Sie haben sich bereits angemeldet!</string>
+    <string name="android_8_required">Diese Funktion ist auf Geräten mit Android 8 und neuer verfügbar. Verwenden Sie stattdessen den Export in CSV.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App thema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -110,7 +111,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="card_action">Kartenaktion</string>
     <string name="card_type">Speicherkarten-Typ</string>
-    <string name="change_background">Einstellungen und Warnungen</string>
+    <string name="change_background">Hintergrundbild ändern</string>
     <string name="change_background_image">Hintergrundbild ändern</string>
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
     <string name="changelog">(änderungsprotokoll)</string>
@@ -638,7 +639,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Vorteile</string>
     <string name="widget_empty">Drücken Sie +, um Sensoren hinzuzufügen</string>
+    <string name="widgets_add_sensors_first">Fügen Sie Sensoren zur App hinzu, bevor Sie Widgets verwenden</string>
     <string name="widgets_battery_optimisation_hint">Damit die Widgets von Ruuvi automatisch aktualisiert werden können, deaktivieren Sie bitte die Batterieoptimierung der App.</string>
+    <string name="widgets_enable_background_service">Aktualisieren Sie die Daten der lokalen Bluetooth-Sensoren im Widget, indem Sie die Hintergrundsuche aktivieren. Dies ist nicht erforderlich für Cloud-Sensoren, deren Daten über Ruuvi Gateway gesammelt werden. Das Intervall für die Hintergrundsuche kann in den Einstellungen der Ruuvi Station-App festgelegt werden (derzeit eingestellt auf %1$s).</string>
     <string name="widgets_gateway_only">Sie können Ruuvi-Widgets verwenden, wenn sich Ihre Sensoren in Reichweite eines Ruuvi-Gateways befinden oder wenn Ihnen jemand einen Ruuvi-Sensor zur Verfügung gestellt hat.</string>
     <string name="widgets_loading">laden...</string>
     <string name="widgets_missing_sensors">Sie können nicht alle Ihre Sensoren in der Liste sehen? Vergewissern Sie sich, dass Sie alle Ihre Sensoren für sich beansprucht haben und dass sich die Sensoren in der Reichweite eines Ruuvi Gateway Routers befinden.</string>
