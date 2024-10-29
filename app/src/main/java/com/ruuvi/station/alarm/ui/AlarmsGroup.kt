@@ -596,7 +596,7 @@ fun AlarmEditDialog(
         NumberTextFieldRuuvi(
             value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })
