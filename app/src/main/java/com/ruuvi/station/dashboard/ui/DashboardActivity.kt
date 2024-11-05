@@ -1059,18 +1059,20 @@ fun ItemBottomUpdatedInfo(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier.padding(top = 2.dp)
         ) {
+            val fontScale = LocalContext.current.resources.configuration.fontScale
+
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
             val icon = sensor.getSource().getIconResource()
             if (sensor.getSource() == UpdateSource.Cloud) {
                 Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
                     tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,
                 )
             } else {
                 Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
                     tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,

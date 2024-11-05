@@ -851,6 +851,7 @@ fun SensorCardBottom(
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()
+            val fontScale = LocalContext.current.resources.configuration.fontScale
 
             if (syncInProgress) {
                 Text(
@@ -873,8 +874,8 @@ fun SensorCardBottom(
 
             Icon(
                 modifier = Modifier
-                    .height(RuuviStationTheme.dimensions.mediumPlus)
-                    .width(24.dp),
+                    .height(RuuviStationTheme.dimensions.mediumPlus * fontScale)
+                    .width((24 * fontScale).dp),
                 painter = painterResource(id = icon),
                 tint = White50,
                 contentDescription = null,
