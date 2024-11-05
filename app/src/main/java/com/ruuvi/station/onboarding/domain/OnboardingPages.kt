@@ -7,7 +7,7 @@ enum class OnboardingPages (val gatewayRequired: Boolean = false) {
     HISTORY,
     ALERTS,
     SHARING (true),
-    WIDGETS (true),
+    WIDGETS,
     WEB (true),
     FINISH
 }
