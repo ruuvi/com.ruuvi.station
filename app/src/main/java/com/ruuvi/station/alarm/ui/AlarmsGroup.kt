@@ -552,6 +552,12 @@ fun AlarmEditDialog(
         else -> ""
     }
 
+    val keyboardType = if (alarmState.type == AlarmType.TEMPERATURE || alarmState.type == AlarmType.RSSI) {
+        KeyboardType.Unspecified
+    } else {
+        KeyboardType.Decimal
+    }
+
     val possibleRange by remember {
         mutableStateOf(getPossibleRange.invoke(alarmState.type))
     }
@@ -584,6 +590,7 @@ fun AlarmEditDialog(
         Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleMinString))
         NumberTextFieldRuuvi(
             value = alarmState.displayLow,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
             keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
         ) { parsed, value ->
             min = value
@@ -596,7 +603,7 @@ fun AlarmEditDialog(
         NumberTextFieldRuuvi(
             value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })
