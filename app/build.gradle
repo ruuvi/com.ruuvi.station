@@ -84,7 +84,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.7'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.3'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.4'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:2.4.2'
@@ -104,7 +104,6 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accomponist_version"
 
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
