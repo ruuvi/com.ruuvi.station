@@ -1,6 +1,7 @@
 package com.ruuvi.station.alarm.ui
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
@@ -56,7 +57,7 @@ class AlarmItemsViewModel(
         val alarmItem = _alarms.firstOrNull { it.type == type }
 
         if (alarmItem != null) {
-            val newAlarm = alarmItem.copy(isEnabled = enabled, mutedTill = null)
+            val newAlarm = alarmItem.copy(isEnabled = mutableStateOf(enabled), mutedTill = null)
             _alarms[_alarms.indexOf(alarmItem)] = newAlarm
             saveAlarm(newAlarm)
         }

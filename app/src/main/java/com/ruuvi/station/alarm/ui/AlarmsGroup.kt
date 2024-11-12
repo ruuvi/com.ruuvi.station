@@ -69,7 +69,7 @@ fun AlarmsGroup(
 
     val sensorState by viewModel.sensorState.collectAsState()
 
-    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
+    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled.value }) {
         permissionAsked = true
         LaunchedEffect(key1 = true) {
             notificationPermissionState.launchPermissionRequest()
@@ -79,6 +79,7 @@ fun AlarmsGroup(
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
+            Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {
                 AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE ->
@@ -156,7 +157,7 @@ fun OfflineAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -231,7 +232,7 @@ fun AlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -343,7 +344,7 @@ fun RssiAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -423,7 +424,7 @@ private fun AlarmHeader(
             text = title,
             modifier = Modifier.weight(1f)
         )
-        if (alarmState.isEnabled) {
+        if (alarmState.isEnabled.value) {
             if (alarmState.triggered) {
                 BlinkingEffect() {
                     Icon(
@@ -462,7 +463,7 @@ fun MovementAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
