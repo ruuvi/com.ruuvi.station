@@ -367,6 +367,7 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         if (showCharts) {
+                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidityValue == null || sensor.latestMeasurement.pressureValue == null
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 showChartStats = showChartStats,
@@ -383,6 +384,7 @@ fun SensorsPager(
                                 dontShowGattSyncDescription = dontShowGattSyncDescription,
                                 changeShowStats = changeShowStats,
                                 increasedChartSize = increasedChartSize,
+                                hideIncreaseChartSize = hideIncreaseChartSize,
                                 changeIncreasedChartSize = changeIncreasedChartSize
                             )
                             var size by remember { mutableStateOf(Size.Zero)}

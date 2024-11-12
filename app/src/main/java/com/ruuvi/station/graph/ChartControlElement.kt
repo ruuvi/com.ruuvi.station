@@ -37,6 +37,7 @@ fun ChartControlElement2(
     showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
     increasedChartSize: Boolean,
+    hideIncreaseChartSize: Boolean,
     changeIncreasedChartSize: () -> Unit,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
@@ -146,6 +147,7 @@ fun ChartControlElement2(
                 sensorId = sensorId,
                 showChartStats = showChartStats,
                 increasedChartSize = increasedChartSize,
+                hideIncreaseChartSize = hideIncreaseChartSize,
                 changeIncreasedChartSize = changeIncreasedChartSize,
                 exportToCsv = { exportToCsv(sensorId) },
                 exportToXlsx = { exportToXlsx(sensorId) },
@@ -312,6 +314,7 @@ fun ThreeDotsMenu(
     sensorId: String,
     showChartStats: Boolean,
     increasedChartSize: Boolean,
+    hideIncreaseChartSize: Boolean,
     changeIncreasedChartSize: () -> Unit,
     exportToCsv: () -> Uri?,
     exportToXlsx: () -> Uri?,
@@ -382,16 +385,18 @@ fun ThreeDotsMenu(
                 }
                 Paragraph(text = caption)
             }
-            DropdownMenuItem(onClick = {
-                threeDotsMenuExpanded = false
-                changeIncreasedChartSize()
-            }) {
-                val caption = if (increasedChartSize) {
-                    stringResource(id = R.string.decrease_graph_size)
-                } else {
-                    stringResource(id = R.string.increase_graph_size)
+            if (!hideIncreaseChartSize) {
+                DropdownMenuItem(onClick = {
+                    threeDotsMenuExpanded = false
+                    changeIncreasedChartSize()
+                }) {
+                    val caption = if (increasedChartSize) {
+                        stringResource(id = R.string.decrease_graph_size)
+                    } else {
+                        stringResource(id = R.string.increase_graph_size)
+                    }
+                    Paragraph(text = caption)
                 }
-                Paragraph(text = caption)
             }
         }
     }
