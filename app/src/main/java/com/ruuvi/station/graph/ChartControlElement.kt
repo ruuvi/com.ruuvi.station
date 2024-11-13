@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -385,18 +386,19 @@ fun ThreeDotsMenu(
                 }
                 Paragraph(text = caption)
             }
-            if (!hideIncreaseChartSize) {
-                DropdownMenuItem(onClick = {
-                    threeDotsMenuExpanded = false
-                    changeIncreasedChartSize()
-                }) {
-                    val caption = if (increasedChartSize) {
-                        stringResource(id = R.string.decrease_graph_size)
-                    } else {
-                        stringResource(id = R.string.increase_graph_size)
-                    }
-                    Paragraph(text = caption)
-                }
+
+            val caption = if (increasedChartSize) {
+                stringResource(id = R.string.decrease_graph_size)
+            } else {
+                stringResource(id = R.string.increase_graph_size)
+            }
+            DropdownMenuItem(onClick = {
+                if (hideIncreaseChartSize) return@DropdownMenuItem
+                threeDotsMenuExpanded = false
+                changeIncreasedChartSize()
+            }) {
+                val modifier = if (hideIncreaseChartSize) Modifier.alpha(0.5f) else Modifier
+                Paragraph(text = caption, modifier = modifier)
             }
         }
     }
