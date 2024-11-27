@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.prepareFilename
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
@@ -30,7 +31,9 @@ class CsvExporter(
         val readings = sensorHistoryRepository.getHistory(tagId, GlobalSettings.historyLengthHours)
             .map {
                 it.copy(
-                    temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+                    temperature = it.temperature?.let { temperature ->
+                        temperature + (sensorSettings?.temperatureOffset ?: 0.0)
+                    },
                     humidity = it.humidity?.let { humidity ->
                         humidity + (sensorSettings?.humidityOffset ?: 0.0)
                     },
@@ -44,11 +47,12 @@ class CsvExporter(
 
         val filenameDate = SimpleDateFormat("yyyyMMdd").format(Date())
         val filenameTime = SimpleDateFormat("HHmmssZ").format(Date())
+        val sensorName = sensorSettings?.name?.prepareFilename()
 
-        val filename = if (sensorSettings?.name.isNullOrEmpty()) {
+        val filename = if (sensorName.isNullOrEmpty()) {
             "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.csv"
         } else {
-            "$cacheDir/${sensorSettings?.name}_${filenameDate}T${filenameTime}.csv"
+            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.csv"
         }
 
         val csvFile = File(filename)
@@ -86,7 +90,7 @@ class CsvExporter(
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
-                fileWriter.append(unitsConverter.getTemperatureValue(reading.temperature).toString())
+                fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
                 fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() } ?: nullValue)
                 fileWriter.append(',')

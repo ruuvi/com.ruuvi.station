@@ -33,11 +33,13 @@ fun CalibrationSettingsGroup(
         },
         backgroundColor = RuuviStationTheme.colors.settingsTitle
     ) {
-        CalibrationItem(
-            title = stringResource(id = R.string.temperature),
-            value = getTemperatureOffsetString(sensorState.temperatureOffset ?: 0.0)
-        ) {
-            CalibrationActivity.start(context, sensorState.id, CalibrationType.TEMPERATURE)
+        if (sensorState.latestMeasurement?.temperatureValue != null) {
+            CalibrationItem(
+                title = stringResource(id = R.string.temperature),
+                value = getTemperatureOffsetString(sensorState.temperatureOffset ?: 0.0)
+            ) {
+                CalibrationActivity.start(context, sensorState.id, CalibrationType.TEMPERATURE)
+            }
         }
         if (sensorState.latestMeasurement?.humidityValue != null) {
             DividerRuuvi()

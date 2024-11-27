@@ -57,7 +57,7 @@ data class SensorSettings(
 
     fun updateFromNetwork(sensor: SensorsDenseInfo) {
         name = sensor.name
-        owner = sensor.owner
+        owner = sensor.owner.lowercase()
         canShare = sensor.canShare
         humidityOffset = sensor.offsetHumidity
         pressureOffset = sensor.offsetPressure

@@ -69,7 +69,7 @@ fun AlarmsGroup(
 
     val sensorState by viewModel.sensorState.collectAsState()
 
-    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled }) {
+    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled.value }) {
         permissionAsked = true
         LaunchedEffect(key1 = true) {
             notificationPermissionState.launchPermissionRequest()
@@ -79,6 +79,7 @@ fun AlarmsGroup(
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms.sortedBy { it.type.value }) {
+            Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {
                 AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE ->
@@ -156,7 +157,7 @@ fun OfflineAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -231,7 +232,7 @@ fun AlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -269,10 +270,10 @@ fun AlertEditItem(
 
         if (sensorState.latestMeasurement != null) {
             val latestValue = when (alarmState.type) {
-                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue.valueWithUnit
+                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue?.valueWithUnit
                 AlarmType.HUMIDITY -> unitsConverter.getHumidityString(
                     sensorState.latestMeasurement.humidityValue?.original,
-                    sensorState.latestMeasurement.temperatureValue.original,
+                    sensorState.latestMeasurement.temperatureValue?.original,
                     HumidityUnit.PERCENT
                 )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressureValue?.valueWithUnit
@@ -282,7 +283,7 @@ fun AlertEditItem(
                 Text(
                     modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    fontSize = RuuviStationTheme.fontSizes.small,
+                    fontSize = RuuviStationTheme.fontSizes.compact,
                     text = stringResource(
                         id = R.string.latest_measured_value,
                         latestValue
@@ -343,7 +344,7 @@ fun RssiAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -423,7 +424,7 @@ private fun AlarmHeader(
             text = title,
             modifier = Modifier.weight(1f)
         )
-        if (alarmState.isEnabled) {
+        if (alarmState.isEnabled.value) {
             if (alarmState.triggered) {
                 BlinkingEffect() {
                     Icon(
@@ -462,7 +463,7 @@ fun MovementAlertEditItem(
         SwitchIndicatorRuuvi(
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             text = getMutedText(LocalContext.current, alarmState.mutedTill),
-            checked = alarmState.isEnabled,
+            checked = alarmState.isEnabled.value,
             onCheckedChange = {
                 changeEnabled.invoke(alarmState.type, it)
             },
@@ -552,6 +553,12 @@ fun AlarmEditDialog(
         else -> ""
     }
 
+    val keyboardType = if (alarmState.type == AlarmType.TEMPERATURE || alarmState.type == AlarmType.RSSI) {
+        KeyboardType.Unspecified
+    } else {
+        KeyboardType.Decimal
+    }
+
     val possibleRange by remember {
         mutableStateOf(getPossibleRange.invoke(alarmState.type))
     }
@@ -584,6 +591,7 @@ fun AlarmEditDialog(
         Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleMinString))
         NumberTextFieldRuuvi(
             value = alarmState.displayLow,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
             keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
         ) { parsed, value ->
             min = value
@@ -596,7 +604,7 @@ fun AlarmEditDialog(
         NumberTextFieldRuuvi(
             value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })

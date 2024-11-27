@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.util.extensions.prepareFilename
 import uk.co.spudsoft.xlsx.ColumnDefinition
 import uk.co.spudsoft.xlsx.TableDefinition
 import uk.co.spudsoft.xlsx.XlsxWriter
@@ -36,7 +37,9 @@ class XlsxExporter (
         val readings = sensorHistoryRepository.getHistory(sensorId, GlobalSettings.historyLengthHours)
             .map {
                 it.copy(
-                    temperature = it.temperature + (sensorSettings?.temperatureOffset ?: 0.0),
+                    temperature = it.temperature?.let { temperature ->
+                        temperature + (sensorSettings?.temperatureOffset ?: 0.0)
+                    },
                     humidity = it.humidity?.let { humidity ->
                         humidity + (sensorSettings?.humidityOffset ?: 0.0)
                     },
@@ -50,11 +53,12 @@ class XlsxExporter (
 
         val filenameDate = SimpleDateFormat("yyyyMMdd").format(Date())
         val filenameTime = SimpleDateFormat("HHmmssZ").format(Date())
+        val sensorName = sensorSettings?.name?.prepareFilename()
 
-        val filename = if (sensorSettings?.name.isNullOrEmpty()) {
+        val filename = if (sensorName.isNullOrEmpty()) {
             "$cacheDir/${tag?.id}_${filenameDate}T${filenameTime}.xlsx"
         } else {
-            "$cacheDir/${sensorSettings?.name}_${filenameDate}T${filenameTime}.xlsx"
+            "$cacheDir/${sensorName}_${filenameDate}T${filenameTime}.xlsx"
         }
 
         val filePath = File(filename)
@@ -89,7 +93,6 @@ class XlsxExporter (
             e.printStackTrace()
             return null
         }
-        return null
     }
 
     private fun getStandardColumnsDefns(dataFormat: Int): List<ColumnDefinition> {
@@ -124,7 +127,7 @@ class XlsxExporter (
     private fun getDataRow(dataFormat: Int, reading: TagSensorReading): List<Any?> {
         val dataRow = mutableListOf<Any?>(
             dateFormat.format(reading.createdAt),
-            unitsConverter.getTemperatureValue(reading.temperature),
+            reading.temperature?.let { unitsConverter.getTemperatureValue(it) },
             reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) },
             reading.pressure?.let { unitsConverter.getPressureValue(it) },
             reading.rssi

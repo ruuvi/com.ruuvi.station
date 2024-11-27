@@ -51,7 +51,7 @@ data class FavouriteSensorQuery(
     @Column
     var rssi: Int = 0,
     @Column
-    var temperature: Double = 0.0,
+    var temperature: Double? = null,
     @Column
     var humidity: Double? = null,
     @Column
@@ -65,7 +65,7 @@ data class FavouriteSensorQuery(
     @Column
     var voltage: Double = 0.0,
     @Column
-    var updateAt: Date? = null,
+    var updateAt: Date = Date(),
     @Column
     var dataFormat: Int = 0,
     @Column

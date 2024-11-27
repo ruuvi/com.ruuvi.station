@@ -7,10 +7,12 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
+import java.util.Date
 
 class TagInteractor constructor(
     private val tagRepository: TagRepository,
@@ -62,6 +64,20 @@ class TagInteractor constructor(
             sensor.id?.let {sensorId ->
                 sortingInteractor.addNewSensor(sensorId)
             }
+        }
+    }
+
+    fun makeSensorFavorite(sensorId: String) {
+        val existingSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (existingSettings == null) {
+            val sensorSettings = SensorSettings(
+                id = sensorId,
+                createDate = Date(),
+                name = MacAddressUtils.getDefaultName(sensorId)
+            )
+            sensorSettings.save()
+            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            sortingInteractor.addNewSensor(sensorId)
         }
     }
 

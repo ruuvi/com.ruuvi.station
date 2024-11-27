@@ -1,5 +1,7 @@
 package com.ruuvi.station.alarm.domain
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.ruuvi.station.database.tables.Alarm
 import timber.log.Timber
 import java.util.*
@@ -7,7 +9,7 @@ import java.util.*
 data class AlarmItemState(
     val sensorId: String,
     var type: AlarmType,
-    var isEnabled: Boolean,
+    var isEnabled: MutableState<Boolean>,
     var min: Double,
     var max: Double,
     var rangeLow: Float,
@@ -37,7 +39,7 @@ data class AlarmItemState(
             val state = AlarmItemState(
                 sensorId = alarm.ruuviTagId,
                 type = type,
-                isEnabled = alarm.enabled,
+                isEnabled = mutableStateOf(alarm.enabled),
                 min = min.toDouble(),
                 max = max.toDouble(),
                 rangeLow = rangeLow,
@@ -60,7 +62,7 @@ data class AlarmItemState(
             return AlarmItemState(
                 sensorId = sensorId,
                 type = alarmType,
-                isEnabled = false,
+                isEnabled = mutableStateOf(false),
                 min = min.toDouble(),
                 max = max.toDouble(),
                 rangeLow = rangeLow,

@@ -3,6 +3,7 @@ package com.ruuvi.station.graph
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build.VERSION
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,6 +36,9 @@ fun ChartControlElement2(
     viewPeriod: Period,
     showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
+    increasedChartSize: Boolean,
+    hideIncreaseChartSize: Boolean,
+    changeIncreasedChartSize: () -> Unit,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
     syncGatt: (String) -> Unit,
@@ -142,6 +146,9 @@ fun ChartControlElement2(
             ThreeDotsMenu(
                 sensorId = sensorId,
                 showChartStats = showChartStats,
+                increasedChartSize = increasedChartSize,
+                hideIncreaseChartSize = hideIncreaseChartSize,
+                changeIncreasedChartSize = changeIncreasedChartSize,
                 exportToCsv = { exportToCsv(sensorId) },
                 exportToXlsx = { exportToXlsx(sensorId) },
                 clearHistory = { removeTagData(sensorId) },
@@ -306,6 +313,9 @@ fun ViewPeriodMenu(
 fun ThreeDotsMenu(
     sensorId: String,
     showChartStats: Boolean,
+    increasedChartSize: Boolean,
+    hideIncreaseChartSize: Boolean,
+    changeIncreasedChartSize: () -> Unit,
     exportToCsv: () -> Uri?,
     exportToXlsx: () -> Uri?,
     clearHistory: () -> Unit,
@@ -315,13 +325,17 @@ fun ThreeDotsMenu(
     var clearConfirmOpened by remember {
         mutableStateOf(false)
     }
+    var android26RequiredDialog by remember {
+        mutableStateOf(false)
+    }
     var threeDotsMenuExpanded by remember {
         mutableStateOf(false)
     }
 
     Box() {
         IconButton(onClick = { threeDotsMenuExpanded = !threeDotsMenuExpanded }) {
-            Icon(painter = painterResource(id = R.drawable.ic_3dots),
+            Icon(
+                painter = painterResource(id = R.drawable.ic_3dots),
                 contentDescription = null,
                 tint = RuuviStationTheme.colors.buttonText
             )
@@ -334,15 +348,23 @@ fun ThreeDotsMenu(
         ) {
             DropdownMenuItem(onClick = {
                 val uri = exportToCsv.invoke()
-                if (uri != null) { sendCsv(sensorId, uri, context) }
+                if (uri != null) {
+                    sendCsv(sensorId, uri, context)
+                }
                 threeDotsMenuExpanded = false
             }) {
                 Paragraph(text = stringResource(id = R.string.export_history))
             }
             DropdownMenuItem(onClick = {
-                val uri = exportToXlsx.invoke()
-                if (uri != null) { sendXlsx(sensorId, uri, context) }
-                threeDotsMenuExpanded = false
+                if (VERSION.SDK_INT < 26) {
+                    android26RequiredDialog = true
+                } else {
+                    val uri = exportToXlsx.invoke()
+                    if (uri != null) {
+                        sendXlsx(sensorId, uri, context)
+                    }
+                    threeDotsMenuExpanded = false
+                }
             }) {
                 Paragraph(text = stringResource(id = R.string.export_history_xlsx))
             }
@@ -363,6 +385,19 @@ fun ThreeDotsMenu(
                 }
                 Paragraph(text = caption)
             }
+            if (!hideIncreaseChartSize) {
+                DropdownMenuItem(onClick = {
+                    threeDotsMenuExpanded = false
+                    changeIncreasedChartSize()
+                }) {
+                    val caption = if (increasedChartSize) {
+                        stringResource(id = R.string.decrease_graph_size)
+                    } else {
+                        stringResource(id = R.string.increase_graph_size)
+                    }
+                    Paragraph(text = caption)
+                }
+            }
         }
     }
 
@@ -370,6 +405,13 @@ fun ThreeDotsMenu(
         ClearHistoryDialog(
             clearHistory = clearHistory,
             dismissAction = { clearConfirmOpened = false }
+        )
+    }
+
+    if (android26RequiredDialog) {
+        RuuviMessageDialog(
+            message = stringResource(id = R.string.android_8_required),
+            onDismissRequest = { android26RequiredDialog = false }
         )
     }
 }

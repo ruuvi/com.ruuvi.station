@@ -133,7 +133,7 @@ fun NumberTextFieldRuuvi(
     modifier: Modifier = Modifier,
     value: String,
     hint: String? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
     keyboardActions: KeyboardActions = KeyboardActions(),
     onValueChange: (Boolean, Double?) -> Unit,
     ) {

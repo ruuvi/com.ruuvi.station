@@ -37,7 +37,7 @@ data class RuuviTag(
 }
 
 data class SensorMeasurements(
-    val temperatureValue: EnvironmentValue,
+    val temperatureValue: EnvironmentValue?,
     val humidityValue: EnvironmentValue?,
     val pressureValue: EnvironmentValue?,
     val movementValue: EnvironmentValue?,
@@ -50,12 +50,12 @@ data class SensorMeasurements(
     val txPower: Double,
     val connectable: Boolean?,
     val dataFormat: Int,
-    val updatedAt: Date?,
+    val updatedAt: Date,
 )
 
 fun SensorMeasurements.isLowBattery(): Boolean {
-    val temperature = temperatureValue.value
     val voltage = voltageValue.value
+    val temperature = temperatureValue?.value ?: return voltage < 2.5
     return when {
         temperature <= -20 && voltage < 2 && voltage > 0 -> true
         temperature > -20 && temperature < 0 && voltage < 2.3 && voltage > 0 -> true

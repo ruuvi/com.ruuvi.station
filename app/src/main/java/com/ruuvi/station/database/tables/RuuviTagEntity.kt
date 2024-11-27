@@ -21,7 +21,7 @@ data class RuuviTagEntity(
     @Column
     var rssi: Int = 0,
     @Column
-    var temperature: Double = 0.0,
+    var temperature: Double? = null,
     @Column
     var temperatureOffset: Double = 0.0,
     @Column
@@ -43,7 +43,7 @@ data class RuuviTagEntity(
     @Column
     var voltage: Double = 0.0,
     @Column
-    var updateAt: Date? = null,
+    var updateAt: Date = Date(),
     @Column
     var dataFormat: Int = 0,
     @Column
@@ -59,7 +59,7 @@ data class RuuviTagEntity(
     constructor(tag: FoundRuuviTag) :this(
         id = tag.id,
         rssi = tag.rssi ?: 0,
-        temperature = tag.temperature ?: 0.0,
+        temperature = tag.temperature,
         humidity = tag.humidity,
         pressure = tag.pressure,
         accelX = tag.accelX,
@@ -118,13 +118,38 @@ data class RuuviTagEntity(
         humidityOffset = reading.humidityOffset
         pressureOffset = reading.pressureOffset
     }
+
+    companion object {
+        val queryFields = arrayOf(
+            RuuviTagEntity_Table.id.withTable(),
+            RuuviTagEntity_Table.rssi.withTable(),
+            RuuviTagEntity_Table.temperature.withTable(),
+            RuuviTagEntity_Table.temperatureOffset.withTable(),
+            RuuviTagEntity_Table.humidity.withTable(),
+            RuuviTagEntity_Table.humidityOffset.withTable(),
+            RuuviTagEntity_Table.pressure.withTable(),
+            RuuviTagEntity_Table.pressureOffset.withTable(),
+            RuuviTagEntity_Table.favorite.withTable(),
+            RuuviTagEntity_Table.accelX.withTable(),
+            RuuviTagEntity_Table.accelY.withTable(),
+            RuuviTagEntity_Table.accelZ.withTable(),
+            RuuviTagEntity_Table.voltage.withTable(),
+            RuuviTagEntity_Table.updateAt.withTable(),
+            RuuviTagEntity_Table.dataFormat.withTable(),
+            RuuviTagEntity_Table.txPower.withTable(),
+            RuuviTagEntity_Table.movementCounter.withTable(),
+            RuuviTagEntity_Table.measurementSequenceNumber.withTable(),
+            RuuviTagEntity_Table.connectable.withTable()
+        )
+    }
 }
 
 fun RuuviTagEntity.isLowBattery(): Boolean {
+    val temperature = this.temperature ?: return this.voltage < 2.5
     return when {
-        this.temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
-        this.temperature > -20 && this.temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
-        this.temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
+        temperature <= -20 && this.voltage < 2 && this.voltage > 0 -> true
+        temperature > -20 && temperature < 0 && this.voltage < 2.3 && this.voltage > 0 -> true
+        temperature >= 0 && this.voltage < 2.5 && this.voltage > 0 -> true
         else -> false
     }
 }

@@ -63,11 +63,12 @@
     <string name="already_latest_version">Sie verwenden die neueste Firmware-Version, keine Aktualisierung erforderlich</string>
     <string name="already_logged_in_message">Benutzer %@ ist bereits angemeldet. Wenn Sie ein anderes Konto verwenden möchten, melden Sie sich bitte zuerst ab und versuchen Sie es dann erneut.</string>
     <string name="already_signed_in">Super! Sie haben sich bereits angemeldet!</string>
+    <string name="android_8_required">Diese Funktion ist auf Geräten mit Android 8 und neuer verfügbar. Verwenden Sie stattdessen den Export in CSV.</string>
     <string name="app_name">Ruuvi Station</string>
-    <string name="app_theme">App Thema</string>
+    <string name="app_theme">App thema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Zurück</string>
-    <string name="background_image">Hintergrund bild</string>
+    <string name="background_image">Hintergrundbild</string>
     <string name="background_interval">alle %1$s min</string>
     <string name="background_interval_10sec">alle %1$s sec</string>
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
@@ -110,7 +111,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="card_action">Kartenaktion</string>
     <string name="card_type">Speicherkarten-Typ</string>
-    <string name="change_background">Einstellungen und Warnungen</string>
+    <string name="change_background">Hintergrundbild ändern</string>
     <string name="change_background_image">Hintergrundbild ändern</string>
     <string name="change_background_message">Wählen Sie das Hintergrundbild. Wenn Sie nicht angemeldet sind, verlieren Sie das Bild bei einer Neuinstallation der App.</string>
     <string name="changelog">(änderungsprotokoll)</string>
@@ -132,7 +133,7 @@
     <string name="claim_sensor">Sensor beanspruchen</string>
     <string name="claim_sensor_ownership">Beanspruchen Sie den Besitz des Sensors</string>
     <string name="claim_warning">Sichern Sie die Eigentumsinformationen Ihrer Sensoren, indem Sie ihre Eigentumsrechte in der App beanspruchen.</string>
-    <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene RuuviTag</string>
+    <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene Ruuvi-Sensor</string>
     <string name="clear">Löschen</string>
     <string name="clear_confirm">Die lokalen historischen Daten aus der App löschen?</string>
     <string name="clear_local_history">Lokaler Verlauf löschen</string>
@@ -157,7 +158,7 @@
     <string name="cloud_er_sub_data_storage_error">Datenspeicherfehler</string>
     <string name="cloud_er_sub_no_user">Kein Benutzer</string>
     <string name="cloud_er_subscription_not_found">Abonnement wurde nicht gefunden</string>
-    <string name="cloud_er_token_expired">Token ist abgelaufen</string>
+    <string name="cloud_er_token_expired">Das eingegebene Einmalpasswort (OTP) ist falsch oder abgelaufen</string>
     <string name="cloud_er_unable_to_send_email">Die Email kann nicht gesendet werden</string>
     <string name="cloud_er_unauthorized">Nicht autorisiert</string>
     <string name="cloud_er_user_not_found">Benutzer wurde nicht gefunden</string>
@@ -277,7 +278,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_added_tags">Sensoren hinzugefügt: %1$,d</string>
     <string name="help_db_data_points">Anzahl lokal gespeicherter Messungen: %1$,d</string>
     <string name="help_db_size">Datenbankgröße: %1$,d kB</string>
-    <string name="help_more_to_read_text">Ruuvi-Website: ruuvi.com\nRuuvi-Forum: f.ruuvi.com\nRuuvi-Blog: ruuvi.com/blog\nRuuvi auf Twitter: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Ruuvi-Website: ruuvi.com\nRuuvi-Forum: f.ruuvi.com\nRuuvi-blog: ruuvi.com/blog\nRuuvi auf Twitter: twitter.com/ruuvicom</string>
     <string name="help_more_to_read_title">Mehr erfahren</string>
     <string name="help_opensource_text">Genau wie Ruuvi-Sensoren sind auch die Ruuvi Station-Apps Open Source. Verfolgen Sie die Entwicklung und leisten Sie einen Beitrag unter: github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -290,10 +291,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
     <string name="history_view">Ansicht Verlauf</string>
     <string name="hour">Stunde</string>
-    <string name="hour_1">1 stunde</string>
-    <string name="hour_12">12 stunden</string>
-    <string name="hour_2">2 stunden</string>
-    <string name="hour_3">3 stunden</string>
+    <string name="hour_1">1 Stunde</string>
+    <string name="hour_12">12 Stunden</string>
+    <string name="hour_2">2 Stunden</string>
+    <string name="hour_3">3 Stunden</string>
     <string name="hour_x">%1$s tage</string>
     <string name="hours">Stunden</string>
     <string name="humidity">Feuchtigkeit</string>
@@ -323,7 +324,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="logged_in">Eingeloggt:</string>
     <string name="login_description">Um alle Funktionen nutzen zu können, erstellen Sie ein kostenloses Konto oder melden Sie sich bei Ihrem bestehenden Ruuvi-Konto an, indem Sie Ihre E-Mail-Adresse eingeben.</string>
     <string name="login_to_ruuvi_network">Login zur\nRuuvi\nStation</string>
-    <string name="longer_history_message">Die Ruuvi Station Mobile App unterstützt maximal 10 Tage Historie. Ruuvi-Cloud-Abonnenten können mit der Web-App unter ruuvi.com/station (erfordert Ruuvi-Gateway-Router) bis zu 2 Jahre historische Daten anzeigen.</string>
+    <string name="longer_history_message">Die Ruuvi Station Mobile App unterstützt maximal 10 Tage Historie. Ruuvi-Cloud-Abonnenten können mit der Web-App unter ruuvi.com/station (erfordert Ruuvi-Gateway-Router) bis zu 3 Jahre historische Daten anzeigen.</string>
     <string name="longer_history_title">Längere Geschichte</string>
     <string name="low_battery">Schwache Batterie</string>
     <string name="mac_address">MAC-Adresse</string>
@@ -345,9 +346,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="movement_counter">Bewegungszähler</string>
     <string name="movements">bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
+    <string name="my_account_change_email">Kontaktieren Sie support@ruuvi.com, wenn Sie die mit diesem Benutzerkonto verknüpfte E-Mail-Adresse ändern möchten.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
     <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
-    <string name="my_ruuvi_account">Mein Ruuvi Konto</string>
+    <string name="my_ruuvi_account">Mein Ruuvi konto</string>
     <string name="name">NAME</string>
     <string name="navigation_drawer_close">Schließen der Navigation</string>
     <string name="navigation_drawer_open">Öffnen der Navigation</string>
@@ -624,7 +626,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
-    <string name="view">Siehe</string>
+    <string name="view">Ansicht</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>
@@ -637,7 +639,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Vorteile</string>
     <string name="widget_empty">Drücken Sie +, um Sensoren hinzuzufügen</string>
+    <string name="widgets_add_sensors_first">Fügen Sie Sensoren zur App hinzu, bevor Sie Widgets verwenden</string>
     <string name="widgets_battery_optimisation_hint">Damit die Widgets von Ruuvi automatisch aktualisiert werden können, deaktivieren Sie bitte die Batterieoptimierung der App.</string>
+    <string name="widgets_enable_background_service">Aktualisieren Sie die Daten der lokalen Bluetooth-Sensoren im Widget, indem Sie die Hintergrundsuche aktivieren. Dies ist nicht erforderlich für Cloud-Sensoren, deren Daten über Ruuvi Gateway gesammelt werden. Das Intervall für die Hintergrundsuche kann in den Einstellungen der Ruuvi Station-App festgelegt werden (derzeit eingestellt auf %1$s).</string>
     <string name="widgets_gateway_only">Sie können Ruuvi-Widgets verwenden, wenn sich Ihre Sensoren in Reichweite eines Ruuvi-Gateways befinden oder wenn Ihnen jemand einen Ruuvi-Sensor zur Verfügung gestellt hat.</string>
     <string name="widgets_loading">laden...</string>
     <string name="widgets_missing_sensors">Sie können nicht alle Ihre Sensoren in der Liste sehen? Vergewissern Sie sich, dass Sie alle Ihre Sensoren für sich beansprucht haben und dass sich die Sensoren in der Reichweite eines Ruuvi Gateway Routers befinden.</string>
