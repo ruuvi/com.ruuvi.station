@@ -114,12 +114,10 @@ fun WidgetSetupScreen(viewModel: ComplexWidgetConfigureViewModel) {
         modifier = Modifier.fillMaxSize(),
         color = RuuviStationTheme.colors.background
     ) {
-        if (!userLoggedIn) {
-            LogInFirstScreen()
-        } else if (userHasCloudSensors) {
+        if (userHasCloudSensors) {
             SelectSensorsScreen(viewModel)
         } else {
-            ForNetworkSensorsOnlyScreen()
+            AddSensorsFirstScreen()
         }
     }
 }
@@ -127,15 +125,16 @@ fun WidgetSetupScreen(viewModel: ComplexWidgetConfigureViewModel) {
 @Composable
 fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
     val sensors by viewModel.widgetItems.observeAsState(listOf())
-    val gotFilteredSensors by viewModel.gotFilteredSensors.observeAsState(false)
+    val gotLocalSensors by viewModel.gotLocalSensors.observeAsState(false)
+    val backgroundServiceEnabled by viewModel.backgroundServiceEnabled.observeAsState(true)
+
 
     LazyColumn() {
         item {
-            if (gotFilteredSensors) {
-                Paragraph(
-                    text = stringResource(id = R.string.widgets_missing_sensors),
-                    modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
-                )
+            if (gotLocalSensors && !backgroundServiceEnabled) {
+                EnableBackgroundService(bgScanInterval = viewModel.backgroundServiceInterval) {
+                    viewModel.enableBackgroundService()
+                }
             }
         }
 

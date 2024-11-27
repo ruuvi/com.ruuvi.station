@@ -2,6 +2,8 @@ package com.ruuvi.station.widgets.ui
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -10,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -18,6 +21,7 @@ import androidx.lifecycle.LiveData
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -82,12 +86,38 @@ fun LogInFirstScreen() {
 }
 
 @Composable
-fun ForNetworkSensorsOnlyScreen() {
+fun AddSensorsFirstScreen() {
     Column() {
         Paragraph(
-            text = stringResource(id = R.string.widgets_gateway_only),
+            text = stringResource(id = R.string.widgets_add_sensors_first),
             modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
         )
+    }
+}
+
+@Composable
+fun EnableBackgroundService(
+    bgScanInterval: Int,
+    enableBackgroundService: () -> Unit
+) {
+    var intervalText = ""
+    val min = bgScanInterval / 60
+    val sec = bgScanInterval - min * 60
+    if (min > 0) intervalText += min.toString() + " " + stringResource(R.string.min) + " "
+    if (sec > 0) intervalText += sec.toString() + " " + stringResource(R.string.sec)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Paragraph(
+            text = stringResource(id = R.string.widgets_enable_background_service, intervalText),
+            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
+        )
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
+        RuuviButton(text = "Enable background service") {
+            enableBackgroundService.invoke()
+        }
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
     }
 }
 

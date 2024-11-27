@@ -26,7 +26,7 @@ class NetworkTokenRepository (
     }
 
     private fun setNetworkTokenInfo(tokenInfo: NetworkTokenInfo) {
-        preferences.networkEmail = tokenInfo.email
+        preferences.networkEmail = tokenInfo.email.lowercase()
         preferences.networkToken = tokenInfo.token
         preferences.signedInOnce = true
     }

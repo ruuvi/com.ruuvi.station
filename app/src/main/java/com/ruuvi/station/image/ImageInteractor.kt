@@ -269,11 +269,11 @@ class ImageInteractor (
             6 -> R.drawable.bg7
             7 -> R.drawable.bg8
             8 -> R.drawable.bg9
-            else -> getRandomResource()
+            else -> getDefaultResource()
         }
     }
 
-    fun getRandomResource(): Int = R.drawable.new_bg2
+    fun getDefaultResource(): Int = R.drawable.new_bg2
 }
 
 enum class ImageSource (val prefix: String) {

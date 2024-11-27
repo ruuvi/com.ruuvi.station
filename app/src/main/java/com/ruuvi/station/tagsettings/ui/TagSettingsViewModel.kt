@@ -60,11 +60,11 @@ class TagSettingsViewModel(
     }
 
     val sensorOwnedByUser: Flow<Boolean> = sensorState.mapNotNull {
-        it.owner?.isNotEmpty() == true && it.owner == networkInteractor.getEmail()
+        it.owner?.isNotEmpty() == true && it.owner.equals(networkInteractor.getEmail(), true)
     }
 
     val sensorOwnedOrOffline: Flow<Boolean> = sensorState.mapNotNull {
-        !it.networkSensor || it.owner.isNullOrEmpty() || it.owner == networkInteractor.getEmail()
+        !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
 
     private val _askToClaim =  MutableSharedFlow<Boolean>()

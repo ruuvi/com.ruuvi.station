@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferenceItem
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
@@ -18,16 +20,15 @@ class ComplexWidgetConfigureViewModel(
     private val appWidgetId: Int,
     private val tagRepository: TagRepository,
     private val networkInteractor: RuuviNetworkInteractor,
-    private val preferencesInteractor: ComplexWidgetPreferencesInteractor
+    private val preferencesInteractor: ComplexWidgetPreferencesInteractor,
+    private val preferencesRepository: PreferencesRepository
     ): ViewModel(), ICloudWidgetViewModel {
 
     private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
 
-    private val cloudSensors = _allSensors.map { allSensors ->
-        allSensors.filter { it.networkLastSync != null }
-    }
+    private val cloudSensors = _allSensors
 
-    val gotFilteredSensors = _allSensors.map { allSensors ->
+    val gotLocalSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }
     }
 
@@ -42,6 +43,11 @@ class ComplexWidgetConfigureViewModel(
     override val userHasCloudSensors: LiveData<Boolean> = cloudSensors.map {
         it.isNotEmpty()
     }
+
+    val backgroundServiceInterval = preferencesRepository.getBackgroundScanInterval()
+
+    private val _backgroundServiceEnabled: MutableLiveData<Boolean> = MutableLiveData<Boolean>(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
+    val backgroundServiceEnabled: LiveData<Boolean> = _backgroundServiceEnabled
 
     private val _setupComplete = MutableLiveData<Boolean> (false)
     val setupComplete: LiveData<Boolean> = _setupComplete
@@ -59,7 +65,7 @@ class ComplexWidgetConfigureViewModel(
 
     fun getSensorsForWidgetId(appWidgetId: Int): List<ComplexWidgetSensorItem> {
         val saved = preferencesInteractor.getComplexWidgetSettings(appWidgetId)
-        return tagRepository.getFavoriteSensors().filter { it.networkLastSync != null }.map { cloudSensor ->
+        return tagRepository.getFavoriteSensors().map { cloudSensor ->
             ComplexWidgetSensorItem(cloudSensor.id, cloudSensor.displayName).also {
                 it.restoreSettings(saved.firstOrNull { it.sensorId == cloudSensor.id })
             }
@@ -93,6 +99,11 @@ class ComplexWidgetConfigureViewModel(
 
     private fun recalcCanBeSaved() {
         _canBeSaved.value = _widgetItems?.value?.any { item -> item.checked && item.anySensorChecked() } ?: false
+    }
+
+    fun enableBackgroundService() {
+        preferencesRepository.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+        _backgroundServiceEnabled.value = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
     }
 }
 

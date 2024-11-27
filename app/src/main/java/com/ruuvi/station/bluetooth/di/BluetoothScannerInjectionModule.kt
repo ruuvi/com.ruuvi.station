@@ -14,6 +14,8 @@ import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.TimeUtils
 import com.ruuvi.station.util.test.FakeScanResultsSender
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -68,6 +70,14 @@ object BluetoothScannerInjectionModule {
                     val resultIntent = StartupActivity.createIntentForNotification(context)
                     return PendingIntent
                         .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                }
+
+                override fun getSimpleWidgetUpdatePendingIntent(): PendingIntent? {
+                    return SimpleWidget.getUpdatePendingIntent(context, 0)
+                }
+
+                override fun getComplexWidgetUpdatePendingIntent(): PendingIntent? {
+                    return ComplexWidgetProvider.getUpdatePendingIntent(context, 0)
                 }
             }
         }

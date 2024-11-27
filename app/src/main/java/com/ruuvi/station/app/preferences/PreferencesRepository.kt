@@ -320,6 +320,13 @@ class PreferencesRepository(
         preferences.acceptTerms = acceptTerms
     }
 
+    fun isIncreasedChartSize(): Boolean =
+        preferences.increasedChartSize
+
+    fun setIncreasedChartSize(increasedChartSize: Boolean) {
+        preferences.increasedChartSize = increasedChartSize
+    }
+
     fun isFirebaseConsent(): Boolean =
         preferences.firebaseConsent
 

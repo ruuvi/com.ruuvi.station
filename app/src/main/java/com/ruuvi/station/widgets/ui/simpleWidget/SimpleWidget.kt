@@ -102,7 +102,7 @@ class SimpleWidget: AppWidgetProvider() {
             }
         }
 
-        private fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
+        fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
             val updateIntent = Intent(context, SimpleWidget::class.java).apply {
                 action = MANUAL_REFRESH
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

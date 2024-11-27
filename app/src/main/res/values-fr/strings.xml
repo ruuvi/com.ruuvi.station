@@ -63,8 +63,9 @@
     <string name="already_latest_version">L\'appareil est à déjà à jour</string>
     <string name="already_logged_in_message">L\'utilisateur %1$s est déjà connecté. Si vous souhaitez utiliser un autre compte veuillez vous déconnecter d\'abord.</string>
     <string name="already_signed_in">Super ! Vous vous êtes déjà connecté !</string>
+    <string name="android_8_required">Cette fonctionnalité est disponible sur les appareils Android 8 et versions ultérieures. Utilisez l\'option d\'exportation en CSV à la place.</string>
     <string name="app_name">Ruuvi Station</string>
-    <string name="app_theme">App Theme</string>
+    <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="back">Retour</string>
     <string name="background_image">Fond d\'écran</string>
@@ -110,7 +111,7 @@
     <string name="cancel">Annuler</string>
     <string name="card_action">Action de la carte</string>
     <string name="card_type">Type de carte</string>
-    <string name="change_background">Paramètres et alertes</string>
+    <string name="change_background">Changer le fond d\'écran</string>
     <string name="change_background_image">Modifier l\'image de fond</string>
     <string name="change_background_message">Sélectionnez l\'image d\'arrière-plan. Si vous n\'êtes pas connecté, vous perdrez l\'image en cas de réinstallation de l\'application.</string>
     <string name="changelog">(journal des modifications)</string>
@@ -132,7 +133,7 @@
     <string name="claim_sensor">Confirmer l\'appropriation</string>
     <string name="claim_sensor_ownership">Revendiquer la propriété du capteur</string>
     <string name="claim_warning">Sécurisez les informations de propriété de vos capteurs en revendiquant leurs propriétés dans l\'application.</string>
-    <string name="claim_wrong_sensor_scanned">Vous scannez différents RuuviTag</string>
+    <string name="claim_wrong_sensor_scanned">Vous scannez différents capteur Ruuvi</string>
     <string name="clear">Effacer</string>
     <string name="clear_confirm">Supprimer l\'historique de l\'application ?</string>
     <string name="clear_local_history">Effacer l\'histoire locale</string>
@@ -157,7 +158,7 @@
     <string name="cloud_er_sub_data_storage_error">Erreur d\'enregistrement</string>
     <string name="cloud_er_sub_no_user">Pas d\'utilisateur</string>
     <string name="cloud_er_subscription_not_found">L\'abonnement est introuvable</string>
-    <string name="cloud_er_token_expired">Le code est perimé</string>
+    <string name="cloud_er_token_expired">Le mot de passe à usage unique (OTP) entré est incorrect ou expiré</string>
     <string name="cloud_er_unable_to_send_email">Impossible d\'envoyer l\'email</string>
     <string name="cloud_er_unauthorized">Non permis</string>
     <string name="cloud_er_user_not_found">Utilisateur introuvable</string>
@@ -271,7 +272,7 @@
     <string name="help_added_tags">Capteurs jumelés : %1$,d</string>
     <string name="help_db_data_points">Données enregistrées : %1$,d</string>
     <string name="help_db_size">Taille de la base de données : %1$,d kB</string>
-    <string name="help_more_to_read_text">Site officiel de Ruuvi : ruuvi.com\nRuuvi Forum : f.ruuvi.com\nRuuvi Blog : ruuvi.com/blog\nRuuvi Twitter : twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Site officiel de Ruuvi : ruuvi.com\nRuuvi Forum : f.ruuvi.com\nRuuvi blog : ruuvi.com/blog\nRuuvi Twitter : twitter.com/ruuvicom</string>
     <string name="help_more_to_read_title">Plus d\'infos</string>
     <string name="help_opensource_text">Tout comme les capteurs Ruuvi, les applications Ruuvi Station sont open source. Suivez le développement et contribuez sur : github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -317,7 +318,7 @@
     <string name="logged_in">Connecté :</string>
     <string name="login_description">Profitez de tous les avantages de Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
     <string name="login_to_ruuvi_network">Connexion \nRuuvi\nStation</string>
-    <string name="longer_history_message">L\'application mobile Ruuvi Station prend en charge un maximum de 10 jours d\'historique. Les abonnés à Ruuvi Cloud peuvent consulter jusqu\'à 2 ans d\'historique en utilisant l\'application web à ruuvi.com/station (nécessite le routeur Ruuvi Gateway).</string>
+    <string name="longer_history_message">L\'application mobile Ruuvi Station prend en charge un maximum de 10 jours d\'historique. Les abonnés à Ruuvi Cloud peuvent consulter jusqu\'à 3 ans d\'historique en utilisant l\'application web à ruuvi.com/station (nécessite le routeur Ruuvi Gateway).</string>
     <string name="longer_history_title">Une histoire plus longue</string>
     <string name="low_battery">Batterie faible</string>
     <string name="mac_address">Adresse MAC</string>
@@ -339,6 +340,7 @@
     <string name="movement_counter">Compteur de mouvements</string>
     <string name="movements">mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
+    <string name="my_account_change_email">Contactez support@ruuvi.com si vous souhaitez modifier l\'adresse e-mail associée à ce compte utilisateur.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
     <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mon compte Ruuvi</string>
@@ -357,7 +359,7 @@
     <string name="nfc_dialog_add_sensor">Ajouter un capteur</string>
     <string name="nfc_dialog_firmware_version">Version du firmware:</string>
     <string name="nfc_dialog_go_to_sensor">Aller à la carte du capteur</string>
-    <string name="nfc_dialog_mac_address">Adresse Mac:</string>
+    <string name="nfc_dialog_mac_address">Adresse MAC:</string>
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_unique_id">Identifiant unique:</string>
     <string name="nfc_enable_bt_to_add_sensor">Activez Bluetooth et scannez le capteur pour l\'ajouter</string>
@@ -631,7 +633,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Bénéfices</string>
     <string name="widget_empty">Appuyez sur + pour ajouter des capteurs</string>
+    <string name="widgets_add_sensors_first">Ajoutez des capteurs à l\'application avant d\'utiliser les widgets</string>
     <string name="widgets_battery_optimisation_hint">Pour que les widgets puissent se mettre à jour automatiquement, désactivez le mode économie d\'énergie de l\'application.</string>
+    <string name="widgets_enable_background_service">Activez le balayage en arrière-plan pour mettre à jour les valeurs des capteurs locaux via Bluetooth dans le widget. Ce n\'est pas nécessaire pour les capteurs cloud avec Ruuvi Gateway. L\'intervalle de balayage en arrière-plan peut être défini dans les paramètres de l\'application Ruuvi Station (actuellement défini sur %1$s).</string>
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur.</string>
     <string name="widgets_loading">Chargement...</string>
     <string name="widgets_missing_sensors">Vous ne voyez pas tous vos capteurs sur la liste ? Assurez-vous de vous être approprié tous les capteurs depuis l\'application mobile et que les capteurs sont à la portée d\'un routeur Ruuvi Gateway.</string>

@@ -12,7 +12,7 @@ class TagConverter(
 ) {
 
     fun fromDatabase(entity: RuuviTagEntity, sensorSettings: SensorSettings): RuuviTag {
-        val temperature = entity.temperature + (sensorSettings.temperatureOffset ?: 0.0)
+        val temperature = entity.temperature?.let { it + (sensorSettings.temperatureOffset ?: 0.0)}
         val humidity = entity.humidity?.let {it + (sensorSettings.humidityOffset ?: 0.0)}
         val pressure = entity.pressure?.let {it + (sensorSettings.pressureOffset ?: 0.0)}
 
@@ -33,7 +33,7 @@ class TagConverter(
             firmware = sensorSettings.firmware,
             subscriptionName = sensorSettings.subscriptionName,
             latestMeasurement = SensorMeasurements(
-                temperatureValue = unitsConverter.getTemperatureEnvironmentValue(temperature),
+                temperatureValue = temperature?.let { unitsConverter.getTemperatureEnvironmentValue(it) },
                 pressureValue = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
                 humidityValue = humidity?.let {
                     unitsConverter.getHumidityEnvironmentValue(
@@ -61,7 +61,7 @@ class TagConverter(
     }
 
     fun fromDatabase(entity: FavouriteSensorQuery): RuuviTag {
-        val temperature = entity.temperature + (entity.temperatureOffset ?: 0.0)
+        val temperature = entity.temperature?.let { it + (entity.temperatureOffset ?: 0.0)}
         val humidity = entity.humidity?.let {it + (entity.humidityOffset ?: 0.0)}
         val pressure = entity.pressure?.let {it + (entity.pressureOffset ?: 0.0)}
 
@@ -83,22 +83,17 @@ class TagConverter(
             firmware = entity.firmware,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(
-                    temperatureValue = unitsConverter.getTemperatureEnvironmentValue(temperature),
+                    temperatureValue = temperature?.let {
+                        unitsConverter.getTemperatureEnvironmentValue(it)
+                    },
                     pressureValue = pressure?.let {
-                        unitsConverter.getPressureEnvironmentValue(
-                            it
-                        )
+                        unitsConverter.getPressureEnvironmentValue(it)
                     },
                     humidityValue = humidity?.let {
-                        unitsConverter.getHumidityEnvironmentValue(
-                            it,
-                            temperature
-                        )
+                        unitsConverter.getHumidityEnvironmentValue(it, temperature)
                     },
                     movementValue = entity.movementCounter?.let {
-                        movementConverter.getMovementEnvironmentValue(
-                            it
-                        )
+                        movementConverter.getMovementEnvironmentValue(it)
                     },
                     voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
                     rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),

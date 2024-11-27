@@ -56,8 +56,10 @@ fun RuuviButton(
 ) {
     Button(
         modifier = modifier
-            .defaultMinSize(minWidth = 150.dp)
-            .height(height),
+            .defaultMinSize(
+                minWidth = 150.dp,
+                minHeight = height
+            ),
         enabled = enabled,
         shape = shape,
         colors = if (isWarning) ruuviWarningButtonColors() else ruuviButtonColors(),

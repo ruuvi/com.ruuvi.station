@@ -58,9 +58,8 @@ import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
-import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.nfc.domain.NfcScanResponse
-import com.ruuvi.station.nfc.ui.NfcDialog
+import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
@@ -110,6 +109,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
                 val newChartsUI by viewModel.newChartsUI.collectAsStateWithLifecycle()
+                val increasedChartSize by viewModel.increasedChartSize.collectAsStateWithLifecycle()
 
                 if (sensors.isNotEmpty()) {
                     SensorsPager(
@@ -135,6 +135,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         exportToXlsx = viewModel::exportToXlsx ,
                         removeTagData= viewModel::removeTagData,
                         refreshStatus = viewModel::refreshStatus,
+                        increasedChartSize = increasedChartSize,
+                        changeIncreasedChartSize = viewModel::changeIncreaseChartSize,
                         dontShowGattSyncDescription = viewModel::dontShowGattSyncDescription,
                         getNfcScanResponse = viewModel::getNfcScanResponse,
                         addSensor = viewModel::addSensor,
@@ -221,6 +223,7 @@ fun SensorsPager(
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
     newChartsUI: Boolean,
+    increasedChartSize: Boolean,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
@@ -235,6 +238,7 @@ fun SensorsPager(
     getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
     addSensor: (String) -> Unit,
     changeShowStats: () -> Unit,
+    changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
     getIndex: (String) -> Int
 ) {
@@ -363,6 +367,7 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         if (showCharts) {
+                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidityValue == null || sensor.latestMeasurement.pressureValue == null
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 showChartStats = showChartStats,
@@ -377,8 +382,10 @@ fun SensorsPager(
                                 removeTagData = removeTagData,
                                 refreshStatus = refreshStatus,
                                 dontShowGattSyncDescription = dontShowGattSyncDescription,
-                                changeShowStats = changeShowStats
-
+                                changeShowStats = changeShowStats,
+                                increasedChartSize = increasedChartSize,
+                                hideIncreaseChartSize = hideIncreaseChartSize,
+                                changeIncreasedChartSize = changeIncreasedChartSize
                             )
                             var size by remember { mutableStateOf(Size.Zero)}
                             ChartsView(
@@ -405,6 +412,7 @@ fun SensorsPager(
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 getActiveAlarms = getActiveAlarms,
+                                increasedChartSize = increasedChartSize,
                                 size = size
                             )
                         } else {
@@ -478,56 +486,6 @@ fun SensorsPager(
         }
     }
 
-}
-
-@Composable
-fun NfcInteractor(
-    getNfcScanResponse: (SensorNfсScanInfo) -> NfcScanResponse,
-    addSensor: (String) -> Unit
-) {
-    val context = LocalContext.current
-    var nfcDialog by remember { mutableStateOf(false) }
-    var nfcScanResponse by remember { mutableStateOf<NfcScanResponse?>(null) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-
-    LaunchedEffect(key1 = lifecycleOwner.lifecycle) {
-        lifecycleOwner.lifecycleScope.launch {
-            Timber.d("nfc scanned launch")
-
-            NfcScanReciever.nfcSensorScanned
-                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { scanInfo ->
-                    Timber.d("nfc scanned: $scanInfo")
-                    if (scanInfo != null) {
-                        val response = getNfcScanResponse.invoke(scanInfo)
-                        Timber.d("nfc scanned response: $response")
-                        nfcScanResponse = response
-                        nfcDialog = true
-                    }
-                }
-        }
-    }
-
-    if (nfcDialog && nfcScanResponse != null) {
-        val response = nfcScanResponse
-        if (response != null) {
-            NfcDialog(
-                sensorInfo = response,
-                addSensorAction = {
-                    addSensor(response.sensorId)
-                    TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
-                },
-                goToSensorAction = {
-                    SensorCardActivity.startWithDashboard(context, response.sensorId)
-                },
-                onDismissRequest = {
-                    nfcDialog = false
-                    nfcScanResponse = null
-                }
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -611,7 +569,7 @@ fun SensorCard(
     ) {
         val (temperatureValue, temperatureUnit, otherValues, lowBattery) = createRefs()
 
-        if (sensor.latestMeasurement != null) {
+        if (sensor.latestMeasurement?.temperatureValue != null) {
             Text(
                 modifier = Modifier
                     .constrainAs(temperatureValue) {
@@ -736,7 +694,7 @@ fun SensorValueItem(
                     ),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White80,
-                fontSize = RuuviStationTheme.fontSizes.small,
+                fontSize = RuuviStationTheme.fontSizes.compact,
                 text = unit,
             )
         }
@@ -822,19 +780,19 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
-        modifier = modifier.padding(end = RuuviStationTheme.dimensions.mediumPlus)
+        modifier = modifier.padding(end = RuuviStationTheme.dimensions.medium)
     ) {
         Text(
             color = White50,
-            fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = RuuviStationTheme.fontSizes.small,
+            style = RuuviStationTheme.typography.dashboardSecondary,
             textAlign = TextAlign.Right,
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
         Image(
             modifier = Modifier
-                .size(16.dp)
+                .height(12.dp)
+                .width(24.dp)
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.icon_battery_low),
             contentDescription = null
@@ -895,12 +853,12 @@ fun SensorCardBottom(
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()
+            val fontScale = LocalContext.current.resources.configuration.fontScale
 
             if (syncInProgress) {
                 Text(
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = White50,
-                    fontSize = RuuviStationTheme.fontSizes.small,
                     textAlign = TextAlign.Left,
                     text = syncText,
                 )
@@ -910,7 +868,6 @@ fun SensorCardBottom(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
-                fontSize = RuuviStationTheme.fontSizes.small,
                 textAlign = TextAlign.Right,
                 text = updatedText,
             )
@@ -919,8 +876,8 @@ fun SensorCardBottom(
 
             Icon(
                 modifier = Modifier
-                    .height(20.dp)
-                    .width(24.dp),
+                    .height(RuuviStationTheme.dimensions.mediumPlus * fontScale)
+                    .width((24 * fontScale).dp),
                 painter = painterResource(id = icon),
                 tint = White50,
                 contentDescription = null,
@@ -965,7 +922,7 @@ fun SensorCardBottom(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
-                fontSize = RuuviStationTheme.fontSizes.small,
+                fontSize = RuuviStationTheme.fontSizes.compact,
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.no_data_10_days),
             )

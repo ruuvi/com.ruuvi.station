@@ -22,7 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
-import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
@@ -70,7 +69,6 @@ import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.app.ui.theme.Titan
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
@@ -78,11 +76,11 @@ import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
+import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
-import com.ruuvi.station.tagdetails.ui.NfcInteractor
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
@@ -133,6 +131,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
+                val shouldAskNotificationPermission by dashboardViewModel.shouldAskNotificationPermission.collectAsState()
                 val dragDropListState = rememberDragDropListState(
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
@@ -144,11 +143,13 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     colors.navigationTransparent
                 }
 
-                NotificationPermission(
-                    scaffoldState = scaffoldState,
-                    shouldAskNotificationPermission = dashboardViewModel.shouldAskNotificationPermission
-                ) {
-                    bluetoothCheckReady = true
+                if (shouldAskNotificationPermission) {
+                    NotificationPermission(
+                        scaffoldState = scaffoldState,
+                        shouldAskNotificationPermission = shouldAskNotificationPermission
+                    ) {
+                        bluetoothCheckReady = true
+                    }
                 }
 
                 if (bluetoothCheckReady) {
@@ -330,6 +331,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 if (it is NetworkSyncEvent.Success) {
                     dashboardViewModel.refreshDashboardType()
                     dashboardViewModel.refreshDashboardTapAction()
+                }
+
+                if (it is NetworkSyncEvent.SensorsSynced) {
+                    dashboardViewModel.refreshNotificationStatus()
                 }
             }
         }
@@ -923,10 +928,12 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                ValueDisplay(
-                    value = sensor.latestMeasurement.temperatureValue,
-                    sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
-                )
+                if (sensor.latestMeasurement.temperatureValue != null) {
+                    ValueDisplay(
+                        value = sensor.latestMeasurement.temperatureValue,
+                        sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
+                    )
+                }
                 if (sensor.latestMeasurement.humidityValue != null) {
                     ValueDisplay(
                         value = sensor.latestMeasurement.humidityValue,
@@ -1052,18 +1059,20 @@ fun ItemBottomUpdatedInfo(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier.padding(top = 2.dp)
         ) {
+            val fontScale = LocalContext.current.resources.configuration.fontScale
+
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
             val icon = sensor.getSource().getIconResource()
             if (sensor.getSource() == UpdateSource.Cloud) {
                 Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
                     tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,
                 )
             } else {
                 Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus),
+                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
                     tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,
@@ -1193,7 +1202,7 @@ fun DashboardItemDropdownMenu(
 
     var setNameDialog by remember { mutableStateOf(false) }
 
-    val canBeShared = sensor.owner == userEmail
+    val canBeShared = sensor.owner.equals(userEmail, true)
     val canBeClaimed = sensor.owner.isNullOrEmpty() && userEmail?.isNotEmpty() == true
 
     Box() {

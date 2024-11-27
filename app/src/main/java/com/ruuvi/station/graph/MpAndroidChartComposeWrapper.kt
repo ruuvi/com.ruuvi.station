@@ -9,14 +9,13 @@ import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -35,6 +34,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -45,6 +45,8 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun ChartView(
@@ -131,6 +133,7 @@ fun ChartViewPrototype(
         Text(
             modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
             style = RuuviStationTheme.typography.subtitle,
+            fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
             text = title,
             color = RuuviStationTheme.colors.buttonText
         )
@@ -143,7 +146,7 @@ fun ChartViewPrototype(
                 ),
                 style = RuuviStationTheme.typography.paragraphSmall,
                 text = description,
-                fontSize = RuuviStationTheme.fontSizes.tiny,
+                fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
                 color = RuuviStationTheme.colors.buttonText
             )
         }
@@ -438,10 +441,11 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    var textSize = context.resources.getDimension(R.dimen.graph_description_size).toFloat()
+    var textSize = context.resources.getDimension(R.dimen.graph_description_size)
     val density = context.resources.displayMetrics.density
     if (density < 2) textSize *= 2
-    Timber.d("graph_description_size $textSize $density")
+    textSize = min(textSize, 20f)
+    Timber.d("graph_description_sizegraph_description_size $textSize $density")
     chart.description.textSize = textSize
     chart.axisLeft.textSize = textSize
     chart.xAxis.textSize = textSize
@@ -479,7 +483,7 @@ private fun addDataToChart(
     to: Long
 ) {
     val set = LineDataSet(data, label)
-    setLabelCount(chart)
+    setLabelCount(context, chart)
     set.setDrawCircles(graphDrawDots)
     set.setDrawValues(false)
     set.setDrawFilled(true)
@@ -565,19 +569,24 @@ fun formatDoubleToString(value: Double): String {
     }
 }
 
-private fun setLabelCount(chart: LineChart) {
+private fun setLabelCount(context: Context, chart: LineChart) {
     val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+    val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+    val dateText = DateUtils.formatDateTime(context, Date().time, flags)
 
     val computePaint = Paint(1)
     computePaint.typeface = chart.xAxis.typeface
     computePaint.textSize = chart.xAxis.textSize
     val computeSize = Utils.calcTextSize(computePaint, timeText)
+    val computeSize2 = Utils.calcTextSize(computePaint, dateText)
+    val width = max(computeSize.width, computeSize2.width)
+    Timber.d("setLabelCount $timeText $dateText $computeSize $computeSize2")
 
-    Timber.d("setLabelCount computeLabelWidth = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()}")
-
-    var labelCount = chart.viewPortHandler.contentWidth() / (computeSize.width * 1.7)
+    var labelCount = chart.viewPortHandler.contentWidth() / (width * 2)
+    var labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
+    Timber.d("setLabelCount computeLabelSize = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} contentHeight = ${chart.viewPortHandler.contentHeight()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
-    chart.axisLeft.setLabelCount(6, false)
+    chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.

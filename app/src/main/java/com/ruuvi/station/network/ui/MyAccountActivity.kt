@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -137,13 +138,24 @@ fun MyAccountBody(
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    RuuviButton(text = stringResource(id = R.string.delete_account), isWarning = true) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RuuviButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(id = R.string.delete_account),
+                        isWarning = true
+                    ) {
                         deleteAccount.invoke()
                     }
 
                     Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.big))
-                    RuuviButton(text = stringResource(id = R.string.sign_out)) {
+                    RuuviButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(id = R.string.sign_out)
+                    ) {
                         signOutDialog = true
                     }
                 }

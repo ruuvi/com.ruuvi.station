@@ -32,7 +32,11 @@ class ComplexWidgetProvider: AppWidgetProvider() {
             MANUAL_REFRESH -> {
                 val appWidgetId= intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
                 val appWidgetManager = AppWidgetManager.getInstance(context)
-                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+                if (appWidgetId == 0) {
+                    updateAll(context)
+                } else {
+                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+                }
             }
             ITEM_CLICK -> {
                 val sensorId = intent.getStringExtra(EXTRA_SENSOR_ID) ?: ""
@@ -70,7 +74,7 @@ class ComplexWidgetProvider: AppWidgetProvider() {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
         }
 
-        private fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
+        fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
             val updateIntent = Intent(context, ComplexWidgetProvider::class.java).apply {
                 action = MANUAL_REFRESH
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

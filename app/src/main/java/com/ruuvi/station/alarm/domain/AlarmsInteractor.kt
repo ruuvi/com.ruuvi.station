@@ -157,7 +157,7 @@ class AlarmsInteractor(
             min = state.min,
             max = state.max,
             type = state.type.value,
-            enabled = state.isEnabled,
+            enabled = state.isEnabled.value,
             description = state.customDescription,
             mutedTill = state.mutedTill
         )

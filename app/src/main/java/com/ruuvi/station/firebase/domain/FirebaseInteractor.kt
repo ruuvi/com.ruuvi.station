@@ -94,7 +94,7 @@ class FirebaseInteractor(
                     sensorSettings.count { it.networkSensor && it.owner == userEmail }
                 val offlineSensors =
                     sensorSettings.count { !it.networkSensor }
-                val ownedSensors = favouriteTags.filter { !it.networkSensor || it.owner == userEmail }
+                val ownedSensors = favouriteTags.filter { !it.networkSensor || it.owner.equals(userEmail, true) }
 
                 firebaseAnalytics.setUserProperty(CLAIMED_TAGS, claimedSensors.toString())
                 firebaseAnalytics.setUserProperty(OFFLINE_TAGS, offlineSensors.toString())

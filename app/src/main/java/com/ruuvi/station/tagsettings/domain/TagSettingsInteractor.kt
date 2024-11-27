@@ -105,7 +105,7 @@ class TagSettingsInteractor(
     ) {
         setDefaultBackgroundImageByResource(
             sensorId = sensorId,
-            defaultBackground = imageInteractor.getRandomResource()
+            defaultBackground = imageInteractor.getDefaultResource()
         )
     }
 

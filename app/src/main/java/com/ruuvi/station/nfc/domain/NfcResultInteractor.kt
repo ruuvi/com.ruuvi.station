@@ -19,7 +19,7 @@ class NfcResultInteractor(
 
     fun getNfcScanResponse(info: SensorNfсScanInfo): NfcScanResponse {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(info.mac)
-        val canBeAdded = tagRepository.getTagById(info.mac) != null
+        val canBeAdded = sensorSettings == null
         if (sensorSettings != null) {
             return NfcScanResponse(
                 id = info.id,

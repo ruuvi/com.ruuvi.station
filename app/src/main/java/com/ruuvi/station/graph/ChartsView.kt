@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -43,6 +44,7 @@ import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.min
 
 private val chartHeight = 280.dp
 
@@ -65,6 +67,7 @@ fun ChartsView(
     viewPeriod: Period,
     newChartsUI: Boolean,
     size: Size,
+    increasedChartSize: Boolean,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -75,6 +78,14 @@ fun ChartsView(
 
     var chartContainers by remember {
         mutableStateOf<List<ChartContainer>>(ArrayList())
+    }
+
+    var needsScroll by remember {
+        mutableStateOf(true)
+    }
+
+    var chartsPerScreen by remember {
+        mutableStateOf(3)
     }
 
     var temperatureData by remember {
@@ -141,7 +152,7 @@ fun ChartsView(
     var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
     var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
 
-    LaunchedEffect(key1 = selected, viewPeriod) {
+    LaunchedEffect(key1 = selected, viewPeriod, increasedChartSize) {
         Timber.d("ChartView - LaunchedEffect $sensorId")
         while (selected) {
             val container = mutableListOf<ChartContainer>()
@@ -190,24 +201,31 @@ fun ChartsView(
 
                     history.forEach { item ->
                         val timestamp = (item.createdAt.time - from).toFloat()
-                        temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(item.temperature).toFloat()))
+                        item.temperature?.let { temperature ->
+                            temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(temperature).toFloat()))
+                        }
                         item.humidity?.let { humidity ->
-                            humidityDataTemp.add(Entry(timestamp, unitsConverter.getHumidityValue(humidity, item.temperature).toFloat()))
+                            val humidityValue = unitsConverter.getHumidityValue(humidity, item.temperature)
+                            if (humidityValue != null) {
+                                humidityDataTemp.add(Entry(timestamp, humidityValue.toFloat()))
+                            }
                         }
                         item.pressure?.let {pressure ->
                             pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
                         }
-                        item.voltage?.let {voltage ->
-                            batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
-                        }
-                        item.accelX?.let {accelX ->
-                            accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
-                        }
-                        item.rssi?.let {rssi ->
-                            rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
-                        }
-                        item.movementCounter?.let {movements ->
-                            movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                        if (newChartsUI) {
+                            item.voltage?.let {voltage ->
+                                batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
+                            }
+                            item.accelX?.let {accelX ->
+                                accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
+                            }
+                            item.rssi?.let {rssi ->
+                                rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
+                            }
+                            item.movementCounter?.let {movements ->
+                                movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                            }
                         }
                     }
                     container.add(
@@ -307,6 +325,14 @@ fun ChartsView(
                 }
             }
             isLoading = false
+            chartsPerScreen = if (increasedChartSize) {
+                min(2, chartContainers.size)
+            } else {
+                min(3, chartContainers.size)
+            }
+            needsScroll = chartsPerScreen < chartContainers.size
+            Timber.d("needsScroll $needsScroll increaseChartSize = $increasedChartSize chartsPerScreen=$chartsPerScreen containers = ${chartContainers.size}")
+
             delay(1000)
         }
     }
@@ -332,14 +358,20 @@ fun ChartsView(
                 showChartStats
             )
         } else {
-           VerticalChartsPrototype(
-                modifier,
-                chartContainers,
-                unitsConverter,
-                graphDrawDots,
-                showChartStats,
-               size = size
-           )
+            Box (modifier = modifier.fillMaxSize()){
+                val height = (size.height / chartsPerScreen).pxToDp()
+
+                if (!size.isEmpty())
+                VerticalChartsPrototype(
+                    modifier =  Modifier,
+                    chartContainers = chartContainers,
+                    unitsConverter = unitsConverter,
+                    graphDrawDots = graphDrawDots,
+                    showChartStats = showChartStats,
+                    height = height,
+                    needsScroll = needsScroll
+                )
+            }
         }
     }
 }
@@ -351,7 +383,8 @@ fun VerticalChartsPrototype(
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
-    size: Size
+    height: Dp,
+    needsScroll: Boolean
 ) {
     val clearMarker = {
         for (chartContainer in chartContainers) {
@@ -359,31 +392,22 @@ fun VerticalChartsPrototype(
         }
     }
 
-    val listState = rememberLazyListState()
-
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
-        var needsScroll = true
-        var height = chartHeight
-        if (chartContainers.size <= 3 && size.height.pxToDp() >= chartHeight * chartContainers.size && chartContainers.isNotEmpty()) {
-            height = (size.height / chartContainers.size).pxToDp()
-            needsScroll = false
-        }
 
-        Timber.d("chart height $size $height")
+        Timber.d("chart height $height $needsScroll")
+        val listState = rememberLazyListState()
 
-        val columnModifier = if (needsScroll) {
-            modifier.fillMaxSize().scrollbar(state = listState, horizontal = false)
-        } else {
-            modifier
-        }
+        if (needsScroll) {
+            val columnModifier = modifier
+                .fillMaxSize()
+                .scrollbar(state = listState, horizontal = false)
 
-        LazyColumn(
-            state = listState,
-            modifier = columnModifier
-        ) {
-            if (!size.isEmpty()) {
+            LazyColumn(
+                state = listState,
+                modifier = columnModifier
+            ) {
                 for (chartContainer in chartContainers) {
                     item {
                         ChartViewPrototype(
@@ -402,6 +426,29 @@ fun VerticalChartsPrototype(
                             clearMarker
                         )
                     }
+                }
+            }
+        } else {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+            ) {
+                for (chartContainer in chartContainers) {
+                    ChartViewPrototype(
+                        chartContainer.uiComponent,
+                        Modifier
+                            .height(height)
+                            .fillMaxWidth(),
+                        chartContainer.data,
+                        unitsConverter,
+                        chartContainer.chartSensorType,
+                        graphDrawDots,
+                        showChartStats,
+                        limits = chartContainer.limits,
+                        chartContainer.from,
+                        chartContainer.to,
+                        clearMarker
+                    )
                 }
             }
         }

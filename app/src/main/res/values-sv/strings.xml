@@ -63,6 +63,7 @@
     <string name="already_latest_version">Du har redan den senaste firmwareversionen, ingen uppdatering behövs</string>
     <string name="already_logged_in_message">Användare %1$s är redan inloggad. Om du vill använda ett annat konto, logga ut först och försök sedan igen.</string>
     <string name="already_signed_in">Bra! Du är redan inloggad!</string>
+    <string name="android_8_required">Den här funktionen är tillgänglig på enheter med Android 8 och senare. Använd export till CSV istället.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App tema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
@@ -132,7 +133,7 @@
     <string name="claim_sensor">Bekräfta ägandet</string>
     <string name="claim_sensor_ownership">Gör anspråk på sensorägande</string>
     <string name="claim_warning">Säkra ägarinformationen för dina sensorer genom att göra anspråk på deras äganderätt i appen.</string>
-    <string name="claim_wrong_sensor_scanned">Du skannar fel RuuviTag</string>
+    <string name="claim_wrong_sensor_scanned">Du skannar av fel Ruuvi-sensor</string>
     <string name="clear">Rensa</string>
     <string name="clear_confirm">Radera historisk data från appen?</string>
     <string name="clear_local_history">Rensa lokal historik</string>
@@ -157,7 +158,7 @@
     <string name="cloud_er_sub_data_storage_error">Datalagringsfel</string>
     <string name="cloud_er_sub_no_user">Ingen användare</string>
     <string name="cloud_er_subscription_not_found">Prenumerationen hittades inte</string>
-    <string name="cloud_er_token_expired">Nyckeln har upphört att gälla</string>
+    <string name="cloud_er_token_expired">Den angivna engångskoden (OTP) är felaktig eller har gått ut</string>
     <string name="cloud_er_unable_to_send_email">Kunde inte skicka e-post</string>
     <string name="cloud_er_unauthorized">Obehörig</string>
     <string name="cloud_er_user_not_found">Användaren hittades inte</string>
@@ -312,7 +313,7 @@
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
     <string name="login_to_ruuvi_network">Logga in till\nRuuvi\nStation</string>
-    <string name="longer_history_message">Ruuvi Station mobilapp stöder högst 10 dagars historik. Ruuvi Cloud-prenumeranter kan se upp till 2 års historisk data med hjälp av webbappen på ruuvi.com/station (kräver Ruuvi Gateway-router).</string>
+    <string name="longer_history_message">Ruuvi Station mobilapp stöder högst 10 dagars historik. Ruuvi Cloud-prenumeranter kan se upp till 3 års historisk data med hjälp av webbappen på ruuvi.com/station (kräver Ruuvi Gateway-router).</string>
     <string name="longer_history_title">Längre historik</string>
     <string name="low_battery">Låg batterinivå</string>
     <string name="mac_address">MAC Adress</string>
@@ -323,7 +324,7 @@
     <string name="menu_app_settings">App Inställningar</string>
     <string name="menu_buy_gateway">Köp Ruuvi Gateway</string>
     <string name="menu_buy_sensors">Köp Ruuvi-sensorer</string>
-    <string name="menu_send_feedback">Skicka Feedback</string>
+    <string name="menu_send_feedback">Skicka feedback</string>
     <string name="menu_what_to_measure">Vad ska man mäta med Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
@@ -334,6 +335,7 @@
     <string name="movement_counter">Rörelseräknare</string>
     <string name="movements">rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
+    <string name="my_account_change_email">Kontakta support@ruuvi.com om du vill ändra e-postadressen som är kopplad till detta användarkonto.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
     <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
     <string name="my_ruuvi_account">Mitt Ruuvi-konto</string>
@@ -363,7 +365,7 @@
     <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
-    <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i Inställningar.</string>
+    <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i inställningar.</string>
     <string name="off">Av</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
@@ -626,7 +628,9 @@
     <string name="what_to_measure_link">https://ruuvi.com/ideas?utm_campaign=app_ua\u0026utm_medium=referral\u0026utm_source=android</string>
     <string name="why_should_sign_in">Fördelar</string>
     <string name="widget_empty">Tryck på + för att lägga till sensorer</string>
+    <string name="widgets_add_sensors_first">Lägg till sensorer i appen innan du använder widgetar</string>
     <string name="widgets_battery_optimisation_hint">För att tillåta widgetsvärden att uppdateras automatiskt, stäng av appens batterioptimering.</string>
+    <string name="widgets_enable_background_service">Uppdatera lokala Bluetooth-sensorers data i widgeten genom att aktivera bakgrundsskanning. Detta behövs inte för molnsensorer vars data samlas in via Ruuvi Gateway. Intervall för bakgrundsskanning kan ställas in i Ruuvi Station-appens inställningar (för närvarande inställt på %1$s).</string>
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
     <string name="widgets_loading">laddar...</string>
     <string name="widgets_missing_sensors">Kan du inte se alla dina sensorer i listan? Se till att du har bekräftat ägandet av alla dina sensorer i applikationen och att de är inom räckhåll för Ruuvi Gateway-routern.</string>
