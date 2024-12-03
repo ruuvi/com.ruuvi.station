@@ -316,6 +316,66 @@ class UnitsConverter (
             unitString = getSignalUnit()
         )
 
+    fun getPmEnvironmentValue(pm: Double): EnvironmentValue =
+        EnvironmentValue(
+            original = pm,
+            value = pm,
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "µg/m³"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "").trim(),
+            unitString = "µg/m³"
+        )
+
+    fun getCo2EnvironmentValue(co2: Int) =
+        EnvironmentValue(
+            original = co2.toDouble(),
+            value = co2.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "ppm"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "").trim(),
+            unitString = "ppm"
+        )
+
+    fun getVocEnvironmentValue(voc: Int) =
+        EnvironmentValue(
+            original = voc.toDouble(),
+            value = voc.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "TVOC"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "").trim(),
+            unitString = "TVOC"
+        )
+
+    fun getNoxEnvironmentValue(nox: Int) =
+        EnvironmentValue(
+            original = nox.toDouble(),
+            value = nox.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "NOX"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "").trim(),
+            unitString = "NOX"
+        )
+
+    fun getLuminosityEnvironmentValue(luminosity: Int) =
+        EnvironmentValue(
+            original = luminosity.toDouble(),
+            value = luminosity.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "lux"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "").trim(),
+            unitString = "lux"
+        )
+
+    fun getNoiseEnvironmentValue(dba: Double) =
+        EnvironmentValue(
+            original = dba,
+            value = dba,
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "dB"),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "").trim(),
+            unitString = "dB"
+        )
+
     companion object {
         const val NO_VALUE_AVAILABLE = "-"
     }

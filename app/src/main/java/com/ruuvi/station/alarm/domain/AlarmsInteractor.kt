@@ -104,6 +104,12 @@ class AlarmsInteractor(
             if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
             if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
             if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
+            if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
+            if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
+            if (sensor.latestMeasurement?.voc != null) alarmTypes.add(AlarmType.VOC)
+            if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
+            if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
+            if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
             alarmTypes
         } else {
             emptySet()
@@ -137,6 +143,15 @@ class AlarmsInteractor(
             AlarmType.RSSI -> context.getString(R.string.signal_strength_dbm)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> context.getString(R.string.alert_cloud_connection_title)
+            AlarmType.CO2 -> "CO2"
+            AlarmType.PM1 -> "PM 1.0"
+            AlarmType.PM25 -> "PM 2.5"
+            AlarmType.PM4 -> "PM 4.0"
+            AlarmType.PM10 -> "PM 10.0"
+            AlarmType.SOUND -> "Sound"
+            AlarmType.LUMINOSITY -> "Luminosity"
+            AlarmType.VOC -> "VOC"
+            AlarmType.NOX -> "NOX"
         }
     }
 
@@ -148,6 +163,15 @@ class AlarmsInteractor(
             AlarmType.RSSI -> context.getString(R.string.signal_unit)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> ""
+            AlarmType.CO2 -> "ppm"
+            AlarmType.PM1 -> "µg/m³"
+            AlarmType.PM25 -> "µg/m³"
+            AlarmType.PM4 -> "µg/m³"
+            AlarmType.PM10 -> "µg/m³"
+            AlarmType.SOUND -> "db"
+            AlarmType.LUMINOSITY -> "lux"
+            AlarmType.VOC -> "VOC"
+            AlarmType.NOX -> "NOX"
         }
     }
 

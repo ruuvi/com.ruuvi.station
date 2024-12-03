@@ -141,6 +141,9 @@ class AlarmCheckInteractor(
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
                         context.getString(resource, "$displayThreshold ${unitsConverter.getSignalUnit()}")
                     }
+                    AlarmType.CO2, AlarmType.NOX, AlarmType.VOC, AlarmType.SOUND, AlarmType.PM25, AlarmType.LUMINOSITY, -> {
+                        "${alarm.alarmType} violated"
+                    }
                     AlarmType.MOVEMENT -> context.getString(resource)
                     else -> null
                 }
@@ -153,7 +156,16 @@ class AlarmCheckInteractor(
                 AlarmType.HUMIDITY,
                 AlarmType.PRESSURE,
                 AlarmType.TEMPERATURE,
-                AlarmType.RSSI -> compareWithAlarmRange()
+                AlarmType.RSSI,
+                AlarmType.CO2,
+                AlarmType.PM1,
+                AlarmType.PM25,
+                AlarmType.PM4,
+                AlarmType.PM10,
+                AlarmType.SOUND,
+                AlarmType.LUMINOSITY,
+                AlarmType.VOC,
+                AlarmType.NOX -> compareWithAlarmRange()
                 AlarmType.MOVEMENT -> checkMovementData()
                 AlarmType.OFFLINE -> checkOfflineData()
             }
@@ -191,6 +203,55 @@ class AlarmCheckInteractor(
                             ruuviTag.latestMeasurement.rssiValue,
                             R.string.alert_notification_rssi_low_threshold to
                                     R.string.alert_notification_rssi_high_threshold
+                        )
+                    }
+                AlarmType.CO2.value ->
+                    ruuviTag.latestMeasurement?.co2?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                            R.string.alert_notification_rssi_low_threshold
+                        )
+                    }
+
+                AlarmType.LUMINOSITY.value ->
+                    ruuviTag.latestMeasurement?.luminosity?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_low_threshold
+                        )
+                    }
+                AlarmType.SOUND.value ->
+                    ruuviTag.latestMeasurement?.dBaAvg?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_low_threshold
+                        )
+                    }
+                AlarmType.VOC.value ->
+                    ruuviTag.latestMeasurement?.voc?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_low_threshold
+                        )
+                    }
+                AlarmType.NOX.value ->
+                    ruuviTag.latestMeasurement?.nox?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_low_threshold
+                        )
+                    }
+                AlarmType.PM25.value ->
+                    ruuviTag.latestMeasurement?.pm25?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_rssi_low_threshold to
+                                    R.string.alert_notification_rssi_low_threshold
                         )
                     }
             }

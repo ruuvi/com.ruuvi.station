@@ -678,7 +678,7 @@ fun DashboardItem(
                     )
 
                     if (sensor.latestMeasurement != null) {
-                        if (sensor.latestMeasurement?.temperatureValue != null) {
+                        if (sensor.latestMeasurement?.temperatureValue != null && sensor.latestMeasurement.co2 == null) {
                             BigValueDisplay(
                                 value = sensor.latestMeasurement.temperatureValue,
                                 alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
@@ -690,15 +690,31 @@ fun DashboardItem(
                             )
                         }
 
-                        ItemValuesWithoutTemperature(
-                            sensor = sensor,
-                            modifier = Modifier.constrainAs(values) {
-                                start.linkTo(parent.start)
-                                bottom.linkTo(updated.top)
-                                end.linkTo(parent.end)
-                                width = Dimension.fillToConstraints
-                            }
-                        )
+                        if (sensor.latestMeasurement.co2 != null) {
+                            ItemValues(
+                                sensor = sensor,
+                                modifier = Modifier
+                                    .padding(vertical = RuuviStationTheme.dimensions.small)
+                                    .constrainAs(values) {
+                                        bottom.linkTo(updated.top)
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
+                                        width = Dimension.fillToConstraints
+                                    }
+                            )
+                        } else {
+                            ItemValuesWithoutTemperature(
+                                sensor = sensor,
+                                modifier = Modifier
+                                    .padding(vertical = RuuviStationTheme.dimensions.small)
+                                    .constrainAs(values) {
+                                        bottom.linkTo(updated.top)
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
+                                        width = Dimension.fillToConstraints
+                                    }
+                            )
+                        }
 
                         ItemBottom(
                             sensor = sensor,
@@ -928,16 +944,28 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                if (sensor.latestMeasurement.temperatureValue != null) {
+                sensor.latestMeasurement.temperatureValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.temperatureValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
                     )
                 }
-                if (sensor.latestMeasurement.humidityValue != null) {
+                sensor.latestMeasurement.humidityValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.humidityValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
+                    )
+                }
+                sensor.latestMeasurement.luminosity?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.LUMINOSITY)
+                    )
+                }
+                sensor.latestMeasurement.dBaAvg?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.SOUND)
                     )
                 }
             }
@@ -947,17 +975,41 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                if (sensor.latestMeasurement.pressureValue != null) {
+                sensor.latestMeasurement.pressureValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.pressureValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
                     )
                 }
 
-                if (sensor.latestMeasurement.movementValue != null) {
+                sensor.latestMeasurement.movementValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.movementValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                    )
+                }
+                sensor.latestMeasurement.co2?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.CO2)
+                    )
+                }
+                sensor.latestMeasurement.voc?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.VOC)
+                    )
+                }
+                sensor.latestMeasurement.nox?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.NOX)
+                    )
+                }
+                sensor.latestMeasurement.pm25?.let {
+                    ValueDisplay(
+                        value = it,
+                        sensor.alarmSensorStatus.triggered(AlarmType.PM25)
                     )
                 }
             }
@@ -981,16 +1033,28 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                if (sensor.latestMeasurement.humidityValue != null) {
+                sensor.latestMeasurement.humidityValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.humidityValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
                     )
                 }
-                if (sensor.latestMeasurement.movementValue != null) {
+                sensor.latestMeasurement.movementValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.movementValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                    )
+                }
+                sensor.latestMeasurement.luminosity?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
+                    )
+                }
+                sensor.latestMeasurement.dBaAvg?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
                     )
                 }
             }
@@ -1000,10 +1064,34 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                if (sensor.latestMeasurement.pressureValue != null) {
+                sensor.latestMeasurement.pressureValue?.let {
                     ValueDisplay(
-                        value = sensor.latestMeasurement.pressureValue,
+                        value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
+                    )
+                }
+                sensor.latestMeasurement.co2?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
+                    )
+                }
+                sensor.latestMeasurement.voc?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
+                    )
+                }
+                sensor.latestMeasurement.nox?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
+                    )
+                }
+                sensor.latestMeasurement.pm25?.let {
+                    ValueDisplay(
+                        value = it,
+                        false
                     )
                 }
             }
