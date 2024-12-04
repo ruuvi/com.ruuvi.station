@@ -51,6 +51,7 @@
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
+    <string name="aqi">AQI</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>
@@ -129,6 +130,7 @@
     <string name="cloud_er_user_not_found">Пользователь не найден</string>
     <string name="cloud_only_mode">Отключить Bluetooth</string>
     <string name="cloud_only_mode_description">При активации опции Отключить Bluetooth приложение будет игнорировать любые измерения, отправленные датчиками Ruuvi по Bluetooth, когда датчики находятся рядом с маршрутизатором Ruuvi Gateway. Вместо этого приложение будет получать данные измерений датчиков исключительно из Ruuvi Cloud. Чтобы данные измерений передавались в Ruuvi Cloud, ваш датчик должен находиться вблизи маршрутизатора Ruuvi Gateway.</string>
+    <string name="co2">CO2</string>
     <string name="confirm">Подтвердить</string>
     <string name="connected_reading_info">Обмениваюсь...</string>
     <string name="connecting">Соединение...</string>
@@ -185,6 +187,7 @@
     <string name="export_csv_header_format2_4">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V)</string>
     <string name="export_csv_header_format5">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
+    <string name="export_csv_header_formatE0">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
     <string name="export_history">Выгрузить историю (csv)</string>
     <string name="export_history_xlsx">Выгрузить историю (xlsx)</string>
     <string name="file_not_supported">Тип файла не поддерживается</string>
@@ -280,6 +283,7 @@
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
+    <string name="nox">NOx</string>
     <string name="off">Выкл</string>
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
@@ -296,6 +300,10 @@
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
     <string name="permission_location_needed_api31">Разрешите доступ к устройствам поблизости, чтобы увидеть датчики.</string>
+    <string name="pm1">PM1.0</string>
+    <string name="pm10">PM10.0</string>
+    <string name="pm25">PM2.5</string>
+    <string name="pm4">PM4.0</string>
     <string name="press_to_add">Нет добавленных датчиков\nнажмите чтобы добавить</string>
     <string name="pressure">Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
@@ -446,6 +454,7 @@
     <string name="use_dev_server_description">Чтобы применить изменения, просто синхронизируйте данные с панели управления или дождитесь следующей синхронизации.</string>
     <string name="version">Версия: %1$s</string>
     <string name="view">Вид</string>
+    <string name="voc">VOC</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>

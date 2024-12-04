@@ -67,6 +67,7 @@
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
+    <string name="aqi">AQI</string>
     <string name="back">Retour</string>
     <string name="background_image">Fond d\'écran</string>
     <string name="background_interval">toutes les %1$s min</string>
@@ -170,6 +171,7 @@
     <string name="cloud_stored_names">● Noms des capteurs</string>
     <string name="cloud_stored_ownerships">● Propriété des capteurs</string>
     <string name="cloud_stored_sharing">● Paramètres de l\'application</string>
+    <string name="co2">CO2</string>
     <string name="confirm">Confirmer</string>
     <string name="connected_reading_info">Synchronisation...</string>
     <string name="connecting">Connexion...</string>
@@ -211,6 +213,7 @@
     <string name="day_9">9 jours</string>
     <string name="day_x">%1$s jours</string>
     <string name="days">Jours</string>
+    <string name="decrease_graph_size">Réduire la taille des graphiques</string>
     <string name="delete_account">Supprimer le compte</string>
     <string name="details">Détails</string>
     <string name="dfu_low_battery_warning">La tension de la pile du capteur est faible et risque de faire echouer la mise à jour. Nous vous conseillons de remplacer la batterie avant la mise à jour.</string>
@@ -238,6 +241,7 @@
     <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
+    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
     <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
     <string name="file_not_supported">Format non supporté</string>
@@ -304,6 +308,7 @@
     <string name="image_cards">Cartes-images</string>
     <string name="image_format_not_supported">Format d\'image non pris en charge</string>
     <string name="image_view">Vue de l\'image</string>
+    <string name="increase_graph_size">Agrandir la taille des graphiques</string>
     <string name="information">Information</string>
     <string name="internet_connection_problem">Problème de connexion Internet</string>
     <string name="language_english">English</string>
@@ -321,6 +326,7 @@
     <string name="longer_history_message">L\'application mobile Ruuvi Station prend en charge un maximum de 10 jours d\'historique. Les abonnés à Ruuvi Cloud peuvent consulter jusqu\'à 3 ans d\'historique en utilisant l\'application web à ruuvi.com/station (nécessite le routeur Ruuvi Gateway).</string>
     <string name="longer_history_title">Une histoire plus longue</string>
     <string name="low_battery">Batterie faible</string>
+    <string name="luminosity">Luminosité</string>
     <string name="mac_address">Adresse MAC</string>
     <string name="mac_copied">Adreesse MAC copiée dans le presse-papiers</string>
     <string name="measurement_sequence_number">Numéro de séquence</string>
@@ -371,6 +377,7 @@
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
+    <string name="nox">NOx</string>
     <string name="off">Désactivé</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
@@ -420,6 +427,10 @@
     <string name="permission_location_needed_api31">Veuillez autoriser l\'affichage des appareils à proximité dans les paramètres pour voir les capteurs.</string>
     <string name="permission_notification_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
     <string name="plan_expiry_date">Date d\'expiration du plan Ruuvi</string>
+    <string name="pm1">PM1.0</string>
+    <string name="pm10">PM10.0</string>
+    <string name="pm25">PM2.5</string>
+    <string name="pm4">PM4.0</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
     <string name="prepare_your_sensor_instructions_2">2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés \"R\" et \"B\" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.</string>
@@ -573,6 +584,8 @@
     <string name="simple_view">Vue simple</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
+    <string name="sound_avg">Niveau sonore (moyenne)</string>
+    <string name="sound_peak">Niveau sonore (crête)</string>
     <string name="start_the_update">Lancer la mise à jour</string>
     <string name="start_update_process">Début de la mise à jour</string>
     <string name="subscription_disclaimer">Il s\'agit d\'une application entièrement gratuite qui ne prend pas en charge les achats d\'abonnements mensuels ou autres achats in-app. Si vous êtes un utilisateur du routeur Ruuvi Gateway et que vous recherchez des informations plus détaillées sur votre compte Ruuvi, rendez-vous sur notre site Web et connectez-vous.</string>
@@ -621,6 +634,7 @@
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
+    <string name="voc">VOC</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>

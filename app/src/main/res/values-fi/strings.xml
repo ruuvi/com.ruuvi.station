@@ -67,6 +67,7 @@
     <string name="app_name">Ruuvi Station</string>
     <string name="app_theme">Sovelluksen teema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
+    <string name="aqi">AQI</string>
     <string name="back">Takaisin</string>
     <string name="background_image">Taustakuva</string>
     <string name="background_interval">joka %1$s min</string>
@@ -170,6 +171,7 @@
     <string name="cloud_stored_names">● Anturinimet</string>
     <string name="cloud_stored_ownerships">● Anturien omistajuustiedot</string>
     <string name="cloud_stored_sharing">● Sovellusasetukset</string>
+    <string name="co2">CO2</string>
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>
@@ -211,6 +213,7 @@
     <string name="day_9">9 päivää</string>
     <string name="day_x">%1$s päivää</string>
     <string name="days">päivää</string>
+    <string name="decrease_graph_size">Pienennä kaavioiden kokoa</string>
     <string name="delete_account">Poista tili</string>
     <string name="details">Tiedot</string>
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
@@ -238,6 +241,7 @@
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
+    <string name="export_csv_header_formatE0">Päivämäärä,AQI,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
     <string name="export_history">Lataa historia (csv)</string>
     <string name="export_history_xlsx">Lataa historia (xlsx)</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
@@ -299,6 +303,7 @@
     <string name="image_cards">Kuvakortit</string>
     <string name="image_format_not_supported">Kuvamuotoa ei tueta</string>
     <string name="image_view">Näytä kuvat</string>
+    <string name="increase_graph_size">Suurenna kaavioiden kokoa</string>
     <string name="information">Tietoja</string>
     <string name="internet_connection_problem">Ongelma internet-yhteydessä</string>
     <string name="language_english">English</string>
@@ -316,6 +321,7 @@
     <string name="longer_history_message">Ruuvi Station -mobiilisovellus tukee maksimissaan 10 päivän historiaa. Ruuvi Cloud -tilaajat voivat tarkastella historiatietoja jopa 3 vuoden ajalta web-sovelluksessa osoitteessa ruuvi.com/fi/station (vaatii Ruuvi Gateway -reitittimen).</string>
     <string name="longer_history_title">Pidempi historia</string>
     <string name="low_battery">Paristo vähissä</string>
+    <string name="luminosity">Valoisuus</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
@@ -366,6 +372,7 @@
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>
+    <string name="nox">NOx</string>
     <string name="off">Pois</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
@@ -415,6 +422,10 @@
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
     <string name="permission_notification_needed">Hälytysten näyttäminen vaatii ilmoitusten sallimisen asetuksista.</string>
     <string name="plan_expiry_date">Ruuvi-tilauksen päättymispäivä</string>
+    <string name="pm1">PM1.0</string>
+    <string name="pm10">PM10.0</string>
+    <string name="pm25">PM2.5</string>
+    <string name="pm4">PM4.0</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
     <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
@@ -568,6 +579,8 @@
     <string name="simple_view">Piilota kuvat</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
+    <string name="sound_avg">Äänitaso (keskiarvo)</string>
+    <string name="sound_peak">Äänitaso (huippu)</string>
     <string name="start_the_update">Aloita päivitys</string>
     <string name="start_update_process">Siirry päivittämään</string>
     <string name="subscription_disclaimer">Tämä on täysin ilmainen sovellus, joka ei tue kuukausitilausten ostoja tai muita sovelluksen sisäisiä ostoja. Mikäli olet Ruuvi Gateway -reitittimen käyttäjä ja etsit tarkempia Ruuvi-tilisi tietoja, siirry kotisivuillemme ja kirjaudu sisään.</string>
@@ -616,6 +629,7 @@
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>
+    <string name="voc">VOC</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>

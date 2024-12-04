@@ -99,13 +99,33 @@ class XlsxExporter (
         val humidityUnit = " (${unitsConverter.getHumidityUnitString()})"
         val pressureUnit = " (${unitsConverter.getPressureUnitString()})"
         val columns = mutableListOf(
-            ColumnDefinition(context.getString(R.string.date), null, 20.0),
+            ColumnDefinition(context.getString(R.string.date), null, 20.0))
+        if (dataFormat == 0xE0)
+            columns.add(ColumnDefinition(context.getString(R.string.aqi), null, null))
+        columns.addAll(listOf(
             ColumnDefinition(context.getString(R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString()), null, null),
             ColumnDefinition(context.getString(R.string.humidity) + humidityUnit, null, null),
             ColumnDefinition(context.getString(R.string.pressure) + pressureUnit, null, null),
-            ColumnDefinition("RSSI (dBm)", null, null)
-        )
-        if (dataFormat == 3 || dataFormat == 5) {
+            ))
+
+        if (dataFormat == 0xE0) {
+            columns.addAll(listOf(
+                ColumnDefinition(context.getString(R.string.luminosity), null, null),
+                ColumnDefinition(context.getString(R.string.sound_avg), null, null),
+                ColumnDefinition(context.getString(R.string.sound_peak), null, null),
+                ColumnDefinition(context.getString(R.string.co2), null, null),
+                ColumnDefinition(context.getString(R.string.voc), null, null),
+                ColumnDefinition(context.getString(R.string.nox), null, null),
+                ColumnDefinition(context.getString(R.string.pm1), null, null),
+                ColumnDefinition(context.getString(R.string.pm25), null, null),
+                ColumnDefinition(context.getString(R.string.pm4), null, null),
+                ColumnDefinition(context.getString(R.string.pm10), null, null),
+            ))
+        }
+
+        //todo remove hardcodedd string
+        columns.add(ColumnDefinition("RSSI (dBm)", null, null))
+        if (dataFormat == 3 || dataFormat == 5 || dataFormat == 0xE0) {
             val accelerationUnit = " (${context.getString(R.string.acceleration_unit)})"
             val voltageUnit = " (${context.getString(R.string.voltage_unit)})"
             columns.add(ColumnDefinition(context.getString(R.string.acceleration_x) + accelerationUnit, null, null))
@@ -113,7 +133,7 @@ class XlsxExporter (
             columns.add(ColumnDefinition(context.getString(R.string.acceleration_z) + accelerationUnit, null, null))
             columns.add(ColumnDefinition(context.getString(R.string.battery_voltage) + voltageUnit, null, null))
         }
-        if (dataFormat == 5) {
+        if (dataFormat == 5 || dataFormat == 0xE0) {
             val movementsUnit = " (${context.getString(R.string.movements)})"
             val txPowerUnit = " (${context.getString(R.string.signal_unit)})"
             columns.add(ColumnDefinition(context.getString(R.string.movement_counter) + movementsUnit, null, null))
@@ -126,19 +146,37 @@ class XlsxExporter (
 
     private fun getDataRow(dataFormat: Int, reading: TagSensorReading): List<Any?> {
         val dataRow = mutableListOf<Any?>(
-            dateFormat.format(reading.createdAt),
-            reading.temperature?.let { unitsConverter.getTemperatureValue(it) },
-            reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) },
-            reading.pressure?.let { unitsConverter.getPressureValue(it) },
-            reading.rssi
+            dateFormat.format(reading.createdAt)
         )
-        if (dataFormat == 3 || dataFormat == 5) {
+        if (dataFormat == 0xE0) {
+            //todo replace with AQI
+            dataRow.add(null)
+        }
+        dataRow.add(reading.temperature?.let { unitsConverter.getTemperatureValue(it) })
+        dataRow.add(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) })
+        dataRow.add(reading.pressure?.let { unitsConverter.getPressureValue(it) })
+
+        if (dataFormat == 0xE0) {
+            dataRow.add(reading.luminosity)
+            dataRow.add(reading.dBaAvg)
+            dataRow.add(reading.dBaPeak)
+            dataRow.add(reading.co2)
+            dataRow.add(reading.voc)
+            dataRow.add(reading.nox)
+            dataRow.add(reading.pm1)
+            dataRow.add(reading.pm25)
+            dataRow.add(reading.pm4)
+            dataRow.add(reading.pm10)
+        }
+        dataRow.add(reading.rssi)
+
+        if (dataFormat == 3 || dataFormat == 5 || dataFormat == 0xE0) {
             dataRow.add(reading.accelX)
             dataRow.add(reading.accelY)
             dataRow.add(reading.accelZ)
             dataRow.add(reading.voltage)
         }
-        if (dataFormat == 5) {
+        if (dataFormat == 5 || dataFormat == 0xE0) {
             dataRow.add(reading.movementCounter)
             dataRow.add(reading.measurementSequenceNumber)
             dataRow.add(reading.txPower)
