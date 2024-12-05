@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.extensions.prepareFilename
 import uk.co.spudsoft.xlsx.ColumnDefinition
 import uk.co.spudsoft.xlsx.TableDefinition
@@ -149,8 +150,7 @@ class XlsxExporter (
             dateFormat.format(reading.createdAt)
         )
         if (dataFormat == 0xE0) {
-            //todo replace with AQI
-            dataRow.add(null)
+            dataRow.add(AQI.getAQI(reading.pm25, reading.co2, reading.voc, reading.nox).score)
         }
         dataRow.add(reading.temperature?.let { unitsConverter.getTemperatureValue(it) })
         dataRow.add(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) })

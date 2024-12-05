@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.extensions.prepareFilename
 import java.io.File
 import java.io.FileWriter
@@ -98,8 +99,7 @@ class CsvExporter(
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
                 if (tag?.dataFormat == 0xE0) {
-                    //todo add AQI here
-                    fileWriter.append(nullValue)
+                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2, reading.voc, reading.nox).score?.let { it.toString() } ?: nullValue)
                     fileWriter.append(',')
                 }
                 fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)
