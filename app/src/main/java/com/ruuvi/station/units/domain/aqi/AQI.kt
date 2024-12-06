@@ -23,7 +23,7 @@ sealed class AQI (val score: Int?) {
             nox?.let { distances.add(scoreNox(it)) }
             co2?.let { distances.add(scoreCO2(it)) }
             if (distances.size > 0) {
-                val index = 100 - sqrt(distances.reduce{ acc, value -> acc + value * value} / distances.size).roundHalfUp(0).toInt()
+                val index = max(0, 100 - sqrt(distances.fold(0.0) { acc, value -> acc + value * value} / distances.size).roundHalfUp(0).toInt())
                 return when (index) {
                     in 0 .. 33 -> RedAQI(index)
                     in 34..66 -> YellowAQI(index)
