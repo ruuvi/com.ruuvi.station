@@ -1,6 +1,7 @@
 package com.ruuvi.station.units.domain.aqi
 
 import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
+import com.ruuvi.station.tag.domain.SensorMeasurements
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -35,6 +36,14 @@ sealed class AQI (val score: Int?) {
                 return UndefinedAQI
             }
         }
+
+        fun getAQI(measurements: SensorMeasurements) =
+            getAQI(
+                measurements.pm25?.value,
+                measurements.co2?.value?.toInt(),
+                measurements.voc?.value?.toInt(),
+                measurements.nox?.value?.toInt()
+            )
 
         private fun scorePpm(pm: Double): Double {
             return max(0.0, (pm - 12) * 2)

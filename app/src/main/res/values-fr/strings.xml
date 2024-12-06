@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Ajoutez votre premier capteur</string>
     <string name="advertisement">Messages des capteurs</string>
     <string name="ago">avant</string>
+    <string name="air_quality">Qualité de l\'air</string>
     <string name="alarm_custom_description_title">Description personnalisée de l\'alerte</string>
     <string name="alarm_custom_title_hint">Modifier la description...</string>
     <string name="alarm_mute_for_hour">Désactiver les notifications pendant une heure</string>
@@ -172,6 +173,7 @@
     <string name="cloud_stored_ownerships">● Propriété des capteurs</string>
     <string name="cloud_stored_sharing">● Paramètres de l\'application</string>
     <string name="co2">CO2</string>
+    <string name="co2_with_unit">CO2 (%1$s)</string>
     <string name="confirm">Confirmer</string>
     <string name="connected_reading_info">Synchronisation...</string>
     <string name="connecting">Connexion...</string>
@@ -241,7 +243,7 @@
     <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
+    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Luminosity(lx),db Avg(dBA),db peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
     <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
     <string name="file_not_supported">Format non supporté</string>
@@ -327,6 +329,7 @@
     <string name="longer_history_title">Une histoire plus longue</string>
     <string name="low_battery">Batterie faible</string>
     <string name="luminosity">Luminosité</string>
+    <string name="luminosity_with_unit">Luminosité (%1$s)</string>
     <string name="mac_address">Adresse MAC</string>
     <string name="mac_copied">Adreesse MAC copiée dans le presse-papiers</string>
     <string name="measurement_sequence_number">Numéro de séquence</string>
@@ -378,6 +381,7 @@
     <string name="note">Note!</string>
     <string name="notification_permission_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
     <string name="nox">NOx</string>
+    <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Désactivé</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
@@ -429,8 +433,12 @@
     <string name="plan_expiry_date">Date d\'expiration du plan Ruuvi</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
+    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
+    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm4">PM4.0</string>
+    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
     <string name="prepare_your_sensor_instructions_2">2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés \"R\" et \"B\" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.</string>
@@ -586,6 +594,7 @@
     <string name="something_went_wrong">Erreur</string>
     <string name="sound_avg">Niveau sonore (moyenne)</string>
     <string name="sound_peak">Niveau sonore (crête)</string>
+    <string name="sound_with_unit">Son (%1$s)</string>
     <string name="start_the_update">Lancer la mise à jour</string>
     <string name="start_update_process">Début de la mise à jour</string>
     <string name="subscription_disclaimer">Il s\'agit d\'une application entièrement gratuite qui ne prend pas en charge les achats d\'abonnements mensuels ou autres achats in-app. Si vous êtes un utilisateur du routeur Ruuvi Gateway et que vous recherchez des informations plus détaillées sur votre compte Ruuvi, rendez-vous sur notre site Web et connectez-vous.</string>
@@ -623,6 +632,15 @@
     <string name="unclaim">Annuler la réclamation</string>
     <string name="unclaim_sensor">Annuler la revendication du capteur</string>
     <string name="unclaim_sensor_description">La propriété de ce capteur a été revendiquée sur votre compte Ruuvi. Appuyez sur Annuler la revendication pour supprimer les paramètres de ce capteur et les données associées de votre compte Ruuvi.</string>
+    <string name="unit_co2">ppm</string>
+    <string name="unit_luminosity">lx</string>
+    <string name="unit_nox">NOx Index</string>
+    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm25">µg/m³</string>
+    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_sound">dBA</string>
+    <string name="unit_voc">VOC Index</string>
     <string name="unknown_error">Erreur inconnue</string>
     <string name="update_action">REDÉMARRER</string>
     <string name="update_downloaded_message">La mise à jour a été téléchargée.</string>
@@ -635,6 +653,7 @@
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
     <string name="voc">VOC</string>
+    <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>

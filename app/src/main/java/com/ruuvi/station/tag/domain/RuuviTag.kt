@@ -82,6 +82,9 @@ fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }
 
+fun RuuviTag.isAir(): Boolean =
+    this.latestMeasurement?.dataFormat == 0xE0 || this.latestMeasurement?.dataFormat == 0xF0
+
 sealed class UpdateSource() {
     abstract fun getDescriptionResource(): Int
     abstract fun getIconResource(): Int

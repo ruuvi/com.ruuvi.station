@@ -11,6 +11,7 @@
     <string name="add_tag_not_found">Nie wykryto czujników</string>
     <string name="add_tag_title">Czujniki Ruuvi w pobliżu</string>
     <string name="ago">temu</string>
+    <string name="air_quality">Jakość powietrza</string>
     <string name="alarm_custom_title_hint">Ustaw opis zdefiniowany przez użytkownika...</string>
     <string name="alarm_mute_for_hour">Wycisz na godzinę</string>
     <string name="alarm_notification_disable">Wyłącz alarm</string>
@@ -102,6 +103,7 @@
     <string name="cloud_only_mode">Wyłącz Bluetooth</string>
     <string name="cloud_only_mode_description">Gdy opcja Wyłącz Bluetooth jest aktywna, aplikacja zignoruje wszelkie pomiary wysyłane przez czujniki Ruuvi przez Bluetooth, gdy czujniki znajdują się w pobliżu routera Ruuvi Gateway. Zamiast tego aplikacja będzie odbierać dane pomiarowe czujników wyłącznie z Ruuvi Cloud. Aby dane pomiarowe mogły być przesyłane do Ruuvi Cloud, czujnik musi znajdować się w pobliżu routera Ruuvi Gateway.</string>
     <string name="co2">CO2</string>
+    <string name="co2_with_unit">CO2 (%1$s)</string>
     <string name="confirm">Zatwierdź</string>
     <string name="connected_reading_info">Synchronizacja...</string>
     <string name="connecting">Łączenie...</string>
@@ -135,7 +137,7 @@
     <string name="export_csv_header_format2_4">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie</string>
     <string name="export_csv_header_format5">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie,licznik przesunięć, numer sekwencji pomiaru</string>
-    <string name="export_csv_header_formatE0">Znacznik czasu,AQI,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie,licznik przesunięć, numer sekwencji pomiaru</string>
+    <string name="export_csv_header_formatE0">Znacznik czasu,AQI,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),Luminosity(lx),db Avg(dBA),db peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie,licznik przesunięć, numer sekwencji pomiaru</string>
     <string name="file_not_supported">Nieobsługiwany typ pliku</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualizuj Firmware</string>
@@ -190,6 +192,7 @@
     <string name="login_description">Aby korzystać ze wszystkich funkcji, utwórz darmowe konto lub zaloguj się do istniejącego konta Ruuvi, podając swój adres e-mail.</string>
     <string name="login_to_ruuvi_network">Zaloguj się do\nRuuvi\nStation</string>
     <string name="luminosity">Jasność</string>
+    <string name="luminosity_with_unit">Jasność (%1$s)</string>
     <string name="mac_address">Adres MAC</string>
     <string name="mac_copied">Adres MAC skopiowany do schowka</string>
     <string name="measurement_sequence_number">Numer sekwencji pomiaru</string>
@@ -224,6 +227,7 @@
     <string name="no_new_data_points">Brak dostępności nowych punktów danych</string>
     <string name="none">żaden</string>
     <string name="nox">NOx</string>
+    <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="offset_correction">Korekta wyrównania</string>
     <string name="ok">OK</string>
     <string name="old_sensor_fw">Twój czujnik nie podaje swojej aktualnej wersji firmware. Oznacza to, że prawdopodobnie działa na starej wersji firmware i zalecana jest jego aktualizacja.</string>
@@ -240,8 +244,12 @@
     <string name="permission_location_needed">Prosimy włączyć uprawnienia do lokalizacji w ustawieniach, aby wyświetlić czujniki.</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
+    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
+    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm4">PM4.0</string>
+    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Przygotuj swój czujnik</string>
     <string name="prepare_your_sensor_instructions_1">1. Otwórz osłonę swojego czujnika Ruuvi.</string>
     <string name="press_to_add">Brak dodanych czujników.\nAby dodać czujniki, należy nacisnąć tu.</string>
@@ -357,6 +365,7 @@
     <string name="something_went_wrong">Coś poszło nie tak</string>
     <string name="sound_avg">Poziom dźwięku (średnia)</string>
     <string name="sound_peak">Poziom dźwięku (szczyt)</string>
+    <string name="sound_with_unit">Dźwięk (%1$s)</string>
     <string name="start_the_update">Rozpocznij aktualizację</string>
     <string name="start_update_process">Rozpocznij aktualizacje</string>
     <string name="successfully_claimed">Potwierdzono prawa własności czujnika</string>
@@ -384,12 +393,22 @@
     <string name="title_activity_dfu_update">Aktualizacja Firmware</string>
     <string name="tx_power">Moc nadawania</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
+    <string name="unit_co2">ppm</string>
+    <string name="unit_luminosity">lx</string>
+    <string name="unit_nox">NOx Index</string>
+    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm25">µg/m³</string>
+    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_sound">dBA</string>
+    <string name="unit_voc">VOC Index</string>
     <string name="update_successful">Zaktualizowano pomyślnie</string>
     <string name="updated">Zaktualizowano %1$s</string>
     <string name="updating">Aktualizowanie...</string>
     <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
     <string name="version">Wersja: %1$s</string>
     <string name="voc">VOC</string>
+    <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Przeciągnij, aby zobaczyć, co Ruuvi Station może dla Ciebie zrobić.</string>

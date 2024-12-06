@@ -80,12 +80,14 @@ import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
@@ -584,6 +586,7 @@ fun DashboardItem(
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int) -> Unit
 ) {
+    val itemHeight = (itemHeight.value * if (sensor.isAir()) 1.3 else 1.0).dp
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
         Modifier
@@ -678,19 +681,16 @@ fun DashboardItem(
                     )
 
                     if (sensor.latestMeasurement != null) {
-                        if (sensor.latestMeasurement?.temperatureValue != null && sensor.latestMeasurement.co2 == null) {
-                            BigValueDisplay(
-                                value = sensor.latestMeasurement.temperatureValue,
-                                alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                        if (sensor.isAir()) {
+                            AQIDisplay(
+                                value = AQI.getAQI(sensor.latestMeasurement),
+                                alertTriggered = false,
                                 modifier = Modifier
                                     .constrainAs(bigTemperature) {
                                         top.linkTo(title.bottom)
                                         start.linkTo(parent.start)
                                     }
                             )
-                        }
-
-                        if (sensor.latestMeasurement.co2 != null) {
                             ItemValues(
                                 sensor = sensor,
                                 modifier = Modifier
@@ -703,6 +703,17 @@ fun DashboardItem(
                                     }
                             )
                         } else {
+                            if (sensor.latestMeasurement.temperatureValue != null) {
+                                BigValueDisplay(
+                                    value = sensor.latestMeasurement.temperatureValue,
+                                    alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                    modifier = Modifier
+                                        .constrainAs(bigTemperature) {
+                                            top.linkTo(title.bottom)
+                                            start.linkTo(parent.start)
+                                        }
+                                )
+                            }
                             ItemValuesWithoutTemperature(
                                 sensor = sensor,
                                 modifier = Modifier
@@ -1263,12 +1274,75 @@ fun BigValueDisplay(
         Text(
             modifier = Modifier
                 .padding(
-                    top = 8.dp * LocalDensity.current.fontScale,
+                    top = 6.dp * LocalDensity.current.fontScale,
                     start = 2.dp
                 ),
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             text = value.unitString,
             color = textColor
+        )
+    }
+}
+
+@Composable
+fun AQIDisplay(
+    value: AQI,
+    alertTriggered: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val textColor = if (alertTriggered) {
+        RuuviStationTheme.colors.activeAlert
+    } else {
+        RuuviStationTheme.colors.settingsTitleText
+    }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Row(
+            modifier = Modifier.offset(y = (-8).dp * LocalDensity.current.fontScale),
+            verticalAlignment = Top
+        ) {
+            Text(
+                style = RuuviStationTheme.typography.dashboardBigValue,
+                text = value.score.toString(),
+                lineHeight = 10.sp,
+                color = textColor
+            )
+            Column (
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ){
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 6.dp * LocalDensity.current.fontScale,
+                            start = 4.dp
+                        ),
+                    style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                    text = "/100",
+                    color = textColor
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 4.dp),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    text = stringResource(id = R.string.air_quality),
+                )
+            }
+        }
+        val progressColor = when (value) {
+            is AQI.RedAQI -> Color.Red
+            is AQI.GreenAQI -> Color.Green
+            is AQI.YellowAQI -> Color.Yellow
+            else -> Color.Gray
+        }
+        LinearProgressIndicator(
+            modifier = Modifier.width(110.dp),
+            progress = (value.score ?: 0) / 100F,
+            color = progressColor
         )
     }
 }

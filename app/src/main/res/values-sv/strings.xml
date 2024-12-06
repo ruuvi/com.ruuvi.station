@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Lägg till din första sensor.</string>
     <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
+    <string name="air_quality">Luftkvalitet</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
     <string name="alarm_mute_for_hour">Pausa alarmet i en timme</string>
@@ -172,6 +173,7 @@
     <string name="cloud_stored_ownerships">● Sensorns ägarskap</string>
     <string name="cloud_stored_sharing">● App inställningar</string>
     <string name="co2">CO2</string>
+    <string name="co2_with_unit">CO2 (%1$s)</string>
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
@@ -241,7 +243,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
-    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Luminosity,db Avg,db peak,CO2,TVOC,NOX,PM1.0,PM2.5,PM4.0,PM10.0,Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
+    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Luminosity(lx),db Avg(dBA),db peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
     <string name="export_history">Exportera historik (csv)</string>
     <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
@@ -322,6 +324,7 @@
     <string name="longer_history_title">Längre historik</string>
     <string name="low_battery">Låg batterinivå</string>
     <string name="luminosity">Luminans</string>
+    <string name="luminosity_with_unit">Luminans (%1$s)</string>
     <string name="mac_address">MAC Adress</string>
     <string name="mac_copied">MAC-adressen kopierad till urklippet</string>
     <string name="measurement_sequence_number">Mätningssekvensnummer</string>
@@ -373,6 +376,7 @@
     <string name="note">Obs!</string>
     <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i inställningar.</string>
     <string name="nox">NOx</string>
+    <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Av</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
@@ -424,8 +428,12 @@
     <string name="plan_expiry_date">Ruuvi-prenumerationens utgångsdatum</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
+    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
+    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm4">PM4.0</string>
+    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.</string>
@@ -581,6 +589,7 @@
     <string name="something_went_wrong">Något gick fel</string>
     <string name="sound_avg">Ljudnivå (genomsnitt)</string>
     <string name="sound_peak">Ljudnivå (topp)</string>
+    <string name="sound_with_unit">Ljud (%1$s)</string>
     <string name="start_the_update">Starta uppdatering</string>
     <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="subscription_disclaimer">Detta är en helt gratis app som inte stöder månadsvisa prenumerationsköp eller andra in-app-köp. Om du är användare av Ruuvi Gateway-routern och du söker mer detaljerad information om ditt Ruuvi-konto, gå till vår hemsida och logga in.</string>
@@ -618,6 +627,15 @@
     <string name="unclaim">Ta bort anspråk</string>
     <string name="unclaim_sensor">Ta bort äganderätten</string>
     <string name="unclaim_sensor_description">Äganderätten till denna sensor har gjorts anspråk på ditt Ruuvi-konto. Tryck på Unclaim för att ta bort sensorns inställningar och relaterade data från ditt Ruuvi-konto.</string>
+    <string name="unit_co2">ppm</string>
+    <string name="unit_luminosity">lx</string>
+    <string name="unit_nox">NOx Index</string>
+    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm25">µg/m³</string>
+    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_sound">dBA</string>
+    <string name="unit_voc">VOC Index</string>
     <string name="unknown_error">Okänt fel</string>
     <string name="update_action">STARTA OM</string>
     <string name="update_downloaded_message">En uppdatering har laddats ner.</string>
@@ -630,6 +648,7 @@
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>
     <string name="voc">VOC</string>
+    <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>

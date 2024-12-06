@@ -321,9 +321,9 @@ class UnitsConverter (
             original = pm,
             value = pm,
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "µg/m³"),
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, context.getString(R.string.unit_pm10)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "").trim(),
-            unitString = "µg/m³"
+            unitString = context.getString(R.string.unit_pm10)
         )
 
     fun getCo2EnvironmentValue(co2: Int) =
@@ -331,9 +331,9 @@ class UnitsConverter (
             original = co2.toDouble(),
             value = co2.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "ppm"),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), context.getString(R.string.unit_co2)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "").trim(),
-            unitString = "ppm"
+            unitString = context.getString(R.string.unit_co2)
         )
 
     fun getVocEnvironmentValue(voc: Int) =
@@ -341,9 +341,9 @@ class UnitsConverter (
             original = voc.toDouble(),
             value = voc.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "TVOC"),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), context.getString(R.string.unit_voc)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "").trim(),
-            unitString = "TVOC"
+            unitString = context.getString(R.string.unit_voc)
         )
 
     fun getNoxEnvironmentValue(nox: Int) =
@@ -351,9 +351,9 @@ class UnitsConverter (
             original = nox.toDouble(),
             value = nox.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "NOX"),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), context.getString(R.string.unit_nox)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "").trim(),
-            unitString = "NOX"
+            unitString = context.getString(R.string.unit_nox)
         )
 
     fun getLuminosityEnvironmentValue(luminosity: Int) =
@@ -361,9 +361,9 @@ class UnitsConverter (
             original = luminosity.toDouble(),
             value = luminosity.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "lux"),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), context.getString(R.string.unit_luminosity)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "").trim(),
-            unitString = "lux"
+            unitString = context.getString(R.string.unit_luminosity)
         )
 
     fun getNoiseEnvironmentValue(dba: Double) =
@@ -371,9 +371,9 @@ class UnitsConverter (
             original = dba,
             value = dba,
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "dB"),
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, context.getString(R.string.unit_sound)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "").trim(),
-            unitString = "dB"
+            unitString = context.getString(R.string.unit_sound)
         )
 
     companion object {
