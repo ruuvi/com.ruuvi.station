@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
@@ -32,6 +31,8 @@ import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
+import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
@@ -43,22 +44,12 @@ import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.min
-
-private val chartHeight = 280.dp
 
 @Composable
 fun ChartsView(
     modifier: Modifier,
-    sensorId: String,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    batteryChart: LineChart,
-    accelerationChart: LineChart,
-    rssiChart: LineChart,
-    movementsChart: LineChart,
+    sensor: RuuviTag,
     unitsConverter: UnitsConverter,
     selected: Boolean,
     graphDrawDots: Boolean,
@@ -71,14 +62,78 @@ fun ChartsView(
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
-    Timber.d("ChartView - top $sensorId $selected viewPeriod = ${viewPeriod.value}")
+    Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
 
-    var viewPeriodLocal by remember { mutableStateOf<Period?>(null) }
-
-    var chartContainers by remember {
-        mutableStateOf<List<ChartContainer>>(ArrayList())
+    val chartContainers by remember {
+        mutableStateOf<MutableList<ChartContainer>>(mutableListOf())
     }
+
+    LaunchedEffect(key1 = sensor.id) {
+        Timber.d("ChartView - chart containers fill ${sensor.id}")
+
+        val temperatureContainer = ChartContainer(ChartSensorType.TEMPERATURE, LineChart(context))
+        chartContainers.add(temperatureContainer)
+
+        if (sensor.latestMeasurement?.humidityValue != null) {
+            val humidityContainer = ChartContainer(ChartSensorType.HUMIDITY, LineChart(context))
+            chartContainers.add(humidityContainer)
+        }
+
+        if (sensor.latestMeasurement?.pressureValue != null) {
+            val pressureContainer = ChartContainer(ChartSensorType.PRESSURE, LineChart(context))
+            chartContainers.add(pressureContainer)
+        }
+
+        if (sensor.isAir()) {
+            sensor.latestMeasurement?.co2.let {
+                val co2Container = ChartContainer(ChartSensorType.CO2, LineChart(context))
+                chartContainers.add(co2Container)
+            }
+
+            sensor.latestMeasurement?.voc.let {
+                val vocContainer = ChartContainer(ChartSensorType.VOC, LineChart(context))
+                chartContainers.add(vocContainer)
+            }
+
+            sensor.latestMeasurement?.nox.let {
+                val noxContainer = ChartContainer(ChartSensorType.NOX, LineChart(context))
+                chartContainers.add(noxContainer)
+            }
+
+            sensor.latestMeasurement?.pm25.let {
+                val pm25Container = ChartContainer(ChartSensorType.PM25, LineChart(context))
+                chartContainers.add(pm25Container)
+            }
+
+            sensor.latestMeasurement?.luminosity.let {
+                val luminosityContainer = ChartContainer(ChartSensorType.LUMINOSITY, LineChart(context))
+                chartContainers.add(luminosityContainer)
+            }
+
+            sensor.latestMeasurement?.dBaAvg.let {
+                val soundContainer = ChartContainer(ChartSensorType.SOUND, LineChart(context))
+                chartContainers.add(soundContainer)
+            }
+        }
+
+        Timber.d("ChartView - initial setup ${sensor.id}")
+        chartsInitialSetup(
+            charts = chartContainers.map { it.chartSensorType to it.uiComponent },
+            unitsConverter = unitsConverter,
+            context = context
+        )
+
+        chartCleared.collect{
+            Timber.d("ChartView - chart cleared $it")
+            for (container in chartContainers) {
+                container.data?.clear()
+                container.uiComponent.fitScreen()
+            }
+        }
+    }
+
+    var viewPeriodLocal by remember { mutableStateOf<Period?>(null) }
 
     var needsScroll by remember {
         mutableStateOf(true)
@@ -86,16 +141,6 @@ fun ChartsView(
 
     var chartsPerScreen by remember {
         mutableStateOf(3)
-    }
-
-    var temperatureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var humidityData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
-    }
-    var pressureData by remember {
-        mutableStateOf<MutableList<Entry>>(ArrayList())
     }
 
     var history by remember {
@@ -115,36 +160,10 @@ fun ChartsView(
     }
 
     if (viewPeriod != viewPeriodLocal) {
+        Timber.d("ChartView - viewPeriod changed ${sensor.id}")
         viewPeriodLocal = viewPeriod
-        temperatureChart.fitScreen()
-        humidityChart.fitScreen()
-        pressureChart.fitScreen()
-    }
-
-    LaunchedEffect(key1 = sensorId) {
-        Timber.d("ChartView - initial setup $sensorId")
-        chartsInitialSetup(
-            charts = listOf(
-                ChartSensorType.TEMPERATURE to temperatureChart,
-                ChartSensorType.HUMIDITY to humidityChart,
-                ChartSensorType.PRESSURE to pressureChart,
-                ChartSensorType.BATTERY to batteryChart,
-                ChartSensorType.RSSI to rssiChart,
-                ChartSensorType.ACCELERATION to accelerationChart,
-                ChartSensorType.MOVEMENTS to movementsChart
-            ),
-            unitsConverter = unitsConverter,
-            context = context
-        )
-
-        chartCleared.collect{
-            Timber.d("ChartView - chart cleared $it")
-            temperatureData.clear()
-            humidityData.clear()
-            pressureData.clear()
-            temperatureChart.fitScreen()
-            humidityChart.fitScreen()
-            pressureChart.fitScreen()
+        for (container in chartContainers) {
+            container.uiComponent.fitScreen()
         }
     }
 
@@ -153,14 +172,14 @@ fun ChartsView(
     var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
 
     LaunchedEffect(key1 = selected, viewPeriod, increasedChartSize) {
-        Timber.d("ChartView - LaunchedEffect $sensorId")
+        Timber.d("ChartView - LaunchedEffect ${sensor.id}")
         while (selected) {
             val container = mutableListOf<ChartContainer>()
 
-            Timber.d("ChartView - get history $sensorId")
+            Timber.d("ChartView - get history ${sensor.id}")
             delay(300)
-            val freshHistory = getHistory.invoke(sensorId)
-            val alarms = getActiveAlarms(sensorId)
+            val freshHistory = getHistory.invoke(sensor.id)
+            val alarms = getActiveAlarms(sensor.id)
 
             temperatureLimits = alarms.firstOrNull { it.alarmType == AlarmType.TEMPERATURE }?.let {
                 unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
@@ -176,12 +195,13 @@ fun ChartsView(
             Timber.d("ChartView - humidityLimits $humidityLimits")
             Timber.d("ChartView - pressureLimits $pressureLimits")
 
+            val tempChart = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.TEMPERATURE }
             if (history.isEmpty() ||
-                temperatureChart.highestVisibleX >= (temperatureChart.data?.xMax ?: Float.MIN_VALUE)) {
+                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
                 history = freshHistory
 
                 if (history.isNotEmpty()) {
-                    Timber.d("ChartView - prepare datasets $sensorId pointsCount = ${history.size} FROM = $from")
+                    Timber.d("ChartView - prepare datasets ${sensor.id} pointsCount = ${history.size} FROM = $from")
                     if (viewPeriod is Period.All) {
                         Timber.d("ChartView - VIEW ALL")
                         from = history[0].createdAt.time
@@ -198,6 +218,12 @@ fun ChartsView(
                     val accelerationDataTemp = mutableListOf<Entry>()
                     val rssiDataTemp = mutableListOf<Entry>()
                     val movementDataTemp = mutableListOf<Entry>()
+                    val co2DataTemp = mutableListOf<Entry>()
+                    val vocDataTemp = mutableListOf<Entry>()
+                    val noxDataTemp = mutableListOf<Entry>()
+                    val pm25DataTemp = mutableListOf<Entry>()
+                    val luminosityDataTemp = mutableListOf<Entry>()
+                    val soundDataTemp = mutableListOf<Entry>()
 
                     history.forEach { item ->
                         val timestamp = (item.createdAt.time - from).toFloat()
@@ -227,101 +253,106 @@ fun ChartsView(
                                 movementDataTemp.add(Entry(timestamp, movements.toFloat()))
                             }
                         }
+                        item.co2?.let { co2 ->
+                            co2DataTemp.add(Entry(timestamp, co2.toFloat()))
+                        }
+                        item.voc?.let { voc ->
+                            vocDataTemp.add(Entry(timestamp, voc.toFloat()))
+                        }
+                        item.nox?.let { nox ->
+                            noxDataTemp.add(Entry(timestamp, nox.toFloat()))
+                        }
+                        item.pm25?.let { pm25 ->
+                            pm25DataTemp.add(Entry(timestamp, pm25.toFloat()))
+                        }
+                        item.luminosity?.let { luminosity ->
+                            luminosityDataTemp.add(Entry(timestamp, luminosity.toFloat()))
+                        }
+                        item.dBaAvg?.let { dBaAvg ->
+                            soundDataTemp.add(Entry(timestamp, dBaAvg.toFloat()))
+                        }
                     }
-                    container.add(
-                        ChartContainer(
-                            chartSensorType = ChartSensorType.TEMPERATURE,
-                            uiComponent = temperatureChart,
-                            data = temperatureDataTemp,
-                            limits = temperatureLimits,
-                            from = from,
-                            to = to
-                        )
-                    )
+                    val temperatureContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.TEMPERATURE }
+                    temperatureContainer?.let {
+                        it.data = temperatureDataTemp
+                        it.limits = temperatureLimits
+                        it.from = from
+                        it.to = to
+                    }
 
                     if (humidityDataTemp.isNotEmpty()) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.HUMIDITY,
-                                uiComponent = humidityChart,
-                                data = humidityDataTemp,
-                                limits = humidityLimits,
-                                from = from,
-                                to = to
-                            )
-                        )
+                        val humidityContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.HUMIDITY }
+                        humidityContainer?.let {
+                            it.data = humidityDataTemp
+                            it.limits = humidityLimits
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
                     if (pressureDataTemp.isNotEmpty()) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.PRESSURE,
-                                uiComponent = pressureChart,
-                                data = pressureDataTemp,
-                                limits = pressureLimits,
-                                from = from,
-                                to = to
-                            )
-                        )
+                        val pressureContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.PRESSURE }
+                        pressureContainer?.let {
+                            it.data = pressureDataTemp
+                            it.limits = pressureLimits
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
-
-                    if (batteryDataTemp.isNotEmpty() && newChartsUI) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.BATTERY,
-                                uiComponent = batteryChart,
-                                data = batteryDataTemp,
-                                limits = null,
-                                from = from,
-                                to = to
-                            )
-                        )
+                    if (co2DataTemp.isNotEmpty()) {
+                        val co2Container = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.CO2}
+                        co2Container?.let {
+                            it.data = co2DataTemp
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
-                    if (accelerationDataTemp.isNotEmpty() && newChartsUI) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.ACCELERATION,
-                                uiComponent = accelerationChart,
-                                data = accelerationDataTemp,
-                                limits = null,
-                                from = from,
-                                to = to
-                            )
-                        )
+                    if (vocDataTemp.isNotEmpty()) {
+                        val vocContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.VOC}
+                        vocContainer?.let {
+                            it.data = vocDataTemp
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
-                    if (rssiDataTemp.isNotEmpty() && newChartsUI) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.RSSI,
-                                uiComponent = rssiChart,
-                                data = rssiDataTemp,
-                                limits = null,
-                                from = from,
-                                to = to
-                            )
-                        )
+                    if (noxDataTemp.isNotEmpty()) {
+                        val noxContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.NOX}
+                        noxContainer?.let {
+                            it.data = noxDataTemp
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
-                    if (movementDataTemp.isNotEmpty() && newChartsUI) {
-                        container.add(
-                            ChartContainer(
-                                chartSensorType = ChartSensorType.MOVEMENTS,
-                                uiComponent = movementsChart,
-                                data = movementDataTemp,
-                                limits = null,
-                                from = from,
-                                to = to
-                            )
-                        )
+                    if (pm25DataTemp.isNotEmpty()) {
+                        val pm25Container = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.PM25}
+                        pm25Container?.let {
+                            it.data = pm25DataTemp
+                            it.from = from
+                            it.to = to
+                        }
                     }
 
-                    temperatureData = temperatureDataTemp
-                    humidityData = humidityDataTemp
-                    pressureData = pressureDataTemp
-                    chartContainers = container
+                    if (luminosityDataTemp.isNotEmpty()) {
+                        val luminosityContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.LUMINOSITY}
+                        luminosityContainer?.let {
+                            it.data = luminosityDataTemp
+                            it.from = from
+                            it.to = to
+                        }
+                    }
+
+                    if (soundDataTemp.isNotEmpty()) {
+                        val soundContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.SOUND}
+                        soundContainer?.let {
+                            it.data = soundDataTemp
+                            it.from = from
+                            it.to = to
+                        }
+                    }
                 }
             }
             isLoading = false
@@ -409,22 +440,27 @@ fun VerticalChartsPrototype(
                 modifier = columnModifier
             ) {
                 for (chartContainer in chartContainers) {
-                    item {
-                        ChartViewPrototype(
-                            chartContainer.uiComponent,
-                            Modifier
-                                .height(height)
-                                .fillMaxWidth(),
-                            chartContainer.data,
-                            unitsConverter,
-                            chartContainer.chartSensorType,
-                            graphDrawDots,
-                            showChartStats,
-                            limits = chartContainer.limits,
-                            chartContainer.from,
-                            chartContainer.to,
-                            clearMarker
-                        )
+                    val data = chartContainer.data
+                    val from = chartContainer.from
+                    val to  = chartContainer.to
+                    if (data != null && to != null && from != null) {
+                        item {
+                            ChartViewPrototype(
+                                chartContainer.uiComponent,
+                                Modifier
+                                    .height(height)
+                                    .fillMaxWidth(),
+                                data,
+                                unitsConverter,
+                                chartContainer.chartSensorType,
+                                graphDrawDots,
+                                showChartStats,
+                                limits = chartContainer.limits,
+                                from,
+                                to,
+                                clearMarker
+                            )
+                        }
                     }
                 }
             }
@@ -434,28 +470,32 @@ fun VerticalChartsPrototype(
                     .fillMaxSize()
             ) {
                 for (chartContainer in chartContainers) {
-                    ChartViewPrototype(
-                        chartContainer.uiComponent,
-                        Modifier
-                            .height(height)
-                            .fillMaxWidth(),
-                        chartContainer.data,
-                        unitsConverter,
-                        chartContainer.chartSensorType,
-                        graphDrawDots,
-                        showChartStats,
-                        limits = chartContainer.limits,
-                        chartContainer.from,
-                        chartContainer.to,
-                        clearMarker
-                    )
+                    val data = chartContainer.data
+                    val from = chartContainer.from
+                    val to  = chartContainer.to
+                    if (data != null && to != null && from != null) {
+                        ChartViewPrototype(
+                            chartContainer.uiComponent,
+                            Modifier
+                                .height(height)
+                                .fillMaxWidth(),
+                            data,
+                            unitsConverter,
+                            chartContainer.chartSensorType,
+                            graphDrawDots,
+                            showChartStats,
+                            limits = chartContainer.limits,
+                            from,
+                            to,
+                            clearMarker
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LandscapeChartsPrototype(
     modifier: Modifier,
@@ -480,20 +520,24 @@ fun LandscapeChartsPrototype(
         beyondViewportPageCount = 3
     ) { page ->
         val chartContainer = chartContainers[page]
-
-        ChartViewPrototype(
-            chartContainer.uiComponent,
-            Modifier.fillMaxSize(),
-            chartContainer.data,
-            unitsConverter,
-            chartContainer.chartSensorType,
-            graphDrawDots,
-            showChartStats,
-            limits = chartContainer.limits,
-            chartContainer.from,
-            chartContainer.to,
-            clearMarker
-        )
+        val data = chartContainer.data
+        val from = chartContainer.from
+        val to  = chartContainer.to
+        if (data != null && to != null && from != null) {
+            ChartViewPrototype(
+                chartContainer.uiComponent,
+                Modifier.fillMaxSize(),
+                data,
+                unitsConverter,
+                chartContainer.chartSensorType,
+                graphDrawDots,
+                showChartStats,
+                limits = chartContainer.limits,
+                from,
+                to,
+                clearMarker
+            )
+        }
     }
 }
 

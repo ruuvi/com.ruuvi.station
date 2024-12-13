@@ -6,8 +6,8 @@ import com.github.mikephil.charting.data.Entry
 data class ChartContainer (
     val chartSensorType: ChartSensorType,
     val uiComponent: LineChart,
-    val data: MutableList<Entry>,
-    val limits: Pair<Double, Double>?,
-    val from: Long,
-    val to: Long
+    var data: MutableList<Entry>? = null,
+    var limits: Pair<Double, Double>? = null,
+    var from: Long? = null,
+    var to: Long? = null
 )

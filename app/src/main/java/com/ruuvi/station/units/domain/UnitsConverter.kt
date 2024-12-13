@@ -291,6 +291,25 @@ class UnitsConverter (
         return value.round(0).toInt().toString()
     }
 
+    fun getValue(
+        value: Double?,
+        accuracy: Accuracy,
+        unit: String): String
+    {
+        if (value == null)
+            return NO_VALUE_AVAILABLE
+        return context.getString(accuracy.nameTemplateId, value, unit).trim()
+    }
+
+    fun getValueWithoutUnit(
+        value: Double?,
+        accuracy: Accuracy, ): String
+    {
+        if (value == null)
+            return NO_VALUE_AVAILABLE
+        return context.getString(accuracy.nameTemplateId, value, "").trim()
+    }
+
     fun getVoltageEnvironmentValue(
         voltage: Double
     ): EnvironmentValue =

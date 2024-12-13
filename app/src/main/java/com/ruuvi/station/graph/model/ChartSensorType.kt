@@ -9,5 +9,11 @@ enum class ChartSensorType (val captionTemplate: Int) {
     BATTERY (R.string.battery_voltage),
     ACCELERATION (R.string.acceleration_x),
     RSSI (R.string.signal_strength_rssi),
-    MOVEMENTS (R.string.movement_counter)
+    MOVEMENTS (R.string.movement_counter),
+    CO2 (R.string.co2_with_unit),
+    VOC (R.string.voc_with_unit),
+    NOX (R.string.nox_with_unit),
+    PM25 (R.string.pm25_with_unit),
+    LUMINOSITY (R.string.luminosity_with_unit),
+    SOUND (R.string.sound_with_unit),
 }

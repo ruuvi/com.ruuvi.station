@@ -333,35 +333,6 @@ fun SensorsPager(
             ) { page ->
                 val sensor = sensors.getOrNull(page)
                 if (sensor != null) {
-
-                    val temperatureChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val humidityChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val pressureChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val batteryChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val accelerationChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val rssiChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
-                    val movementsChart by remember {
-                        mutableStateOf(LineChart(context))
-                    }
-
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Top
@@ -395,14 +366,7 @@ fun SensorsPager(
                                         size = coordinates.size.toSize()
                                         Timber.d("ChartsView size $size")
                                     },
-                                sensorId = sensor.id,
-                                temperatureChart = temperatureChart,
-                                humidityChart = humidityChart,
-                                pressureChart = pressureChart,
-                                batteryChart = batteryChart,
-                                accelerationChart = accelerationChart,
-                                rssiChart = rssiChart,
-                                movementsChart = movementsChart,
+                                sensor = sensor,
                                 getHistory = getHistory,
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,

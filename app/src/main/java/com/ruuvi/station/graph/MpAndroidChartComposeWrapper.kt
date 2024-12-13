@@ -74,18 +74,18 @@ fun ChartView(
         },
         update = { view ->
             Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
-            val chartCaption =
-                if (showChartStats) {
-                    getMinMaxAverageDescription(
-                        context,
-                        lineChart,
-                        chartData,
-                        chartSensorType,
-                        unitsConverter
-                    ) + System.lineSeparator()
-                } else {
-                    ""
-                } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
+            val chartCaption = ""
+//                if (showChartStats) {
+//                    getMinMaxAverageDescription(
+//                        context,
+//                        lineChart,
+//                        chartData,
+//                        chartSensorType,
+//                        unitsConverter
+//                    ) + System.lineSeparator()
+//                } else {
+//                    ""
+//                } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
             addDataToChart(context, chartData, view, chartCaption, graphDrawDots, limits, from, to)
             (view.marker as ChartMarkerView).getFrom = {from}
         }
@@ -116,6 +116,12 @@ fun ChartViewPrototype(
         ChartSensorType.ACCELERATION -> stringResource(id = R.string.acceleration_x)
         ChartSensorType.RSSI -> stringResource(id = R.string.signal_strength_rssi)
         ChartSensorType.MOVEMENTS -> stringResource(id = R.string.movement_counter)
+        ChartSensorType.CO2 -> stringResource(id = R.string.co2_with_unit, stringResource(id = R.string.unit_co2))
+        ChartSensorType.VOC -> stringResource(id = R.string.voc_with_unit, stringResource(id = R.string.unit_voc))
+        ChartSensorType.NOX -> stringResource(id = R.string.nox_with_unit, stringResource(id = R.string.unit_nox))
+        ChartSensorType.PM25 -> stringResource(id = R.string.pm25_with_unit, stringResource(id = R.string.unit_pm25))
+        ChartSensorType.LUMINOSITY -> stringResource(id = R.string.luminosity_with_unit, stringResource(id = R.string.unit_luminosity))
+        ChartSensorType.SOUND -> stringResource(id = R.string.sound_with_unit, stringResource(id = R.string.unit_sound))
     } 
 
     val offset = RuuviStationTheme.dimensions.extended
@@ -179,6 +185,11 @@ fun getPrototypeChartDescription(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
 ): String {
+
+    fun getSimpleValue (value: Double, x: Int?): String {
+        return value.toInt().toString()
+    }
+
     val getRawValue = when (chartSensorType) {
         ChartSensorType.TEMPERATURE -> unitsConverter::getTemperatureRawWithoutUnitString
         ChartSensorType.HUMIDITY -> unitsConverter::getHumidityRawWithoutUnitString
@@ -187,6 +198,12 @@ fun getPrototypeChartDescription(
         ChartSensorType.ACCELERATION -> unitsConverter::getTemperatureRawWithoutUnitString
         ChartSensorType.RSSI -> unitsConverter::getTemperatureRawWithoutUnitString
         ChartSensorType.MOVEMENTS -> unitsConverter::getTemperatureRawWithoutUnitString
+        ChartSensorType.CO2 -> ::getSimpleValue
+        ChartSensorType.VOC -> ::getSimpleValue
+        ChartSensorType.NOX -> ::getSimpleValue
+        ChartSensorType.PM25 -> ::getSimpleValue
+        ChartSensorType.LUMINOSITY -> ::getSimpleValue
+        ChartSensorType.SOUND -> ::getSimpleValue
     }
 
     val latestPoint = chartData.lastOrNull()
@@ -247,6 +264,12 @@ fun getLatestValueDescription(
             ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
             ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
             ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
+            ChartSensorType.CO2 -> TODO()
+            ChartSensorType.VOC -> TODO()
+            ChartSensorType.NOX -> TODO()
+            ChartSensorType.PM25 -> TODO()
+            ChartSensorType.LUMINOSITY -> TODO()
+            ChartSensorType.SOUND -> TODO()
         }
         context.getString(chartSensorType.captionTemplate, latestValue)
     } else {
@@ -358,6 +381,12 @@ fun getMinMaxAvg(
         ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(min.toDouble())
         ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(min.toDouble())
         ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(min.toDouble())
+        ChartSensorType.CO2 -> TODO()
+        ChartSensorType.VOC -> TODO()
+        ChartSensorType.NOX -> TODO()
+        ChartSensorType.PM25 -> TODO()
+        ChartSensorType.LUMINOSITY -> TODO()
+        ChartSensorType.SOUND -> TODO()
     })
     if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
@@ -371,6 +400,12 @@ fun getMinMaxAvg(
         ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(max.toDouble())
         ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(max.toDouble())
         ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(max.toDouble())
+        ChartSensorType.CO2 -> TODO()
+        ChartSensorType.VOC -> TODO()
+        ChartSensorType.NOX -> TODO()
+        ChartSensorType.PM25 -> TODO()
+        ChartSensorType.LUMINOSITY -> TODO()
+        ChartSensorType.SOUND -> TODO()
     })
     if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
 
@@ -384,6 +419,12 @@ fun getMinMaxAvg(
         ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(average.toDouble())
         ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(average.toDouble())
         ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(average.toDouble())
+        ChartSensorType.CO2 -> TODO()
+        ChartSensorType.VOC -> TODO()
+        ChartSensorType.NOX -> TODO()
+        ChartSensorType.PM25 -> TODO()
+        ChartSensorType.LUMINOSITY -> TODO()
+        ChartSensorType.SOUND -> TODO()
     })
 
     Timber.d("calculateCaption getMinMaxAvg $lineBuilder")
