@@ -38,7 +38,6 @@ import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
@@ -47,50 +46,6 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
-
-@Composable
-fun ChartView(
-    lineChart: LineChart,
-    modifier: Modifier,
-    chartData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType,
-    graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    limits: Pair<Double,Double>?,
-    from: Long,
-    to: Long,
-    clearMarker: () -> Unit
-) {
-    val context = LocalContext.current
-
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            Timber.d("ChartView - factory")
-            val chart = lineChart
-            setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
-            chart
-        },
-        update = { view ->
-            Timber.d("ChartView - update $from pointsCount = ${chartData.size}")
-            val chartCaption = ""
-//                if (showChartStats) {
-//                    getMinMaxAverageDescription(
-//                        context,
-//                        lineChart,
-//                        chartData,
-//                        chartSensorType,
-//                        unitsConverter
-//                    ) + System.lineSeparator()
-//                } else {
-//                    ""
-//                } + getLatestValueDescription(context, chartData, unitsConverter, chartSensorType)
-            addDataToChart(context, chartData, view, chartCaption, graphDrawDots, limits, from, to)
-            (view.marker as ChartMarkerView).getFrom = {from}
-        }
-    )
-}
 
 @Composable
 fun ChartViewPrototype(
@@ -175,7 +130,6 @@ fun ChartViewPrototype(
             }
         )
     }
-    
 }
 
 fun getPrototypeChartDescription(
@@ -185,6 +139,7 @@ fun getPrototypeChartDescription(
     unitsConverter: UnitsConverter,
     chartSensorType: ChartSensorType,
 ): String {
+    Timber.d("ChartView - getPrototypeChartDescription")
 
     fun getSimpleValue (value: Double, x: Int?): String {
         return value.toInt().toString()
@@ -246,189 +201,6 @@ fun getPrototypeChartDescription(
         getRawValue(average.toDouble(), null),
         latestValue
     )
-}
-
-fun getLatestValueDescription(
-    context: Context,
-    chartData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType
-): String {
-    val latestPoint = chartData.lastOrNull()
-    return if (latestPoint != null) {
-        val latestValue = when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
-            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(latestPoint.y.toDouble())
-            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(latestPoint.y.toDouble())
-            ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
-            ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
-            ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
-            ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(latestPoint.y.toDouble())
-            ChartSensorType.CO2 -> TODO()
-            ChartSensorType.VOC -> TODO()
-            ChartSensorType.NOX -> TODO()
-            ChartSensorType.PM25 -> TODO()
-            ChartSensorType.LUMINOSITY -> TODO()
-            ChartSensorType.SOUND -> TODO()
-        }
-        context.getString(chartSensorType.captionTemplate, latestValue)
-    } else {
-        context.getString(chartSensorType.captionTemplate, "")
-    }
-}
-
-fun getMinMaxAverageDescription(
-    context: Context,
-    lineChart: LineChart,
-    chartData: MutableList<Entry>,
-    chartSensorType: ChartSensorType,
-    unitsConverter: UnitsConverter
-): String {
-    val lowestVisibleX = lineChart.lowestVisibleX
-    val highestVisibleX = lineChart.highestVisibleX
-    val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
-    Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
-
-    if (visibleEntries.isEmpty()) return getMinMaxAvg(
-        context = context,
-        chartSensorType = chartSensorType,
-        unitsConverter = unitsConverter,
-        min = 0f,
-        max = 0f,
-        average = 0f,
-        multiLine = false
-    )
-
-    var totalArea = 0.0
-
-    var min = visibleEntries[0].y
-    var max = visibleEntries[0].y
-
-    for (i in 1 until visibleEntries.size) {
-        val x1 = visibleEntries[i-1].x
-        val y1 = visibleEntries[i-1].y
-        val x2 = visibleEntries[i].x
-        val y2 = visibleEntries[i].y
-
-        val area = (x2 - x1) * (y2 + y1) / 2.0
-        totalArea += area
-
-        if (y2 < min) min = y2
-        if (y2 > max) max = y2
-    }
-    val timespan = visibleEntries.last().x - visibleEntries.first().x
-
-    val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
-
-    val minMaxAvgOneLine = getMinMaxAvg(
-        context = context,
-        chartSensorType = chartSensorType,
-        unitsConverter = unitsConverter,
-        min = min,
-        max = max,
-        average = average,
-        multiLine = false
-    )
-    val computePaint = Paint(1)
-    computePaint.typeface = lineChart.description.typeface
-    computePaint.textSize = lineChart.description.textSize
-    val computeSize = Utils.calcTextSize(computePaint, minMaxAvgOneLine)
-    val lineFits = computeSize.width * 1.1f < lineChart.viewPortHandler.contentWidth()
-    Timber.d("calculateCaption $minMaxAvgOneLine size = $computeSize field = ${lineChart.viewPortHandler.contentWidth()}")
-
-    return if (lineFits) {
-        minMaxAvgOneLine
-    } else {
-        getMinMaxAvg(
-            context = context,
-            chartSensorType = chartSensorType,
-            unitsConverter = unitsConverter,
-            min = min,
-            max = max,
-            average = average,
-            multiLine = true
-        )
-    }
-}
-
-fun getMinMaxAvg(
-    context: Context,
-    chartSensorType: ChartSensorType,
-    unitsConverter: UnitsConverter,
-    min: Float,
-    max: Float,
-    average: Float,
-    multiLine: Boolean
-): String {
-    val lineBuilder = StringBuilder()
-    Timber.d("calculateCaption getMinMaxAvg $chartSensorType min = $min max = $max average = $average")
-
-    val valueTemplate = if (chartSensorType == ChartSensorType.PRESSURE &&
-        unitsConverter.getPressureUnit() == PressureUnit.PA
-    ) {
-        R.string.accuracy0_template
-    } else {
-        R.string.accuracy2_template
-    }
-
-    lineBuilder.append(context.getString(R.string.chart_stat_min))
-    lineBuilder.append(": ")
-    lineBuilder.append(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(min.toDouble())
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(min.toDouble())
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(min.toDouble())
-        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(min.toDouble())
-        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(min.toDouble())
-        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(min.toDouble())
-        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(min.toDouble())
-        ChartSensorType.CO2 -> TODO()
-        ChartSensorType.VOC -> TODO()
-        ChartSensorType.NOX -> TODO()
-        ChartSensorType.PM25 -> TODO()
-        ChartSensorType.LUMINOSITY -> TODO()
-        ChartSensorType.SOUND -> TODO()
-    })
-    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
-
-    lineBuilder.append(context.getString(R.string.chart_stat_max))
-    lineBuilder.append(": ")
-    lineBuilder.append(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(max.toDouble())
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(max.toDouble())
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(max.toDouble())
-        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(max.toDouble())
-        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(max.toDouble())
-        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(max.toDouble())
-        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(max.toDouble())
-        ChartSensorType.CO2 -> TODO()
-        ChartSensorType.VOC -> TODO()
-        ChartSensorType.NOX -> TODO()
-        ChartSensorType.PM25 -> TODO()
-        ChartSensorType.LUMINOSITY -> TODO()
-        ChartSensorType.SOUND -> TODO()
-    })
-    if (multiLine) lineBuilder.appendLine() else lineBuilder.append(" ")
-
-    lineBuilder.append(context.getString(R.string.chart_stat_avg))
-    lineBuilder.append(": ")
-    lineBuilder.append(when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(average.toDouble())
-        ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(average.toDouble())
-        ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(average.toDouble())
-        ChartSensorType.BATTERY -> unitsConverter.getTemperatureRawString(average.toDouble())
-        ChartSensorType.ACCELERATION -> unitsConverter.getTemperatureRawString(average.toDouble())
-        ChartSensorType.RSSI -> unitsConverter.getTemperatureRawString(average.toDouble())
-        ChartSensorType.MOVEMENTS -> unitsConverter.getTemperatureRawString(average.toDouble())
-        ChartSensorType.CO2 -> TODO()
-        ChartSensorType.VOC -> TODO()
-        ChartSensorType.NOX -> TODO()
-        ChartSensorType.PM25 -> TODO()
-        ChartSensorType.LUMINOSITY -> TODO()
-        ChartSensorType.SOUND -> TODO()
-    })
-
-    Timber.d("calculateCaption getMinMaxAvg $lineBuilder")
-    return lineBuilder.toString()
 }
 
 fun chartsInitialSetup(
@@ -501,6 +273,7 @@ fun setupMarker(
     getFrom: () -> Long,
     clearMarker: () -> Unit
 ) {
+    Timber.d("ChartView - setupMarker")
     val markerView = ChartMarkerView(
         context = context,
         layoutResource = R.layout.custom_marker_view,
@@ -523,6 +296,7 @@ private fun addDataToChart(
     from: Long,
     to: Long
 ) {
+    Timber.d("ChartView - addDataToChart")
     val set = LineDataSet(data, label)
     setLabelCount(context, chart)
     set.setDrawCircles(graphDrawDots)
@@ -628,6 +402,7 @@ private fun setLabelCount(context: Context, chart: LineChart) {
     Timber.d("setLabelCount computeLabelSize = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} contentHeight = ${chart.viewPortHandler.contentHeight()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
     chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
+    chart.invalidate()
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.

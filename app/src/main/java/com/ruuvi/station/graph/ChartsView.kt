@@ -133,7 +133,7 @@ fun ChartsView(
         }
     }
 
-    var viewPeriodLocal by remember { mutableStateOf<Period?>(null) }
+    var viewPeriodLocal by remember { mutableStateOf<Period?>(viewPeriod) }
 
     var needsScroll by remember {
         mutableStateOf(true)
@@ -160,7 +160,7 @@ fun ChartsView(
     }
 
     if (viewPeriod != viewPeriodLocal) {
-        Timber.d("ChartView - viewPeriod changed ${sensor.id}")
+        Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod $viewPeriodLocal")
         viewPeriodLocal = viewPeriod
         for (container in chartContainers) {
             container.uiComponent.fitScreen()
@@ -172,12 +172,10 @@ fun ChartsView(
     var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
 
     LaunchedEffect(key1 = selected, viewPeriod, increasedChartSize) {
-        Timber.d("ChartView - LaunchedEffect ${sensor.id}")
+        Timber.d("ChartView - LaunchedEffect ${sensor.id} $selected $viewPeriod $increasedChartSize")
         while (selected) {
-            val container = mutableListOf<ChartContainer>()
-
-            Timber.d("ChartView - get history ${sensor.id}")
             delay(300)
+            Timber.d("ChartView - LaunchedEffect get history ${sensor.id}")
             val freshHistory = getHistory.invoke(sensor.id)
             val alarms = getActiveAlarms(sensor.id)
 
@@ -191,23 +189,17 @@ fun ChartsView(
                 unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
             }
 
-            Timber.d("ChartView - temperatureLimits $temperatureLimits")
-            Timber.d("ChartView - humidityLimits $humidityLimits")
-            Timber.d("ChartView - pressureLimits $pressureLimits")
-
             val tempChart = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.TEMPERATURE }
             if (history.isEmpty() ||
                 (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
                 history = freshHistory
 
                 if (history.isNotEmpty()) {
-                    Timber.d("ChartView - prepare datasets ${sensor.id} pointsCount = ${history.size} FROM = $from")
-                    if (viewPeriod is Period.All) {
-                        Timber.d("ChartView - VIEW ALL")
-                        from = history[0].createdAt.time
+                    Timber.d("ChartView - LaunchedEffect prepare datasets ${sensor.id} pointsCount = ${history.size} FROM = $from")
+                    from = if (viewPeriod is Period.All) {
+                        history[0].createdAt.time
                     } else {
-                        Timber.d("ChartView - VIEW ${viewPeriod.value}")
-                        from = Date().time - viewPeriod.value * 60 * 60 * 1000
+                        Date().time - viewPeriod.value * 60 * 60 * 1000
                     }
                     to = Date().time
 
@@ -355,7 +347,7 @@ fun ChartsView(
                     }
                 }
             }
-            isLoading = false
+
             chartsPerScreen = if (increasedChartSize) {
                 min(2, chartContainers.size)
             } else {
@@ -363,9 +355,11 @@ fun ChartsView(
             }
             needsScroll = chartsPerScreen < chartContainers.size
             Timber.d("needsScroll $needsScroll increaseChartSize = $increasedChartSize chartsPerScreen=$chartsPerScreen containers = ${chartContainers.size}")
-
+            isLoading = false
             delay(1000)
+            Timber.d("ChartView - LaunchedEffect ${sensor.id} end cycle")
         }
+        Timber.d("ChartView - LaunchedEffect ${sensor.id} END")
     }
 
     val configuration = LocalConfiguration.current
@@ -583,203 +577,5 @@ class AxisLeftValueFormatter(private val formatPattern: String) : IAxisValueForm
     override fun getFormattedValue(value: Double, p1: AxisBase?): String {
         val decimalFormat = DecimalFormat(formatPattern)
         return decimalFormat.format(value)
-    }
-}
-
-@Composable
-fun VerticalCharts(
-    modifier: Modifier,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    temperatureData: MutableList<Entry>,
-    pressureData: MutableList<Entry>,
-    humidityData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    temperatureLimits: Pair<Double, Double>?,
-    humidityLimits: Pair<Double, Double>?,
-    pressureLimits: Pair<Double, Double>?,
-    from: Long,
-    to: Long
-) {
-    val clearMarker = {
-        temperatureChart.highlightValue(null)
-        pressureChart.highlightValue(null)
-        humidityChart.highlightValue(null)
-    }
-
-    Column(modifier = modifier.fillMaxSize()) {
-        if (temperatureData.isEmpty() && humidityData.isEmpty() && pressureData.isEmpty()) {
-            EmptyCharts(modifier)
-        } else {
-            val onlyOneChart = humidityData.isEmpty() && pressureData.isEmpty()
-            if (onlyOneChart) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.5f)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-            ) {
-                ChartView(
-                    temperatureChart,
-                    Modifier.fillMaxSize(),
-                    temperatureData,
-                    unitsConverter,
-                    ChartSensorType.TEMPERATURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = temperatureLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-            }
-            if (onlyOneChart) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.5f)
-                )
-            }
-            if (humidityData.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    ChartView(
-                        humidityChart,
-                        Modifier.fillMaxSize(),
-                        humidityData,
-                        unitsConverter,
-                        ChartSensorType.HUMIDITY,
-                        graphDrawDots,
-                        showChartStats,
-                        limits = humidityLimits,
-                        from,
-                        to,
-                        clearMarker
-                    )
-                }
-            }
-            if (pressureData.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    ChartView(
-                        pressureChart,
-                        Modifier.fillMaxSize(),
-                        pressureData,
-                        unitsConverter,
-                        ChartSensorType.PRESSURE,
-                        graphDrawDots,
-                        showChartStats,
-                        limits = pressureLimits,
-                        from,
-                        to,
-                        clearMarker
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun LandscapeCharts(
-    modifier: Modifier,
-    temperatureChart: LineChart,
-    humidityChart: LineChart,
-    pressureChart: LineChart,
-    temperatureData: MutableList<Entry>,
-    pressureData: MutableList<Entry>,
-    humidityData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    graphDrawDots: Boolean,
-    showChartStats: Boolean,
-    temperatureLimits: Pair<Double, Double>?,
-    humidityLimits: Pair<Double, Double>?,
-    pressureLimits: Pair<Double, Double>?,
-    from: Long,
-    to: Long
-) {
-    val clearMarker = {
-        temperatureChart.highlightValue(null)
-        humidityChart.highlightValue(null)
-        pressureChart.highlightValue(null)
-    }
-    val chartTypes = mutableListOf<ChartSensorType>(ChartSensorType.TEMPERATURE)
-    if (humidityData.isNotEmpty()) chartTypes.add(ChartSensorType.HUMIDITY)
-    if (pressureData.isNotEmpty()) chartTypes.add(ChartSensorType.PRESSURE)
-
-    val pagerState = rememberPagerState {
-        return@rememberPagerState chartTypes.size
-    }
-
-    VerticalPager(
-        modifier = modifier.fillMaxSize(),
-        state = pagerState,
-        beyondViewportPageCount = 3
-    ) { page ->
-        val chartSensorType = chartTypes[page]
-
-        when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> {
-                ChartView(
-                    temperatureChart,
-                    Modifier.fillMaxSize(),
-                    temperatureData,
-                    unitsConverter,
-                    ChartSensorType.TEMPERATURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = temperatureLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-            }
-            ChartSensorType.HUMIDITY -> {
-                ChartView(
-                    humidityChart,
-                    Modifier.fillMaxSize(),
-                    humidityData,
-                    unitsConverter,
-                    ChartSensorType.HUMIDITY,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = humidityLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-            }
-            ChartSensorType.PRESSURE -> {
-                ChartView(
-                    pressureChart,
-                    Modifier.fillMaxSize(),
-                    pressureData,
-                    unitsConverter,
-                    ChartSensorType.PRESSURE,
-                    graphDrawDots,
-                    showChartStats,
-                    limits = pressureLimits,
-                    from,
-                    to,
-                    clearMarker
-                )
-            }
-            else -> {}
-        }
     }
 }

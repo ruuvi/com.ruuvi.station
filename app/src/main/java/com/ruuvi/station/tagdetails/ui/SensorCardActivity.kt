@@ -104,7 +104,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedSensor by viewModel.selectedSensor.collectAsStateWithLifecycle()
-                val viewPeriod by viewModel.chartViewPeriod.collectAsState(Period.Day10())
+                val viewPeriod by viewModel.chartViewPeriod.collectAsState()
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
