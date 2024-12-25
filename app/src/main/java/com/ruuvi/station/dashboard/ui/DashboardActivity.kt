@@ -439,7 +439,7 @@ fun DashboardItems(
     dashboardTapAction: DashboardTapAction,
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
-    onMove: (Int, Int) -> Unit,
+    onMove: (Int, Int, Boolean) -> Unit,
     dragDropListState: ItemListDragAndDropState,
     refreshing: Boolean
 ) {
@@ -584,7 +584,7 @@ fun DashboardItem(
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int) -> Unit
+    moveItem: (Int, Int, Boolean) -> Unit
 ) {
     val itemHeight = (itemHeight.value * if (sensor.isAir()) 1.3 else 1.0).dp
     val context = LocalContext.current
@@ -763,7 +763,7 @@ fun DashboardItemSimple(
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int) -> Unit,
+    moveItem: (Int, Int, Boolean) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
 ) {
@@ -891,7 +891,7 @@ fun ItemButtons(
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int) -> Unit,
+    moveItem: (Int, Int, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -902,7 +902,7 @@ fun ItemButtons(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
-        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
             if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
                 IconButton(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
@@ -1354,7 +1354,7 @@ fun DashboardItemDropdownMenu(
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int) -> Unit
+    moveItem: (Int, Int, Boolean) -> Unit
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
@@ -1430,7 +1430,7 @@ fun DashboardItemDropdownMenu(
             if (itemIndex != 0) {
                 DropdownMenuItem(onClick = {
                     var newIndex = itemIndex - 1
-                    moveItem(itemIndex, newIndex)
+                    moveItem(itemIndex, newIndex, true)
                     if (newIndex < 0) newIndex = 0
                     threeDotsMenuExpanded = false
                     coroutineScope.launch {
@@ -1444,7 +1444,7 @@ fun DashboardItemDropdownMenu(
             if (itemIndex != lazyGridState.layoutInfo.totalItemsCount - 2) {
                 DropdownMenuItem(onClick = {
                     var newIndex = itemIndex + 1
-                    moveItem(itemIndex, newIndex)
+                    moveItem(itemIndex, newIndex, true)
                     if (newIndex >= lazyGridState.layoutInfo.totalItemsCount) {
                         newIndex = lazyGridState.layoutInfo.totalItemsCount - 2
                     }
