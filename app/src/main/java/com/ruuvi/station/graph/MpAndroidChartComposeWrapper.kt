@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.size
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.LimitLine
@@ -62,6 +64,7 @@ fun ChartViewPrototype(
     clearMarker: () -> Unit
 ) {
     val context = LocalContext.current
+    Timber.d("ChartView - ChartViewPrototype")
 
     val title = when (chartSensorType) {
         ChartSensorType.TEMPERATURE -> stringResource(id = R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
@@ -116,6 +119,10 @@ fun ChartViewPrototype(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
+                .onSizeChanged { size ->
+                    Timber.d("setLabelCount onSizeChanged $size")
+                    //setLabelCount(context, lineChart)
+                }
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
                 Timber.d("ChartView - factory")
@@ -395,11 +402,10 @@ private fun setLabelCount(context: Context, chart: LineChart) {
     val computeSize = Utils.calcTextSize(computePaint, timeText)
     val computeSize2 = Utils.calcTextSize(computePaint, dateText)
     val width = max(computeSize.width, computeSize2.width)
-    Timber.d("setLabelCount $timeText $dateText $computeSize $computeSize2")
 
     var labelCount = chart.viewPortHandler.contentWidth() / (width * 2)
     var labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
-    Timber.d("setLabelCount computeLabelSize = $computeSize contentWidth = ${chart.viewPortHandler.contentWidth()} contentHeight = ${chart.viewPortHandler.contentHeight()} labelCount = $labelCount (${labelCount.toInt()}) labelCountY = ${labelCountY.toInt()}")
+    Timber.d("setLabelCount ${chart.size} VIEWPORT ${chart.viewPortHandler.contentWidth()} x ${chart.viewPortHandler.contentHeight()}")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
     chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
     chart.invalidate()
